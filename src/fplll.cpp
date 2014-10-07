@@ -273,8 +273,7 @@ int bkzReduction(const BKZParam& param) {
   if (param.flags & BKZ_NO_LLL)
     zerosLast(*param.b, u, uInv);
   else {
-    int flags = (param.flags & BKZ_VERBOSE) ? LLL_VERBOSE : LLL_DEFAULT;
-    Wrapper wrapper(*param.b, u, uInv, lllDelta, LLL_DEF_ETA, flags);
+    Wrapper wrapper(*param.b, u, uInv, lllDelta, LLL_DEF_ETA, LLL_DEFAULT);
     if (!wrapper.lll()) return wrapper.status;
   }
 
