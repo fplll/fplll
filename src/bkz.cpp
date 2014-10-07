@@ -134,9 +134,7 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, bool& clean) {
 template<class FT>
 bool BKZReduction<FT>::bkzLoop(int& kappaMax, int& nIter, bool& clean) {
   int flags = param.flags;
-  for (int iter = 0;; iter++) {
-    if (iter >= numRows - 1) break;
-    int kappa = iter;
+  for (int kappa = 0; kappa < numRows-1; kappa++) {
     // SVP-reduces a block
     int blockSize = min(param.blockSize, numRows - kappa);
     if (!svpReduction(kappa, blockSize, clean)) return false;
