@@ -13,6 +13,8 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
+#include <iomanip>
+
 /* Template source file */
 #include "bkz.h"
 #include "enumerate.h"
@@ -152,6 +154,12 @@ bool BKZReduction<FT>::bkz() {
   int flags = param.flags;
   int finalStatus = RED_SUCCESS;
 
+  if (flags & BKZ_DUMP_GSO) {
+    std::ostringstream prefix;
+    prefix << "Input";
+    dumpGSO(param.dumpGSOFilename, prefix.str(), false);
+  }
+
   if (param.blockSize < 2)
     return setStatus(RED_SUCCESS);
 
@@ -186,6 +194,18 @@ bool BKZReduction<FT>::bkz() {
       fr0.mul_2si(fr0, expo);
       cerr << "End of BKZ loop, time=" << cputime() * 0.001 << ", r_0 = " << fr0 << endl;
     }
+    if (flags & BKZ_DUMP_GSO) {
+      std::ostringstream prefix;
+      prefix << "End of BKZ loop " << std::setw(4) << iLoop;
+      prefix << " (" << std::fixed << std::setw( 9 ) << std::setprecision( 3 ) << (cputime() - cputimeStart) * 0.001 << "s)";
+      dumpGSO(param.dumpGSOFilename, prefix.str());
+    }
+  }
+  if (flags & BKZ_DUMP_GSO) {
+    std::ostringstream prefix;
+    prefix << "Output ";
+    prefix << " (" << std::fixed << std::setw( 9 ) << std::setprecision( 3 ) << (cputime() - cputimeStart)* 0.001 << "s)";
+    dumpGSO(param.dumpGSOFilename, prefix.str());
   }
   return setStatus(finalStatus);
 }
@@ -207,5 +227,26 @@ bool BKZReduction<FT>::setStatus(int newStatus) {
   }
   return status == RED_SUCCESS;
 }
+
+template<class FT>
+void BKZReduction<FT>::dumpGSO(const std::string filename, const std::string prefix, bool append) {
+  ofstream dump;
+  if (append)
+    dump.open(filename.c_str(), std::ios_base::app);
+  else
+    dump.open(filename.c_str());
+  dump << std::setw(4) << prefix << ": ";
+  FT f, logF;
+  long expo;
+  for(int i=0; i<numRows; i++) {
+    m.updateGSORow(i);
+    f = m.getRExp(i, i, expo);
+    logF.log(f, GMP_RNDU);
+    dump << std::setprecision(8) << logF.get_d() + expo * log(2.0) << " ";
+  }
+  dump << std::endl;
+  dump.close();
+}
+
 
 FPLLL_END_NAMESPACE
