@@ -50,13 +50,14 @@ FPLLL_DECLARE_LLL(double)
 #endif
 
 struct BKZParam {
-  BKZParam() : b(NULL), u(NULL), blockSize(0), delta(LLL_DEF_DELTA),
+  BKZParam() : b(NULL), u(NULL), blockSize(0), blockSize_pre(2), delta(LLL_DEF_DELTA),
     floatType(FT_DEFAULT), precision(0), flags(BKZ_DEFAULT),
     maxLoops(0), maxTime(0) {
   }
   IntMatrix* b;
   IntMatrix* u;
   int blockSize;
+  int blockSize_pre;
   double delta;
   FloatType floatType;
   int precision;
@@ -67,8 +68,8 @@ struct BKZParam {
 };
 
 int bkzReduction(const BKZParam& param);
-int bkzReduction(IntMatrix& b, int blockSize, int flags = BKZ_DEFAULT);
-int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags = BKZ_DEFAULT);
+int bkzReduction(IntMatrix& b, int blockSize, int flags = BKZ_DEFAULT, int blockSize_pre = 2);
+int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags = BKZ_DEFAULT, int blockSize_pre = 2);
 
 int hkzReduction(IntMatrix& b, int flags = HKZ_DEFAULT);
 

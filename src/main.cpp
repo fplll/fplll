@@ -97,6 +97,7 @@ int bkz(Options& o, IntMatrix& b) {
   param.b = &b;
   param.u = strchr(format, 'u') ? &u : NULL;
   param.blockSize = o.blockSize;
+  param.blockSize_pre = o.blockSize_pre;
   param.delta = o.delta;
   param.floatType = o.floatType;
   param.precision = o.precision;
@@ -267,6 +268,11 @@ void readOptions(int argc, char** argv, Options& o) {
       ++ac;
       CHECK(ac < argc, "missing value after -b switch");
       o.blockSize = atoi(argv[ac]);
+    }
+    else if (strcmp(argv[ac], "-bpre") == 0) {
+      ++ac;
+      CHECK(ac < argc, "missing value after -b2 switch");
+      o.blockSize_pre = atoi(argv[ac]);
     }
     else if (strcmp(argv[ac], "-bkzboundedlll") == 0) {
       o.bkzFlags |= BKZ_BOUNDED_LLL;

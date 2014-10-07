@@ -23,8 +23,8 @@ FPLLL_BEGIN_NAMESPACE
 template<class FT>
 class BKZAutoAbort {
 public:
-  BKZAutoAbort(MatGSO<Integer, FT>& m, int numRows) : m(m),
-      oldSlope(numeric_limits<double>::max()), noDec(-1), numRows(numRows) {}
+  BKZAutoAbort(MatGSO<Integer, FT>& m, int numRows, int startRow = 0) : m(m),
+    oldSlope(numeric_limits<double>::max()), noDec(-1), numRows(numRows), startRow(startRow) {}
   bool testAbort();
 
 private:
@@ -33,6 +33,7 @@ private:
   double oldSlope;
   int noDec;
   int numRows;
+  int startRow;
 };
 
 /* The matrix must be LLL-reduced */
@@ -43,8 +44,8 @@ public:
                const BKZParam& param);
   ~BKZReduction();
 
-  bool svpReduction(int kappa, int blockSize, bool& clean);
-  bool bkzLoop(int& kappaMax, bool& clean);
+  bool svpReduction(int kappa, int blockSize, int blockSize_pre, bool& clean);
+  bool bkzLoop(int& kappaMax, int blockSize, int blockSize_pre, int minRow, int maxRow, bool& clean);
   bool bkz();
 
   int status;

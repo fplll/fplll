@@ -305,19 +305,21 @@ int bkzReduction(const BKZParam& param) {
   return status;
 }
 
-int bkzReduction(IntMatrix& b, int blockSize, int flags) {
+int bkzReduction(IntMatrix& b, int blockSize, int flags, int blockSize_pre) {
   BKZParam param;
   param.b = &b;
   param.blockSize = blockSize;
+  param.blockSize_pre = blockSize_pre;
   param.flags = flags;
   return bkzReduction(param);
 }
 
-int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags) {
+int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags, int blockSize_pre) {
   BKZParam param;
   param.b = &b;
   param.u = &u;
   param.blockSize = blockSize;
+  param.blockSize_pre = blockSize_pre;
   param.flags = flags;
   return bkzReduction(param);
 }
