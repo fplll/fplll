@@ -52,7 +52,7 @@ FPLLL_DECLARE_LLL(double)
 struct BKZParam {
   BKZParam() : b(NULL), u(NULL), blockSize(0), blockSize_pre(2), delta(LLL_DEF_DELTA),
     floatType(FT_DEFAULT), precision(0), flags(BKZ_DEFAULT),
-    maxLoops(0), maxTime(0) {
+    maxLoops(0), maxTime(0), dumpGSOFilename("gso.log") {
   }
   IntMatrix* b;
   IntMatrix* u;
@@ -65,6 +65,7 @@ struct BKZParam {
   int maxLoops;
   double maxTime;
   vector<double> pruning;
+  string dumpGSOFilename;
 };
 
 int bkzReduction(const BKZParam& param);

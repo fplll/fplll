@@ -101,6 +101,9 @@ int bkz(Options& o, IntMatrix& b) {
   param.delta = o.delta;
   param.floatType = o.floatType;
   param.precision = o.precision;
+  param.flags = o.bkzFlags;
+  if (o.bkzFlags & BKZ_DUMP_GSO)
+    param.dumpGSOFilename = o.bkzDumpGSOFilename;
   if (o.verbose) param.flags |= BKZ_VERBOSE;
   if (o.noLLL) param.flags |= BKZ_NO_LLL;
   if (o.pruningFile != NULL) {
@@ -291,6 +294,12 @@ void readOptions(int argc, char** argv, Options& o) {
     }
     else if (strcmp(argv[ac], "-bkzautoabort") == 0) {
       o.bkzFlags |= BKZ_AUTO_ABORT;
+    }
+    else if (strcmp(argv[ac], "-bkzdumpgso") == 0) {
+      ++ac;
+      CHECK(ac < argc, "missing filename after -bkzdumpgso switch");
+      o.bkzDumpGSOFilename = argv[ac];
+      o.bkzFlags |= BKZ_DUMP_GSO;
     }
     else if (strcmp(argv[ac], "-c") == 0) {
       ++ac;

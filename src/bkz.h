@@ -47,6 +47,7 @@ public:
   bool svpReduction(int kappa, int blockSize, int blockSize_pre, bool& clean);
   bool bkzLoop(int& kappaMax, int blockSize, int blockSize_pre, int minRow, int maxRow, bool& clean);
   bool bkz();
+  void dumpGSO(const std::string filename, const std::string prefix, bool append = true);
 
   int status;
 
