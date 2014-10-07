@@ -44,15 +44,24 @@ public:
                const BKZParam& param);
   ~BKZReduction();
 
-  bool svpReduction(int kappa, int blockSize, int blockSize_pre, bool& clean);
-  bool bkzLoop(int& kappaMax, int blockSize, int blockSize_pre, int minRow, int maxRow, bool& clean);
+  /**
+     Run enumeration to find a new shortest vecto in the sublattice B[kappa,kappa+blockSize]
+
+     @param kappa Start row
+     @param blockSize Block size to use, this may be < param.blockSize
+     @param param Parameters to use for this enumeration (blockSize is ignored)
+     @param clean Did we change anything?
+  */
+  
+  bool svpReduction(int kappa, int blockSize, const BKZParam &param, bool& clean);
+  bool bkzLoop(const int loop, int& kappaMax, const BKZParam &param, int minRow, int maxRow, bool& clean);
   bool bkz();
   void dumpGSO(const std::string filename, const std::string prefix, bool append = true);
 
   int status;
 
 private:
-  void printParams();
+  void printParams(const BKZParam &param, ostream &out);
   bool setStatus(int newStatus);
 
   const BKZParam& param;

@@ -241,96 +241,90 @@ FPLLL_DEFINE_LLL(double, ZT_DOUBLE)
 #endif
 
 template<class FT>
-int bkzReductionF(const BKZParam& param, int selFT, double lllDelta, IntMatrix& u, IntMatrix& uInv) {
+int bkzReductionF(IntMatrix &b, const BKZParam& param, int selFT, double lllDelta, IntMatrix& u, IntMatrix& uInv) {
   int gsoFlags = 0;
-  if (param.b->getRows() == 0 || param.b->getCols() == 0)
+  if (b.getRows() == 0 || b.getCols() == 0)
     return RED_SUCCESS;
   if (selFT == FT_DOUBLE || selFT == FT_LONG_DOUBLE)
     gsoFlags |= GSO_ROW_EXPO;
-  MatGSO<Integer, FT> mGSO(*param.b, u, uInv, gsoFlags);
+  MatGSO<Integer, FT> mGSO(b, u, uInv, gsoFlags);
   LLLReduction<Integer, FT> lllObj(mGSO, lllDelta, LLL_DEF_ETA, LLL_DEFAULT);
   BKZReduction<FT> bkzObj(mGSO, lllObj, param);
   bkzObj.bkz();
   return bkzObj.status;
 }
 
-int bkzReduction(const BKZParam& param) {
+int bkzReduction(IntMatrix* B, IntMatrix *U, const BKZParam& param, FloatType floatType, int precision) {
   IntMatrix emptyMat;
-  IntMatrix& u = param.u ? *param.u : emptyMat;
+  IntMatrix& u = U ? *U : emptyMat;
   IntMatrix& uInv = emptyMat;
-  FPLLL_CHECK(param.b, "param.b = NULL in bkzReduction");
+  FPLLL_CHECK(B, "B == NULL in bkzReduction");
 
-  if (param.u && u.empty()) {
-    u.gen_identity(param.b->getRows());
+  if (U && u.empty()) {
+    u.gen_identity(B->getRows());
   }
 
   double lllDelta = param.delta < 1 ? param.delta : LLL_DEF_DELTA;
 
-  FloatType selFT = (param.floatType != FT_DEFAULT) ? param.floatType : FT_DOUBLE;
-  FPLLL_CHECK(!(selFT == FT_MPFR && param.precision == 0),
+  FloatType selFT = (floatType != FT_DEFAULT) ? floatType : FT_DOUBLE;
+  FPLLL_CHECK(!(selFT == FT_MPFR && precision == 0),
                "Missing precision for BKZ with floating point type mpfr");
 
   if (param.flags & BKZ_NO_LLL)
-    zerosLast(*param.b, u, uInv);
+    zerosLast(*B, u, uInv);
   else {
     int flags = (param.flags & BKZ_VERBOSE) ? LLL_VERBOSE : LLL_DEFAULT;
-    Wrapper wrapper(*param.b, u, uInv, lllDelta, LLL_DEF_ETA, flags);
+    Wrapper wrapper(*B, u, uInv, lllDelta, LLL_DEF_ETA, flags);
     if (!wrapper.lll()) return wrapper.status;
   }
 
   int status;
   if (selFT == FT_DOUBLE) {
-    status = bkzReductionF< FP_NR<double> >(param, selFT, lllDelta, u, uInv);
+    status = bkzReductionF< FP_NR<double> >(*B, param, selFT, lllDelta, u, uInv);
   }
 #ifdef FPLLL_WITH_LONG_DOUBLE
   else if (selFT == FT_LONG_DOUBLE) {
-    status = bkzReductionF< FP_NR<long double> >(param, selFT, lllDelta, u, uInv);
+    status = bkzReductionF< FP_NR<long double> >(*B, param, selFT, lllDelta, u, uInv);
   }
 #endif
 #ifdef FPLLL_WITH_DPE
   else if (selFT == FT_DPE) {
-    status = bkzReductionF< FP_NR<dpe_t> >(param, selFT, lllDelta, u, uInv);
+    status = bkzReductionF< FP_NR<dpe_t> >(*B, param, selFT, lllDelta, u, uInv);
   }
 #endif
   else if (selFT == FT_MPFR) {
-    int oldPrec = FP_NR<mpfr_t>::setprec(param.precision);
-    status = bkzReductionF< FP_NR<mpfr_t> >(param, selFT, lllDelta, u, uInv);
+    int oldPrec = FP_NR<mpfr_t>::setprec(precision);
+    status = bkzReductionF< FP_NR<mpfr_t> >(*B, param, selFT, lllDelta, u, uInv);
     FP_NR<mpfr_t>::setprec(oldPrec);
   }
   else {
     FPLLL_ABORT("Compiled without support for BKZ reduction with " 
                  << FLOAT_TYPE_STR[selFT]);
   }
-  zerosFirst(*param.b, u, uInv);
+  zerosFirst(*B, u, uInv);
   return status;
 }
 
-int bkzReduction(IntMatrix& b, int blockSize, int flags, int blockSize_pre) {
+int bkzReduction(IntMatrix& b, int blockSize, int flags, FloatType floatType, int precision) {
   BKZParam param;
-  param.b = &b;
   param.blockSize = blockSize;
-  param.blockSize_pre = blockSize_pre;
   param.flags = flags;
-  return bkzReduction(param);
+  return bkzReduction(&b, NULL, param, floatType, precision);
 }
 
-int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags, int blockSize_pre) {
+int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags, FloatType floatType, int precision) {
   BKZParam param;
-  param.b = &b;
-  param.u = &u;
   param.blockSize = blockSize;
-  param.blockSize_pre = blockSize_pre;
   param.flags = flags;
-  return bkzReduction(param);
+  return bkzReduction(&b, &u, param, floatType, precision);
 }
 
 int hkzReduction(IntMatrix& b, int flags) {
   BKZParam param;
-  param.b = &b;
   param.blockSize = b.getRows();
   param.delta = 1;
   if (flags & HKZ_VERBOSE) param.flags |= BKZ_VERBOSE;
-  return bkzReduction(param);
+  return bkzReduction(&b, NULL, param);
 }
 
 const char* getRedStatusStr(int status) {

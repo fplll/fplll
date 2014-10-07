@@ -71,10 +71,10 @@ BKZReduction<FT>::~BKZReduction() {
 }
 
 template<class FT>
-bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, int blockSize_pre, bool& clean) {
+bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &par, bool& clean) {
   long maxDistExpo;
 
-  int lllStart = (param.flags & BKZ_BOUNDED_LLL) ? kappa : 0;
+  int lllStart = (par.flags & BKZ_BOUNDED_LLL) ? kappa : 0;
 
   if (!lllObj.lll(lllStart, kappa, kappa + blockSize)) {
     return setStatus(lllObj.status);
@@ -83,18 +83,21 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, int blockSize_pre,
     clean = false;
   }
 
-  if (blockSize_pre > 2) {
+  const BKZParam *preproc = par.preprocessing;
+  if (preproc && preproc->blockSize < blockSize && preproc->blockSize > 2) {
     int dummyKappaMax = numRows;
-    int maxRow2 = min(kappa + blockSize, numRows);
-    BKZAutoAbort<FT> autoAbort(m, maxRow2, kappa);
+    BKZAutoAbort<FT> autoAbort(m, kappa + blockSize, kappa);
+    double cputimeStart2 = cputime();
+
     for(int i=0; ; i++) {
-      if (autoAbort.testAbort()) {
-        break;
-      }
+      if ((par.flags & BKZ_MAX_LOOPS) && i >= par.maxLoops) break;
+      if ((par.flags & BKZ_MAX_TIME) && (cputime() - cputimeStart2) * 0.001 >= par.maxTime) break;
+      if (autoAbort.testAbort()) break;
+
       bool clean2 = true;
-      if (!bkzLoop(dummyKappaMax, blockSize_pre, 2, kappa, maxRow2, clean2)) {
+      if (!bkzLoop(i, dummyKappaMax, *preproc, kappa, kappa + blockSize, clean2))
         return false;
-      }
+
       if(clean2)
         break;
       else
@@ -107,7 +110,7 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, int blockSize_pre,
   vector<FT>& solCoord = evaluator.solCoord;
   solCoord.clear();
   Enumeration::enumerate(m, maxDist, maxDistExpo, evaluator, emptySubTree,
-            emptySubTree, kappa, kappa + blockSize, param.pruning);
+            emptySubTree, kappa, kappa + blockSize, par.pruning);
   if (solCoord.empty()) {
     return setStatus(RED_ENUM_FAILURE);
   }
@@ -155,20 +158,33 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, int blockSize_pre,
 }
 
 template<class FT>
-bool BKZReduction<FT>::bkzLoop(int& kappaMax, int blockSize, int blockSize_pre, int minRow, int maxRow, bool& clean) {
-  int flags = param.flags;
+bool BKZReduction<FT>::bkzLoop(const int loop, int& kappaMax, const BKZParam &par, int minRow, int maxRow, bool& clean) {
   for (int kappa = minRow; kappa < maxRow-1; kappa++) {
     // SVP-reduces a block
-    blockSize = min(blockSize, maxRow - kappa);
-    if (blockSize < blockSize_pre)
-      blockSize_pre = 2;
-    if (!svpReduction(kappa, blockSize, blockSize_pre, clean)) return false;
-    if ((flags & BKZ_VERBOSE) && kappaMax < kappa && clean) {
-      cerr << "Block [1-" << kappa + 1
-           << "] BKZ-reduced for the first time" << endl;
+    int blockSize = min(par.blockSize, maxRow - kappa);
+    if (!svpReduction(kappa, blockSize, par, clean)) return false;
+    if ((par.flags & BKZ_VERBOSE) && kappaMax < kappa && clean) {
+      cerr << "Block [1-" << setw(4) << kappa + 1 << "] BKZ-" << setw(0) << par.blockSize << " reduced for the first time" << endl;
       kappaMax = kappa;
     }
   }
+
+  if (par.flags & BKZ_VERBOSE) {
+    FT r0;
+    Float fr0;
+    long expo;
+    r0 = m.getRExp(minRow, minRow, expo);
+    fr0 = r0.get_d();
+    fr0.mul_2si(fr0, expo);
+    cerr << "End of BKZ loop " << std::setw(4) << loop << ", time=" << std::fixed << std::setw( 9 ) << std::setprecision( 3 ) << (cputime() - cputimeStart) * 0.001 << "s, r_" << minRow << " = " << fr0 << endl;
+  }
+  if (par.flags & BKZ_DUMP_GSO) {
+    std::ostringstream prefix;
+    prefix << "End of BKZ loop " << std::setw(4) << loop;
+    prefix << " (" << std::fixed << std::setw( 9 ) << std::setprecision( 3 ) << (cputime() - cputimeStart) * 0.001 << "s)";
+    dumpGSO(par.dumpGSOFilename, prefix.str());
+  }
+
   return true;
 }
 
@@ -190,7 +206,11 @@ bool BKZReduction<FT>::bkz() {
   int iLoop =0;
   BKZAutoAbort<FT> autoAbort(m, numRows);
 
-  if (flags & BKZ_VERBOSE) printParams();
+  if (flags & BKZ_VERBOSE) {
+    cerr << "Entering BKZ:" << endl;
+    printParams(param, cerr);
+    cerr << endl;
+  }
   cputimeStart = cputime();
 
   m.discoverAllRows();
@@ -206,23 +226,8 @@ bool BKZReduction<FT>::bkz() {
     }
     if ((flags & BKZ_AUTO_ABORT) && autoAbort.testAbort()) break;
     bool clean = true;
-    if (!bkzLoop(kappaMax, param.blockSize, param.blockSize_pre, 0, numRows, clean)) return false;
+    if (!bkzLoop(iLoop, kappaMax, param, 0, numRows, clean)) return false;
     if (clean || param.blockSize >= numRows) break;
-    if (flags & BKZ_VERBOSE) {
-      FT r0;
-      Float fr0;
-      long expo;
-      r0 = m.getRExp(0, 0, expo);
-      fr0 = r0.get_d();
-      fr0.mul_2si(fr0, expo);
-      cerr << "End of BKZ loop " << std::setw(3) << iLoop << ", time=" << std::fixed << std::setw( 8 ) << std::setprecision( 3 ) << cputime() * 0.001 << "s, r_0 = " << fr0 << endl;
-    }
-    if (flags & BKZ_DUMP_GSO) {
-      std::ostringstream prefix;
-      prefix << "End of BKZ loop " << std::setw(4) << iLoop;
-      prefix << " (" << std::fixed << std::setw( 9 ) << std::setprecision( 3 ) << (cputime() - cputimeStart) * 0.001 << "s)";
-      dumpGSO(param.dumpGSOFilename, prefix.str());
-    }
   }
   if (flags & BKZ_DUMP_GSO) {
     std::ostringstream prefix;
@@ -234,9 +239,15 @@ bool BKZReduction<FT>::bkz() {
 }
 
 template<class FT>
-void BKZReduction<FT>::printParams() {
-  cerr << "Entering BKZ"
-       << "\nblocksize = " << param.blockSize << ", preprocessing blocksize = " << param.blockSize_pre  << endl;
+void BKZReduction<FT>::printParams(const BKZParam &param, ostream &out) {
+  out << "blocksize = " << std::setw(3) << param.blockSize << ", ";
+  out << "flags = 0x" << std::setw(4) << setfill('0') << std::hex << param.flags << ", " << std::dec << std::setfill(' ');
+  out << "maxLoops = " << std::setw(3) << param.maxLoops << ", ";
+  out << "maxTime = " << std::setw(0) << std::fixed << std::setprecision( 1 ) << param.maxTime;
+  out << endl;
+
+  if (param.preprocessing)
+    printParams(*param.preprocessing, out);
 }
 
 template<class FT>

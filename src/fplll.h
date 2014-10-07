@@ -49,28 +49,26 @@ FPLLL_DECLARE_LLL(long)
 FPLLL_DECLARE_LLL(double)
 #endif
 
-struct BKZParam {
-  BKZParam() : b(NULL), u(NULL), blockSize(0), blockSize_pre(2), delta(LLL_DEF_DELTA),
-    floatType(FT_DEFAULT), precision(0), flags(BKZ_DEFAULT),
-    maxLoops(0), maxTime(0), dumpGSOFilename("gso.log") {
+class BKZParam {
+ public:
+ BKZParam(int blockSize=0, double delta=LLL_DEF_DELTA, int flags=BKZ_DEFAULT, int maxLoops=0, double maxTime=0) :
+  blockSize(blockSize), delta(delta), flags(flags), maxLoops(maxLoops), maxTime(maxTime), dumpGSOFilename("gso.log"), preprocessing(NULL) {
   }
-  IntMatrix* b;
-  IntMatrix* u;
   int blockSize;
-  int blockSize_pre;
   double delta;
-  FloatType floatType;
-  int precision;
   int flags;
   int maxLoops;
   double maxTime;
+
   vector<double> pruning;
   string dumpGSOFilename;
+
+  BKZParam *preprocessing;
 };
 
-int bkzReduction(const BKZParam& param);
-int bkzReduction(IntMatrix& b, int blockSize, int flags = BKZ_DEFAULT, int blockSize_pre = 2);
-int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags = BKZ_DEFAULT, int blockSize_pre = 2);
+int bkzReduction(IntMatrix* B, IntMatrix* U, const BKZParam& param, FloatType floatType=FT_DEFAULT, int precision=0);
+int bkzReduction(IntMatrix& b, int blockSize, int flags = BKZ_DEFAULT, FloatType floatType=FT_DEFAULT, int precision=0);
+int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags = BKZ_DEFAULT, FloatType floatType=FT_DEFAULT, int precision=0);
 
 int hkzReduction(IntMatrix& b, int flags = HKZ_DEFAULT);
 
