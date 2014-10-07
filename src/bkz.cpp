@@ -132,7 +132,7 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, bool& clean) {
 }
 
 template<class FT>
-bool BKZReduction<FT>::bkzLoop(int& kappaMax, int& nIter, bool& clean) {
+bool BKZReduction<FT>::bkzLoop(int& kappaMax, bool& clean) {
   int flags = param.flags;
   for (int kappa = 0; kappa < numRows-1; kappa++) {
     // SVP-reduces a block
@@ -143,7 +143,6 @@ bool BKZReduction<FT>::bkzLoop(int& kappaMax, int& nIter, bool& clean) {
            << "] BKZ-reduced for the first time" << endl;
       kappaMax = kappa;
     }
-    nIter++;
   }
   return true;
 }
@@ -157,7 +156,7 @@ bool BKZReduction<FT>::bkz() {
     return setStatus(RED_SUCCESS);
 
   int kappaMax = 0;
-  int iLoop, nIter = 0;
+  int iLoop =0;
   BKZAutoAbort<FT> autoAbort(m, numRows);
 
   if (flags & BKZ_VERBOSE) printParams();
@@ -176,7 +175,7 @@ bool BKZReduction<FT>::bkz() {
     }
     if ((flags & BKZ_AUTO_ABORT) && autoAbort.testAbort()) break;
     bool clean = true;
-    if (!bkzLoop(kappaMax, nIter, clean)) return false;
+    if (!bkzLoop(kappaMax, clean)) return false;
     if (clean || param.blockSize >= numRows) break;
     if (flags & BKZ_VERBOSE) {
       FT r0;

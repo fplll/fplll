@@ -44,7 +44,7 @@ public:
   ~BKZReduction();
 
   bool svpReduction(int kappa, int blockSize, bool& clean);
-  bool bkzLoop(int& kappaMax, int& nIter, bool& clean);
+  bool bkzLoop(int& kappaMax, bool& clean);
   bool bkz();
 
   int status;
