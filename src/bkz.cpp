@@ -192,7 +192,7 @@ bool BKZReduction<FT>::bkz() {
       r0 = m.getRExp(0, 0, expo);
       fr0 = r0.get_d();
       fr0.mul_2si(fr0, expo);
-      cerr << "End of BKZ loop, time=" << cputime() * 0.001 << ", r_0 = " << fr0 << endl;
+      cerr << "End of BKZ loop, time=" << (cputime()-cputimeStart) * 0.001 << ", r_0 = " << fr0 << endl;
     }
     if (flags & BKZ_DUMP_GSO) {
       std::ostringstream prefix;
