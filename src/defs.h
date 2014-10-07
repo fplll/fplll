@@ -39,6 +39,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <fstream>
+#include <sstream>
 #include <string>
 
 #ifdef FPLLL_WITH_GETRUSAGE
@@ -204,7 +205,8 @@ enum BKZFlags {
   BKZ_MAX_LOOPS = 4,
   BKZ_MAX_TIME = 8,
   BKZ_BOUNDED_LLL = 0x10,
-  BKZ_AUTO_ABORT = 0x20
+  BKZ_AUTO_ABORT = 0x20,
+  BKZ_DUMP_GSO = 0x40
 };
 
 enum HKZFlags {

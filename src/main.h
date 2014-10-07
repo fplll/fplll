@@ -61,6 +61,7 @@ struct Options {
   int bkzFlags;
   int bkzMaxLoops;
   double bkzMaxTime;
+  string bkzDumpGSOFilename;
 
   bool verbose;
   const char* inputFile;
