@@ -833,7 +833,7 @@ inline void FP_NR<double>::div(const FP_NR<double>& b, const FP_NR<double>& c, m
 template<>
 inline void FP_NR<double>::abs(const FP_NR<double>& b) {
   data = b.data;
-  if (data < 0) data =- data;
+  if (data < 0) data = -data;
 }
 template<>
 inline void FP_NR<double>::rnd(const FP_NR<double>& b) {
@@ -1042,7 +1042,7 @@ inline void FP_NR<long double>::div(const FP_NR<long double>& b, const FP_NR<lon
 template<>
 inline void FP_NR<long double>::abs(const FP_NR<long double>& b) {
   data = b.data;
-  if (data < 0) data =- data;
+  if (data < 0) data = -data;
 }
 template<>
 inline void FP_NR<long double>::rnd(const FP_NR<long double>& b) {
