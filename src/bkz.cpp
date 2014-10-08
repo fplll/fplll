@@ -59,7 +59,7 @@ static double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow)
     x[i] = logF.get_d() + expo * log(2.0);
   }
   int n = stopRow - startRow;
-  double iMean = (n - 1) * 0.5, xMean = 0, v1 = 0, v2 = 0;
+  double iMean = (n - 1) * 0.5 + startRow, xMean = 0, v1 = 0, v2 = 0;
   for (int i = startRow; i < stopRow; i++) {
     xMean += x[i];
   }
