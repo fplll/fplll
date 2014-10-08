@@ -191,6 +191,9 @@ default options, it is guaranteed that the basis is (0.98,0.52)-LLL-reduced.
 -bkzmaxtime &lt;time&gt;        Stop after <i>time</i> seconds (up to loop completion).
 -bkzautoabort             Heuristic, stop when the average slope of log(||b_i*||)
                           does not decrease fast enough.
+-bpre &lt;blocksize&gt;   Pre-processing block size. Between 2 and the block size.
+-bkzlinearpruning &lt;level&gt; Enables linear pruning in enumeration, in level dimensions.
+-bkzdumgso &lt;file_name&gt;    Dumps the logarithms of the GSO diagonal coefficients in specified file.
 </pre>
 
 <h3 id="llldiff">llldiff</h3>
