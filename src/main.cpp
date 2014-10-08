@@ -110,8 +110,10 @@ int bkz(Options& o, IntMatrix& b) {
   if (o.noLLL) param.flags |= BKZ_NO_LLL;
   if (o.pruningFile != NULL) {
     readPruningVector(o.pruningFile, param.pruning, o.blockSize);
+  } else if (o.bkzLinearPruningLevel) {
+    param.enableLinearPruning(o.bkzLinearPruningLevel);
   }
-
+  
   status = bkzReduction(&b, strchr(format, 'u') ? &u : NULL, param, o.floatType, o.precision);
 
   for (int i = 0; format[i]; i++) {
@@ -302,6 +304,11 @@ void readOptions(int argc, char** argv, Options& o) {
       CHECK(ac < argc, "missing filename after -bkzdumpgso switch");
       o.bkzDumpGSOFilename = argv[ac];
       o.bkzFlags |= BKZ_DUMP_GSO;
+    }
+    else if (strcmp(argv[ac], "-bkzlinearpruning") == 0) {
+      ++ac;
+      CHECK(ac < argc, "missing filename after -bkzdumpgso switch");
+      o.bkzLinearPruningLevel = atol(argv[ac]);
     }
     else if (strcmp(argv[ac], "-c") == 0) {
       ++ac;

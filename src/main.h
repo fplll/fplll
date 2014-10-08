@@ -63,6 +63,7 @@ struct Options {
   int bkzMaxLoops;
   double bkzMaxTime;
   string bkzDumpGSOFilename;
+  int bkzLinearPruningLevel;
 
   bool verbose;
   const char* inputFile;
