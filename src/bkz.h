@@ -23,15 +23,20 @@ FPLLL_BEGIN_NAMESPACE
 
 class BKZParam {
  public:
- BKZParam(int blockSize=0, double delta=LLL_DEF_DELTA, int flags=BKZ_DEFAULT, int maxLoops=0, double maxTime=0) :
-  blockSize(blockSize), delta(delta), flags(flags), maxLoops(maxLoops), maxTime(maxTime), dumpGSOFilename("gso.log"), preprocessing(NULL) {
+  BKZParam(int blockSize=0, double delta=LLL_DEF_DELTA, int flags=BKZ_DEFAULT, int maxLoops=0, double maxTime=0, int autoAbort_maxNoDec=5, double autoAbort_scale=1.0) :
+  blockSize(blockSize), delta(delta), flags(flags), maxLoops(maxLoops), maxTime(maxTime),
+  autoAbort_scale(autoAbort_scale), autoAbort_maxNoDec(autoAbort_maxNoDec),
+  dumpGSOFilename("gso.log"), preprocessing(NULL) {
   }
-  int blockSize;
+  int    blockSize;
   double delta;
-  int flags;
-  int maxLoops;
+  int    flags;
+  int    maxLoops;
   double maxTime;
 
+  double autoAbort_scale;
+  int autoAbort_maxNoDec;
+  
   vector<double> pruning;
   string dumpGSOFilename;
 
@@ -39,20 +44,8 @@ class BKZParam {
 };
 
 template<class FT>
-class BKZAutoAbort {
-public:
-  BKZAutoAbort(MatGSO<Integer, FT>& m, int numRows, int startRow = 0) : m(m),
-    oldSlope(numeric_limits<double>::max()), noDec(-1), numRows(numRows), startRow(startRow) {}
-  bool testAbort();
+static double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow);
 
-private:
-  MatGSO<Integer, FT>& m;
-  vector<double> x;
-  double oldSlope;
-  int noDec;
-  int numRows;
-  int startRow;
-};
 
 /* The matrix must be LLL-reduced */
 template<class FT>
@@ -75,7 +68,7 @@ public:
   bool bkzLoop(const int loop, int& kappaMax, const BKZParam &param, int minRow, int maxRow, bool& clean);
   bool bkz();
   void dumpGSO(const std::string filename, const std::string prefix, bool append = true);
-
+ 
   int status;
 
 private:
@@ -93,6 +86,21 @@ private:
   const vector<FT> emptyTarget, emptySubTree;
   FT maxDist, deltaMaxDist;
   double cputimeStart;
+};
+
+template<class FT>
+class BKZAutoAbort {
+public:
+  BKZAutoAbort(MatGSO<Integer, FT>& m, int numRows, int startRow = 0): m(m),
+    oldSlope(numeric_limits<double>::max()), noDec(-1), numRows(numRows), startRow(startRow) {}
+  bool testAbort(double scale=1.0, int maxNoDec=5);
+
+private:
+  MatGSO<Integer, FT>& m;
+  double oldSlope;
+  int noDec;
+  int numRows;
+  int startRow;
 };
 
 FPLLL_END_NAMESPACE
