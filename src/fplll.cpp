@@ -273,8 +273,7 @@ int bkzReduction(IntMatrix* B, IntMatrix *U, const BKZParam& param, FloatType fl
   if (param.flags & BKZ_NO_LLL)
     zerosLast(*B, u, uInv);
   else {
-    int flags = (param.flags & BKZ_VERBOSE) ? LLL_VERBOSE : LLL_DEFAULT;
-    Wrapper wrapper(*B, u, uInv, lllDelta, LLL_DEF_ETA, flags);
+    Wrapper wrapper(*B, u, uInv, lllDelta, LLL_DEF_ETA, LLL_DEFAULT);
     if (!wrapper.lll()) return wrapper.status;
   }
 
