@@ -94,12 +94,15 @@ int bkz(Options& o, IntMatrix& b) {
   const char* format = o.outputFormat ? o.outputFormat : "b";
   int status;
 
-  param.b = &b;
-  param.u = strchr(format, 'u') ? &u : NULL;
   param.blockSize = o.blockSize;
+
+  BKZParam preproc;
+  if (o.preprocBlockSize > 2) {
+    preproc.flags |= BKZ_AUTO_ABORT;
+    preproc.blockSize = o.preprocBlockSize;
+    param.preprocessing = &preproc;
+  }
   param.delta = o.delta;
-  param.floatType = o.floatType;
-  param.precision = o.precision;
   param.flags = o.bkzFlags;
   if (o.bkzFlags & BKZ_DUMP_GSO)
     param.dumpGSOFilename = o.bkzDumpGSOFilename;
@@ -107,9 +110,11 @@ int bkz(Options& o, IntMatrix& b) {
   if (o.noLLL) param.flags |= BKZ_NO_LLL;
   if (o.pruningFile != NULL) {
     readPruningVector(o.pruningFile, param.pruning, o.blockSize);
+  } else if (o.bkzLinearPruningLevel) {
+    param.enableLinearPruning(o.bkzLinearPruningLevel);
   }
-
-  status = bkzReduction(param);
+  
+  status = bkzReduction(&b, strchr(format, 'u') ? &u : NULL, param, o.floatType, o.precision);
 
   for (int i = 0; format[i]; i++) {
     switch (format[i]) {
@@ -271,6 +276,11 @@ void readOptions(int argc, char** argv, Options& o) {
       CHECK(ac < argc, "missing value after -b switch");
       o.blockSize = atoi(argv[ac]);
     }
+    else if (strcmp(argv[ac], "-bpre") == 0) {
+      ++ac;
+      CHECK(ac < argc, "missing value after -b2 switch");
+      o.preprocBlockSize = atoi(argv[ac]);
+    }
     else if (strcmp(argv[ac], "-bkzboundedlll") == 0) {
       o.bkzFlags |= BKZ_BOUNDED_LLL;
     }
@@ -294,6 +304,11 @@ void readOptions(int argc, char** argv, Options& o) {
       CHECK(ac < argc, "missing filename after -bkzdumpgso switch");
       o.bkzDumpGSOFilename = argv[ac];
       o.bkzFlags |= BKZ_DUMP_GSO;
+    }
+    else if (strcmp(argv[ac], "-bkzlinearpruning") == 0) {
+      ++ac;
+      CHECK(ac < argc, "missing filename after -bkzdumpgso switch");
+      o.bkzLinearPruningLevel = atol(argv[ac]);
     }
     else if (strcmp(argv[ac], "-c") == 0) {
       ++ac;

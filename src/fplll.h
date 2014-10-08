@@ -20,6 +20,7 @@
 
 #include "util.h"
 #include "svpcvp.h"
+#include "bkz.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -49,27 +50,10 @@ FPLLL_DECLARE_LLL(long)
 FPLLL_DECLARE_LLL(double)
 #endif
 
-struct BKZParam {
-  BKZParam() : b(NULL), u(NULL), blockSize(0), delta(LLL_DEF_DELTA),
-    floatType(FT_DEFAULT), precision(0), flags(BKZ_DEFAULT),
-    maxLoops(0), maxTime(0), dumpGSOFilename("gso.log") {
-  }
-  IntMatrix* b;
-  IntMatrix* u;
-  int blockSize;
-  double delta;
-  FloatType floatType;
-  int precision;
-  int flags;
-  int maxLoops;
-  double maxTime;
-  vector<double> pruning;
-  string dumpGSOFilename;
-};
 
-int bkzReduction(const BKZParam& param);
-int bkzReduction(IntMatrix& b, int blockSize, int flags = BKZ_DEFAULT);
-int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags = BKZ_DEFAULT);
+int bkzReduction(IntMatrix* B, IntMatrix* U, const BKZParam& param, FloatType floatType=FT_DEFAULT, int precision=0);
+int bkzReduction(IntMatrix& b, int blockSize, int flags = BKZ_DEFAULT, FloatType floatType=FT_DEFAULT, int precision=0);
+int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags = BKZ_DEFAULT, FloatType floatType=FT_DEFAULT, int precision=0);
 
 int hkzReduction(IntMatrix& b, int flags = HKZ_DEFAULT);
 
