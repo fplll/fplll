@@ -96,8 +96,8 @@ int bkz(Options& o, IntMatrix& b) {
 
   param.blockSize = o.blockSize;
 
+  BKZParam preproc;
   if (o.preprocBlockSize > 2) {
-    BKZParam preproc;
     preproc.flags |= BKZ_AUTO_ABORT;
     preproc.blockSize = o.preprocBlockSize;
     param.preprocessing = &preproc;
