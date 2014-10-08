@@ -6,7 +6,7 @@ include_fplll_HEADERS=defs.h dpe.h fplll.h matrix.h matrix.cpp nr.h \
 	nr.cpp numvect.h util.h svpcvp.h fplllv31.h
 
 EXTRA_DIST=example_in example_out example_svp_in example_svp_out dim55_in \
-	reformat.pl reformat_magma.pl pruning.txt
+	pruning.txt
 
 bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff
