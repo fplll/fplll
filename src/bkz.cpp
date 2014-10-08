@@ -244,12 +244,17 @@ bool BKZReduction<FT>::bkz() {
 
 template<class FT>
 void BKZReduction<FT>::printParams(const BKZParam &param, ostream &out) {
-  out << "blocksize = " << std::setw(3) << param.blockSize << ", ";
-  out << "flags = 0x" << std::setw(4) << setfill('0') << std::hex << param.flags << ", " << std::dec << std::setfill(' ');
-  out << "maxLoops = " << std::setw(3) << param.maxLoops << ", ";
-  out << "maxTime = " << std::setw(0) << std::fixed << std::setprecision( 1 ) << param.maxTime << ", ";
-  out << "autoAbort scale = " << std::setw(0) << std::fixed << std::setprecision( 6 ) << param.autoAbort_scale << ", ";
-  out << "autoAbort maxWait = " << std::setw(2) << param.autoAbort_maxNoDec;
+  out << "blocksize: " << std::setw(3) << param.blockSize << ", ";
+  out << "flags: 0x" << std::setw(4) << setfill('0') << std::hex << param.flags << ", " << std::dec << std::setfill(' ');
+  out << "maxLoops: " << std::setw(3) << param.maxLoops << ", ";
+  out << "maxTime: " << std::setw(0) << std::fixed << std::setprecision( 1 ) << param.maxTime << ", ";
+  out << "autoAbort: (" << std::setw(0) << std::fixed << std::setprecision( 6 ) << param.autoAbort_scale;
+  out << ", " << std::setw(2) << param.autoAbort_maxNoDec << "), ";
+  out << "pruning: ";
+  if (!param.pruning.empty())
+    out << 1;
+  else
+    out << 0;
   out << endl;
 
   if (param.preprocessing)
