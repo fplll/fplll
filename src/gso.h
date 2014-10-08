@@ -47,7 +47,7 @@ public:
    *   The matrix on which row operations are performed. It must not be empty.
    * @param u
    *   If u is not empty, operations on b are also done on u
-   *   (is this case both must have the same number of rows).
+   *   (in this case both must have the same number of rows).
    *   If u is initially the identity matrix, multiplying transform by the
    *   initial basis gives the current basis.
    * @param uInvT
