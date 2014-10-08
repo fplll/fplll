@@ -17,8 +17,26 @@
 #define FPLLL_BKZ_H
 
 #include "lll.h"
+#include "evaluator.h"
 
 FPLLL_BEGIN_NAMESPACE
+
+class BKZParam {
+ public:
+ BKZParam(int blockSize=0, double delta=LLL_DEF_DELTA, int flags=BKZ_DEFAULT, int maxLoops=0, double maxTime=0) :
+  blockSize(blockSize), delta(delta), flags(flags), maxLoops(maxLoops), maxTime(maxTime), dumpGSOFilename("gso.log"), preprocessing(NULL) {
+  }
+  int blockSize;
+  double delta;
+  int flags;
+  int maxLoops;
+  double maxTime;
+
+  vector<double> pruning;
+  string dumpGSOFilename;
+
+  BKZParam *preprocessing;
+};
 
 template<class FT>
 class BKZAutoAbort {

@@ -20,6 +20,7 @@
 
 #include "util.h"
 #include "svpcvp.h"
+#include "bkz.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -49,22 +50,6 @@ FPLLL_DECLARE_LLL(long)
 FPLLL_DECLARE_LLL(double)
 #endif
 
-class BKZParam {
- public:
- BKZParam(int blockSize=0, double delta=LLL_DEF_DELTA, int flags=BKZ_DEFAULT, int maxLoops=0, double maxTime=0) :
-  blockSize(blockSize), delta(delta), flags(flags), maxLoops(maxLoops), maxTime(maxTime), dumpGSOFilename("gso.log"), preprocessing(NULL) {
-  }
-  int blockSize;
-  double delta;
-  int flags;
-  int maxLoops;
-  double maxTime;
-
-  vector<double> pruning;
-  string dumpGSOFilename;
-
-  BKZParam *preprocessing;
-};
 
 int bkzReduction(IntMatrix* B, IntMatrix* U, const BKZParam& param, FloatType floatType=FT_DEFAULT, int precision=0);
 int bkzReduction(IntMatrix& b, int blockSize, int flags = BKZ_DEFAULT, FloatType floatType=FT_DEFAULT, int precision=0);
