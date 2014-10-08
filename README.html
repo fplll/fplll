@@ -191,9 +191,9 @@ default options, it is guaranteed that the basis is (0.98,0.52)-LLL-reduced.
 -bkzmaxtime &lt;time&gt;        Stop after <i>time</i> seconds (up to loop completion).
 -bkzautoabort             Heuristic, stop when the average slope of log(||b_i*||)
                           does not decrease fast enough.
--bpre &lt;blocksize&gt;   Pre-processing block size. Between 2 and the block size.
+-bpre &lt;blocksize&gt;         Pre-processing block size. Between 2 and the block size.
 -bkzlinearpruning &lt;level&gt; Enables linear pruning in enumeration, in level dimensions.
--bkzdumgso &lt;file_name&gt;    Dumps the logarithms of the GSO diagonal coefficients in specified file.
+-bkzdumgso &lt;file_name&gt;    Dumps the log(||b_i*||)'s in specified file.
 </pre>
 
 <h3 id="llldiff">llldiff</h3>
@@ -723,6 +723,7 @@ produces
 <h2 id="Developers">Developers</h2>
 
 <p><b>Current developer:</b><br />
+Martin Albrecht, martinralbrecht@googlemail.com <br>
 Damien Stehle, damien.stehle@gmail.com</p>
 
 <p><b>Former developers:</b><br />
@@ -735,7 +736,7 @@ Xavier Pujol, xavier.pujol@ens-lyon.org<br />
 @unpublished{fplll,<br>
     Note = {Available at \url{http://perso.ens-lyon.fr/damien.stehle}},<br>
     Title = {{fplll-4.0}, a floating-point {LLL} implementation},<br>
-    Author = {Cad{\'e}, D. and Pujol, X. and Stehl{\'e}, D.}<br>
+    Author = {Albrecht, M. and Cad{\'e}, D. and Pujol, X. and Stehl{\'e}, D.}<br>
 }
 
 
