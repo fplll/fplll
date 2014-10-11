@@ -1,6 +1,9 @@
-Changes in fplll-4.0.5:
+Changes in fplll-4.1:
 - copyright headers
 - how to cite
+- pre-processing in BKZ
+- dumping Gram-Schmidt vectors
+- linear pruning
 
 Changes in fplll-4.0.4:
 - compatibility for packages that still expect to build against 
