@@ -249,8 +249,12 @@ void BKZReduction<FT>::printParams(const BKZParam &param, ostream &out) {
   out << "flags: 0x" << std::setw(4) << setfill('0') << std::hex << param.flags << ", " << std::dec << std::setfill(' ');
   out << "maxLoops: " << std::setw(3) << param.maxLoops << ", ";
   out << "maxTime: " << std::setw(0) << std::fixed << std::setprecision( 1 ) << param.maxTime << ", ";
-  out << "autoAbort: (" << std::setw(0) << std::fixed << std::setprecision( 6 ) << param.autoAbort_scale;
-  out << ", " << std::setw(2) << param.autoAbort_maxNoDec << "), ";
+  if (param.flags & BKZ_AUTO_ABORT) {
+    out << "autoAbort: (" << std::setw(0) << std::fixed << std::setprecision( 4 ) << param.autoAbort_scale;
+    out << ", " << std::setw(2) << param.autoAbort_maxNoDec << "), ";
+  } else {
+    out << "autoAbort: (     -,  -), ";
+  }
   out << "pruning: ";
   if (!param.pruning.empty())
     out << 1;
