@@ -1,241 +1,232 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>fplll 4.0</title>
-</head>
-<body>
-<h1>fplll 4.0</h1>
+# fplll 4.0 #
 
-<ul>
-<li><a href="#Overall description">Overall description</a>
-<li><a href="#Dependencies">Dependencies</a>
-<li><a href="#Installation">Installation</a>
-<li><a href="#Check">Check</a>
-<li><a href="#How to use">How to use</a>
-  <ul>
-    <li><a href="#latticegen">latticegen</a>
-    <li><a href="#fplll">fplll</a>
-    <li><a href="#llldiff">llldiff</a>
-  </ul>
-<li><a href="#How to use as a library">How to use as a library</a>
-  <ul>
-    <li><a href="#Functions">Functions</a>
-      <ul>
-        <li><a href="#LLL">LLL</a>
-        <li><a href="#BKZ">BKZ</a>
-        <li><a href="#SVP">SVP</a>
-      </ul>
-    <li><a href="#Data types">Data types</a>
-  </ul>
-<li><a href="#Examples">Examples</a>
-<li><a href="#Developers">Developers</a>
-  <li><a href="#Cite">How to cite</a>
-<li><a href="#Acknowledgements">Acknowledgements</a>
-<li><a href="#New releases and bug reports">New releases and bug reports</a>
-</ul>
+* [Overall description](#overall_description)
+* [Dependencies](#dependencies)
+* [Installation](#installation)
+* [Check](#check)
+* [How to use](#how_to_use)
+	* [latticegen](#latticegen)
+	* [fplll](#fplll)
+	* [llldiff](#llldiff)
+* [How to use as a library](#how_to_use_as_a_library)
+	* [Functions](#functions)
+		* [LLL](#lll)
+		* [BKZ](#bkz)
+		* [SVP](#svp)
+	* [Data Types](#data_types)
+		* [Z\_NR](#z_nr)
+		* [FP\_NR](#fp_nr)
+		* [Matrix](#matrix)
+		* [MatrixRow](#matrix_row)
+		* [ZZ\_mat](#zz_mat)
+		* [FP\_mat](#fp_mat)
+		* [See also](#see_also)
+* [Expamles](#examples)
+* [Developers](#developers)
+* [How to cite](#how_to_cite)
+* [Acknowledgments](#acknowledgments)
+* [New releases and bug reports](#new_releases_and_bug_reports)
 
-<h2 id="Overall description">Overall description</h2>
+<a name="overall_description"></a>
+## Overall description ##
 
-<p>fplll is distributed under the <a href="COPYING">GNU Lesser General
+fplll is distributed under the <a href="COPYING">GNU Lesser General
 Public License</a> (either version 2.1 of the License, or, at your option, any later version)
-as published by the Free Software Foundation.</p>
+as published by the Free Software Foundation.
 
-<p>fplll  contains  several  algorithms  on lattices  that  rely on
-floating-point computations.  This includes  implementations  of the
-floating-point   LLL   reduction   algorithm,   offering   different
-speed/guarantees  ratios.  It  contains  a  'wrapper'  choosing  the
+fplll contains several algorithms on lattices that rely on
+floating-point computations. This includes implementations of the
+floating-point LLL reduction algorithm, offering different
+speed/guarantees ratios. It contains a 'wrapper' choosing the
 estimated best sequence of variants in order to provide a guaranteed
-output  as  fast  as  possible.  In  the  case  of the  wrapper, the
-succession of  variants is oblivious to  the user. It  also includes
-a rigorous floating-point implementation  of the Kannan-Fincke-Pohst
+output as fast as possible. In the case of the wrapper, the
+succession of variants is oblivious to the user. It also includes
+a rigorous floating-point implementation of the Kannan-Fincke-Pohst
 algorithm that finds a shortest non-zero lattice vector, and the
-BKZ reduction algorithm.</p>
+BKZ reduction algorithm.
 
-<h2 id="Dependencies">Dependencies</h2>
+<a name="dependencies"></a>
+## Dependencies ##
 
-<p>Absolutely needed:
-<ul>
-<li>GNU MP 4.2.0 or higher (<a href="http://gmplib.org/">http://gmplib.org/</a>)
-<li>MPFR 2.3.0 or higher, COMPLETE INSTALLATION
-(<a href="http://www.mpfr.org/">http://www.mpfr.org/</a>)
-</ul>
+* Absolutely needed:
+	* GNU MP 4.2.0 or higher [http://gmplib.org/](http://gmplib.org/)
+	* MPFR 2.3.0 or higher, COMPLETE INSTALLATION [http://www.mpfr.org/](http://www.mpfr.org/)
+	* autotools 2.61 or higher
 
-<p>If GMP and/or MPFR include and lib files are not in the default
+If GMP and/or MPFR include and lib files are not in the default
 directories /usr/include and /usr/lib, you have to set the
 environment variables CFLAGS and LDFLAGS for instance through
 the configure command line
-<pre>./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude" LDFLAGS="-L/mpfrlib -L/gmplib"</pre>
+
+```./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude" LDFLAGS="-L/mpfrlib -L/gmplib"```
+
 or
-<pre>./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude $CPPFLAGD" LDFLAGS="-L/mpfrlib -L/gmplib $LDFLAGS"</pre>
+
+```./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude $CPPFLAGD" LDFLAGS="-L/mpfrlib -L/gmplib $LDFLAGS"```
+
 if these variables already exist in your environment.
 This should be modified soon for using standard --with-gmp and
---with-mpfr package specifications.</p>
+--with-mpfr package specifications.
 
-<h2 id="Installation">Installation</h2>
+<a name="installation"></a>
+## Installation ##
 
-<p>To  install files  'cd'  to the  directory containing the  package's
-source code and just type</p>
+To  install files  'cd'  to the  directory containing the  package's
+source code and just type
 
-<pre>
- autoreconf -i
- ./configure
- make
- make install      # (as root)
-</pre>
+	autoreconf -i
+	./configure
+	make
+	make install			# (as root)
 
-<p>You can remove the program binaries and object files from the source
-code directory  by typing 'make  clean'.  To  also remove  the files
-that 'configure'  created (so  you can  compile   the package  for a
-different kind of computer), type 'make distclean'.
-By default, 'make install' installs the package commands under
+The configure script will be generated by autotools, when invoking _autoreconf_.
+You can remove the program binaries and object files from the source
+code directory by typing _make clean_. To also remove the files
+that _./configure_ created (so you can compile the package for a
+different kind of computer), type _make distclean_.
+By default, _make install_ installs the package commands under
 '/usr/local/bin', include files under '/usr/local/include', etc.
 You can specify an installation directory name other than
-'/usr/local' by giving 'configure' the option '--prefix=dirname'.
-Run 'configure --help' for further details.</p>
+'/usr/local' by giving _./configure_ the option '--prefix=dirname'.
+Run _./configure --help_ for further details.
 
-<h2 id="Check">Check</h2>
+<a name="check"></a>
+## Check ##
 
 'cd' to the src directory, and type
 
-<pre>
- make check
-</pre>
+	make check
 
 This tests the LLL wrapper given dim55_in as input. If the error message
 'INVALID RESULT' is not printed, the self-test has succeeded.
 
-<h2 id="How to use">How to use</h2>
+<a name="how_to_use"></a>
+## How to use ##
 
-<p>Executable files fplll and latticegen are installed in the directory
+Executable files fplll and latticegen are installed in the directory
 bin. If you type 'make check', it will also generate the file llldiff.
 (Note that the programs generated by make in the 'src/' directory are
-only wrappers to the programs in 'src/.libs/)</p>
+only wrappers to the programs in 'src/.libs/)
 
-<h3 id="latticegen">latticegen</h3>
+<a name="latticegen"></a>
+### latticegen ###
 
-<p>latticegen is an utility for generating matrices (rows form input
-lattice bases).</p>
+latticegen is an utility for generating matrices (rows form input
+lattice bases).
 
-<p>The options are :
-<ul>
-<li>r &lt;d&gt; &lt;b&gt; : generates a knapsack style matrix of dimension d,d+1 and b bits.
-<li>s &lt;d&gt; &lt;b&gt; &lt;b2&gt; : generates a simdioph matrix.
-<li>u &lt;d&gt; &lt;b&gt; : generates an uniform matrix.
-<li>n &lt;d&gt; &lt;b&gt; &lt;q&gt; : generates an ntru like matrix.
-<li>N &lt;d&gt; &lt;b&gt; &lt;q&gt; : generates an ntru like matrix.
-<li>a &lt;d&gt; &lt;f&gt; : generates an ajtai style matrix.
-<li>A &lt;d&gt; : generates an ajtai style matrix. Also requires d coefficients.
-</ul></p>
+The options are :
 
-<p>The matrix is printed in stdout.</p>
+* r &lt;d&gt; &lt;b&gt; : generates a knapsack style matrix of dimension d,d+1 and b bits.
+* s &lt;d&gt; &lt;b&gt; &lt;b2&gt; : generates a simdioph matrix.
+* u &lt;d&gt; &lt;b&gt; : generates an uniform matrix.
+* n &lt;d&gt; &lt;b&gt; &lt;q&gt; : generates an ntru like matrix.
+* N &lt;d&gt; &lt;b&gt; &lt;q&gt; : generates an ntru like matrix.
+* a &lt;d&gt; &lt;f&gt; : generates an ajtai style matrix.
+* A &lt;d&gt; : generates an ajtai style matrix. Also requires d coefficients.
 
-<p>Note that by default, the random bits always use the same seed,
+The matrix is printed in stdout.
+
+Note that by default, the random bits always use the same seed,
 to ensure reproducibility. You can change the seed with the option
-<pre> -randseed &lt;integer&gt;</pre>
-or use the current time (in seconds)
-<pre> -randseed time</pre>
-If you use this option, it must be the first one on the command line.</p>
+``` -randseed <integer>``` or use the current time (in seconds)
+``` -randseed time```
 
-<h3 id="fplll">fplll</h3>
+If you use this option, it must be the first one on the command line.
 
-<p>fplll does LLL, BKZ or SVP on a matrix (considered as a set of row
-vectors) given in stdin or in a file as parameter.</p>
 
-<p>The options are:</p>
+<a name="fplll"></a>
+### fplll ###
 
-<pre>
--a lll : LLL-reduction (default).
--a bkz : BKZ-reduction.
--a svp : print a shortest vector of the lattice.
+fplll does LLL, BKZ or SVP on a matrix (considered as a set of row
+vectors) given in stdin or in a file as parameter.
 
--r &lt;size&gt;, -c &lt;size&gt; : ignored, provided for compatibility with previous
-                       versions of fplll.
-</pre>
+The options are:
 
-<p>Options for LLL-reduction:</p>
+* -a lll : LLL-reduction (default).
+* -a bkz : BKZ-reduction.
+* -a svp : print a shortest vector of the lattice.
+* -r &lt;size&gt;, -c &lt;size&gt; : ignored, provided for compatibility with previous versions of fplll.
 
-<pre>
--d &lt;delta&gt; :     delta (default=0.99)
--e &lt;eta&gt; :       eta (default=0.51)
--l &lt;lovasz&gt; :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz)
--p &lt;precision&gt; : precision of the floating-point arithmetic, works
-                 only with -f mpfr.
+Options for LLL-reduction:
 
--f mpfr : sets the floating-point type to MPFR (default if m=proved).
--f dpe : sets the floating-point type to DPE (default if m=heuristic/heuristicearly).
--f double : sets the floating-point type to double (default if m=fast/fastearly).
--f longdouble : sets the floating-point type to long double.
--z int : sets the integer type to int.
--z mpz : sets the integer type to mpz, the integer type of GMP (default).
--z double : sets the integer type to double.
+* -d &lt;delta&gt; :     delta (default=0.99)
+* -e &lt;eta&gt; :       eta (default=0.51)
+* -l &lt;lovasz&gt; :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz)
+* -p &lt;precision&gt; : precision of the floating-point arithmetic, works only with -f mpfr.
 
--m wrapper : uses the wrapper. (default if z=mpz)
--m fast : uses the fast method, works only with -f double.
--m fastearly : uses the fast method with early reduction, works only
-               with -f double.
--m heuristic : uses the heuristic method.
--m heuristicearly : uses the heuristic method with early reduction.
--m proved : uses the proved version of the algorithm.
+* -f mpfr : sets the floating-point type to MPFR (default if m=proved).
+* -f dpe : sets the floating-point type to DPE (default if m=heuristic/heuristicearly).
+* -f double : sets the floating-point type to double (default if m=fast/fastearly).
+* -f longdouble : sets the floating-point type to long double.
+
+* -z int : sets the integer type to int.
+* -z mpz : sets the integer type to mpz, the integer type of GMP (default).
+* -z double : sets the integer type to double.
+
+* -m wrapper : uses the wrapper. (default if z=mpz)
+* -m fast : uses the fast method, works only with -f double.
+* -m fastearly : uses the fast method with early reduction, works only with -f double.
+* -m heuristic : uses the heuristic method.
+* -m heuristicearly : uses the heuristic method with early reduction.
+* -m proved : uses the proved version of the algorithm.
 
 With the wrapper or the proved version, it is guaranteed that the basis is
-LLL-reduced with delta'=2*delta-1 and eta'=2*eta-1/2. For instance, with the
+LLL-reduced with delta'=2&times;delta-1 and eta'=2&times;eta-1/2. For instance, with the
 default options, it is guaranteed that the basis is (0.98,0.52)-LLL-reduced.
-</pre>
 
-<p>Options for BKZ-reduction:</p>
+Options for BKZ-reduction:
 
-<pre>
--b &lt;blocksize&gt;            Block size, mandatory, between 2 and the number of rows.
--f &lt;float_type&gt;           Same as LLL (-p is required if float_type=mpfr)
--p &lt;precision&gt;            Precision of the floating-point arithmetic with -f mpfr
--bkzmaxloops &lt;loops&gt;      Maximum number of full loops.
--bkzmaxtime &lt;time&gt;        Stop after <i>time</i> seconds (up to loop completion).
--bkzautoabort             Heuristic, stop when the average slope of log(||b_i*||)
-                          does not decrease fast enough.
--bpre &lt;blocksize&gt;         Pre-processing block size. Between 2 and the block size.
--bkzlinearpruning &lt;level&gt; Enables linear pruning in enumeration, in level dimensions.
--bkzdumgso &lt;file_name&gt;    Dumps the log(||b_i*||)'s in specified file.
-</pre>
+* -b &lt;blocksize&gt;            Block size, mandatory, between 2 and the number of rows.
+* -f &lt;float_type&gt;           Same as LLL (-p is required if float_type=mpfr)
+* -p &lt;precision&gt;            Precision of the floating-point arithmetic with -f mpfr
+* -bkzmaxloops &lt;loops&gt;      Maximum number of full loops.
+* -bkzmaxtime &lt;time&gt;        Stop after <i>time</i> seconds (up to loop completion).
+* -bkzautoabort             Heuristic, stop when the average slope of log(||b_i*||) does not decrease fast enough.
+* -bpre &lt;blocksize&gt;         Pre-processing block size. Between 2 and the block size.
+* -bkzlinearpruning &lt;level&gt; Enables linear pruning in enumeration, in level dimensions.
+* -bkzdumgso &lt;file_name&gt;    Dumps the log(||b_i*||)'s in specified file.
 
-<h3 id="llldiff">llldiff</h3>
+<a name="llldiff"></a>
+### llldiff ###
 
-<p>llldiff compares two bases (b1,...,bd) and (c1,...c_d'): they are considered
-equal iff d=d' and for any i, bi = +- ci.</p>
+llldiff compares two bases (b1,...,bd) and (c1,...c_d'): they are considered
+equal iff d=d' and for any i, bi = +- ci.
 
-<h2 id="How to use as a library">How to use as a library</h2>
+<a name="how_to_use_as_a_library"></a>
+## How to use as a library ##
 
-<p>At the beginning of your code, type:
-<pre>
-#include &lt;fplll.h&gt;
-using namespace fplll;
-</pre>
-</p>
+At the beginning of your code, type:
 
-<p>See the example file test.cpp in the src directory.
-To compile it, assuming fplll has been installed in /tmp/fplll:</p>
+	#include <fplll.h>
+	using namespace fplll;
 
-<pre>
-bash-3.00$ g++ -static -I /tmp/fplll/include test.cpp -L /tmp/fplll/lib -lfplll -lmpfr -lgmp
-bash-3.00$ ./a.out
-[[4 3 7]
-[3 0 1]
-[3 5 3]]
-[[3 0 1]
-[2 2 -3]
-[0 5 2]]
-</pre>
+See the example file test.cpp in the src directory.
+To compile it, assuming fplll has been installed in /tmp/fplll:
 
-All types, functions and constants are wrapped in the <code>fplll</code> namespace, with the exception of the <code>dpe</code> type defined in dpe.h. Preprocessor definitions prefixed by FPLLL_ are reserved for internal use.
+	bash-3.00$ g++ -static -I /tmp/fplll/include test.cpp -L /tmp/fplll/lib -lfplll -lmpfr -lgmp
+	bash-3.00$ ./a.out
+	[[4 3 7]
+	[3 0 1]
+	[3 5 3]]
+	[[3 0 1]
+	[2 2 -3]
+	[0 5 2]]
 
-<h3 id="Functions">Functions</h3>
+All types, functions and constants are wrapped in the ```fplll``` namespace,
+with the exception of the ```dpe``` type defined in dpe.h. Preprocessor
+definitions prefixed by FPLLL_ are reserved for internal use.
 
-<h4 id="LLL">LLL</h4>
+<a name="functions"></a>
+### Functions ###
 
-<table cellpadding="5">
-<tr><td><tt>int lllReduction(ZZ_mat&lt;mpz_t&gt;&amp; b, double delta =
-0.99, double eta = 0.51, LLLMethod method = LM_WRAPPER,
-FloatType floatType = FT_DEFAULT, int precision = 0, int flags =
-LLL_DEFAULT)</tt><br>
+
+<a name="lll"></a>
+#### LLL ####
+
+<tr><td><tt>int lllReduction(ZZ\_mat&lt;mpz\_t&gt;&amp; b, double delta =
+0.99, double eta = 0.51, LLLMethod method = LM\_WRAPPER,
+FloatType floatType = FT\_DEFAULT, int precision = 0, int flags =
+LLL\_DEFAULT)</tt><br>
 <p>LLL-reduces a basis of Z_NR&lt;mpz_t&gt;.</p>
 <p>It is guaranteed that the output is (delta', eta')-LLL-reduced with delta'=2&times;delta-1, eta'=2&times;eta-1/2 provided that
 method=LM_WRAPPER/LM_PROVED, floatType=FT_DEFAULT and precision=0. For instance, with the default parameters, it is
@@ -281,28 +272,35 @@ guaranteed that the output basis is (0.98, 0.52)-LLL-reduced.</p>
       </table>
   </dl>
 </blockquote>
-<p>Return value:</p>
-<blockquote>
-  <table cellpadding="3">
-  <tr><td>RED_SUCCESS<td>Success.
-  <tr><td>RED_BABAI_FAILURE<td>Error.
-  <tr><td>RED_LLL_FAILURE<td>Error: infinite loop in LLL.
-  <tr><td>Any other value<td>Error.
-  </table>
-  <p>Even if an error occurs, it is guaranteed that <code>b</code> remains a basis of the same lattice.</p>
-</blockquote>
-<tr><td><tt>int lllReduction(ZZ_mat&lt;long&gt;&amp; b, double delta =
-0.99, double eta = 0.51, LLLMethod method = LM_FAST,
-FloatType floatType = FT_DEFAULT, int precision = 0, int flags =
-LLL_DEFAULT)</tt><br>
-LLL-reduces a basis of Z_NR&lt;long&gt;. There is no guarantee and the LM_WRAPPER method is not available.
-<tr><td><tt>int lllReduction(ZZ_mat&lt;double&gt;&amp; b, double delta =
-0.99, double eta = 0.51, LLLMethod method = LM_FAST,
-FloatType floatType = FT_DEFAULT, int precision = 0, int flags =
-LLL_DEFAULT)</tt><br>
-LLL-reduces a basis of Z_NR&lt;double&gt;. There is no guarantee and the LM_WRAPPER method is not available.
 
-<h4 id="BKZ">BKZ</h4>
+Return value:
+<blockquote>
+<table cellpadding="3">
+<tr><td>RED_SUCCESS<td>Success.
+<tr><td>RED_BABAI_FAILURE<td>Error.
+<tr><td>RED_LLL_FAILURE<td>Error: infinite loop in LLL.
+<tr><td>Any other value<td>Error.
+</table>
+Even if an error occurs, it is guaranteed that <code>b</code> remains a basis of the same lattice.
+</blockquote>
+
+<tr><td><tt>int lllReduction(ZZ\_mat&lt;long&gt;&amp; b, double delta =
+0.99, double eta = 0.51, LLLMethod method = LM\_FAST,
+FloatType floatType = FT\_DEFAULT, int precision = 0, int flags =
+LLL\_DEFAULT)</tt>
+
+LLL-reduces a basis of Z\_NR&lt;long&gt;. There is no guarantee and the LM\_WRAPPER method is not available.
+
+<tr><td><tt>int lllReduction(ZZ\_mat&lt;double&gt;&amp; b, double delta =
+0.99, double eta = 0.51, LLLMethod method = LM\_FAST,
+FloatType floatType = FT\_DEFAULT, int precision = 0, int flags =
+LLL\_DEFAULT)</tt>
+
+LLL-reduces a basis of Z\_NR&lt;double&gt;. There is no guarantee and the LM\_WRAPPER method is not available.
+
+
+<a name="bkz"></a>
+#### BKZ ####
 
 <table cellpadding="5">
 <tr><td><tt>int bkzReduction(IntMatrix&amp; b, int blockSize, int flags = BKZ_DEFAULT)
@@ -395,7 +393,8 @@ Same as above, but also computes the transform matrix u such that b<sub>new</sub
 <p>Return value: Same as above.</p>
 </table>
 
-<h4 id="SVP">SVP</h4>
+<a name="svp"></a>
+#### SVP ####
 
 <table>
 <tr><td><tt>int shortestVector(IntMatrix&amp; b, vector&lt;Integer&gt;&amp;
@@ -426,15 +425,17 @@ The result is guaranteed if method = SVPM_PROVED.</p>
 </blockquote>
 </table>
 
-<h3 id="Data types">Data types</h3>
+<a name="data_types"></a>
+### Data Types ###
 
-<h4>Z_NR&lt;Z&gt;</h4>
+<a name="z_nr"></a>
+#### Z\_NR&lt;Z&gt; ####
 
-<p>Z_NR stores integers. This template provides a uniform interface for doing
+Z\_NR stores integers. This template provides a uniform interface for doing
 integer computations with several underlying types (long, double and
-mpz_t).</p>
+mpz\_t).
 
-<p>Methods:</p>
+Methods:
 
 <table cellpadding="5">
 <tr><td><tt>Z_NR()</tt><br>
@@ -498,7 +499,7 @@ Efficiently swaps the values of two Z_NR.
 Returns the internal representation of the data.
 </table>
 
-<p>Non-member functions:</p>
+Non-member functions:
 
 <table cellpadding="5">
 <tr><td><tt>template &lt;class Z&gt;<br>ostream&amp; operator&lt;&lt;(ostream&amp; os, const Z_NR&lt;Z&gt;&amp; x)</tt><br>
@@ -507,22 +508,21 @@ Prints x on stream <code>os</code>.
 Reads x from stream <code>is</code>.
 </table>
 
-<p>Containers:</p>
+Containers:
 
-<p><tt>typedef Z_NR&lt;mpz_t&gt; Integer;</tt><br>
+<tt>typedef Z\_NR&lt;mpz\_t&gt; Integer;</tt><br>
 <tt>typedef std::vector&lt;Integer&gt; IntVect;<br>
-typedef ZZ_mat&lt;mpz_t&gt; IntMatrix;</tt></p>
+typedef ZZ\_mat&lt;mpz_t&gt; IntMatrix;</tt>
 
+<a name="fp_nr"></a>
+#### FP\_NR&lt;F&gt; ####
 
-
-<h4>FP_NR&lt;F&gt;</h4>
-
-<p>FP_NR stores floating-point numbers. This template provides a uniform
+FP\_NR stores floating-point numbers. This template provides a uniform
 interface for doing floating-point computations with several underlying
-types (double, dpe_t and mpfr_t). For all functions, the rounding mode rnd
-is ignored unless F=mpfr_t.</p>
+types (double, dpe_t and mpfr\_t). For all functions, the rounding mode rnd
+is ignored unless F=mpfr\_t.
 
-<p>Methods:</p>
+Methods:
 
 <table cellpadding="5">
 <tr><td><tt>FP_NR()</tt><br>
@@ -588,7 +588,7 @@ Efficiently swaps the values of two FP_NR.
 Returns the internal representation of the data.
 </table>
 
-<p>Static members:</p>
+Static members:
 
 <table cellpadding="5">
 <tr><td><tt>static unsigned int getprec()</tt><br>
@@ -598,22 +598,24 @@ Sets the precision of new FP_NR&lt;F&gt; objects. Returns the previous value.
 This has no effect is F != mpfr_t.
 </table>
 
-<p>Non-member functions:</p>
+Non-member functions:
 
 <table cellpadding="5">
 <tr><td><tt>template &lt;class F&gt;<br>ostream&amp; operator&lt;&lt;(ostream&amp; os, const FP_NR&lt;F&gt;&amp; x)</tt><br>
 Prints x on stream os.
 </table>
 
-<p>Containers:</p>
+Containers:
 
-<p><tt>typedef FP_NR&lt;mpfr_t&gt; Float;</tt><br>
+<tt>typedef FP\_NR&lt;mpfr\_t&gt; Float;</tt><br>
 <tt>typedef std::vector&lt;Float&gt; FloatVect;<br>
-typedef FP_mat&lt;mpfr_t&gt; FloatMatrix;</tt></p>
+typedef FP\_mat&lt;mpfr\_t&gt; FloatMatrix;</tt>
 
-<h4>Matrix&lt;T&gt;</h4>
 
-<p>Methods:</p>
+<a name="matrix"></a>
+#### Matrix&lt;T&gt; ####
+
+Methods:
 
 <table cellpadding="5">
 <tr><td><tt>Matrix()</tt><br>
@@ -644,7 +646,7 @@ Returns a reference to a coefficient of the matrix.
 Returns a MatrixRow object pointing to the i-th row of the matrix.
 </table>
 
-<p>Non-member functions:</p>
+Non-member functions:
 
 <table cellpadding="5">
 <tr><td><tt>template&lt;class T&gt; ostream&amp; operator&lt;&lt;(ostream&amp; os, const Matrix&lt;T&gt;&amp; m)</tt><br>
@@ -653,118 +655,120 @@ Prints matrix m on stream <code>os</code>.
 Reads matrix m from stream <code>is</code>.
 </table>
 
-<p>Note: a call to <tt>clear</tt>, <tt>resize</tt>, <tt>setRows</tt>,
+Note: a call to <tt>clear</tt>, <tt>resize</tt>, <tt>setRows</tt>,
 <tt>setCols</tt> or <tt>swap</tt> invalidates all references returned by
-operator() and MatrixRow objects returned by operator[].</p>
+operator() and MatrixRow objects returned by operator[].
 
-<h4>MatrixRow&lt;T&gt;</h4>
 
-<p>MatrixRow stores a reference to a row of a Matrix. It supports a subset
-of operations available on vectors.</p>
+<a name="matrix_row"></a>
+#### MatrixRow&lt;T&gt; ####
 
-<p>Methods:</p>
+MatrixRow stores a reference to a row of a Matrix. It supports a subset
+of operations available on vectors.
 
-<table cellpadding="5">
-<tr><td><tt>T&amp; operator[](int i)</tt><br>
-<tt>const T&amp; operator[](int i) const</tt><br>
-Returns a reference to the i-th element of this row.
-<tr><td><tt>int size() const</tt><br>
-Returns the number of columns.
-</table>
-
-<p>Non-member functions:</p>
+Methods:
 
 <table cellpadding="5">
 <tr><td><tt>template&lt;class T&gt; ostream&amp; operator&lt;&lt;(ostream&amp; os, const MatrixRow&lt;T&gt;&amp; mr)</tt><br>
 Prints mr on stream os.
 </table>
 
-<h4>ZZ_mat&lt;ZT&gt;</h4>
+<a name="zz_mat"></a>
+#### ZZ\_mat ####
 
-<p>Base class: Matrix&lt;Z_NR&lt;ZT&gt;&gt;</p>
+Base class: Matrix&lt;Z_NR&lt;ZT&gt;&gt;
 
-<p>Matrix of integers. Same constructors as Matrix.</p>
+Matrix of integers. Same constructors as Matrix.
 
-<h4>FP_mat&lt;FT&gt;</h4>
+<a name="fp_mat"></a>
+#### FP_mat ####
 
-<p>Base class: Matrix&lt;FP_NR&lt;FT&gt;&gt;</p>
+Base class: Matrix&lt;FP_NR&lt;FT&gt;&gt;
 
-<p>Matrix of floating-point nubmers. Same constructors as Matrix.</p>
+Matrix of floating-point nubmers. Same constructors as Matrix.
 
-<h3>See also</h3>
+<a name="see_also"></a>
+### See also ###
 
-<a href="http://www.sgi.com/tech/stl/Vector.html">Documentation of std::vector</a>
+[Documentation of std::vector](http://www.sgi.com/tech/stl/Vector.html)
 
-<h2 id="Examples">Examples</h2>
+<a name="examples"></a>
+## Examples ##
 
-<pre>
-1)
-./latticegen r 10 1000 | ./fplll
+	1. Reduction
+	./latticegen r 10 1000 | ./fplll
 
-2)
-If the file 'matrix' contains
-[[ 10 11]
-[11 12]]
+	2. Fileinput for Reduction
+	If the file 'matrix' contains
 
-Then
-./fplll matrix
-produces
-[[0 1 ]
-[1 0 ]
-]
+	[[ 10 11]
+	[11 12]]
 
-3) Random generator
-./latticegen -randseed 1234 r 10 1000 | ./fplll
-./latticegen -randseed time u 10 16 | ./fplll
+	Then
 
-4) Solving SVP
-./latticegen r 30 3000 | ./fplll -a svp
-</pre>
+	./fplll matrix
 
-<h2 id="Developers">Developers</h2>
+	produces
 
-<p><b>Current developer:</b><br />
+	[[0 1 ]
+	[1 0 ]
+	]
+
+	3. Random generator
+	./latticegen -randseed 1234 r 10 1000 | ./fplll
+	./latticegen -randseed time u 10 16 | ./fplll
+
+	4. Solving SVP
+	./latticegen r 30 3000 | ./fplll -a svp
+
+<a name="developers"></a>
+## Developers ##
+
+**Current developer:**
+
 Martin Albrecht, martinralbrecht@googlemail.com <br>
-Damien Stehle, damien.stehle@gmail.com</p>
+Damien Stehle, damien.stehle@gmail.com
 
-<p><b>Former developers:</b><br />
+**Former developers:**
 
 David Cade, david.cade@ens.fr <br>
-Xavier Pujol, xavier.pujol@ens-lyon.org<br />
+Xavier Pujol, xavier.pujol@ens-lyon.org
 
-<h2 id="Cite">How to cite</h2>
+<a name="how_to_cite"></a>
+## How to cite ##
 
-@unpublished{fplll,<br>
-    Note = {Available at \url{http://perso.ens-lyon.fr/damien.stehle}},<br>
-    Title = {{fplll-4.0}, a floating-point {LLL} implementation},<br>
-    Author = {Albrecht, M. and Cad{\'e}, D. and Pujol, X. and Stehl{\'e}, D.}<br>
-}
+	@unpublished{fplll,
+	    Note = {Available at \url{http://perso.ens-lyon.fr/damien.stehle}},
+	    Title = {{fplll-4.0}, a floating-point {LLL} implementation},
+	    Author = {Albrecht, M. and Cad{\'e}, D. and Pujol, X. and Stehl{\'e}, D.}
+	}
 
+<a name="acknowledgments"></a>
+## Acknowledgments ##
 
-<h2 id="Acknowledgements">Acknowledgements</h2>
+Patrick Pelissier and Paul Zimmermann for dpe.
 
-<p>Patrick Pelissier and Paul Zimmermann for dpe.</p>
-
-<p>Martin Albrecht, Sylvain Chevillard, Christoph
+Martin Albrecht, Sylvain Chevillard, Christoph
 Lauter and Gilles Villard for the
-"configure/make/make install" packaging.</p>
+"configure/make/make install" packaging.
 
-<p>Martin Albrecht for the incorporation into SAGE.</p>
+Martin Albrecht for the incorporation into SAGE.
 
-<p>Timothy Abbott, Michael Abshoff, Martin Albrecht, Bill Allombert,
+Timothy Abbott, Michael Abshoff, Martin Albrecht, Bill Allombert,
 John Cannon, Sylvain Chevillard, Julien Clement, Andreas Enge,
 Jean-Pierre Flori, Laurent Fousse, Guillaume Hanrot, Jens Hermans,
 Jerry James, Christoph Lauter, Andrew Novocin, Willem Jan Palenstijn,
 Patrick Pelissier, Michael Schneider, Thiemo Seufer, Allan Steel,
 Gilles Villard and Paul Zimmermann for their support and for many
-suggestions that helped debugging and improving this code.</p>
+suggestions that helped debugging and improving this code.
 
-<h2 id="New releases and bug reports">New releases and bug reports</h2>
+<a name="new_releases_and_bug_reports"></a>
+## New releases and bug reports ##
 
-<p>New releases will be announced at the URL:
-<a href="http://perso.ens-lyon.fr/damien.stehle/fplll/">http://perso.ens-lyon.fr/damien.stehle/fplll/</a>
+New releases will be announced at the URL:<br>
+[http://perso.ens-lyon.fr/damien.stehle/fplll/](http://perso.ens-lyon.fr/damien.stehle/fplll/)
 
-<p>Bug reports may be sent at:
-<ul>
-<li><a href="mailto:damien.stehle@gmail.com">damien.stehle@gmail.com</a>
-</ul></p>
+Bug reports may be sent at:<br>
+[damien.stehle@gmail.com](mailto:damien.stehle@gmail.com)
+
+or create an issue.
