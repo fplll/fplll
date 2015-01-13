@@ -93,9 +93,9 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
     double cputimeStart2 = cputime();
 
     for(int i=0; ; i++) {
-      if ((par.flags & BKZ_MAX_LOOPS) && i >= par.maxLoops) break;
-      if ((par.flags & BKZ_MAX_TIME) && (cputime() - cputimeStart2) * 0.001 >= par.maxTime) break;
-      if (autoAbort.testAbort(par.autoAbort_scale, par.autoAbort_maxNoDec)) break;
+      if ((preproc->flags & BKZ_MAX_LOOPS) && i >= preproc->maxLoops) break;
+      if ((preproc->flags & BKZ_MAX_TIME) && (cputime() - cputimeStart2) * 0.001 >= preproc->maxTime) break;
+      if (autoAbort.testAbort(preproc->autoAbort_scale, preproc->autoAbort_maxNoDec)) break;
 
       bool clean2 = true;
       if (!bkzLoop(i, dummyKappaMax, *preproc, kappa, kappa + blockSize, clean2))
