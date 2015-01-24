@@ -1,0 +1,22 @@
+language: c
+
+compiler: gcc
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libmpfr-dev libgmp-dev
+
+before_script:
+  - ./autogen.sh
+
+script:
+  - ./configure
+  - make
+  - make check
+  - make dist
+
+notifications:
+  email:
+     - martinralbrecht+fplll@googlemail.com
+  on_success: change
+  on_failure: always
