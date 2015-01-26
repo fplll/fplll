@@ -17,6 +17,6 @@ script:
 
 notifications:
   email:
-     - martinralbrecht+fplll@googlemail.com
+     - fplll-devel@googlegroups.com
   on_success: change
   on_failure: always
