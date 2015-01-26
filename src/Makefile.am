@@ -1,5 +1,3 @@
-AUTOMAKE_OPTIONS=gnu
-
 include_fpllldir=$(includedir)/fplll
 
 include_fplll_HEADERS=defs.h dpe.h fplll.h matrix.h matrix.cpp nr.h \
