@@ -27,8 +27,6 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-THIS IS BROKEN, DEAL WITH IT
-
 template<class ZT>
 void zerosFirst(ZZ_mat<ZT>& b, ZZ_mat<ZT>& u, ZZ_mat<ZT>& uInvT) {
   int i, d = b.getRows();
