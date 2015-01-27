@@ -1,0 +1,22 @@
+language: cpp
+
+compiler: gcc
+
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libmpfr-dev libgmp-dev
+
+before_script:
+  - ./autogen.sh
+
+script:
+  - ./configure
+  - make
+  - make check
+  - make dist
+
+notifications:
+  email:
+     - fplll-devel@googlegroups.com
+  on_success: change
+  on_failure: always
