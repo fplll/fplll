@@ -16,7 +16,5 @@ script:
   - make dist
 
 notifications:
-  email:
-     - fplll-devel@googlegroups.com
   on_success: change
   on_failure: always
