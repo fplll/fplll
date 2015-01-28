@@ -106,6 +106,8 @@ int bkz(Options& o, IntMatrix& b) {
   param.flags = o.bkzFlags;
   if (o.bkzFlags & BKZ_DUMP_GSO)
     param.dumpGSOFilename = o.bkzDumpGSOFilename;
+  if (o.bkzFlags & BKZ_GH_BND)
+    param.ghFactor = o.bkzGHFactor;
   if (o.verbose) param.flags |= BKZ_VERBOSE;
   if (o.noLLL) param.flags |= BKZ_NO_LLL;
   if (o.pruningFile != NULL) {
@@ -307,13 +309,19 @@ void readOptions(int argc, char** argv, Options& o) {
     }
     else if (strcmp(argv[ac], "-bkzlinearpruning") == 0) {
       ++ac;
-      CHECK(ac < argc, "missing filename after -bkzdumpgso switch");
+      CHECK(ac < argc, "missing value after -bkzlinearpruning switch");
       o.bkzLinearPruningLevel = atol(argv[ac]);
     }
     else if (strcmp(argv[ac], "-c") == 0) {
       ++ac;
       CHECK(ac < argc, "missing value after -c switch");
       //o.c=atoi(argv[ac]); // ignored (was the number of columns)
+    }
+    else if (strcmp(argv[ac], "-bkzghbound") == 0) {
+      ++ac;
+      CHECK(ac < argc, "missing value after '-bkzghbound'");
+      o.bkzGHFactor = atof(argv[ac]);
+      o.bkzFlags |= BKZ_GH_BND;
     }
     else if (strcmp(argv[ac], "-d") == 0 || strcmp(argv[ac], "-delta") == 0) {
       ++ac;
