@@ -32,7 +32,7 @@ int shortestVector(IntMatrix& b, IntVect& solCoord,
         SVPMethod method = SVPM_PROVED, int flags = SVP_DEFAULT);
 
 int shortestVectorPruning(IntMatrix& b, IntVect& solCoord,
-        const vector<double>& pruning, int flags = SVP_DEFAULT);
+        const vector<double>& pruning, Integer& argIntMaxDist, int flags = SVP_DEFAULT);
 
 // Experimental. Do not use.
 int closestVector(IntMatrix& b, const IntVect& intTarget,
