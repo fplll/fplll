@@ -108,6 +108,8 @@ int bkz(Options& o, IntMatrix& b) {
     param.dumpGSOFilename = o.bkzDumpGSOFilename;
   if (o.bkzFlags & BKZ_GH_BND)
     param.ghFactor = o.bkzGHFactor;
+  if (o.bkzFlags & BKZ_MAX_LOOPS)
+    param.maxLoops = o.bkzMaxLoops;
   if (o.verbose) param.flags |= BKZ_VERBOSE;
   if (o.noLLL) param.flags |= BKZ_NO_LLL;
   if (o.pruningFile != NULL) {
