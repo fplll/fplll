@@ -40,7 +40,8 @@ struct Options {
   Options() : action(ACTION_LLL), method(LM_WRAPPER), intType(ZT_MPZ),
               floatType(FT_DEFAULT), delta(LLL_DEF_DELTA), eta(LLL_DEF_ETA),
               precision(0), earlyRed(false), siegel(false), noLLL(false),
-              blockSize(0), preprocBlockSize(2), verbose(false), inputFile(NULL),
+              blockSize(0), preprocBlockSize(2), bkzLinearPruningLevel(0),
+              bkzGHFactor(1.1), verbose(false), inputFile(NULL),
               outputFormat(NULL), pruningFile(NULL) {
     bkzFlags = 0;
     bkzMaxLoops = 0;
@@ -64,6 +65,7 @@ struct Options {
   double bkzMaxTime;
   string bkzDumpGSOFilename;
   int bkzLinearPruningLevel;
+  double bkzGHFactor;  
 
   bool verbose;
   const char* inputFile;

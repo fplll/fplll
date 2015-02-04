@@ -72,6 +72,32 @@ static double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow)
   return v1 / v2;
 }
 
+template<class FT>
+static void computeGaussHeurDist(MatGSO<Integer, FT>& m, FT& maxDist, long maxDistExpo, int kappa, int blockSize, double ghFactor){
+  double t = (double)blockSize/2.0+1;
+  t=tgamma(t);
+  t=pow(t,2.0/(double)blockSize);
+  t=t/M_PI;
+  FT f,g,h;
+  f = t;
+  m.getR(h,kappa,kappa);
+  g.log(h);
+  for(int i = kappa+1; i < kappa+blockSize; i++){
+      m.getR(h,i,i);
+      h.log(h);
+      g.add(g,h);
+  }
+  h = (double)blockSize;
+  g.div(g,h);
+  g.exponential(g);
+  f.mul(f,g);
+  f.mul_2si(f,-maxDistExpo);
+  h = ghFactor;
+  f.mul(f,h);
+  if(f < maxDist) {
+    maxDist = f;
+  }
+}
 
 template<class FT>
 bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &par, bool& clean) {
@@ -110,12 +136,18 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
 
   maxDist = m.getRExp(kappa, kappa, maxDistExpo);
   deltaMaxDist.mul(delta, maxDist);
+  
+  if((par.flags & BKZ_GH_BND) && blockSize > 30){ 
+    computeGaussHeurDist(m, maxDist, maxDistExpo, kappa, blockSize, par.ghFactor);
+  }
+  
   vector<FT>& solCoord = evaluator.solCoord;
   solCoord.clear();
   Enumeration::enumerate(m, maxDist, maxDistExpo, evaluator, emptySubTree,
             emptySubTree, kappa, kappa + blockSize, par.pruning);
   if (solCoord.empty()) {
-    return setStatus(RED_ENUM_FAILURE);
+    if(par.flags & BKZ_GH_BND) return true; // Do nothing
+    else return setStatus(RED_ENUM_FAILURE);
   }
 
   // Is it already in the basis ?

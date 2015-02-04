@@ -27,10 +27,10 @@ public:
 
   BKZParam(int blockSize=0, double delta=LLL_DEF_DELTA, int flags=BKZ_DEFAULT,
            int maxLoops=0, double maxTime=0, int linearPruningLevel=0,
-           double autoAbort_scale=1.0, int autoAbort_maxNoDec=5) :
+           double autoAbort_scale=1.0, int autoAbort_maxNoDec=5, double ghFactor = 1.1) :
   blockSize(blockSize), delta(delta), flags(flags),
   maxLoops(maxLoops), maxTime(maxTime),
-  autoAbort_scale(autoAbort_scale), autoAbort_maxNoDec(autoAbort_maxNoDec),
+  autoAbort_scale(autoAbort_scale), autoAbort_maxNoDec(autoAbort_maxNoDec), ghFactor(ghFactor),
   dumpGSOFilename("gso.log"), preprocessing(NULL) {
     if (linearPruningLevel > 0) {
       enableLinearPruning(linearPruningLevel);
@@ -65,8 +65,14 @@ public:
   */
   
   vector<double> pruning;
-
-  /** If BKZ_DUMP_GSO us set, the norms of the GSO matrix are written to this
+  
+  /** If BKZ_GH_BND is set, the enumeration bound will be set to ghFactor times
+      the Gaussian Heuristic
+  */
+  
+  double ghFactor;
+  
+  /** If BKZ_DUMP_GSO is set, the norms of the GSO matrix are written to this
       file after each complete round.
   */
   
@@ -96,6 +102,8 @@ public:
 template<class FT>
 static double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow);
 
+template<class FT>
+static void computeGaussHeurDist(MatGSO<Integer, FT>& m, FT& maxDist, long maxDistExpo, int kappa, int blockSize, double ghFactor);
 
 /* The matrix must be LLL-reduced */
 template<class FT>

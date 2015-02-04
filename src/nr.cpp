@@ -1188,6 +1188,13 @@ inline void FP_NR<dpe_t>::log(const FP_NR<dpe_t>& a, mp_rnd_t /*rnd*/) {
 }
 
 template<>
+inline void FP_NR<dpe_t>::exponential(const FP_NR<dpe_t>& a, mp_rnd_t /*rnd*/) {
+  dpe_ugly_exp(data, a.data);
+  /*  FPLLL_DEBUG_ABORT("FP_NR<dpe_t>::exp not implemented"); */
+}
+
+
+template<>
 inline int FP_NR<dpe_t>::cmp(const FP_NR<dpe_t>& a) const {
   return dpe_cmp(data, a.data);
 }

@@ -190,7 +190,8 @@ enum SVPMethod {
 
 enum SVPFlags {
   SVP_DEFAULT = 0,
-  SVP_VERBOSE = 1
+  SVP_VERBOSE = 1,
+  SVP_OVERRIDE_BND = 2
 };
 
 enum CVPFlags {
@@ -206,7 +207,8 @@ enum BKZFlags {
   BKZ_MAX_TIME = 8,
   BKZ_BOUNDED_LLL = 0x10,
   BKZ_AUTO_ABORT = 0x20,
-  BKZ_DUMP_GSO = 0x40
+  BKZ_DUMP_GSO = 0x40,
+  BKZ_GH_BND = 0x80
 };
 
 enum HKZFlags {
