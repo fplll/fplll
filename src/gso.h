@@ -110,13 +110,20 @@ public:
   inline void getGram(FT& f, int i, int j);
 
   /**
-   * Returns the mu and r matrix respectively
+   * Returns the mu matrix
    * Coefficients of the Gram Schmidt Orthogonalization
    * (lower triangular matrix)
+   * mu(i, j) = r(i, j) / ||b*_j||^2.
    */
   const Matrix<FT>& getMuMatrix() {
     return mu;
   }
+  
+    /**
+   * Returns the r matrix
+   * Coefficients of the Gram Schmidt Orthogonalization
+   * (lower triangular matrix)
+   */
   const Matrix<FT>& getRMatrix() {
     return r;
   }
