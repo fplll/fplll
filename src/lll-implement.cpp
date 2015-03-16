@@ -5,10 +5,10 @@
 using namespace std;
 
 //Calculate dot product of a[i] and b[j], used by GSO()
-float dotProduct(float a[10][10], int i, float b[10][10], int j, int ineachbasis)
+int dotProduct(const Matrix<int>& a, int i,const Matrix<int>& b, int j, int ineachbasis)
 {
-    float dot= 0;
-    for(int k = 1; k <= ineachbasis; k++)
+    int dot= 0;
+    for(int k = 0; k < ineachbasis; k++)
     {
         dot+=(a[i][k]*b[j][k]);
     }
@@ -16,23 +16,23 @@ float dotProduct(float a[10][10], int i, float b[10][10], int j, int ineachbasis
 }
 
 //Apply Gram-Schmidt Process, matrix b gives the Gram-Schmidt basis
-void GSO(float a[10][10], float b[10][10], int noofbasis, int ineachbasis, float B[10], float u[10][10])
+void GSO(Matrix<int>& a, Matrix<int>& b, int noofbasis, int ineachbasis, int B[], Matrix<float>& u)
 {
-    int i = 1;
-    for(int j = 1; j <= ineachbasis; j++) b[i][j] = a[i][j];
+    int i = 0;
+    for(int j = 0; j < ineachbasis; j++) b[i][j] = a[i][j];
     
-    B[1] = dotProduct(b, 1, b, 1, ineachbasis);
+    B[0] = dotProduct(b, 0, b, 0, ineachbasis);
     
     
-    for(i = 2; i<=noofbasis; i++)
+    for(i = 1; i<noofbasis; i++)
     {
-        for(int j = 1; j <= ineachbasis; j++) b[i][j] = a[i][j];
+        for(int j = 0; j < ineachbasis; j++) b[i][j] = a[i][j];
         
-        for(int j = 1; j <= i-1; j++)
+        for(int j = 0; j <= i-1; j++)
         {
 	    //Calculate projection and find orthogonal basis
             u[i][j] = dotProduct(a, i, b, j, ineachbasis)/B[j];
-            for(int k = 1; k <= ineachbasis; k++) b[i][k] = b[i][k] - (u[i][j]*b[j][k]);
+            for(int k = 0; k < ineachbasis; k++) b[i][k] = b[i][k] - (u[i][j]*b[j][k]);
         }
         
         B[i] = dotProduct(b, i, b, i, ineachbasis);
@@ -41,15 +41,15 @@ void GSO(float a[10][10], float b[10][10], int noofbasis, int ineachbasis, float
 }
 
 //Size Reduction
-void RED(float a[10][10], float u[10][10], int k, int l, int noofbasis)
+void RED(Matrix<int>& a, Matrix<float>& u, int k, int l, int noofbasis)
 {
         float r = 0.5 + u[k][l];
         int f = floor(r);
-        for(int p = 1; p <= noofbasis; p++)
+        for(int p = 0; p < noofbasis; p++)
         {
             a[k][p] = a[k][p] - (f*a[l][p]);
         }
-        for(int j = 1; j<=l-1; j++)
+        for(int j = 0; j<l-1; j++)
         {
             u[k][j] = u[k][j] - (f*u[l][j]);
         }
@@ -57,20 +57,21 @@ void RED(float a[10][10], float u[10][10], int k, int l, int noofbasis)
 }
 
 //Outputs the result of applying LLL Algorithm on matrix A
-void LLLImplement(const Matrix<float> &A)
+void LLLImplement(const Matrix<int> &A)
 {
-    float a[10][10];
-    float b[10][10];
-    float u[10][10];
-    float B[10];
     int noofbasis, ineachbasis;
     
     noofbasis = A.getRows();
     ineachbasis = A.getCols();
     
-    for(int i = 1; i <= noofbasis; i++)
+    Matrix<int> a(noofbasis, ineachbasis);
+    Matrix<float> u(noofbasis, ineachbasis);
+    Matrix<int> b(noofbasis, ineachbasis);
+    int B[noofbasis];
+    
+    for(int i = 0; i < noofbasis; i++)
     {
-        for(int j = 1; j <= ineachbasis; j++) 
+        for(int j = 0; j < ineachbasis; j++) 
         {
             a[i][j] = A[i][j];
         }
@@ -78,10 +79,10 @@ void LLLImplement(const Matrix<float> &A)
     
     GSO(a, b, noofbasis, ineachbasis, B, u);
     
-    int k = 2;
-    while(k<=noofbasis)
+    int k = 1;
+    while(k<noofbasis)
     {
-        for(int j = k-1; j>=1; j--)
+        for(int j = k-1; j>=0; j--)
         {
 	    //Length reduce a[k] and calculate correct u[k][j] values
             if(u[k][j]>0.5 || u[k][j]<-0.5)
@@ -93,19 +94,22 @@ void LLLImplement(const Matrix<float> &A)
         }
         else	//Lovasz Condition fails, swap rows and calculate new values
         {
-            for(int p = 1; p <= ineachbasis; p++) swap(a[k][p], a[k-1][p]);
+            for(int p = 0; p < ineachbasis; p++) swap(a[k][p], a[k-1][p]);
             GSO(a, b, noofbasis, ineachbasis, B, u);
-            k = max(2, k-1);
+            k = max(1, k-1);
         }
     }
     
     //Output the result
-    for(int i = 1; i <= noofbasis; i++)
+    for(int i = 0; i < noofbasis; i++)
     {
-        for(int j = 1; j <= ineachbasis; j++)
+        for(int j = 0; j < ineachbasis; j++)
         {
             cout<<a[i][j]<<" ";
         }
         cout<<"\n";
     }
+    a.clear();
+    b.clear();
+    u.clear();
 }
