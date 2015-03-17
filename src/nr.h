@@ -178,8 +178,12 @@ public:
   inline void abs(const Z_NR<Z>& a);
   /** Returns the smallest non-negative expo such that |value| < 2^expo. */
   inline long exponent() const;
+  
+  /** Generates random integer between 0 and 2^n-1. */
   inline void randb(int bits);
+  /** Generates random integer between 0 and n - 1  */
   inline void randm(const Z_NR<Z>& max);
+
   inline bool is_zero() const {return *this == 0;}
 
   /** Efficiently swaps the values of two Z_NR. */

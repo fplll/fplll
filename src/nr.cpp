@@ -210,6 +210,27 @@ inline long Z_NR<long>::exponent() const {
 }
 
 template<>
+inline void Z_NR<long>::randb(int bits) {
+  mpz_t temp;
+  mpz_init(temp);
+  mpz_urandomb(temp, RandGen::getGMPState(), bits);
+  data = mpz_get_si(temp);
+  mpz_clear(temp);
+}
+
+template<>
+inline void Z_NR<long>::randm(const Z_NR<long>& max) {
+  mpz_t temp, lim;
+  mpz_init(temp);
+  mpz_init(lim);
+  mpz_set_si(lim, max.data);
+  mpz_urandomm(temp, RandGen::getGMPState(), lim);
+  data = mpz_get_si(temp);
+  mpz_clear(temp);
+  mpz_clear(lim);
+}
+
+template<>
 inline void Z_NR<long>::swap(Z_NR<long>& a) {
   std::swap(data, a.data);
 }
@@ -430,6 +451,28 @@ inline long Z_NR<double>::exponent() const {
   frexp(data, &intExpo);
   return static_cast<long>(intExpo);
 }
+
+template<>
+inline void Z_NR<double>::randb(int bits) {
+  mpz_t temp;
+  mpz_init(temp);
+  mpz_urandomb(temp, RandGen::getGMPState(), bits);
+  data = mpz_get_d(temp);
+  mpz_clear(temp);
+}
+
+template<>
+inline void Z_NR<double>::randm(const Z_NR<double>& max) {
+  mpz_t temp, lim;
+  mpz_init(temp);
+  mpz_init(lim);
+  mpz_set_d(lim, max.data);
+  mpz_urandomm(temp, RandGen::getGMPState(), lim);
+  data = mpz_get_d(temp);
+  mpz_clear(temp);
+  mpz_clear(lim);
+}
+
 template<>
 inline void Z_NR<double>::swap(Z_NR<double>& a) {
   std::swap(data, a.data);
