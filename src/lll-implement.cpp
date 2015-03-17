@@ -5,9 +5,21 @@
 using namespace std;
 
 //Calculate dot product of a[i] and b[j], used by GSO()
-int dotProduct(const Matrix<int>& a, int i,const Matrix<int>& b, int j, int ineachbasis)
+float dotProduct(const Matrix<int>& a, int i, const Matrix<float>& b, int j)
 {
-    int dot= 0;
+    float dot= 0;
+    int ineachbasis = a.getCols();
+    for(int k = 0; k < ineachbasis; k++)
+    {
+        dot+=(a[i][k]*b[j][k]);
+    }
+    return dot;
+}
+
+float dotProduct(const Matrix<float>& a, int i, const Matrix<float>& b, int j)
+{
+    float dot= 0;
+    int ineachbasis = a.getCols();
     for(int k = 0; k < ineachbasis; k++)
     {
         dot+=(a[i][k]*b[j][k]);
@@ -16,13 +28,16 @@ int dotProduct(const Matrix<int>& a, int i,const Matrix<int>& b, int j, int inea
 }
 
 //Apply Gram-Schmidt Process, matrix b gives the Gram-Schmidt basis
-void GSO(Matrix<int>& a, Matrix<int>& b, int noofbasis, int ineachbasis, int B[], Matrix<float>& u)
+void GSO(Matrix<float>& b, Matrix<float>& u, float B[], const Matrix<int> a)
 {
+    int noofbasis, ineachbasis;
+    noofbasis = a.getRows();
+    ineachbasis = a.getCols();
+    
     int i = 0;
     for(int j = 0; j < ineachbasis; j++) b[i][j] = a[i][j];
     
-    B[0] = dotProduct(b, 0, b, 0, ineachbasis);
-    
+    B[0] = dotProduct(b, 0, b, 0);
     
     for(i = 1; i<noofbasis; i++)
     {
@@ -31,18 +46,19 @@ void GSO(Matrix<int>& a, Matrix<int>& b, int noofbasis, int ineachbasis, int B[]
         for(int j = 0; j <= i-1; j++)
         {
 	    //Calculate projection and find orthogonal basis
-            u[i][j] = dotProduct(a, i, b, j, ineachbasis)/B[j];
+            u[i][j] = dotProduct(a, i, b, j)/B[j];
             for(int k = 0; k < ineachbasis; k++) b[i][k] = b[i][k] - (u[i][j]*b[j][k]);
         }
         
-        B[i] = dotProduct(b, i, b, i, ineachbasis);
+        B[i] = dotProduct(b, i, b, i);
         
     }
 }
 
 //Size Reduction
-void RED(Matrix<int>& a, Matrix<float>& u, int k, int l, int noofbasis)
+void RED(Matrix<int>& a, Matrix<float>& u, int k, int l)
 {
+	int noofbasis = a.getRows();
         float r = 0.5 + u[k][l];
         int f = floor(r);
         for(int p = 0; p < noofbasis; p++)
@@ -66,8 +82,8 @@ void LLLImplement(const Matrix<int> &A)
     
     Matrix<int> a(noofbasis, ineachbasis);
     Matrix<float> u(noofbasis, ineachbasis);
-    Matrix<int> b(noofbasis, ineachbasis);
-    int B[noofbasis];
+    Matrix<float> b(noofbasis, ineachbasis);
+    float B[noofbasis];
     
     for(int i = 0; i < noofbasis; i++)
     {
@@ -77,7 +93,7 @@ void LLLImplement(const Matrix<int> &A)
         }
     }
     
-    GSO(a, b, noofbasis, ineachbasis, B, u);
+    GSO(b, u, B, a);
     
     int k = 1;
     while(k<noofbasis)
@@ -86,7 +102,7 @@ void LLLImplement(const Matrix<int> &A)
         {
 	    //Length reduce a[k] and calculate correct u[k][j] values
             if(u[k][j]>0.5 || u[k][j]<-0.5)
-                RED(a, u, k, j, noofbasis);
+                RED(a, u, k, j);
         }
         if(B[k] >= (0.75 - (u[k][k-1]*u[k][k-1]))*B[k-1] )	//Lovasz Condition (delta) = 0.75
         {
@@ -95,7 +111,7 @@ void LLLImplement(const Matrix<int> &A)
         else	//Lovasz Condition fails, swap rows and calculate new values
         {
             for(int p = 0; p < ineachbasis; p++) swap(a[k][p], a[k-1][p]);
-            GSO(a, b, noofbasis, ineachbasis, B, u);
+            GSO(b, u, B, a);
             k = max(1, k-1);
         }
     }
