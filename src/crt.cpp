@@ -3,7 +3,7 @@
 *	C = c_{i} (mod p_{i})     i = 1,...,k
 *	by recombining the c_{i}'s using Chinese Remainder Theorem. 
 *
-* Compile using the command: g++ crt.cpp -std=c++11 -o crt
+* Compile using the command: g++ crt.cpp -std=c++11 -o crt -lgmp
 *
 *	Usage:
 *	Sample Input: 
@@ -17,41 +17,8 @@
 
 #include <iostream>
 #include <vector>
-
+#include <gmp.h>
 using namespace std;
-
-// Structure "egcd" to store the GCD, and Bezout Coefficients such that a*x + b*y = gcd(a, b)
-typedef struct {
-  int gcd;
-  int x;
-  int y;  
-} egcd;
-
-// Recursive function for Extended Euclid's Algorithm
-template<class T>
-egcd Extended_Euclid(T a, T b)
-{
-  // Swap elements if a is greater than b
-  if ( a > b) {
-    T t = a;
-    a = b;
-    b = t;
-  }
-
-  egcd e;
-  if ( a == 0)  {
-      e = {b, 0, 1};  
-    return e;
-  }
-  else  {
-    e = Extended_Euclid(b%a, a);
-    T temp = e.y;
-    e.y = e.x;
-    e.x = temp; 
-    e = {e.gcd, e.x-((b/a)*e.y), e.y};
-    return e;
-  }
-}
 
 /**
 * Define P = p_1 * p_2 * ... * p_k
@@ -61,60 +28,69 @@ egcd Extended_Euclid(T a, T b)
 * congruence relations as C = c_0 * e_0 + c_1 * e_1 + ... + c_k * e_k
 */
 template<class T>
-T Recombine_CRT(vector<T>& numbers, vector<T>& moduli)
+T Recombine_CRT(const T numbers, const T moduli, const mpz_t array_size)
 {
-  if (numbers.size() == 0 || moduli.size() == 0)  {
-    cout << "Arguments to function should be non-empty lists." << endl;
-    return -1;
-  }
-  if (numbers.size() != moduli.size())  {
-    cout << "Arguments to function should be lists of same length." << endl;
-    return -1;
-  }
+	mpz_t *result = new mpz_t[1];
+	mpz_t *s = new mpz_t[mpz_get_ui(array_size)];
+	mpz_t *t = new mpz_t[mpz_get_ui(array_size)];
 
-  T C = 0;
-  T P = moduli[0];
-  egcd e;
-  vector<int> E(numbers.size());
-  for ( int i = 1; i< moduli.size(); i++) {
-    P = P*moduli[i];
-  }
-  
-  for ( int i = 0; i < moduli.size(); i++) {
-    e = Extended_Euclid(moduli[i], P/moduli[i]);
-    E[i] = (e.y*P)/moduli[i];
-    C = C + numbers[i]*E[i]; 
-  }
+	mpz_t gcd;
+	mpz_init(gcd);
+	mpz_t temp;
+	mpz_init(temp);
+	mpz_t moduli_lcm;
+  	mpz_init(moduli_lcm);
+  	
+  	mpz_set_ui(moduli_lcm, 1);
+  	for (int i = 0; i < mpz_get_ui(array_size); i++)	{
+  		mpz_lcm(moduli_lcm, moduli_lcm, moduli[i]);
+  	}
 
-  //To find a non-negative solution
-  if( C < 0)  {
-    C = P + C;
-  }
-  return C%P;
+  	//Chinese Remainder Algorithm
+	for (int i = 0; i < mpz_get_ui(array_size); i++)	{
+		mpz_divexact(temp, moduli_lcm, moduli[i]);
+  		mpz_gcdext(gcd, s[i], t[i], moduli[i], temp);
+  		mpz_mul(s[i], t[i], temp);
+  		mpz_addmul(result[0], numbers[i], s[i]);
+	}
+
+	mpz_cdiv_r(result[0], result[0], moduli_lcm);
+
+	// Return a non-negative solution
+	if (mpz_cmp_ui(result[0], 0) < 0)	{
+		mpz_add(result[0], result[0], moduli_lcm);
+	}
+	
+	return result;
 }
 
 int main()
 {
 	//Initializing variables/objects
-  int array_size;
-  int result;
-  cin >> array_size;
-  vector<int> numbers(array_size);
-  vector<int> moduli(array_size);
-     
-	//Scanning for c_{i} and p_{i} as input;
-  for (int i=0;i<array_size;i++) {
-    	cin >> numbers[i];
+	mpz_t i;
+	mpz_init(i);
+	mpz_t array_size;
+	mpz_init (array_size);
+	mpz_inp_str(array_size, NULL, 10);
+
+	mpz_t *numbers = new mpz_t[mpz_get_ui(array_size)];
+	mpz_t *moduli = new mpz_t[mpz_get_ui(array_size)];
+	mpz_t *result = new mpz_t[1];
+
+	//Scanning for numbers and moduli arrays as input;
+	for (int j = 0; j < mpz_get_ui(array_size); j++)	{
+		mpz_inp_str(numbers[j], NULL, 10);
 	}
-	for (int i=0;i<array_size;i++) {
-	   	cin >> moduli[i];
+	for (int j = 0; j < mpz_get_ui(array_size); j++)	{
+		mpz_inp_str(moduli[j], NULL, 10);
 	}
+	
+  	//Calling the Recombine function
+  	result = Recombine_CRT(numbers, moduli, array_size);
 
-	//Calling the Recombine function
-  result = Recombine_CRT(numbers, moduli);
+  	//Print answer
+	mpz_out_str(NULL, 10, result[0]);
+	cout << endl;
 
-  //Print answer
-	cout << result << endl;	
-
-  return 0;
+  	return 0;
 }
