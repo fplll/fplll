@@ -1,0 +1,34 @@
+#! /bin/bash
+./fplll < dim55_in > foo
+./fplll -m proved < foo > foo2
+diff foo foo2
+rm foo foo2
+./latticegen r 50 1000 | ./fplll -m fast -f double > foo
+./fplll -m proved < foo > foo2
+diff foo foo2
+rm foo foo2
+./latticegen r 30 2000 | ./fplll -m heuristic -f dpe > foo
+./fplll -m proved < foo > foo2
+diff foo foo2
+rm foo foo2
+./latticegen r 30 2000 | ./fplll -m proved -f dpe > foo
+./fplll -m proved < foo > foo2
+diff foo foo2
+rm foo foo2	
+./fplll -m heuristic < example_in > foo
+cat foo example_out | ./llldiff
+rm foo
+./fplll -m fast -f double < example_in > foo
+cat foo example_out | ./llldiff
+rm foo
+./fplll -m proved < example_in > foo
+cat foo example_out | ./llldiff
+rm foo
+./fplll -m fastearly -f double < example_in > foo
+cat foo example_out | ./llldiff
+rm foo
+./fplll -m heuristicearly < example_in > foo
+cat foo example_out | ./llldiff
+rm foo
+./fplll -a svp < example_svp_in > foo
+diff foo example_svp_out
