@@ -109,9 +109,21 @@ public:
    */
   inline void getGram(FT& f, int i, int j);
 
+  /**
+   * Returns the mu matrix
+   * Coefficients of the Gram Schmidt Orthogonalization
+   * (lower triangular matrix)
+   * mu(i, j) = r(i, j) / ||b*_j||^2.
+   */
   const Matrix<FT>& getMuMatrix() {
     return mu;
   }
+  
+    /**
+   * Returns the r matrix
+   * Coefficients of the Gram Schmidt Orthogonalization
+   * (lower triangular matrix)
+   */
   const Matrix<FT>& getRMatrix() {
     return r;
   }
@@ -218,7 +230,11 @@ public:
    */
   void row_addmul_we(int i, int j, const FT& x, long expoAdd);
 
-  // Early reduction
+  /** 
+   * Early reduction
+   * Allowed when enableIntGram=false,
+   * nKnownCols large enough to compute all the g(i,j)
+   */
   void lockCols();
   void unlockCols();
 
@@ -232,12 +248,17 @@ public:
   void createRows(int nNewRows);
 
   /**
-   * Removes the last row of b (and of u if enableTranform=true).
+   * Removes the last row of b (and of u if enableTransform=true).
    * Do not use if enableInvTransform=true.
    */
   void removeLastRow();
   void removeLastRows(int nRemovedRows);
 
+  /**
+   * Executes transformation by creating extra rows,
+   * Calculating new entries, swapping the new rows with previous ones,
+   * And then removing the excess rows
+   */
   void applyTransform(const Matrix<FT>& transform, int srcBase, int targetBase);
 
   void applyTransform(const Matrix<FT>& transform, int srcBase) {
