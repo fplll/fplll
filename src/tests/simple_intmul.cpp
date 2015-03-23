@@ -4,15 +4,16 @@
 #include<fplll.h>
 #include<nr.h>
 
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
+
 using namespace std;
 using namespace fplll;
 
-
-template<class T> int zeroIdentity()
-{
+template<class T> int zeroIdentity() {
     T a, b, res;
     a = (long) 0;
-    b.randb(30);
+    b.randb(20);
     res = a;
 
     a.mul(a, b);
@@ -24,11 +25,10 @@ template<class T> int zeroIdentity()
     return a.cmp(res);
 }
 
-template<class T> int commutative()
-{
+template<class T> int commutative() {
     T a, b, lhs, rhs;
-    a.randb(30);
-    b.randb(30);
+    a.randb(20);
+    b.randb(20);
 
     lhs.mul(a, b);
     rhs.mul(b, a);
@@ -36,8 +36,7 @@ template<class T> int commutative()
     return lhs.cmp(rhs);
 }
 
-template<class T> int associative()
-{
+template<class T> int associative() {
     T a, b, c, lhs, rhs;
     a.randb(30);
     b.randb(30);
@@ -52,12 +51,11 @@ template<class T> int associative()
     return lhs.cmp(rhs);
 }
 
-template<class T> int distributive()
-{
+template<class T> int distributive() {
     T a, b, c, lhs, rhs, temp;
-    a.randb(30);
-    b.randb(30);
-    c.randb(30);
+    a.randb(20);
+    b.randb(20);
+    c.randb(20);
 
     lhs.add(b, c);
     lhs.mul(a, lhs);
@@ -69,26 +67,28 @@ template<class T> int distributive()
     return lhs.cmp(rhs);
 }
 
-template<class T> void test_mul()
-{
-    if( zeroIdentity<T>() )
-        FPLLL_ABORT("Zero Identity failed.\n");
-    if( commutative<T>() )
-        FPLLL_ABORT("Commutative Identity failed.\n");
-    if( associative<T>() )
-        FPLLL_ABORT("Associative Identity failed.\n");
-    if( distributive<T>() )
-        FPLLL_ABORT("Distributive Identity failed.\n");
-}
-
-int main()
-{
+TEST_CASE("Integer Multiplication", "intmul") {
     RandGen g;
     g.initWithTime();
 
-    test_mul<Z_NR<long> >();
-    test_mul<Z_NR<double> >();
-    test_mul<Z_NR<mpz_t> >();
-    
-    return 0;
+    SECTION("long") { 
+        CHECK(zeroIdentity<Z_NR<long> >() == 0);
+        CHECK(commutative<Z_NR<long> >() == 0);
+        CHECK(associative<Z_NR<long> >() == 0);
+        CHECK(distributive<Z_NR<long> >() == 0);
+    }
+
+    SECTION("double") {
+        CHECK(zeroIdentity<Z_NR<double> >() == 0);
+        CHECK(commutative<Z_NR<double> >() == 0);
+        CHECK(associative<Z_NR<double> >() == 0);
+        CHECK(distributive<Z_NR<double> >() == 0);
+    }
+
+    SECTION("mpz_t") {
+        CHECK(zeroIdentity<Z_NR<mpz_t> >() == 0);
+        CHECK(commutative<Z_NR<mpz_t> >() == 0);
+        CHECK(associative<Z_NR<mpz_t> >() == 0);
+        CHECK(distributive<Z_NR<mpz_t> >() == 0);
+    }
 }
