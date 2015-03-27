@@ -91,7 +91,7 @@ void SWAP(Matrix<int>& a, Matrix<float>& u, Matrix<int>& H, Matrix<float>& b, fl
     }
 }
 
-void LLLImplement(Matrix<int>& A)
+void LLLImplement(const Matrix<int>& A)
 {
     int noofbasis, ineachbasis;
     
@@ -101,7 +101,7 @@ void LLLImplement(Matrix<int>& A)
     Matrix<int> a(noofbasis, ineachbasis);
     Matrix<float> u(noofbasis, ineachbasis);
     Matrix<float> b(noofbasis, ineachbasis);
-    Matrix<int> H(noofbasis, ineachbasis);
+    Matrix<int> H(noofbasis, ineachbasis);	//Transformation Matrix
     float B[noofbasis];
     int k, kmax;
     
