@@ -84,6 +84,9 @@ public:
   
   BKZParam *preprocessing;
 
+  /** Sets all pruning coefficients to 1, except the last <level> coefficients,
+      these will be linearly with slope -1 / blockSize.
+  */
   inline void enableLinearPruning(int level) {
     int startDescent = blockSize - level;
     
@@ -99,9 +102,16 @@ public:
                      
 };
 
+/** Finds the slope of the curve fitted to the lengths of the vectors from
+    startRow to stopRow. The slope gives an indication of the quality of the
+    LLL-reduced basis.
+*/
 template<class FT>
 static double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow);
 
+/** Uses the Gaussian Heuristic Distance to compute a bound on the length of the
+    shortest vector.
+*/
 template<class FT>
 static void computeGaussHeurDist(MatGSO<Integer, FT>& m, FT& maxDist, long maxDistExpo, int kappa, int blockSize, double ghFactor);
 
@@ -114,7 +124,7 @@ public:
   ~BKZReduction();
 
   /**
-     Run enumeration to find a new shortest vecto in the sublattice B[kappa,kappa+blockSize]
+     Run enumeration to find a new shortest vector in the sublattice B[kappa,kappa+blockSize]
 
      @param kappa Start row
      @param blockSize Block size to use, this may be < param.blockSize
