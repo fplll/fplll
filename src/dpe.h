@@ -706,7 +706,7 @@ dpe_swap (dpe_t x, dpe_t y)
 DPE_INLINE void
 dpe_ugly_log (dpe_t x, const dpe_t y)
 {
-  dpe_set_d (x, ((double) DPE_EXP(y)) *  0.301 + log (DPE_MANT(y))); 
+  dpe_set_d (x, ((double) DPE_EXP(y)) *  M_LN2 + log (DPE_MANT(y)));
 }
 
 DPE_INLINE void
