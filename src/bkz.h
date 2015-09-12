@@ -86,6 +86,8 @@ public:
 
   /** Sets all pruning coefficients to 1, except the last <level> coefficients,
       these will be linearly with slope -1 / blockSize.
+
+      @param level number of levels in linear descent
   */
   inline void enableLinearPruning(int level) {
     int startDescent = blockSize - level;
@@ -96,8 +98,8 @@ public:
     pruning.resize(blockSize);
     for(int k=0; k< startDescent; k++)
       pruning[k] = 1.0;
-    for(int k=startDescent; k<blockSize; k++)
-      pruning[k] = ((double)(blockSize-k-startDescent))/blockSize;
+    for(int k=0; k<blockSize; k++)
+      pruning[k] = ((double)(blockSize-k-1))/blockSize;
   }
                      
 };
