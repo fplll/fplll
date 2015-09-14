@@ -181,9 +181,9 @@ Options for BKZ-reduction:
 * -p &lt;precision&gt;            Precision of the floating-point arithmetic with -f mpfr
 * -bkzmaxloops &lt;loops&gt;      Maximum number of full loops.
 * -bkzmaxtime &lt;time&gt;        Stop after <i>time</i> seconds (up to loop completion).
-* -bkzautoabort             Heuristic, stop when the average slope of log(||b_i*||) does not decrease fast enough.
+* -bkzautoabort                   Heuristic, stop when the average slope of log(||b_i*||) does not decrease fast enough.
 * -bpre &lt;blocksize&gt;         Pre-processing block size. Between 2 and the block size.
-* -bkzlinearpruning &lt;level&gt; Enables linear pruning in enumeration, in level dimensions.
+* -bkzlinearpruning &lt;level&gt; Enables linear pruning in enumeration, such that the last level steps drop with slope -1/blockSize
 * -bkzdumgso &lt;file_name&gt;    Dumps the log(||b_i*||)'s in specified file.
 
 <a name="llldiff"></a>
