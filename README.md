@@ -116,13 +116,13 @@ lattice bases).
 
 The options are :
 
-* r &lt;d&gt; &lt;b&gt; : generates a knapsack style matrix of dimension d,d+1 and b bits.
-* s &lt;d&gt; &lt;b&gt; &lt;b2&gt; : generates a simdioph matrix.
-* u &lt;d&gt; &lt;b&gt; : generates an uniform matrix.
-* n &lt;d&gt; &lt;b&gt; &lt;q&gt; : generates an ntru like matrix.
-* N &lt;d&gt; &lt;b&gt; &lt;q&gt; : generates an ntru like matrix.
-* a &lt;d&gt; &lt;f&gt; : generates an ajtai style matrix.
-* A &lt;d&gt; : generates an ajtai style matrix. Also requires d coefficients.
+* r `d` `b` : generates a knapsack style matrix of dimension d,d+1 and b bits.
+* s `d` `b` `b2` : generates a simdioph matrix.
+* u `d` `b` : generates an uniform matrix.
+* n `d` `b` `q` : generates an ntru like matrix.
+* N `d` `b` `q` : generates an ntru like matrix.
+* a `d` `f` : generates an ajtai style matrix.
+* A `d` : generates an ajtai style matrix. Also requires d coefficients.
 
 The matrix is printed in stdout.
 
@@ -145,14 +145,14 @@ The options are:
 * -a lll : LLL-reduction (default).
 * -a bkz : BKZ-reduction.
 * -a svp : print a shortest vector of the lattice.
-* -r &lt;size&gt;, -c &lt;size&gt; : ignored, provided for compatibility with previous versions of fplll.
+* -r `size`, -c `size` : ignored, provided for compatibility with previous versions of fplll.
 
 Options for LLL-reduction:
 
-* -d &lt;delta&gt; :     delta (default=0.99)
-* -e &lt;eta&gt; :       eta (default=0.51)
-* -l &lt;lovasz&gt; :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz)
-* -p &lt;precision&gt; : precision of the floating-point arithmetic, works only with -f mpfr.
+* -d `delta` :     delta (default=0.99)
+* -e `eta` :       eta (default=0.51)
+* -l `lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz)
+* -p `precision` : precision of the floating-point arithmetic, works only with -f mpfr.
 
 * -f mpfr : sets the floating-point type to MPFR (default if m=proved).
 * -f dpe : sets the floating-point type to DPE (default if m=heuristic/heuristicearly).
@@ -176,15 +176,15 @@ default options, it is guaranteed that the basis is (0.98,0.52)-LLL-reduced.
 
 Options for BKZ-reduction:
 
-* -b &lt;blocksize&gt;            Block size, mandatory, between 2 and the number of rows.
-* -f &lt;float_type&gt;           Same as LLL (-p is required if float_type=mpfr)
-* -p &lt;precision&gt;            Precision of the floating-point arithmetic with -f mpfr
-* -bkzmaxloops &lt;loops&gt;      Maximum number of full loops.
-* -bkzmaxtime &lt;time&gt;        Stop after <i>time</i> seconds (up to loop completion).
+* -b `blocksize`            Block size, mandatory, between 2 and the number of rows.
+* -f `float_type`           Same as LLL (-p is required if float_type=mpfr)
+* -p `precision`            Precision of the floating-point arithmetic with -f mpfr
+* -bkzmaxloops `loops`      Maximum number of full loops.
+* -bkzmaxtime `time`        Stop after <i>time</i> seconds (up to loop completion).
 * -bkzautoabort                   Heuristic, stop when the average slope of log(||b_i*||) does not decrease fast enough.
-* -bpre &lt;blocksize&gt;         Pre-processing block size. Between 2 and the block size.
-* -bkzlinearpruning &lt;level&gt; Enables linear pruning in enumeration, such that the last level steps drop with slope -1/blockSize
-* -bkzdumgso &lt;file_name&gt;    Dumps the log(||b_i*||)'s in specified file.
+* -bpre `blocksize`         Pre-processing block size. Between 2 and the block size.
+* -bkzlinearpruning `level` Enables linear pruning in enumeration, such that the last level steps drop with slope -1/blockSize
+* -bkzdumgso `file_name`    Dumps the log(||b_i*||)'s in specified file.
 
 <a name="llldiff"></a>
 ### llldiff ###
