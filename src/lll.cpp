@@ -145,16 +145,6 @@ bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
 }
 
 template<class ZT, class FT>
-bool LLLReduction<ZT, FT>::sizeReduction(int kappaMin, int kappaEnd) {
-  if (kappaEnd == -1) kappaEnd = m.d;
-  for (int k = kappaMin; k < kappaEnd; k++) {
-    if ((k > 0 && !babai(k, k)) || !m.updateGSORow(k))
-      return false;
-  }
-  return setStatus(RED_SUCCESS);
-}
-
-template<class ZT, class FT>
 bool LLLReduction<ZT, FT>::babai(int kappa, int nCols) {
   //FPLLL_TRACE_IN("kappa=" << kappa);
   long maxExpo = LONG_MAX;
