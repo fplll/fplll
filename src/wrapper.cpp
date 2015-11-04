@@ -73,6 +73,10 @@ bool Wrapper::little(int kappa, int precision) {
   return kappa < p;
 }
 
+
+/**
+ * main function. Method determines whether heuristic, fast or proved
+ */
 template<class Z, class F>
 int Wrapper::callLLL(ZZ_mat<Z>& bz, ZZ_mat<Z>& uz, ZZ_mat<Z>& uInvZ,
         LLLMethod method, int precision, double delta, double eta) {
@@ -121,6 +125,10 @@ int Wrapper::callLLL(ZZ_mat<Z>& bz, ZZ_mat<Z>& uz, ZZ_mat<Z>& uInvZ,
     return -1;
 }
 
+
+/**
+ * pass the method to callLLL()
+ */
 template<class F>
 int Wrapper::fastLLL(double delta, double eta) {
   return callLLL<mpz_t, F>(b, u, uInv, LM_FAST, 0, delta, eta);
@@ -140,6 +148,10 @@ int Wrapper::provedLLL(ZZ_mat<Z>& bz, ZZ_mat<Z>& uz,
   return callLLL<Z, F>(bz, uz, uInvZ, LM_PROVED, precision, delta, eta);
 }
 
+
+/**
+ * In heuristicLoop(), we only use double or dpe_t or mpfr_t.
+ */
 int Wrapper::heuristicLoop(int precision) {
   int kappa;
 
@@ -184,7 +196,13 @@ int Wrapper::provedLoop(int precision) {
     return -1; // This point should never be reached
 }
 
+
+/**
+ * last call to LLL. Need to be provedLLL.
+ */
 int Wrapper::lastLLL() {
+
+  /* <long, FT> */
 #ifdef FPLLL_WITH_ZLONG
   if (useLong) {
     int kappa;
@@ -195,6 +213,8 @@ int Wrapper::lastLLL() {
     return kappa;
   }
 #endif
+
+  /* <mpfr, FT> */
 #ifdef FPLLL_WITH_DPE
   if (goodPrec <= numeric_limits<double>::digits) {
     return provedLLL<mpz_t, dpe_t>(b, u, uInv, goodPrec, delta, eta);
@@ -203,8 +223,16 @@ int Wrapper::lastLLL() {
   return provedLLL<mpz_t, mpfr_t>(b, u, uInv, goodPrec, delta, eta);
 }
 
+
+/**
+ * Wrapper.lll() calls
+ *  - heuristicLLL()
+ *  - fastLLL()
+ *  - provedLLL()
+ */
 bool Wrapper::lll() {
-  if (b.getRows() == 0 || b.getCols() == 0) return RED_SUCCESS;
+  if (b.getRows() == 0 || b.getCols() == 0)
+    return RED_SUCCESS;
 
 #ifdef FPLLL_WITH_ZLONG
   bool heuristicWithLong = maxExponent < numeric_limits<long>::digits - 2
@@ -217,16 +245,22 @@ bool Wrapper::lll() {
 
   int kappa;
 
+  /* small matrix */
   if (heuristicWithLong) {
 #ifdef FPLLL_WITH_ZLONG
     setUseLong(true);
+    /* try heuristicLLL <long, double> */
     heuristicLLL<long, double>(bLong, uLong, uInvLong, 0, delta, eta);
 #endif
   }
+  /* large matrix */
   else {
+
+    /* try fastLLL<mpz_t, double> */
     kappa = fastLLL<double>(delta, eta);
     bool lllFailure = (kappa != 0);
 
+    /* try fastLLL<mpz_t, long double> */
 #ifdef FPLLL_WITH_LONG_DOUBLE
     if (lllFailure) {
       kappa = fastLLL<long double>(delta, eta);
@@ -237,6 +271,7 @@ bool Wrapper::lll() {
     int lastPrec = numeric_limits<double>::digits;
 #endif
 
+    /* loop */
     if (lllFailure) {
       int precD = numeric_limits<double>::digits;
       if (little(kappa, lastPrec))
@@ -247,11 +282,16 @@ bool Wrapper::lll() {
   }
 
   setUseLong(provedWithLong);
+  /* final LLL */
   kappa = lastLLL();
   setUseLong(false);
   return kappa == 0;
 }
 
+
+/**
+ * set blong <-- b
+ */
 void Wrapper::setUseLong(bool value) {
 #ifdef FPLLL_WITH_ZLONG
   if (!useLong && value) {
