@@ -1,7 +1,7 @@
 #ifndef FPLLL_CONFIG__H
 #define FPLLL_CONFIG__H
 
-// use quaddouble library
-#define FPLLL_WITH_QD @FPLLL_WITH_QD@
+/* use quaddouble library */
+#undef FPLLL_WITH_QD
 
 #endif //FPLLL_CONFIG__H

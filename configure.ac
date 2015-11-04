@@ -64,9 +64,8 @@ AC_CHECK_HEADER(qd/dd_real.h,
     have_libqd="no")
 
 if test "x${have_libqd}" = "xyes"; then
-   FPLLL_WITH_QD=1
    LDFLAGS="$LDFLAGS -lqd"
-   AC_SUBST(FPLLL_WITH_QD)
+   AC_DEFINE([FPLLL_WITH_QD], [1], [define if libqd-dev is available])
 fi
 
 # Checks for header files.
@@ -84,7 +83,8 @@ AC_C_VOLATILE
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([floor pow rint sqrt strtol])
 
+AC_CONFIG_HEADERS([src/fplll_config.h])
 AC_CONFIG_FILES([Makefile
-                 src/Makefile
-                 src/fplll_config.h])
+                 src/Makefile])
 AC_OUTPUT
+
