@@ -53,6 +53,14 @@ void zerosLast(ZZ_mat<ZT>& b, ZZ_mat<ZT>& u, ZZ_mat<ZT>& uInvT) {
   }
 }
 
+
+/**
+ * LLL with a typical method "proved or heuristic or fast".
+ * @ proved:       exact gram +   exact rowexp +   exact rowaddmul
+ * @ heuristic:  approx. gram +   exact rowexp +   exact rowaddmul
+ * @ fast:       approx. gram + approx. rowexp + approx. rowaddmul
+ *    (double, long double, dd_real, qd_real)
+ */
 template<class ZT, class FT>
 int lllReductionZF(ZZ_mat<ZT>& b, ZZ_mat<ZT>& u, ZZ_mat<ZT>& uInv,
                    double delta, double eta, LLLMethod method, int flags) {
@@ -88,12 +96,18 @@ int lllReductionWrapper(IntMatrix& b, IntMatrix& u, IntMatrix& uInv,
   return wrapper.status;
 }
 
+
+/**
+ * Main function called from call_lll().
+ */
 template<class ZT>
 int lllReductionZ(ZZ_mat<ZT>& b, ZZ_mat<ZT>& u, ZZ_mat<ZT>& uInv,
-                  double delta, double eta,
-                  LLLMethod method, IntType intType, FloatType floatType,
-                  int precision, int flags) {
+                  double delta, double eta, LLLMethod method,
+                  IntType intType, FloatType floatType,
+                  int precision, int flags)
+{
 
+  /* switch to wrapper */
   if (method == LM_WRAPPER)
     return lllReductionWrapper(b, u, uInv, delta, eta,
             floatType, precision, flags);
@@ -101,10 +115,10 @@ int lllReductionZ(ZZ_mat<ZT>& b, ZZ_mat<ZT>& u, ZZ_mat<ZT>& uInv,
   FPLLL_CHECK(!(method == LM_PROVED && (flags & LLL_EARLY_RED)),
     "LLL method 'proved' with early reduction is not implemented");
 
-  // Computes the parameters required for the proved version
+  /* computes the parameters required for the proved version */
   int goodPrec = l2MinPrec(b.getRows(), delta, eta, LLL_DEF_EPSILON);
 
-  // Sets the parameters and checks the consistency
+  /* sets the parameters and checks the consistency */
   int selPrec = 0;
   if (method == LM_PROVED) {
     selPrec = (precision != 0) ? precision : goodPrec;
@@ -115,6 +129,7 @@ int lllReductionZ(ZZ_mat<ZT>& b, ZZ_mat<ZT>& u, ZZ_mat<ZT>& uInv,
 
   FloatType selFT = floatType;
 
+  /* if manually input precision */
   if (precision != 0) {
     if (selFT == FT_DEFAULT) {
       selFT = FT_MPFR;
@@ -130,12 +145,19 @@ int lllReductionZ(ZZ_mat<ZT>& b, ZZ_mat<ZT>& u, ZZ_mat<ZT>& uInv,
     else if (selPrec <= static_cast<int>(FP_NR<dpe_t>::getprec()))
       selFT = FT_DPE;
 #endif
+#ifdef FPLLL_WITH_QD
+    else if (selPrec <= static_cast<int>(FP_NR<dd_real>::getprec()))
+      selFT = FT_DD;
+    else if (selPrec <= static_cast<int>(FP_NR<qd_real>::getprec()))
+      selFT = FT_QD;
+#endif
     else
       selFT = FT_MPFR;
   }
   else if (method == LM_FAST
-           && (selFT != FT_DOUBLE && selFT != FT_LONG_DOUBLE)) {
-    FPLLL_ABORT("'double' or 'long double' required for "
+           && (selFT != FT_DOUBLE && selFT != FT_LONG_DOUBLE
+               && selFT != FT_DD && selFT != FT_QD)) {
+    FPLLL_ABORT("'double' or 'long double' or 'dd' or 'qd' required for "
                   << LLL_METHOD_STR[method]);
   }
 
@@ -149,6 +171,13 @@ int lllReductionZ(ZZ_mat<ZT>& b, ZZ_mat<ZT>& u, ZZ_mat<ZT>& uInv,
   else if (selFT == FT_DPE)
     selPrec = FP_NR<dpe_t>::getprec();
 #endif
+#ifdef FPLLL_WITH_QD
+  else if (selFT == FT_DD)
+    selPrec = FP_NR<dd_real>::getprec();
+  else if (selFT == FT_QD)
+    selPrec = FP_NR<qd_real>::getprec();
+#endif
+
 
   if (flags & LLL_VERBOSE) {
     cerr << "Starting LLL method '" << LLL_METHOD_STR[method] << "'" << endl
@@ -182,6 +211,22 @@ int lllReductionZ(ZZ_mat<ZT>& b, ZZ_mat<ZT>& u, ZZ_mat<ZT>& uInv,
             delta, eta, method, flags);
   }
 #endif
+#ifdef FPLLL_WITH_QD
+  else if (selFT == FT_DD) {
+    unsigned int old_cw;
+    fpu_fix_start(&old_cw);
+    status = lllReductionZF<ZT, dd_real>(b, u, uInv,
+                                         delta, eta, method, flags);
+    fpu_fix_end(&old_cw);
+  }
+  else if (selFT == FT_QD) {
+    unsigned int old_cw;
+    fpu_fix_start(&old_cw);
+    status = lllReductionZF<ZT, qd_real>(b, u, uInv,
+                                         delta, eta, method, flags);
+    fpu_fix_end(&old_cw);
+  }
+#endif
   else if (selFT == FT_MPFR) {
     int oldPrec = FP_NR<mpfr_t>::setprec(selPrec);
     status = lllReductionZF<ZT, mpfr_t>(b, u, uInv,
@@ -196,9 +241,11 @@ int lllReductionZ(ZZ_mat<ZT>& b, ZZ_mat<ZT>& u, ZZ_mat<ZT>& uInv,
   return status;
 }
 
-/* We define LLL for each input type instead of using a template,
-   in order to force the compiler to instantiate the functions. */
 
+/**
+ * We define LLL for each input type instead of using a template,
+ * in order to force the compiler to instantiate the functions.
+ */
 #define FPLLL_DEFINE_LLL(T, idT)                                        \
 int lllReduction(ZZ_mat<T>& b, double delta, double eta,                \
                  LLLMethod method, FloatType floatType,                 \
@@ -240,8 +287,21 @@ FPLLL_DEFINE_LLL(long, ZT_LONG)
 FPLLL_DEFINE_LLL(double, ZT_DOUBLE)
 #endif
 
+
+/***************************************************************/
+
+
+/**
+ * call LLLReduction() and then BKZReduction.
+ */
 template<class FT>
-int bkzReductionF(IntMatrix &b, const BKZParam& param, int selFT, double lllDelta, IntMatrix& u, IntMatrix& uInv) {
+int bkzReductionF ( IntMatrix &b,
+                    const BKZParam& param,
+                    int selFT,
+                    double lllDelta,
+                    IntMatrix& u,
+                    IntMatrix& uInv ) 
+{
   int gsoFlags = 0;
   if (b.getRows() == 0 || b.getCols() == 0)
     return RED_SUCCESS;
@@ -254,6 +314,10 @@ int bkzReductionF(IntMatrix &b, const BKZParam& param, int selFT, double lllDelt
   return bkzObj.status;
 }
 
+
+/**
+ * interface called from call_bkz() from main.cpp.
+ */
 int bkzReduction(IntMatrix* B, IntMatrix *U, const BKZParam& param, FloatType floatType, int precision) {
   IntMatrix emptyMat;
   IntMatrix& u = U ? *U : emptyMat;
@@ -270,30 +334,48 @@ int bkzReduction(IntMatrix* B, IntMatrix *U, const BKZParam& param, FloatType fl
   FPLLL_CHECK(!(selFT == FT_MPFR && precision == 0),
                "Missing precision for BKZ with floating point type mpfr");
 
+  /* lllwrapper (no FloatType needed, -m ignored) */
   if (param.flags & BKZ_NO_LLL)
     zerosLast(*B, u, uInv);
   else {
     Wrapper wrapper(*B, u, uInv, lllDelta, LLL_DEF_ETA, LLL_DEFAULT);
-    if (!wrapper.lll()) return wrapper.status;
+    if (!wrapper.lll())
+      return wrapper.status;
   }
 
+  
+  /* bkz (with FloatType) */
   int status;
   if (selFT == FT_DOUBLE) {
-    status = bkzReductionF< FP_NR<double> >(*B, param, selFT, lllDelta, u, uInv);
+    status = bkzReductionF< FP_NR<double> >(*B, param, selFT,
+                                            lllDelta, u, uInv);
   }
 #ifdef FPLLL_WITH_LONG_DOUBLE
   else if (selFT == FT_LONG_DOUBLE) {
-    status = bkzReductionF< FP_NR<long double> >(*B, param, selFT, lllDelta, u, uInv);
+    status = bkzReductionF< FP_NR<long double> >(*B, param, selFT,
+                                                 lllDelta, u, uInv);
   }
 #endif
 #ifdef FPLLL_WITH_DPE
   else if (selFT == FT_DPE) {
-    status = bkzReductionF< FP_NR<dpe_t> >(*B, param, selFT, lllDelta, u, uInv);
+    status = bkzReductionF< FP_NR<dpe_t> >(*B, param, selFT,
+                                           lllDelta, u, uInv);
+  }
+#endif
+#ifdef FPLLL_WITH_QD
+  else if (selFT == FT_DD) {
+    status = bkzReductionF< FP_NR<dd_real> >(*B, param, selFT,
+                                             lllDelta, u, uInv);
+  }
+  else if (selFT == FT_QD) {
+    status = bkzReductionF< FP_NR<qd_real> >(*B, param, selFT,
+                                             lllDelta, u, uInv);
   }
 #endif
   else if (selFT == FT_MPFR) {
     int oldPrec = FP_NR<mpfr_t>::setprec(precision);
-    status = bkzReductionF< FP_NR<mpfr_t> >(*B, param, selFT, lllDelta, u, uInv);
+    status = bkzReductionF< FP_NR<mpfr_t> >(*B, param, selFT,
+                                            lllDelta, u, uInv);
     FP_NR<mpfr_t>::setprec(oldPrec);
   }
   else {
@@ -304,6 +386,11 @@ int bkzReduction(IntMatrix* B, IntMatrix *U, const BKZParam& param, FloatType fl
   return status;
 }
 
+
+/**
+ * We define BKZ/HKZ for each input type instead of using a template,
+ * in order to force the compiler to instantiate the functions.
+ */
 int bkzReduction(IntMatrix& b, int blockSize, int flags, FloatType floatType, int precision) {
   BKZParam param;
   param.blockSize = blockSize;
@@ -322,7 +409,8 @@ int hkzReduction(IntMatrix& b, int flags) {
   BKZParam param;
   param.blockSize = b.getRows();
   param.delta = 1;
-  if (flags & HKZ_VERBOSE) param.flags |= BKZ_VERBOSE;
+  if (flags & HKZ_VERBOSE)
+    param.flags |= BKZ_VERBOSE;
   return bkzReduction(&b, NULL, param);
 }
 

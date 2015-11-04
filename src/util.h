@@ -73,38 +73,6 @@ inline void sqrNorm(T& result, const MatrixRow<T>& v, int n) {
   scalarProduct(result, v, v, n);
 }
 
-/** Prints x on stream os. */
-template<class T>
-ostream& operator<<(ostream& os, const Z_NR<T>& x) {
-  return os << x.getData();
-}
-
-template<>
-ostream& operator<<(ostream& os, const Z_NR<mpz_t>& x);
-
-/** Prints x on stream os. */
-template<class T>
-ostream& operator<<(ostream& os, const FP_NR<T>& x) {
-  return os << x.getData();
-}
-
-#ifdef FPLLL_WITH_DPE
-template<>
-ostream& operator<<(ostream& os, const FP_NR<dpe_t>& x);
-#endif
-
-template<>
-ostream& operator<<(ostream& os, const FP_NR<mpfr_t>& x);
-
-/** Reads x from stream is. */
-template<class T>
-istream& operator>>(istream& is, Z_NR<T>& x) {
-  return is >> x.getData();
-}
-
-template<>
-istream& operator>>(istream& is, Z_NR<mpz_t>& x);
-
 const double DEF_GSO_PREC_EPSILON = 0.03;
 
 /**
