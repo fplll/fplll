@@ -173,10 +173,14 @@ int Wrapper::heuristicLoop(int precision) {
     return provedLoop(precision);
 }
 
+
 int Wrapper::provedLoop(int precision) {
   int kappa;
-
+#ifdef FPLLL_WITH_QD
+  if (precision > PREC_DD)
+#else
   if (precision > numeric_limits<double>::digits)
+#endif
     kappa = provedLLL<mpz_t, mpfr_t>(b, u, uInv, precision, delta, eta);
   else if (maxExponent * 2 > MAX_EXP_DOUBLE) {
 #ifdef FPLLL_WITH_DPE
@@ -185,6 +189,10 @@ int Wrapper::provedLoop(int precision) {
     kappa = provedLLL<mpz_t, mpfr_t>(b, u, uInv, precision, delta, eta);
 #endif
   }
+#ifdef FPLLL_WITH_QD
+  else if (precision > numeric_limits<double>::digits)
+    kappa = provedLLL<mpz_t, dd_real>(b, u, uInv, precision, delta, eta);  
+#endif
   else
     kappa = provedLLL<mpz_t, double>(b, u, uInv, 0, delta, eta);
 
@@ -207,18 +215,28 @@ int Wrapper::lastLLL() {
   if (useLong) {
     int kappa;
     if (goodPrec <= numeric_limits<double>::digits)
-      kappa = provedLLL<long, double>(bLong, uLong, uInvLong, goodPrec, delta, eta);
+      kappa = provedLLL<long, double>(bLong, uLong, uInvLong,
+                                      goodPrec, delta, eta);
+#ifdef FPLLL_WITH_QD
+    else if (goodPrec <= PREC_DD)
+      kappa = provedLLL<long, dd_real>(bLong, uLong, uInvLong,
+                                       goodPrec, delta, eta);
+#endif
     else
-      kappa = provedLLL<long, mpfr_t>(bLong, uLong, uInvLong, goodPrec, delta, eta);
+      kappa = provedLLL<long, mpfr_t>(bLong, uLong, uInvLong,
+                                      goodPrec, delta, eta);
     return kappa;
   }
 #endif
 
   /* <mpfr, FT> */
 #ifdef FPLLL_WITH_DPE
-  if (goodPrec <= numeric_limits<double>::digits) {
+  if (goodPrec <= numeric_limits<double>::digits)
     return provedLLL<mpz_t, dpe_t>(b, u, uInv, goodPrec, delta, eta);
-  }
+#ifdef FPLLL_WITH_QD
+  else if (goodPrec <= PREC_DD)
+    return provedLLL<mpz_t, dd_real>(b, u, uInv, goodPrec, delta, eta);
+#endif
 #endif
   return provedLLL<mpz_t, mpfr_t>(b, u, uInv, goodPrec, delta, eta);
 }
@@ -259,6 +277,7 @@ bool Wrapper::lll() {
     /* try fastLLL<mpz_t, double> */
     kappa = fastLLL<double>(delta, eta);
     bool lllFailure = (kappa != 0);
+    int lastPrec;
 
     /* try fastLLL<mpz_t, long double> */
 #ifdef FPLLL_WITH_LONG_DOUBLE
@@ -266,9 +285,24 @@ bool Wrapper::lll() {
       kappa = fastLLL<long double>(delta, eta);
       lllFailure = kappa != 0;
     }
-    int lastPrec = numeric_limits<long double>::digits;
+    lastPrec = numeric_limits<long double>::digits;
 #else
-    int lastPrec = numeric_limits<double>::digits;
+    lastPrec = numeric_limits<double>::digits;
+#endif
+
+    /* try fastLLL<mpz_t, dd_real> */
+#ifdef FPLLL_WITH_QD
+    if (lllFailure) {
+      kappa = fastLLL<dd_real>(delta, eta);
+      lllFailure = kappa != 0;
+    }
+    lastPrec = PREC_DD;
+#else
+#ifdef FPLLL_WITH_LONG_DOUBLE
+    lastPrec = numeric_limits<long double>::digits;
+#else
+    lastPrec = numeric_limits<double>::digits;
+#endif
 #endif
 
     /* loop */
