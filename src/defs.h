@@ -178,8 +178,8 @@ enum FloatType {
   FT_MPFR
 };
 
-const char* const FLOAT_TYPE_STR[5] =
-  {"", "double", "long double", "dpe", "mpfr"};
+const char* const FLOAT_TYPE_STR[7] =
+  {"", "double", "long double", "dpe", "dd", "qd", "mpfr"};
 
 enum LLLFlags {
   LLL_VERBOSE = 1,
