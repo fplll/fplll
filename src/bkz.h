@@ -98,8 +98,8 @@ public:
     pruning.resize(blockSize);
     for(int k=0; k< startDescent; k++)
       pruning[k] = 1.0;
-    for(int k=0; k<blockSize; k++)
-      pruning[k] = ((double)(blockSize-k-1))/blockSize;
+    for(int k=0; k<blockSize-startDescent; k++)
+      pruning[startDescent+k] = ((double)(blockSize-k-1))/blockSize;
   }
                      
 };
