@@ -192,10 +192,13 @@ void Enumeration::enumerate(MatGSO<Integer, FT>& gso, FT& fMaxDist, long maxDist
     fR = gso.getRExp(i + first, i + first, rExpo);
     normExp = max(normExp, rExpo + fR.exponent());
   }
-
-  fMaxDistNorm.mul_2si(fMaxDist, maxDistExpo - normExp);
+  
+  if (dual) {
+    fMaxDistNorm.mul_2si(fMaxDist, normExp - maxDistExpo);
+  } else {
+    fMaxDistNorm.mul_2si(fMaxDist, maxDistExpo - normExp);
+  }
   maxDist = fMaxDistNorm.get_d(GMP_RNDU);
-  if (dual) maxDist = enumf(1.0)/maxDist;
 
   for (int i = 0; i < d; i++) {
     fR = gso.getRExp(i + first, i + first, rExpo);
