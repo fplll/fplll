@@ -212,7 +212,7 @@ int lllReduction(ZZ_mat<T>& b, ZZ_mat<T>& u, double delta, double eta,  \
                  LLLMethod method, FloatType floatType,                 \
                  int precision, int flags) {                            \
   ZZ_mat<T> emptyMat;                                                   \
-  if (u.empty()) u.gen_identity(b.getRows());                           \
+  if (!u.empty()) u.gen_identity(b.getRows());                           \
   return lllReductionZ<T>(b, u, emptyMat, delta, eta, method,           \
             idT, floatType, precision, flags);                          \
 }                                                                       \
@@ -221,8 +221,8 @@ int lllReduction(ZZ_mat<T>& b, ZZ_mat<T>& u, ZZ_mat<T>& uInv,           \
                  double delta, double eta,                              \
                  LLLMethod method, FloatType floatType,                 \
                  int precision, int flags) {                            \
-  if (u.empty()) u.gen_identity(b.getRows());                           \
-  if (uInv.empty()) uInv.gen_identity(b.getRows());                     \
+  if (!u.empty()) u.gen_identity(b.getRows());                           \
+  if (!uInv.empty()) uInv.gen_identity(b.getRows());                     \
   uInv.transpose();                                                     \
   int status = lllReductionZ<T>(b, u, uInv, delta, eta, method,         \
             idT, floatType, precision, flags);                          \
@@ -260,7 +260,7 @@ int bkzReduction(IntMatrix* B, IntMatrix *U, const BKZParam& param, FloatType fl
   IntMatrix& uInv = emptyMat;
   FPLLL_CHECK(B, "B == NULL in bkzReduction");
 
-  if (U && u.empty()) {
+  if (U && (!u.empty())) {
     u.gen_identity(B->getRows());
   }
 

@@ -161,7 +161,7 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
   }
   evaluator->initDeltaDef(prec, rho, true);
 
-  if (evalMode == EVALMODE_SV || method == SVPM_PROVED) {
+  if (!(flags & SVP_OVERRIDE_BND) && (evalMode == EVALMODE_SV || method == SVPM_PROVED)) {
     Float ftmp1;
     bool result = evaluator->getMaxErrorAux(maxDist, true, ftmp1);
     FPLLL_CHECK(result, "shortestVector: cannot compute an initial bound");
@@ -171,7 +171,7 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
       maxDist.sub(maxDist, ftmp1, GMP_RNDU);
     }
   }
-
+  
   // Main loop of the enumeration
   enumerateSVP(d, gso, maxDist, *evaluator, pruning, flags);
 
@@ -204,10 +204,10 @@ int shortestVector(IntMatrix& b, IntVect& solCoord,
 }
 
 int shortestVectorPruning(IntMatrix& b, IntVect& solCoord,
-                   const vector<double>& pruning, int flags) {
+                   const vector<double>& pruning, Integer& argIntMaxDist, int flags) {
   long long tmp;
   return shortestVectorEx(b, solCoord, SVPM_FAST, pruning, flags,
-          EVALMODE_SV, Integer(), tmp);
+          EVALMODE_SV, argIntMaxDist, tmp);
 }
 
 long long countShortVectors(IntMatrix& b, const Integer& maxSqrNorm,

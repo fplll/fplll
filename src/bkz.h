@@ -27,10 +27,10 @@ public:
 
   BKZParam(int blockSize=0, double delta=LLL_DEF_DELTA, int flags=BKZ_DEFAULT,
            int maxLoops=0, double maxTime=0, int linearPruningLevel=0,
-           double autoAbort_scale=1.0, int autoAbort_maxNoDec=5) :
+           double autoAbort_scale=1.0, int autoAbort_maxNoDec=5, double ghFactor = 1.1) :
   blockSize(blockSize), delta(delta), flags(flags),
   maxLoops(maxLoops), maxTime(maxTime),
-  autoAbort_scale(autoAbort_scale), autoAbort_maxNoDec(autoAbort_maxNoDec),
+  autoAbort_scale(autoAbort_scale), autoAbort_maxNoDec(autoAbort_maxNoDec), ghFactor(ghFactor),
   dumpGSOFilename("gso.log"), preprocessing(NULL) {
     if (linearPruningLevel > 0) {
       enableLinearPruning(linearPruningLevel);
@@ -65,8 +65,14 @@ public:
   */
   
   vector<double> pruning;
-
-  /** If BKZ_DUMP_GSO us set, the norms of the GSO matrix are written to this
+  
+  /** If BKZ_GH_BND is set, the enumeration bound will be set to ghFactor times
+      the Gaussian Heuristic
+  */
+  
+  double ghFactor;
+  
+  /** If BKZ_DUMP_GSO is set, the norms of the GSO matrix are written to this
       file after each complete round.
   */
   
@@ -78,6 +84,11 @@ public:
   
   BKZParam *preprocessing;
 
+  /** Sets all pruning coefficients to 1, except the last <level> coefficients,
+      these will be linearly with slope -1 / blockSize.
+
+      @param level number of levels in linear descent
+  */
   inline void enableLinearPruning(int level) {
     int startDescent = blockSize - level;
     
@@ -87,15 +98,24 @@ public:
     pruning.resize(blockSize);
     for(int k=0; k< startDescent; k++)
       pruning[k] = 1.0;
-    for(int k=startDescent; k<blockSize; k++)
-      pruning[k] = ((double)(blockSize-k-startDescent))/blockSize;
+    for(int k=0; k<blockSize; k++)
+      pruning[k] = ((double)(blockSize-k-1))/blockSize;
   }
                      
 };
 
+/** Finds the slope of the curve fitted to the lengths of the vectors from
+    startRow to stopRow. The slope gives an indication of the quality of the
+    LLL-reduced basis.
+*/
 template<class FT>
 static double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow);
 
+/** Uses the Gaussian Heuristic Distance to compute a bound on the length of the
+    shortest vector.
+*/
+template<class FT>
+static void computeGaussHeurDist(MatGSO<Integer, FT>& m, FT& maxDist, long maxDistExpo, int kappa, int blockSize, double ghFactor);
 
 /* The matrix must be LLL-reduced */
 template<class FT>
@@ -106,7 +126,7 @@ public:
   ~BKZReduction();
 
   /**
-     Run enumeration to find a new shortest vecto in the sublattice B[kappa,kappa+blockSize]
+     Run enumeration to find a new shortest vector in the sublattice B[kappa,kappa+blockSize]
 
      @param kappa Start row
      @param blockSize Block size to use, this may be < param.blockSize

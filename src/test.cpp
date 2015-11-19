@@ -22,11 +22,14 @@ using namespace fplll;
 int main(void) {
   mpz_t q;
   ZZ_mat<mpz_t> M(3, 3);
+  ZZ_mat<mpz_t> U(3, 3);
   M.gen_uniform(3);
   mpz_init_set_str(q, "FFFFFFFFFFFFFFFFFFFFFFFF99DEF836146BC9B1B4D22831", 16); 
   M[2][2].set(q);
   cout << M << endl;
-  lllReduction(M, 0.99, 0.51, LM_WRAPPER);
+  lllReduction(M, U, 0.99, 0.51, LM_WRAPPER);
   cout << M << endl;
+  cout << U << endl;
+  mpz_clear(q);
   return 0;
 }
