@@ -61,6 +61,3 @@ uninstall-hook:
 
 dbg: fplll_dbg latticegen_dbg
 
-check:
-	./fplll -a svp < $(srcdir)/example_svp_in > foo
-	diff foo $(srcdir)/example_svp_out
