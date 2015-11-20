@@ -75,8 +75,10 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL
 
   // zero on success
   status = lllReduction(A, LLL_DEF_DELTA, LLL_DEF_ETA, method, float_type, 0, flags);
-  if (status) {
-    cerr << "LLL failed with method " << LLL_METHOD_STR[method] << endl;
+  if (status != RED_SUCCESS) {
+    cerr << "LLL reduction failed with error '" << getRedStatusStr(status);
+    cerr << "' for method " << LLL_METHOD_STR[method];
+    cerr << " and float type " << FLOAT_TYPE_STR[float_type] << endl;
     return status;
   }
 
