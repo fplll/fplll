@@ -138,16 +138,16 @@ int main(int argc, char *argv[]) {
   status |= testFilename<mpz_t>("lattices/dim55_in", LM_PROVED, FT_MPFR);
 
   status |= testIntRel<mpz_t>(50, 1000, LM_FAST, FT_DOUBLE);
-  status |= testIntRel<mpz_t>(50, 1000, LM_PROVED);
+  status |= testIntRel<mpz_t>(50, 1000, LM_PROVED, FT_MPFR);
 
   status |= testIntRel<mpz_t>(30, 2000, LM_HEURISTIC, FT_DPE);
   status |= testIntRel<mpz_t>(30, 2000, LM_PROVED, FT_DPE);
-  status |= testIntRel<mpz_t>(30, 2000, LM_PROVED);
+  status |= testIntRel<mpz_t>(30, 2000, LM_PROVED, FT_MPFR);
 
 
   status |= testFilename<mpz_t>("lattices/example_in", LM_HEURISTIC);
   status |= testFilename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE);
-  status |= testFilename<mpz_t>("lattices/example_in", LM_PROVED);
+  status |= testFilename<mpz_t>("lattices/example_in", LM_PROVED, FT_MPFR);
   status |= testFilename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE, LLL_DEFAULT | LLL_EARLY_RED);
   status |= testFilename<mpz_t>("lattices/example_in", LM_HEURISTIC, FT_DEFAULT, LLL_DEFAULT | LLL_EARLY_RED);
 
