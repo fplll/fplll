@@ -19,12 +19,28 @@
 using namespace std;
 using namespace fplll;
 
+/**
+   @brief Read matrix from `input_filename`.
+
+   @param A
+   @param input_filename
+   @return
+*/
+
 template<class ZT>
 void readMatrix(ZZ_mat<ZT> &A, const char *input_filename) {
   istream *is = new ifstream(input_filename);
   *is >> A;
   delete is;
 }
+
+/**
+   @brief Read vector from `input_filename` into `b`.
+
+   @param b                vector
+   @param input_filename   filename
+   @return
+*/
 
 template<class ZT>
 void readVector(vector<Z_NR<ZT> > &b, const char *input_filename) {
@@ -33,6 +49,13 @@ void readVector(vector<Z_NR<ZT> > &b, const char *input_filename) {
   delete is;
 }
 
+/**
+   @brief Test if SVP function returns vector with right norm.
+
+   @param A              input lattice
+   @param b              shortest vector
+   @return
+*/
 
 template<class ZT>
 int testSVP(ZZ_mat<ZT> &A, IntVect &b) {
@@ -74,6 +97,13 @@ int testSVP(ZZ_mat<ZT> &A, IntVect &b) {
   return 0;
 }
 
+/**
+   @brief Test if SVP function returns vector with right norm.
+
+   @param input_filename   filename of an input lattice
+   @param output_filename  filename of a shortest vector
+   @return
+*/
 
 template<class ZT>
 int testFilename(const char *input_filename, const char *output_filename) {
@@ -85,6 +115,14 @@ int testFilename(const char *input_filename, const char *output_filename) {
 
   return testSVP<ZT>(A, b);
 }
+
+/**
+   @brief Run SVP tests.
+
+   @param argc             ignored
+   @param argv             ignored
+   @return
+*/
 
 int main(int argc, char *argv[]) {
 
