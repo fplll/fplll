@@ -5,7 +5,7 @@ DEFINES =
 
 include_fpllldir=$(includedir)/fplll
 
-EXTRA_DIST=dim55_in examples_in
+EXTRA_DIST=lattices/dim55_in lattices/examples_in
 
 # include TOPBUILDIR for fplll_config.h
 AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPBUILDDIR)
