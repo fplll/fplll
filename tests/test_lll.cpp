@@ -26,13 +26,55 @@ void readMatrix(ZZ_mat<ZT> &A, const char *input_filename) {
   delete is;
 }
 
+/**
+   @brief Test the tester.
+
+   @param A
+   @return zero on success.
+*/
+
+template<class ZT>
+int testTest(ZZ_mat<ZT> &A) {
+  ZZ_mat<ZT> U;
+  ZZ_mat<ZT> UT;
+
+  MatGSO<Z_NR<ZT>, FP_NR<mpfr_t> > M(A, U, UT, 0);
+
+  int is_reduced = isLLLReduced<Z_NR<ZT>, FP_NR<mpfr_t> >(M, LLL_DEF_DELTA, LLL_DEF_ETA);
+
+  if (is_reduced)
+    cerr << "isLLLReduced reports success when it should not" << endl;
+
+  return is_reduced;
+}
+
+/**
+   @brief Test LLL reduction.
+
+   @param A                test matrix
+   @param method           LLL method to test
+   @param float_type       floating point type to test
+   @param flags            flags to use
+
+   @return zero on success.
+*/
+
 template<class ZT>
 int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL_DEFAULT) {
 
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
 
-  int status = lllReduction(A, LLL_DEF_DELTA, LLL_DEF_ETA, method);
+  int status = 0;
+
+  // zero on success
+  if (testTest(A)){
+    return 0;
+
+  }
+
+  // zero on success
+  status = lllReduction(A, LLL_DEF_DELTA, LLL_DEF_ETA, method, float_type, 0, flags);
   if (status) {
     cerr << "LLL failed with method " << LLL_METHOD_STR[method] << endl;
     return status;
@@ -40,6 +82,7 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL
 
   MatGSO<Z_NR<ZT>, FP_NR<mpfr_t> > M(A, U, UT, 0);
 
+  // one on success
   status = isLLLReduced<Z_NR<ZT>, FP_NR<mpfr_t> >(M, LLL_DEF_DELTA, LLL_DEF_ETA);
 
   if (status == 0)
@@ -48,12 +91,35 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL
   return (status == 0);
 }
 
+/**
+   @brief Test LLL for matrix stored in file pointed to by `input_filename`.
+
+   @param input_filename   a path
+   @param method           LLL method to test
+   @param float_type       floating point type to test
+   @param flags            flags to use
+
+   @return zero on success
+*/
+
 template<class ZT>
 int testFilename(const char *input_filename, LLLMethod method, FloatType float_type=FT_DEFAULT, int flags=LLL_DEFAULT) {
   ZZ_mat<ZT> A;
   readMatrix(A, input_filename);
   return testLLL<ZT>(A, method, float_type, flags);
 }
+
+/**
+   @brief Construct d × (d+1) integer relations matrix with bit size b and test LLL.
+
+   @param d                dimension
+   @param b                bit size
+   @param method           LLL method to test
+   @param float_type       floating point type to test
+   @param flags            flags to use
+
+   @return zero on success
+*/
 
 template<class ZT>
 int testIntRel(int d, int b, LLLMethod method, FloatType float_type=FT_DEFAULT, int flags=LLL_DEFAULT) {
@@ -80,7 +146,7 @@ int main(int argc, char *argv[]) {
   status |= testFilename<mpz_t>("lattices/example_in", LM_HEURISTIC);
   status |= testFilename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE);
   status |= testFilename<mpz_t>("lattices/example_in", LM_PROVED);
-  status |= testFilename<mpz_t>("lattices/example_in", LM_FAST, FT_DEFAULT, LLL_DEFAULT | LLL_EARLY_RED);
+  status |= testFilename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE, LLL_DEFAULT | LLL_EARLY_RED);
   status |= testFilename<mpz_t>("lattices/example_in", LM_HEURISTIC, FT_DEFAULT, LLL_DEFAULT | LLL_EARLY_RED);
 
   if (status == 0) {
