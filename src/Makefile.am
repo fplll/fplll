@@ -19,8 +19,7 @@ include_fplll_HEADERS=defs.h dpe.h fplll.h matrix.h matrix.cpp \
 	numvect.h util.h svpcvp.h fplllv31.h bkz.h lll.h gso.h evaluator.h \
 	fplll_config.h
 
-EXTRA_DIST=example_in example_out example_svp_in example_svp_out dim55_in \
-	pruning.txt
+EXTRA_DIST=example_svp_in example_svp_out pruning.txt
 
 bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff
@@ -78,37 +77,3 @@ uninstall-hook:
 
 dbg: fplll_dbg latticegen_dbg
 
-check:
-	./fplll < $(srcdir)/dim55_in > foo
-	./fplll -m proved < foo > foo2
-	diff foo foo2
-	rm foo foo2
-	./latticegen r 50 1000 | ./fplll -m fast -f double > foo
-	./fplll -m proved < foo > foo2
-	diff foo foo2
-	rm foo foo2
-	./latticegen r 30 2000 | ./fplll -m heuristic -f dpe > foo
-	./fplll -m proved < foo > foo2
-	diff foo foo2
-	rm foo foo2
-	./latticegen r 30 2000 | ./fplll -m proved -f dpe > foo
-	./fplll -m proved < foo > foo2
-	diff foo foo2
-	rm foo foo2	
-	./fplll -m heuristic < $(srcdir)/example_in > foo
-	cat foo $(srcdir)/example_out | ./llldiff
-	rm foo
-	./fplll -m fast -f double < $(srcdir)/example_in > foo
-	cat foo $(srcdir)/example_out | ./llldiff
-	rm foo
-	./fplll -m proved < $(srcdir)/example_in > foo
-	cat foo $(srcdir)/example_out | ./llldiff
-	rm foo
-	./fplll -m fastearly -f double < $(srcdir)/example_in > foo
-	cat foo $(srcdir)/example_out | ./llldiff
-	rm foo
-	./fplll -m heuristicearly < $(srcdir)/example_in > foo
-	cat foo $(srcdir)/example_out | ./llldiff
-	rm foo
-	./fplll -a svp < $(srcdir)/example_svp_in > foo
-	diff foo $(srcdir)/example_svp_out
