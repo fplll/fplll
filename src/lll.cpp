@@ -242,4 +242,37 @@ bool LLLReduction<ZT, FT>::setStatus(int newStatus) {
   return status == RED_SUCCESS;
 }
 
+
+template<class ZT, class FT>
+bool isLLLReduced(MatGSO<ZT, FT>& m, double delta, double eta) {
+  FT ftmp1;
+  FT ftmp2;
+  FT delta_;
+  delta_.set(delta);
+  m.updateGSO();
+  for(int i=0; i<m.d; i++) {
+    for(int j=0; j<i; j++) {
+      m.getMu(ftmp1, i, j);
+      ftmp1.abs(ftmp1);
+      if (ftmp1 > eta)
+        return false;
+    }
+  }
+  for(int i=1; i<m.d; i++) {
+    m.getMu(ftmp2, i, i-1);
+    ftmp2.mul(ftmp2, ftmp2); // μ^2
+
+    ftmp2.sub(delta_, ftmp2); // δ - μ^2
+    m.getR(ftmp1, i-1, i-1);
+    ftmp2.mul(ftmp1, ftmp2); // (δ - μ^2) ⋅ r_{i-1,i-1}
+
+    m.getR(ftmp1, i, i);  // r_{i,i}
+
+    if (ftmp1 < ftmp2)
+      return false;
+  }
+  return true;
+}
+
+
 FPLLL_END_NAMESPACE
