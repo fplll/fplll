@@ -333,4 +333,12 @@ const char* getRedStatusStr(int status) {
     return "unknown error";
 }
 
+template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<double> >(MatGSO<Z_NR<mpz_t>, FP_NR<double> >& m, double delta, double eta);
+template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<long double> >(MatGSO<Z_NR<mpz_t>, FP_NR<long double> >& m, double delta, double eta);
+template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<mpfr_t> >(MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t> >& m, double delta, double eta);
+
+#ifdef FPLLL_WITH_DPE
+template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<dpe_t> >(MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t> >& m, double delta, double eta);
+#endif
+
 FPLLL_END_NAMESPACE

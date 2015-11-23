@@ -66,6 +66,9 @@ private:
   FT muMant, ftmp1;
 };
 
+template<class ZT, class FT>
+bool isLLLReduced(MatGSO<ZT, FT>& m, double delta, double eta);
+
 FPLLL_END_NAMESPACE
 
 #endif
