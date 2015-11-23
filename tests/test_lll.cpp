@@ -55,12 +55,13 @@ int testTest(ZZ_mat<ZT> &A) {
    @param method           LLL method to test
    @param float_type       floating point type to test
    @param flags            flags to use
+   @param prec             precision used for isLLLReduced
 
    @return zero on success.
 */
 
 template<class ZT>
-int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL_DEFAULT) {
+int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL_DEFAULT, int prec=0) {
 
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
@@ -82,10 +83,15 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL
     return status;
   }
 
+  const int oldPrec = prec ? FP_NR<mpfr_t>::setprec(prec) : 0;
+
   MatGSO<Z_NR<ZT>, FP_NR<mpfr_t> > M(A, U, UT, 0);
 
   // one on success
   status = isLLLReduced<Z_NR<ZT>, FP_NR<mpfr_t> >(M, LLL_DEF_DELTA, LLL_DEF_ETA);
+
+  if (prec)
+    FP_NR<mpfr_t>::setprec(oldPrec);
 
   if (status == 0)
     cerr << "Output of LLL reduction is not LLL reduced with method " << LLL_METHOD_STR[method] << endl;
@@ -100,15 +106,16 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL
    @param method           LLL method to test
    @param float_type       floating point type to test
    @param flags            flags to use
+   @param prec             precision used for isLLLReduced
 
    @return zero on success
 */
 
 template<class ZT>
-int testFilename(const char *input_filename, LLLMethod method, FloatType float_type=FT_DEFAULT, int flags=LLL_DEFAULT) {
+int testFilename(const char *input_filename, LLLMethod method, FloatType float_type=FT_DEFAULT, int flags=LLL_DEFAULT, int prec=0) {
   ZZ_mat<ZT> A;
   readMatrix(A, input_filename);
-  return testLLL<ZT>(A, method, float_type, flags);
+  return testLLL<ZT>(A, method, float_type, flags, prec);
 }
 
 /**
@@ -119,22 +126,23 @@ int testFilename(const char *input_filename, LLLMethod method, FloatType float_t
    @param method           LLL method to test
    @param float_type       floating point type to test
    @param flags            flags to use
+   @param prec             precision used for isLLLReduced
 
    @return zero on success
 */
 
 template<class ZT>
-int testIntRel(int d, int b, LLLMethod method, FloatType float_type=FT_DEFAULT, int flags=LLL_DEFAULT) {
+int testIntRel(int d, int b, LLLMethod method, FloatType float_type=FT_DEFAULT, int flags=LLL_DEFAULT, int prec=0) {
   ZZ_mat<ZT> A;
   A.resize(d, d + 1);
   A.gen_intrel(b);
-  return testLLL<ZT>(A, method, float_type, flags);
+  return testLLL<ZT>(A, method, float_type, flags, prec);
 }
 
 int main(int argc, char *argv[]) {
 
   int status = 0;
-  status |= testFilename<mpz_t>("lattices/dim55_in", LM_WRAPPER, FT_DEFAULT);
+  status |= testFilename<mpz_t>("lattices/dim55_in", LM_WRAPPER, FT_DEFAULT, 128);
   status |= testFilename<mpz_t>("lattices/dim55_in", LM_PROVED, FT_MPFR);
 
   status |= testIntRel<mpz_t>(50, 1000, LM_FAST, FT_DOUBLE);
