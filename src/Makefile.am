@@ -19,7 +19,7 @@ include_fplll_HEADERS=defs.h dpe.h fplll.h matrix.h matrix.cpp \
 	numvect.h util.h svpcvp.h fplllv31.h bkz.h lll.h gso.h evaluator.h \
 	fplll_config.h
 
-EXTRA_DIST=example_svp_in example_svp_out pruning.txt
+EXTRA_DIST=pruning.txt
 
 bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff

@@ -94,6 +94,9 @@ public:
     
     if (startDescent > blockSize)
       startDescent = blockSize;
+
+    if (startDescent < 1)
+      startDescent = 1;
     
     pruning.resize(blockSize);
     for(int k=0; k< startDescent; k++)
