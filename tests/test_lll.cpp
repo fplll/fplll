@@ -142,7 +142,7 @@ int testIntRel(int d, int b, LLLMethod method, FloatType float_type=FT_DEFAULT, 
 int main(int argc, char *argv[]) {
 
   int status = 0;
-  status |= testFilename<mpz_t>("lattices/dim55_in", LM_WRAPPER, FT_DEFAULT, 128);
+  status |= testFilename<mpz_t>("lattices/dim55_in", LM_WRAPPER, FT_DEFAULT, LLL_DEFAULT, 128);
   status |= testFilename<mpz_t>("lattices/dim55_in", LM_PROVED, FT_MPFR);
 
   status |= testIntRel<mpz_t>(50, 1000, LM_FAST, FT_DOUBLE);
