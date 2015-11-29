@@ -425,6 +425,11 @@ template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<double> >(MatGSO<Z_NR<mpz_t>, FP_N
 template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<long double> >(MatGSO<Z_NR<mpz_t>, FP_NR<long double> >& m, double delta, double eta);
 template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<mpfr_t> >(MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t> >& m, double delta, double eta);
 
+#ifdef FPLLL_WITH_QD
+template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<dd_real> >(MatGSO<Z_NR<mpz_t>, FP_NR<dd_real> >& m, double delta, double eta);
+template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<qd_real> >(MatGSO<Z_NR<mpz_t>, FP_NR<qd_real> >& m, double delta, double eta);
+#endif
+
 #ifdef FPLLL_WITH_DPE
 template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<dpe_t> >(MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t> >& m, double delta, double eta);
 #endif
