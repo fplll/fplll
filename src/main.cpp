@@ -342,12 +342,16 @@ void readOptions(int argc, char** argv, Options& o) {
         o.floatType = FT_MPFR;
       else if (strcmp("dpe",argv[ac])==0)
         o.floatType = FT_DPE;
+      else if (strcmp("dd",argv[ac])==0)
+        o.floatType = FT_DD;
+      else if (strcmp("qd",argv[ac])==0)
+        o.floatType = FT_QD;
       else if (strcmp("double",argv[ac])==0)
         o.floatType = FT_DOUBLE;
       else if (strcmp("longdouble", argv[ac]) == 0)
         o.floatType = FT_LONG_DOUBLE;
       else
-        ABORT_MSG("parse error in -f switch : mpfr, dpe or double expected");
+        ABORT_MSG("parse error in -f switch : mpfr, qd, dd, dpe or double expected");
     }
     else if (strcmp(argv[ac], "-l") == 0) {
       ++ac;
@@ -429,7 +433,7 @@ void readOptions(int argc, char** argv, Options& o) {
            << "       LLL version (default: wrapper)\n"
            << "  -z [int|mpz|double]\n"
            << "       Integer type in LLL (default: mpz)\n"
-           << "  -f [mpfr|dpe|double]\n"
+           << "  -f [mpfr|qd|dd|dpe|double]\n"
            << "       Floating-point type in LLL (proved/heuristic method only; default: dpe)\n"
            << "  -p <precision>\n"
            << "       Floating-point precision (only with -f mpfr)\n"
