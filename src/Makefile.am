@@ -1,7 +1,23 @@
 include_fpllldir=$(includedir)/fplll
 
-include_fplll_HEADERS=defs.h dpe.h fplll.h matrix.h matrix.cpp nr.h \
-	nr.cpp numvect.h util.h svpcvp.h fplllv31.h bkz.h lll.h gso.h evaluator.h
+include_fplll_HEADERS=defs.h dpe.h fplll.h matrix.h matrix.cpp \
+	nr_FP_dd.inl \
+	nr_FP_d.inl \
+	nr_FP_dpe.inl \
+	nr_FP.inl \
+	nr_FP_ld.inl \
+	nr_FP_misc.inl \
+	nr_FP_mpfr.inl \
+	nr_FP_qd.inl \
+	nr.h \
+	nr_rand.inl \
+	nr_Z_d.inl \
+	nr_Z.inl \
+	nr_Z_l.inl \
+	nr_Z_misc.inl \
+	nr_Z_mpz.inl \
+	numvect.h util.h svpcvp.h fplllv31.h bkz.h lll.h gso.h evaluator.h \
+	fplll_config.h
 
 EXTRA_DIST=pruning.txt
 

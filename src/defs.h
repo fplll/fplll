@@ -50,8 +50,9 @@
 
 #include <gmp.h>
 #include <mpfr.h>
+#include "fplll_config.h"
 #ifdef FPLLL_WITH_DPE
-  #include "dpe.h"
+#include "dpe.h"
 #endif
 
 #if defined(__sun) || defined(__CYGWIN__)
@@ -115,6 +116,8 @@ using namespace std;
 
 const int MAX_EXP_DOUBLE = 1000;
 const int PREC_DOUBLE = 53;
+const int PREC_DD = 106;
+const int PREC_QD = 212;
 
 const double LLL_DEF_DELTA = 0.99;
 const double LLL_DEF_ETA = 0.51;
@@ -170,11 +173,13 @@ enum FloatType {
   FT_DOUBLE,
   FT_LONG_DOUBLE,
   FT_DPE,
+  FT_DD,
+  FT_QD,
   FT_MPFR
 };
 
-const char* const FLOAT_TYPE_STR[5] =
-  {"", "double", "long double", "dpe", "mpfr"};
+const char* const FLOAT_TYPE_STR[7] =
+  {"", "double", "long double", "dpe", "dd", "qd", "mpfr"};
 
 enum LLLFlags {
   LLL_VERBOSE = 1,

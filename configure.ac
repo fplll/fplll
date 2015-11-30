@@ -26,13 +26,6 @@ AC_PROG_CC
 AC_PROG_MAKE_SET
 
 # Checks for libraries.
-AC_ARG_WITH(mpfr,
-   [  --with-mpfr=DIR          MPFR install directory ], [
-      CPPFLAGS="$CPPFLAGS -I$withval/include"
-       LDFLAGS="$LDFLAGS -L$withval/lib"
-       mpfr_lib_path="$withval/lib"
-   ])
-
 AC_ARG_WITH(gmp,
    [  --with-gmp=DIR          GMP install directory ], [
       CPPFLAGS="$CPPFLAGS -I$withval/include"
@@ -42,9 +35,38 @@ AC_ARG_WITH(gmp,
 
 AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
 [GNU MP not found, see http://gmplib.org])])
+
+AC_CHECK_LIB(gmp, __gmp_get_memory_functions, , [AC_MSG_ERROR(
+[GMP version too old, need >= 4.2.0, see http://gmplib.org])])
+
+AC_ARG_WITH(mpfr,
+   [  --with-mpfr=DIR          MPFR install directory ], [
+      CPPFLAGS="$CPPFLAGS -I$withval/include"
+       LDFLAGS="$LDFLAGS -L$withval/lib"
+       mpfr_lib_path="$withval/lib"
+   ])
+
 AC_CHECK_LIB(mpfr, mpfr_add, , [AC_MSG_ERROR(
 [MPFR not found, see http://www.mpfr.org])])
 
+AC_CHECK_LIB(mpfr, mpfr_fms, , [AC_MSG_ERROR(
+[MPFR version too old, need >= 2.3.0, see http://www.mpfr.org])])
+
+AC_ARG_WITH(qd,
+   [  --with-qd=DIR          quaddouble install directory ], [
+      CPPFLAGS="$CPPFLAGS -I$withval/include"
+       LDFLAGS="$LDFLAGS -L$withval/lib"
+       qd_lib_path="$withval/lib"
+   ])
+
+AC_CHECK_HEADER(qd/dd_real.h,
+    have_libqd="yes",
+    have_libqd="no")
+
+if test "x${have_libqd}" = "xyes"; then
+   LDFLAGS="$LDFLAGS -lqd"
+   AC_DEFINE([FPLLL_WITH_QD], [1], [define if libqd-dev is available])
+fi
 
 # Checks for header files.
 AC_HEADER_STDC
@@ -61,14 +83,9 @@ AC_C_VOLATILE
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([floor pow rint sqrt strtol])
 
-
-AC_CHECK_LIB(gmp, __gmp_get_memory_functions, , [AC_MSG_ERROR(
-[GMP version too old, need >= 4.2.0, see http://gmplib.org])])
-
-AC_CHECK_LIB(mpfr, mpfr_fms, , [AC_MSG_ERROR(
-[MPFR version too old, need >= 2.3.0, see http://www.mpfr.org])])
-
+AC_CONFIG_HEADERS([src/fplll_config.h])
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  tests/Makefile])
 AC_OUTPUT
+
