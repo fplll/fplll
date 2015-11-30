@@ -52,6 +52,8 @@ BKZ reduction algorithm.
 	* GNU MP 4.2.0 or higher [http://gmplib.org/](http://gmplib.org/)
 	* MPFR 2.3.0 or higher, COMPLETE INSTALLATION [http://www.mpfr.org/](http://www.mpfr.org/)
 	* autotools 2.61 or higher
+* Optional:
+  * QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install the shared library (e.g ./configure --enable-shared=yes). [http://crd-legacy.lbl.gov/~dhbailey/mpdist/]
 
 If GMP and/or MPFR include and lib files are not in the default
 directories /usr/include and /usr/lib, you have to set the
@@ -65,7 +67,7 @@ or
 ```./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude $CPPFLAGD" LDFLAGS="-L/mpfrlib -L/gmplib $LDFLAGS"```
 
 if these variables already exist in your environment.  This should be modified soon for using
-standard `--with-gmp` and `--with-mpfr` package specifications.
+standard `--with-gmp` and `--with-mpfr` package specifications. The same philosophy applies to the (optional) QD library. 
 
 <a name="installation"></a>
 ## Installation ##
