@@ -1,4 +1,5 @@
-/* Copyright (C) 2008-2011 Xavier Pujol.
+/* Copyright (C) 2008-2011 Xavier Pujol
+   (C) 2015 Michael Walter.
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -28,10 +29,13 @@ EnumfVect Enumeration::center;
 EnumfVect Enumeration::centerPartSum;
 EnumfVect Enumeration::maxDists;
 EnumfVect Enumeration::centerLoopBg;
+EnumfVect Enumeration::alpha;
 int Enumeration::d;
 int Enumeration::k;
 int Enumeration::kEnd;
 int Enumeration::kMax;
+bool Enumeration::dual;
+Z_NR<mpz_t> Enumeration::nodes;
 
 static const vector<FP_NR<double> > EMPTY_DOUBLE_VECT;
 
@@ -47,7 +51,7 @@ void Enumeration::prepareEnumeration(enumf maxDist, const vector<FT>& subTree, b
   for (k = d - 1; k >= 0 && newDist <= maxDist; k--) {
     enumf newCenter = centerPartSum[k];
     for (int j = k + 1; j < kEnd; j++) {
-      newCenter -= x[j] * mut[k][j];
+      newCenter += center_summand(k, j);
     }
 
     if (k >= kEnd) {
@@ -68,8 +72,8 @@ void Enumeration::prepareEnumeration(enumf maxDist, const vector<FT>& subTree, b
               << " ddx_k=" << ddx[k]);*/
     }
     x[k] = newX;
-    enumf y = newCenter - newX;
-    newDist += y * y * rdiag[k];
+    alpha[k] = newX - newCenter;
+    newDist += alpha[k] * alpha[k] * rdiag[k];
   }
   if (!svpBeginning) {
     kMax = kEnd; // The last non-zero coordinate of x will not stay positive
@@ -94,13 +98,14 @@ bool Enumeration::enumerateLoop(enumf& newMaxDist, int& newKMax) {
   }
 
   while (true) {
-    enumf y = center[k] - x[k];
-    enumf newDist = dist[k] + y * y * rdiag[k];
+    alpha[k] = x[k] - center[k];
+    enumf newDist = dist[k] + alpha[k] * alpha[k] * rdiag[k];
     /*FPLLL_TRACE("k=" << k << " x_k=" << x[k] << " center_k=" << center[k]
             << " dist_k=" << dist[k] << " r_k=" << rdiag[k]
             << " y=" << y << " newDist=" << newDist);*/
     if (newDist <= maxDists[k]) {
       k--;
+      nodes.add_ui(nodes, 1);
       if (k < 0) {
         newMaxDist = newDist;
         newKMax = kMax;
@@ -108,7 +113,7 @@ bool Enumeration::enumerateLoop(enumf& newMaxDist, int& newKMax) {
       }
 
       for (int j = centerLoopBg[k]; j > k; j--) {
-        centerPartSums[k][j] = centerPartSums[k][j + 1] - x[j] * mut[k][j];
+        centerPartSums[k][j] = centerPartSums[k][j + 1] + center_summand(k, j);
       }
       enumf newCenter = centerPartSums[k][k + 1];
       if (k > 0) centerLoopBg[k - 1] = max(centerLoopBg[k - 1], centerLoopBg[k]);
@@ -165,8 +170,9 @@ template<class FT>
 void Enumeration::enumerate(MatGSO<Integer, FT>& gso, FT& fMaxDist, long maxDistExpo,
                Evaluator<FT>& evaluator, const vector<FT>& targetCoord,
                const vector<FT>& subTree, int first, int last,
-               const vector<double>& pruning) {
+               const vector<double>& pruning, bool dual) {
   bool solvingSVP;    // true->SVP, false->CVP
+  Enumeration::dual = dual;
   enumf maxDist;
   FT fR, fMu, fMaxDistNorm;
   long rExpo, normExp = LONG_MIN;
@@ -177,19 +183,30 @@ void Enumeration::enumerate(MatGSO<Integer, FT>& gso, FT& fMaxDist, long maxDist
   solvingSVP = targetCoord.empty();
   FPLLL_CHECK(d <= DMAX, "enumerate: dimension is too high");
 
+  FPLLL_CHECK((solvingSVP || !dual), "CVP for dual not implemented! What does that even mean? ");
+  FPLLL_CHECK((subTree.empty() || !dual), "Subtree enumeration for dual not implemented!");
+
   // FT->enumf conversion and transposition of mu
   for (int i = 0; i < d; i++) {
     fR = gso.getRExp(i + first, i + first, rExpo);
     normExp = max(normExp, rExpo + fR.exponent());
   }
-
-  fMaxDistNorm.mul_2si(fMaxDist, maxDistExpo - normExp);
+  
+  if (dual) {
+    fMaxDistNorm.mul_2si(fMaxDist, normExp - maxDistExpo);
+  } else {
+    fMaxDistNorm.mul_2si(fMaxDist, maxDistExpo - normExp);
+  }
   maxDist = fMaxDistNorm.get_d(GMP_RNDU);
 
   for (int i = 0; i < d; i++) {
     fR = gso.getRExp(i + first, i + first, rExpo);
     fR.mul_2si(fR, rExpo - normExp);
-    rdiag[i] = fR.get_d();
+    if (dual) {
+      rdiag[d-i-1] = enumf(1.0)/fR.get_d();
+    } else {
+      rdiag[i] = fR.get_d();
+    }
 
     if (solvingSVP)
       centerPartSum[i] = 0.0;
@@ -198,15 +215,26 @@ void Enumeration::enumerate(MatGSO<Integer, FT>& gso, FT& fMaxDist, long maxDist
 
     for (int j = i + 1; j < d; j++) {
       gso.getMu(fMu, j + first, i + first);
-      mut[i][j] = fMu.get_d();
+      if (dual) {
+        mut[j][i] = fMu.get_d();
+      } else {
+        mut[i][j] = fMu.get_d();
+      }
     }
   }
 
   prepareEnumeration(maxDist, subTree, solvingSVP);
   enumerate(maxDist, normExp, evaluator, pruning);
-
+  
   fMaxDistNorm = maxDist; // Exact
-  fMaxDist.mul_2si(fMaxDistNorm, normExp - maxDistExpo);
+  
+  if (dual) {
+    fMaxDistNorm.mul_2si(fMaxDist, maxDistExpo - normExp);
+  } else {
+    fMaxDist.mul_2si(fMaxDistNorm, normExp - maxDistExpo);
+  }
+  
+  if (dual && !evaluator.solCoord.empty()) reverseBySwap(evaluator.solCoord, 0, d-1);
 }
 
 

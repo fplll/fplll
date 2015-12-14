@@ -196,7 +196,8 @@ enum SVPMethod {
 enum SVPFlags {
   SVP_DEFAULT = 0,
   SVP_VERBOSE = 1,
-  SVP_OVERRIDE_BND = 2
+  SVP_OVERRIDE_BND = 2,
+  SVP_DUAL = 4
 };
 
 enum CVPFlags {

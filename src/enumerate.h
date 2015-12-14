@@ -1,4 +1,5 @@
-/* Copyright (C) 2008-2011 Xavier Pujol.
+/* Copyright (C) 2008-2011 Xavier Pujol
+   (C) 2015 Michael Walter.
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -33,17 +34,20 @@ public:
   static void enumerate(MatGSO<Integer, FT>& gso, FT& fMaxDist, long maxDistExpo,
                Evaluator<FT>& evaluator, const vector<FT>& targetCoord,
                const vector<FT>& subTree, int first, int last,
-               const vector<double>& pruning);
-
+               const vector<double>& pruning, bool dual = false);
+  
+  static Z_NR<mpz_t> nodes;
+  
 private:
   static const int DMAX = 150;
   static enumf mut[DMAX][DMAX];
   static enumf centerPartSums[DMAX][DMAX + 1];
-  static EnumfVect rdiag, x, dx, ddx, dist, center, centerPartSum, maxDists, centerLoopBg;
+  static EnumfVect rdiag, x, dx, ddx, dist, center, centerPartSum, maxDists, centerLoopBg, alpha;
   static int d;
   static int k;              // Current level in the enumeration
   static int kEnd;           // The algorithm stops when k = kEnd
   static int kMax;           // Index of the last non-zero value of x (<= kEnd)
+  static bool dual;
 
   // Input: x, dx, ddx, k, kMax, kEnd
   // Output: k, kMax
@@ -66,6 +70,10 @@ private:
       result = false;
     }
     return result;
+  }
+
+  static inline enumf center_summand(int k, int j) {
+    return dual ? alpha[j] * mut[d-k-1][d-j-1] : - x[j] * mut[k][j];
   }
 
   template<class FT>

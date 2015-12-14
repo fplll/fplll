@@ -1,4 +1,5 @@
 /* Copyright (C) 2008-2011 Xavier Pujol.
+    (C) 2015 Michael Walter.
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -55,9 +56,10 @@ static void getBasisMin(Integer& basisMin, const IntMatrix& b,
 static bool enumerateSVP(int d, MatGSO<Integer, Float>& gso, Float& maxDist,
         Evaluator<Float>& evaluator, const vector<double>& pruning,
         int flags) {
-  if (d == 1 || !pruning.empty()) {
+  bool dual = (flags & SVP_DUAL);
+  if (d == 1 || !pruning.empty() || dual) {
     Enumeration::enumerate(gso, maxDist, 0, evaluator, FloatVect(), FloatVect(),
-            0, d, pruning);
+            0, d, pruning, dual);
   }
   else {
     Enumerator enumerator(d, gso.getMuMatrix(), gso.getRMatrix());
@@ -121,18 +123,27 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
     //FPLLL_TRACE("Ignoring the last " << d - newD << " vector(s)");
     d = newD;
   }
-
-  if (evalMode == EVALMODE_SV && !(flags & SVP_OVERRIDE_BND)) {
-    /* Computes a bound for the enumeration. This bound would work for an
-       exact algorithm, but we will increase it later to ensure that the fp
-       algorithm finds a solution */
-    getBasisMin(intMaxDist, b, 0, d);
+  
+  if (flags & SVP_DUAL) {
+    maxDist = gso.getRExp(d - 1, d - 1);
+    Float one; one = 1.0;
+    maxDist.div(one, maxDist);
+    if (flags & SVP_VERBOSE) {
+      cout << "maxDist = " << maxDist << endl;
+    }
+  } else {
+    if (evalMode == EVALMODE_SV) {
+      /* Computes a bound for the enumeration. This bound would work for an
+         exact algorithm, but we will increase it later to ensure that the fp
+         algorithm finds a solution */
+      getBasisMin(intMaxDist, b, 0, d);
+    }
+    else {
+      /* Use the bound given as a parameter */
+      intMaxDist = argIntMaxDist;
+    }
+    maxDist.set_z(intMaxDist, GMP_RNDU);
   }
-  else {
-    /* Use the bound given as a parameter */
-    intMaxDist = argIntMaxDist;
-  }
-  maxDist.set_z(intMaxDist, GMP_RNDU);
 
   // Initializes the evaluator of solutions
   Evaluator<Float>* evaluator;
@@ -155,7 +166,11 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
     Float ftmp1;
     bool result = evaluator->getMaxErrorAux(maxDist, true, ftmp1);
     FPLLL_CHECK(result, "shortestVector: cannot compute an initial bound");
-    maxDist.add(maxDist, ftmp1, GMP_RNDU);
+    if (flags & SVP_DUAL) {
+      maxDist.add(maxDist, ftmp1, GMP_RNDU);
+    } else {
+      maxDist.sub(maxDist, ftmp1, GMP_RNDU);
+    }
   }
   
   // Main loop of the enumeration
