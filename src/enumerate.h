@@ -36,8 +36,6 @@ public:
                const vector<FT>& subTree, int first, int last,
                const vector<double>& pruning, bool dual = false);
   
-  static Z_NR<mpz_t> nodes;
-  
 private:
   static const int DMAX = 150;
   static enumf mut[DMAX][DMAX];
@@ -70,10 +68,6 @@ private:
       result = false;
     }
     return result;
-  }
-
-  static inline enumf center_summand(int k, int j) {
-    return dual ? alpha[j] * mut[d-k-1][d-j-1] : - x[j] * mut[k][j];
   }
 
   template<class FT>

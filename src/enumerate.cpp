@@ -35,7 +35,6 @@ int Enumeration::k;
 int Enumeration::kEnd;
 int Enumeration::kMax;
 bool Enumeration::dual;
-Z_NR<mpz_t> Enumeration::nodes;
 
 static const vector<FP_NR<double> > EMPTY_DOUBLE_VECT;
 
@@ -51,7 +50,7 @@ void Enumeration::prepareEnumeration(enumf maxDist, const vector<FT>& subTree, b
   for (k = d - 1; k >= 0 && newDist <= maxDist; k--) {
     enumf newCenter = centerPartSum[k];
     for (int j = k + 1; j < kEnd; j++) {
-      newCenter += center_summand(k, j);
+      newCenter += dual ? alpha[j] * mut[d-k-1][d-j-1] : - x[j] * mut[k][j];
     }
 
     if (k >= kEnd) {
@@ -105,17 +104,22 @@ bool Enumeration::enumerateLoop(enumf& newMaxDist, int& newKMax) {
             << " y=" << y << " newDist=" << newDist);*/
     if (newDist <= maxDists[k]) {
       k--;
-      nodes.add_ui(nodes, 1);
       if (k < 0) {
         newMaxDist = newDist;
         newKMax = kMax;
         return true; // New solution found
       }
-
-      for (int j = centerLoopBg[k]; j > k; j--) {
-        //~ centerPartSums[k][j] = centerPartSums[k][j + 1] - x[j] * mut[k][j];
-        centerPartSums[k][j] = centerPartSums[k][j + 1] + center_summand(k, j);
+      
+      if (dual) {
+        for (int j = centerLoopBg[k]; j > k; j--) {
+          centerPartSums[k][j] = centerPartSums[k][j + 1] + alpha[j] * mut[d-k-1][d-j-1];
+        }
+      } else {
+        for (int j = centerLoopBg[k]; j > k; j--) {
+          centerPartSums[k][j] = centerPartSums[k][j + 1] - x[j] * mut[k][j];
+        }
       }
+      
       enumf newCenter = centerPartSums[k][k + 1];
       if (k > 0) centerLoopBg[k - 1] = max(centerLoopBg[k - 1], centerLoopBg[k]);
       centerLoopBg[k] = k + 1;
@@ -155,7 +159,7 @@ void Enumeration::enumerate(enumf& maxDist, long normExp, Evaluator<FT>& evaluat
     if (!enumerateLoop(newMaxDist, kMax)) {
       break;
     }
-
+    
     // We have found a solution
     for (int j = 0; j < d; j++) {
       fX[j] = x[j];
