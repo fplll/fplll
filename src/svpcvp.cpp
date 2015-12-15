@@ -1,4 +1,5 @@
 /* Copyright (C) 2008-2011 Xavier Pujol.
+    (C) 2015 Michael Walter.
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser

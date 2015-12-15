@@ -231,8 +231,13 @@ void Enumeration::enumerate(MatGSO<Integer, FT>& gso, FT& fMaxDist, long maxDist
   prepareEnumeration(maxDist, subTree, solvingSVP);
   enumerate(maxDist, normExp, evaluator, pruning);
   
-  fMaxDistNorm = dual ? enumf(1.0)/maxDist : maxDist; // Exact
-  fMaxDist.mul_2si(fMaxDistNorm, normExp - maxDistExpo);
+  fMaxDistNorm = maxDist; // Exact
+  
+  if (dual) {
+    fMaxDistNorm.mul_2si(fMaxDist, maxDistExpo - normExp);
+  } else {
+    fMaxDist.mul_2si(fMaxDistNorm, normExp - maxDistExpo);
+  }
   
   if (dual && !evaluator.solCoord.empty()) reverseBySwap(evaluator.solCoord, 0, d-1);
 }
