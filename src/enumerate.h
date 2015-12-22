@@ -41,6 +41,7 @@ private:
   static enumf mut[DMAX][DMAX];
   static enumf centerPartSums[DMAX][DMAX + 1];
   static EnumfVect rdiag, x, dx, ddx, dist, center, centerPartSum, maxDists, centerLoopBg, alpha;
+  static EnumfVect *co;
   static int d;
   static int k;              // Current level in the enumeration
   static int kEnd;           // The algorithm stops when k = kEnd
@@ -72,12 +73,14 @@ private:
 
   template<class FT>
   static void prepareEnumeration(enumf maxDist, const vector<FT>& subTree, bool solvingSVP);
-
+  
   static bool enumerateLoop(enumf& newMaxDist, int& newKMax);
 
   template<class FT>
   static void enumerate(enumf& maxDist, long normExp, Evaluator<FT>& evaluator, const vector<double>& pruning);
+  
 };
+
 
 FPLLL_END_NAMESPACE
 

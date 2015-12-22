@@ -35,6 +35,7 @@ int Enumeration::k;
 int Enumeration::kEnd;
 int Enumeration::kMax;
 bool Enumeration::dual;
+EnumfVect *Enumeration::co;
 
 static const vector<FP_NR<double> > EMPTY_DOUBLE_VECT;
 
@@ -50,7 +51,7 @@ void Enumeration::prepareEnumeration(enumf maxDist, const vector<FT>& subTree, b
   for (k = d - 1; k >= 0 && newDist <= maxDist; k--) {
     enumf newCenter = centerPartSum[k];
     for (int j = k + 1; j < kEnd; j++) {
-      newCenter += dual ? alpha[j] * mut[d-k-1][d-j-1] : - x[j] * mut[k][j];
+      newCenter -= (*co)[j] * mut[k][j];
     }
 
     if (k >= kEnd) {
@@ -110,14 +111,8 @@ bool Enumeration::enumerateLoop(enumf& newMaxDist, int& newKMax) {
         return true; // New solution found
       }
       
-      if (dual) {
-        for (int j = centerLoopBg[k]; j > k; j--) {
-          centerPartSums[k][j] = centerPartSums[k][j + 1] + alpha[j] * mut[d-k-1][d-j-1];
-        }
-      } else {
-        for (int j = centerLoopBg[k]; j > k; j--) {
-          centerPartSums[k][j] = centerPartSums[k][j + 1] - x[j] * mut[k][j];
-        }
+      for (int j = centerLoopBg[k]; j > k; j--) {
+        centerPartSums[k][j] = centerPartSums[k][j + 1] - (*co)[j] * mut[k][j];
       }
       
       enumf newCenter = centerPartSums[k][k + 1];
@@ -178,6 +173,7 @@ void Enumeration::enumerate(MatGSO<Integer, FT>& gso, FT& fMaxDist, long maxDist
                const vector<double>& pruning, bool dual) {
   bool solvingSVP;    // true->SVP, false->CVP
   Enumeration::dual = dual;
+  co = dual ? &alpha : &x;
   enumf maxDist;
   FT fR, fMu, fMaxDistNorm;
   long rExpo, normExp = LONG_MIN;
@@ -221,7 +217,7 @@ void Enumeration::enumerate(MatGSO<Integer, FT>& gso, FT& fMaxDist, long maxDist
     for (int j = i + 1; j < d; j++) {
       gso.getMu(fMu, j + first, i + first);
       if (dual) {
-        mut[j][i] = fMu.get_d();
+        mut[d-j-1][d-i-1] = -fMu.get_d();
       } else {
         mut[i][j] = fMu.get_d();
       }
