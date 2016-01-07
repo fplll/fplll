@@ -35,7 +35,6 @@ int Enumeration::k;
 int Enumeration::kEnd;
 int Enumeration::kMax;
 bool Enumeration::dual;
-EnumfVect *Enumeration::co;
 
 static const vector<FP_NR<double> > EMPTY_DOUBLE_VECT;
 
@@ -45,13 +44,15 @@ void Enumeration::prepareEnumeration(enumf maxDist, const vector<FT>& subTree, b
   // true->SVP and all coordinates in subTree are null
   bool svpBeginning = solvingSVP;
   enumf newX, newDist = enumf(0.0);
-
+  enumf *co;
+  
   kEnd = d - subTree.size();
   // Prepares the loop (goes to the first vector)
   for (k = d - 1; k >= 0 && newDist <= maxDist; k--) {
     enumf newCenter = centerPartSum[k];
     for (int j = k + 1; j < kEnd; j++) {
-      newCenter -= (*co)[j] * mut[k][j];
+      co = dual ? &alpha[j] : &x[j];
+      newCenter -= (*co) * mut[k][j];
     }
 
     if (k >= kEnd) {
@@ -88,6 +89,7 @@ void Enumeration::prepareEnumeration(enumf maxDist, const vector<FT>& subTree, b
 
 /* Input: rdiag, center, dist, centerPartSum, x, dx, ddx, maxDists, k, kEnd, kMax
    Output: center, dist, centerPartSum, x, dx, ddx, k, kMax, newMaxDist, newKMax */
+template< class EnumType >
 bool Enumeration::enumerateLoop(enumf& newMaxDist, int& newKMax) {
   //FPLLL_TRACE_IN("k=" << k);
   if (k >= kEnd) return false;
@@ -112,7 +114,7 @@ bool Enumeration::enumerateLoop(enumf& newMaxDist, int& newKMax) {
       }
       
       for (int j = centerLoopBg[k]; j > k; j--) {
-        centerPartSums[k][j] = centerPartSums[k][j + 1] - (*co)[j] * mut[k][j];
+        centerPartSums[k][j] = centerPartSums[k][j + 1] - EnumType::center_summand_coefficient(alpha[j], x[j]) * mut[k][j];
       }
       
       enumf newCenter = centerPartSums[k][k + 1];
@@ -150,9 +152,15 @@ void Enumeration::enumerate(enumf& maxDist, long normExp, Evaluator<FT>& evaluat
         maxDists[i] = pruning[i] * maxDist;
       }
     }
-
-    if (!enumerateLoop(newMaxDist, kMax)) {
-      break;
+    
+    if (dual) {
+      if (!enumerateLoop<DualEnum>(newMaxDist, kMax)) {
+        break;
+      }
+    } else {
+      if (!enumerateLoop<PrimalEnum>(newMaxDist, kMax)) {
+        break;
+      }
     }
     
     // We have found a solution
@@ -173,7 +181,6 @@ void Enumeration::enumerate(MatGSO<Integer, FT>& gso, FT& fMaxDist, long maxDist
                const vector<double>& pruning, bool dual) {
   bool solvingSVP;    // true->SVP, false->CVP
   Enumeration::dual = dual;
-  co = dual ? &alpha : &x;
   enumf maxDist;
   FT fR, fMu, fMaxDistNorm;
   long rExpo, normExp = LONG_MIN;
