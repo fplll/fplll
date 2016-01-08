@@ -1,33 +1,5 @@
-# fplll 4.0 #
+# fplll #
 
-* [Overall description](#overall_description)
-* [Dependencies](#dependencies)
-* [Installation](#installation)
-* [Check](#check)
-* [How to use](#how_to_use)
-	* [latticegen](#latticegen)
-	* [fplll](#fplll)
-	* [llldiff](#llldiff)
-* [How to use as a library](#how_to_use_as_a_library)
-	* [Functions](#functions)
-		* [LLL](#lll)
-		* [BKZ](#bkz)
-		* [SVP](#svp)
-	* [Data Types](#data_types)
-		* [Z\_NR](#z_nr)
-		* [FP\_NR](#fp_nr)
-		* [Matrix](#matrix)
-		* [MatrixRow](#matrix_row)
-		* [ZZ\_mat](#zz_mat)
-		* [FP\_mat](#fp_mat)
-		* [See also](#see_also)
-* [Expamles](#examples)
-* [Developers](#developers)
-* [How to cite](#how_to_cite)
-* [Acknowledgments](#acknowledgments)
-* [New releases and bug reports](#new_releases_and_bug_reports)
-
-<a name="overall_description"></a>
 ## Overall description ##
 
 fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of
