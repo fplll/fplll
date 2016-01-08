@@ -156,9 +156,15 @@ Options for BKZ-reduction:
 `llldiff` compares two bases (b1,...,bd) and (c1,...c_d'): they are considered
 equal iff d=d' and for any i, bi = +- ci.
 
-## How to use as a library ##
+### How to use as a library ###
 
 See [API documentation](library.md).
+
+### Alternative interfaces ###
+
+- fplll is included in in [Sage](http://sagemath.org), see documentation for [IntegerMatrix](http://doc.sagemath.org/html/en/reference/matrices/sage/matrix/matrix_integer_dense.html) and [IntegerLattice](http://doc.sagemath.org/html/en/reference/modules/sage/modules/free_module_integer.html).
+- [fpylll](https://github.com/malb/fpylll) is a stand-alone Python interface for fplll.
+
 
 ## Examples ##
 
