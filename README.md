@@ -688,56 +688,55 @@ Matrix of floating-point nubmers. Same constructors as Matrix.
 	4. Solving SVP
 	./latticegen r 30 3000 | ./fplll -a svp
 
-<a name="developers"></a>
-## Developers ##
+## Credit ##
 
-**Current developer:**
+### Maintainers ###
 
-Martin Albrecht, martinralbrecht@googlemail.com <br>
-Damien Stehle, damien.stehle@gmail.com
+fplll is currently maintained by:
 
-**Former developers:**
+- Martin Albrecht, <martinralbrecht@googlemail.com>
+- Damien Stehle, <damien.stehle@gmail.com>
+- Shi Bai, <shi.bai@gmail.com>
 
-David Cade, david.cade@ens.fr <br>
-Xavier Pujol, xavier.pujol@ens-lyon.org
+### Contributors ###
 
-<a name="how_to_cite"></a>
-## How to cite ##
+The following people have contributed to fplll:
+
+- Martin Albrecht
+- Shi Bai
+- David Cade
+- Xavier Pujol
+- Damien Stehle
+- Joop van de Pol
+- Michael Walter
+
+### Acknowledgments ###
+
+- Patrick Pelissier and Paul Zimmermann for `dpe`.
+
+- David H. Bailey for QD.
+
+- Sylvain Chevillard, Christoph Lauter and Gilles Villard for the `configure/make/make install`
+packaging.
+
+- Timothy Abbott, Michael Abshoff, Bill Allombert, John Cannon, Sylvain Chevillard, Julien Clement,
+Andreas Enge, Jean-Pierre Flori, Laurent Fousse, Guillaume Hanrot, Jens Hermans, Jerry James,
+Christoph Lauter, Andrew Novocin, Willem Jan Palenstijn, Patrick Pelissier, Michael Schneider,
+Thiemo Seufer, Allan Steel, Gilles Villard and Paul Zimmermann for their support and for many
+suggestions that helped debugging and improving this code.
+
+### How to cite ###
 
 	@unpublished{fplll,
 	    Note = {Available at \url{http://perso.ens-lyon.fr/damien.stehle}},
 	    Title = {{fplll-4.0}, a floating-point {LLL} implementation},
-	    Author = {Albrecht, M. and Cad{\'e}, D. and Pujol, X. and Stehl{\'e}, D.}
+	    Author = {Albrecht, M. and Bai, S. and Cad{\'e}, D. and Pujol, X. and Stehl{\'e}, D.}
 	}
 
-<a name="acknowledgments"></a>
-## Acknowledgments ##
-
-Patrick Pelissier and Paul Zimmermann for dpe.
-
-David H. Bailey for QD.
-
-Martin Albrecht, Sylvain Chevillard, Christoph
-Lauter and Gilles Villard for the
-"configure/make/make install" packaging.
-
-Martin Albrecht for the incorporation into SAGE.
-
-Timothy Abbott, Michael Abshoff, Martin Albrecht, Bill Allombert,
-John Cannon, Sylvain Chevillard, Julien Clement, Andreas Enge,
-Jean-Pierre Flori, Laurent Fousse, Guillaume Hanrot, Jens Hermans,
-Jerry James, Christoph Lauter, Andrew Novocin, Willem Jan Palenstijn,
-Patrick Pelissier, Michael Schneider, Thiemo Seufer, Allan Steel,
-Gilles Villard and Paul Zimmermann for their support and for many
-suggestions that helped debugging and improving this code.
-
-<a name="new_releases_and_bug_reports"></a>
 ## New releases and bug reports ##
 
-New releases will be announced at the URL:<br>
-[http://perso.ens-lyon.fr/damien.stehle/fplll/](http://perso.ens-lyon.fr/damien.stehle/fplll/)
+New releases will be announced at the URL [http://perso.ens-lyon.fr/damien.stehle/fplll/](http://perso.ens-lyon.fr/damien.stehle/fplll/) and on [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel)
 
-Bug reports may be sent at:<br>
-[damien.stehle@gmail.com](mailto:damien.stehle@gmail.com)
-
-or create an issue.
+Bug reports may be sent to [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel) or via
+[https://github.com/dstehle/fplll/issues](https://github.com/dstehle/fplll/issues). Alternatively, they may also be sent directly to one of the
+maintainers.
