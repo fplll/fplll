@@ -210,6 +210,8 @@ The following people have contributed to fplll:
 - Joop van de Pol
 - Michael Walter
 
+Please add yourself here if you make a contribution.
+
 ### Acknowledgments ###
 
 - Patrick Pelissier and Paul Zimmermann for `dpe`.
