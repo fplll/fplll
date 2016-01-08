@@ -164,42 +164,43 @@ See [API documentation](library.md).
 
 1. Reduction
 
-``` 
-./latticegen r 10 1000 | ./fplll
-``` 
+   ``` 
+   ./latticegen r 10 1000 | ./fplll
+   ``` 
 
 2. Fileinput for Reduction. If the file `matrix` contains
 
-``` 
-[[ 10 11]
-[11 12]]
-``` 
-	Then
+   ``` 
+   [[ 10 11]
+   [11 12]]
+   ``` 
 
-``` 
-./fplll matrix
-```
+   then
 
-produces
+   ``` 
+   ./fplll matrix
+   ```
 
-``` 
-[[0 1 ]
- [1 0 ]
-]
-``` 
+   produces
+
+   ``` 
+   [[0 1 ]
+    [1 0 ]
+   ]
+   ``` 
 
 3. Random generator
 
-``` 
-./latticegen -randseed 1234 r 10 1000 | ./fplll
-./latticegen -randseed time u 10 16 | ./fplll
-``` 
+   ``` 
+   ./latticegen -randseed 1234 r 10 1000 | ./fplll
+   ./latticegen -randseed time u 10 16 | ./fplll
+   ``` 
 	
 4. Solving SVP
 
-```
-./latticegen r 30 3000 | ./fplll -a svp
-```
+   ```
+   ./latticegen r 30 3000 | ./fplll -a svp
+   ```
 
 ## Credit ##
 
