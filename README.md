@@ -1,10 +1,5 @@
 # fplll #
 
-## Overall description ##
-
-fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of
-the License, or, at your option, any later version) as published by the Free Software Foundation.
-
 fplll contains several algorithms on lattices that rely on floating-point computations. This
 includes implementations of the floating-point LLL reduction algorithm, offering different
 speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in
@@ -12,6 +7,9 @@ order to provide a guaranteed output as fast as possible. In the case of the wra
 of variants is oblivious to the user. It also includes a rigorous floating-point implementation of
 the Kannan-Fincke-Pohst algorithm that finds a shortest non-zero lattice vector, and the BKZ
 reduction algorithm.
+
+fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of
+the License, or, at your option, any later version) as published by the Free Software Foundation.
 
 ## Dependencies ##
 
