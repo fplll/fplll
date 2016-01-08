@@ -112,25 +112,25 @@ The options are:
 
 Options for LLL-reduction:
 
-* `-d delta` :     delta (default=0.99)
-* `-e eta` :       eta (default=0.51)
+* `-d delta` :     δ (default=0.99)
+* `-e eta` :       η (default=0.51)
 * `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz)
-* `-p precision` : precision of the floating-point arithmetic, works only with -f mpfr.
+* `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
 
-* `-f mpfr` : sets the floating-point type to MPFR (default if m=proved).
+* `-f mpfr` : sets the floating-point type to MPFR (default if `m=proved`).
 * `-f dd` : sets the floating-point type to double-double.
 * `-f qd` : sets the floating-point type to quad-double.
-* `-f dpe` : sets the floating-point type to DPE (default if m=heuristic/heuristicearly).
-* `-f double` : sets the floating-point type to double (default if m=fast/fastearly).
+* `-f dpe` : sets the floating-point type to DPE (default if `m=heuristic/heuristicearly`).
+* `-f double` : sets the floating-point type to double (default if `m=fast/fastearly`).
 * `-f longdouble` : sets the floating-point type to long double.
 
 * `-z int` : sets the integer type to int.
 * `-z mpz` : sets the integer type to mpz, the integer type of GMP (default).
 * `-z double` : sets the integer type to double.
 
-* `-m wrapper` : uses the wrapper. (default if z=mpz)
-* `-m fast` : uses the fast method, works only with -f double.
-* `-m fastearly` : uses the fast method with early reduction, works only with -f double.
+* `-m wrapper` : uses the wrapper. (default if `z=mpz`)
+* `-m fast` : uses the fast method, works only with `-f double`.
+* `-m fastearly` : uses the fast method with early reduction, works only with `-f double`.
 * `-m heuristic` : uses the heuristic method.
 * `-m heuristicearly` : uses the heuristic method with early reduction.
 * `-m proved` : uses the proved version of the algorithm.
@@ -142,14 +142,14 @@ and η'=2×η-1/2. For instance, with the default options, it is guaranteed that
 Options for BKZ-reduction:
 
 * `-b blocksize`             Block size, mandatory, between 2 and the number of rows.
-* `-f float`_type            Same as LLL (-p is required if float_type=mpfr)
-* `-p precision`             Precision of the floating-point arithmetic with -f mpfr
+* `-f float_type`            Same as LLL (`-p` is required if `float_type=mpfr`)
+* `-p precision`             Precision of the floating-point arithmetic with `-f mpfr`
 * `-bkzmaxloops loops`       Maximum number of full loops.
-* `-bkzmaxtime time`         Stop after <i>time</i> seconds (up to loop completion).
+* `-bkzmaxtime time`         Stop after `time` seconds (up to loop completion).
 * `-bkzautoabort`            Heuristic, stop when the average slope of log(||b_i*||) does not decrease fast enough.
 * `-bpre blocksize`          Pre-processing block size. Between 2 and the block size.
 * `-bkzlinearpruning level`  Enables linear pruning in enumeration, such that the last level steps drop with slope -1/blockSize
-* `-bkzdumgso file`_name    Dumps the log(||b_i*||)'s in specified file.
+* `-bkzdumgso file_name`    Dumps the log(||b_i*||)'s in specified file.
 
 ### llldiff ###
 
@@ -162,31 +162,44 @@ See [API documentation](library.md).
 
 ## Examples ##
 
-	1. Reduction
-	./latticegen r 10 1000 | ./fplll
+1. Reduction
 
-	2. Fileinput for Reduction
-	If the file 'matrix' contains
+``` 
+./latticegen r 10 1000 | ./fplll
+``` 
 
-	[[ 10 11]
-	[11 12]]
+2. Fileinput for Reduction. If the file `matrix` contains
 
+``` 
+[[ 10 11]
+[11 12]]
+``` 
 	Then
 
-	./fplll matrix
+``` 
+./fplll matrix
+```
 
-	produces
+produces
 
-	[[0 1 ]
-	[1 0 ]
-	]
+``` 
+[[0 1 ]
+ [1 0 ]
+]
+``` 
 
-	3. Random generator
-	./latticegen -randseed 1234 r 10 1000 | ./fplll
-	./latticegen -randseed time u 10 16 | ./fplll
+3. Random generator
 
-	4. Solving SVP
-	./latticegen r 30 3000 | ./fplll -a svp
+``` 
+./latticegen -randseed 1234 r 10 1000 | ./fplll
+./latticegen -randseed time u 10 16 | ./fplll
+``` 
+	
+4. Solving SVP
+
+```
+./latticegen r 30 3000 | ./fplll -a svp
+```
 
 ## Credit ##
 
