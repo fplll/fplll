@@ -285,7 +285,7 @@ inline void FP_NR<dpe_t>::set(unsigned int s) {
 template<>
 inline ostream& operator<<(ostream& os, const FP_NR<dpe_t>& x) {
   double m = DPE_MANT(x.getData());
-  if (!finite(m))
+  if (!isfinite(m))
     os << m;
   else {
     double mm = DPE_EXP(x.getData()) * log10(2.0);
