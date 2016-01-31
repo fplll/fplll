@@ -237,7 +237,7 @@ void Enumeration::enumerate(MatGSO<Integer, FT>& gso, FT& fMaxDist, long maxDist
   fMaxDistNorm = maxDist; // Exact
   
   if (dual) {
-    fMaxDistNorm.mul_2si(fMaxDist, maxDistExpo - normExp);
+    fMaxDist.mul_2si(fMaxDistNorm, maxDistExpo - normExp);
   } else {
     fMaxDist.mul_2si(fMaxDistNorm, normExp - maxDistExpo);
   }
