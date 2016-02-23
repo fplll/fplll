@@ -166,11 +166,7 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
     Float ftmp1;
     bool result = evaluator->getMaxErrorAux(maxDist, true, ftmp1);
     FPLLL_CHECK(result, "shortestVector: cannot compute an initial bound");
-    if (flags & SVP_DUAL) {
-      maxDist.add(maxDist, ftmp1, GMP_RNDU);
-    } else {
-      maxDist.sub(maxDist, ftmp1, GMP_RNDU);
-    }
+    maxDist.add(maxDist, ftmp1, GMP_RNDU);
   }
   
   // Main loop of the enumeration

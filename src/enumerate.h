@@ -36,8 +36,6 @@ public:
                const vector<FT>& subTree, int first, int last,
                const vector<double>& pruning, bool dual = false);
   
-  static Z_NR<mpz_t> nodes;
-  
 private:
   static const int DMAX = 150;
   static enumf mut[DMAX][DMAX];
@@ -72,17 +70,29 @@ private:
     return result;
   }
 
-  static inline enumf center_summand(int k, int j) {
-    return dual ? alpha[j] * mut[d-k-1][d-j-1] : - x[j] * mut[k][j];
-  }
-
   template<class FT>
   static void prepareEnumeration(enumf maxDist, const vector<FT>& subTree, bool solvingSVP);
-
+  
+  template<class EnumType>
   static bool enumerateLoop(enumf& newMaxDist, int& newKMax);
 
   template<class FT>
   static void enumerate(enumf& maxDist, long normExp, Evaluator<FT>& evaluator, const vector<double>& pruning);
+  
+};
+
+class PrimalEnum {
+  public:
+    static enumf& center_summand_coefficient(enumf& alpha, enumf& x) {
+      return x;
+    }
+};
+
+class DualEnum {
+  public:
+    static enumf& center_summand_coefficient(enumf& alpha, enumf& x) {
+      return alpha;
+    }
 };
 
 FPLLL_END_NAMESPACE
