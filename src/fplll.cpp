@@ -421,6 +421,8 @@ const char* getRedStatusStr(int status) {
     return "unknown error";
 }
 
+/** instantiate functions **/
+
 template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<double> >(MatGSO<Z_NR<mpz_t>, FP_NR<double> >& m, double delta, double eta);
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<long double> >(MatGSO<Z_NR<mpz_t>, FP_NR<long double> >& m, double delta, double eta);
@@ -435,5 +437,12 @@ template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<qd_real> >(MatGSO<Z_NR<mpz_t>, FP_
 #ifdef FPLLL_WITH_DPE
 template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<dpe_t> >(MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t> >& m, double delta, double eta);
 #endif
+
+template void Enumeration::enumerate<FP_NR<double> >(MatGSO<Integer, FP_NR<double> >& gso,
+                                                     FP_NR<double>& fMaxDist, long maxDistExpo,
+                                                     Evaluator<FP_NR<double> >& evaluator,
+                                                     const vector<FP_NR<double> >& targetCoord,
+                                                     const vector<FP_NR<double> >& subTree,
+                                                     int first, int last, const vector<double>& pruning, bool dual);
 
 FPLLL_END_NAMESPACE

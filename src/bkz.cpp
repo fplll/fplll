@@ -48,7 +48,7 @@ BKZReduction<FT>::~BKZReduction() {
 }
 
 template<class FT>
-static double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow) {
+double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow) {
   FT f, logF;
   long expo;
   vector<double> x;
@@ -73,7 +73,7 @@ static double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow)
 }
 
 template<class FT>
-static void computeGaussHeurDist(MatGSO<Integer, FT>& m, FT& maxDist, long maxDistExpo, int kappa, int blockSize, double ghFactor){
+void computeGaussHeurDist(MatGSO<Integer, FT>& m, FT& maxDist, long maxDistExpo, int kappa, int blockSize, double ghFactor){
   double t = (double)blockSize/2.0+1;
   t=tgamma(t);
   t=pow(t,2.0/(double)blockSize);
