@@ -17,7 +17,7 @@ include_fplll_HEADERS=defs.h dpe.h fplll.h matrix.h matrix.cpp \
 	nr_Z_misc.inl \
 	nr_Z_mpz.inl \
 	numvect.h util.h svpcvp.h fplllv31.h bkz.h lll.h gso.h evaluator.h \
-	fplll_config.h
+	fplll_config.h wrapper.h enumerate.h
 
 EXTRA_DIST=pruning.txt
 

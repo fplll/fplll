@@ -112,13 +112,13 @@ public:
     LLL-reduced basis.
 */
 template<class FT>
-static double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow);
+double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow);
 
 /** Uses the Gaussian Heuristic Distance to compute a bound on the length of the
     shortest vector.
 */
 template<class FT>
-static void computeGaussHeurDist(MatGSO<Integer, FT>& m, FT& maxDist, long maxDistExpo, int kappa, int blockSize, double ghFactor);
+void computeGaussHeurDist(MatGSO<Integer, FT>& m, FT& maxDist, long maxDistExpo, int kappa, int blockSize, double ghFactor);
 
 /* The matrix must be LLL-reduced */
 template<class FT>
