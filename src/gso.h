@@ -609,10 +609,8 @@ inline void MatGSO<ZT, FT>::dumpR_d(double* r, int offset, int blocksize){
   }
 
   for (int i = 0; i < blocksize; ++i) {
-    for (int j = 0; j < blocksize; ++j) {
-      getR(e,offset+i,offset+j);
-      r[i*blocksize+j] = e.get_d();
-    }
+    getR(e,offset+i, offset+i);
+    r[i] = e.get_d();
   }
 }
 
@@ -625,10 +623,8 @@ inline void MatGSO<ZT, FT>::dumpR_d(vector<double> r, int offset, int blocksize)
 
   r.reserve(r.size() + blocksize*blocksize);
   for (int i = 0; i < blocksize; ++i) {
-    for (int j = 0; j < blocksize; ++j) {
-      getR(e,offset+i,offset+j);
-      r.push_back(e.get_d());
-    }
+    getR(e,offset+i,offset+i);
+    r.push_back(e.get_d());
   }
 }
 
