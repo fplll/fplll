@@ -265,28 +265,6 @@ public:
     applyTransform(transform, srcBase, srcBase);
   }
 
-  /** Exact computation of dot products (i.e. with type ZT instead of FT) */
-  const bool enableIntGram;
-
-  /** Normalization of each row of b by a power of 2. */
-  const bool enableRowExpo;
-
-  /** Computation of the transform matrix. */
-  const bool enableTransform;
-
-  /**
-   * Computation of the inverse transform matrix (transposed).
-   * This works only if enableTransform=true.
-   * This matrix has very large coefficients, computing it is slow.
-   */
-  const bool enableInvTransform;
-
-  /**
-   * Changes the behaviour of row_addmul(_we).
-   * See the description of row_addmul.
-   */
-  const bool rowOpForceLong;
-
   /**
    * Dump mu matrix to parameter `mu`.
 
@@ -308,6 +286,28 @@ public:
 
   inline void dumpR_d(double* r, int offset=0, int blocksize=-1);
   inline void dumpR_d(vector<double> r, int offset=0, int blocksize=-1);
+
+  /** Exact computation of dot products (i.e. with type ZT instead of FT) */
+  const bool enableIntGram;
+
+  /** Normalization of each row of b by a power of 2. */
+  const bool enableRowExpo;
+
+  /** Computation of the transform matrix. */
+  const bool enableTransform;
+
+  /**
+   * Computation of the inverse transform matrix (transposed).
+   * This works only if enableTransform=true.
+   * This matrix has very large coefficients, computing it is slow.
+   */
+  const bool enableInvTransform;
+
+  /**
+   * Changes the behaviour of row_addmul(_we).
+   * See the description of row_addmul.
+   */
+  const bool rowOpForceLong;
 
 private:
   /* Allocates matrices and arrays whose size depends on d (all but tmpColExpo).
