@@ -271,6 +271,8 @@ public:
    * When a double pointer is provided the caller must ensure it can hold
    * blocksize^2 entries. When a vector is provided new entries are pushed to
    * the end. In particular, existing entries are not overwritten or cleared.
+   *
+   * @note No row discover or update is performed prior to dumping the matrix.
    */
 
   inline void dumpMu_d(double* mu, int offset=0, int blocksize=-1);
@@ -282,6 +284,8 @@ public:
    * When a double pointer is provided the caller must ensure it can hold
    * blocksize^2 entries. When a vector is provided new entries are pushed to
    * the end. In particular, existing entries are not overwritten or cleared.
+   *
+   * @note No row discover or update is performed prior to dumping the matrix.
    */
 
   inline void dumpR_d(double* r, int offset=0, int blocksize=-1);
