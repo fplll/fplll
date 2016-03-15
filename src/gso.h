@@ -569,7 +569,7 @@ template<class ZT, class FT>
 inline void MatGSO<ZT, FT>::dumpMu_d(double* mu, int offset, int blocksize){
   FT e;
   if (blocksize <= 0) {
-    blocksize = b.numRows();
+    blocksize = b.getRows();
   }
 
   for (int i = 0; i < blocksize; ++i) {
@@ -584,7 +584,7 @@ template<class ZT, class FT>
 inline void MatGSO<ZT, FT>::dumpMu_d(vector<double> mu, int offset, int blocksize){
   FT e;
   if (blocksize <= 0) {
-    blocksize = b.numRows();
+    blocksize = b.getRows();
   }
 
   r.reserve(r.size() + blocksize*blocksize);
@@ -601,7 +601,7 @@ template<class ZT, class FT>
 inline void MatGSO<ZT, FT>::dumpR_d(double* r, int offset, int blocksize){
   FT e;
   if (blocksize <= 0) {
-    blocksize = b.numRows();
+    blocksize = b.getRows();
   }
 
   for (int i = 0; i < blocksize; ++i) {
@@ -616,7 +616,7 @@ template<class ZT, class FT>
 inline void MatGSO<ZT, FT>::dumpR_d(vector<double> r, int offset, int blocksize){
   FT e;
   if (blocksize <= 0) {
-    blocksize = b.numRows();
+    blocksize = b.getRows();
   }
 
   r.reserve(r.size() + blocksize*blocksize);
