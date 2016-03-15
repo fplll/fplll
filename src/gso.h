@@ -287,6 +287,28 @@ public:
    */
   const bool rowOpForceLong;
 
+  /**
+   * Dump mu matrix to parameter `mu`.
+
+   * When a double pointer is provided the caller must ensure it can hold
+   * blocksize^2 entries. When a vector is provided new entries are pushed to
+   * the end. In particular, existing entries are not overwritten or cleared.
+   */
+
+  inline void dumpMu_d(double* mu, int offset=0, int blocksize=-1);
+  inline void dumpMu_d(vector<double> mu, int offset=0, int blocksize=-1);
+
+  /**
+   * Dump r matrix to parameter `r`.
+
+   * When a double pointer is provided the caller must ensure it can hold
+   * blocksize^2 entries. When a vector is provided new entries are pushed to
+   * the end. In particular, existing entries are not overwritten or cleared.
+   */
+
+  inline void dumpR_d(double* r, int offset=0, int blocksize=-1);
+  inline void dumpR_d(vector<double> r, int offset=0, int blocksize=-1);
+
 private:
   /* Allocates matrices and arrays whose size depends on d (all but tmpColExpo).
      When enableIntGram=false, initializes bf. */
@@ -541,6 +563,69 @@ inline void MatGSO<ZT, FT>::rowOpBegin(int first, int last) {
   rowOpFirst = first;
   rowOpLast = last;
 #endif
+}
+
+template<class ZT, class FT>
+inline void MatGSO<ZT, FT>::dumpMu_d(double* mu, int offset, int blocksize){
+  FT e;
+  if (blocksize <= 0) {
+    blocksize = b.numRows();
+  }
+
+  for (int i = 0; i < blocksize; ++i) {
+    for (int j = 0; j < blocksize; ++j) {
+      getMu(e,offset+i,offset+j);
+      mu[i*blocksize+j] = e.get_d();
+    }
+  }
+}
+
+template<class ZT, class FT>
+inline void MatGSO<ZT, FT>::dumpMu_d(vector<double> mu, int offset, int blocksize){
+  FT e;
+  if (blocksize <= 0) {
+    blocksize = b.numRows();
+  }
+
+  r.reserve(r.size() + blocksize*blocksize);
+  for (int i = 0; i < blocksize; ++i) {
+    for (int j = 0; j < blocksize; ++j) {
+      getMu(e,offset+i,offset+j);
+      mu.push_back(e.get_d());
+    }
+  }
+}
+
+
+template<class ZT, class FT>
+inline void MatGSO<ZT, FT>::dumpR_d(double* r, int offset, int blocksize){
+  FT e;
+  if (blocksize <= 0) {
+    blocksize = b.numRows();
+  }
+
+  for (int i = 0; i < blocksize; ++i) {
+    for (int j = 0; j < blocksize; ++j) {
+      getR(e,offset+i,offset+j);
+      r[i*blocksize+j] = e.get_d();
+    }
+  }
+}
+
+template<class ZT, class FT>
+inline void MatGSO<ZT, FT>::dumpR_d(vector<double> r, int offset, int blocksize){
+  FT e;
+  if (blocksize <= 0) {
+    blocksize = b.numRows();
+  }
+
+  r.reserve(r.size() + blocksize*blocksize);
+  for (int i = 0; i < blocksize; ++i) {
+    for (int j = 0; j < blocksize; ++j) {
+      getR(e,offset+i,offset+j);
+      r.push_back(e.get_d());
+    }
+  }
 }
 
 
