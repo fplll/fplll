@@ -86,6 +86,7 @@ AC_CHECK_FUNCS([floor pow rint sqrt strtol])
 AC_CONFIG_HEADERS([src/fplll_config.h])
 AC_CONFIG_FILES([Makefile
                  src/Makefile
-                 tests/Makefile])
+                 tests/Makefile
+                 fplll.pc])
 AC_OUTPUT
 
