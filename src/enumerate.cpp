@@ -35,6 +35,7 @@ int Enumeration::k;
 int Enumeration::kEnd;
 int Enumeration::kMax;
 bool Enumeration::dual;
+long Enumeration::nodes; // uint64_t is only a thing starting with C++11
 
 static const vector<FP_NR<double> > EMPTY_DOUBLE_VECT;
 
@@ -107,6 +108,7 @@ bool Enumeration::enumerateLoop(enumf& newMaxDist, int& newKMax) {
             << " y=" << y << " newDist=" << newDist);*/
     if (newDist <= maxDists[k]) {
       k--;
+      nodes++;
       if (k < 0) {
         newMaxDist = newDist;
         newKMax = kMax;
@@ -143,6 +145,7 @@ template<class FT>
 void Enumeration::enumerate(enumf& maxDist, long normExp, Evaluator<FT>& evaluator, const vector<double>& pruning) {
   vector<FT> fX(d);
   enumf newMaxDist;
+  nodes = 0;
   while (true) {
     if (pruning.empty()) {
       fill(maxDists, maxDists + d, maxDist);

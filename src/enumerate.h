@@ -35,7 +35,9 @@ public:
                Evaluator<FT>& evaluator, const vector<FT>& targetCoord,
                const vector<FT>& subTree, int first, int last,
                const vector<double>& pruning, bool dual = false);
-  
+
+  static inline long getNodes() { return nodes; }
+
 private:
   static const int DMAX = 150;
   static enumf mut[DMAX][DMAX];
@@ -46,6 +48,7 @@ private:
   static int kEnd;           // The algorithm stops when k = kEnd
   static int kMax;           // Index of the last non-zero value of x (<= kEnd)
   static bool dual;
+  static long nodes;
 
   // Input: x, dx, ddx, k, kMax, kEnd
   // Output: k, kMax
