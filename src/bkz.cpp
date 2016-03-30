@@ -145,6 +145,7 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
   solCoord.clear();
   Enumeration::enumerate(m, maxDist, maxDistExpo, evaluator, emptySubTree,
             emptySubTree, kappa, kappa + blockSize, par.pruning);
+  nodes += Enumeration::getNodes();
   if (solCoord.empty()) {
     if(par.flags & BKZ_GH_BND) return true; // Do nothing
     else return setStatus(RED_ENUM_FAILURE);
@@ -213,7 +214,8 @@ bool BKZReduction<FT>::bkzLoop(const int loop, int& kappaMax, const BKZParam &pa
     fr0.mul_2si(fr0, expo);
     cerr << "End of BKZ loop " << std::setw(4) << loop << ", time = " << std::fixed << std::setw( 9 ) << std::setprecision( 3 ) << (cputime() - cputimeStart) * 0.001 << "s";
     cerr << ", r_" << minRow << " = " << fr0;
-    cerr << ", slope = " << std::setw( 9 ) << std::setprecision( 6 ) << getCurrentSlope(m, minRow, maxRow) << endl;
+    cerr << ", slope = " << std::setw( 9 ) << std::setprecision( 6 ) << getCurrentSlope(m, minRow, maxRow);
+    cerr << ", log2(nodes) = " << std::setw( 9 ) << std::setprecision( 6 ) << log2(nodes) << endl;
   }
   if (par.flags & BKZ_DUMP_GSO) {
     std::ostringstream prefix;
@@ -229,6 +231,7 @@ template<class FT>
 bool BKZReduction<FT>::bkz() {
   int flags = param.flags;
   int finalStatus = RED_SUCCESS;
+  nodes = 0;
 
   if (flags & BKZ_DUMP_GSO) {
     std::ostringstream prefix;
