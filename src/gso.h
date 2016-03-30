@@ -206,8 +206,6 @@ public:
    */
   void moveRow(int oldR, int newR);
 
-  void swapRows(int row1, int row2);
-
   /**
    * b[i] := b[i] + x * b[j].
    * After one or several calls to row_addmul, rowOpEnd must be called.
