@@ -144,6 +144,12 @@ public:
  
   int status;
 
+  /**
+      Number of nodes visited during enumeration.
+  */
+
+  long nodes;
+
 private:
   void printParams(const BKZParam &param, ostream &out);
   bool setStatus(int newStatus);
