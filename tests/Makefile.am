@@ -14,9 +14,10 @@ STAGEDIR := $(realpath -s $(TOPBUILDDIR)/.libs)
 AM_LDFLAGS = -L$(STAGEDIR) -Wl,-rpath,$(STAGEDIR) -lfplll
 LDFLAGS = -no-install
 
-TESTS = test_lll test_svp
+TESTS = test_lll test_svp test_bkz
 
 test_lll_SOURCES = test_lll.cpp
 test_svp_SOURCES = test_svp.cpp
+test_bkz_SOURCES = test_bkz.cpp
 
 check_PROGRAMS = $(TESTS)
