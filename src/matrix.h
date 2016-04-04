@@ -302,7 +302,20 @@ public:
   void gen_intrel(int bits);
   void gen_simdioph(int bits,int bits2);
   void gen_uniform(int bits);
+
+
+  /** Construct a matrix `[[I,H],[0,qI]]` where `H` is constructed from rotations of a vector ``h``.
+
+     @note The constructed matrix will not come with a guarantee of unusually short vectors.
+  **/
+
   void gen_ntrulike(int bits,int q);
+
+  /** Construct a matrix ``[[qI,0],[H,I]]`` where ``H`` is constructed from rotations of a vector ``h``.
+
+    @note The constructed matrix will not come with a guarantee of unusually short vectors.
+  */
+
   void gen_ntrulike2(int bits,int q);
   void gen_ajtai(double alpha);
   void gen_ajtai2(FP_NR<mpfr_t> *w);
