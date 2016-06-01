@@ -84,7 +84,7 @@ static int computeMinPrec(double& rho, int d, double delta, double eta,
   tmp2 = (algo == MINPREC_L2) ? 10.0 : 5.0;
   fMinprec.add(tmp1, tmp2, GMP_RNDU);
   int minprec = static_cast<int>(ceil(fMinprec.get_d(GMP_RNDU)));
-
+  mpfr_free_cache();
   Float::setprec(oldprec);
   return minprec;
 }
