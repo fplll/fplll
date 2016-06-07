@@ -254,6 +254,10 @@ public:
     return mpfr_get_ld(temp, GMP_RNDN); // exact
   }
 
+  static void free() {
+    freeTemp();
+  }
+
   /**
    * Returns d and sets exp such that 0.5 <= |d| < 1 and d * 2^exp is equal
    * to op rounded to the nearest long double.
@@ -276,6 +280,13 @@ private:
     if (!tempInitialized) {
       mpfr_init2(temp, numeric_limits<long double>::digits);
       tempInitialized = true;
+    }
+  }
+
+  static inline void freeTemp() {
+    if (tempInitialized) {
+      mpfr_clear(temp);
+      tempInitialized = false;
     }
   }
 
