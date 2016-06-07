@@ -238,7 +238,6 @@ int lllReductionZ(ZZ_mat<ZT>& b, ZZ_mat<ZT>& u, ZZ_mat<ZT>& uInv,
                  << FLOAT_TYPE_STR[selFT]);
   }
   zerosFirst(b, u, uInv);
-  LDConvHelper::free();
   return status;
 }
 

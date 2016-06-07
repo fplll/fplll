@@ -37,6 +37,10 @@ public:
   LLLReduction(MatGSO<ZT, FT>& m, double delta, double eta,
                int flags);
 
+  ~LLLReduction() {
+    LDConvHelper::free();
+  }
+  
   bool lll(int kappaMin = 0, int kappaStart = 0, int kappaEnd = -1);
   inline bool sizeReduction(int kappaMin = 0, int kappaEnd = -1);
 
