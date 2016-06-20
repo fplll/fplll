@@ -259,5 +259,5 @@ suggestions that helped debugging and improving this code.
 New releases will be announced at the URL [http://perso.ens-lyon.fr/damien.stehle/fplll/](http://perso.ens-lyon.fr/damien.stehle/fplll/) and on [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel)
 
 Bug reports may be sent to [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel) or via
-[https://github.com/dstehle/fplll/issues](https://github.com/dstehle/fplll/issues). Alternatively, they may also be sent directly to one of the
+[https://github.com/fplll/fplll/issues](https://github.com/fplll/fplll/issues). Alternatively, they may also be sent directly to one of the
 maintainers.
