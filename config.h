@@ -7,6 +7,9 @@
 /* Define to 1 if you have the <cstdio> header file. */
 #define HAVE_CSTDIO 1
 
+/* define if the compiler supports basic C++11 syntax */
+#define HAVE_CXX11 1
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
 
