@@ -54,12 +54,13 @@ static void getBasisMin(Integer& basisMin, const IntMatrix& b,
 }
 
 static bool enumerateSVP(int d, MatGSO<Integer, Float>& gso, Float& maxDist,
-        Evaluator<Float>& evaluator, const vector<double>& pruning,
-        int flags) {
+        Evaluator<Float>& evaluator, const vector<enumf>& pruning,
+        int flags) 
+{
+  Enumeration2<Float> enum2(gso, evaluator);
   bool dual = (flags & SVP_DUAL);
   if (d == 1 || !pruning.empty() || dual) {
-    Enumeration::enumerate(gso, maxDist, 0, evaluator, FloatVect(), FloatVect(),
-            0, d, pruning, dual);
+    enum2.enumerate(0, d, maxDist, 0, vector<Float>(), vector<enumxt>(), pruning, dual);
   }
   else {
     Enumerator enumerator(d, gso.getMuMatrix(), gso.getRMatrix());
@@ -73,8 +74,7 @@ static bool enumerateSVP(int d, MatGSO<Integer, Float>& gso, Float& maxDist,
 
       /* Enumerates short vectors only in enumerator.getSubTree()
         (about maxVolume iterations or less) */
-      Enumeration::enumerate(gso, maxDist, 0, evaluator,
-        FloatVect(), enumerator.getSubTree(), 0, d, pruning);
+      enum2.enumerate(0, d, maxDist, 0, FloatVect(), enumerator.getSubTree(), pruning);
 
       if (flags & SVP_VERBOSE) {
         cerr << "\r" << (char) 27 << "[K";
@@ -336,8 +336,8 @@ int closestVector(IntMatrix& b, const IntVect& intTarget,
           EVALMODE_CV);
 
   // Main loop of the enumeration
-  Enumeration::enumerate(gso, maxDist, 0, evaluator, targetCoord,
-          vector<Float>(), 0, d, vector<double>());
+  Enumeration2<Float> enum2(gso, evaluator);
+  enum2.enumerate(0, d, maxDist, 0, targetCoord, vector<enumxt>(), vector<enumf>());
 
   int result = RED_ENUM_FAILURE;
   if (!evaluator.solCoord.empty()) {
