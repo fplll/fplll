@@ -20,7 +20,7 @@
 #ifndef FPLLL_UTIL_H
 #define FPLLL_UTIL_H
 
-#include "matrix.h"
+#include "nr/matrix.h"
 
 FPLLL_BEGIN_NAMESPACE
 
