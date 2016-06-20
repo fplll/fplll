@@ -63,14 +63,34 @@ public:
      @param kappa Start row
      @param blockSize Block size to use, this may be < param.blockSize
      @param param Parameters to use for this enumeration (blockSize is ignored)
-     @param clean Did we change anything?
   */
 
-  bool svpReduction(int kappa, int blockSize, const BKZParam &param, bool &clean);
-  bool bkzLoop(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow,
-               bool &clean);
+  bool svpReduction(int kappa, int blockSize, const BKZParam &param);
+  bool svpReduction_ex(int kappa, int blockSize, const BKZParam &param, bool &clean) {
+    try {
+      clean = svpReduction(kappa, blockSize, param);
+      return true;
+    } catch (RedStatus & e) {
+      return setStatus(e);
+    }
+  }
+
+  bool tour(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow);
+  bool tour_ex(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow, bool &clean) {
+    try {
+      clean = tour(loop, kappaMax, param, minRow, maxRow);
+      return true;
+    } catch (RedStatus & e) {
+      return setStatus(e);
+    }
+  }
+
   bool bkz();
+
+  /** I/O **/
+
   void dumpGSO(const std::string filename, const std::string prefix, bool append = true);
+  void printTour(const int loop, int minRow, int maxRow);
 
   int status;
 
