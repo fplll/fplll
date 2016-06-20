@@ -229,28 +229,25 @@ int Matrix<T>::read()
 
 #endif // #ifdef FPLLL_V3_COMPAT
 
-
 /* ZZ_mat */
 
-template<class ZT> inline void ZZ_mat<ZT>::gen_intrel(int bits)
-{
-  if (c!=r+1)
-    {
-      FPLLL_ABORT("gen_intrel called on an ill-formed matrix");
-      return;
+template <class ZT> inline void ZZ_mat<ZT>::gen_intrel(int bits) {
+  if (c != r + 1) {
+    FPLLL_ABORT("gen_intrel called on an ill-formed matrix");
+    return;
+  }
+  int i, j;
+  for (i = 0; i < r; i++) {
+    matrix[i][0].randb(bits);
+    for (j = 1; j <= i; j++) {
+      matrix[i][j] = 0;
     }
-  int i,j;
-  for (i=0;i<r;i++)
-    {
-      matrix[i][0].randb(bits);
-      for (j=1; j<=i; j++)
-        matrix[i][j] = 0;
-      matrix[i][i + 1] = 1;
-      for (j=i+2; j<c; j++)
-        matrix[i][j] = 0;
+    matrix[i][i + 1] = 1;
+    for (j = i + 2; j < c; j++) {
+      matrix[i][j] = 0;
     }
+  }
 }
-
 
 template<class ZT> inline void ZZ_mat<ZT>::gen_simdioph(int bits,int bits2)
 {
@@ -281,91 +278,102 @@ template<class ZT> inline void ZZ_mat<ZT>::gen_uniform(int bits)
   for (int i=0;i<r;i++)for(int j=0;j<c;j++)matrix[i][j].randb(bits);
 }
 
-template<class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits,int q)
-{
+template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits, int q) {
+  // [A00 A01]
+  // [A10 A11]
+
   int i, j, k;
-  int d=r/2;
-  if (c!=r || c!=2*d) 
-    {
-      FPLLL_ABORT("gen_ntrulike called on an ill-formed matrix");
-      return;
-    }
-  Z_NR<ZT> * h=new Z_NR<ZT>[d];
+  int d = r / 2;
+  if (c != r || c != 2 * d) {
+    FPLLL_ABORT("gen_ntrulike called on an ill-formed matrix");
+    return;
+  }
+  Z_NR<ZT> *h = new Z_NR<ZT>[d];
 
-  for (i=0; i<d; i++)
+  for (i = 0; i < d; i++) {
     h[i].randb(bits);
-  
-  for (i=0; i<d; i++)
-    {
-      for (j=0; j<i; j++)
-        matrix[i][j] = 0;
-      matrix[i][i] = 1;
-      for (j=i+1; j<d; j++)
-        matrix[i][j] = 0;
-    }
+  }
 
-  for (i=d; i<r; i++)
-    for (j=0; j<d; j++)
+  // I in A00
+  for (i = 0; i < d; i++) {
+    for (j = 0; j < i; j++) {
       matrix[i][j] = 0;
-
-  for (i=d; i<r; i++)
-    {
-      for (j=d; j<i; j++)
-        matrix[i][j] = 0;
-      matrix[i][i] = q;
-      for (j=i+1; j<c; j++)
-        matrix[i][j] = 0;
     }
+    matrix[i][i] = 1;
+    for (j = i + 1; j < d; j++) {
+      matrix[i][j] = 0;
+    }
+  }
 
-  for (i=0; i<d; i++)
-    for (j=d; j<c; j++)
-      { 
-        k = j+i;
-        while (k>=d)k-=d;
-        matrix[i][j] = h[k];
+  // 0 in A10
+  for (i = d; i < r; i++) {
+    for (j = 0; j < d; j++) {
+      matrix[i][j] = 0;
+    }
+  }
+  // qI in A11
+  for (i = d; i < r; i++) {
+    for (j = d; j < i; j++) {
+      matrix[i][j] = 0;
+    }
+    matrix[i][i] = q;
+    for (j = i + 1; j < c; j++) {
+      matrix[i][j] = 0;
+    }
+  }
+
+  // H in A01
+  for (i = 0; i < d; i++)
+    for (j = d; j < c; j++) {
+      k = j + i;
+      while (k >= d) {
+        k -= d;
       }
+      matrix[i][j] = h[k];
+    }
 
   delete[] h;
 }
 
-template<class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(int bits,int q)
-{
+template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(int bits, int q) {
 
   int i, j, k;
-  
-  int d=r/2;
-  if (c!=r || c!=2*d) 
-    {
-      FPLLL_ABORT("gen_ntrulike2 called on an ill-formed matrix");
-      return;
-    }
-  Z_NR<ZT> * h=new Z_NR<ZT>[d];
-   
-  for (i=0; i<d; i++)
+
+  int d = r / 2;
+  if (c != r || c != 2 * d) {
+    FPLLL_ABORT("gen_ntrulike2 called on an ill-formed matrix");
+    return;
+  }
+  Z_NR<ZT> *h = new Z_NR<ZT>[d];
+
+  for (i = 0; i < d; i++) {
     h[i].randb(bits);
-  
-  for (i=0; i<d; i++)
-    for (j=0; j<c; j++)
-      matrix[i][j] = 0;
+  }
 
-  for (i=0; i<d; i++)
+  for (i = 0; i < d; i++) {
+    for (j = 0; j < c; j++) {
+      matrix[i][j] = 0;
+    }
+  }
+  for (i = 0; i < d; i++) {
     matrix[i][i] = q;
-
-
-  for (i=d; i<r; i++)
-    for (j=d; j<c; j++)
+  }
+  for (i = d; i < r; i++)
+    for (j = d; j < c; j++) {
       matrix[i][j] = 0;
-      
-  for (i=d; i<c; i++)
-    matrix[i][i] = 1;
+    }
 
-  for (i=d; i<r; i++)
-    for (j=0; j<d; j++)
-      { 
-        k = i+j;
-        while (k>=d)k-=d;
+  for (i = d; i < c; i++) {
+    matrix[i][i] = 1;
+  }
+
+  for (i = d; i < r; i++)
+    for (j = 0; j < d; j++) {
+      k = i + j;
+      while (k >= d) {
         matrix[i][j] = h[k];
       }
+    }
 
   delete[] h;
 }

@@ -18,7 +18,7 @@
 #ifndef FPLLL_WRAPPER_H
 #define FPLLL_WRAPPER_H
 
-#include "matrix.h"
+#include "nr/matrix.h"
 
 FPLLL_BEGIN_NAMESPACE
 

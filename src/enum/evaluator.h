@@ -16,7 +16,7 @@
 #ifndef FPLLL_EVALUATOR_H
 #define FPLLL_EVALUATOR_H
 
-#include "util.h"
+#include "../util.h"
 
 FPLLL_BEGIN_NAMESPACE
 
