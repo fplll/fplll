@@ -1,23 +1,30 @@
 include_fpllldir=$(includedir)/fplll
 
-include_fplll_HEADERS=defs.h dpe.h fplll.h matrix.h matrix.cpp \
-	nr_FP_dd.inl \
-	nr_FP_d.inl \
-	nr_FP_dpe.inl \
-	nr_FP.inl \
-	nr_FP_ld.inl \
-	nr_FP_misc.inl \
-	nr_FP_mpfr.inl \
-	nr_FP_qd.inl \
-	nr.h \
-	nr_rand.inl \
-	nr_Z_d.inl \
-	nr_Z.inl \
-	nr_Z_l.inl \
-	nr_Z_misc.inl \
-	nr_Z_mpz.inl \
-	numvect.h util.h svpcvp.h fplllv31.h bkz.h lll.h gso.h evaluator.h \
-	fplll_config.h wrapper.h enumerate.h
+include_fplll_HEADERS=defs.h fplll.h \
+  nr/dpe.h \
+  nr/matrix.h \
+  nr/matrix.cpp \
+	nr/nr_FP_dd.inl \
+	nr/nr_FP_d.inl \
+	nr/nr_FP_dpe.inl \
+	nr/nr_FP.inl \
+	nr/nr_FP_ld.inl \
+	nr/nr_FP_misc.inl \
+	nr/nr_FP_mpfr.inl \
+	nr/nr_FP_qd.inl \
+	nr/nr.h \
+	nr/nr_rand.inl \
+	nr/nr_Z_d.inl \
+	nr/nr_Z.inl \
+	nr/nr_Z_l.inl \
+	nr/nr_Z_misc.inl \
+	nr/nr_Z_mpz.inl \
+	nr/numvect.h \
+	util.h \
+	svpcvp.h fplllv31.h bkz.h lll.h gso.h  \
+	enum/evaluator.h \
+	fplll_config.h wrapper.h \
+  enum/enumerate.h
 
 EXTRA_DIST=pruning.txt
 
@@ -47,10 +54,10 @@ llldiff_LDADD=libfplll.la
 test_SOURCES=test.cpp
 test_LDADD=libfplll.la
 
-libfplll_la_SOURCES=fplll.cpp fplll.h util.cpp util.h topenum.cpp topenum.h \
-	evaluator.cpp evaluator.h
+libfplll_la_SOURCES=fplll.cpp fplll.h util.cpp util.h enum/topenum.cpp enum/topenum.h \
+	enum/evaluator.cpp enum/evaluator.h
 EXTRA_libfplll_la_SOURCES=gso.cpp gso.h lll.cpp lll.h wrapper.cpp wrapper.h \
-	bkz.cpp bkz.h enumerate.cpp enumerate.h svpcvp.cpp
+	bkz.cpp bkz.h enum/enumerate.cpp enum/enumerate.h svpcvp.cpp
 libfplll_la_LIBADD=-lgmp -lmpfr
 libfplll_la_LDFLAGS=-no-undefined -version-info 1:0:1
 
