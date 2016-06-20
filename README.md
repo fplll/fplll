@@ -1,13 +1,13 @@
 # fplll #
 
-fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL is central to the code, hence the name.  
+fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL [LLL82] is central to the code, hence the name.  
 
 
-It includes implementations of floating-point LLL reduction algorithms, offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible. In the case of the wrapper, the succession of variants is oblivious to the user. 
+It includes implementations of floating-point LLL reduction algorithms [NS09,MSV09], offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible [S10]. In the case of the wrapper, the succession of variants is oblivious to the user. 
 
-It includes an implementation of the BKZ reduction algorithm, including the BKZ-2.0 improvements (extreme enumeration pruning, pre-processing of blocks, early termination).
+It includes an implementation of the BKZ reduction algorithm [SE94], including the BKZ-2.0 [CN11] improvements (extreme enumeration pruning, pre-processing of blocks, early termination).
 
-It also includes a rigorous floating-point implementation of the Kannan-Fincke-Pohst algorithm that finds a shortest non-zero lattice vector. For the same task, the GaussSieve algorithm is also available in fplll. Finally, it contains a variant of the enumeration algorithm that computes a lattice vector closest to a given vector belonging to the real span of the lattice.
+It also includes a floating-point implementation of the Kannan-Fincke-Pohst algorithm [K83,FP85] that finds a shortest non-zero lattice vector. For the same task, the GaussSieve algorithm [MV10] is also available in fplll. Finally, it contains a variant of the enumeration algorithm that computes a lattice vector closest to a given vector belonging to the real span of the lattice.
 
 fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of the License, or, at your option, any later version) as published by the Free Software Foundation.
 
@@ -207,6 +207,32 @@ See [API documentation](library.md).
    ```
    ./latticegen r 30 3000 | ./fplll -a svp
    ```
+
+## Bibliography ##
+
+[CN11] Y. Chen and P. Q. Nguyen. BKZ 2.0: Better Lattice Security Estimates. ASIACRYPT 2011: 1-20
+
+[K83] R. Kannan.  Improved algorithms for integer programming and related lattice problems. STOC 1983, 99-108,
+
+[FP85] U. Fincke and M. Pohst. Improved methods for calculating vectors of short length in a lattice, including a complexity analysis.
+Math. Comp., 44(170):463–471 (1985)
+
+[LLL82] A. K. Lenstra, H. W. Lenstra, Jr. and L. Lovasz. Factoring polynomials with rational coefficients. Math. Ann., 261: 515–534 (1982)
+
+[MSV09] I. Morel, D. Stehle and G. Villard.
+H-LLL: using Householder inside LLL. ISSAC 2009: 271-278
+
+[MV10] D. Micciancio and P. Voulgaris.
+Faster Exponential Time Algorithms for the Shortest Vector Problem. SODA 2010: 1468-1480
+
+[NS09] P. Q. Nguyen and D. Stehle. An LLL Algorithm with Quadratic Complexity. SIAM J. Comput. 39(3): 874-903 (2009)
+
+[S10] D. Stehle. Floating-Point LLL: Theoretical and Practical Aspects.  The LLL Algorithm 2010: 179-213
+
+[SE94] C.-P. Schnorr and M. Euchner. Lattice basis reduction: Improved practical algorithms and solving subset sum problems. 
+Math. Program. 66: 181-199 (1994)
+
+
 
 ## Credit ##
 
