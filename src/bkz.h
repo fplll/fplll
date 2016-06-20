@@ -18,7 +18,7 @@
 #define FPLLL_BKZ_H
 
 #include "lll.h"
-#include "evaluator.h"
+#include "enum/evaluator.h"
 
 FPLLL_BEGIN_NAMESPACE
 

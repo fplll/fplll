@@ -52,7 +52,7 @@
 #include <mpfr.h>
 #include "fplll_config.h"
 #ifdef FPLLL_WITH_DPE
-#include "dpe.h"
+#include "nr/dpe.h"
 #endif
 
 #if defined(__sun) || defined(__CYGWIN__)

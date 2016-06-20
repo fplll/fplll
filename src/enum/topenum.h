@@ -16,7 +16,7 @@
 #ifndef FPLLL_TOP_ENUM_H
 #define FPLLL_TOP_ENUM_H
 
-#include "util.h"
+#include "../util.h"
 
 FPLLL_BEGIN_NAMESPACE
 

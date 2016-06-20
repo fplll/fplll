@@ -21,9 +21,9 @@
 #include "gso.cpp"
 #include "lll.cpp"
 #include "wrapper.cpp"
-#include "enumerate.cpp"
 #include "svpcvp.cpp"
 #include "bkz.cpp"
+#include "enum/enumerate.cpp"
 
 FPLLL_BEGIN_NAMESPACE
 
