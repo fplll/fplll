@@ -21,6 +21,7 @@
 #include "util.h"
 #include "svpcvp.h"
 #include "bkz.h"
+#include "pruner.h"
 
 FPLLL_BEGIN_NAMESPACE
 

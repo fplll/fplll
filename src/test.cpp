@@ -31,5 +31,7 @@ int main(void) {
   cout << M << endl;
   cout << U << endl;
   mpz_clear(q);
+  Pruner<FP_NR<double>> pru;
+  pru.setTabulatedConsts();   
   return 0;
 }

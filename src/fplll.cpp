@@ -24,6 +24,7 @@
 #include "svpcvp.cpp"
 #include "bkz.cpp"
 #include "enum/enumerate.cpp"
+#include "pruner.cpp"
 
 FPLLL_BEGIN_NAMESPACE
 
