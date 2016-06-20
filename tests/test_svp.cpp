@@ -98,6 +98,96 @@ int testSVP(ZZ_mat<ZT> &A, IntVect &b) {
 }
 
 /**
+   @brief Compute the norm of a dual vector (specified by coefficients in the dual basis).
+
+   @param A              input lattice
+   @param b              coefficients of shortest dual vector
+   @return
+*/
+template<class ZT>
+int dualLength(Float &norm, ZZ_mat<ZT> &A, const IntVect &coords) {
+  int d = coords.size();
+  if (A.getRows() != d) {
+    cerr << "DSVP length error: Coefficient vector has wrong dimension: ";
+    cerr << A.getRows() << " vs " << d << endl;
+    return 1;
+  }
+  FloatVect coords_d(d);
+  for (int i = 0; i < d; i++) {
+    coords_d[i] = coords[i].get_d();
+  }
+  
+  IntMatrix emptyMat;
+  MatGSO<Integer, Float> gso(A, emptyMat, emptyMat, GSO_INT_GRAM);
+  if (!gso.updateGSO()) {
+    cerr << "GSO Failure." << endl;
+    return 1;
+  }
+  Float tmp;
+  gso.getR(tmp, d-1, d-1);
+  tmp.pow_si(tmp, -1);
+  
+  FloatVect alpha(d);
+  Float mu, alpha2, r_inv;
+  norm = 0;
+  for (int i = 0; i < d; i++) {
+    alpha[i] = coords_d[i];
+    for (int j = 0; j < i; j++) {
+      gso.getMu(mu, i, j);
+      alpha[i].submul(mu, alpha[j]);
+    }
+    gso.getR(r_inv, i, i);
+    r_inv.pow_si(r_inv, -1);
+    alpha2.pow_si(alpha[i], 2);
+    norm.addmul(alpha2, r_inv);
+  }
+  
+  return 0;
+}
+
+/**
+   @brief Test if dual SVP function returns vector with right norm.
+
+   @param A              input lattice
+   @param b              shortest dual vector
+   @return
+*/
+
+template<class ZT>
+int testDualSVP(ZZ_mat<ZT> &A, IntVect &b) {
+  IntVect solCoord;  // In the LLL-reduced basis
+  IntVect solution;
+  IntMatrix u;
+
+  int status = lllReduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
+  if (status != RED_SUCCESS) {
+    cerr << "LLL reduction failed: " << getRedStatusStr(status) << endl;
+    return status;
+  }
+
+  status = shortestVector(A, solCoord, SVPM_FAST, SVP_DUAL);
+
+  if (status != RED_SUCCESS) {
+    cerr << "Failure: " << getRedStatusStr(status) << endl;
+    return status;
+  }
+  
+  Float normSol, normb;
+  if (dualLength(normSol, A, solCoord)) {
+    return 1;
+  }
+  
+  if (dualLength(normb, A, b)) {
+    return 1;
+  }
+  
+  if (normSol > normb)
+    return 1;
+
+  return 0;
+}
+
+/**
    @brief Test if SVP function returns vector with right norm.
 
    @param input_filename   filename of an input lattice
@@ -106,14 +196,18 @@ int testSVP(ZZ_mat<ZT> &A, IntVect &b) {
 */
 
 template<class ZT>
-int testFilename(const char *input_filename, const char *output_filename) {
+int testFilename(const char *input_filename, const char *output_filename, const bool dual = false) {
   ZZ_mat<ZT> A;
   readMatrix(A, input_filename);
 
   IntVect b;
   readVector(b, output_filename);
-
-  return testSVP<ZT>(A, b);
+  
+  if (dual) {
+    return testDualSVP<ZT>(A, b);
+  } else {
+    return testSVP<ZT>(A, b);
+  }
 }
 
 /**
@@ -131,6 +225,8 @@ int main(int argc, char *argv[]) {
    status |= testFilename<mpz_t>(argv[1] /*"lattices/example_svp_in"*/, "lattices/example_svp_out");
   else
    status |= testFilename<mpz_t>("lattices/example_svp_in", "lattices/example_svp_out");
+
+  status |= testFilename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", true);
 
   if (status == 0) {
     cerr << "All tests passed." << endl;

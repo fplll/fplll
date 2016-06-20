@@ -15,8 +15,8 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "svpcvp.h"
-#include "enumerate.h"
-#include "topenum.h"
+#include "enum/enumerate.h"
+#include "enum/topenum.h"
 
 FPLLL_BEGIN_NAMESPACE
 

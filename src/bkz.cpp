@@ -18,7 +18,7 @@
 
 /* Template source file */
 #include "bkz.h"
-#include "enumerate.h"
+#include "enum/enumerate.h"
 #include <iomanip>
 
 FPLLL_BEGIN_NAMESPACE
