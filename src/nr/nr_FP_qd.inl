@@ -49,6 +49,11 @@ inline void FP_NR<qd_real>::get_mpfr(mpfr_t r, mp_rnd_t rnd) const {
 }
 
 template<>
+inline void FP_NR<qd_real>::set_mpfr(mpfr_t r, mp_rnd_t rnd) {
+  data = mpfr_get_ld (r, rnd);
+}
+
+template<>
 inline long FP_NR<qd_real>::get_si() const {
   return to_int(data);
 }
