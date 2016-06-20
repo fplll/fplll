@@ -54,6 +54,8 @@ public:
 
     if (linearPruningLevel > 0) {
       pruning.emplace_back(blockSize, linearPruningLevel);
+    } else {
+      pruning.emplace_back();
     }
   }
 

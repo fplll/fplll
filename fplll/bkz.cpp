@@ -18,12 +18,11 @@
 
 /* Template source file */
 #include "bkz.h"
+#include "bkz_params.h"
 #include "enum/enumerate.h"
 #include <iomanip>
-#include "bkz_params.h"
 
 FPLLL_BEGIN_NAMESPACE
-
 
 template <class FT>
 BKZReduction<FT>::BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lllObj,
@@ -64,9 +63,9 @@ template <class FT>
 void computeGaussHeurDist(MatGSO<Integer, FT> &m, FT &maxDist, long maxDistExpo, int kappa,
                           int blockSize, double ghFactor) {
   double t = (double)blockSize / 2.0 + 1;
-  t        = tgamma(t);
-  t        = pow(t, 2.0 / (double)blockSize);
-  t        = t / M_PI;
+  t = tgamma(t);
+  t = pow(t, 2.0 / (double)blockSize);
+  t = t / M_PI;
   FT f, g, h;
   f = t;
   m.getR(h, kappa, kappa);
@@ -88,15 +87,17 @@ void computeGaussHeurDist(MatGSO<Integer, FT> &m, FT &maxDist, long maxDistExpo,
   }
 }
 
+
+
 template <class FT>
 bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &par, bool &clean) {
-  long maxDistExpo;
 
   int lllStart = (par.flags & BKZ_BOUNDED_LLL) ? kappa : 0;
 
   if (!lllObj.lll(lllStart, kappa, kappa + blockSize)) {
     return setStatus(lllObj.status);
   }
+
   if (lllObj.nSwaps > 0) {
     clean = false;
   }
@@ -104,29 +105,30 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
   const BKZParam *preproc = par.preprocessing;
   if (preproc && preproc->blockSize < blockSize && preproc->blockSize > 2) {
     int dummyKappaMax = numRows;
+
     BKZAutoAbort<FT> autoAbort(m, kappa + blockSize, kappa);
-    double cputimeStart2 = cputime();
+    double cputimeStart = cputime();
 
     for (int i = 0;; i++) {
       if ((preproc->flags & BKZ_MAX_LOOPS) && i >= preproc->maxLoops)
         break;
-      if ((preproc->flags & BKZ_MAX_TIME) &&
-          (cputime() - cputimeStart2) * 0.001 >= preproc->maxTime)
+      if ((preproc->flags & BKZ_MAX_TIME) && (cputime() - cputimeStart) * 0.001 >= preproc->maxTime)
         break;
       if (autoAbort.testAbort(preproc->autoAbort_scale, preproc->autoAbort_maxNoDec))
         break;
 
-      bool clean2 = true;
-      if (!bkzLoop(i, dummyKappaMax, *preproc, kappa, kappa + blockSize, clean2))
+      bool cleanInner = true;
+      if (!bkzLoop(i, dummyKappaMax, *preproc, kappa, kappa + blockSize, cleanInner))
         return false;
 
-      if (clean2)
+      if (cleanInner)
         break;
       else
-        clean = clean2;
+        clean = cleanInner;
     }
   }
 
+  long maxDistExpo;
   maxDist = m.getRExp(kappa, kappa, maxDistExpo);
   deltaMaxDist.mul(delta, maxDist);
 
@@ -136,20 +138,14 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
 
   FT ghMaxDist;
   computeGaussHeurDist(m, ghMaxDist, maxDistExpo, kappa, blockSize, par.ghFactor);
-  const Pruning &pruning = par.getPruning(maxDist.get_d() * pow(2,maxDistExpo),
-                                          ghMaxDist.get_d() * pow(2,maxDistExpo));
+  const Pruning &pruning = par.getPruning(maxDist.get_d() * pow(2, maxDistExpo),
+                                          ghMaxDist.get_d() * pow(2, maxDistExpo));
 
   vector<FT> &solCoord = evaluator.solCoord;
   solCoord.clear();
-<<<<<<< a5c9a46a7987d0b026ef96f5ca6485e01dc08ed8:fplll/bkz.cpp
   Enumeration<FT> Enum(m, evaluator);
   Enum.enumerate( kappa, kappa + blockSize, maxDist, maxDistExpo, vector<FT>(), vector<enumxt>(), par.pruning);
   nodes += Enum.getNodes(); //Enumeration::getNodes();
-=======
-  Enumeration::enumerate(m, maxDist, maxDistExpo, evaluator, emptySubTree, emptySubTree, kappa,
-                         kappa + blockSize, pruning.coefficients);
-  nodes += Enumeration::getNodes();
->>>>>>> converting pruning parameters to new format:src/bkz.cpp
   if (solCoord.empty()) {
     if (par.flags & BKZ_GH_BND)
       return true;  // Do nothing

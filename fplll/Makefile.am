@@ -24,8 +24,8 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	svpcvp.h fplllv31.h bkz.h lll.h gso.h  \
 	enum/evaluator.h \
 	fplll_config.h wrapper.h \
-	bkz_param.h
-  enum/enumerate.h
+	bkz_params.h \
+	enum/enumerate.h
 
 EXTRA_DIST=pruning.txt
 
