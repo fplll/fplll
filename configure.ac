@@ -5,7 +5,7 @@ AC_PREREQ(2.61)
 AC_INIT(libfplll,4.0.5)
 AC_CONFIG_SRCDIR([src/fplll.cpp])
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 AC_CONFIG_HEADER(config.h)
 
