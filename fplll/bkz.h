@@ -63,9 +63,13 @@ public:
      @param kappa Start row
      @param blockSize Block size to use, this may be < param.blockSize
      @param param Parameters to use for this enumeration (blockSize is ignored)
+
+     ``_ex`` variant is exception handling.
   */
 
+
   bool svpReduction(int kappa, int blockSize, const BKZParam &param);
+
   bool svpReduction_ex(int kappa, int blockSize, const BKZParam &param, bool &clean) {
     try {
       clean = svpReduction(kappa, blockSize, param);
@@ -76,6 +80,7 @@ public:
   }
 
   bool tour(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow);
+
   bool tour_ex(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow, bool &clean) {
     try {
       clean = tour(loop, kappaMax, param, minRow, maxRow);
@@ -85,12 +90,13 @@ public:
     }
   }
 
+  bool preprocess(int kappa, int blockSize, const BKZParam &param);
+
   bool bkz();
 
   /** I/O **/
 
   void dumpGSO(const std::string filename, const std::string prefix, bool append = true);
-  void printTour(const int loop, int minRow, int maxRow);
 
   int status;
 
@@ -101,8 +107,12 @@ public:
   long nodes;
 
 private:
+  void printTour(const int loop, int minRow, int maxRow);
   void printParams(const BKZParam &param, ostream &out);
+
   bool setStatus(int newStatus);
+
+  const Pruning &getPruning(int kappa, int blockSize, const BKZParam &par) const;
 
   const BKZParam &param;
   int numRows;
@@ -115,6 +125,9 @@ private:
   const vector<FT> emptyTarget, emptySubTree;
   FT maxDist, deltaMaxDist;
   double cputimeStart;
+
+
+
 };
 
 

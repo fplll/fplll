@@ -88,6 +88,38 @@ void computeGaussHeurDist(MatGSO<Integer, FT> &m, FT &maxDist, long maxDistExpo,
 }
 
 
+template <class FT>
+bool BKZReduction<FT>::preprocess(int kappa, int blockSize, const BKZParam &param) {
+  BKZAutoAbort<FT> autoAbort(m, kappa + blockSize, kappa);
+  double cputimeStart = cputime();
+
+  int dummyKappaMax = numRows;
+  bool clean = true;
+  for (int i = 0;; i++) {
+    if ((param.flags & BKZ_MAX_LOOPS) && i >= param.maxLoops)
+      break;
+    if ((param.flags & BKZ_MAX_TIME) && (cputime() - cputimeStart) * 0.001 >= param.maxTime)
+      break;
+    if (autoAbort.testAbort(param.autoAbort_scale, param.autoAbort_maxNoDec))
+      break;
+
+    clean &= tour(i, dummyKappaMax, param, kappa, kappa + blockSize);
+  }
+  return clean;
+}
+
+
+template <class FT>
+const Pruning &BKZReduction<FT>::getPruning(int kappa, int blockSize, const BKZParam &par) const {
+
+  long maxDistExpo;
+  FT maxDist = m.getRExp(kappa, kappa, maxDistExpo);
+
+  FT ghMaxDist;
+  computeGaussHeurDist(m, ghMaxDist, maxDistExpo, kappa, blockSize, 1.0);
+  return par.getPruning(maxDist.get_d() * pow(2, maxDistExpo),
+                        ghMaxDist.get_d() * pow(2, maxDistExpo));
+}
 
 template <class FT>
 bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &par) {
@@ -99,32 +131,12 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
     throw lllObj.status;
   }
 
-  if (lllObj.nSwaps > 0) {
-    clean = false;
-  }
+  clean &= (lllObj.nSwaps == 0);
 
-  const BKZParam *preproc = par.preprocessing;
-  if (preproc && preproc->blockSize < blockSize && preproc->blockSize > 2) {
-    int dummyKappaMax = numRows;
-
-    BKZAutoAbort<FT> autoAbort(m, kappa + blockSize, kappa);
-    double cputimeStart = cputime();
-
-    for (int i = 0;; i++) {
-      if ((preproc->flags & BKZ_MAX_LOOPS) && i >= preproc->maxLoops)
-        break;
-      if ((preproc->flags & BKZ_MAX_TIME) && (cputime() - cputimeStart) * 0.001 >= preproc->maxTime)
-        break;
-      if (autoAbort.testAbort(preproc->autoAbort_scale, preproc->autoAbort_maxNoDec))
-        break;
-
-      bool cleanInner = tour(i, dummyKappaMax, *preproc, kappa, kappa + blockSize);
-
-      if (cleanInner)
-        break;
-      else
-        clean = cleanInner;
-    }
+  if (par.preprocessing
+      && par.preprocessing->blockSize < blockSize
+      && par.preprocessing->blockSize > 2) {
+    clean &= preprocess(kappa, blockSize, *par.preprocessing);
   }
 
   long maxDistExpo;
@@ -135,10 +147,7 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
     computeGaussHeurDist(m, maxDist, maxDistExpo, kappa, blockSize, par.ghFactor);
   }
 
-  FT ghMaxDist;
-  computeGaussHeurDist(m, ghMaxDist, maxDistExpo, kappa, blockSize, par.ghFactor);
-  const Pruning &pruning = par.getPruning(maxDist.get_d() * pow(2, maxDistExpo),
-                                          ghMaxDist.get_d() * pow(2, maxDistExpo));
+  const Pruning &pruning = getPruning(kappa, blockSize, par);
 
   vector<FT> &solCoord = evaluator.solCoord;
   solCoord.clear();
@@ -194,24 +203,9 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
 }
 
 template <class FT>
-void BKZReduction<FT>::printTour(const int loop, int minRow, int maxRow) {
-  FT r0;
-  Float fr0;
-  long expo;
-  r0  = m.getRExp(minRow, minRow, expo);
-  fr0 = r0.get_d();
-  fr0.mul_2si(fr0, expo);
-  cerr << "End of BKZ loop " << std::setw(4) << loop << ", time = " << std::fixed << std::setw(9)
-         << std::setprecision(3) << (cputime() - cputimeStart) * 0.001 << "s";
-    cerr << ", r_" << minRow << " = " << fr0;
-    cerr << ", slope = " << std::setw(9) << std::setprecision(6)
-         << getCurrentSlope(m, minRow, maxRow);
-    cerr << ", log2(nodes) = " << std::setw(9) << std::setprecision(6) << log2(nodes) << endl;
-}
-
-template <class FT>
 bool BKZReduction<FT>::tour(const int loop, int &kappaMax, const BKZParam &par, int minRow, int maxRow) {
   bool clean = true;
+
   for (int kappa = minRow; kappa < maxRow - 1; kappa++) {
     int blockSize = min(par.blockSize, maxRow - kappa);
     clean &= svpReduction(kappa, blockSize, par);
@@ -225,6 +219,7 @@ bool BKZReduction<FT>::tour(const int loop, int &kappaMax, const BKZParam &par, 
   if (par.flags & BKZ_VERBOSE) {
     printTour(loop, minRow, maxRow);
   }
+
   if (par.flags & BKZ_DUMP_GSO) {
     std::ostringstream prefix;
     prefix << "End of BKZ loop " << std::setw(4) << loop;
@@ -250,7 +245,6 @@ template <class FT> bool BKZReduction<FT>::bkz() {
   if (param.blockSize < 2)
     return setStatus(RED_SUCCESS);
 
-  int kappaMax = 0;
   int i    = 0;
   BKZAutoAbort<FT> autoAbort(m, numRows);
 
@@ -263,6 +257,7 @@ template <class FT> bool BKZReduction<FT>::bkz() {
 
   m.discoverAllRows();
 
+  int kappaMax;
   bool clean = true;
   for (i = 0;; i++) {
     if ((flags & BKZ_MAX_LOOPS) && i >= param.maxLoops) {
@@ -296,6 +291,22 @@ template <class FT> bool BKZReduction<FT>::bkz() {
     dumpGSO(param.dumpGSOFilename, prefix.str());
   }
   return setStatus(finalStatus);
+}
+
+template <class FT>
+void BKZReduction<FT>::printTour(const int loop, int minRow, int maxRow) {
+  FT r0;
+  Float fr0;
+  long expo;
+  r0  = m.getRExp(minRow, minRow, expo);
+  fr0 = r0.get_d();
+  fr0.mul_2si(fr0, expo);
+  cerr << "End of BKZ loop " << std::setw(4) << loop << ", time = " << std::fixed << std::setw(9)
+         << std::setprecision(3) << (cputime() - cputimeStart) * 0.001 << "s";
+    cerr << ", r_" << minRow << " = " << fr0;
+    cerr << ", slope = " << std::setw(9) << std::setprecision(6)
+         << getCurrentSlope(m, minRow, maxRow);
+    cerr << ", log2(nodes) = " << std::setw(9) << std::setprecision(6) << log2(nodes) << endl;
 }
 
 template <class FT> void BKZReduction<FT>::printParams(const BKZParam &param, ostream &out) {
