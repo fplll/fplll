@@ -19,89 +19,23 @@
 
 #include "lll.h"
 #include "enum/evaluator.h"
+#include "bkz_params.h"
 
 FPLLL_BEGIN_NAMESPACE
 
-class BKZParam {
+template <class FT> class BKZAutoAbort {
 public:
-  BKZParam(int blockSize = 0, double delta = LLL_DEF_DELTA, int flags = BKZ_DEFAULT,
-           int maxLoops = 0, double maxTime = 0, int linearPruningLevel = 0,
-           double autoAbort_scale = 1.0, int autoAbort_maxNoDec = 5, double ghFactor = 1.1)
-      : blockSize(blockSize), delta(delta), flags(flags), maxLoops(maxLoops), maxTime(maxTime),
-        autoAbort_scale(autoAbort_scale), autoAbort_maxNoDec(autoAbort_maxNoDec),
-        ghFactor(ghFactor), dumpGSOFilename("gso.log"), preprocessing(NULL) {
-    if (linearPruningLevel > 0) {
-      enableLinearPruning(linearPruningLevel);
-    }
-  }
+  BKZAutoAbort(MatGSO<Integer, FT> &m, int numRows, int startRow = 0)
+      : m(m), oldSlope(numeric_limits<double>::max()), noDec(-1), numRows(numRows),
+        startRow(startRow) {}
+  bool testAbort(double scale = 1.0, int maxNoDec = 5);
 
-  /** Block size used for enumeration **/
-  int blockSize;
-
-  /** LLL parameter delta **/
-  double delta;
-
-  /** See BKZFlags **/
-  int flags;
-
-  /** Maximum number of loops to execute **/
-  int maxLoops;
-
-  /** Maximum time to spend **/
-  double maxTime;
-
-  /** If BKZ_AUTOABORT is set, We abort if newSlope < autoAbort_scale * oldSlope
-      is true for autoAbort_maxNoDec loops.
-   */
-  double autoAbort_scale;
-  int autoAbort_maxNoDec;
-
-  /** If not empty these are the prunning coefficients used for prunned
-      enumeration. If linearPruningLevel > 0, the first blockSize -
-      linearPruningLevel coefficients will be one. Afterwards the coefficients
-      drop linearly with slope -1/blockSize.
-  */
-
-  vector<double> pruning;
-
-  /** If BKZ_GH_BND is set, the enumeration bound will be set to ghFactor times
-      the Gaussian Heuristic
-  */
-
-  double ghFactor;
-
-  /** If BKZ_DUMP_GSO is set, the norms of the GSO matrix are written to this
-      file after each complete round.
-  */
-
-  string dumpGSOFilename;
-
-  /** If not NULL, these parameters are used for BKZ preprocessing. It is
-      allowed to nest these preprocessing parameters
-  */
-
-  BKZParam *preprocessing;
-
-  /** Sets all pruning coefficients to 1, except the last <level> coefficients,
-      these will be linearly with slope -1 / blockSize.
-
-      @param level number of levels in linear descent
-  */
-  inline void enableLinearPruning(int level) {
-    int startDescent = blockSize - level;
-
-    if (startDescent > blockSize)
-      startDescent = blockSize;
-
-    if (startDescent < 1)
-      startDescent = 1;
-
-    pruning.resize(blockSize);
-    for (int k   = 0; k < startDescent; k++)
-      pruning[k] = 1.0;
-    for (int k                  = 0; k < blockSize - startDescent; k++)
-      pruning[startDescent + k] = ((double)(blockSize - k - 1)) / blockSize;
-  }
+private:
+  MatGSO<Integer, FT> &m;
+  double oldSlope;
+  int noDec;
+  int numRows;
+  int startRow;
 };
 
 /** Finds the slope of the curve fitted to the lengths of the vectors from
@@ -163,20 +97,6 @@ private:
   double cputimeStart;
 };
 
-template <class FT> class BKZAutoAbort {
-public:
-  BKZAutoAbort(MatGSO<Integer, FT> &m, int numRows, int startRow = 0)
-      : m(m), oldSlope(numeric_limits<double>::max()), noDec(-1), numRows(numRows),
-        startRow(startRow) {}
-  bool testAbort(double scale = 1.0, int maxNoDec = 5);
-
-private:
-  MatGSO<Integer, FT> &m;
-  double oldSlope;
-  int noDec;
-  int numRows;
-  int startRow;
-};
 
 FPLLL_END_NAMESPACE
 

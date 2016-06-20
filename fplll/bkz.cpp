@@ -20,18 +20,10 @@
 #include "bkz.h"
 #include "enum/enumerate.h"
 #include <iomanip>
+#include "bkz_params.h"
 
 FPLLL_BEGIN_NAMESPACE
 
-template <class FT> bool BKZAutoAbort<FT>::testAbort(double scale, int maxNoDec) {
-  double newSlope = -getCurrentSlope(m, startRow, numRows);
-  if (noDec == -1 || newSlope < scale * oldSlope)
-    noDec = 0;
-  else
-    noDec++;
-  oldSlope = min(oldSlope, newSlope);
-  return noDec >= maxNoDec;
-}
 
 template <class FT>
 BKZReduction<FT>::BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lllObj,
@@ -142,11 +134,22 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
     computeGaussHeurDist(m, maxDist, maxDistExpo, kappa, blockSize, par.ghFactor);
   }
 
+  FT ghMaxDist;
+  computeGaussHeurDist(m, ghMaxDist, maxDistExpo, kappa, blockSize, par.ghFactor);
+  const Pruning &pruning = par.getPruning(maxDist.get_d() * pow(2,maxDistExpo),
+                                          ghMaxDist.get_d() * pow(2,maxDistExpo));
+
   vector<FT> &solCoord = evaluator.solCoord;
   solCoord.clear();
+<<<<<<< a5c9a46a7987d0b026ef96f5ca6485e01dc08ed8:fplll/bkz.cpp
   Enumeration<FT> Enum(m, evaluator);
   Enum.enumerate( kappa, kappa + blockSize, maxDist, maxDistExpo, vector<FT>(), vector<enumxt>(), par.pruning);
   nodes += Enum.getNodes(); //Enumeration::getNodes();
+=======
+  Enumeration::enumerate(m, maxDist, maxDistExpo, evaluator, emptySubTree, emptySubTree, kappa,
+                         kappa + blockSize, pruning.coefficients);
+  nodes += Enumeration::getNodes();
+>>>>>>> converting pruning parameters to new format:src/bkz.cpp
   if (solCoord.empty()) {
     if (par.flags & BKZ_GH_BND)
       return true;  // Do nothing
@@ -345,6 +348,7 @@ void BKZReduction<FT>::dumpGSO(const std::string filename, const std::string pre
   dump.close();
 }
 
+<<<<<<< a5c9a46a7987d0b026ef96f5ca6485e01dc08ed8:fplll/bkz.cpp
 /**
    Force instantiation of templates
 */
@@ -366,5 +370,16 @@ template class BKZReduction<FP_NR<dpe_t> >;
 #endif
 
 template class BKZReduction<FP_NR<mpfr_t> >;
+=======
+template <class FT> bool BKZAutoAbort<FT>::testAbort(double scale, int maxNoDec) {
+  double newSlope = -getCurrentSlope(m, startRow, numRows);
+  if (noDec == -1 || newSlope < scale * oldSlope)
+    noDec = 0;
+  else
+    noDec++;
+  oldSlope = min(oldSlope, newSlope);
+  return noDec >= maxNoDec;
+}
+>>>>>>> converting pruning parameters to new format:src/bkz.cpp
 
 FPLLL_END_NAMESPACE

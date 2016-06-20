@@ -59,13 +59,14 @@ int lll(Options& o, ZZ_mat<ZT>& b) {
 
 /* BKZ reduction */
 
-void readPruningVector(const char* fileName, vector<double>& v, int n) {
+void readPruningVector(const char* fileName, Pruning& pr, int n) {
   double x;
   FILE* file = fopen(fileName, "r");
   CHECK(file, "Cannot open '" << fileName << "'");
-  v.clear();
+
+  pr.coefficients.clear();
   for (int i = 0; i <= n && fscanf(file, "%lf", &x) == 1; i++) {
-    v.push_back(x);
+    pr.coefficients.push_back(x);
     CHECK(x > 0 && x <= 1, "Number " << x << " in file '" << fileName
           << "' is not in the interval (0,1]");
     if (i == 0) {
@@ -73,11 +74,11 @@ void readPruningVector(const char* fileName, vector<double>& v, int n) {
             << "' should be 1");
     }
     else {
-      CHECK(v[i] <= v[i - 1], "File '" << fileName
+      CHECK(pr.coefficients[i] <= pr.coefficients[i - 1], "File '" << fileName
             << "' should contain a non-increasing sequence of numbers");
     }
   }
-  CHECK(static_cast<int>(v.size()) == n, "File '" << fileName
+  CHECK(static_cast<int>(pr.coefficients.size()) == n, "File '" << fileName
         << "' should contain exactly " << n << " numbers");
 }
 
@@ -113,9 +114,10 @@ int bkz(Options& o, IntMatrix& b) {
   if (o.verbose) param.flags |= BKZ_VERBOSE;
   if (o.noLLL) param.flags |= BKZ_NO_LLL;
   if (o.pruningFile != NULL) {
-    readPruningVector(o.pruningFile, param.pruning, o.blockSize);
+    param.pruning.emplace_back();
+    readPruningVector(o.pruningFile, param.pruning.back(), o.blockSize);
   } else if (o.bkzLinearPruningLevel) {
-    param.enableLinearPruning(o.bkzLinearPruningLevel);
+    param.pruning.emplace_back(o.blockSize, o.bkzLinearPruningLevel);
   }
   
   status = bkzReduction(&b, strchr(format, 'u') ? &u : NULL, param, o.floatType, o.precision);
