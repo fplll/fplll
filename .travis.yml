@@ -14,10 +14,9 @@ addons:
     - gcc-4.8
     - g++-4.8
     - clang
-
-before_install:
-  - apt-get update -qq
-  - apt-get install -qq libmpfr-dev libgmp-dev libqd-dev
+    - libmpfr-dev
+    - libgmp-dev
+    - libqd-dev
 
 install:
 - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
