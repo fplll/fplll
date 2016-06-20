@@ -22,30 +22,6 @@
 FPLLL_BEGIN_NAMESPACE
 
 template<class ZT, class FT>
-MatGSO<ZT, FT>::MatGSO(Matrix<ZT>& argB, Matrix<ZT>& argU, Matrix<ZT>& argUInvT,
-                       int flags) :
-  b(argB),
-  enableIntGram(flags & GSO_INT_GRAM),
-  enableRowExpo(flags & GSO_ROW_EXPO),
-  enableTransform(argU.getRows() > 0),
-  enableInvTransform(argUInvT.getRows() > 0),
-  rowOpForceLong(flags & GSO_OP_FORCE_LONG),
-  u(argU), uInvT(argUInvT),
-  nKnownRows(0), nSourceRows(0), nKnownCols(0),
-  colsLocked(false), allocDim(0)
-{
-  FPLLL_DEBUG_CHECK(!(enableIntGram && enableRowExpo));
-  d = b.getRows();
-  if (enableRowExpo) {
-    tmpColExpo.resize(b.getCols());
-  }
-  sizeIncreased();
-#ifdef DEBUG
-  rowOpFirst = rowOpLast = -1;
-#endif
-}
-
-template<class ZT, class FT>
 inline void MatGSO<ZT, FT>::invalidateGSORow(int i, int newValidCols) {
   FPLLL_DEBUG_CHECK(i >= 0 && i < nKnownRows
                     && newValidCols >= 0 && newValidCols <= i + 1);

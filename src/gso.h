@@ -70,7 +70,28 @@ public:
    *   Affects the behaviour of row_addmul(_we).
    *   See the documentation of row_addmul.
    */
-  MatGSO(Matrix<ZT>& b, Matrix<ZT>& u, Matrix<ZT>& uInvT, int flags);
+  //~ MatGSO(Matrix<ZT>& b, Matrix<ZT>& u, Matrix<ZT>& uInvT, int flags);
+  MatGSO(Matrix<ZT>& argB, Matrix<ZT>& argU, Matrix<ZT>& argUInvT, int flags) :
+    b(argB),
+    enableIntGram(flags & GSO_INT_GRAM),
+    enableRowExpo(flags & GSO_ROW_EXPO),
+    enableTransform(argU.getRows() > 0),
+    enableInvTransform(argUInvT.getRows() > 0),
+    rowOpForceLong(flags & GSO_OP_FORCE_LONG),
+    u(argU), uInvT(argUInvT),
+    nKnownRows(0), nSourceRows(0), nKnownCols(0),
+    colsLocked(false), allocDim(0)
+  {
+    FPLLL_DEBUG_CHECK(!(enableIntGram && enableRowExpo));
+    d = b.getRows();
+    if (enableRowExpo) {
+      tmpColExpo.resize(b.getCols());
+    }
+    sizeIncreased();
+  #ifdef DEBUG
+    rowOpFirst = rowOpLast = -1;
+  #endif
+  }
 
   /**
    * Number of rows of b (dimension of the lattice).
