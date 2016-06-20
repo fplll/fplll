@@ -1,15 +1,14 @@
 # fplll #
 
-fplll contains several algorithms on lattices that rely on floating-point computations. This
-includes implementations of the floating-point LLL reduction algorithm, offering different
-speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in
-order to provide a guaranteed output as fast as possible. In the case of the wrapper, the succession
-of variants is oblivious to the user. It also includes a rigorous floating-point implementation of
-the Kannan-Fincke-Pohst algorithm that finds a shortest non-zero lattice vector, and the BKZ
-reduction algorithm.
+fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL is central to the code, hence the name.  
 
-fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of
-the License, or, at your option, any later version) as published by the Free Software Foundation.
+It includes implementations of floating-point LLL reduction algorithms, offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible. In the case of the wrapper, the succession of variants is oblivious to the user. 
+
+It includes an implementation of the BKZ reduction algorithm, including the BKZ-2.0 improvements (extreme enumeration pruning, pre-processing of blocks, early termination).
+
+It also includes a rigorous floating-point implementation of the Kannan-Fincke-Pohst algorithm that finds a shortest non-zero lattice vector. For the same task, the GaussSieve algorithm is also available in fplll. Finally, it contains a variant of the enumeration algorithm that computes a lattice vector closest to a given vector belonging to the real span of the lattice.
+
+fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of the License, or, at your option, any later version) as published by the Free Software Foundation.
 
 ## Dependencies ##
 
