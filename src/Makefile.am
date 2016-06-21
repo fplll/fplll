@@ -1,6 +1,6 @@
 include_fpllldir=$(includedir)/fplll
 
-include_fplll_HEADERS=defs.h fplll.h \
+nobase_include_fplll_HEADERS=defs.h fplll.h \
   nr/dpe.h \
   nr/matrix.h \
   nr/matrix.cpp \
