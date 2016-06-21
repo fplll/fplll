@@ -323,15 +323,21 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits, int q) {
   // H in A01
   for (i = 0; i < d; i++)
     for (j = d; j < c; j++) {
-      k = j + i;
-      while (k >= d) {
-        k -= d;
+      k = j - d - i;
+      while (k < 0) {
+        k += d;
       }
       matrix[i][j] = h[k];
     }
 
   delete[] h;
 }
+
+
+
+
+
+
 
 template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(int bits, int q) {
 
@@ -361,9 +367,9 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(int bits, int q) {
 
   for (i = d; i < r; i++) {
     for (j = 0; j < d; j++) {
-      k = i + j;
-      while (k >= d) {
-	k -= d;
+      k = i -d - j;
+      while (k < 0) {
+	k += d;
       }
       matrix[i][j] = h[k];
     }
