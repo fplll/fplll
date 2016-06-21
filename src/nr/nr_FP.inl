@@ -70,6 +70,11 @@ public:
   inline void get_mpfr(mpfr_t r, mp_rnd_t rnd = GMP_RNDN) const;
 
   /**
+   * Convert this object from a mpfr_t r.
+   */
+  inline void set_mpfr(mpfr_t r, mp_rnd_t rnd = GMP_RNDN);
+
+  /**
    * Converts this object to a long. The rounding direction is undefined.
    * If it does not fit in a long, the result is undefined.
    */
@@ -148,7 +153,8 @@ public:
    */
   inline void operator=(const FP_NR<F>& a);
   inline void operator=(double a);
-  inline void operator=(mpfr_t& a);
+  //inline void operator=(mpfr_t& a);
+  inline void operator=(mpfr_t& a) {set_mpfr(a, MPFR_RNDN);};
   inline bool operator<(const FP_NR<F>& a) const;
   inline bool operator<(double a) const;
   inline bool operator>(const FP_NR<F>& a) const;
