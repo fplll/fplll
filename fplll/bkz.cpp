@@ -279,11 +279,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
     if (solCoord.empty())
     {
-      if (par.flags & BKZ_GH_BND)
-      {
-        return clean;
-      }
-      else
+      if (pruning.coefficients[0] == 1 && !(par.flags & BKZ_GH_BND))
       {
         throw RED_ENUM_FAILURE;
       }
