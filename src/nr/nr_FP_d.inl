@@ -41,6 +41,11 @@ inline void FP_NR<double>::get_mpfr(mpfr_t r, mp_rnd_t rnd) const {
 }
 
 template<>
+inline void FP_NR<double>::set_mpfr(mpfr_t r, mp_rnd_t rnd) {
+  data = mpfr_get_d (r, rnd);
+}
+
+template<>
 inline long FP_NR<double>::get_si() const {
   return static_cast<long>(data);
 }
