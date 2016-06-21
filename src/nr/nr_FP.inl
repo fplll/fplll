@@ -2,7 +2,7 @@
  *   Float Class
  *********************/
 
-#include "defs.h"
+#include "../defs.h"
 
 #ifndef FPLLL_NR_FP_H
 #define FPLLL_NR_FP_H

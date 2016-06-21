@@ -5,7 +5,7 @@
  * loading definitions
  */
 #include <iostream>
-#include "defs.h"
+#include "../defs.h"
 
 #include "nr_rand.inl"
 
