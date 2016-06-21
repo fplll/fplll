@@ -81,9 +81,9 @@ lattice basis vectors).
 
 The options are:
 
-* `r` `d` `b` : generates a knapsack style matrix of dimension d x (d+1) and b bits.
-* `s` `d` `b` `b2` : generates a simdioph matrix.
-* `u` `d` `b` : generates an uniform matrix.
+* `r` `d` `b` : generates a knapsack like matrix of dimension d x (d+1) and b bits (see, e.g., [S09]): the i-th vector starts with a random integer of bit-length <=b and the rest is the i-th canonical unit vector.
+* `s` `d` `b` `b2` : generates a d x d matrix of a form similar to that is involved when trying to find rational approximations to reals with the same small denominator (see, e.g., [LLL82]): the first vector starts with a random integer of bit-length <=b2 and continues with d-1 independent integers of bit-lengths <=b; the i-th vector for i>1 is the i-th canonical unit vector scaled by a factor 2^b.
+* `u` `d` `b` : generates a d x d matrix whose entries are independent integers of bit-lengths <=b.
 * `n` `d` `b` `q` : generates an ntru like matrix.
 * `N` `d` `b` `q` : generates an ntru like matrix.
 * `a` `d` `f` : generates an ajtai style matrix.
