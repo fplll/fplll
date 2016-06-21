@@ -27,40 +27,85 @@
 FPLLL_BEGIN_NAMESPACE
 
 class Pruning {
+
 public:
-  double radiusFactor;               //< radius/Gaussian heuristic
-  double probability;                //< success probability
+
+  double radiusFactor;              //< radius/Gaussian heuristic
+  double probability;               //< success probability
   std::vector<double> coefficients;  //< pruning coefficients
 
-  /** Sets all pruning coefficients to 1, except the last <level> coefficients,
-      these will be linearly with slope -1 / blockSize.
+  inline Pruning() : radiusFactor(1.), probability(1.) {};
+
+  /** Sets all pruning coefficients to 1, except the last <level>
+      coefficients, these will be linearly with slope -1 / blockSize.
 
       @param level number of levels in linear descent
   */
 
-  inline Pruning() : radiusFactor(1.),probability(1.) {};
-  Pruning(int blockSize, int level);
+  static Pruning LinearPruning(int blockSize, int level) {
+
+    Pruning pruning = Pruning();
+    int startDescent = blockSize - level;
+
+    if (startDescent > blockSize)
+      startDescent = blockSize;
+
+    if (startDescent < 1)
+      startDescent = 1;
+
+    pruning.coefficients.resize(blockSize);
+    for (int k = 0; k < startDescent; k++) {
+      pruning.coefficients[k] = 1.0;
+    }
+    for (int k = 0; k < blockSize - startDescent; k++) {
+      pruning.coefficients[startDescent + k] = ((double)(blockSize - k - 1)) / blockSize;
+    }
+    // TODO: need to adapt probability
+    pruning.radiusFactor = 1.0;
+    pruning.probability = 1.0;
+
+    return pruning;
+  }
 };
+
+
+class Strategy {
+public:
+  vector<Pruning> pruning_parameters;
+  vector<int> preprocessing_blocksizes;
+
+  const Pruning &getPruning(double radius, double gh) const;
+};
+
 
 class BKZParam {
 public:
-
-  BKZParam(int blockSize = 0, double delta = LLL_DEF_DELTA, int flags = BKZ_DEFAULT,
-           int maxLoops = 0, double maxTime = 0, int linearPruningLevel = 0,
-           double autoAbort_scale = 1.0, int autoAbort_maxNoDec = 5, double ghFactor = 1.1)
-      : blockSize(blockSize), delta(delta), flags(flags), maxLoops(maxLoops), maxTime(maxTime),
-        autoAbort_scale(autoAbort_scale), autoAbort_maxNoDec(autoAbort_maxNoDec),
-        ghFactor(ghFactor), dumpGSOFilename("gso.log"), preprocessing(NULL) {
-
-    if (linearPruningLevel > 0) {
-      pruning.emplace_back(blockSize, linearPruningLevel);
-    } else {
-      pruning.emplace_back();
+  BKZParam(int blockSize, vector<Strategy> &strategies,
+           double delta = LLL_DEF_DELTA, int flags = BKZ_DEFAULT,
+           int maxLoops = 0, double maxTime = 0, double autoAbort_scale = 1.0,
+           int autoAbort_maxNoDec = 5, double ghFactor = 1.1,
+           double minSuccessProbability = 0.5,
+           int rerandomizationDensity = 3)
+    : blockSize(blockSize), strategies(strategies), delta(delta), flags(flags), maxLoops(maxLoops), maxTime(maxTime),
+      autoAbort_scale(autoAbort_scale), autoAbort_maxNoDec(autoAbort_maxNoDec),
+      ghFactor(ghFactor), dumpGSOFilename("gso.log"),
+      minSuccessProbability(minSuccessProbability),
+      rerandomizationDensity(rerandomizationDensity) {
+    if (strategies.empty()) {
+      strategies = vector<Strategy>();
+      for(long b=0; b<=blockSize; ++b) {
+        strategies.emplace_back();
+      }
     }
-  }
+
+  };
 
   /** Block size used for enumeration **/
   int blockSize;
+
+  /** Strategies (pruning coefficients, preprocessing)  */
+
+  vector<Strategy> &strategies;
 
   /** LLL parameter delta **/
   double delta;
@@ -78,13 +123,7 @@ public:
       is true for autoAbort_maxNoDec loops.
    */
   double autoAbort_scale;
-  int autoAbort_maxNoDec;
-
-  /** If not empty these are the prunning coefficients used for prunned
-      enumeration.
-  */
-
-  std::vector<Pruning> pruning;
+  int    autoAbort_maxNoDec;
 
   /** If BKZ_GH_BND is set, the enumeration bound will be set to ghFactor times
       the Gaussian Heuristic
@@ -98,13 +137,14 @@ public:
 
   string dumpGSOFilename;
 
-  /** If not NULL, these parameters are used for BKZ preprocessing. It is
-      allowed to nest these preprocessing parameters
-  */
+  /** minimum success probability when using extreme pruning */
 
-  BKZParam *preprocessing;
+  double minSuccessProbability;
 
-  const Pruning &getPruning(double radius, double gh) const;
+  /** density of rerandomization operation when using extreme pruning **/
+
+  int rerandomizationDensity;
+
 };
 
 FPLLL_END_NAMESPACE

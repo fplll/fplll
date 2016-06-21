@@ -57,6 +57,10 @@ public:
   BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lllObj, const BKZParam &param);
   ~BKZReduction();
 
+  bool  svpPreprocessing(int kappa, int blockSize, const BKZParam &param);
+
+  bool svpPostprocessing(int kappa, int blockSize, const vector<FT> &solution);
+
   /**
      Run enumeration to find a new shortest vector in the sublattice B[kappa,kappa+blockSize]
 
@@ -66,7 +70,6 @@ public:
 
      ``_ex`` variant is exception handling.
   */
-
 
   bool svpReduction(int kappa, int blockSize, const BKZParam &param);
 
@@ -90,9 +93,9 @@ public:
     }
   }
 
-  bool preprocess(int kappa, int blockSize, const BKZParam &param);
-
   bool bkz();
+
+  void rerandomizeBlock(int minRow, int maxRow, int density);
 
   /** I/O **/
 

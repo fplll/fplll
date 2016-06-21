@@ -63,9 +63,9 @@ template <class FT>
 void computeGaussHeurDist(MatGSO<Integer, FT> &m, FT &maxDist, long maxDistExpo, int kappa,
                           int blockSize, double ghFactor) {
   double t = (double)blockSize / 2.0 + 1;
-  t = tgamma(t);
-  t = pow(t, 2.0 / (double)blockSize);
-  t = t / M_PI;
+  t        = tgamma(t);
+  t        = pow(t, 2.0 / (double)blockSize);
+  t        = t / M_PI;
   FT f, g, h;
   f = t;
   m.getR(h, kappa, kappa);
@@ -87,38 +87,126 @@ void computeGaussHeurDist(MatGSO<Integer, FT> &m, FT &maxDist, long maxDistExpo,
   }
 }
 
+/** Randomize basis between from ``min_row`` and ``max_row`` (exclusive)
+
+    1. permute rows
+    2. apply lower triangular matrix with coefficients in -1,0,1
+    3. LLL reduce result
+
+    :param min_row: start in this row
+    :param max_row: stop at this row (exclusive)
+    :param stats: object for maintaining statistics
+    :param triangular_density: number of non-zero coefficients in lower triangular
+    transformation matrix
+**/
 
 template <class FT>
-bool BKZReduction<FT>::preprocess(int kappa, int blockSize, const BKZParam &param) {
-  BKZAutoAbort<FT> autoAbort(m, kappa + blockSize, kappa);
-  double cputimeStart = cputime();
+void BKZReduction<FT>::rerandomizeBlock(int minRow, int maxRow, int density) {
+  if (maxRow - minRow < 2)
+    return;
 
-  int dummyKappaMax = numRows;
-  bool clean = true;
-  for (int i = 0;; i++) {
-    if ((param.flags & BKZ_MAX_LOOPS) && i >= param.maxLoops)
-      break;
-    if ((param.flags & BKZ_MAX_TIME) && (cputime() - cputimeStart) * 0.001 >= param.maxTime)
-      break;
-    if (autoAbort.testAbort(param.autoAbort_scale, param.autoAbort_maxNoDec))
-      break;
+  // 1. permute rows
+  size_t niter = 4 * (maxRow-minRow); // some guestimate
 
-    clean &= tour(i, dummyKappaMax, param, kappa, kappa + blockSize);
+  for(size_t i=0; i<niter; ++i) {
+    size_t a = gmp_urandomm_ui(RandGen::getGMPState(), maxRow-minRow-1) + minRow;
+    size_t b = a;
+    while (b == a) {
+      b = gmp_urandomm_ui(RandGen::getGMPState(), maxRow-minRow-1) + minRow;
+    }
+    m.moveRow(b, a);
   }
-  return clean;
+
+  // 2. triangular transformation matrix with coefficients in -1,0,1
+  m.rowOpBegin(minRow, maxRow);
+  FT x;
+  for(long a=minRow; a<maxRow-2; ++a) {
+    for(long i=0; i<density; i++) {
+      size_t b = gmp_urandomm_ui(RandGen::getGMPState(), maxRow-(a+1)-1) + a+1;
+      if (gmp_urandomm_ui(RandGen::getGMPState(), 2))
+        m.row_add(a, b);
+      else
+        m.row_sub(a, b);
+    }
+  }
+  m.rowOpEnd(minRow, maxRow);
+
+  // 3. LLL reduce
+  if (!lllObj.lll(0, minRow, maxRow))
+    throw lllObj.status;
+  return;
 }
 
 
 template <class FT>
+bool BKZReduction<FT>::svpPreprocessing(int kappa, int blockSize, const BKZParam &param) {
+  bool clean = true;
+
+  FPLLL_DEBUG_CHECK(param.strategies.size() > blockSize);
+
+  auto &preproc = param.strategies[blockSize].preprocessing_blocksizes;
+  for(auto it = preproc.begin(); it != preproc.end(); ++it) {
+    int dummyKappaMax = numRows;
+    BKZParam prepar = BKZParam(*it, param.strategies);
+    clean &= tour(0, dummyKappaMax, prepar, kappa, kappa + blockSize);
+  }
+
+  return clean;
+}
+
+template <class FT>
 const Pruning &BKZReduction<FT>::getPruning(int kappa, int blockSize, const BKZParam &par) const {
+
+  FPLLL_DEBUG_CHECK(param.strategies.size() > blockSize);
+
+  Strategy &strat = par.strategies[blockSize];
 
   long maxDistExpo;
   FT maxDist = m.getRExp(kappa, kappa, maxDistExpo);
 
   FT ghMaxDist;
   computeGaussHeurDist(m, ghMaxDist, maxDistExpo, kappa, blockSize, 1.0);
-  return par.getPruning(maxDist.get_d() * pow(2, maxDistExpo),
-                        ghMaxDist.get_d() * pow(2, maxDistExpo));
+  return strat.getPruning(maxDist.get_d() * pow(2, maxDistExpo),
+                          ghMaxDist.get_d() * pow(2, maxDistExpo));
+}
+
+template <class FT>
+bool BKZReduction<FT>::svpPostprocessing(int kappa, int blockSize, const vector<FT> &solution) {
+  // Is it already in the basis ?
+  int nzVectors = 0, iVector = -1;
+  for (int i = 0; i < blockSize; i++) {
+    if (!solution[i].is_zero()) {
+      nzVectors++;
+      if (iVector == -1 && fabs(solution[i].get_d()) == 1)
+        iVector = i;
+    }
+  }
+
+  FPLLL_DEBUG_CHECK(nzVectors > 0);
+
+  if (nzVectors == 1) {
+    // Yes, it is another vector
+    FPLLL_DEBUG_CHECK(iVector != -1 && iVector != 0);
+    m.moveRow(kappa + iVector, kappa);
+    if (!lllObj.sizeReduction(kappa, kappa + 1))
+      throw lllObj.status;
+  } else {
+    // No, general case
+    int d = m.d;
+    m.createRow();
+    m.rowOpBegin(d, d + 1);
+    for (int i = 0; i < blockSize; i++) {
+      m.row_addmul(d, kappa + i, solution[i]);
+    }
+    m.rowOpEnd(d, d + 1);
+    m.moveRow(d, kappa);
+    if (!lllObj.lll(kappa, kappa, kappa + blockSize + 1))
+      throw lllObj.status;
+    FPLLL_DEBUG_CHECK(m.b[kappa + blockSize].is_zero());
+    m.moveRow(kappa + blockSize, d);
+    m.removeLastRow();
+  }
+  return false;
 }
 
 template <class FT>
@@ -133,77 +221,54 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
 
   clean &= (lllObj.nSwaps == 0);
 
-  if (par.preprocessing
-      && par.preprocessing->blockSize < blockSize
-      && par.preprocessing->blockSize > 2) {
-    clean &= preprocess(kappa, blockSize, *par.preprocessing);
-  }
+  size_t trial = 0;
+  double remaining_probability = 1.0;
 
-  long maxDistExpo;
-  maxDist = m.getRExp(kappa, kappa, maxDistExpo);
-  deltaMaxDist.mul(delta, maxDist);
-
-  if ((par.flags & BKZ_GH_BND) && blockSize > 30) {
-    computeGaussHeurDist(m, maxDist, maxDistExpo, kappa, blockSize, par.ghFactor);
-  }
-
-  const Pruning &pruning = getPruning(kappa, blockSize, par);
-
-  vector<FT> &solCoord = evaluator.solCoord;
-  solCoord.clear();
-  Enumeration<FT> Enum(m, evaluator);
-  Enum.enumerate( kappa, kappa + blockSize, maxDist, maxDistExpo, vector<FT>(), vector<enumxt>(), par.pruning);
-  nodes += Enum.getNodes(); //Enumeration::getNodes();
-  if (solCoord.empty()) {
-    if (par.flags & BKZ_GH_BND)
-      return clean;
-    else
-      throw RED_ENUM_FAILURE;
-  }
-
-  // Is it already in the basis ?
-  int nzVectors = 0, iVector = -1;
-  for (int i = 0; i < blockSize; i++) {
-    if (!solCoord[i].is_zero()) {
-      nzVectors++;
-      if (iVector == -1 && (solCoord[i].get_d() == 1 || solCoord[i].get_d() == -1))
-        iVector = i;
+  while (remaining_probability > 1. - par.minSuccessProbability) {
+    if (trial > 0) {
+      rerandomizeBlock(kappa+1, kappa+blockSize, par.rerandomizationDensity);
     }
-  }
-  FPLLL_DEBUG_CHECK(nzVectors > 0);
 
-  if (maxDist >= deltaMaxDist) {
-    return clean;  // Do nothing
-  }
+    clean &= svpPreprocessing(kappa, blockSize, par);
 
-  if (nzVectors == 1) {
-    // Yes, it is another vector
-    FPLLL_DEBUG_CHECK(iVector != -1 && iVector != 0);
-    m.moveRow(kappa + iVector, kappa);
-    if (!lllObj.sizeReduction(kappa, kappa + 1))
-      throw lllObj.status;
-  } else {
-    // No, general case
-    int d = m.d;
-    m.createRow();
-    m.rowOpBegin(d, d + 1);
-    for (int i = 0; i < blockSize; i++) {
-      m.row_addmul(d, kappa + i, solCoord[i]);
+    long maxDistExpo;
+    FT maxDist = m.getRExp(kappa, kappa, maxDistExpo);
+    FT deltaMaxDist;
+    deltaMaxDist.mul(delta, maxDist);
+
+    if ((par.flags & BKZ_GH_BND) && blockSize > 30) {
+      computeGaussHeurDist(m, maxDist, maxDistExpo, kappa, blockSize, par.ghFactor);
     }
-    m.rowOpEnd(d, d + 1);
-    m.moveRow(d, kappa);
-    if (!lllObj.lll(kappa, kappa, kappa + blockSize + 1))
-      throw lllObj.status;
-    FPLLL_DEBUG_CHECK(m.b[kappa + blockSize].is_zero());
-    m.moveRow(kappa + blockSize, d);
-    m.removeLastRow();
+
+    const Pruning &pruning = getPruning(kappa, blockSize, par);
+
+    vector<FT> &solCoord = evaluator.solCoord;
+    solCoord.clear();
+    Enumeration::enumerate(m, maxDist, maxDistExpo, evaluator, emptySubTree, emptySubTree, kappa,
+                           kappa + blockSize, pruning.coefficients);
+
+    nodes += Enumeration::getNodes();
+
+    if (solCoord.empty()) {
+      if (par.flags & BKZ_GH_BND) {
+        return clean;
+      } else {
+        throw RED_ENUM_FAILURE;
+      }
+    }
+
+    if (maxDist < deltaMaxDist) {
+      clean &= svpPostprocessing(kappa, blockSize, solCoord);
+    }
+    remaining_probability *= (1- pruning.probability);
+    trial += 1;
   }
-  clean = false;
   return clean;
 }
 
 template <class FT>
-bool BKZReduction<FT>::tour(const int loop, int &kappaMax, const BKZParam &par, int minRow, int maxRow) {
+bool BKZReduction<FT>::tour(const int loop, int &kappaMax, const BKZParam &par, int minRow,
+                            int maxRow) {
   bool clean = true;
 
   for (int kappa = minRow; kappa < maxRow - 1; kappa++) {
@@ -245,7 +310,7 @@ template <class FT> bool BKZReduction<FT>::bkz() {
   if (param.blockSize < 2)
     return setStatus(RED_SUCCESS);
 
-  int i    = 0;
+  int i = 0;
   BKZAutoAbort<FT> autoAbort(m, numRows);
 
   if (flags & BKZ_VERBOSE) {
@@ -270,7 +335,7 @@ template <class FT> bool BKZReduction<FT>::bkz() {
     }
     if ((flags & BKZ_AUTO_ABORT) &&
         autoAbort.testAbort(param.autoAbort_scale, param.autoAbort_maxNoDec)) {
-        break;
+      break;
     }
 
     try {
@@ -293,8 +358,7 @@ template <class FT> bool BKZReduction<FT>::bkz() {
   return setStatus(finalStatus);
 }
 
-template <class FT>
-void BKZReduction<FT>::printTour(const int loop, int minRow, int maxRow) {
+template <class FT> void BKZReduction<FT>::printTour(const int loop, int minRow, int maxRow) {
   FT r0;
   Float fr0;
   long expo;
@@ -302,11 +366,11 @@ void BKZReduction<FT>::printTour(const int loop, int minRow, int maxRow) {
   fr0 = r0.get_d();
   fr0.mul_2si(fr0, expo);
   cerr << "End of BKZ loop " << std::setw(4) << loop << ", time = " << std::fixed << std::setw(9)
-         << std::setprecision(3) << (cputime() - cputimeStart) * 0.001 << "s";
-    cerr << ", r_" << minRow << " = " << fr0;
-    cerr << ", slope = " << std::setw(9) << std::setprecision(6)
-         << getCurrentSlope(m, minRow, maxRow);
-    cerr << ", log2(nodes) = " << std::setw(9) << std::setprecision(6) << log2(nodes) << endl;
+       << std::setprecision(3) << (cputime() - cputimeStart) * 0.001 << "s";
+  cerr << ", r_" << minRow << " = " << fr0;
+  cerr << ", slope = " << std::setw(9) << std::setprecision(6)
+       << getCurrentSlope(m, minRow, maxRow);
+  cerr << ", log2(nodes) = " << std::setw(9) << std::setprecision(6) << log2(nodes) << endl;
 }
 
 template <class FT> void BKZReduction<FT>::printParams(const BKZParam &param, ostream &out) {
@@ -322,15 +386,7 @@ template <class FT> void BKZReduction<FT>::printParams(const BKZParam &param, os
   } else {
     out << "autoAbort: (     -,  -), ";
   }
-  out << "pruning: ";
-  if (!param.pruning.empty())
-    out << 1;
-  else
-    out << 0;
   out << endl;
-
-  if (param.preprocessing)
-    printParams(*param.preprocessing, out);
 }
 
 template <class FT> bool BKZReduction<FT>::setStatus(int newStatus) {
@@ -364,10 +420,19 @@ void BKZReduction<FT>::dumpGSO(const std::string filename, const std::string pre
   dump.close();
 }
 
-<<<<<<< a5c9a46a7987d0b026ef96f5ca6485e01dc08ed8:fplll/bkz.cpp
 /**
    Force instantiation of templates
 */
+
+template <class FT> bool BKZAutoAbort<FT>::testAbort(double scale, int maxNoDec) {
+  double newSlope = -getCurrentSlope(m, startRow, numRows);
+  if (noDec == -1 || newSlope < scale * oldSlope)
+    noDec = 0;
+  else
+    noDec++;
+  oldSlope = min(oldSlope, newSlope);
+  return noDec >= maxNoDec;
+}
 
 template class BKZReduction<FP_NR<double> >;
 
@@ -386,16 +451,5 @@ template class BKZReduction<FP_NR<dpe_t> >;
 #endif
 
 template class BKZReduction<FP_NR<mpfr_t> >;
-=======
-template <class FT> bool BKZAutoAbort<FT>::testAbort(double scale, int maxNoDec) {
-  double newSlope = -getCurrentSlope(m, startRow, numRows);
-  if (noDec == -1 || newSlope < scale * oldSlope)
-    noDec = 0;
-  else
-    noDec++;
-  oldSlope = min(oldSlope, newSlope);
-  return noDec >= maxNoDec;
-}
->>>>>>> converting pruning parameters to new format:src/bkz.cpp
 
 FPLLL_END_NAMESPACE
