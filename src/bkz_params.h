@@ -30,11 +30,11 @@ class Pruning {
 
 public:
 
-  double radiusFactor;              //< radius/Gaussian heuristic
+  double radius_factor;              //< radius/Gaussian heuristic
   double probability;               //< success probability
   std::vector<double> coefficients;  //< pruning coefficients
 
-  Pruning() : radiusFactor(1.), probability(1.) {};
+  Pruning() : radius_factor(1.), probability(1.) {};
 
   /** Sets all pruning coefficients to 1, except the last <level>
       coefficients, these will be linearly with slope -1 / blockSize.
@@ -42,26 +42,26 @@ public:
       @param level number of levels in linear descent
   */
 
-  static Pruning LinearPruning(int blockSize, int level) {
+  static Pruning LinearPruning(int block_size, int level) {
 
     Pruning pruning = Pruning();
-    int startDescent = blockSize - level;
+    int start_descent = block_size - level;
 
-    if (startDescent > blockSize)
-      startDescent = blockSize;
+    if (start_descent > block_size)
+      start_descent = block_size;
 
-    if (startDescent < 1)
-      startDescent = 1;
+    if (start_descent < 1)
+      start_descent = 1;
 
-    pruning.coefficients.resize(blockSize);
-    for (int k = 0; k < startDescent; k++) {
+    pruning.coefficients.resize(block_size);
+    for (int k = 0; k < start_descent; k++) {
       pruning.coefficients[k] = 1.0;
     }
-    for (int k = 0; k < blockSize - startDescent; k++) {
-      pruning.coefficients[startDescent + k] = ((double)(blockSize - k - 1)) / blockSize;
+    for (int k = 0; k < block_size - start_descent; k++) {
+      pruning.coefficients[start_descent + k] = ((double)(block_size - k - 1)) / block_size;
     }
     // TODO: need to adapt probability
-    pruning.radiusFactor = 1.0;
+    pruning.radius_factor = 1.0;
     pruning.probability = 1.0;
 
     return pruning;
@@ -80,33 +80,33 @@ public:
     return strat;
   };
 
-  const Pruning &getPruning(double radius, double gh) const;
+  const Pruning &get_pruning(double radius, double gh) const;
 };
 
 
 class BKZParam {
 public:
-  BKZParam(int blockSize, vector<Strategy> &strategies,
+  BKZParam(int block_size, vector<Strategy> &strategies,
            double delta = LLL_DEF_DELTA, int flags = BKZ_DEFAULT,
-           int maxLoops = 0, double maxTime = 0, double autoAbort_scale = 1.0,
-           int autoAbort_maxNoDec = 5, double ghFactor = 1.1,
-           double minSuccessProbability = 0.5,
-           int rerandomizationDensity = 3)
-    : blockSize(blockSize), strategies(strategies), delta(delta), flags(flags), maxLoops(maxLoops), maxTime(maxTime),
-      autoAbort_scale(autoAbort_scale), autoAbort_maxNoDec(autoAbort_maxNoDec),
-      ghFactor(ghFactor), dumpGSOFilename("gso.log"),
-      minSuccessProbability(minSuccessProbability),
-      rerandomizationDensity(rerandomizationDensity) {
+           int max_loops = 0, double max_time = 0, double auto_abort_scale = 1.0,
+           int auto_abort_max_no_dec = 5, double gh_factor = 1.1,
+           double min_success_probability = 0.5,
+           int rerandomization_density = 3)
+    : block_size(block_size), strategies(strategies), delta(delta), flags(flags), max_loops(max_loops), max_time(max_time),
+      auto_abort_scale(auto_abort_scale), auto_abort_max_no_dec(auto_abort_max_no_dec),
+      gh_factor(gh_factor), dump_gso_filename("gso.log"),
+      min_success_probability(min_success_probability),
+      rerandomization_density(rerandomization_density) {
     if (strategies.empty()) {
       strategies = vector<Strategy>();
-      for (long b = 0; b <= blockSize; ++b) {
+      for (long b = 0; b <= block_size; ++b) {
         strategies.emplace_back(std::move(Strategy::EmptyStrategy()));
       }
     }
   };
 
   /** Block size used for enumeration **/
-  int blockSize;
+  int block_size;
 
   /** Strategies (pruning coefficients, preprocessing)  */
 
@@ -119,36 +119,36 @@ public:
   int flags;
 
   /** Maximum number of loops to execute **/
-  int maxLoops;
+  int max_loops;
 
   /** Maximum time to spend **/
-  double maxTime;
+  double max_time;
 
   /** If BKZ_AUTOABORT is set, We abort if newSlope < autoAbort_scale * oldSlope
       is true for autoAbort_maxNoDec loops.
    */
-  double autoAbort_scale;
-  int    autoAbort_maxNoDec;
+  double auto_abort_scale;
+  int    auto_abort_max_no_dec;
 
   /** If BKZ_GH_BND is set, the enumeration bound will be set to ghFactor times
       the Gaussian Heuristic
   */
 
-  double ghFactor;
+  double gh_factor;
 
   /** If BKZ_DUMP_GSO is set, the norms of the GSO matrix are written to this
       file after each complete round.
   */
 
-  string dumpGSOFilename;
+  string dump_gso_filename;
 
   /** minimum success probability when using extreme pruning */
 
-  double minSuccessProbability;
+  double min_success_probability;
 
   /** density of rerandomization operation when using extreme pruning **/
 
-  int rerandomizationDensity;
+  int rerandomization_density;
 
 };
 

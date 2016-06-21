@@ -100,11 +100,11 @@ int bkz(Options& o, IntMatrix& b) {
   param.flags = o.bkzFlags;
 
   if (o.bkzFlags & BKZ_DUMP_GSO)
-    param.dumpGSOFilename = o.bkzDumpGSOFilename;
+    param.dump_gso_filename = o.bkzDumpGSOFilename;
   if (o.bkzFlags & BKZ_GH_BND)
-    param.ghFactor = o.bkzGHFactor;
+    param.gh_factor = o.bkzGHFactor;
   if (o.bkzFlags & BKZ_MAX_LOOPS)
-    param.maxLoops = o.bkzMaxLoops;
+    param.max_loops = o.bkzMaxLoops;
   if (o.verbose) param.flags |= BKZ_VERBOSE;
   if (o.noLLL) param.flags |= BKZ_NO_LLL;
 
