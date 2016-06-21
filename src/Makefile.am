@@ -1,39 +1,29 @@
 include_fpllldir=$(includedir)/fplll
 
-include_fplll_HEADERS=defs.h fplll.h \
-  nr/dpe.h \
-  nr/matrix.h \
-  nr/matrix.cpp \
-	nr/nr_FP_dd.inl \
-	nr/nr_FP_d.inl \
-	nr/nr_FP_dpe.inl \
-	nr/nr_FP.inl \
-	nr/nr_FP_ld.inl \
-	nr/nr_FP_misc.inl \
-	nr/nr_FP_mpfr.inl \
-	nr/nr_FP_qd.inl \
-	nr/nr.h \
-	nr/nr_rand.inl \
-	nr/nr_Z_d.inl \
-	nr/nr_Z.inl \
-	nr/nr_Z_l.inl \
-	nr/nr_Z_misc.inl \
+# Headers: floating point/integer types; vectors; lll/bkz; enum; sieve
+nobase_include_fplll_HEADERS=defs.h fplll.h \
+  nr/nr.h \
+  fplll_config.h \
+  nr/nr_FP.inl nr/nr_FP_d.inl nr/nr_FP_ld.inl nr/nr_FP_dd.inl \
+  nr/nr_FP_qd.inl nr/nr_FP_dpe.inl nr/nr_FP_misc.inl \
+  nr/nr_FP_mpfr.inl nr/dpe.h \
+	nr/nr_Z.inl nr/nr_Z_l.inl nr/nr_Z_d.inl nr/nr_Z_misc.inl \
 	nr/nr_Z_mpz.inl \
-	nr/numvect.h \
-	util.h \
-	svpcvp.h fplllv31.h bkz.h lll.h gso.h  \
-	enum/evaluator.h \
-	fplll_config.h wrapper.h \
-  enum/enumerate.h
+  nr/nr_rand.inl \
+	nr/numvect.h nr/matrix.h nr/matrix.cpp \
+	util.h gso.h \
+	svpcvp.h fplllv31.h bkz.h lll.h wrapper.h \
+  enum/evaluator.h enum/enumerate.h
 
 EXTRA_DIST=pruning.txt
 
 bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff
-EXTRA_PROGRAMS=fplll_dbg latticegen_dbg test 
+EXTRA_PROGRAMS=fplll_dbg latticegen_dbg test latsieve
 lib_LTLIBRARIES=libfplll.la
 EXTRA_LTLIBRARIES=libfplllv.la libfpllld.la
 
+# fplll
 fplll_SOURCES=main.cpp main.h
 fplll_LDADD=libfplll.la
 fplll_dbg_SOURCES=$(fplll_SOURCES)
@@ -41,6 +31,7 @@ fplll_dbg_CPPFLAGS=-DDEBUG $(AM_CPPFLAGS)
 fplll_dbg_CXXFLAGS=-g $(AM_CXXFLAGS)
 fplll_dbg_LDADD=libfpllld.la
 
+# latticegen
 latticegen_SOURCES=latticegen.cpp
 latticegen_LDADD=libfplll.la
 latticegen_dbg_SOURCES=$(latticegen_SOURCES)
@@ -48,11 +39,20 @@ latticegen_dbg_CPPFLAGS=-DDEBUG $(AM_CPPFLAGS)
 latticegen_dbg_CXXFLAGS=-g $(AM_CXXFLAGS)
 latticegen_dbg_LDADD=libfpllld.la
 
+# llldiff
 llldiff_SOURCES=llldiff.cpp
 llldiff_LDADD=libfplll.la
 
+# test
 test_SOURCES=test.cpp
 test_LDADD=libfplll.la
+
+# sieve
+latsieve_SOURCES=sieve/sieve_main.cpp sieve/sieve_Gauss.cpp \
+	sieve/sieve_Gauss_2sieve.cpp sieve/sieve_Gauss_3sieve.cpp \
+	sieve/sieve_Gauss_4sieve.cpp sieve/sampler_basic.cpp \
+  sieve/dgs/dgs_gauss_dp.c sieve/dgs/dgs_gauss_mp.c sieve/dgs/dgs_bern.c
+latsieve_LDADD=libfplll.la
 
 libfplll_la_SOURCES=fplll.cpp fplll.h util.cpp util.h enum/topenum.cpp enum/topenum.h \
 	enum/evaluator.cpp enum/evaluator.h
@@ -79,6 +79,8 @@ install-data-hook:
 	rm -f "$(srcdir)/fplll.h.root"
 
 uninstall-hook:
+	if test -d "${DESTDIR}$(includedir)/fplll/enum"; then rmdir "${DESTDIR}$(includedir)/fplll/enum"; fi
+	if test -d "${DESTDIR}$(includedir)/fplll/nr"; then rmdir "${DESTDIR}$(includedir)/fplll/nr"; fi
 	(test -d "${DESTDIR}$(includedir)/fplll" && rmdir "${DESTDIR}$(includedir)/fplll") || true
 	rm -f "${DESTDIR}$(includedir)/fplll.h"
 

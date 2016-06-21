@@ -191,35 +191,24 @@ public:
     return data[i];
   }
 
-  void add(const NumVect<T>& v) {
-    add(v, size());
-  }
-
   void add(const NumVect<T>& v, int n);
-
-  void sub(const NumVect<T>& v) {
-    sub(v, size());
-  }
-
+  void add(const NumVect<T>& v) {add(v, size());}
   void sub(const NumVect<T>& v, int n);
-
+  void sub(const NumVect<T>& v) {sub(v, size());}
+  void mul(const NumVect<T>& v, int n, T c);
+  void mul(const NumVect<T>& v, T c) {mul(v, size(), c);}
+  void addmul(const NumVect<T>& v, T x, int n);
+  void addmul(const NumVect<T>& v, T x) {addmul(v, x, size());}
   void addmul_2exp(const NumVect<T>& v, const T& x, long expo, T& tmp) {
     addmul_2exp(v, x, expo, size(), tmp);
   }
-
   void addmul_2exp(const NumVect<T>& v, const T& x, long expo, int n, T& tmp);
-
-  void addmul_si(const NumVect<T>& v, long x) {
-    addmul_si(v, x, size());
-  }
-
+  void addmul_si(const NumVect<T>& v, long x) {addmul_si(v, x, size());}
   void addmul_si(const NumVect<T>& v, long x, int n);
-
   void addmul_si_2exp(const NumVect<T>& v, long x,
                              long expo, T& tmp) {
     addmul_si_2exp(v, x, expo, size(), tmp);
   }
-
   void addmul_si_2exp(const NumVect<T>& v, long x,
                              long expo, int n, T& tmp);
 
@@ -261,6 +250,20 @@ void NumVect<T>::sub(const NumVect<T>& v, int n) {
   FPLLL_DEBUG_CHECK(n <= size() && size() == v.size() && v.is_zero(n));
   for (int i = n - 1; i >= 0; i--)
     data[i].sub(data[i], v[i]);
+}
+
+template<class T>
+void NumVect<T>::mul(const NumVect<T>& v, int n, T c) {
+  FPLLL_DEBUG_CHECK(n <= size() && size() == v.size() && v.is_zero(n));
+  for (int i = n - 1; i >= 0; i--)
+    data[i].mul(v[i], c);
+}
+
+template<class T>
+void NumVect<T>::addmul(const NumVect<T>& v, T x, int n) {
+  FPLLL_DEBUG_CHECK(n <= size() && size() == v.size() && v.is_zero(n));
+  for (int i = n - 1; i >= 0; i--)
+    data[i].addmul(v[i], x);
 }
 
 template<class T>
