@@ -143,11 +143,9 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
   
   vector<FT>& solCoord = evaluator.solCoord;
   solCoord.clear();
-  Enumeration2<FT> enum2(m, evaluator);
-  enum2.enumerate( kappa, kappa + blockSize, maxDist, maxDistExpo, vector<FT>(), vector<enumxt>(), par.pruning);
-//  Enumeration::enumerate(m, maxDist, maxDistExpo, evaluator, emptySubTree,
-//            emptySubTree, kappa, kappa + blockSize, par.pruning);
-  nodes += enum2.getNodes(); //Enumeration::getNodes();
+  Enumeration<FT> Enum(m, evaluator);
+  Enum.enumerate( kappa, kappa + blockSize, maxDist, maxDistExpo, vector<FT>(), vector<enumxt>(), par.pruning);
+  nodes += Enum.getNodes(); //Enumeration::getNodes();
   if (solCoord.empty()) {
     if(par.flags & BKZ_GH_BND) return true; // Do nothing
     else return setStatus(RED_ENUM_FAILURE);
