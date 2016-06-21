@@ -34,7 +34,7 @@ public:
   double probability;               //< success probability
   std::vector<double> coefficients;  //< pruning coefficients
 
-  inline Pruning() : radiusFactor(1.), probability(1.) {};
+  Pruning() : radiusFactor(1.), probability(1.) {};
 
   /** Sets all pruning coefficients to 1, except the last <level>
       coefficients, these will be linearly with slope -1 / blockSize.
@@ -74,6 +74,12 @@ public:
   vector<Pruning> pruning_parameters;
   vector<int> preprocessing_blocksizes;
 
+  static Strategy EmptyStrategy() {
+    Strategy strat;
+    strat.pruning_parameters.emplace_back(Pruning());
+    return strat;
+  };
+
   const Pruning &getPruning(double radius, double gh) const;
 };
 
@@ -93,11 +99,10 @@ public:
       rerandomizationDensity(rerandomizationDensity) {
     if (strategies.empty()) {
       strategies = vector<Strategy>();
-      for(long b=0; b<=blockSize; ++b) {
-        strategies.emplace_back();
+      for (long b = 0; b <= blockSize; ++b) {
+        strategies.emplace_back(std::move(Strategy::EmptyStrategy()));
       }
     }
-
   };
 
   /** Block size used for enumeration **/

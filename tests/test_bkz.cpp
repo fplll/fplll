@@ -20,7 +20,7 @@ using namespace std;
 using namespace fplll;
 
 template<class ZT>
-void readMatrix(ZZ_mat<ZT> &A, const char *input_filename) {
+void read_matrix(ZZ_mat<ZT> &A, const char *input_filename) {
   istream *is = new ifstream(input_filename);
   *is >> A;
   delete is;
@@ -39,7 +39,7 @@ void readMatrix(ZZ_mat<ZT> &A, const char *input_filename) {
 */
 
 template<class ZT>
-int testBKZ(ZZ_mat<ZT> &A, const int block_size, FloatType float_type, int flags=BKZ_DEFAULT, int prec=0) {
+int test_bkz(ZZ_mat<ZT> &A, const int block_size, FloatType float_type, int flags=BKZ_DEFAULT, int prec=0) {
 
   int status = 0;
 
@@ -54,6 +54,43 @@ int testBKZ(ZZ_mat<ZT> &A, const int block_size, FloatType float_type, int flags
 }
 
 /**
+   @brief Test BKZ strategy interface.
+
+   @param A                test matrix
+   @param block_size       block size
+
+   @return zero on success.
+*/
+
+template<class ZT>
+int test_bkz_param(ZZ_mat<ZT> &A, const int block_size) {
+
+  int status = 0;
+
+  vector<Strategy> strategies;
+  for(long b=0; b<=block_size; b++) {
+    Strategy strategy = Strategy::EmptyStrategy();
+    if (b == 10) {
+      strategy.preprocessing_blocksizes.emplace_back(5);
+    } else if (b == 20) {
+      strategy.preprocessing_blocksizes.emplace_back(10);
+    } else if (b == 30) {
+      strategy.preprocessing_blocksizes.emplace_back(15);
+    }
+    strategies.emplace_back(std::move(strategy));
+  }
+
+  BKZParam params(block_size, strategies);
+  // zero on success
+  status = bkzReduction(&A, NULL, params, FT_DEFAULT, 53);
+  if (status != RED_SUCCESS) {
+    cerr << "BKZ parameter test failed with error '" << getRedStatusStr(status) << "'" << endl;
+  }
+  return status;
+}
+
+
+/**
    @brief Test BKZ for matrix stored in file pointed to by `input_filename`.
 
    @param input_filename   a path
@@ -66,10 +103,14 @@ int testBKZ(ZZ_mat<ZT> &A, const int block_size, FloatType float_type, int flags
 */
 
 template<class ZT>
-int testFilename(const char *input_filename, const int block_size, FloatType float_type=FT_DEFAULT, int flags=BKZ_DEFAULT, int prec=0) {
-  ZZ_mat<ZT> A;
-  readMatrix(A, input_filename);
-  return testBKZ<ZT>(A, block_size, float_type, flags, prec);
+int test_filename(const char *input_filename, const int block_size, FloatType float_type=FT_DEFAULT, int flags=BKZ_DEFAULT, int prec=0) {
+  ZZ_mat<ZT> A, B;
+  read_matrix(A, input_filename);
+  B = A;
+  int status = 0;
+  status |= test_bkz<ZT>(A, block_size, float_type, flags, prec);
+  status |= test_bkz_param<ZT>(B, block_size);
+  return status;
 }
 
 /**
@@ -86,31 +127,35 @@ int testFilename(const char *input_filename, const int block_size, FloatType flo
 */
 
 template<class ZT>
-int testIntRel(int d, int b, const int block_size, FloatType float_type=FT_DEFAULT, int flags=BKZ_DEFAULT, int prec=0) {
-  ZZ_mat<ZT> A;
+int test_int_rel(int d, int b, const int block_size, FloatType float_type=FT_DEFAULT, int flags=BKZ_DEFAULT, int prec=0) {
+  ZZ_mat<ZT> A, B;
   A.resize(d, d + 1);
   A.gen_intrel(b);
-  return testBKZ<ZT>(A, block_size, float_type, flags|BKZ_VERBOSE, prec);
+  B = A;
+  int status = 0;
+  status |= test_bkz<ZT>(A, block_size, float_type, flags|BKZ_VERBOSE, prec);
+  status |= test_bkz_param<ZT>(B, block_size);
+  return status;
 }
 
 int main(int argc, char *argv[]) {
 
   int status = 0;
-  status |= testFilename<mpz_t>("lattices/dim55_in", 10, FT_DEFAULT, BKZ_DEFAULT|BKZ_AUTO_ABORT);
-  status |= testFilename<mpz_t>("lattices/dim55_in", 20, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 128);
+  status |= test_filename<mpz_t>("lattices/dim55_in", 10, FT_DEFAULT, BKZ_DEFAULT|BKZ_AUTO_ABORT);
+  status |= test_filename<mpz_t>("lattices/dim55_in", 20, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 128);
 
-  status |= testIntRel<mpz_t>(50, 1000, 10, FT_DOUBLE, BKZ_DEFAULT|BKZ_AUTO_ABORT);
-  status |= testIntRel<mpz_t>(50, 1000, 15, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 100);
+  status |= test_int_rel<mpz_t>(50, 1000, 10, FT_DOUBLE, BKZ_DEFAULT|BKZ_AUTO_ABORT);
+  status |= test_int_rel<mpz_t>(50, 1000, 15, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 100);
 
-  status |= testIntRel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_DEFAULT|BKZ_AUTO_ABORT);
-  status |= testIntRel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_DEFAULT|BKZ_AUTO_ABORT);
-  status |= testIntRel<mpz_t>(30, 2000, 10, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 53);
+  status |= test_int_rel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_DEFAULT|BKZ_AUTO_ABORT);
+  status |= test_int_rel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_DEFAULT|BKZ_AUTO_ABORT);
+  status |= test_int_rel<mpz_t>(30, 2000, 10, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 53);
 
 
-  status |= testFilename<mpz_t>("lattices/example_in", 10);
-  status |= testFilename<mpz_t>("lattices/example_in", 10, FT_DOUBLE);
-  status |= testFilename<mpz_t>("lattices/example_in", 10, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 212);
-  status |= testFilename<mpz_t>("lattices/example_in", 10, FT_DOUBLE);
+  status |= test_filename<mpz_t>("lattices/example_in", 10);
+  status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE);
+  status |= test_filename<mpz_t>("lattices/example_in", 10, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 212);
+  status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE);
 
   if (status == 0) {
     cerr << "All tests passed." << endl;
