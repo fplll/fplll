@@ -57,7 +57,7 @@ double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow) {
     m.updateGSORow(i);
     f = m.getRExp(i, i, expo);
     logF.log(f, GMP_RNDU);
-    x[i] = logF.get_d() + expo * log(2.0);
+    x[i] = logF.get_d() + expo * std::log(2.0);
   }
   int n = stopRow - startRow;
   double iMean = (n - 1) * 0.5 + startRow, xMean = 0, v1 = 0, v2 = 0;
@@ -327,7 +327,7 @@ void BKZReduction<FT>::dumpGSO(const std::string filename, const std::string pre
     m.updateGSORow(i);
     f = m.getRExp(i, i, expo);
     logF.log(f, GMP_RNDU);
-    dump << std::setprecision(8) << logF.get_d() + expo * log(2.0) << " ";
+    dump << std::setprecision(8) << logF.get_d() + expo * std::log(2.0) << " ";
   }
   dump << std::endl;
   dump.close();
