@@ -90,21 +90,15 @@ int bkz(Options& o, ZZ_mat<ZT>& b) {
 template<>
 int bkz(Options& o, IntMatrix& b) {
   CHECK(o.blockSize > 0, "Option -b is missing");
-  BKZParam param;
+  vector<Strategy> strategies;
+  BKZParam param(o.blockSize, strategies);
   IntMatrix u;
   const char* format = o.outputFormat ? o.outputFormat : "b";
   int status;
 
-  param.blockSize = o.blockSize;
-
-  BKZParam preproc;
-  if (o.preprocBlockSize > 2) {
-    preproc.flags |= BKZ_AUTO_ABORT;
-    preproc.blockSize = o.preprocBlockSize;
-    param.preprocessing = &preproc;
-  }
   param.delta = o.delta;
   param.flags = o.bkzFlags;
+
   if (o.bkzFlags & BKZ_DUMP_GSO)
     param.dumpGSOFilename = o.bkzDumpGSOFilename;
   if (o.bkzFlags & BKZ_GH_BND)
@@ -113,13 +107,7 @@ int bkz(Options& o, IntMatrix& b) {
     param.maxLoops = o.bkzMaxLoops;
   if (o.verbose) param.flags |= BKZ_VERBOSE;
   if (o.noLLL) param.flags |= BKZ_NO_LLL;
-  if (o.pruningFile != NULL) {
-    param.pruning.emplace_back();
-    readPruningVector(o.pruningFile, param.pruning.back(), o.blockSize);
-  } else if (o.bkzLinearPruningLevel) {
-    param.pruning.emplace_back(o.blockSize, o.bkzLinearPruningLevel);
-  }
-  
+
   status = bkzReduction(&b, strchr(format, 'u') ? &u : NULL, param, o.floatType, o.precision);
 
   for (int i = 0; format[i]; i++) {
@@ -282,11 +270,6 @@ void readOptions(int argc, char** argv, Options& o) {
       CHECK(ac < argc, "missing value after -b switch");
       o.blockSize = atoi(argv[ac]);
     }
-    else if (strcmp(argv[ac], "-bpre") == 0) {
-      ++ac;
-      CHECK(ac < argc, "missing value after -b2 switch");
-      o.preprocBlockSize = atoi(argv[ac]);
-    }
     else if (strcmp(argv[ac], "-bkzboundedlll") == 0) {
       o.bkzFlags |= BKZ_BOUNDED_LLL;
     }
@@ -310,11 +293,6 @@ void readOptions(int argc, char** argv, Options& o) {
       CHECK(ac < argc, "missing filename after -bkzdumpgso switch");
       o.bkzDumpGSOFilename = argv[ac];
       o.bkzFlags |= BKZ_DUMP_GSO;
-    }
-    else if (strcmp(argv[ac], "-bkzlinearpruning") == 0) {
-      ++ac;
-      CHECK(ac < argc, "missing value after -bkzlinearpruning switch");
-      o.bkzLinearPruningLevel = atol(argv[ac]);
     }
     else if (strcmp(argv[ac], "-c") == 0) {
       ++ac;
@@ -395,11 +373,6 @@ void readOptions(int argc, char** argv, Options& o) {
       ++ac;
       CHECK(ac < argc, "missing value after -p switch");
       o.precision = atoi(argv[ac]);
-    }
-    else if (strcmp(argv[ac], "-pruningfile") == 0) {
-      ++ac;
-      CHECK(ac < argc, "missing value after '-pruningfile'");
-      o.pruningFile = argv[ac];
     }
     else if (strcmp(argv[ac], "-r") == 0) {
       ++ac;
