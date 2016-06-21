@@ -22,10 +22,13 @@ config.h.in~
 /src/fplll_config.h
 /src/llldiff
 /src/stamp-h2
+/src/*.o
+/src/enum/*.o
 /test-driver
 /tests/test_bkz
 /tests/test_lll
 /tests/test_svp
+/tests/*.o
 Makefile
 Makefile.in
 TAGS
