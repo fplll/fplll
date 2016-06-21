@@ -79,6 +79,8 @@ install-data-hook:
 	rm -f "$(srcdir)/fplll.h.root"
 
 uninstall-hook:
+	if test -d "${DESTDIR}$(includedir)/fplll/enum"; then rmdir "${DESTDIR}$(includedir)/fplll/enum"; fi
+	if test -d "${DESTDIR}$(includedir)/fplll/nr"; then rmdir "${DESTDIR}$(includedir)/fplll/nr"; fi
 	(test -d "${DESTDIR}$(includedir)/fplll" && rmdir "${DESTDIR}$(includedir)/fplll") || true
 	rm -f "${DESTDIR}$(includedir)/fplll.h"
 
