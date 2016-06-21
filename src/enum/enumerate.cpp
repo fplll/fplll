@@ -154,6 +154,7 @@ void Enumeration<FT,MaxDimension>::prepareEnumeration(enumf maxDist, const vecto
 }
 
 template<typename FT, int MaxDimension>
+template<bool dualenum>
 bool Enumeration<FT,MaxDimension>::enumerateLoop(enumf& newMaxDist, int& newKMax) 
 {
     if (k >= kEnd)
@@ -180,7 +181,7 @@ bool Enumeration<FT,MaxDimension>::enumerateLoop(enumf& newMaxDist, int& newKMax
                 return true;
             }
             
-            if (dual)
+            if (dualenum)
             {
                 for (int j = centerLoopBg[k]; j > k; --j)
                     centerPartSums[k][j] = centerPartSums[k][j+1] - alpha[j] * mut[k][j];
@@ -202,8 +203,6 @@ bool Enumeration<FT,MaxDimension>::enumerateLoop(enumf& newMaxDist, int& newKMax
             dist[k] = newDist;
             roundto(x[k], newCenter);
             dx[k] = ddx[k] = (((int)(newCenter >= x[k]) & 1) << 1) - 1;
-//            dx[k] = 0;
-//            ddx[k] = newCenter < x[k] ? enumxt(1) : enumxt(-1);
         }
         else
         {
@@ -230,8 +229,16 @@ void Enumeration<FT,MaxDimension>::enumerate(enumf& maxDist, long normExp, const
             for (int i = 0; i < d; ++i)
                 maxDists[i] = pruning[i] * maxDist;
         }
-        if (!enumerateLoop(newMaxDist, kMax))
-            break;
+        if (dual)
+        {
+            if (!enumerateLoop<true>(newMaxDist, kMax))
+                break;
+        }
+        else
+        {
+            if (!enumerateLoop<false>(newMaxDist, kMax))
+                break;
+        }
             
         for (int j = 0; j < d; ++j)
             fX[j] = x[j];

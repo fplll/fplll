@@ -65,7 +65,6 @@ private:
             x[k] += dx[k];
             ddx[k] = -ddx[k];
             dx[k] = ddx[k] - dx[k];
-//            x[k] += dx[k];
             return true;
         }
         else if (k < kEnd)
@@ -79,9 +78,11 @@ private:
 
     void prepareEnumeration(enumf maxDist, const vector<enumxt>& subTree, bool solvingSVP);
   
+    template<bool dualenum>
     bool enumerateLoop(enumf& newMaxDist, int& newKMax);
 
     void enumerate(enumf& maxDist, long normExp, const vector<double>& pruning);
+    
 };
 
 
