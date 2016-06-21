@@ -37,9 +37,9 @@ public:
     if (!initialized) init();
     return gmpState;
   }
+  static gmp_randstate_t gmpState;
 private:
   static bool initialized;
-  static gmp_randstate_t gmpState;
 };
 
 

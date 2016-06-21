@@ -45,6 +45,11 @@ inline void FP_NR<mpfr_t>::get_mpfr(mpfr_t r, mp_rnd_t rnd) const {
 }
 
 template<>
+inline void FP_NR<mpfr_t>::set_mpfr(mpfr_t r, mp_rnd_t rnd) {
+  mpfr_set(data, r, rnd);
+}
+
+template<>
 inline long FP_NR<mpfr_t>::get_si() const {
   return mpfr_get_si(data,GMP_RNDN);
 }
