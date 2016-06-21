@@ -17,17 +17,20 @@
 #ifndef FPLLL_BKZ_H
 #define FPLLL_BKZ_H
 
-#include "lll.h"
-#include "enum/evaluator.h"
 #include "bkz_params.h"
+#include "enum/evaluator.h"
+#include "lll.h"
 
 FPLLL_BEGIN_NAMESPACE
 
-template <class FT> class BKZAutoAbort {
+template <class FT> class BKZAutoAbort
+{
 public:
   BKZAutoAbort(MatGSO<Integer, FT> &m, int num_rows, int start_row = 0)
       : m(m), old_slope(numeric_limits<double>::max()), no_dec(-1), num_rows(num_rows),
-        start_row(start_row) {}
+        start_row(start_row)
+  {
+  }
   bool test_abort(double scale = 1.0, int maxNoDec = 5);
 
 private:
@@ -52,12 +55,13 @@ void compute_gauss_heur_dist(MatGSO<Integer, FT> &m, FT &maxDist, long maxDistEx
                              int blockSize, double ghFactor);
 
 /* The matrix must be LLL-reduced */
-template <class FT> class BKZReduction {
+template <class FT> class BKZReduction
+{
 public:
   BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lllObj, const BKZParam &param);
   ~BKZReduction();
 
-  bool  svp_preprocessing(int kappa, int blockSize, const BKZParam &param);
+  bool svp_preprocessing(int kappa, int blockSize, const BKZParam &param);
 
   bool svp_postprocessing(int kappa, int blockSize, const vector<FT> &solution);
 
@@ -73,22 +77,31 @@ public:
 
   bool svp_reduction(int kappa, int block_size, const BKZParam &param);
 
-  bool svp_reduction_Ex(int kappa, int block_size, const BKZParam &param, bool &clean) {
-    try {
+  bool svp_reduction_Ex(int kappa, int block_size, const BKZParam &param, bool &clean)
+  {
+    try
+    {
       clean = svp_reduction(kappa, block_size, param);
       return true;
-    } catch (RedStatus & e) {
+    }
+    catch (RedStatus &e)
+    {
       return set_status(e);
     }
   }
 
   bool tour(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow);
 
-  bool tour_ex(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow, bool &clean) {
-    try {
+  bool tour_ex(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow,
+               bool &clean)
+  {
+    try
+    {
       clean = tour(loop, kappaMax, param, minRow, maxRow);
       return true;
-    } catch (RedStatus & e) {
+    }
+    catch (RedStatus &e)
+    {
       return set_status(e);
     }
   }
@@ -128,9 +141,7 @@ private:
   const vector<FT> empty_target, empty_sub_tree;
   FT max_dist, delta_max_dist;
   double cputime_start;
-
 };
-
 
 FPLLL_END_NAMESPACE
 
