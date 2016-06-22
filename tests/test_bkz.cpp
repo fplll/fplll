@@ -91,6 +91,31 @@ int test_bkz_param(ZZ_mat<ZT> &A, const int block_size) {
 
 
 /**
+   @brief Test BKZ with pruning.
+
+   @param A                test matrix
+   @param block_size       block size
+
+   @return zero on success.
+*/
+
+template<class ZT>
+int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size) {
+
+  int status = 0;
+
+  vector<Strategy> strategies = load_strategies_json("../strategies/default.json");
+  BKZParam params(block_size, strategies);
+  // zero on success
+  status = bkzReduction(&A, NULL, params, FT_DEFAULT, 53);
+  if (status != RED_SUCCESS) {
+    cerr << "BKZ parameter test failed with error '" << getRedStatusStr(status) << "'" << endl;
+  }
+  return status;
+}
+
+
+/**
    @brief Test BKZ for matrix stored in file pointed to by `input_filename`.
 
    @param input_filename   a path
@@ -135,6 +160,7 @@ int test_int_rel(int d, int b, const int block_size, FloatType float_type=FT_DEF
   int status = 0;
   status |= test_bkz<ZT>(A, block_size, float_type, flags|BKZ_VERBOSE, prec);
   status |= test_bkz_param<ZT>(B, block_size);
+  status |= test_bkz_param_pruning<ZT>(B, block_size);
   return status;
 }
 
