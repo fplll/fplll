@@ -7,10 +7,6 @@
 #include "../fplll.h"
 #include "../gso.cpp"
 
-extern "C" 
-{
-#include "dgs/dgs.h"
-}
 
 using namespace std;
 using namespace fplll;
@@ -25,9 +21,6 @@ class KleinSampler {
   void print_param ();
   Z_NR<ZT> sampleZ(F c, F s);
   Z_NR<ZT> sampleZ_basic(F c, F s);
-  Z_NR<long> sampleZ_dgs(FP_NR<double> c, FP_NR<double> s, long flag);
-  Z_NR<mpz_t> sampleZ_dgs(FP_NR<double> c, FP_NR<double> s, mpz_t flag);
-  Z_NR<mpz_t> sampleZ_dgs(FP_NR<mpfr_t> c, FP_NR<mpfr_t> s, mpz_t flag);
 
   NumVect<Z_NR<ZT> > sample();
 

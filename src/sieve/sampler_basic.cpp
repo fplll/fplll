@@ -58,21 +58,10 @@ KleinSampler<ZT, F>::~KleinSampler ()
 template<class ZT, class F>
 void KleinSampler<ZT, F>::print_param ()
 {
-  /*
-    cout << b << endl;
-    cout << r << endl;
-    cout << g << endl;
-  */
   cout << "# [info] nc = " << nc << endl;
   cout << "# [info] nr = " << nr << endl;
   cout << "# [info] t = log(nr) = " << t << endl;
   cout << "# [info] maxbistar2 = " << maxbistar2 << endl;
-  /*
-    for (int i = 0; i < nr; i++) {
-    cout << "# [info]  B_" << i << "^* = " << g(i,i) << 
-    ", (s')^2 = " << ((*s_prime)[i]) << endl;
-    }
-  */
 }
 
 
@@ -93,12 +82,6 @@ Z_NR<ZT> KleinSampler<ZT, F>::sampleZ_basic (F c, F s)
   min.rnd(min);
   max.rnd(max);
   range.sub(max, min, GMP_RNDN);
-
-  /*
-  cout << "st is " << st << endl;
-  cout << "min is " << min << endl;
-  cout << "max is " << max << endl;
-  */
 
   Z_NR<ZT> x;
   while(1) {
@@ -121,69 +104,6 @@ Z_NR<ZT> KleinSampler<ZT, F>::sampleZ_basic (F c, F s)
 
 
 /**
- * (long, double) use function from dgs
- */
-template<>
-Z_NR<long> KleinSampler<long, FP_NR<double> >::sampleZ_dgs
-( FP_NR<double> c,
-  FP_NR<double> s,
-  long flag )
-{
-  Z_NR<long> rz;
-  double s_ = s.get_d();
-  double c_ = c.get_d();
-  dgs_disc_gauss_alg_t alg = DGS_DISC_GAUSS_UNIFORM_TABLE;
-  dgs_disc_gauss_dp_t *gen = dgs_disc_gauss_dp_init(s_, c_, 6, alg);
-  rz = gen->call(gen);
-  dgs_disc_gauss_dp_clear(gen);
-  return rz;
-}
-
-
-/**
- * (mpz_t, mpfr_t) use function from dgs
- */
-template<>
-Z_NR<mpz_t> KleinSampler<mpz_t, FP_NR<mpfr_t> >::sampleZ_dgs
-( FP_NR<mpfr_t> c,
-  FP_NR<mpfr_t> s,
-  mpz_t flag )
-{
-  mpfr_set_default_prec(80);
-  Z_NR<mpz_t> rz;
-  mpfr_t s_, c_;
-  mpz_t r;
-  mpz_init(r);
-  mpfr_init(s_);
-  mpfr_init(c_);
-  s.get_mpfr(s_, GMP_RNDN);
-  c.get_mpfr(c_, GMP_RNDN);
-  dgs_disc_gauss_alg_t alg = DGS_DISC_GAUSS_UNIFORM_TABLE;
-  dgs_disc_gauss_mp_t *gen = dgs_disc_gauss_mp_init(s_, c_, 6, alg);
-  gen->call(r, gen, state);
-  rz = r;
-  dgs_disc_gauss_mp_clear(gen);
-  mpz_clear(r);
-  mpfr_clear(s_);
-  mpfr_clear(c_);
-  return rz;
-}
-
-
-/**
- * (mpz_t, double) use sampler_basic
- */
-template<>
-Z_NR<mpz_t> KleinSampler<mpz_t, FP_NR<double> >::sampleZ_dgs
-( FP_NR<double> c,
-  FP_NR<double> s,
-  mpz_t flag )
-{
-  return sampleZ_basic (c, s);
-}
-
-
-/**
  * support three modes:
  *   long, double
  *   mpz_t, double
@@ -192,9 +112,7 @@ Z_NR<mpz_t> KleinSampler<mpz_t, FP_NR<double> >::sampleZ_dgs
 template<class ZT, class F>
 Z_NR<ZT> KleinSampler<ZT, F>::sampleZ (F c, F s)
 {
-  ZT flag;
-  flag = 0;
-  return sampleZ_dgs (c, s, flag);
+  return sampleZ_basic (c, s);
 }
 
 
@@ -231,11 +149,6 @@ NumVect<Z_NR<ZT> > KleinSampler<ZT, F>::sample ()
       }
       //lp->norm += lp->v[i] * lp->v[i];
     }
-/*
-    if (!vec.is_zero())
-      break;
-  }
-*/
   return vec;
 }
 

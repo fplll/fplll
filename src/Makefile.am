@@ -50,8 +50,7 @@ test_LDADD=libfplll.la
 # sieve
 latsieve_SOURCES=sieve/sieve_main.cpp sieve/sieve_Gauss.cpp \
 	sieve/sieve_Gauss_2sieve.cpp sieve/sieve_Gauss_3sieve.cpp \
-	sieve/sieve_Gauss_4sieve.cpp sieve/sampler_basic.cpp \
-  sieve/dgs/dgs_gauss_dp.c sieve/dgs/dgs_gauss_mp.c sieve/dgs/dgs_bern.c
+	sieve/sieve_Gauss_4sieve.cpp sieve/sampler_basic.cpp
 latsieve_LDADD=libfplll.la
 
 libfplll_la_SOURCES=fplll.cpp fplll.h util.cpp util.h enum/topenum.cpp enum/topenum.h \
