@@ -30,6 +30,7 @@ public:
   inline FP_NR<F>();
   inline FP_NR<F>(const FP_NR<F> &f);
   inline ~FP_NR<F>();
+  inline FP_NR<F>(const double d) : FP_NR<F>() {*this = d;};
 
   /**
    * Returns the current precision for new FP_NR&lt;F&gt; objects.
@@ -159,6 +160,17 @@ public:
   inline bool operator<=(double a) const;
   inline bool operator>=(const FP_NR<F> &a) const;
   inline bool operator>=(double a) const;
+
+  inline FP_NR<F> &operator+=(const FP_NR<F> &a) { this->add(*this, a); };
+  inline FP_NR<F> &operator-=(const FP_NR<F> &a) { this->sub(*this, a); };
+  inline FP_NR<F> &operator*=(const FP_NR<F> &a) { this->mul(*this, a); };
+  inline FP_NR<F> &operator/=(const FP_NR<F> &a) { this->div(*this, a); };
+
+  inline FP_NR<F> &operator+=(const double a) { FP_NR<F> t=a; this->add(*this, t); };
+  inline FP_NR<F> &operator-=(const double a) { FP_NR<F> t=a; this->sub(*this, t); };
+  inline FP_NR<F> &operator*=(const double a) { this->mul_d(*this, a); };
+  inline FP_NR<F> &operator/=(const double a) { this->div_d(*this, a); };
+
 
   /**
    * max between a and b
