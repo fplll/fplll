@@ -75,7 +75,7 @@ bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
 
   long long iter, maxIter;
   maxIter = static_cast<long long>(d - 2 * d * (d + 1)
-          * ((m.b.getMaxExp() + 3) / log(delta.get_d())));
+                                   * ((m.b.getMaxExp() + 3) / std::log(delta.get_d())));
 
   for (iter = 0; iter < maxIter && kappa < kappaEnd - zeros; iter++) {
     if (kappa > kappaMax) {

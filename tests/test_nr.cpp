@@ -20,20 +20,44 @@ using namespace std;
 using namespace fplll;
 
 template<class FT> int test_arithmetic() {
-  FT a, b, c;
-  a = 6.0;
-  b = 3.0;
-  c =-2.0;
-
+  FT a = 6.0, b=3.0, c=-2;
   FT d = (a*b + 2*c + 2.0)/c;
-  return d.cmp(-8);
+  int status = 0;
+  status |= d.cmp(-8);
+  d += 1.0;
+  status |= d.cmp(-7);
+  return status;
 }
+
+/**
+   @brief
+
+   zero on success.
+
+   @return
+*/
+
+template<class FT> int test_std() {
+  FT a;
+  a = 6.1;
+  int status = 0;
+  status |= !(abs(sqrt(a) - std::sqrt(a.get_d())) < 0.001);
+  status |= !(abs(log(a) - std::log(a.get_d())) < 0.001);
+  status |= !(abs(exp(a) - std::exp(a.get_d())) < 0.001);
+  status |= !(abs(floor(a) - std::floor(a.get_d())) < 0.001);
+  status |= !(abs(pow_si(a, 2) - std::pow(a.get_d(), 2.0)) < 0.001);
+  status |= !(abs(root(a, 3.0) - std::pow(a.get_d(), 1/3.0)) < 0.001);
+  return status;
+}
+
 
 int main(int argc, char *argv[]) {
 
   int status = 0;
   status |= test_arithmetic<FP_NR<double> >();
   status |= test_arithmetic<FP_NR<mpfr_t> >();
+  status |= test_std<FP_NR<double> >();
+  status |= test_std<FP_NR<mpfr_t> >();
 
   if (status == 0) {
     cerr << "All tests passed." << endl;

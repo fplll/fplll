@@ -30,6 +30,7 @@ public:
   inline FP_NR<F>();
   inline FP_NR<F>(const FP_NR<F> &f);
   inline ~FP_NR<F>();
+  inline FP_NR<F>(const double d) : FP_NR<F>() {*this = d;};
 
   /**
    * Returns the current precision for new FP_NR&lt;F&gt; objects.
@@ -159,6 +160,17 @@ public:
   inline bool operator<=(double a) const;
   inline bool operator>=(const FP_NR<F> &a) const;
   inline bool operator>=(double a) const;
+
+  inline FP_NR<F> &operator+=(const FP_NR<F> &a) { this->add(*this, a); return *this;};
+  inline FP_NR<F> &operator-=(const FP_NR<F> &a) { this->sub(*this, a); return *this;};
+  inline FP_NR<F> &operator*=(const FP_NR<F> &a) { this->mul(*this, a); return *this;};
+  inline FP_NR<F> &operator/=(const FP_NR<F> &a) { this->div(*this, a); return *this;};
+
+  inline FP_NR<F> &operator+=(const double a) { FP_NR<F> t=a; this->add(*this, t); return *this;};
+  inline FP_NR<F> &operator-=(const double a) { FP_NR<F> t=a; this->sub(*this, t); return *this;};
+  inline FP_NR<F> &operator*=(const double a) { this->mul_d(*this, a); return *this;};
+  inline FP_NR<F> &operator/=(const double a) { this->div_d(*this, a); return *this;};
+
 
   /**
    * max between a and b
@@ -359,7 +371,8 @@ template <class F> inline FP_NR<F> operator-(const FP_NR<F> &a, const FP_NR<F> &
 template <class F> inline FP_NR<F> operator-(const FP_NR<F> &a, double b)
 {
   FP_NR<F> r;
-  r.sub_d(a, b);
+  r = b;
+  r.sub(a, r);
   return r;
 }
 
@@ -408,6 +421,86 @@ template <class F> inline FP_NR<F> operator/(const FP_NR<F> &a, const FP_NR<F> &
   r.div(a, b);
   return r;
 }
+
+template <class F> inline FP_NR<F> sqrt(const FP_NR<F> &a) {
+  FP_NR<F> r;
+  r.sqrt(a);
+  return r;
+}
+
+template <class F> inline FP_NR<F>&& sqrt(FP_NR<F> &&a) {
+  a.sqrt(a);
+  return std::move(a);
+}
+
+template <class F> inline FP_NR<F> abs(const FP_NR<F> &a) {
+  FP_NR<F> r;
+  r.abs(a);
+  return r;
+}
+
+template <class F> inline FP_NR<F>&& abs(FP_NR<F> &&a) {
+  a.abs(a);
+  return std::move(a);
+}
+
+
+template <class F> inline FP_NR<F> floor(const FP_NR<F> &a) {
+  FP_NR<F> r;
+  r.floor(a);
+  return r;
+}
+
+template <class F> inline FP_NR<F>&& floor(FP_NR<F> &&a) {
+  a.floor(a);
+  return std::move(a);
+}
+
+
+template <class F> inline FP_NR<F> log(const FP_NR<F> &a) {
+  FP_NR<F> r;
+  r.log(a);
+  return r;
+}
+
+template <class F> inline FP_NR<F>&& log(FP_NR<F> &&a) {
+  a.log(a);
+  return std::move(a);
+}
+
+template <class F> inline FP_NR<F> exp(const FP_NR<F> &a) {
+  FP_NR<F> r;
+  r.exponential(a);
+  return r;
+}
+
+template <class F> inline FP_NR<F>&& exp(FP_NR<F> &&a) {
+  a.exponential(a);
+  return std::move(a);
+}
+
+template <class F> inline FP_NR<F> pow_si(const FP_NR<F> &a, long b) {
+  FP_NR<F> r;
+  r.pow_si(a, b);
+  return r;
+}
+
+template <class F> inline FP_NR<F> &&pow_si(FP_NR<F> &&a, long b) {
+  a.pow_si(a, b);
+  return a;
+}
+
+template <class F> inline FP_NR<F> root(const FP_NR<F> &a, unsigned int b) {
+  FP_NR<F> r;
+  r.root(a, b);
+  return r;
+}
+
+template <class F> inline FP_NR<F> &&root(FP_NR<F> &&a, unsigned int b) {
+  a.root(a, b);
+  return a;
+}
+
 
 /**
  * FP_NR: some generic functions.
