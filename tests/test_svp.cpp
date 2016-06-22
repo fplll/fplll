@@ -221,9 +221,13 @@ int testFilename(const char *input_filename, const char *output_filename, const 
 int main(int argc, char *argv[]) {
 
   int status = 0;
-  status |= testFilename<mpz_t>("lattices/example_svp_in", "lattices/example_svp_out");
+  if (argc >= 2)
+   status |= testFilename<mpz_t>(argv[1] /*"lattices/example_svp_in"*/, "lattices/example_svp_out");
+  else
+   status |= testFilename<mpz_t>("lattices/example_svp_in", "lattices/example_svp_out");
+
   status |= testFilename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", true);
-  
+
   if (status == 0) {
     cerr << "All tests passed." << endl;
     return 0;
