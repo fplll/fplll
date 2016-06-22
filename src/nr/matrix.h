@@ -319,8 +319,8 @@ public:
 
   void gen_ntrulike2(int bits);
   void gen_ntrulike2_withq(int q);
-  void gen_ajtai(double alpha);
-  void gen_ajtai2(FP_NR<mpfr_t> *w);
+  void gen_trg(double alpha);
+  void gen_trg2(FP_NR<mpfr_t> *w);
 
 #ifdef FPLLL_V3_COMPAT
   int getShift();
