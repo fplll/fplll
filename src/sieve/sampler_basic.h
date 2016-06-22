@@ -15,16 +15,17 @@ template<class ZT, class F>
 class KleinSampler {
 
   public:
+  bool verbose;
 
-  KleinSampler (ZZ_mat<ZT>& B);
+  KleinSampler (ZZ_mat<ZT>& B, bool verbose);
   ~KleinSampler();
   void print_param ();
   Z_NR<ZT> sampleZ(F c, F s);
   Z_NR<ZT> sampleZ_basic(F c, F s);
+  void set_verbose (bool verbose);
 
   NumVect<Z_NR<ZT> > sample();
-
-
+  
   private:
 
   /**

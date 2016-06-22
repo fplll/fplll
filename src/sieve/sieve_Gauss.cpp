@@ -20,7 +20,7 @@
  * constructor
  */
 template<class ZT, class F>
-Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg)
+Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg, bool ver)
 {
   
   /* stats */
@@ -31,26 +31,29 @@ Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg)
   iterations = 0;
   collisions = 0;
   samples = 0;
-  verbose = 0;
   goal_sqr_norm = 0;
   mem_lower = pow(2.0, 0.18*nc);
   alg = alg_arg;
-
+  set_verbose (ver);
+  
   /* sanity check */
   if (alg == 2) {
-    cout << "# [info] running 2-sieve" <<endl;
+    if (verbose)
+      cout << "# [info] running 2-sieve" <<endl;
     mult = 0.1;
     add = 200.0;
     iterations_step = 200;
   }
   else if (alg == 3) {
-    cout << "# [info] running 3-sieve" <<endl;
+    if (verbose)
+      cout << "# [info] running 3-sieve" <<endl;
     mult = 0.1;
     add = 100.0;
     iterations_step = 50;
   }
   else if (alg == 4) {
-    cout << "# [info] running 4-sieve" <<endl;
+    if (verbose)
+      cout << "# [info] running 4-sieve" <<endl;
     mult = 0.1;
     add = 50.0;
     iterations_step = 5;
@@ -64,8 +67,8 @@ Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg)
   free_list_queue();
 
   /* initialize sampler */
-  Sampler = new KleinSampler<ZT, F> (b);
-
+  Sampler = new KleinSampler<ZT, F> (b, verbose);
+  
   /* initialize list */
   init_list ();
 
@@ -76,13 +79,15 @@ Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg)
   max_list_size = List.size();
 
   /* output stats */
-  cout << "# [info] done initialization, size(List)="
-       << List.size() << endl;
-  cout << "# [info] done initialization, size(Queue)="
-       << Queue.size() << endl;
-  cout << "# [info] done initialization, mem_est="
-       << mem_lower <<endl;
-
+  if (verbose) {
+    cout << "# [info] done initialization, size(List)="
+         << List.size() << endl;
+    cout << "# [info] done initialization, size(Queue)="
+         << Queue.size() << endl;
+    cout << "# [info] done initialization, mem_est="
+         << mem_lower <<endl;
+  }
+  
 }
 
 
@@ -262,15 +267,17 @@ void Gauss_sieve<ZT, F>::set_verbose (bool ver)
 template<class ZT, class F>
 void Gauss_sieve<ZT, F>::print_curr_info () 
 {
-  if (iterations % iterations_step == 0) {
-    cout << "# [info] [" << iterations << "] cols=" << collisions;
-    cout << " (" << mult * max_list_size + add << ")";
-    cout << " |L|=" << List.size();
-    cout << " |Q|=" << Queue.size();
-    cout << " |samples|=" << samples;
-    cout << " |sv|^2=" << List.front()->norm;
-    cout << endl;
-    cout << std::flush;
+  if (verbose) {
+    if (iterations % iterations_step == 0) {
+      cout << "# [info] [" << iterations << "] cols=" << collisions;
+      cout << " (" << mult * max_list_size + add << ")";
+      cout << " |L|=" << List.size();
+      cout << " |Q|=" << Queue.size();
+      cout << " |samples|=" << samples;
+      cout << " |sv|^2=" << List.front()->norm;
+      cout << endl;
+      cout << std::flush;
+    }
   }
 }
 
@@ -290,22 +297,26 @@ void Gauss_sieve<ZT, F>::print_final_info ()
       break;
     }
   }
-  cout << "# [****] done!" << endl;
-  cout << "# [info] [" << iterations << "] cols=" << collisions;
-  cout << " (" << mult * max_list_size + add << ")";
-  cout << " |L|=" << List.size();
-  cout << " |Q|=" << Queue.size();
-  cout << " |samples|=" << samples << endl;
-  cout << "# [info] max(|L|)=" << max_list_size;
-  cout << " log2(max|L|)/n=" << log2(max_list_size)/nc << endl;
-  cout << "# [info] true max|L| = " << first_size << endl;;
-  cout << "# [info] true log2(max|L|)/n = " << log2(first_size)/nc << endl;
-  cout << "# [info] sv is" << endl;
+  if (verbose) {
+    cout << "# [****] done!" << endl;
+    cout << "# [info] [" << iterations << "] cols=" << collisions;
+    cout << " (" << mult * max_list_size + add << ")";
+    cout << " |L|=" << List.size();
+    cout << " |Q|=" << Queue.size();
+    cout << " |samples|=" << samples << endl;
+    cout << "# [info] max(|L|)=" << max_list_size;
+    cout << " log2(max|L|)/n=" << log2(max_list_size)/nc << endl;
+    cout << "# [info] true max|L| = " << first_size << endl;;
+    cout << "# [info] true log2(max|L|)/n = " << log2(first_size)/nc << endl;
+    cout << "# [info] sv is" << endl;
+  }
   cout << List.front()->v << endl;
-  final_norm.set_z(best_sqr_norm);
-  final_norm.sqrt(final_norm, GMP_RNDN);
-  cout << "# [info] |sv| = " << final_norm << " (" << best_sqr_norm
-       << ")" << endl;
+  if (verbose){
+    final_norm.set_z(best_sqr_norm);
+    final_norm.sqrt(final_norm, GMP_RNDN);
+    cout << "# [info] |sv| = " << final_norm << " (" << best_sqr_norm
+         << ")" << endl;
+  }
 }
 
 template class Gauss_sieve<mpz_t, FP_NR<double> >;

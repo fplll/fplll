@@ -1,7 +1,7 @@
 #include "sieve_Gauss.h"
 #include <iterator>
 
-#define DEBUG_CHECK_3RED
+//#define DEBUG_CHECK_3RED
 #define EXTENSION_FILTERING
 
 /**

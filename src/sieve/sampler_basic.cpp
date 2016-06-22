@@ -11,7 +11,7 @@
 
 
 template<class ZT, class F>
-KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B)
+KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B, bool ver)
 {
   /* set dimensions */
   b = B;
@@ -41,6 +41,7 @@ KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B)
   }
 
   /* verbose */
+  set_verbose(ver);
   print_param();
   gmp_randinit_default(state);
 }
@@ -55,13 +56,25 @@ KleinSampler<ZT, F>::~KleinSampler ()
 }
 
 
+/**
+ * set verbose
+ */
+template<class ZT, class F>
+void KleinSampler<ZT, F>::set_verbose (bool ver)
+{
+  verbose = ver;
+}
+
+
 template<class ZT, class F>
 void KleinSampler<ZT, F>::print_param ()
 {
-  cout << "# [info] nc = " << nc << endl;
-  cout << "# [info] nr = " << nr << endl;
-  cout << "# [info] t = log(nr) = " << t << endl;
-  cout << "# [info] maxbistar2 = " << maxbistar2 << endl;
+  if (verbose) {
+    cout << "# [info] nc = " << nc << endl;
+    cout << "# [info] nr = " << nr << endl;
+    cout << "# [info] t = log(nr) = " << t << endl;
+    cout << "# [info] maxbistar2 = " << maxbistar2 << endl;
+  }
 }
 
 

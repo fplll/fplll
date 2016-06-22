@@ -89,8 +89,7 @@ inline bool half_2reduce ( ListPoint<ZT>* p1,
   gettimeofday(&time, 0);
   long startt = 1000000 * time.tv_sec + time.tv_usec;
 #endif
-
-  /* debug info */
+  /* debug info 
   int debug = 0;
   if (debug) {
     cout << "[debug] start reduction " << endl;
@@ -99,7 +98,7 @@ inline bool half_2reduce ( ListPoint<ZT>* p1,
     cout << "[debug]  p1 = " << p1->v << endl;
     cout << "[debug]  p2 = " << p2->v << endl;
   }
-  
+  */
   /* if 2*<p1,p2> <= |p2|^2, do nothing */
   Z_NR<ZT> dot, t, s;
 
@@ -143,16 +142,14 @@ inline bool half_2reduce ( ListPoint<ZT>* p1,
   t.mul_ui(t, 2);
   t.mul(t, dot);
   (p1->norm).sub(s, t);
-
+  /*
   if (debug) {
     cout << "[debug]  p1new = " << p1->v << endl;
     cout << "[debug]  |p1new| = " << p1->norm << endl;
     cout << "[debug]  |v| = " << p2->norm << endl;
-    /* this is possible
        if (p1->norm <= p2->norm && p1->norm != 0)
        exit(1);
-    */
-  }
+  }*/
   
 #if 0
   gettimeofday(&time, 0);

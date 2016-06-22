@@ -16,7 +16,7 @@ template<class ZT, class F>
 
 public:
   
-  Gauss_sieve (ZZ_mat<ZT>& B, int alg);
+  Gauss_sieve (ZZ_mat<ZT>& B, int alg, bool ver);
   ~Gauss_sieve ();
 
   bool run_2sieve ();
@@ -25,6 +25,7 @@ public:
 
   void set_verbose (bool verbose);
   void set_goal_norm2 (Z_NR<ZT> norm);
+  bool verbose;
 
   /*
     void Init(const mat_ZZ& B, KleinSampler* sampler);
@@ -54,7 +55,6 @@ private:
   long iterations;
   long iterations_step;
   long collisions;
-  bool verbose;
 
   /* statistics for 2-, 3- and 4-red, set manually in init() */
   double mult;

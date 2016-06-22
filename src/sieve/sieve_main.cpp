@@ -1,3 +1,8 @@
+/*
+  This provides an implementation of Gauss sieving, including using
+  tuples of vectors in fplll framework. The Gauss Sieve code is
+  based on Panagiotis Voulgaris's implementation of the Gauss sieve.
+*/
 #include "sieve_main.h"
 
 long dot_time;
@@ -29,9 +34,9 @@ main_usage (char *myself) {
  * run sieve
  */
 template<class ZT>
-int main_run_sieve (ZZ_mat<ZT> B, Z_NR<ZT> goal_norm, int alg)
+int main_run_sieve (ZZ_mat<ZT> B, Z_NR<ZT> goal_norm, int alg, int ver)
 {
-  Gauss_sieve<ZT, FP_NR<double> > gsieve(B, alg);
+  Gauss_sieve<ZT, FP_NR<double> > gsieve(B, alg, ver);
   gsieve.set_goal_norm2 (goal_norm);
   if (gsieve.alg == 3)
     gsieve.run_3sieve();
@@ -60,6 +65,10 @@ int main (int argc, char** argv)
   alg = 2;
 
   /* parse */
+  if (argc==1) {
+      main_usage(argv[0]);
+      return -1;
+  }
   while((option = getopt (argc, argv, "a:f:r:t:v")) != -1) {
     switch (option) {
     case 'a':
@@ -85,7 +94,12 @@ int main (int argc, char** argv)
       goal_norm_s = optarg;
       break;
     case 'h':
+      main_usage(argv[0]);
+      return -1;
     case '?':
+      main_usage(argv[0]);
+      return -1;
+    case ':':
       main_usage(argv[0]);
       return -1;
     }
@@ -102,15 +116,19 @@ int main (int argc, char** argv)
     else {
       cin >> B;
     }
-    cout << "# [info] reading lattice of dimension "
-         << B.getRows() << "x" << B.getCols() << endl;
+    if(flag_verbose) {
+      cout << "# [info] reading lattice of dimension "
+           << B.getRows() << "x" << B.getCols() << endl;
+    }
   }
   else {
+    if(flag_verbose) {
     cout << "# [info] generating random lattice of dimension "
          << dim << endl;
-    //srand (time(NULL));
-    srand (1);
-    B.gen_intrel(10*dim);
+    }
+    srand (time(NULL));
+    B.resize(dim, dim);
+    B.gen_ajtai(1.1);
   }
 
   /* set targeted norm */
@@ -121,7 +139,8 @@ int main (int argc, char** argv)
   }
   if (goal_norm < 0)
     goal_norm = 0;
-  cout << "# [info] goal norm^2 is " << goal_norm << endl;
+  if(flag_verbose)
+    cout << "# [info] goal norm^2 is " << goal_norm << endl;
   
   /* preprocessing of basis */
   clock_t stime = clock();
@@ -130,7 +149,8 @@ int main (int argc, char** argv)
 
   clock_t etime = clock();
   double secs = (etime - stime) / (double) CLOCKS_PER_SEC;
-  cout << "# [info] LLL took time " << secs << " s" << endl;
+  if(flag_verbose)
+    cout << "# [info] LLL took time " << secs << " s" << endl;
   //cout << B << endl;
 
   /* decide integer type */
@@ -146,20 +166,22 @@ int main (int argc, char** argv)
     for (int i = 0; i < B.getRows(); i ++)
       for (int j = 0; j < B.getCols(); j ++)
         B2(i, j) = B(i, j).get_si();
-    main_run_sieve<long>(B2, goal_norm_lt, alg);
+    main_run_sieve<long>(B2, goal_norm_lt, alg, flag_verbose);
   }
   else
 #endif
-    main_run_sieve<mpz_t>(B, goal_norm, alg);
+    main_run_sieve<mpz_t>(B, goal_norm, alg, flag_verbose);
   
   etime = clock();
   secs = (etime - stime) / (double) CLOCKS_PER_SEC;
-  cout << "# [info] sieve took time " << secs << " s" << endl;
-
-  /* dot product time */
-  cout << "# [info] dot_time " << dot_time << endl;
-  cout << "# [info] dot_num " << dot_num << endl;
-  cout << "# [info] dot_time/dot_number " << (double) dot_time/dot_num << endl;
+  if(flag_verbose) {
+    cout << "# [info] sieve took time " << secs << " s" << endl;
+    /* dot product time */
+    cout << "# [info] dot_time " << dot_time << endl;
+    cout << "# [info] dot_num " << dot_num << endl;
+    cout << "# [info] dot_time/dot_number " << (double) dot_time/dot_num << endl;
+  }
+  
 
   return 1;
 }
