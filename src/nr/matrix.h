@@ -309,7 +309,7 @@ public:
      @note The constructed matrix will not come with a guarantee of unusually short vectors.
   **/
 
-  void gen_ntrulike(int bits,int q);
+  void gen_ntrulike(int bits);
 
   /** Construct a matrix ``[[qI,0],[H,I]]`` where ``H`` is constructed from rotations of a vector ``h``.
 
