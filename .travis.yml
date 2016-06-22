@@ -6,34 +6,34 @@ matrix:
     - compiler: gcc
       env: COMPILER=g++-4.9
       addons:
-        sources:
-          - ubuntu-toolchain-r-test
         apt:
-            packages:
-              - g++-4.9
-              - libgmp-dev
-              - libmpfr-dev
-              - libqd-dev
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+            - libgmp-dev
+            - libmpfr-dev
+            - libqd-dev
 
     - compiler: gcc
       env: COMPILER=g++-5
       addons:
-        sources:
-          - ubuntu-toolchain-r-test
         apt:
-            packages:
-              - g++-5.0
-              - libgmp-dev
-              - libmpfr-dev
-              - libqd-dev
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5.0
+            - libgmp-dev
+            - libmpfr-dev
+            - libqd-dev
     - compiler: clang
       env: COMPILER=clang++
       addons:
         apt:
-            packages:
-              - libgmp-dev
-              - libmpfr-dev
-              - libqd-dev
+          packages:
+            - libgmp-dev
+            - libmpfr-dev
+            - libqd-dev
 
 install:
   export CXX="$COMPILER"
