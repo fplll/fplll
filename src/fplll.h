@@ -18,6 +18,10 @@
 #ifndef FPLLL_H
 #define FPLLL_H
 
+#if __cplusplus < 201103L
+#error fplll needs at least a C++11 compliant compiler
+#endif
+
 #include "util.h"
 #include "svpcvp.h"
 #include "bkz.h"
