@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign
-TOPSRCDIR = $(srcdir)/../src/
-TOPBUILDDIR = $(builddir)/../src/
+TOPSRCDIR = $(srcdir)/../fplll
+TOPBUILDDIR = $(builddir)/../fplll/
 DEFINES =
 
 include_fpllldir=$(includedir)/fplll
