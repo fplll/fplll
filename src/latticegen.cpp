@@ -26,8 +26,8 @@ void printHelp() {
        << " r <d> <b> : gen_intrel"<<endl
        << " s <d> <b> <b2> : gen_simdioph"<< endl
        << " u <d> <b> : gen_uniform"<< endl
-       << " n <d> <b> <q> : gen_ntrulike"<<endl
-       << " N <d> <b> <q> : gen_ntrulike2"<<endl
+       << " n <d> <c> : gen_ntrulike"<<endl
+       << " N <d> <c> : gen_ntrulike2"<<endl
        << " a <d> <f> : gen_ajtai"<<endl
        << " A <d> : gen_ajtai2"<<endl;
 }
@@ -107,20 +107,44 @@ int main(int argc, char* argv[]) {
       }
     case 'n':
       {
-	if (argc - iArg < 2) fatalError("method 'n' requires 3 arguments");
+	if (argc - iArg < 1) fatalError("method 'n' requires 3 arguments");
 	int b=atoi(argv[iArg]);
-	int q=atoi(argv[iArg + 1]);
+	char c=argv[iArg+1][0];
 	m.resize(2 * d, 2 * d);
-	m.gen_ntrulike(b, q);
+	switch(c)
+	  {
+	  case 'b':
+	    {
+	      m.gen_ntrulike(b);
+	      break;
+	    }
+	  case 'q':
+	    {
+	      m.gen_ntrulike_withq(b);
+	      break;
+	    }
+	  }
 	break;
       }
     case 'N':
       {
-	if (argc - iArg < 2) fatalError("method 'N' requires 3 arguments");
+	if (argc - iArg < 1) fatalError("method 'N' requires 3 arguments");
 	int b=atoi(argv[iArg]);
-	int q=atoi(argv[iArg + 1]);
+	int c=argv[iArg + 1][0];
         m.resize(2 * d, 2 * d);
-	m.gen_ntrulike2(b, q);
+	switch(c)
+	  {
+	  case 'b':
+	    {
+	      m.gen_ntrulike2(b);
+	      break;
+	    }
+	  case 'q':
+	    {
+	      m.gen_ntrulike2_withq(b);
+	      break;
+	    }
+	  }
 	break;
       }
     case 'a':

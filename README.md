@@ -81,11 +81,11 @@ lattice basis vectors).
 
 The options are:
 
-* `r` `d` `b` : generates a knapsack style matrix of dimension d x (d+1) and b bits.
-* `s` `d` `b` `b2` : generates a simdioph matrix.
-* `u` `d` `b` : generates an uniform matrix.
-* `n` `d` `b` `q` : generates an ntru like matrix.
-* `N` `d` `b` `q` : generates an ntru like matrix.
+* `r` `d` `b` : generates a knapsack like matrix of dimension d x (d+1) and b bits (see, e.g., [S09]): the i-th vector starts with a random integer of bit-length <=b and the rest is the i-th canonical unit vector.
+* `s` `d` `b` `b2` : generates a d x d matrix of a form similar to that is involved when trying to find rational approximations to reals with the same small denominator (see, e.g., [LLL82]): the first vector starts with a random integer of bit-length <=b2 and continues with d-1 independent integers of bit-lengths <=b; the i-th vector for i>1 is the i-th canonical unit vector scaled by a factor 2^b.
+* `u` `d` `b` : generates a d x d matrix whose entries are independent integers of bit-lengths <=b.
+* `n` `d` `b` `c` : generates an ntru-like matrix. If char is 'b', then it first samples an integer q of bit-length <=b, whereas if char is 'q', then it first samples q of bit-length <=b. Then it samples a uniform h in the ring Z_q[x]/(x^n-1). It finally constructs and returns the 2x2 block matrix [[I, Rot(h)], [0, q*I]], where each block is dxd, the first row of Rot(h) is the coefficient vector of h, and the i-th row of Rot(h) is the shift of the (i-1)-th (with last entry put back in first position), for all i>1.    
+* `N` `d` `b` `c` : as previous option, except that the contructed matrix is [[q*I, 0], [Rot(h), I]]. 
 * `a` `d` `f` : generates an ajtai style matrix.
 * `A` `d` : generates an ajtai style matrix. Also requires d coefficients.
 
