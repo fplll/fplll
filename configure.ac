@@ -3,7 +3,7 @@
 
 AC_PREREQ(2.61)
 AC_INIT(libfplll,4.0.5)
-AC_CONFIG_SRCDIR([src/fplll.cpp])
+AC_CONFIG_SRCDIR([fplll/fplll.cpp])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
@@ -86,9 +86,9 @@ AC_C_VOLATILE
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([floor pow rint sqrt strtol])
 
-AC_CONFIG_HEADERS([src/fplll_config.h])
+AC_CONFIG_HEADERS([fplll/fplll_config.h])
 AC_CONFIG_FILES([Makefile
-                 src/Makefile
+                 fplll/Makefile
                  tests/Makefile
                  fplll.pc])
 AC_OUTPUT
