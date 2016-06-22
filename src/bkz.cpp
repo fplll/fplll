@@ -57,7 +57,7 @@ double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow) {
     m.updateGSORow(i);
     f = m.getRExp(i, i, expo);
     logF.log(f, GMP_RNDU);
-    x[i] = logF.get_d() + expo * log(2.0);
+    x[i] = logF.get_d() + expo * std::log(2.0);
   }
   int n = stopRow - startRow;
   double iMean = (n - 1) * 0.5 + startRow, xMean = 0, v1 = 0, v2 = 0;
@@ -143,9 +143,9 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
   
   vector<FT>& solCoord = evaluator.solCoord;
   solCoord.clear();
-  Enumeration::enumerate(m, maxDist, maxDistExpo, evaluator, emptySubTree,
-            emptySubTree, kappa, kappa + blockSize, par.pruning);
-  nodes += Enumeration::getNodes();
+  Enumeration<FT> Enum(m, evaluator);
+  Enum.enumerate( kappa, kappa + blockSize, maxDist, maxDistExpo, vector<FT>(), vector<enumxt>(), par.pruning);
+  nodes += Enum.getNodes(); //Enumeration::getNodes();
   if (solCoord.empty()) {
     if(par.flags & BKZ_GH_BND) return true; // Do nothing
     else return setStatus(RED_ENUM_FAILURE);
@@ -327,7 +327,7 @@ void BKZReduction<FT>::dumpGSO(const std::string filename, const std::string pre
     m.updateGSORow(i);
     f = m.getRExp(i, i, expo);
     logF.log(f, GMP_RNDU);
-    dump << std::setprecision(8) << logF.get_d() + expo * log(2.0) << " ";
+    dump << std::setprecision(8) << logF.get_d() + expo * std::log(2.0) << " ";
   }
   dump << std::endl;
   dump.close();

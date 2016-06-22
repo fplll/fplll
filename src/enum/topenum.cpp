@@ -71,7 +71,7 @@ bool Enumerator::enumNext(const Float& maxsqrlength) {
       }
       subTree.resize(d - k);
       for (size_t j = 0; j < subTree.size(); j++)
-        subTree[j] = x[j + k];
+        subTree[j] = enumxt(x[j + k].get_d());
       //FPLLL_TRACE("  SubTree approx_size=" << volume << " coord=" << subTree);
       notFound = false;
     }
