@@ -4,7 +4,7 @@
  *  F=qd_real specialization
  *********************************/
 
-#include "defs.h"
+#include "../defs.h"
 #include "nr_FP.inl"
 #include <qd/qd_real.h>
 

@@ -29,7 +29,7 @@ public:
              double maxVolume = ENUM_MAX_VOLUME,
              int minLevel = ENUM_MIN_LEVEL);
   bool enumNext(const Float& maxsqrlength);
-  inline const FloatVect& getSubTree() {
+  inline const vector<enumxt>& getSubTree() {
     return subTree;
   }
 private:
@@ -38,7 +38,8 @@ private:
   int k, kmin, kmax, d;
   FloatVect center, dist;
   FloatVect x, dx, ddx;
-  FloatVect subTree;
+//  FloatVect subTree;
+  vector<enumxt> subTree;
   Float maxVolume;
   bool svpInitNeeded;
 };

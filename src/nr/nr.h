@@ -5,7 +5,7 @@
  * loading definitions
  */
 #include <iostream>
-#include "defs.h"
+#include "../defs.h"
 
 #include "nr_rand.inl"
 
@@ -49,7 +49,8 @@ typedef Z_NR<IntegerT> Integer;
 
 /* Floating-point type inside the SVP/CVP solver */
 typedef double enumf;
-
+typedef double enumxt;
+//typedef int enumxt;
 
 /**
  * return type
