@@ -300,8 +300,15 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits) {
   q.randb(bits);
   if (q.sgn()==0) 
     q.set(1); 
-  for (i = 0; i < d; i++) 
-    h[i].randm(q);
+  h[0].set(0);
+  for (i = 1; i < d; i++)
+    {
+      h[i].randm(q);
+      h[0].sub(h[0],h[i]);
+      if (h[0].sgn()<0)
+	h[0].add(h[0],q);
+ // set h0 such that h(1) = 0 mod q.
+    }  
 
   // I in A00
   for (i = 0; i < d; i++) {
@@ -353,8 +360,15 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike_withq(int q) {
   Z_NR<ZT> q2;
 
   q2.set(q);
-  for (i = 0; i < d; i++) 
-    h[i].randm(q2);
+  h[0].set(0);
+  for (i = 1; i < d; i++)
+    {
+      h[i].randm(q2);
+      h[0].sub(h[0],h[i]);
+      if (h[0].sgn()<0)
+	h[0].add(h[0],q2);
+ // set h0 such that h(1) = 0 mod q.
+    }  
 
   // I in A00
   for (i = 0; i < d; i++) {
@@ -407,8 +421,15 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(int bits) {
   Z_NR<ZT> q;
 
   q.randb(bits);
-  for (i = 0; i < d; i++)
-    h[i].randm(q);
+  h[0].set(0);
+  for (i = 1; i < d; i++)
+    {
+      h[i].randm(q);
+      h[0].sub(h[0],h[i]);
+      if (h[0].sgn()<0)
+	h[0].add(h[0],q);
+ // set h0 such that h(1) = 0 mod q.
+    }  
 
   for (i = 0; i < d; i++) {
     for (j = 0; j < c; j++)
@@ -450,8 +471,15 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2_withq(int q) {
   Z_NR<ZT> q2;
 
   q2.set(q);
-  for (i = 0; i < d; i++)
-    h[i].randm(q2);
+  h[0].set(0);
+  for (i = 1; i < d; i++)
+    {
+      h[i].randm(q2);
+      h[0].sub(h[0],h[i]);
+      if (h[0].sgn()<0)
+	h[0].add(h[0],q2);
+ // set h0 such that h(1) = 0 mod q.
+    }  
 
   for (i = 0; i < d; i++) {
     for (j = 0; j < c; j++)
