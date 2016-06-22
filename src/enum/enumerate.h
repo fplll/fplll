@@ -25,7 +25,7 @@ FPLLL_BEGIN_NAMESPACE
 inline void roundto(int& dest, const double& src) { dest = lrint(src); }
 inline void roundto(double& dest, const double& src) { dest = rint(src); }
 
-template<typename FT, int MaxDimension = 160>
+template<typename FT, int MaxDimension = 256>
 class Enumeration
 {
 public:
