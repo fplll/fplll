@@ -82,16 +82,16 @@ FT get_root_det(MatGSO<Integer, FT>& m, int start, int end) {
   return root_det;
 }
 
+
 template <class FT>
-void compute_gauss_heur_dist(FT &root_det, FT &max_dist, long max_dist_expo, int kappa,
-                             int block_size, double gh_factor)
+void compute_gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det, double gh_factor)
 {
   double t = (double)block_size / 2.0 + 1;
   t        = tgamma(t);
   t        = pow(t, 2.0 / (double)block_size);
   t        = t / M_PI;
-  FT f = t;
-  f = f * root_det;
+  FT f     = t;
+  f        = f * root_det;
   f.mul_2si(f, -max_dist_expo);
   f = f * gh_factor;
   if (f < max_dist)
@@ -168,7 +168,7 @@ const Pruning &BKZReduction<FT>::get_pruning(int kappa, int block_size, const BK
 
   FT gh_max_dist;
   FT root_det = get_root_det(m, kappa, kappa + block_size);
-  compute_gauss_heur_dist(root_det, gh_max_dist, max_dist_expo, kappa, block_size, 1.0);
+  compute_gaussian_heuristic(gh_max_dist, max_dist_expo, block_size, root_det, 1.0);
   return strat.get_pruning(max_dist.get_d() * pow(2, max_dist_expo),
                            gh_max_dist.get_d() * pow(2, max_dist_expo));
 }
@@ -253,7 +253,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     if ((par.flags & BKZ_GH_BND) && block_size > 30)
     {
       FT root_det = get_root_det(m, kappa, kappa + block_size);
-      compute_gauss_heur_dist(root_det, max_dist, max_dist_expo, kappa, block_size, par.gh_factor);
+      compute_gaussian_heuristic(max_dist, max_dist_expo, block_size, root_det, par.gh_factor);
     }
 
     const Pruning &pruning = get_pruning(kappa, block_size, par);

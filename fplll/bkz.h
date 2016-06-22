@@ -48,14 +48,22 @@ private:
 */
 template <class FT> double get_current_slope(MatGSO<Integer, FT> &m, int startRow, int stopRow);
 
-/** Uses the Gaussian Heuristic Distance to compute a bound on the length of the
-    shortest vector.
+/**
+   @brief Use the Gaussian Heuristic to compute a bound on the length
+   of the shortest vector.
+
+   @param max_dist         output
+   @param max_dist_expo    exponent of output
+   @param block_size       block size
+   @param root_det
+   @param gh_factor
+   @return
 */
+
 template <class FT>
-void compute_gauss_heur_dist(FT &root_det, FT &maxDist, long maxDistExpo, int kappa,
-                             int blockSize, double ghFactor);
-                             
-                             /**
+void compute_gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det, double gh_factor);
+
+/**
  * Compute the (squared) root determinant of the basis.
  */
 template<class FT>
@@ -303,7 +311,7 @@ bool BKZReduction<FT>::dsvp_reduction(int kappa, int block_size, const BKZParam 
     {
       FT root_det = get_root_det(m, kappa, kappa + block_size);
       root_det.pow_si(root_det, -1);
-      compute_gauss_heur_dist(root_det, max_dist, max_dist_expo, kappa, block_size, par.gh_factor);
+      compute_gaussian_heuristic(max_dist, max_dist_expo, block_size, root_det, par.gh_factor);
     }
 
     const Pruning &pruning = get_pruning(kappa, block_size, par);
