@@ -18,6 +18,7 @@
 #define FPLLL_ENUMERATE_H
 
 #include <array>
+#include <gso.h>
 #include "evaluator.h"
 
 FPLLL_BEGIN_NAMESPACE
