@@ -26,18 +26,27 @@
 
 FPLLL_BEGIN_NAMESPACE
 
+/**
+   Pruning parameters for one radius (expressed as a ratio to the Gaussian heuristic)
+ */
+
 class Pruning
 {
 
 public:
   double radius_factor;              //< radius/Gaussian heuristic
-  double probability;                //< success probability
   std::vector<double> coefficients;  //< pruning coefficients
+  double probability;                //< success probability
+
+  /**
+     The default constructor means no pruning.
+  */
 
   Pruning() : radius_factor(1.), probability(1.){};
 
-  /** Sets all pruning coefficients to 1, except the last <level>
-      coefficients, these will be linearly with slope -1 / blockSize.
+  /** Set all pruning coefficients to 1, except the last <level>
+      coefficients, these will be linearly with slope `-1 /
+      block_size`.
 
       @param level number of levels in linear descent
   */
@@ -71,11 +80,28 @@ public:
   }
 };
 
+/**
+   A strategy covers pruning parameters and preprocessing blocksizes
+*/
+
 class Strategy
 {
 public:
+
+  /** Pruning parameters */
+
   vector<Pruning> pruning_parameters;
+
+  /** For each block size we run one tour */
+
   vector<int> preprocessing_blocksizes;
+
+  /** Construct an empty strategy
+
+      @note Use this instead of the default constructor. The default
+      constructor does not add default pruning parameters.
+
+   */
 
   static Strategy EmptyStrategy()
   {
@@ -84,12 +110,39 @@ public:
     return strat;
   };
 
+
+  /** Select the best pruning parameters for the input `radius`. The
+      parameter `gh` is used to establish the ratio between `radius`
+      and the Gaussian heuristic, which is used for sizes.
+
+     @param radius radius of the currently shortest vector
+     @param gh Gaussian heuristic prediction for radius
+
+   */
+
   const Pruning &get_pruning(double radius, double gh) const;
 };
 
 class BKZParam
 {
 public:
+
+  /**
+     @brief Create BKZ parameters
+
+     @param block_size               block size > 2
+     @param strategies               vector of strategies used for pruning and preprocessing
+     @param delta                    LLL parameter delta
+     @param flags                    flags
+     @param max_loops                maximum number of loops (or zero to disable this)
+     @param max_time                 maximum number of time  (or zero to disable this)
+     @param auto_abort_scale         auto abort when next tour does not improve slope over `scale` * previous tour
+     @param auto_abort_max_no_dec    auto abort when next tour does not improve slope `no_dec` times
+     @param gh_factor                set enumeration bound to Gaussian heuristic times `gh_factor`
+     @param min_success_probability  minimum success probability in an SVP reduction (when using pruning)
+     @param rerandomization_density  the heavier rerandomization, the better our guarantees and costs
+  */
+
   BKZParam(int block_size, vector<Strategy> &strategies, double delta = LLL_DEF_DELTA,
            int flags = BKZ_DEFAULT, int max_loops = 0, double max_time = 0,
            double auto_abort_scale = 1.0, int auto_abort_max_no_dec = 5, double gh_factor = 1.1,
@@ -100,6 +153,8 @@ public:
         dump_gso_filename("gso.log"), min_success_probability(min_success_probability),
         rerandomization_density(rerandomization_density)
   {
+
+    // we create dummy strategies
     if (strategies.empty())
     {
       strategies = vector<Strategy>();
@@ -114,7 +169,6 @@ public:
   int block_size;
 
   /** Strategies (pruning coefficients, preprocessing)  */
-
   vector<Strategy> &strategies;
 
   /** LLL parameter delta **/
@@ -129,13 +183,13 @@ public:
   /** Maximum time to spend **/
   double max_time;
 
-  /** If BKZ_AUTOABORT is set, We abort if newSlope < autoAbort_scale * oldSlope
-      is true for autoAbort_maxNoDec loops.
+  /** If BKZ_AUTOABORT is set, We abort if `new_slope < auto_abort_scale * old_slope`
+      is true for `auto_abort_max_no_dec` loops.
    */
   double auto_abort_scale;
   int auto_abort_max_no_dec;
 
-  /** If BKZ_GH_BND is set, the enumeration bound will be set to ghFactor times
+  /** If BKZ_GH_BND is set, the enumeration bound will be set to gh_factor times
       the Gaussian Heuristic
   */
 
@@ -155,6 +209,14 @@ public:
 
   int rerandomization_density;
 };
+
+/**
+   Load BKZ pruning and preprocessing strategies from a json file.
+
+   @note All parameters except pruning and preprocessing are silently ignored.
+*/
+
+vector<Strategy> load_strategies_json(const char *filename);
 
 FPLLL_END_NAMESPACE
 #endif /* BKZ_PARAMS_H */
