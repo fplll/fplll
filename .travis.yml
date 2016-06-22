@@ -11,7 +11,6 @@ addons:
       - libqd-dev
       - g++-4.9
       - g++-5
-      - clang-3.6
       
 matrix:
   include:
@@ -20,7 +19,6 @@ matrix:
     - compiler: gcc
       env: COMPILER=g++-5
     - compiler: clang
-      env: COMPILER=clang++-3.6
 
 install:
   export CXX="$COMPILER"
