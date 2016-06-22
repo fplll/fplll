@@ -168,8 +168,8 @@ public:
 
   inline FP_NR<F> &operator+=(const double a) { FP_NR<F> t=a; this->add(*this, t); };
   inline FP_NR<F> &operator-=(const double a) { FP_NR<F> t=a; this->sub(*this, t); };
-  inline FP_NR<F> &operator*=(const double a) { FP_NR<F> t=a; this->mul(*this, t); };
-  inline FP_NR<F> &operator/=(const double a) { FP_NR<F> t=a; this->div(*this, t); };
+  inline FP_NR<F> &operator*=(const double a) { this->mul_d(*this, a); };
+  inline FP_NR<F> &operator/=(const double a) { this->div_d(*this, a); };
 
 
   /**
