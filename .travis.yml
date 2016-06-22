@@ -1,4 +1,5 @@
-sudo: false
+sudo: required
+dist: trusty
 language: cpp
       
 matrix:
@@ -22,7 +23,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - g++-5.0
+            - g++-5
             - libgmp-dev
             - libmpfr-dev
             - libqd-dev
