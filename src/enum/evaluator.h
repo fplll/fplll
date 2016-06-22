@@ -16,6 +16,7 @@
 #ifndef FPLLL_EVALUATOR_H
 #define FPLLL_EVALUATOR_H
 
+#include <deque>
 #include "../util.h"
 
 FPLLL_BEGIN_NAMESPACE
@@ -34,7 +35,7 @@ enum EvaluatorMode {
 template<class FT>
 class Evaluator {
 public:
-  Evaluator() : newSolFlag(false) {}
+  Evaluator(size_t max_aux_solutions = 0, bool findsubsolutions = false) : max_aux_sols(max_aux_solutions), findsubsols(findsubsolutions), newSolFlag(false) {}
   virtual ~Evaluator() {}
 
   /** Called by enumerate when a solution is found.
@@ -44,10 +45,26 @@ public:
      maxDist = current bound of the algorithm
      Output: maxDist can be decreased */
   virtual void evalSol(const vector<FT>& newSolCoord,
-          const enumf& newPartialDist, enumf& maxDist, long normExp) = 0;
+          const enumf& newPartialDist, enumf& maxDist) = 0;
+          
+  virtual void evalSubSol(int offset, const vector<FT>& newSubSolCoord,
+          const enumf& subDist) = 0;
+          
+  virtual void set_normexp(long normExp) {}
 
   /** Coordinates of the solution in the lattice */
   vector<FT> solCoord;
+  enumf solDist;
+  
+  /** Other solutions found in the lattice */
+  size_t max_aux_sols;
+  std::deque< vector<FT> > aux_solCoord;
+  std::deque< enumf > aux_solDist;
+  
+  /** Subsolutions found in the lattice */
+  bool findsubsols;
+  vector< vector<FT> > sub_solCoord;
+  vector< enumf > sub_solDist;
 
   /** Set to true when solCoord is updated */
   bool newSolFlag;
@@ -62,9 +79,19 @@ template<class FT>
 class FastEvaluator : public Evaluator<FT> {
 public:
   using Evaluator<FT>::solCoord;
+  using Evaluator<FT>::solDist;
   using Evaluator<FT>::newSolFlag;
+  using Evaluator<FT>::aux_solCoord;
+  using Evaluator<FT>::aux_solDist;
+  using Evaluator<FT>::sub_solCoord;
+  using Evaluator<FT>::sub_solDist;
+  using Evaluator<FT>::max_aux_sols;
 
-  FastEvaluator() : Evaluator<FT>() {}
+  FastEvaluator(size_t max_aux_solutions = 0, bool findsubsolutions = false) 
+    : Evaluator<FT>(max_aux_solutions, findsubsolutions) 
+  {
+  }
+  
   virtual ~FastEvaluator() {}
 
   /**
@@ -79,11 +106,34 @@ public:
    *                       being converted to double
    */
   virtual void evalSol(const vector<FT>& newSolCoord,
-                       const enumf& newPartialDist, enumf& maxDist,
-                       long normExp) {
+                       const enumf& newPartialDist, enumf& maxDist) 
+  {
+    if (max_aux_sols != 0 && !solCoord.empty())
+    {
+      aux_solCoord.emplace_front( std::move(solCoord) );
+      aux_solDist.emplace_front( solDist );
+      if (aux_solCoord.size() > max_aux_sols)
+      {
+        aux_solCoord.pop_back();
+        aux_solDist.pop_back();
+      }
+    }
     solCoord = newSolCoord;
-    maxDist = newPartialDist;
+    maxDist = solDist = newPartialDist;
     newSolFlag = true;
+  }
+  
+  virtual void evalSubSol(int offset, const vector<FT>& newSubSolCoord, const enumf& subDist)
+  {
+    sub_solCoord.resize( std::max(sub_solCoord.size(), std::size_t(offset+1)) );
+    sub_solDist.resize( sub_solCoord.size(), -1.0 );
+    if (sub_solDist[offset] == -1.0 || subDist < sub_solDist[offset])
+    {
+      sub_solCoord[offset] = newSubSolCoord;
+      for (int i = 0; i < offset; ++i)
+        sub_solCoord[offset][i] = 0;
+      sub_solDist[offset] = subDist;
+    }
   }
 };
 
@@ -95,15 +145,21 @@ template<>
 class Evaluator<Float> {
 public:
   Evaluator<Float>(int d, const Matrix<Float>& mu, const Matrix<Float>& r,
-                   int evalMode) :
-    newSolFlag(false), evalMode(evalMode), inputErrorDefined(false),
+                   int evalMode, size_t max_aux_solutions = 0, bool findsubsolutions = false) :
+    max_aux_sols(max_aux_solutions), findsubsols(findsubsolutions), newSolFlag(false), evalMode(evalMode), inputErrorDefined(false),
     d(d), mu(mu), r(r)
   {
     maxDRdiag.resize(d);
     maxDMu.resize(d);
   }
 
-  virtual ~Evaluator<Float>() {};
+  virtual ~Evaluator<Float>() {}
+
+  virtual void set_normexp(long norm_exp) 
+  {
+    normExp = norm_exp;
+  }
+  long normExp;
 
   void initDeltaDef(int prec, double rho, bool withRoundingToEnumf);
 
@@ -126,13 +182,26 @@ public:
    *                       in enumerate
    */
   virtual void evalSol(const FloatVect& newSolCoord,
-          const enumf& newPartialDist, enumf& maxDist, long normExp) = 0;
+          const enumf& newPartialDist, enumf& maxDist) = 0;
+  virtual void evalSubSol(int offset, const FloatVect& newSubSolCoord,
+          const enumf& subDist) = 0;
 
   // Internal use
   bool getMaxErrorAux(const Float& maxDist, bool boundOnExactVal, Float& maxDE);
 
   /** Coordinates of the solution in the lattice */
   FloatVect solCoord;
+  enumf solDist;
+
+  /** Other solutions found in the lattice */
+  size_t max_aux_sols;
+  std::deque< FloatVect > aux_solCoord;
+  std::deque< enumf > aux_solDist;
+  
+  /** Subsolutions found in the lattice */
+  bool findsubsols;
+  vector< FloatVect > sub_solCoord;
+  vector< enumf > sub_solDist;
 
   /** Set to true when solCoord is updated */
   bool newSolFlag;
@@ -162,13 +231,15 @@ class FastEvaluator<Float> : public Evaluator<Float> {
 public:
   FastEvaluator(int d = 0, const Matrix<Float>& mu = Matrix<Float>(),
                 const Matrix<Float>& r = Matrix<Float>(),
-                int evalMode = EVALMODE_SV) :
-    Evaluator<Float>(d, mu, r, evalMode) {}
+                int evalMode = EVALMODE_SV, size_t max_aux_solutions = 0, bool findsubsolutions = false) :
+    Evaluator<Float>(d, mu, r, evalMode, max_aux_solutions, findsubsolutions) {}
   virtual ~FastEvaluator() {}
 
   virtual bool getMaxError(Float& maxError);
   virtual void evalSol(const FloatVect& newSolCoord,
-          const enumf& newPartialDist, enumf& maxDist, long normExp);
+          const enumf& newPartialDist, enumf& maxDist);
+  virtual void evalSubSol(int offset, const FloatVect& newSubSolCoord,
+          const enumf& subDist);
 };
 
 /**
@@ -178,8 +249,8 @@ public:
 class ExactEvaluator : public Evaluator<Float> {
 public:
   ExactEvaluator(int d, const IntMatrix& matrix, const Matrix<Float>& mu,
-                 const Matrix<Float>& r, int evalMode) :
-    Evaluator<Float>(d, mu, r, evalMode), matrix(matrix)
+                 const Matrix<Float>& r, int evalMode, size_t max_aux_solutions = 0, bool findsubsolutions = false) :
+    Evaluator<Float>(d, mu, r, evalMode, max_aux_solutions, findsubsolutions), matrix(matrix)
   {
     intMaxDist = -1;
   }
@@ -190,12 +261,18 @@ public:
   virtual bool getMaxError(Float& maxError);
 
   virtual void evalSol(const FloatVect& newSolCoord,
-          const enumf& newPartialDist, enumf& maxDist, long normExp);
+          const enumf& newPartialDist, enumf& maxDist);
+
+  virtual void evalSubSol(int offset, const FloatVect& newSubSolCoord,
+          const enumf& subDist);
 
   Integer intMaxDist;       // Exact norm of the last vector
 
+  std::deque< Integer > aux_solintDist; // Exact norm of aux vectors
+  vector< Integer> sub_solintDist; // Exact norm of sub vectors
+
 private:
-  void updateMaxDist(enumf& maxDist, long normExp);
+  void updateMaxDist(enumf& maxDist);
 
   const IntMatrix& matrix;  // matrix of the lattice
 };

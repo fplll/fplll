@@ -30,6 +30,7 @@ class Enumeration
 {
 public:
     static const int DMAX = MaxDimension;
+
     Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator)
         : _gso(gso), _evaluator(evaluator)
     {
@@ -52,6 +53,8 @@ private:
     enumf centerPartSums[DMAX][DMAX];
     array<enumf, DMAX> rdiag, dist, center, centerPartSum, maxDists, alpha;
     array<enumxt, DMAX> x, dx, ddx, centerLoopBg;
+    array<enumf, DMAX> subsolDists;
+    bool findbettersubsols;
     
     int d, k, kEnd, kMax;
     bool dual;
@@ -78,7 +81,7 @@ private:
 
     void prepareEnumeration(enumf maxDist, const vector<enumxt>& subTree, bool solvingSVP);
   
-    template<bool dualenum>
+    template<bool dualenum, bool dosubsols>
     bool enumerateLoop(enumf& newMaxDist, int& newKMax);
 
     void enumerate(enumf& maxDist, long normExp, const vector<double>& pruning);
