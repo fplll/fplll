@@ -316,14 +316,16 @@ public:
      @note The constructed matrix will not come with a guarantee of unusually short vectors.
   **/
 
-  void gen_ntrulike(int bits,int q);
+  void gen_ntrulike(int bits);
+  void gen_ntrulike_withq(int q);
 
   /** Construct a matrix ``[[qI,0],[H,I]]`` where ``H`` is constructed from rotations of a vector ``h``.
 
     @note The constructed matrix will not come with a guarantee of unusually short vectors.
   */
 
-  void gen_ntrulike2(int bits,int q);
+  void gen_ntrulike2(int bits);
+  void gen_ntrulike2_withq(int q);
   void gen_ajtai(double alpha);
   void gen_ajtai2(FP_NR<mpfr_t> *w);
 
