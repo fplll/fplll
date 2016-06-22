@@ -29,6 +29,7 @@
 #define FPLLL_V3_COMPAT
 #define FPLLL_WITH_GETRUSAGE
 
+#include <cstddef>
 #include <iostream>
 #include <cstring>
 #include <cstdio>
