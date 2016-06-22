@@ -65,9 +65,11 @@ AC_CHECK_HEADER(qd/dd_real.h,
     have_libqd="no")
 
 if test "x${have_libqd}" = "xyes"; then
-   LDFLAGS="$LDFLAGS -lqd"
+   LIBQD_LIBADD="-lqd"
    AC_DEFINE([FPLLL_WITH_QD], [1], [define if libqd-dev is available])
 fi
+
+AC_SUBST(LIBQD_LIBADD)
 
 # Checks for header files.
 AC_HEADER_STDC

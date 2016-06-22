@@ -610,7 +610,7 @@ inline void MatGSO<ZT, FT>::dumpMu_d(vector<double> mu, int offset, int blocksiz
     blocksize = b.getRows();
   }
 
-  r.reserve(r.size() + blocksize*blocksize);
+  mu.reserve(mu.size() + blocksize*blocksize);
   for (int i = 0; i < blocksize; ++i) {
     for (int j = 0; j < blocksize; ++j) {
       getMu(e,offset+i,offset+j);
