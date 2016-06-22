@@ -21,7 +21,7 @@ using namespace fplll;
 
 int main(void) {
   mpz_t q;
-  ZZ_mat<mpz_t> M(10, 10);
+  ZZ_mat<mpz_t> M(20, 20);
   ZZ_mat<mpz_t> U(0, 0);
   M.gen_uniform(3);
   //mpz_init_set_str(q, "831", 16); 
@@ -35,18 +35,18 @@ int main(void) {
   mpz_clear(q);
   Pruner<FP_NR<double>> pru;
   pru.load_basis_shape<Z_NR<mpz_t>,FP_NR<double>>(gso);
-  double pr[10];
+  double pr[20];
 
-  for (int i = 0; i < 10; ++i)
+  for (int i = 0; i < 20; ++i)
   {
-    pr[i] = 1.;
+    pr[i] = 1;
   }
 
   cerr << pru.get_svp_success_proba(pr) << endl;
 
-  for (int i = 0; i < 10; ++i)
+  for (int i = 2; i < 20; ++i)
   {
-    pr[i] = .5;
+    pr[i] = .25;
   }
 
   cerr << pru.get_svp_success_proba(pr) << endl;

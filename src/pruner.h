@@ -25,8 +25,8 @@ FPLLL_BEGIN_NAMESPACE
 // naming conventions:
 // b is for bound (squared)
 // pv is for partial volumes (NOT squared)
-// r is for gram schmidt length (squared). Must be renormaliuzed by the
-// enumeration radius
+// r is for gram schmidt length (squared). Automatically renormalized
+// to avoid overflowing partial volumes
 // p is for polynomial
 
 // inside this code, b,pv,and R are in reversed order
@@ -74,7 +74,7 @@ class Pruner{
     FT preproc_cost;
     FT target_sucess_proba;
 
-    inline void enforce_constraints(/*io*/ evec &b, /*opt i*/ int j = 0);
+    inline int enforce_constraints(/*io*/ evec &b, /*opt i*/ int j = 0);
     inline FT eval_poly(int ld,/*i*/ poly *p, FT x);
     inline void integrate_poly(int ld,/*io*/ poly *p);
     inline FT relative_volume(/*i*/int rd, evec &b);
@@ -87,7 +87,10 @@ class Pruner{
 
     FT tabulated_factorial[PRUNER_MAX_N];
     FT tabulated_ball_vol[PRUNER_MAX_N];
-    
+    FT minus_one;
+  
+    FT renormalization_factor;
+
     FT epsilon;    // Epsilon to use for numerical differentiation
     FT min_step;    // Minimal step in a given direction 
     FT step_factor; // Increment factor for steps in a given direction
@@ -101,6 +104,7 @@ Pruner<FT>::Pruner(){
   min_step = pow(2., -9);
   step_factor = pow(2, .5);
   shell_ratio = .995;
+  minus_one = -1.;
 }
 
 
@@ -132,22 +136,35 @@ void Pruner<FT>::load_basis_shape(MatGSO<ZT2, FT2>& gso, int beginning, int end)
   n = end - beginning;
   d = n/2;
   FT2 f;
+  FT logvol,tmp;
+  logvol = 0;
   for (int i = 0; i < n; ++i)
   {
     gso.getR(f, beginning + i, beginning + i);
     r[i] = f;
-    std::cerr << "HAHAAHA" << i << " BEBEBBE " << r[i] << endl;
+    logvol += log(f);
   }
+  tmp = - n;
+  renormalization_factor = exp(logvol / tmp);
+
+  for (int i = 0; i < n; ++i)
+  {
+    r[i] *= renormalization_factor;
+  }
+
 }
 
 template<class FT>
 FT Pruner<FT>::get_svp_success_proba(/*i*/double* pr){
-  vec b;
+  evec b;
   for (int i = 0; i < d; ++i) {
     b[i] = pr[n - 1 - 2 * i];
   }
+  if (enforce_constraints(b)){
+    throw std::runtime_error(
+      "Ill formed pruning coefficients (must be decreasing, starting with two 1.0)");
+  }
   return svp_success_proba(b);
-
 }
 
 
@@ -166,26 +183,32 @@ FT Pruner<FT>::get_svp_success_proba(/*i*/double* pr){
 
 
 template<class FT>
-inline void Pruner<FT>::enforce_constraints(/*io*/ evec &b, /*opt i*/ int j){
+inline int Pruner<FT>::enforce_constraints(/*io*/ evec &b, /*opt i*/ int j){
+  int status = 0;
+  if (b[d - 1] < 1){
+    status = 1;
+  }
   b[d - 1] = 1;
   for (int i = 0; i < d; ++i){
-    if (b[i] > 1) b[i] = 1;
+    if (b[i] > 1) {b[i] = 1; status = 1;}
     if (b[i] <= .1) b[i] = .1;
   }
   for (int i = j; i < d - 1; ++i){
-    if (b[i + 1] < b[i]) b[i + 1] = b[i];
+    if (b[i + 1] < b[i]) {b[i + 1] = b[i]; status = 1;}
   }
   for (int i = j - 1; i >= 0; --i){
-    if (b[i + 1] < b[i]) b[i] = b[i + 1];
+    if (b[i + 1] < b[i]) {b[i] = b[i + 1]; status = 1;}
   }  
+  return status;
 }
 
 template<class FT>
 inline FT Pruner<FT>::eval_poly(int ld,/*i*/ poly *p, FT x){
-  FT acc = 0.0;
+  FT acc;
+  acc = 0.0;
   for (int i = ld; i >= 0; --i) {
-    acc *= x;
-    acc += (*p)[i];
+    acc = acc * x;
+    acc = acc + (*p)[i];
   }
   return acc;
 }
@@ -193,7 +216,9 @@ inline FT Pruner<FT>::eval_poly(int ld,/*i*/ poly *p, FT x){
 template<class FT>
 inline void Pruner<FT>::integrate_poly(int ld,/*io*/ poly *p){
   for (int i = ld; i >= 0; --i) {
-    (*p)[i + 1] = (*p)[i] / (i + 1.);
+    FT tmp;
+    tmp = i + 1.;
+    (*p)[i + 1] = (*p)[i] / tmp;
   }
   (*p)[0] = 0;
 }
@@ -208,10 +233,10 @@ inline FT Pruner<FT>::relative_volume(int rd, /*i*/ evec &b){
   for (int i = rd - 1; i >= 0; --i) {
     integrate_poly(ld, &P);
     ld++;
-    P[0] = -eval_poly(ld, &P, b[i] / b[rd - 1]);
+    P[0] = minus_one * eval_poly(ld, &P, b[i] / b[rd - 1]);
   }
   if (rd % 2) {
-    return -P[0] * tabulated_factorial[rd];
+    return minus_one * P[0] * tabulated_factorial[rd];
   } else {
     return P[0] * tabulated_factorial[rd];
   }
@@ -235,7 +260,7 @@ inline FT Pruner<FT>::node_count_predict(/*i*/ evec &b){
   for (int i = 0; i < 2 * d; ++i) {
     FT tmp;
     tmp = rv[i] * tabulated_ball_vol[i + 1] *
-             pow(b[i / 2], (1. + i) / 2.) / pv[i];
+             pow_si(sqrt(b[i / 2]), 1 + i) / pv[i];
     total += tmp;
   }
   return total;
@@ -255,9 +280,9 @@ inline FT Pruner<FT>::svp_success_proba(/*i*/ evec &b){
   }
 
   FT vol = relative_volume(d, b);
-  FT dxn = pow(dx, 2. * d);
-  FT dvol = vol - dxn * relative_volume(d, b_minus_db);
-  return dvol / (1 - dxn);
+  FT dxn = pow_si(dx, 2 * d);
+  FT dvol =  dxn * relative_volume(d, b_minus_db) - vol;
+  return dvol / (dxn - 1.);
 
 }
 
