@@ -161,15 +161,15 @@ public:
   inline bool operator>=(const FP_NR<F> &a) const;
   inline bool operator>=(double a) const;
 
-  inline FP_NR<F> &operator+=(const FP_NR<F> &a) { this->add(*this, a); };
-  inline FP_NR<F> &operator-=(const FP_NR<F> &a) { this->sub(*this, a); };
-  inline FP_NR<F> &operator*=(const FP_NR<F> &a) { this->mul(*this, a); };
-  inline FP_NR<F> &operator/=(const FP_NR<F> &a) { this->div(*this, a); };
+  inline FP_NR<F> &operator+=(const FP_NR<F> &a) { this->add(*this, a); return *this;};
+  inline FP_NR<F> &operator-=(const FP_NR<F> &a) { this->sub(*this, a); return *this;};
+  inline FP_NR<F> &operator*=(const FP_NR<F> &a) { this->mul(*this, a); return *this;};
+  inline FP_NR<F> &operator/=(const FP_NR<F> &a) { this->div(*this, a); return *this;};
 
-  inline FP_NR<F> &operator+=(const double a) { FP_NR<F> t=a; this->add(*this, t); };
-  inline FP_NR<F> &operator-=(const double a) { FP_NR<F> t=a; this->sub(*this, t); };
-  inline FP_NR<F> &operator*=(const double a) { this->mul_d(*this, a); };
-  inline FP_NR<F> &operator/=(const double a) { this->div_d(*this, a); };
+  inline FP_NR<F> &operator+=(const double a) { FP_NR<F> t=a; this->add(*this, t); return *this;};
+  inline FP_NR<F> &operator-=(const double a) { FP_NR<F> t=a; this->sub(*this, t); return *this;};
+  inline FP_NR<F> &operator*=(const double a) { this->mul_d(*this, a); return *this;};
+  inline FP_NR<F> &operator/=(const double a) { this->div_d(*this, a); return *this;};
 
 
   /**
