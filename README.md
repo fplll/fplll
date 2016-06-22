@@ -89,14 +89,12 @@ The options are:
 * `t` `d` `f` : generates a d x d lower-triangular matrix B with B_ii = 2^(d-i+1)^f for all i, and B_ij is uniform between -B_jj/2 and B_jj/2 for all j<i.
 * `T` `d` : also takes as input a d-dimensional vector vec read from a file. It generates a d x d lower-triangular matrix B with B_ii = vec[i] for all i and B_ij is uniform between -B_jj/2 and B_jj/2 for all j<i.
 
-The matrix is printed in stdout.
+The generated matrix is printed in stdout.
 
 Note that by default, the random bits always use the same seed,
-to ensure reproducibility. You can change the seed with the option
-``` -randseed <integer>``` or use the current time (in seconds)
-``` -randseed time```
-
-If you use this option, it must be the first one on the command line.
+to ensure reproducibility. The seed may be changed with the option
+``` -randseed <integer>``` or by using the current time (in seconds)
+``` -randseed time```. If you use this option, it must be the first one on the command line.
 
 ### fplll ###
 
