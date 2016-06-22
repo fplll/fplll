@@ -11,15 +11,15 @@ addons:
     sources:
     - ubuntu-toolchain-r-test
     packages:
-    - gcc-5
-    - g++-5
+    - gcc-4.9
+    - g++-4.9
     - clang
     - libmpfr-dev
     - libgmp-dev
     - libqd-dev
 
 install:
-- if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
+- if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
   
 before_script:
   - ./autogen.sh
