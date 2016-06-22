@@ -283,6 +283,7 @@ template<class ZT> inline void ZZ_mat<ZT>::gen_uniform(int bits)
   for (int i=0;i<r;i++)for(int j=0;j<c;j++)matrix[i][j].randb(bits);
 }
 
+/*
 template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits, int q) {
   // [A00 A01]
   // [A10 A11]
@@ -332,7 +333,59 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits, int q) {
 
   delete[] h;
 }
+*/
 
+template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits, int q2) {
+  // [A00 A01]
+  // [A10 A11]
+
+  int i, j, k;
+  int d = r / 2;
+  if (c != r || c != 2 * d) {
+    FPLLL_ABORT("gen_ntrulike called on an ill-formed matrix");
+    return;
+  }
+  Z_NR<ZT> *h = new Z_NR<ZT>[d];
+  Z_NR<ZT> q;
+
+  q.randb(bits);
+  for (i = 0; i < d; i++) 
+    h[i].randm(q);
+
+  // I in A00
+  for (i = 0; i < d; i++) {
+    for (j = 0; j < i; j++)
+      matrix[i][j] = 0;
+    matrix[i][i] = 1;
+    for (j = i + 1; j < d; j++)
+      matrix[i][j] = 0;
+  }
+
+  // 0 in A10
+  for (i = d; i < r; i++) {
+    for (j = 0; j < d; j++) 
+      matrix[i][j] = 0;
+  }
+  // qI in A11
+  for (i = d; i < r; i++) {
+    for (j = d; j < i; j++)
+      matrix[i][j] = 0;
+    matrix[i][i] = q;
+    for (j = i + 1; j < c; j++)
+      matrix[i][j] = 0;
+  }
+  // H in A01
+  for (i = 0; i < d; i++)
+    for (j = d; j < c; j++) {
+      k = j - d - i;
+      while (k < 0) {
+        k += d;
+      }
+      matrix[i][j] = h[k];
+    }
+
+  delete[] h;
+}
 
 
 

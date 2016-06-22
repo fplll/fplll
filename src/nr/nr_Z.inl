@@ -209,13 +209,13 @@ public:
   inline void swap(Z_NR<Z>& a);
 
   /**
-   * Generates random integer between 0 and 2^n-1. 
+   * Generates random integer between 0 and 2^bits-1. 
    */
   inline void randb(int bits);
   inline void randb_si(int bits);
 
   /**
-   * Generates random integer between 0 and n - 1  
+   * Generates random integer between 0 and max - 1  
    */
   inline void randm(const Z_NR<Z>& max);
   inline void randm_si(const Z_NR<Z>& max);
