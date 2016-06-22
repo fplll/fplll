@@ -147,15 +147,15 @@ int main(int argc, char* argv[]) {
 	  }
 	break;
       }
-    case 'a':
+    case 't':
       {
-	if (argc - iArg < 1) fatalError("method 'a' requires 2 arguments");
+	if (argc - iArg < 1) fatalError("method 't' requires 2 arguments");
 	double alpha=atof(argv[iArg]);
         m.resize(d, d);
 	m.gen_trg(alpha);
 	break;
       }
-    case 'A':
+    case 'T':
       {
 	FP_NR<mpfr_t>* w = new FP_NR<mpfr_t>[d];
 
