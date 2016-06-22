@@ -228,7 +228,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
   if (!lll_obj.lll(lll_start, kappa, kappa + block_size))
   {
-    throw lll_obj.status;
+    throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
 
   clean &= (lll_obj.nSwaps == 0);
@@ -269,7 +269,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     {
       if (pruning.coefficients[0] == 1 && !(par.flags & BKZ_GH_BND))
       {
-        throw RED_ENUM_FAILURE;
+        throw std::runtime_error(RED_STATUS_STR[RED_ENUM_FAILURE]);
       }
     }
 
@@ -288,19 +288,9 @@ bool BKZReduction<FT>::tour(const int loop, int &kappa_max, const BKZParam &par,
                             int max_row)
 {
   bool clean = true;
-
-  for (int kappa = min_row; kappa < max_row - 1; kappa++)
-  {
-    int block_size = min(par.block_size, max_row - kappa);
-    clean &= svp_reduction(kappa, block_size, par);
-    if ((par.flags & BKZ_VERBOSE) && kappa_max < kappa && clean)
-    {
-      cerr << "Block [1-" << setw(4) << kappa + 1 << "] BKZ-" << setw(0) << par.block_size
-           << " reduced for the first time" << endl;
-      kappa_max = kappa;
-    }
-  }
-
+  clean &= trunc_tour(kappa_max, par,  min_row, max_row);
+  clean &= hkz(kappa_max, par, max_row - par.block_size, max_row);
+  
   if (par.flags & BKZ_VERBOSE)
   {
     print_tour(loop, min_row, max_row);
@@ -310,6 +300,86 @@ bool BKZReduction<FT>::tour(const int loop, int &kappa_max, const BKZParam &par,
   {
     std::ostringstream prefix;
     prefix << "End of BKZ loop " << std::setw(4) << loop;
+    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
+           << (cputime() - cputime_start) * 0.001 << "s)";
+    dump_gso(par.dump_gso_filename, prefix.str());
+  }
+  
+  return clean;
+}
+
+template <class FT>
+bool BKZReduction<FT>::trunc_tour(int &kappa_max, const BKZParam &par, int min_row,
+                            int max_row)
+{
+  bool clean = true;
+  int block_size = par.block_size;
+  for (int kappa = min_row; kappa < max_row - block_size; ++kappa)
+  {
+    clean &= svp_reduction(kappa, block_size, par);
+    if ((par.flags & BKZ_VERBOSE) && kappa_max < kappa && clean)
+    {
+      cerr << "Block [1-" << setw(4) << kappa + 1 << "] BKZ-" << setw(0) << par.block_size
+           << " reduced for the first time" << endl;
+      kappa_max = kappa;
+    }
+  }
+
+  return clean;
+}
+
+template <class FT>
+bool BKZReduction<FT>::trunc_dtour(const BKZParam &par, int min_row,
+                            int max_row)
+{
+  bool clean = true;
+  int block_size = par.block_size;
+  
+  for (int kappa = max_row - block_size; kappa > 0; --kappa)
+  {
+    clean &= dsvp_reduction(kappa, block_size, par);
+  }
+
+  return clean;
+}
+
+template <class FT>
+bool BKZReduction<FT>::hkz(int &kappa_max, const BKZParam &param, int min_row, int max_row)
+{
+  bool clean = true;
+  for (int kappa = min_row; kappa < max_row - 1; ++kappa) {
+    int block_size = max_row - kappa;
+    clean &= svp_reduction(kappa, block_size, param);
+    if ((param.flags & BKZ_VERBOSE) && kappa_max < kappa && clean)
+    {
+      cerr << "Block [1-" << setw(4) << kappa + 1 << "] BKZ-" << setw(0) << param.block_size
+           << " reduced for the first time" << endl;
+      kappa_max = kappa;
+    }
+  }
+  cerr << endl;
+  
+  return clean;
+}
+
+template <class FT>
+bool BKZReduction<FT>::sd_tour(const int loop, const BKZParam &par, int min_row,
+                            int max_row)
+{
+  int dummy_kappa_max = num_rows;
+  bool clean = true;
+  clean &= trunc_dtour(par, min_row, max_row);
+  clean &= trunc_tour(dummy_kappa_max, par, min_row, max_row);
+  
+  if (par.flags & BKZ_VERBOSE)
+  {
+    print_tour(loop, min_row, max_row);
+  }
+
+  if (par.flags & BKZ_DUMP_GSO)
+  {
+    std::ostringstream prefix;
+    prefix << "End of SD-BKZ loop " << std::setw(4) << loop;
     prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
            << (cputime() - cputime_start) * 0.001 << "s)";
     dump_gso(par.dump_gso_filename, prefix.str());
@@ -335,7 +405,15 @@ template <class FT> bool BKZReduction<FT>::bkz()
     return set_status(RED_SUCCESS);
 
   int i = 0;
-  BKZAutoAbort<FT> autoAbort(m, num_rows);
+
+  BKZAutoAbort<FT> auto_abort(m, num_rows);
+  
+  if ((flags & BKZ_SD_VARIANT) && 
+      !(flags & (BKZ_MAX_LOOPS | BKZ_MAX_TIME | BKZ_AUTO_ABORT))) 
+  {
+    cerr << "Warning: SD Variant of BKZ requires explicit termination condition. Turning auto abort on!" << endl;
+    flags |= BKZ_AUTO_ABORT;
+  }
 
   if (flags & BKZ_VERBOSE)
   {
@@ -369,7 +447,14 @@ template <class FT> bool BKZReduction<FT>::bkz()
 
     try
     {
-      clean = tour(i, kappaMax, param, 0, num_rows);
+      if (flags & BKZ_SD_VARIANT)
+      {
+        clean = sd_tour(i, param, 0, num_rows);
+      } 
+      else
+      {
+        clean = tour(i, kappa_max, param, 0, num_rows);
+      }
     }
     catch (RedStatus &e)
     {
@@ -379,7 +464,19 @@ template <class FT> bool BKZReduction<FT>::bkz()
     if (clean || param.block_size >= num_rows)
       break;
   }
-
+  
+  if (flags & BKZ_SD_VARIANT) {
+    int dummy_kappa_max = num_rows;
+    try
+    {
+      hkz(dummy_kappa_max, param, num_rows - param.block_size, num_rows);
+    }
+    catch (RedStatus &e)
+    {
+      return set_status(e);
+    }
+  }
+  
   if (flags & BKZ_DUMP_GSO)
   {
     std::ostringstream prefix;

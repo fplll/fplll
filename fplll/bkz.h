@@ -129,6 +129,24 @@ public:
       return set_status(e);
     }
   }
+  
+  bool sd_tour(const int loop, const BKZParam &param, int minRow, int maxRow);
+
+  bool sd_tour_ex(const int loop, const BKZParam &param, int minRow, int maxRow,
+               bool &clean)
+  {
+    try
+    {
+      clean = sd_tour(loop, param, minRow, maxRow);
+      return true;
+    }
+    catch (RedStatus &e)
+    {
+      return set_status(e);
+    }
+  }
+  
+  bool hkz(int &kappaMax, const BKZParam &param, int min_row, int max_row);
 
   bool bkz();
 
@@ -153,6 +171,9 @@ private:
   bool set_status(int newStatus);
 
   const Pruning &get_pruning(int kappa, int blockSize, const BKZParam &par) const;
+
+  bool trunc_tour(int &kappaMax, const BKZParam &param, int minRow, int maxRow);
+  bool trunc_dtour(const BKZParam &param, int minRow, int maxRow);
 
   const BKZParam &param;
   int num_rows;
