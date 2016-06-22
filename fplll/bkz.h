@@ -51,8 +51,14 @@ template <class FT> double get_current_slope(MatGSO<Integer, FT> &m, int startRo
     shortest vector.
 */
 template <class FT>
-void compute_gauss_heur_dist(MatGSO<Integer, FT> &m, FT &maxDist, long maxDistExpo, int kappa,
+void compute_gauss_heur_dist(FT &root_det, FT &maxDist, long maxDistExpo, int kappa,
                              int blockSize, double ghFactor);
+                             
+                             /**
+ * Compute the (squared) root determinant of the basis.
+ */
+template<class FT>
+FT get_root_det(MatGSO<Integer, FT>& m, int start, int end);
 
 /* The matrix must be LLL-reduced */
 template <class FT> class BKZReduction
@@ -64,6 +70,7 @@ public:
   bool svp_preprocessing(int kappa, int blockSize, const BKZParam &param);
 
   bool svp_postprocessing(int kappa, int blockSize, const vector<FT> &solution);
+  bool dsvp_postprocessing(int kappa, int blockSize, const vector<FT> &solution);
 
   /**
      Run enumeration to find a new shortest vector in the sublattice B[kappa,kappa+blockSize]
@@ -82,6 +89,21 @@ public:
     try
     {
       clean = svp_reduction(kappa, block_size, param);
+      return true;
+    }
+    catch (RedStatus &e)
+    {
+      return set_status(e);
+    }
+  }
+  
+  bool dsvp_reduction(int kappa, int block_size, const BKZParam &param);
+  
+  bool dsvp_reduction_Ex(int kappa, int block_size, const BKZParam &param, bool &clean)
+  {
+    try
+    {
+      clean = dsvp_reduction(kappa, block_size, param);
       return true;
     }
     catch (RedStatus &e)
