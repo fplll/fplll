@@ -86,8 +86,8 @@ The options are:
 * `u` `d` `b` : generates a d x d matrix whose entries are independent integers of bit-lengths <=b.
 * `n` `d` `b` `c` : generates an ntru-like matrix. If char is 'b', then it first samples an integer q of bit-length <=b, whereas if char is 'q', then it first samples q of bit-length <=b. Then it samples a uniform h in the ring Z_q[x]/(x^n-1). It finally constructs and returns the 2x2 block matrix [[I, Rot(h)], [0, q*I]], where each block is dxd, the first row of Rot(h) is the coefficient vector of h, and the i-th row of Rot(h) is the shift of the (i-1)-th (with last entry put back in first position), for all i>1. Warning: this does not produce a genuine ntru lattice containing unexpectedly short vector, as [HPS98].   
 * `N` `d` `b` `c` : as previous option, except that the contructed matrix is [[q*I, 0], [Rot(h), I]]. 
-* `a` `d` `f` : generates an ajtai style matrix.
-* `A` `d` : generates an ajtai style matrix. Also requires d coefficients.
+* `t` `d` `f` : generates a d x d lower-triangular matrix B with B_ii = 2^(d-i+1)^f for all i, and B_ij = B_jj/2 for j<i.
+* `T` `d` `vec`: generates a d x d lower-triangular matrix B with B_ii = vec[i] for all i and B_ij = B_jj/2 for j<i.
 
 The matrix is printed in stdout.
 

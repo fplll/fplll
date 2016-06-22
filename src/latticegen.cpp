@@ -28,8 +28,8 @@ void printHelp() {
        << " u <d> <b> : gen_uniform"<< endl
        << " n <d> <c> : gen_ntrulike"<<endl
        << " N <d> <c> : gen_ntrulike2"<<endl
-       << " a <d> <f> : gen_ajtai"<<endl
-       << " A <d> : gen_ajtai2"<<endl;
+       << " t <d> <f> : gen_trg"<<endl
+       << " T <d> : gen_trg2"<<endl;
 }
 
 void printVersion() {
@@ -152,7 +152,7 @@ int main(int argc, char* argv[]) {
 	if (argc - iArg < 1) fatalError("method 'a' requires 2 arguments");
 	double alpha=atof(argv[iArg]);
         m.resize(d, d);
-	m.gen_ajtai(alpha);
+	m.gen_trg(alpha);
 	break;
       }
     case 'A':
@@ -163,7 +163,7 @@ int main(int argc, char* argv[]) {
 	  mpfr_inp_str(w[i].getData(), stdin, 10, GMP_RNDN);
 
 	m.resize(d, d);
-	m.gen_ajtai2(w);
+	m.gen_trg2(w);
 
 	delete[] w;
 

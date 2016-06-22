@@ -510,7 +510,7 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2_withq(int q) {
 
 
 
-template<class ZT> inline void ZZ_mat<ZT>::gen_ajtai(double alpha)
+template<class ZT> inline void ZZ_mat<ZT>::gen_trg(double alpha)
 {
   int i, j, bits;
   Z_NR<ZT> ztmp, ztmp2, zone, sign;
@@ -521,7 +521,7 @@ template<class ZT> inline void ZZ_mat<ZT>::gen_ajtai(double alpha)
   int d=r;
   if (c!=r) 
     {
-      FPLLL_ABORT("gen_ajtai called on an ill-formed matrix");
+      FPLLL_ABORT("gen_trg called on an ill-formed matrix");
       return;
     }
 
@@ -546,7 +546,7 @@ template<class ZT> inline void ZZ_mat<ZT>::gen_ajtai(double alpha)
 }
 
 
-template<class ZT> inline void ZZ_mat<ZT>::gen_ajtai2(FP_NR<mpfr_t> *w)
+template<class ZT> inline void ZZ_mat<ZT>::gen_trg2(FP_NR<mpfr_t> *w)
 {
   int i, j;
   Z_NR<ZT> ztmp, ztmp2;
@@ -554,7 +554,7 @@ template<class ZT> inline void ZZ_mat<ZT>::gen_ajtai2(FP_NR<mpfr_t> *w)
   int d=r;
   if (c!=r) 
     {
-      FPLLL_ABORT("gen_ajtai2 called on an ill-formed matrix");
+      FPLLL_ABORT("gen_trg2 called on an ill-formed matrix");
       return;
     }
 
