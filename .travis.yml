@@ -9,16 +9,24 @@ addons:
       - libgmp-dev
       - libmpfr-dev
       - libqd-dev
-      - g++-4.9
-      - g++-5
       
 matrix:
   include:
     - compiler: gcc
       env: COMPILER=g++-4.9
+      addons:
+        apt:
+            packages:
+              - g++-4.9
+
     - compiler: gcc
       env: COMPILER=g++-5
+      addons:
+        apt:
+            packages:
+              - g++-5.0
     - compiler: clang
+      env: COMPILER=clang++
 
 install:
   export CXX="$COMPILER"
