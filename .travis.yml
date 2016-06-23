@@ -1,26 +1,44 @@
-sudo: false
-
+sudo: required
+dist: trusty
 language: cpp
+      
+matrix:
+  include:
+    - compiler: gcc
+      env: COMPILER=g++-4.9
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+            - libgmp-dev
+            - libmpfr-dev
+            - libqd-dev
 
-compiler:
-  - gcc
-  - clang
-
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - gcc-4.8
-    - g++-4.8
-    - clang
-    - libmpfr-dev
-    - libgmp-dev
-    - libqd-dev
+    - compiler: gcc
+      env: COMPILER=g++-5
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+            - libgmp-dev
+            - libmpfr-dev
+            - libqd-dev
+    - compiler: clang
+      env: COMPILER=clang++
+      addons:
+        apt:
+          packages:
+            - libgmp-dev
+            - libmpfr-dev
+            - libqd-dev
 
 install:
-- if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
-  
+  export CXX="$COMPILER"
+
 before_script:
   - ./autogen.sh
 

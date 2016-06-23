@@ -15,30 +15,30 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
-#include "config.h"
+#include <config.h>
 #include "main.h"
 
 template<class ZT>
 int lll(Options& o, ZZ_mat<ZT>& b) {
   ZZ_mat<ZT> u, uInv;
-  const char* format = o.outputFormat ? o.outputFormat : "b";
+  const char* format = o.output_format ? o.output_format : "b";
   int status, flags = 0;
   if (o.verbose) flags |= LLL_VERBOSE;
-  if (o.earlyRed) flags |= LLL_EARLY_RED;
+  if (o.early_red) flags |= LLL_EARLY_RED;
   if (o.siegel) flags |= LLL_SIEGEL;
 
   if (strchr(format, 'v') != NULL) {
     // LLL-reduction with transform and inverse transform
-    status = lllReduction(b, u, uInv, o.delta, o.eta, o.method, o.floatType,
+    status = lllReduction(b, u, uInv, o.delta, o.eta, o.method, o.float_type,
             o.precision, flags);
   }
   else if (strchr(format, 'u') != NULL) {
     // LLL-reduction with transform
-    status = lllReduction(b, u, o.delta, o.eta, o.method, o.floatType,
+    status = lllReduction(b, u, o.delta, o.eta, o.method, o.float_type,
             o.precision, flags);
   }
   else {
-    status = lllReduction(b, o.delta, o.eta, o.method, o.floatType,
+    status = lllReduction(b, o.delta, o.eta, o.method, o.float_type,
             o.precision, flags);
   }
 
@@ -59,25 +59,26 @@ int lll(Options& o, ZZ_mat<ZT>& b) {
 
 /* BKZ reduction */
 
-void readPruningVector(const char* fileName, vector<double>& v, int n) {
+void read_pruning_vector(const char* file_name, Pruning& pr, int n) {
   double x;
-  FILE* file = fopen(fileName, "r");
-  CHECK(file, "Cannot open '" << fileName << "'");
-  v.clear();
+  FILE* file = fopen(file_name, "r");
+  CHECK(file, "Cannot open '" << file_name << "'");
+
+  pr.coefficients.clear();
   for (int i = 0; i <= n && fscanf(file, "%lf", &x) == 1; i++) {
-    v.push_back(x);
-    CHECK(x > 0 && x <= 1, "Number " << x << " in file '" << fileName
+    pr.coefficients.push_back(x);
+    CHECK(x > 0 && x <= 1, "Number " << x << " in file '" << file_name
           << "' is not in the interval (0,1]");
     if (i == 0) {
-      CHECK(x == 1, "The first number in file '" << fileName
+      CHECK(x == 1, "The first number in file '" << file_name
             << "' should be 1");
     }
     else {
-      CHECK(v[i] <= v[i - 1], "File '" << fileName
+      CHECK(pr.coefficients[i] <= pr.coefficients[i - 1], "File '" << file_name
             << "' should contain a non-increasing sequence of numbers");
     }
   }
-  CHECK(static_cast<int>(v.size()) == n, "File '" << fileName
+  CHECK(static_cast<int>(pr.coefficients.size()) == n, "File '" << file_name
         << "' should contain exactly " << n << " numbers");
 }
 
@@ -88,37 +89,31 @@ int bkz(Options& o, ZZ_mat<ZT>& b) {
 
 template<>
 int bkz(Options& o, IntMatrix& b) {
-  CHECK(o.blockSize > 0, "Option -b is missing");
-  BKZParam param;
+  CHECK(o.block_size > 0, "Option -b is missing");
+  vector<Strategy> strategies;
+  if (!o.bkz_strategy_file.empty())
+  {
+    strategies = load_strategies_json(o.bkz_strategy_file.c_str());
+  }
+
+  BKZParam param(o.block_size, strategies);
   IntMatrix u;
-  const char* format = o.outputFormat ? o.outputFormat : "b";
+  const char* format = o.output_format ? o.output_format : "b";
   int status;
 
-  param.blockSize = o.blockSize;
-
-  BKZParam preproc;
-  if (o.preprocBlockSize > 2) {
-    preproc.flags |= BKZ_AUTO_ABORT;
-    preproc.blockSize = o.preprocBlockSize;
-    param.preprocessing = &preproc;
-  }
   param.delta = o.delta;
-  param.flags = o.bkzFlags;
-  if (o.bkzFlags & BKZ_DUMP_GSO)
-    param.dumpGSOFilename = o.bkzDumpGSOFilename;
-  if (o.bkzFlags & BKZ_GH_BND)
-    param.ghFactor = o.bkzGHFactor;
-  if (o.bkzFlags & BKZ_MAX_LOOPS)
-    param.maxLoops = o.bkzMaxLoops;
+  param.flags = o.bkz_flags;
+
+  if (o.bkz_flags & BKZ_DUMP_GSO)
+    param.dump_gso_filename = o.bkz_dump_gso_filename;
+  if (o.bkz_flags & BKZ_GH_BND)
+    param.gh_factor = o.bkz_gh_factor;
+  if (o.bkz_flags & BKZ_MAX_LOOPS)
+    param.max_loops = o.bkz_max_loops;
   if (o.verbose) param.flags |= BKZ_VERBOSE;
-  if (o.noLLL) param.flags |= BKZ_NO_LLL;
-  if (o.pruningFile != NULL) {
-    readPruningVector(o.pruningFile, param.pruning, o.blockSize);
-  } else if (o.bkzLinearPruningLevel) {
-    param.enableLinearPruning(o.bkzLinearPruningLevel);
-  }
-  
-  status = bkzReduction(&b, strchr(format, 'u') ? &u : NULL, param, o.floatType, o.precision);
+  if (o.no_lll) param.flags |= BKZ_NO_LLL;
+
+  status = bkzReduction(&b, strchr(format, 'u') ? &u : NULL, param, o.float_type, o.precision);
 
   for (int i = 0; format[i]; i++) {
     switch (format[i]) {
@@ -147,7 +142,7 @@ template<>
 int hkz(Options& o, ZZ_mat<mpz_t>& b) {
   int flags = 0;
   if (o.verbose) flags |= HKZ_VERBOSE;
-  int status = hkzReduction(b, flags, o.floatType, o.precision);
+  int status = hkzReduction(b, flags, o.float_type, o.precision);
   cout << b << endl;
   if (status != RED_SUCCESS) {
     cerr << "Failure: " << getRedStatusStr(status) << endl;
@@ -169,7 +164,7 @@ int svpcvp(Options& o, ZZ_mat<ZT>& b, const vector< Z_NR<ZT> >& target) {
 
 template<>
 int svpcvp(Options& o, ZZ_mat<mpz_t>& b, const vector< Z_NR<mpz_t> >& target) {
-  const char* format = o.outputFormat ? o.outputFormat : "s";
+  const char* format = o.output_format ? o.output_format : "s";
   IntVect solCoord;  // In the LLL-reduced basis
   IntVect solCoord2; // In the initial basis
   IntVect solution;
@@ -180,7 +175,7 @@ int svpcvp(Options& o, ZZ_mat<mpz_t>& b, const vector< Z_NR<mpz_t> >& target) {
   int flagsLLL = LLL_DEFAULT | (o.verbose ? LLL_VERBOSE : 0);
   int status;
 
-  if (!o.noLLL) {
+  if (!o.no_lll) {
     if (withCoord) {
       status = lllReduction(b, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER,
                             FT_DEFAULT, 0, flagsLLL);
@@ -205,7 +200,7 @@ int svpcvp(Options& o, ZZ_mat<mpz_t>& b, const vector< Z_NR<mpz_t> >& target) {
     return status;
   }
   if (withCoord) {
-    if (o.noLLL)
+    if (o.no_lll)
       solCoord2 = solCoord;
     else
       vectMatrixProduct(solCoord2, solCoord, u);
@@ -231,8 +226,8 @@ int runAction(Options& o) {
   ZZ_mat<ZT> m;
   vector<Z_NR<ZT> > target;
 
-  if (o.inputFile)
-    is = new ifstream(o.inputFile);
+  if (o.input_file)
+    is = new ifstream(o.input_file);
   else
     is = &cin;
 
@@ -241,7 +236,7 @@ int runAction(Options& o) {
     *is >> target;
   }
   if (!*is) ABORT_MSG("invalid input");
-  if (o.inputFile) delete is;
+  if (o.input_file) delete is;
 
   int result = 0;
   switch (o.action) {
@@ -278,41 +273,31 @@ void readOptions(int argc, char** argv, Options& o) {
     else if (strcmp(argv[ac], "-b") == 0) {
       ++ac;
       CHECK(ac < argc, "missing value after -b switch");
-      o.blockSize = atoi(argv[ac]);
-    }
-    else if (strcmp(argv[ac], "-bpre") == 0) {
-      ++ac;
-      CHECK(ac < argc, "missing value after -b2 switch");
-      o.preprocBlockSize = atoi(argv[ac]);
+      o.block_size = atoi(argv[ac]);
     }
     else if (strcmp(argv[ac], "-bkzboundedlll") == 0) {
-      o.bkzFlags |= BKZ_BOUNDED_LLL;
+      o.bkz_flags |= BKZ_BOUNDED_LLL;
     }
     else if (strcmp(argv[ac], "-bkzmaxloops") == 0) {
       ++ac;
       CHECK(ac < argc, "missing value after '-bkzmaxloops'");
-      o.bkzMaxLoops = atoi(argv[ac]);
-      o.bkzFlags |= BKZ_MAX_LOOPS;
+      o.bkz_max_loops = atoi(argv[ac]);
+      o.bkz_flags |= BKZ_MAX_LOOPS;
     }
     else if (strcmp(argv[ac], "-bkzmaxtime") == 0) {
       ++ac;
       CHECK(ac < argc, "missing value after '-bkzmaxtime'");
-      o.bkzMaxTime = atof(argv[ac]);
-      o.bkzFlags |= BKZ_MAX_TIME;
+      o.bkz_max_time = atof(argv[ac]);
+      o.bkz_flags |= BKZ_MAX_TIME;
     }
     else if (strcmp(argv[ac], "-bkzautoabort") == 0) {
-      o.bkzFlags |= BKZ_AUTO_ABORT;
+      o.bkz_flags |= BKZ_AUTO_ABORT;
     }
     else if (strcmp(argv[ac], "-bkzdumpgso") == 0) {
       ++ac;
       CHECK(ac < argc, "missing filename after -bkzdumpgso switch");
-      o.bkzDumpGSOFilename = argv[ac];
-      o.bkzFlags |= BKZ_DUMP_GSO;
-    }
-    else if (strcmp(argv[ac], "-bkzlinearpruning") == 0) {
-      ++ac;
-      CHECK(ac < argc, "missing value after -bkzlinearpruning switch");
-      o.bkzLinearPruningLevel = atol(argv[ac]);
+      o.bkz_dump_gso_filename = argv[ac];
+      o.bkz_flags |= BKZ_DUMP_GSO;
     }
     else if (strcmp(argv[ac], "-c") == 0) {
       ++ac;
@@ -322,8 +307,8 @@ void readOptions(int argc, char** argv, Options& o) {
     else if (strcmp(argv[ac], "-bkzghbound") == 0) {
       ++ac;
       CHECK(ac < argc, "missing value after '-bkzghbound'");
-      o.bkzGHFactor = atof(argv[ac]);
-      o.bkzFlags |= BKZ_GH_BND;
+      o.bkz_gh_factor = atof(argv[ac]);
+      o.bkz_flags |= BKZ_GH_BND;
     }
     else if (strcmp(argv[ac], "-d") == 0 || strcmp(argv[ac], "-delta") == 0) {
       ++ac;
@@ -339,19 +324,24 @@ void readOptions(int argc, char** argv, Options& o) {
       ++ac;
       CHECK(ac < argc, "missing value after -f switch");
       if (strcmp("mpfr",argv[ac])==0)
-        o.floatType = FT_MPFR;
+        o.float_type = FT_MPFR;
       else if (strcmp("dpe",argv[ac])==0)
-        o.floatType = FT_DPE;
+        o.float_type = FT_DPE;
       else if (strcmp("dd",argv[ac])==0)
-        o.floatType = FT_DD;
+        o.float_type = FT_DD;
       else if (strcmp("qd",argv[ac])==0)
-        o.floatType = FT_QD;
+        o.float_type = FT_QD;
       else if (strcmp("double",argv[ac])==0)
-        o.floatType = FT_DOUBLE;
+        o.float_type = FT_DOUBLE;
       else if (strcmp("longdouble", argv[ac]) == 0)
-        o.floatType = FT_LONG_DOUBLE;
+        o.float_type = FT_LONG_DOUBLE;
       else
         ABORT_MSG("parse error in -f switch : mpfr, qd, dd, dpe or double expected");
+    }
+    else if (strcmp(argv[ac], "-s") == 0) {
+      ++ac;
+      CHECK(ac < argc, "missing value after -s switch");
+      o.bkz_strategy_file = argv[ac];
     }
     else if (strcmp(argv[ac], "-l") == 0) {
       ++ac;
@@ -371,33 +361,28 @@ void readOptions(int argc, char** argv, Options& o) {
         o.method = LM_FAST;
       else if (strcmp("fastearly",argv[ac])==0) {
         o.method = LM_FAST;
-        o.earlyRed = true;
+        o.early_red = true;
       }
       else if (strcmp("heuristicearly",argv[ac])==0) {
         o.method = LM_HEURISTIC;
-        o.earlyRed = true;
+        o.early_red = true;
       }
       else
         ABORT_MSG("parse error in -m switch : proved, heuristic, fast, "
                   << "or wrapper expected");
     }
     else if (strcmp(argv[ac], "-nolll") == 0) {
-      o.noLLL = true;
+      o.no_lll = true;
     }
     else if (strcmp(argv[ac], "-of") == 0) {
       ac++;
       CHECK(ac < argc, "missing value after -of switch");
-      o.outputFormat = argv[ac];
+      o.output_format = argv[ac];
     }
     else if (strcmp(argv[ac], "-p") == 0) {
       ++ac;
       CHECK(ac < argc, "missing value after -p switch");
       o.precision = atoi(argv[ac]);
-    }
-    else if (strcmp(argv[ac], "-pruningfile") == 0) {
-      ++ac;
-      CHECK(ac < argc, "missing value after '-pruningfile'");
-      o.pruningFile = argv[ac];
     }
     else if (strcmp(argv[ac], "-r") == 0) {
       ++ac;
@@ -408,21 +393,21 @@ void readOptions(int argc, char** argv, Options& o) {
       o.verbose = true;
     }
     else if (strcmp(argv[ac], "-y") == 0) {
-      o.earlyRed = true;
+      o.early_red = true;
     }
     else if (strcmp(argv[ac], "-z") == 0) {
       ++ac;
       CHECK(ac < argc, "missing value after -z switch");
       if (strcmp("mpz",argv[ac])==0)
-        o.intType = ZT_MPZ;
+        o.int_type = ZT_MPZ;
       else if (strcmp("long", argv[ac]) == 0 || strcmp("int", argv[ac]) == 0)
-        o.intType = ZT_LONG;
+        o.int_type = ZT_LONG;
       else if (strcmp("double",argv[ac])==0)
-        o.intType = ZT_DOUBLE;
+        o.int_type = ZT_DOUBLE;
       else
         ABORT_MSG("parse error in -z switch : int, double or mpz expected");
     }
-    else if (strcmp(argv[ac], "--help") == 0) {
+    else if ((strcmp(argv[ac], "-h") == 0) || (strcmp(argv[ac], "--help") == 0)) {
       cout << "Usage: " << argv[0] << " [options] [file]\n"
            << "List of options:\n"
            << "  -a [lll|svp]\n"
@@ -440,6 +425,7 @@ void readOptions(int argc, char** argv, Options& o) {
            << "  -d <delta> (default=0.99)\n"
            << "  -e <eta> (default=0.51)\n"
            << "  -l <lovasz>\n"
+           << "  -s <filename.json> load BKZ strategies from filename"
            << "  -y\n"
            << "       Enable early reduction\n"
            << "  -b <blocksize>\n"
@@ -462,8 +448,8 @@ void readOptions(int argc, char** argv, Options& o) {
         "Try '" << argv[0] << " --help' for more information.");
     }
     else {
-      CHECK(!o.inputFile, "too many input files");
-      o.inputFile = argv[ac];
+      CHECK(!o.input_file, "too many input files");
+      o.input_file = argv[ac];
     }
   }
 }
@@ -474,7 +460,7 @@ int main(int argc, char** argv) {
   Options o;
   readOptions(argc, argv, o);
   IntMatrix::setPrintMode(MAT_PRINT_REGULAR);
-  switch (o.intType) {
+  switch (o.int_type) {
     case ZT_MPZ:    result = runAction<mpz_t>(o); break;
 #ifdef FPLLL_WITH_ZLONG
     case ZT_LONG:   result = runAction<long int>(o); break;
