@@ -338,7 +338,6 @@ int bkzReduction(IntMatrix* B, IntMatrix *U, const BKZParam& param, FloatType fl
       return wrapper.status;
   }
 
-  
   /* bkz (with FloatType) */
   int status;
   if (selFT == FT_DOUBLE) {
@@ -400,13 +399,13 @@ int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags, FloatType
   return bkzReduction(&b, &u, param, floatType, precision);
 }
 
-int hkzReduction(IntMatrix& b, int flags) {
+int hkzReduction(IntMatrix& b, int flags, FloatType floatType, int precision) {
   BKZParam param;
   param.blockSize = b.getRows();
   param.delta = 1;
   if (flags & HKZ_VERBOSE)
     param.flags |= BKZ_VERBOSE;
-  return bkzReduction(&b, NULL, param);
+  return bkzReduction(&b, NULL, param, floatType, precision);
 }
 
 const char* getRedStatusStr(int status) {
