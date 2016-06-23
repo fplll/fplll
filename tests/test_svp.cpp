@@ -36,7 +36,7 @@ enum Test
 */
 
 template<class ZT>
-void readMatrix(ZZ_mat<ZT> &A, const char *input_filename) {
+void read_matrix(ZZ_mat<ZT> &A, const char *input_filename) {
   istream *is = new ifstream(input_filename);
   *is >> A;
   delete is;
@@ -51,7 +51,7 @@ void readMatrix(ZZ_mat<ZT> &A, const char *input_filename) {
 */
 
 template<class ZT>
-void readVector(vector<Z_NR<ZT> > &b, const char *input_filename) {
+void read_vector(vector<Z_NR<ZT> > &b, const char *input_filename) {
   istream *is = new ifstream(input_filename);
   *is >> b;
   delete is;
@@ -66,9 +66,9 @@ void readVector(vector<Z_NR<ZT> > &b, const char *input_filename) {
 */
 
 template<class ZT>
-int testSVP(ZZ_mat<ZT> &A, IntVect &b) {
-  IntVect solCoord;  // In the LLL-reduced basis
-  IntVect solCoord2; // In the initial basis
+int test_svp(ZZ_mat<ZT> &A, IntVect &b) {
+  IntVect sol_coord;  // In the LLL-reduced basis
+  IntVect sol_coord2; // In the initial basis
   IntVect solution;
   IntMatrix u;
 
@@ -78,15 +78,15 @@ int testSVP(ZZ_mat<ZT> &A, IntVect &b) {
     return status;
   }
 
-  status = shortestVector(A, solCoord, SVPM_PROVED, SVP_DEFAULT);
+  status = shortestVector(A, sol_coord, SVPM_PROVED, SVP_DEFAULT);
 
   if (status != RED_SUCCESS) {
     cerr << "Failure: " << getRedStatusStr(status) << endl;
     return status;
   }
 
-  vectMatrixProduct(solCoord2, solCoord, u);
-  vectMatrixProduct(solution, solCoord, A);
+  vectMatrixProduct(sol_coord2, sol_coord, u);
+  vectMatrixProduct(solution, sol_coord, A);
 
   Z_NR<ZT> tmp;
   Z_NR<ZT> norm_s;
@@ -113,7 +113,7 @@ int testSVP(ZZ_mat<ZT> &A, IntVect &b) {
    @return
 */
 template<class ZT>
-int dualLength(Float &norm, ZZ_mat<ZT> &A, const IntVect &coords) {
+int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &coords) {
   int d = coords.size();
   if (A.getRows() != d) {
     cerr << "DSVP length error: Coefficient vector has wrong dimension: ";
@@ -162,13 +162,13 @@ int dualLength(Float &norm, ZZ_mat<ZT> &A, const IntVect &coords) {
 */
 
 template<class ZT>
-int testDualSVP(ZZ_mat<ZT> &A, IntVect &b) {
+int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b) {
   IntVect solCoord;  // In the LLL-reduced basis
   IntVect solution;
   IntMatrix u;
 
   Float normb;
-  if (dualLength(normb, A, b)) {
+  if (dual_length(normb, A, b)) {
     return 1;
   }
   
@@ -185,15 +185,15 @@ int testDualSVP(ZZ_mat<ZT> &A, IntVect &b) {
     return status;
   }
   
-  Float normSol;
-  if (dualLength(normSol, A, solCoord)) {
+  Float norm_sol;
+  if (dual_length(norm_sol, A, solCoord)) {
     return 1;
   }
   
   Float error; error = 1;
   error.mul_2si(error, -(int)error.getprec());
   normb += error;
-  if (normSol > normb) {
+  if (norm_sol > normb) {
     cerr << "Returned dual vector too long by more than " << error << endl;
     return 1;
   }
@@ -210,12 +210,12 @@ int testDualSVP(ZZ_mat<ZT> &A, IntVect &b) {
    @return
 */
 template<class ZT>
-int testDSVPReduce(ZZ_mat<ZT> &A, IntVect &b) {
+int test_dsvp_reduce(ZZ_mat<ZT> &A, IntVect &b) {
   IntMatrix u;
   int d = A.getRows();
   
   Float normb;
-  if (dualLength(normb, A, b)) {
+  if (dual_length(normb, A, b)) {
     return 1;
   }
   
@@ -226,34 +226,34 @@ int testDSVPReduce(ZZ_mat<ZT> &A, IntVect &b) {
   }
   
   
-  IntMatrix emptyMat;
-  MatGSO<Integer, Float> gso(A, emptyMat, emptyMat, GSO_INT_GRAM);
-  LLLReduction<Integer, Float> lllObj(gso, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
+  IntMatrix empty_mat;
+  MatGSO<Integer, Float> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
+  LLLReduction<Integer, Float> lll_obj(gso, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
   
   vector<Strategy> strategies;
   BKZParam dummy(d, strategies);
-  BKZReduction<Float> bkzObj(gso, lllObj, dummy);
+  BKZReduction<Float> bkz_obj(gso, lll_obj, dummy);
   bool clean = true;
   
-  bkzObj.svp_reduction_ex(0, d, dummy, clean, true);
-  status = bkzObj.status;
+  bkz_obj.svp_reduction_ex(0, d, dummy, clean, true);
+  status = bkz_obj.status;
   if (status != RED_SUCCESS) {
     cerr << "Failure: " << getRedStatusStr(status) << endl;
     return status;
   }
   
-  Float normSol;
+  Float norm_sol;
   Integer zero; zero = 0;
   IntVect e_n(d, zero);
   e_n[d-1] = 1;
-  if (dualLength(normSol, A, e_n)) {
+  if (dual_length(norm_sol, A, e_n)) {
     return 1;
   }
   
   Float error; error = 1;
   error.mul_2si(error, -(int)error.getprec());
   normb += error;
-  if (normSol > normb) {
+  if (norm_sol > normb) {
     cerr << "Last dual vector too long by more than " << error << endl;
     return 1;
   }
@@ -270,17 +270,17 @@ int testDSVPReduce(ZZ_mat<ZT> &A, IntVect &b) {
 */
 
 template<class ZT>
-int testFilename(const char *input_filename, const char *output_filename, const Test test = SVP_ENUM) {
+int test_filename(const char *input_filename, const char *output_filename, const Test test = SVP_ENUM) {
   ZZ_mat<ZT> A;
-  readMatrix(A, input_filename);
+  read_matrix(A, input_filename);
 
   IntVect b;
-  readVector(b, output_filename);
+  read_vector(b, output_filename);
   
   switch(test) {
-    case SVP_ENUM     : return testSVP<ZT>(A, b);
-    case DSVP_ENUM    : return testDualSVP<ZT>(A, b);
-    case DSVP_REDUCE  : return testDSVPReduce<ZT>(A, b);
+    case SVP_ENUM     : return test_svp<ZT>(A, b);
+    case DSVP_ENUM    : return test_dual_svp<ZT>(A, b);
+    case DSVP_REDUCE  : return test_dsvp_reduce<ZT>(A, b);
   }
   
   cerr << "Unknown test." << endl;
@@ -298,9 +298,9 @@ int testFilename(const char *input_filename, const char *output_filename, const 
 int main(int argc, char *argv[]) {
 
   int status = 0;
-  status |= testFilename<mpz_t>("lattices/example_svp_in", "lattices/example_svp_out");
-  status |= testFilename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", DSVP_ENUM);
-  status |= testFilename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", DSVP_REDUCE);
+  status |= test_filename<mpz_t>("lattices/example_svp_in", "lattices/example_svp_out");
+  status |= test_filename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", DSVP_ENUM);
+  status |= test_filename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", DSVP_REDUCE);
   
   if (status == 0) {
     cerr << "All tests passed." << endl;
