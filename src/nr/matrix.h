@@ -319,6 +319,17 @@ public:
 
   void gen_ntrulike2(int bits);
   void gen_ntrulike2_withq(int q);
+
+  /** Construct a matrix ``[[qI,0],[H,I]]`` where ``H`` is uniform mod q, of dimensions k x (n-k).
+  */
+
+  void gen_qary(int k, int bits);
+  void gen_qary_withq(int k, int q);
+
+  /** Construct a lower triangular matrices with specified diagonal coefficients
+and random sub-diagonal coefficients.
+  */
+
   void gen_trg(double alpha);
   void gen_trg2(FP_NR<mpfr_t> *w);
 
