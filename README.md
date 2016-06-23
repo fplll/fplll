@@ -86,9 +86,9 @@ The options are:
 * `r` `d` `b` : generates a knapsack like matrix of dimension d x (d+1) and b bits (see, e.g., [S09]): the i-th vector starts with a random integer of bit-length <=b and the rest is the i-th canonical unit vector.
 * `s` `d` `b` `b2` : generates a d x d matrix of a form similar to that is involved when trying to find rational approximations to reals with the same small denominator (see, e.g., [LLL82]): the first vector starts with a random integer of bit-length <=b2 and continues with d-1 independent integers of bit-lengths <=b; the i-th vector for i>1 is the i-th canonical unit vector scaled by a factor 2^b.
 * `u` `d` `b` : generates a d x d matrix whose entries are independent integers of bit-lengths <=b.
-* `n` `d` `b` `c` : generates an ntru-like matrix. If char is 'b', then it first samples an integer q of bit-length <=b, whereas if char is 'q', then it first samples q of bit-length <=b. Then it samples a uniform h in the ring Z_q[x]/(x^n-1). It finally constructs and returns the 2 x 2 block matrix [[I, Rot(h)], [0, q*I]], where each block is dxd, the first row of Rot(h) is the coefficient vector of h, and the i-th row of Rot(h) is the shift of the (i-1)-th (with last entry put back in first position), for all i>1. Warning: this does not produce a genuine ntru lattice with h a genuine public key (see [HPS98]).   
+* `n` `d` `b` `c` : generates an ntru-like matrix. If char is 'b', then it first samples an integer q of bit-length <=b, whereas if char is 'q', then it sets q to the provided value. Then it samples a uniform h in the ring Z_q[x]/(x^n-1). It finally returns the 2 x 2 block matrix [[I, Rot(h)], [0, q*I]], where each block is d x d, the first row of Rot(h) is the coefficient vector of h, and the i-th row of Rot(h) is the shift of the (i-1)-th (with last entry put back in first position), for all i>1. Warning: this does not produce a genuine ntru lattice with h a genuine public key (see [HPS98]).   
 * `N` `d` `b` `c` : as the previous option, except that the contructed matrix is [[q*I, 0], [Rot(h), I]]. 
-* `q` `d` `k` `b` `c` : generates a q-ary matrix. If char is 'b', then it first samples an integer q of bit-length <=b, whereas if char is 'q', then it first samples q of bit-length <=b. It returns a 2 x 2 block matrix [[q*I, 0], [H, I]], where H is k x (d-k) and uniformly random modulo q. GM lattices, SIS and LWE lattices. (see [bla]).   
+* `q` `d` `k` `b` `c` : generates a q-ary matrix. If char is 'b', then it first samples an integer q of bit-length <=b, whereas if char is 'q', then it first samples q of bit-length <=b. It returns a 2 x 2 block matrix [[q*I, 0], [H, I]], where H is k x (d-k) and uniformly random modulo q. These correspond to the SIS/LWE q-ary lattices (see [MR09]). Goldstein-Mayer lattices correspond to k=1 and q prime [GM03].   
 * `t` `d` `f` : generates a d x d lower-triangular matrix B with B_ii = 2^(d-i+1)^f for all i, and B_ij is uniform between -B_jj/2 and B_jj/2 for all j<i.
 * `T` `d` : also takes as input a d-dimensional vector vec read from a file. It generates a d x d lower-triangular matrix B with B_ii = vec[i] for all i and B_ij is uniform between -B_jj/2 and B_jj/2 for all j<i.
 
@@ -217,6 +217,9 @@ See [API documentation](library.md).
 
 [CN11] Y. Chen and P. Q. Nguyen. BKZ 2.0: Better Lattice Security Estimates. ASIACRYPT 2011: 1-20
 
+[GM03] D. Goldstein and A. Mayer. On the equidistribution of Hecke points.
+Forum Mathematicum, 15:165–189 (2003)
+
 [HPS98] J. Hoffstein, J. Pipher, J. H. Silverman. NTRU: A Ring-Based Public Key Cryptosystem. ANTS 1998: 267-288
 
 [K83] R. Kannan.  Improved algorithms for integer programming and related lattice problems. STOC 1983, 99-108
@@ -231,6 +234,8 @@ H-LLL: using Householder inside LLL. ISSAC 2009: 271-278
 
 [MV10] D. Micciancio and P. Voulgaris.
 Faster Exponential Time Algorithms for the Shortest Vector Problem. SODA 2010: 1468-1480
+
+[MR09] D. Micciancio and O. Regev. Post-Quantum Cryptography. Chapter of Lattice-based Cryptography, 147-191 (2009)
 
 [NS09] P. Q. Nguyen and D. Stehle. An LLL Algorithm with Quadratic Complexity. SIAM J. Comput. 39(3): 874-903 (2009)
 
