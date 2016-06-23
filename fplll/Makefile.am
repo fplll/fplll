@@ -30,7 +30,7 @@ EXTRA_DIST=pruning.txt
 
 bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff
-EXTRA_PROGRAMS=fplll_dbg latticegen_dbg test 
+EXTRA_PROGRAMS=fplll_dbg latticegen_dbg test latsieve
 lib_LTLIBRARIES=libfplll.la
 EXTRA_LTLIBRARIES=libfplllv.la libfpllld.la
 
@@ -53,6 +53,12 @@ llldiff_LDADD=libfplll.la
 
 test_SOURCES=test.cpp
 test_LDADD=libfplll.la
+
+# sieve
+latsieve_SOURCES=sieve/sieve_main.cpp sieve/sieve_gauss.cpp \
+	sieve/sieve_gauss_2sieve.cpp sieve/sieve_gauss_3sieve.cpp \
+	sieve/sieve_gauss_4sieve.cpp sieve/sampler_basic.cpp
+latsieve_LDADD=libfplll.la -lgmp -lmpfr $(LIBQD_LIBADD)
 
 libfplll_la_SOURCES=fplll.cpp fplll.h \
 	util.cpp util.h \
