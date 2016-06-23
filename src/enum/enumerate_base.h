@@ -32,22 +32,37 @@ class enumeration_base
 public:
     static const int maxdim = MAXDIMENSION;
     static const int maxdim_opt = MAXTEMPLATEDDIMENSION;
-
-    inline uint64_t getNodes() const { return nodes; }
-
-protected:
-    enumf mut[maxdim][maxdim];
-    enumf centerPartSums[maxdim][maxdim];
-    array<enumf, maxdim> rdiag, dist, center, centerPartSum, maxDists, alpha;
-    array<enumxt, maxdim> x, dx, ddx, centerLoopBg;
     
-    int d, k, kEnd, kMax;
-    bool dual;
+    inline uint64_t getNodes() const { return nodes; }
+    
+protected:
+    /* configuration */
+    bool dual, subsols;
+
+    /* enumeration input */
+    enumf mut[maxdim][maxdim];
+    array<enumf, maxdim> rdiag, partdistbounds;
+    int d, kEnd; // dimension, subtreelevel
+
+    /* partial sum cache */
+    enumf center_partsums[maxdim][maxdim];
+    array<enumf, maxdim> center_partsum;
+    array<int,   maxdim> center_partsum_begin;
+
+    /* enumeration data for each level */
+    array<enumf, maxdim> partdist, center, alpha;
+    array<enumxt,maxdim> x, dx, ddx;
+
+    int k, kMax;
+   
+    /* nodes count */
     uint64_t nodes;
     
-    template<bool dualenum>
+    template<bool dualenum, bool findsubsols>
     bool enumerateLoop(enumf& newMaxDist, int& newKMax);
-    
+
+    virtual process_solution() = 0;
+    virtual process_subsolution(int offset) = 0;
 };
 
 
