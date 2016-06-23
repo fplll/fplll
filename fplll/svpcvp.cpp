@@ -57,7 +57,7 @@ static bool enumerateSVP(int d, MatGSO<Integer, Float>& gso, Float& maxDist,
         Evaluator<Float>& evaluator, const vector<enumf>& pruning,
         int flags) 
 {
-  enumeration<Float> enumobj(gso, evaluator);
+  Enumeration<Float> enumobj(gso, evaluator);
   bool dual = (flags & SVP_DUAL);
   if (d == 1 || !pruning.empty() || dual) {
     enumobj.enumerate(0, d, maxDist, 0, vector<Float>(), vector<enumxt>(), pruning, dual);
@@ -343,7 +343,7 @@ int closestVector(IntMatrix& b, const IntVect& intTarget,
           EVALMODE_CV);
 
   // Main loop of the enumeration
-  enumeration<Float> enumobj(gso, evaluator);
+  Enumeration<Float> enumobj(gso, evaluator);
   enumobj.enumerate(0, d, maxDist, 0, targetCoord, vector<enumxt>(), vector<enumf>());
 
   int result = RED_ENUM_FAILURE;

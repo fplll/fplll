@@ -20,7 +20,7 @@
 FPLLL_BEGIN_NAMESPACE
 
 template<typename FT>
-void enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdistexpo,
+void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdistexpo,
                                 const vector<FT>& targetcoord,
                                 const vector<enumxt>& subtree,
                                 const vector<enumf>& pruning,
@@ -108,7 +108,7 @@ void enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
 }
 
 template<typename FT>
-void enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp)
+void Enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp)
 {
     bool svpbeginning = solvingsvp;
     
@@ -160,7 +160,7 @@ void enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool so
 }
 
 template<typename FT>
-void enumeration<FT>::set_bounds()
+void Enumeration<FT>::set_bounds()
 {
     if (pruning_bounds.empty())
     {
@@ -174,7 +174,7 @@ void enumeration<FT>::set_bounds()
 }
 
 template<typename FT>
-void enumeration<FT>::process_solution(enumf newmaxdist)
+void Enumeration<FT>::process_solution(enumf newmaxdist)
 {
     for (int j = 0; j < d; ++j)
         fx[j] = x[j];
@@ -184,7 +184,7 @@ void enumeration<FT>::process_solution(enumf newmaxdist)
 }
 
 template<typename FT>
-void enumeration<FT>::process_subsolution(int offset, enumf newdist)
+void Enumeration<FT>::process_subsolution(int offset, enumf newdist)
 {
     for (int j = 0; j < offset; ++j)
         fx[j] = 0;
@@ -194,7 +194,7 @@ void enumeration<FT>::process_subsolution(int offset, enumf newdist)
 }
 
 template<typename FT>
-void enumeration<FT>::do_enumerate()
+void Enumeration<FT>::do_enumerate()
 {
     nodes = 0;
 
@@ -211,22 +211,22 @@ void enumeration<FT>::do_enumerate()
             
 }
 
-template class enumeration<FP_NR<double> >;
+template class Enumeration<FP_NR<double> >;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class enumeration<FP_NR<long double> >;
+template class Enumeration<FP_NR<long double> >;
 #endif
 
 #ifdef FPLLL_WITH_QD
-template class enumeration<FP_NR<dd_real> >;
+template class Enumeration<FP_NR<dd_real> >;
 
-template class enumeration<FP_NR<qd_real> >;
+template class Enumeration<FP_NR<qd_real> >;
 #endif
 
 #ifdef FPLLL_WITH_DPE
-template class enumeration<FP_NR<dpe_t> >;
+template class Enumeration<FP_NR<dpe_t> >;
 #endif
 
-template class enumeration<FP_NR<mpfr_t> >;
+template class Enumeration<FP_NR<mpfr_t> >;
 
 FPLLL_END_NAMESPACE

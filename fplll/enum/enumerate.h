@@ -26,10 +26,10 @@
 FPLLL_BEGIN_NAMESPACE
 
 template<typename FT>
-class enumeration : public enumeration_base
+class Enumeration : public EnumerationBase
 {
 public:
-    enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator)
+    Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator)
         : _gso(gso), _evaluator(evaluator)
     {
     }

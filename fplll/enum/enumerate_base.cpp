@@ -20,7 +20,7 @@
 FPLLL_BEGIN_NAMESPACE
 
 template<bool dualenum, bool findsubsols>
-bool enumeration_base::enumerate_loop()
+bool EnumerationBase::enumerate_loop()
 {
     if (k >= k_end)
         return false;
@@ -79,9 +79,9 @@ bool enumeration_base::enumerate_loop()
     }
 }
 
-template bool enumeration_base::enumerate_loop<false,false>();
-template bool enumeration_base::enumerate_loop<false,true>();
-template bool enumeration_base::enumerate_loop<true,false>();
-template bool enumeration_base::enumerate_loop<true,true>();
+template bool EnumerationBase::enumerate_loop<false,false>();
+template bool EnumerationBase::enumerate_loop<false,true>();
+template bool EnumerationBase::enumerate_loop<true,false>();
+template bool EnumerationBase::enumerate_loop<true,true>();
 
 FPLLL_END_NAMESPACE

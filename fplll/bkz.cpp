@@ -144,7 +144,7 @@ bool BKZReduction<FT>::svpReduction(int kappa, int blockSize, const BKZParam &pa
   
   vector<FT>& solCoord = evaluator.solCoord;
   solCoord.clear();
-  enumeration<FT> enumobj(m, evaluator);
+  Enumeration<FT> enumobj(m, evaluator);
   enumobj.enumerate( kappa, kappa + blockSize, maxDist, maxDistExpo, vector<FT>(), vector<enumxt>(), par.pruning);
   nodes += enumobj.getNodes(); //Enumeration::getNodes();
   if (solCoord.empty()) {

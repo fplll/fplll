@@ -29,7 +29,7 @@ inline void roundto(double& dest, const double& src) { dest = rint(src); }
 #define MAXDIMENSION           256
 #define MAXTEMPLATEDDIMENSION  80
 
-class enumeration_base
+class EnumerationBase
 {
 public:
     static const int maxdim = MAXDIMENSION;
