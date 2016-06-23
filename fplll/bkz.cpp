@@ -100,20 +100,6 @@ void compute_gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size
   }
 }
 
-/** Randomize basis between from ``min_row`` and ``max_row`` (exclusive)
-
-    1. permute rows
-    2. apply lower triangular matrix with coefficients in -1,0,1
-    3. LLL reduce result
-
-    @param min_row start in this row
-
-    @param max_row stop at this row (exclusive)
-
-    @param density number of non-zero coefficients in lower triangular
-    transformation matrix
-**/
-
 template <class FT> void BKZReduction<FT>::rerandomize_block(int min_row, int max_row, int density)
 {
   if (max_row - min_row < 2)
@@ -503,7 +489,7 @@ template <class FT> bool BKZReduction<FT>::bkz()
 
   m.discoverAllRows();
 
-  int kappaMax;
+  int kappa_max;
   bool clean = true;
   for (i = 0;; i++)
   {
@@ -518,7 +504,7 @@ template <class FT> bool BKZReduction<FT>::bkz()
       break;
     }
     if ((flags & BKZ_AUTO_ABORT) &&
-        autoAbort.test_abort(param.auto_abort_scale, param.auto_abort_max_no_dec))
+        auto_abort.test_abort(param.auto_abort_scale, param.auto_abort_max_no_dec))
     {
       break;
     }

@@ -27,6 +27,15 @@ FPLLL_BEGIN_NAMESPACE
 template <class FT> class BKZAutoAbort
 {
 public:
+/**
+   @brief
+
+   @param m
+   @param num_rows
+   @param start_row
+   @return
+*/
+  
   BKZAutoAbort(MatGSO<Integer, FT> &m, int num_rows, int start_row = 0)
       : m(m), old_slope(numeric_limits<double>::max()), no_dec(-1), num_rows(num_rows),
         start_row(start_row)
@@ -66,6 +75,7 @@ void compute_gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size
 /**
  * Compute the (squared) root determinant of the basis.
  */
+
 template<class FT>
 FT get_root_det(MatGSO<Integer, FT>& m, int start, int end);
 
@@ -73,6 +83,8 @@ FT get_root_det(MatGSO<Integer, FT>& m, int start, int end);
 template <class FT> class BKZReduction
 {
 public:
+
+
   BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lllObj, const BKZParam &param);
   ~BKZReduction();
 
@@ -94,7 +106,7 @@ public:
 
   bool svp_reduction(int kappa, int block_size, const BKZParam &param, bool dual = false);
 
-  bool svp_reduction_Ex(int kappa, int block_size, const BKZParam &param, bool &clean, bool dual = false)
+  bool svp_reduction_ex(int kappa, int block_size, const BKZParam &param, bool &clean, bool dual = false)
   {
     try
     {
@@ -142,6 +154,20 @@ public:
   bool hkz(int &kappaMax, const BKZParam &param, int min_row, int max_row);
 
   bool bkz();
+
+/** Randomize basis between from ``min_row`` and ``max_row`` (exclusive)
+
+    1. permute rows
+    2. apply lower triangular matrix with coefficients in -1,0,1
+    3. LLL reduce result
+
+    @param min_row start in this row
+
+    @param max_row stop at this row (exclusive)
+
+    @param density number of non-zero coefficients in lower triangular
+    transformation matrix
+**/
 
   void rerandomize_block(int minRow, int maxRow, int density);
 
