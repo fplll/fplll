@@ -101,8 +101,8 @@ to ensure reproducibility. The seed may be changed with the option
 
 ### fplll ###
 
-`fplll` does LLL, BKZ or SVP on a matrix (considered as a set of row vectors) given in stdin or in a
-file as parameter.
+`fplll` does LLL, BKZ or SVP on a matrix (considered as a set of row
+vectors) given in stdin or in a file as parameter. 
 
 The options are:
 
@@ -114,7 +114,7 @@ The options are:
 Options for LLL-reduction:
 
 * `-d delta` :     δ (default=0.99)
-* `-e eta` :       η (default=0.51)
+* `-e eta` :       η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases. 
 * `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz)
 * `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
 
