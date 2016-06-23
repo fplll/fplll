@@ -26,7 +26,7 @@ bool enumeration_base::enumerate_loop()
     
     for (int i = 0; i < k_end; ++i)
     {
-        center_partsum_begin[i] = k_end - 1;
+        center_partsum_begin[i+1] = k_end - 1;
         center_partsums[i][k_end] = center_partsum[i];
     }
     
@@ -36,15 +36,14 @@ bool enumeration_base::enumerate_loop()
         enumf newdist = partdist[k] + alphak * alphak * rdiag[k];
         if (newdist <= partdistbounds[k])
         {
+            ++nodes;
             alpha[k] = alphak;
             if (findsubsols && newdist < subsoldists[k])
             {
                 subsoldists[k] = newdist;
                 process_subsolution(k, newdist);
             }
-            
             --k;
-            ++nodes;
             if (k < 0)
             {
                 process_solution(newdist);
@@ -52,24 +51,19 @@ bool enumeration_base::enumerate_loop()
                     return false;
                 continue;
             }
-            
             if (dualenum)
             {
-                for (int j = center_partsum_begin[k]; j > k; --j)
+                for (int j = center_partsum_begin[k+1]; j > k; --j)
                     center_partsums[k][j] = center_partsums[k][j+1] - alpha[j] * mut[k][j];
             }
             else
             {
-                for (int j = center_partsum_begin[k]; j > k; --j)
+                for (int j = center_partsum_begin[k+1]; j > k; --j)
                     center_partsums[k][j] = center_partsums[k][j+1] - x[j] * mut[k][j];
             }
-            
             enumf newcenter = center_partsums[k][k+1];
-            if (k > 0)
-            {
-                center_partsum_begin[k-1] = max(center_partsum_begin[k-1], center_partsum_begin[k]);
-            }
-            center_partsum_begin[k] = k+1;
+            center_partsum_begin[k] = max(center_partsum_begin[k], center_partsum_begin[k+1]);
+            center_partsum_begin[k+1] = k+1;
             
             center[k] = newcenter;
             partdist[k] = newdist;
