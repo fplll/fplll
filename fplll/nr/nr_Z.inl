@@ -220,6 +220,11 @@ public:
   inline void randm(const Z_NR<Z>& max);
   inline void randm_si(const Z_NR<Z>& max);
 
+  /**	 
+   * Generates smallest prime number above nbr 
+  */
+  inline void nextprime(const Z_NR<Z>& nbr);
+
 #ifdef FPLLL_V3_COMPAT
   // Old interface (do not use)
   inline void print() const;
