@@ -37,7 +37,7 @@ AC_LANG_CPLUSPLUS
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_MAKE_SET
-AX_CXX_COMPILE_STDCXX([11],[],[mandatory])
+AX_CXX_COMPILE_STDCXX([11],[noext],[mandatory])
 
 # Checks for libraries.
 AC_ARG_WITH(gmp,
