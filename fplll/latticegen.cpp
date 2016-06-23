@@ -28,6 +28,7 @@ void printHelp() {
        << " u <d> <b> : gen_uniform"<< endl
        << " n <d> <c> : gen_ntrulike"<<endl
        << " N <d> <c> : gen_ntrulike2"<<endl
+       << " q <d> <k> <b> <c>: gen_qary"<<endl
        << " t <d> <f> : gen_trg"<<endl
        << " T <d> : gen_trg2"<<endl;
 }
@@ -121,6 +122,33 @@ int main(int argc, char* argv[]) {
 	  case 'q':
 	    {
 	      m.gen_ntrulike_withq(b);
+	      break;
+	    }
+	  }
+	break;
+      }
+    case 'q':
+      {
+	if (argc - iArg < 1) fatalError("method 'q' requires 4 arguments");
+	int k=atoi(argv[iArg]);
+	int b=atoi(argv[iArg+1]);
+	char c=argv[iArg+2][0];
+	m.resize(d, d); 
+	switch(c)
+	  {
+	  case 'b':
+	    {
+	      m.gen_qary(k,b);
+	      break;
+	    }
+	  case 'q':
+	    {
+	      m.gen_qary_withq(k,b);
+	      break;
+	    }
+	  case 'p':
+	    {
+	      m.gen_qary_prime(k,b);
 	      break;
 	    }
 	  }

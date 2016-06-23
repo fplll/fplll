@@ -4,4 +4,22 @@
 /* use quaddouble library */
 #undef FPLLL_WITH_QD
 
+/* fplll major version */
+#define FPLLL_MAJOR_VERSION @FPLLL_MAJOR_VERSION@
+
+/* fplll minor version */
+#define FPLLL_MINOR_VERSION @FPLLL_MINOR_VERSION@
+
+/* fplll micro version */
+#define FPLLL_MICRO_VERSION @FPLLL_MICRO_VERSION@
+
+/* fplll sonum */
+#define FPLLL_SONUM @FPLLL_SONUM@
+
+/* fplll version */
+#define FPLLL_VERSION @FPLLL_VERSION@
+
+/* fplll version info */
+#define FPLLL_VERSION_INFO @FPLLL_VERSION_INFO@
+
 #endif //FPLLL_CONFIG__H
