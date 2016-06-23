@@ -264,6 +264,10 @@ public:
    */
   void row_addmul_we(int i, int j, const FT& x, long expoAdd);
 
+  // b[i] += b[j] / b[i] -= b[j] (i > j)
+  void row_add(int i, int j);
+  void row_sub(int i, int j);
+
   /** 
    * Early reduction
    * Allowed when enableIntGram=false,
@@ -362,9 +366,6 @@ private:
   /* Marks g(i, j) for all j <= i (but NOT for j > i) */
   void invalidateGramRow(int i);
 
-  // b[i] += b[j] / b[i] -= b[j] (i > j)
-  void row_add(int i, int j);
-  void row_sub(int i, int j);
   // b[i] <- b[i] + x * b[j] (i > j)
   void row_addmul_si(int i, int j, long x);
   // b[i] <- b[i] + (2^expo * x) * b[j] (i > j)

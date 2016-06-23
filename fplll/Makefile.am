@@ -24,7 +24,8 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	svpcvp.h fplllv31.h bkz.h lll.h gso.h  \
 	enum/evaluator.h \
 	fplll_config.h wrapper.h \
-  enum/enumerate.h
+	bkz_params.h \
+	enum/enumerate.h
 
 EXTRA_DIST=pruning.txt
 
@@ -68,6 +69,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	lll.cpp lll.h \
 	wrapper.cpp wrapper.h \
 	bkz.cpp bkz.h \
+	bkz_params.cpp bkz_params.h \
 	gso.cpp gso.h
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp

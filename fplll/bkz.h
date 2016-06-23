@@ -18,131 +18,164 @@
 #ifndef FPLLL_BKZ_H
 #define FPLLL_BKZ_H
 
-#include "lll.h"
+#include "bkz_params.h"
 #include "enum/evaluator.h"
+#include "enum/enumerate.h"
+#include "lll.h"
 
 FPLLL_BEGIN_NAMESPACE
 
-class BKZParam {
+template <class FT> class BKZAutoAbort
+{
 public:
+/**
+   @brief
 
-  BKZParam(int blockSize=0, double delta=LLL_DEF_DELTA, int flags=BKZ_DEFAULT,
-           int maxLoops=0, double maxTime=0, int linearPruningLevel=0,
-           double autoAbort_scale=1.0, int autoAbort_maxNoDec=5, double ghFactor = 1.1) :
-  blockSize(blockSize), delta(delta), flags(flags),
-  maxLoops(maxLoops), maxTime(maxTime),
-  autoAbort_scale(autoAbort_scale), autoAbort_maxNoDec(autoAbort_maxNoDec), ghFactor(ghFactor),
-  dumpGSOFilename("gso.log"), preprocessing(NULL) {
-    if (linearPruningLevel > 0) {
-      enableLinearPruning(linearPruningLevel);
-    }
+   @param m
+   @param num_rows
+   @param start_row
+   @return
+*/
+  
+  BKZAutoAbort(MatGSO<Integer, FT> &m, int num_rows, int start_row = 0)
+      : m(m), old_slope(numeric_limits<double>::max()), no_dec(-1), num_rows(num_rows),
+        start_row(start_row)
+  {
   }
+  bool test_abort(double scale = 1.0, int maxNoDec = 5);
 
-  /** Block size used for enumeration **/
-  int    blockSize;
-
-  /** LLL parameter delta **/
-  double delta;
-
-  /** See BKZFlags **/
-  int    flags;
-
-  /** Maximum number of loops to execute **/
-  int    maxLoops;
-
-  /** Maximum time to spend **/
-  double maxTime;
-
-  /** If BKZ_AUTOABORT is set, We abort if newSlope < autoAbort_scale * oldSlope
-      is true for autoAbort_maxNoDec loops.
-   */
-  double autoAbort_scale;
-  int autoAbort_maxNoDec;
-
-  /** If not empty these are the prunning coefficients used for prunned
-      enumeration. If linearPruningLevel > 0, the first blockSize -
-      linearPruningLevel coefficients will be one. Afterwards the coefficients
-      drop linearly with slope -1/blockSize.
-  */
-  
-  vector<double> pruning;
-  
-  /** If BKZ_GH_BND is set, the enumeration bound will be set to ghFactor times
-      the Gaussian Heuristic
-  */
-  
-  double ghFactor;
-  
-  /** If BKZ_DUMP_GSO is set, the norms of the GSO matrix are written to this
-      file after each complete round.
-  */
-  
-  string dumpGSOFilename;
-
-  /** If not NULL, these parameters are used for BKZ preprocessing. It is
-      allowed to nest these preprocessing parameters
-  */
-  
-  BKZParam *preprocessing;
-
-  /** Sets all pruning coefficients to 1, except the last <level> coefficients,
-      these will be linearly with slope -1 / blockSize.
-
-      @param level number of levels in linear descent
-  */
-  inline void enableLinearPruning(int level) {
-    int startDescent = blockSize - level;
-    
-    if (startDescent > blockSize)
-      startDescent = blockSize;
-
-    if (startDescent < 1)
-      startDescent = 1;
-    
-    pruning.resize(blockSize);
-    for(int k=0; k< startDescent; k++)
-      pruning[k] = 1.0;
-    for(int k=0; k<blockSize-startDescent; k++)
-      pruning[startDescent+k] = ((double)(blockSize-k-1))/blockSize;
-  }
-                     
+private:
+  MatGSO<Integer, FT> &m;
+  double old_slope;
+  int no_dec;
+  int num_rows;
+  int start_row;
 };
 
 /** Finds the slope of the curve fitted to the lengths of the vectors from
     startRow to stopRow. The slope gives an indication of the quality of the
     LLL-reduced basis.
 */
-template<class FT>
-double getCurrentSlope(MatGSO<Integer, FT>& m, int startRow, int stopRow);
+template <class FT> double get_current_slope(MatGSO<Integer, FT> &m, int startRow, int stopRow);
 
-/** Uses the Gaussian Heuristic Distance to compute a bound on the length of the
-    shortest vector.
+/**
+   @brief Use the Gaussian Heuristic to compute a bound on the length
+   of the shortest vector.
+
+   @param max_dist         output
+   @param max_dist_expo    exponent of output
+   @param block_size       block size
+   @param root_det
+   @param gh_factor
+   @return
 */
+
+template <class FT>
+void compute_gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det, double gh_factor);
+
+/**
+ * Compute the (squared) root determinant of the basis.
+ */
+
 template<class FT>
-void computeGaussHeurDist(MatGSO<Integer, FT>& m, FT& maxDist, long maxDistExpo, int kappa, int blockSize, double ghFactor);
+FT get_root_det(MatGSO<Integer, FT>& m, int start, int end);
 
 /* The matrix must be LLL-reduced */
-template<class FT>
-class BKZReduction {
+template <class FT> class BKZReduction
+{
 public:
-  BKZReduction(MatGSO<Integer, FT>& m, LLLReduction<Integer, FT>& lllObj,
-               const BKZParam& param);
+
+
+  BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lllObj, const BKZParam &param);
   ~BKZReduction();
+
+  bool svp_preprocessing(int kappa, int block_size, const BKZParam &param);
+
+  bool svp_postprocessing(int kappa, int blockSize, const vector<FT> &solution);
+  
+  bool dsvp_postprocessing(int kappa, int block_size, const vector<FT> &solution);
 
   /**
      Run enumeration to find a new shortest vector in the sublattice B[kappa,kappa+blockSize]
 
      @param kappa Start row
-     @param blockSize Block size to use, this may be < param.blockSize
+     @param block_size Block size to use, this may be < param.blockSize
      @param param Parameters to use for this enumeration (blockSize is ignored)
-     @param clean Did we change anything?
+
+     ``_ex`` variant is exception handling.
   */
+
+  bool svp_reduction(int kappa, int block_size, const BKZParam &param, bool dual = false);
+
+  bool svp_reduction_ex(int kappa, int block_size, const BKZParam &param, bool &clean, bool dual = false)
+  {
+    try
+    {
+      clean = svp_reduction(kappa, block_size, param, dual);
+      return true;
+    }
+    catch (RedStatus &e)
+    {
+      return set_status(e);
+    }
+  }
+
+  bool tour(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow);
+
+  bool tour_ex(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow,
+               bool &clean)
+  {
+    try
+    {
+      clean = tour(loop, kappaMax, param, minRow, maxRow);
+      return true;
+    }
+    catch (RedStatus &e)
+    {
+      return set_status(e);
+    }
+  }
   
-  bool svpReduction(int kappa, int blockSize, const BKZParam &param, bool& clean);
-  bool bkzLoop(const int loop, int& kappaMax, const BKZParam &param, int minRow, int maxRow, bool& clean);
+  bool sd_tour(const int loop, const BKZParam &param, int minRow, int maxRow);
+
+  bool sd_tour_ex(const int loop, const BKZParam &param, int minRow, int maxRow,
+               bool &clean)
+  {
+    try
+    {
+      clean = sd_tour(loop, param, minRow, maxRow);
+      return true;
+    }
+    catch (RedStatus &e)
+    {
+      return set_status(e);
+    }
+  }
+  
+  bool hkz(int &kappaMax, const BKZParam &param, int min_row, int max_row);
+
   bool bkz();
-  void dumpGSO(const std::string filename, const std::string prefix, bool append = true);
- 
+
+/** Randomize basis between from ``min_row`` and ``max_row`` (exclusive)
+
+    1. permute rows
+    2. apply lower triangular matrix with coefficients in -1,0,1
+    3. LLL reduce result
+
+    @param min_row start in this row
+
+    @param max_row stop at this row (exclusive)
+
+    @param density number of non-zero coefficients in lower triangular
+    transformation matrix
+**/
+
+  void rerandomize_block(int minRow, int maxRow, int density);
+
+  /** I/O **/
+
+  void dump_gso(const std::string filename, const std::string prefix, bool append = true);
+
   int status;
 
   /**
@@ -152,35 +185,27 @@ public:
   long nodes;
 
 private:
-  void printParams(const BKZParam &param, ostream &out);
-  bool setStatus(int newStatus);
+  void print_tour(const int loop, int minRow, int maxRow);
+  void print_params(const BKZParam &param, ostream &out);
 
-  const BKZParam& param;
-  int numRows;
-  MatGSO<Integer, FT>& m;
-  LLLReduction<Integer, FT>& lllObj;
+  bool set_status(int newStatus);
+
+  const Pruning &get_pruning(int kappa, int blockSize, const BKZParam &par) const;
+
+  bool trunc_tour(int &kappaMax, const BKZParam &param, int minRow, int maxRow);
+  bool trunc_dtour(const BKZParam &param, int minRow, int maxRow);
+
+  const BKZParam &param;
+  int num_rows;
+  MatGSO<Integer, FT> &m;
+  LLLReduction<Integer, FT> &lll_obj;
   FastEvaluator<FT> evaluator;
   FT delta;
 
   // Temporary data
-  const vector<FT> emptyTarget, emptySubTree;
-  FT maxDist, deltaMaxDist;
-  double cputimeStart;
-};
-
-template<class FT>
-class BKZAutoAbort {
-public:
-  BKZAutoAbort(MatGSO<Integer, FT>& m, int numRows, int startRow = 0): m(m),
-    oldSlope(numeric_limits<double>::max()), noDec(-1), numRows(numRows), startRow(startRow) {}
-  bool testAbort(double scale=1.0, int maxNoDec=5);
-
-private:
-  MatGSO<Integer, FT>& m;
-  double oldSlope;
-  int noDec;
-  int numRows;
-  int startRow;
+  const vector<FT> empty_target, empty_sub_tree;
+  FT max_dist, delta_max_dist;
+  double cputime_start;
 };
 
 FPLLL_END_NAMESPACE

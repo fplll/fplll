@@ -11,6 +11,18 @@ It also includes a floating-point implementation of the Kannan-Fincke-Pohst algo
 
 fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of the License, or, at your option, any later version) as published by the Free Software Foundation.
 
+### How to cite ###
+
+	@unpublished{fplll,
+	    Note = {Available at \url{https://github.com/fplll/fplll}},
+	    Title = {{fplll}, a lattice reduction library},
+	    Author = {The {FPLLL} development team},
+	    Year = 2016,
+	    url = {https://github.com/fplll/fplll}
+	}
+
+
+
 ## Dependencies ##
 
 ### Required ###
@@ -101,8 +113,8 @@ to ensure reproducibility. The seed may be changed with the option
 
 ### fplll ###
 
-`fplll` does LLL, BKZ or SVP on a matrix (considered as a set of row vectors) given in stdin or in a
-file as parameter.
+`fplll` does LLL, BKZ or SVP on a matrix (considered as a set of row
+vectors) given in stdin or in a file as parameter. 
 
 The options are:
 
@@ -114,7 +126,7 @@ The options are:
 Options for LLL-reduction:
 
 * `-d delta` :     δ (default=0.99)
-* `-e eta` :       η (default=0.51)
+* `-e eta` :       η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases. 
 * `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz)
 * `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
 
@@ -253,7 +265,6 @@ Math. Program. 66: 181-199 (1994)
 fplll is currently maintained by:
 
 - Martin Albrecht, <martinralbrecht@googlemail.com>
-- Damien Stehle, <damien.stehle@gmail.com>
 - Shi Bai, <shi.bai@gmail.com>
 
 ### Contributors ###
@@ -262,10 +273,14 @@ The following people have contributed to fplll:
 
 - Martin Albrecht
 - Shi Bai
+- Guillaume Bonnoron
 - David Cade
+- Leo Ducas
+- Joop van de Pol
 - Xavier Pujol
 - Damien Stehle
-- Joop van de Pol
+- Marc Stevens
+- Gilles Villard
 - Michael Walter
 
 Please add yourself here if you make a contribution.
@@ -285,17 +300,11 @@ Christoph Lauter, Andrew Novocin, Willem Jan Palenstijn, Patrick Pelissier, Mich
 Thiemo Seufer, Allan Steel, Gilles Villard and Paul Zimmermann for their support and for many
 suggestions that helped debugging and improving this code.
 
-### How to cite ###
-
-	@unpublished{fplll,
-	    Note = {Available at \url{http://perso.ens-lyon.fr/damien.stehle}},
-	    Title = {{fplll-4.0}, a floating-point {LLL} implementation},
-	    Author = {Albrecht, M. and Bai, S. and Cad{\'e}, D. and Pujol, X. and Stehl{\'e}, D.}
-	}
+- This project has been supported by ERC Starting Grant ERC-2013-StG-335086-LATTAC.
 
 ## New releases and bug reports ##
 
-New releases will be announced on [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel)
+New releases will be announced on [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel).
 
 Bug reports may be sent to [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel) or via
 [https://github.com/fplll/fplll/issues](https://github.com/fplll/fplll/issues). 

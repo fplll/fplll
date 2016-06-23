@@ -386,22 +386,23 @@ int bkzReduction(IntMatrix* B, IntMatrix *U, const BKZParam& param, FloatType fl
  * in order to force the compiler to instantiate the functions.
  */
 int bkzReduction(IntMatrix& b, int blockSize, int flags, FloatType floatType, int precision) {
-  BKZParam param;
-  param.blockSize = blockSize;
+  vector<Strategy> strategies;
+  BKZParam param(blockSize, strategies);
   param.flags = flags;
   return bkzReduction(&b, NULL, param, floatType, precision);
 }
 
 int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags, FloatType floatType, int precision) {
-  BKZParam param;
-  param.blockSize = blockSize;
+  vector<Strategy> strategies;
+  BKZParam param(blockSize, strategies);
   param.flags = flags;
   return bkzReduction(&b, &u, param, floatType, precision);
 }
 
 int hkzReduction(IntMatrix& b, int flags, FloatType floatType, int precision) {
-  BKZParam param;
-  param.blockSize = b.getRows();
+  vector<Strategy> strategies;
+  BKZParam param(b.getRows(), strategies);
+  param.block_size = b.getRows();
   param.delta = 1;
   if (flags & HKZ_VERBOSE)
     param.flags |= BKZ_VERBOSE;

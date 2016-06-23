@@ -37,40 +37,37 @@ enum Action {
 };
 
 struct Options {
-  Options() : action(ACTION_LLL), method(LM_WRAPPER), intType(ZT_MPZ),
-              floatType(FT_DEFAULT), delta(LLL_DEF_DELTA), eta(LLL_DEF_ETA),
-              precision(0), earlyRed(false), siegel(false), noLLL(false),
-              blockSize(0), preprocBlockSize(2), bkzLinearPruningLevel(0),
-              bkzGHFactor(1.1), verbose(false), inputFile(NULL),
-              outputFormat(NULL), pruningFile(NULL) {
-    bkzFlags = 0;
-    bkzMaxLoops = 0;
-    bkzMaxTime = 0;
+  Options() : action(ACTION_LLL), method(LM_WRAPPER), int_type(ZT_MPZ),
+              float_type(FT_DEFAULT), delta(LLL_DEF_DELTA), eta(LLL_DEF_ETA),
+              precision(0), early_red(false), siegel(false), no_lll(false),
+              block_size(0), bkz_gh_factor(1.1), verbose(false), input_file(NULL),
+              output_format(NULL) {
+    bkz_flags = 0;
+    bkz_max_loops = 0;
+    bkz_max_time = 0;
   }
   Action action;
   LLLMethod method;
-  IntType intType;
-  FloatType floatType;
+  IntType int_type;
+  FloatType float_type;
   double delta;
   double eta;
   int precision;
-  bool earlyRed;
+  bool early_red;
   bool siegel;
 
-  bool noLLL;
-  int blockSize;
-  int preprocBlockSize;
-  int bkzFlags;
-  int bkzMaxLoops;
-  double bkzMaxTime;
-  string bkzDumpGSOFilename;
-  int bkzLinearPruningLevel;
-  double bkzGHFactor;  
+  bool no_lll;
+  int block_size;
+  int bkz_flags;
+  int bkz_max_loops;
+  double bkz_max_time;
+  string bkz_dump_gso_filename;
+  double bkz_gh_factor;
+  string bkz_strategy_file;
 
   bool verbose;
-  const char* inputFile;
-  const char* outputFormat;
-  const char* pruningFile;
+  const char* input_file;
+  const char* output_format;
 };
 
 #endif
