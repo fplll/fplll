@@ -98,6 +98,18 @@ void Matrix<T>::transpose() {
 }
 
 template<class T>
+T Matrix<T>::getMax() {
+  T m, a;
+  m = 0;
+  for (int i = 0; i < r; i++)
+    for (int j = 0; j < c; j++) {
+      a.abs(matrix[i][j]);
+      m = max(m, a);
+    }
+  return m;
+}
+
+template<class T>
 long Matrix<T>::getMaxExp() {
   long maxExp = 0;
   for (int i = 0; i < r; i++)
