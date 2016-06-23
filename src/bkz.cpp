@@ -334,4 +334,27 @@ void BKZReduction<FT>::dumpGSO(const std::string filename, const std::string pre
 }
 
 
+/**
+   Force instantiation of templates
+*/
+
+template class BKZReduction<FP_NR<double> >;
+
+#ifdef FPLLL_WITH_LONG_DOUBLE
+template class BKZReduction<FP_NR<long double> >;
+#endif
+
+#ifdef FPLLL_WITH_QD
+template class BKZReduction<FP_NR<dd_real> >;
+
+template class BKZReduction<FP_NR<qd_real> >;
+#endif
+
+#ifdef FPLLL_WITH_DPE
+template class BKZReduction<FP_NR<dpe_t> >;
+#endif
+
+template class BKZReduction<FP_NR<mpfr_t> >;
+
+
 FPLLL_END_NAMESPACE
