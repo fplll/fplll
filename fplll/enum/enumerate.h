@@ -20,28 +20,24 @@
 #include <array>
 #include <fplll/gso.h>
 #include <fplll/enum/evaluator.h>
+#include <fplll/enum/enumerate_base.h>
 
 FPLLL_BEGIN_NAMESPACE
 
-inline void roundto(int& dest, const double& src) { dest = lrint(src); }
-inline void roundto(double& dest, const double& src) { dest = rint(src); }
-
-template<typename FT, int MaxDimension = 256>
-class Enumeration
+template<typename FT>
+class enumeration : public enumeration_base
 {
 public:
-    static const int DMAX = MaxDimension;
-
-    Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator)
+    enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator)
         : _gso(gso), _evaluator(evaluator)
     {
     }
     
     void enumerate(int first, int last,
-                FT& fMaxDist, long maxDistExpo, 
-                const vector<FT>& targetCoord,
-                const vector<enumxt>& subTree,
-                const vector<enumf>& pruning,
+                FT& fmaxdist, long fmaxdistexpo, 
+                const vector<FT>& targetcoord = vector<FT>(),
+                const vector<enumxt>& subtree = vector<enumxt>(),
+                const vector<enumf>& pruning = vector<enumf>(),
                 bool dual = false);
 
     inline uint64_t getNodes() const { return nodes; }
@@ -50,43 +46,17 @@ private:
     MatGSO<Integer, FT>& _gso; 
     Evaluator<FT>& _evaluator;
     
-    enumf mut[DMAX][DMAX];
-    enumf centerPartSums[DMAX][DMAX];
-    array<enumf, DMAX> rdiag, dist, center, centerPartSum, maxDists, alpha;
-    array<enumxt, DMAX> x, dx, ddx;
-    array<int, DMAX> centerLoopBg;
-    array<enumf, DMAX> subsolDists;
-    bool findbettersubsols;
+    vector<enumf> pruning_bounds;
+    enumf maxdist;
+    vector<FT> fx;
     
-    int d, k, kEnd, kMax;
-    bool dual;
-    uint64_t nodes;
-    
-    inline bool nextPosUp()
-    {
-        ++k;
-        if (k < kMax)
-        {
-            x[k] += dx[k];
-            ddx[k] = -ddx[k];
-            dx[k] = ddx[k] - dx[k];
-            return true;
-        }
-        else if (k < kEnd)
-        {
-            kMax = k;
-            ++x[k];
-            return true;
-        }
-        return false;
-    }
-
-    void prepareEnumeration(enumf maxDist, const vector<enumxt>& subTree, bool solvingSVP);
+    void prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp);
   
-    template<bool dualenum, bool dosubsols>
-    bool enumerateLoop(enumf& newMaxDist);
+    void do_enumerate();
 
-    void enumerate(enumf& maxDist, long normExp, const vector<double>& pruning);
+    void set_bounds();    
+    virtual void process_solution(enumf newmaxdist);
+    virtual void process_subsolution(int offset, enumf newdist);
     
 };
 

@@ -14,9 +14,10 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef FPLLL_ENUMERATE_H
-#define FPLLL_ENUMERATE_H
+#ifndef FPLLL_ENUMERATE_BASE_H
+#define FPLLL_ENUMERATE_BASE_H
 
+#include <array>
 #include "../nr/nr.h"
 
 FPLLL_BEGIN_NAMESPACE
@@ -37,12 +38,12 @@ public:
     
 protected:
     /* configuration */
-    bool dual, subsols;
+    bool dual;
 
     /* enumeration input */
     enumf mut[maxdim][maxdim];
     array<enumf, maxdim> rdiag, partdistbounds;
-    int d, kEnd; // dimension, subtreelevel
+    int d, k_end; // dimension, subtreelevel
 
     /* partial sum cache */
     enumf center_partsums[maxdim][maxdim];
@@ -52,17 +53,37 @@ protected:
     /* enumeration data for each level */
     array<enumf, maxdim> partdist, center, alpha;
     array<enumxt,maxdim> x, dx, ddx;
-
-    int k, kMax;
+    array<enumf, maxdim> subsoldists;
+    
+    int k, k_max;
    
     /* nodes count */
     uint64_t nodes;
     
     template<bool dualenum, bool findsubsols>
-    bool enumerateLoop(enumf& newMaxDist, int& newKMax);
+    bool enumerate_loop();
 
-    virtual process_solution() = 0;
-    virtual process_subsolution(int offset) = 0;
+    virtual void process_solution(enumf newmaxdist) = 0; 
+    virtual void process_subsolution(int offset, enumf newdist) = 0;
+    
+    inline bool next_pos_up()
+    {
+        ++k;
+        if (k >= k_end)
+            return false;
+        if (k < k_max)
+        {
+            x[k] += dx[k];
+            ddx[k] = -ddx[k];
+            dx[k] = ddx[k] - dx[k];
+        }
+        else
+        {
+            k_max = k;
+            ++x[k];
+        }
+        return true;
+    }
 };
 
 

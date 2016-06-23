@@ -18,59 +18,61 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template<typename FT, int MaxDimension>
-void Enumeration<FT,MaxDimension>::enumerate(int first, int last, FT& fMaxDist, long maxDistExpo,
-                                const vector<FT>& targetCoord,
-                                const vector<enumxt>& subTree,
+template<typename FT>
+void enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdistexpo,
+                                const vector<FT>& targetcoord,
+                                const vector<enumxt>& subtree,
                                 const vector<enumf>& pruning,
                                 bool _dual)
 {
-    bool solvingSVP = targetCoord.empty();
+    bool solvingsvp = targetcoord.empty();
     dual = _dual;
+    pruning_bounds = pruning;
     if (last == -1)
         last = _gso.d;
     d = last - first;
-    FPLLL_CHECK(d < DMAX, "enumerate: dimension is too high");
-    FPLLL_CHECK((solvingSVP || !dual), "CVP for dual not implemented! What does that even mean? ");
-    FPLLL_CHECK((subTree.empty() || !dual), "Subtree enumeration for dual not implemented!");
+    fx.resize(d);
+    FPLLL_CHECK(d < maxdim, "enumerate: dimension is too high");
+    FPLLL_CHECK((solvingsvp || !dual), "CVP for dual not implemented! What does that even mean? ");
+    FPLLL_CHECK((subtree.empty() || !dual), "Subtree enumeration for dual not implemented!");
 
-    if (solvingSVP)
+    if (solvingsvp)
     {
         for (int i = 0; i < d; ++i)
-            centerPartSum[i] = 0.0;
+            center_partsum[i] = 0.0;
     }
     else
     {
         for (int i = 0; i < d; ++i)
-            centerPartSum[i] = targetCoord[i + first].get_d();
+            center_partsum[i] = targetcoord[i + first].get_d();
     }
     
-    FT fR, fMu, fMaxDistNorm;
-    long rExpo, normExp = -1;
+    FT fr, fmu, fmaxdistnorm;
+    long rexpo, normexp = -1;
     for (int i = 0; i < d; ++i)
     {
-        fR = _gso.getRExp(i + first, i + first, rExpo);
-        normExp = max(normExp, rExpo + fR.exponent());
+        fr = _gso.getRExp(i + first, i + first, rexpo);
+        normexp = max(normexp, rexpo + fr.exponent());
     }
-    fMaxDistNorm.mul_2si(fMaxDist, dual ? normExp-maxDistExpo : maxDistExpo-normExp);
-    enumf maxDist = fMaxDistNorm.get_d(GMP_RNDU);
+    fmaxdistnorm.mul_2si(fmaxdist, dual ? normexp-fmaxdistexpo : fmaxdistexpo-normexp);
+    maxdist = fmaxdistnorm.get_d(GMP_RNDU);
 
-    _evaluator.set_normexp(normExp);
+    _evaluator.set_normexp(normexp);
 
     if (dual)
     {
         for (int i = 0; i < d; ++i)
         {
-            fR = _gso.getRExp(i + first, i + first, rExpo);
-            fR.mul_2si(fR, rExpo - normExp);
-            rdiag[d-i-1] = enumf(1.0)/fR.get_d();
+            fr = _gso.getRExp(i + first, i + first, rexpo);
+            fr.mul_2si(fr, rexpo - normexp);
+            rdiag[d-i-1] = enumf(1.0)/fr.get_d();
         }
         for (int i = 0; i < d; ++i)
         {
             for (int j = i + 1; j < d; ++j)
             {
-                _gso.getMu(fMu, j + first, i + first);
-                mut[d-j-1][d-i-1] = -fMu.get_d();
+                _gso.getMu(fmu, j + first, i + first);
+                mut[d-j-1][d-i-1] = -fmu.get_d();
             }
         }
     }
@@ -78,204 +80,152 @@ void Enumeration<FT,MaxDimension>::enumerate(int first, int last, FT& fMaxDist, 
     {
         for (int i = 0; i < d; ++i)
         {
-            fR = _gso.getRExp(i + first, i + first, rExpo);
-            fR.mul_2si(fR, rExpo - normExp);
-            rdiag[i] = fR.get_d();
+            fr = _gso.getRExp(i + first, i + first, rexpo);
+            fr.mul_2si(fr, rexpo - normexp);
+            rdiag[i] = fr.get_d();
         }
         for (int i = 0; i < d; ++i)
         {
             for (int j = i + 1; j < d; ++j)
             {
-                _gso.getMu(fMu, j + first, i + first);
-                mut[i][j] = fMu.get_d();
+                _gso.getMu(fmu, j + first, i + first);
+                mut[i][j] = fmu.get_d();
             }
         }
     }
-
-    if (findbettersubsols)
-        subsolDists = rdiag;
+    subsoldists = rdiag;
     
-    prepareEnumeration(maxDist, subTree, solvingSVP);
-    enumerate(maxDist, normExp, pruning);
+    prepare_enumeration(subtree, solvingsvp);
+    do_enumerate();
   
-    fMaxDistNorm = maxDist; // Exact
+    fmaxdistnorm = maxdist; // Exact
   
-    fMaxDist.mul_2si(fMaxDistNorm, dual ? maxDistExpo-normExp : normExp-maxDistExpo);
+    fmaxdist.mul_2si(fmaxdistnorm, dual ? fmaxdistexpo-normexp : normexp-fmaxdistexpo);
   
     if (dual && !_evaluator.solCoord.empty())
         reverseBySwap(_evaluator.solCoord, 0, d-1);
 }
 
-template<typename FT, int MaxDimension>
-void Enumeration<FT,MaxDimension>::prepareEnumeration(enumf maxDist, const vector<enumxt>& subTree, bool solvingSVP)
+template<typename FT>
+void enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp)
 {
-    bool svpBeginning = solvingSVP;
+    bool svpbeginning = solvingsvp;
     
-    enumxt newX;
-    enumf newDist = 0.0;
-    kEnd = d - subTree.size();
-    for (k = d - 1; k >= 0 && newDist <= maxDist; --k)
+    enumf newdist = 0.0;
+    k_end = d - subtree.size();
+    for (k = d - 1; k >= 0 && newdist <= maxdist; --k)
     {
-        enumf newCenter = centerPartSum[k];
-        for (int j = k + 1; j < kEnd; ++j)
+        enumf newcenter = center_partsum[k];
+        if (k >= k_end)
         {
-            newCenter -= (dual ? alpha[j] : x[j]) * mut[k][j];
-        }
-        if (k >= kEnd)
-        {
-            newX = subTree[k - kEnd];
-            if (newX != 0)
-            {
-                svpBeginning = false;
-            }
+            // use subtree
+            x[k] = subtree[k - k_end];
+            if (x[k] != 0)
+                svpbeginning = false;
+
             for (int j = 0; j < k; ++j)
-            {
-                centerPartSum[j] -= newX * mut[j][k];
-            }
+                center_partsum[j] -= x[k] * mut[j][k];
         }
         else
         {
-            roundto(newX, newCenter); // newX = rint(newCenter) / lrint(newCenter)
-            center[k] = newCenter;
-            dist[k] = newDist;
-            dx[k] = ddx[k] = (((int)(newCenter >= newX) & 1) << 1) - 1;
+            if (dual)
+            {
+                for (int j = k + 1; j < k_end; ++j)
+                    newcenter -= alpha[j] * mut[k][j];
+            }
+            else
+            {
+                for (int j = k + 1; j < k_end; ++j)
+                    newcenter -= x[j] * mut[k][j];
+            }
+            roundto(x[k], newcenter); // newX = rint(newCenter) / lrint(newCenter)
+            center[k] = newcenter;
+            partdist[k] = newdist;
+            dx[k] = ddx[k] = (((int)(newcenter >= x[k]) & 1) << 1) - 1;
         }
-        x[k] = newX;
-        alpha[k] = newX - newCenter;
-        newDist += alpha[k] * alpha[k] * rdiag[k];
+        alpha[k] = x[k] - newcenter;
+        newdist += alpha[k] * alpha[k] * rdiag[k];
     }
-    if (!svpBeginning) 
+    if (!svpbeginning) 
     {
-        kMax = kEnd; // The last non-zero coordinate of x will not stay positive
+        k_max = k_end; // The last non-zero coordinate of x will not stay positive
     }
     else 
     {
-        kMax = 0;
-        x[0] = enumxt(1); // Excludes (0,...,0) from the enumeration
+        k_max = 0;
+        x[0] = 1; // Excludes (0,...,0) from the enumeration
     }
     ++k;
 }
 
-template<typename FT, int MaxDimension>
-template<bool dualenum, bool dosubsols>
-bool Enumeration<FT,MaxDimension>::enumerateLoop(enumf& newMaxDist) 
+template<typename FT>
+void enumeration<FT>::set_bounds()
 {
-    if (k >= kEnd)
-        return false;
-    
-    for (int i = 0; i < kEnd; ++i)
+    if (pruning_bounds.empty())
     {
-        centerLoopBg[i] = kEnd - 1;
-        centerPartSums[i][kEnd] = centerPartSum[i];
+        fill(&partdistbounds[0] + 0, &partdistbounds[0] + d, maxdist);
     }
-    
-    while (true)
+    else
     {
-        alpha[k] = x[k] - center[k];
-        enumf newDist = dist[k] + alpha[k]*alpha[k]*rdiag[k];
-        if (newDist <= maxDists[k])
-        {
-            if (dosubsols && newDist < subsolDists[k])
-            {
-                subsolDists[k] = newDist;
-                vector<FT> fx(d);
-                for (int i = k; i < d; ++i)
-                    fx[i] = x[i];
-                _evaluator.evalSubSol(k, fx, newDist);
-            }
-            
-            --k;
-            ++nodes;
-            if (k < 0)
-            {
-                newMaxDist = newDist;
-                return true;
-            }
-            
-            if (dualenum)
-            {
-                for (int j = centerLoopBg[k]; j > k; --j)
-                    centerPartSums[k][j] = centerPartSums[k][j+1] - alpha[j] * mut[k][j];
-            }
-            else
-            {
-                for (int j = centerLoopBg[k]; j > k; --j)
-                    centerPartSums[k][j] = centerPartSums[k][j+1] - x[j] * mut[k][j];
-            }
-            
-            enumf newCenter = centerPartSums[k][k+1];
-            if (k > 0)
-            {
-                centerLoopBg[k-1] = max(centerLoopBg[k-1], centerLoopBg[k]);
-            }
-            centerLoopBg[k] = k+1;
-            
-            center[k] = newCenter;
-            dist[k] = newDist;
-            roundto(x[k], newCenter);
-            dx[k] = ddx[k] = (((int)(newCenter >= x[k]) & 1) << 1) - 1;
-        }
-        else
-        {
-            if (!nextPosUp())
-                return false;
-        }
+        for (int i = 0; i < d; ++i)
+            partdistbounds[i] = pruning_bounds[i] * maxdist;
     }
 }
 
-template<typename FT, int MaxDimension>
-void Enumeration<FT,MaxDimension>::enumerate(enumf& maxDist, long normExp, const vector<double>& pruning) 
+template<typename FT>
+void enumeration<FT>::process_solution(enumf newmaxdist)
 {
-    vector<FT> fX(d);
-    enumf newMaxDist;
+    for (int j = 0; j < d; ++j)
+        fx[j] = x[j];
+    _evaluator.evalSol(fx, newmaxdist, maxdist);
+    
+    set_bounds();
+}
+
+template<typename FT>
+void enumeration<FT>::process_subsolution(int offset, enumf newdist)
+{
+    for (int j = 0; j < offset; ++j)
+        fx[j] = 0;
+    for (int j = offset; j < d; ++j)
+        fx[j] = x[j];
+    _evaluator.evalSubSol(k, fx, newdist);
+}
+
+template<typename FT>
+void enumeration<FT>::do_enumerate()
+{
     nodes = 0;
-    while (true)
-    {
-        if (pruning.empty())
-        {
-            fill(&maxDists[0] + 0, &maxDists[0] + d, maxDist);
-        }
-        else
-        {
-            for (int i = 0; i < d; ++i)
-                maxDists[i] = pruning[i] * maxDist;
-        }
 
-        if      ( dual &&  _evaluator.findsubsols && !enumerateLoop<true,true>(newMaxDist))
-            break;
-        else if (!dual &&  _evaluator.findsubsols && !enumerateLoop<false,true>(newMaxDist))
-            break;
-        else if ( dual && !_evaluator.findsubsols && !enumerateLoop<true,false>(newMaxDist))
-            break;
-        else if (!dual && !_evaluator.findsubsols && !enumerateLoop<false,false>(newMaxDist))
-            break;
+    set_bounds();
+    
+    if      ( dual &&  _evaluator.findsubsols) 
+        enumerate_loop<true,true>();
+    else if (!dual &&  _evaluator.findsubsols)
+        enumerate_loop<false,true>();
+    else if ( dual && !_evaluator.findsubsols)
+        enumerate_loop<true,false>();
+    else if (!dual && !_evaluator.findsubsols)
+        enumerate_loop<false,false>();
             
-        for (int j = 0; j < d; ++j)
-            fX[j] = x[j];
-            
-        _evaluator.evalSol(fX, newMaxDist, maxDist);
-        k = -1;
-        
-        nextPosUp();
-    }
 }
 
-template class Enumeration<FP_NR<double> >;
+template class enumeration<FP_NR<double> >;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class Enumeration<FP_NR<long double> >;
+template class enumeration<FP_NR<long double> >;
 #endif
 
 #ifdef FPLLL_WITH_QD
-template class Enumeration<FP_NR<dd_real> >;
+template class enumeration<FP_NR<dd_real> >;
 
-template class Enumeration<FP_NR<qd_real> >;
+template class enumeration<FP_NR<qd_real> >;
 #endif
 
 #ifdef FPLLL_WITH_DPE
-template class Enumeration<FP_NR<dpe_t> >;
+template class enumeration<FP_NR<dpe_t> >;
 #endif
 
-template class Enumeration<FP_NR<mpfr_t> >;
+template class enumeration<FP_NR<mpfr_t> >;
 
 FPLLL_END_NAMESPACE
