@@ -15,7 +15,6 @@
 
 #include <cstring>
 #include <fplll.h>
-#include "gso.cpp"
 
 using namespace std;
 using namespace fplll;

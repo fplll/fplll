@@ -54,11 +54,18 @@ llldiff_LDADD=libfplll.la
 test_SOURCES=test.cpp
 test_LDADD=libfplll.la
 
-libfplll_la_SOURCES=fplll.cpp fplll.h util.cpp util.h enum/topenum.cpp enum/topenum.h \
-	enum/evaluator.cpp enum/evaluator.h
-EXTRA_libfplll_la_SOURCES=gso.cpp gso.h lll.cpp lll.h wrapper.cpp wrapper.h \
-	bkz.cpp bkz.h enum/enumerate.cpp enum/enumerate.h svpcvp.cpp
-libfplll_la_LIBADD=-lgmp -lmpfr
+libfplll_la_SOURCES=fplll.cpp fplll.h \
+	util.cpp util.h \
+	enum/topenum.cpp enum/topenum.h \
+	enum/enumerate.cpp enum/enumerate.h \
+	enum/evaluator.cpp enum/evaluator.h \
+	lll.cpp lll.h \
+	wrapper.cpp wrapper.h \
+	bkz.cpp bkz.h \
+	gso.cpp gso.h
+
+EXTRA_libfplll_la_SOURCES= svpcvp.cpp
+libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD)
 libfplll_la_LDFLAGS=-no-undefined -version-info 1:0:1
 
 libfplllv_la_SOURCES=$(libfplll_la_SOURCES)
