@@ -1,6 +1,7 @@
 /* Copyright (C) 2008-2011 Xavier Pujol
    (C) 2015 Michael Walter.
-
+   (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions, subsolutions)
+   
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
    General Public License as published by the Free Software Foundation,
@@ -82,6 +83,5 @@ template bool enumeration_base::enumerate_loop<false,false>();
 template bool enumeration_base::enumerate_loop<false,true>();
 template bool enumeration_base::enumerate_loop<true,false>();
 template bool enumeration_base::enumerate_loop<true,true>();
-
 
 FPLLL_END_NAMESPACE
