@@ -29,6 +29,7 @@
 #define FPLLL_V3_COMPAT
 #define FPLLL_WITH_GETRUSAGE
 
+#include <cstddef>
 #include <iostream>
 #include <cstring>
 #include <cstdio>
@@ -214,7 +215,8 @@ enum BKZFlags {
   BKZ_BOUNDED_LLL = 0x10,
   BKZ_AUTO_ABORT = 0x20,
   BKZ_DUMP_GSO = 0x40,
-  BKZ_GH_BND = 0x80
+  BKZ_GH_BND = 0x80,
+  BKZ_SD_VARIANT = 0x100
 };
 
 enum HKZFlags {
