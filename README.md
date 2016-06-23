@@ -1,5 +1,7 @@
 # fplll #
 
+[![Build Status](https://travis-ci.org/fplll/fplll.svg?branch=master)](https://travis-ci.org/fplll/fplll)
+
 fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL [LLL82] is central to the code, hence the name.  
 
 
