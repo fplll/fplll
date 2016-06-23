@@ -220,7 +220,85 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
 }
 
 template <class FT>
-bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &par)
+bool BKZReduction<FT>::svp_preprocessing(int kappa, int block_size, const BKZParam &param)
+{
+  bool clean = true;
+
+  FPLLL_DEBUG_CHECK(param.strategies.size() > block_size);
+
+  auto &preproc = param.strategies[block_size].preprocessing_blocksizes;
+  for (auto it = preproc.begin(); it != preproc.end(); ++it)
+  {
+    int dummy_kappa_max = num_rows;
+    BKZParam prepar   = BKZParam(*it, param.strategies);
+    clean &= tour(0, dummy_kappa_max, prepar, kappa, kappa + block_size);
+  }
+
+  return clean;
+}
+
+template <class FT>
+bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vector<FT> &solution)
+{ 
+  vector<FT> x = solution;
+  
+  int d = block_size;
+  m.rowOpBegin(kappa, kappa + d);
+  // don't want to deal with negativ coefficients
+  for (int i = 0; i < d; i++) 
+  {
+    if (x[i] < 0) 
+    {
+      x[i].neg(x[i]);
+      for (int j = 0; j < m.b.getCols(); j++) 
+      {
+        m.b[i + kappa][j].neg(m.b[i + kappa][j]);
+      }
+    }
+  }
+  
+  // tree based gcd computation on x, performing operations also on b
+  int off = 1;
+  int k;
+  while (off < d) 
+  {
+    k = d - 1;
+    while(k - off >= 0) 
+    {
+      if (!(x[k].is_zero() && x[k - off].is_zero())) 
+      {
+        if (x[k] < x[k - off]) 
+        {
+          x[k].swap(x[k - off]);
+          m.b.swapRows(kappa + k, kappa + k - off);
+        }
+        
+        while (!x[k - off].is_zero()) 
+        {
+          while (x[k - off] <= x[k]) 
+          {
+            x[k] = x[k] - x[k - off];
+            m.b[kappa + k].sub(m.b[kappa + k - off]);
+          }
+          
+          x[k].swap(x[k - off]);
+          m.b.swapRows(kappa + k, kappa + k - off);
+        }
+      }
+      k -= 2 * off;
+    }
+    off *= 2;
+  }
+  
+  m.rowOpEnd(kappa, kappa + d);
+  if (!lll_obj.lll(kappa, kappa, kappa + d)) {
+    return set_status(lll_obj.status);
+  }
+  return false;
+}
+
+template <class FT>
+bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &par, bool dual)
 {
   bool clean = true;
 
@@ -233,22 +311,26 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
   clean &= (lll_obj.nSwaps == 0);
 
-  size_t trial                 = 0;
+  bool rerandomize                 = false;
   double remaining_probability = 1.0;
 
   while (remaining_probability > 1. - par.min_success_probability)
   {
-    if (trial > 0)
+    if (rerandomize)
     {
       rerandomize_block(kappa + 1, kappa + block_size, par.rerandomization_density);
     }
 
     clean &= svp_preprocessing(kappa, block_size, par);
-
+    
     long max_dist_expo;
-    FT max_dist = m.getRExp(kappa, kappa, max_dist_expo);
-    FT delta_max_dist;
-    delta_max_dist.mul(delta, max_dist);
+    int first = dual ? kappa + block_size - 1 : kappa;
+    FT max_dist = m.getRExp(first, first, max_dist_expo);
+    if (dual) {
+      max_dist.pow_si(max_dist, -1, GMP_RNDU);
+      max_dist_expo *= -1;
+    }
+    max_dist *= delta;
 
     if ((par.flags & BKZ_GH_BND) && block_size > 30)
     {
@@ -258,27 +340,21 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
     const Pruning &pruning = get_pruning(kappa, block_size, par);
 
-    vector<FT> &solCoord = evaluator.solCoord;
-    solCoord.clear();
-    Enumeration::enumerate(m, max_dist, max_dist_expo, evaluator, empty_sub_tree, empty_sub_tree,
-                           kappa, kappa + block_size, pruning.coefficients);
+    vector<FT>& sol_coord = evaluator.solCoord;
+    sol_coord.clear();
+    Enumeration<FT> Enum(m, evaluator);
+    Enum.enumerate( kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(), vector<enumxt>(),
+                    pruning.coefficients, dual);
+    nodes += Enum.getNodes();
 
-    nodes += Enumeration::getNodes();
-
-    if (solCoord.empty())
+    if (!sol_coord.empty())
     {
-      if (pruning.coefficients[0] == 1 && !(par.flags & BKZ_GH_BND))
-      {
-        throw std::runtime_error(RED_STATUS_STR[RED_ENUM_FAILURE]);
-      }
-    }
-
-    if (max_dist < delta_max_dist)
-    {
-      clean &= svp_postprocessing(kappa, block_size, solCoord);
+      clean &= dual ? dsvp_postprocessing(kappa, block_size, sol_coord) : svp_postprocessing(kappa, block_size, sol_coord);
+      rerandomize = false;
+    } else {
+      rerandomize = true;
     }
     remaining_probability *= (1 - pruning.probability);
-    trial += 1;
   }
   return clean;
 }
@@ -337,7 +413,7 @@ bool BKZReduction<FT>::trunc_dtour(const BKZParam &par, int min_row,
   
   for (int kappa = max_row - block_size; kappa > 0; --kappa)
   {
-    clean &= dsvp_reduction(kappa, block_size, par);
+    clean &= svp_reduction(kappa, block_size, par, true);
   }
 
   return clean;
@@ -357,7 +433,6 @@ bool BKZReduction<FT>::hkz(int &kappa_max, const BKZParam &param, int min_row, i
       kappa_max = kappa;
     }
   }
-  cerr << endl;
   
   return clean;
 }
@@ -393,6 +468,7 @@ template <class FT> bool BKZReduction<FT>::bkz()
   int flags        = param.flags;
   int final_status = RED_SUCCESS;
   nodes            = 0;
+  bool sd = (flags & BKZ_SD_VARIANT);
 
   if (flags & BKZ_DUMP_GSO)
   {
@@ -408,8 +484,7 @@ template <class FT> bool BKZReduction<FT>::bkz()
 
   BKZAutoAbort<FT> auto_abort(m, num_rows);
   
-  if ((flags & BKZ_SD_VARIANT) && 
-      !(flags & (BKZ_MAX_LOOPS | BKZ_MAX_TIME | BKZ_AUTO_ABORT))) 
+  if (sd && !(flags & (BKZ_MAX_LOOPS | BKZ_MAX_TIME | BKZ_AUTO_ABORT))) 
   {
     cerr << "Warning: SD Variant of BKZ requires explicit termination condition. Turning auto abort on!" << endl;
     flags |= BKZ_AUTO_ABORT;
@@ -417,7 +492,10 @@ template <class FT> bool BKZReduction<FT>::bkz()
 
   if (flags & BKZ_VERBOSE)
   {
-    cerr << "Entering BKZ:" << endl;
+    if (sd)
+      cerr << "Entering SD-BKZ:" << endl;
+    else
+      cerr << "Entering BKZ:" << endl;
     print_params(param, cerr);
     cerr << endl;
   }

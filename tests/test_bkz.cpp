@@ -63,7 +63,7 @@ int test_bkz(ZZ_mat<ZT> &A, const int block_size, FloatType float_type, int flag
 */
 
 template<class ZT>
-int test_bkz_param(ZZ_mat<ZT> &A, const int block_size) {
+int test_bkz_param(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_DEFAULT) {
 
   int status = 0;
 
@@ -81,6 +81,7 @@ int test_bkz_param(ZZ_mat<ZT> &A, const int block_size) {
   }
 
   BKZParam params(block_size, strategies);
+  params.flags = flags;
   // zero on success
   status = bkzReduction(&A, NULL, params, FT_DEFAULT, 53);
   if (status != RED_SUCCESS) {
@@ -100,12 +101,13 @@ int test_bkz_param(ZZ_mat<ZT> &A, const int block_size) {
 */
 
 template<class ZT>
-int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size) {
+int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_DEFAULT) {
 
   int status = 0;
 
   vector<Strategy> strategies = load_strategies_json("../strategies/default.json");
   BKZParam params(block_size, strategies);
+  params.flags = flags;
   // zero on success
   status = bkzReduction(&A, NULL, params, FT_DEFAULT, 53);
   if (status != RED_SUCCESS) {
@@ -168,27 +170,35 @@ int main(int argc, char *argv[]) {
 
   int status = 0;
   status |= test_filename<mpz_t>("lattices/dim55_in", 10, FT_DEFAULT, BKZ_DEFAULT|BKZ_AUTO_ABORT);
+  status |= test_filename<mpz_t>("lattices/dim55_in", 10, FT_DEFAULT, BKZ_SD_VARIANT|BKZ_AUTO_ABORT);
   status |= test_filename<mpz_t>("lattices/dim55_in", 20, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 128);
+  status |= test_filename<mpz_t>("lattices/dim55_in", 20, FT_MPFR, BKZ_SD_VARIANT|BKZ_AUTO_ABORT, 128);
 
   status |= test_int_rel<mpz_t>(50, 1000, 10, FT_DOUBLE, BKZ_DEFAULT|BKZ_AUTO_ABORT);
+  status |= test_int_rel<mpz_t>(50, 1000, 10, FT_DOUBLE, BKZ_SD_VARIANT|BKZ_AUTO_ABORT);
   status |= test_int_rel<mpz_t>(50, 1000, 15, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 100);
+  status |= test_int_rel<mpz_t>(50, 1000, 15, FT_MPFR, BKZ_SD_VARIANT|BKZ_AUTO_ABORT, 100);
 
   status |= test_int_rel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_DEFAULT|BKZ_AUTO_ABORT);
-  status |= test_int_rel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_DEFAULT|BKZ_AUTO_ABORT);
+  status |= test_int_rel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_SD_VARIANT|BKZ_AUTO_ABORT);
   status |= test_int_rel<mpz_t>(30, 2000, 10, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 53);
+  status |= test_int_rel<mpz_t>(30, 2000, 10, FT_MPFR, BKZ_SD_VARIANT|BKZ_AUTO_ABORT, 53);
 
 
   status |= test_filename<mpz_t>("lattices/example_in", 10);
+  status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DEFAULT, BKZ_SD_VARIANT);
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE);
-  status |= test_filename<mpz_t>("lattices/example_in", 10, FT_MPFR, BKZ_DEFAULT|BKZ_AUTO_ABORT, 212);
+  status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SD_VARIANT);
+  status |= test_filename<mpz_t>("lattices/example_in", 10, FT_MPFR, BKZ_SD_VARIANT|BKZ_AUTO_ABORT, 212);
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE);
-
+  status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SD_VARIANT);
+  
   if (status == 0) {
     cerr << "All tests passed." << endl;
     return 0;
   } else {
     return -1;
   }
-
+  
   return 0;
 }

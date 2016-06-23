@@ -235,7 +235,7 @@ int testDSVPReduce(ZZ_mat<ZT> &A, IntVect &b) {
   BKZReduction<Float> bkzObj(gso, lllObj, dummy);
   bool clean = true;
   
-  bkzObj.dsvp_reduction_Ex(0, d, dummy, clean);
+  bkzObj.svp_reduction_Ex(0, d, dummy, clean, true);
   status = bkzObj.status;
   if (status != RED_SUCCESS) {
     cerr << "Failure: " << getRedStatusStr(status) << endl;

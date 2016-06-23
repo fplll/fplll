@@ -92,28 +92,13 @@ public:
      ``_ex`` variant is exception handling.
   */
 
-  bool svp_reduction(int kappa, int block_size, const BKZParam &param);
+  bool svp_reduction(int kappa, int block_size, const BKZParam &param, bool dual = false);
 
-  bool svp_reduction_Ex(int kappa, int block_size, const BKZParam &param, bool &clean)
+  bool svp_reduction_Ex(int kappa, int block_size, const BKZParam &param, bool &clean, bool dual = false)
   {
     try
     {
-      clean = svp_reduction(kappa, block_size, param);
-      return true;
-    }
-    catch (RedStatus &e)
-    {
-      return set_status(e);
-    }
-  }
-  
-  bool dsvp_reduction(int kappa, int block_size, const BKZParam &par);
-  
-  bool dsvp_reduction_Ex(int kappa, int block_size, const BKZParam &param, bool &clean)
-  {
-    try
-    {
-      clean = dsvp_reduction(kappa, block_size, param);
+      clean = svp_reduction(kappa, block_size, param, dual);
       return true;
     }
     catch (RedStatus &e)
@@ -195,151 +180,6 @@ private:
   FT max_dist, delta_max_dist;
   double cputime_start;
 };
-
-template <class FT>
-bool BKZReduction<FT>::svp_preprocessing(int kappa, int block_size, const BKZParam &param)
-{
-  bool clean = true;
-
-  FPLLL_DEBUG_CHECK(param.strategies.size() > block_size);
-
-  auto &preproc = param.strategies[block_size].preprocessing_blocksizes;
-  for (auto it = preproc.begin(); it != preproc.end(); ++it)
-  {
-    int dummy_kappa_max = num_rows;
-    BKZParam prepar   = BKZParam(*it, param.strategies);
-    clean &= tour(0, dummy_kappa_max, prepar, kappa, kappa + block_size);
-  }
-
-  return clean;
-}
-
-template <class FT>
-bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vector<FT> &solution)
-{ 
-  vector<FT> x = solution;
-  
-  int d = block_size;
-  m.rowOpBegin(kappa, kappa + d);
-  // don't want to deal with negativ coefficients
-  for (int i = 0; i < d; i++) 
-  {
-    if (x[i] < 0) 
-    {
-      x[i].neg(x[i]);
-      for (int j = 0; j < m.b.getCols(); j++) 
-      {
-        m.b[i + kappa][j].neg(m.b[i + kappa][j]);
-      }
-    }
-  }
-  
-  // tree based gcd computation on x, performing operations also on b
-  int off = 1;
-  int k;
-  while (off < d) 
-  {
-    k = d - 1;
-    while(k - off >= 0) 
-    {
-      if (!(x[k].is_zero() && x[k - off].is_zero())) 
-      {
-        if (x[k] < x[k - off]) 
-        {
-          x[k].swap(x[k - off]);
-          m.b.swapRows(kappa + k, kappa + k - off);
-        }
-        
-        while (!x[k - off].is_zero()) 
-        {
-          while (x[k - off] <= x[k]) 
-          {
-            x[k] = x[k] - x[k - off];
-            m.b[kappa + k].sub(m.b[kappa + k - off]);
-          }
-          
-          x[k].swap(x[k - off]);
-          m.b.swapRows(kappa + k, kappa + k - off);
-        }
-      }
-      k -= 2 * off;
-    }
-    off *= 2;
-  }
-  
-  m.rowOpEnd(kappa, kappa + d);
-  if (!lll_obj.lll(kappa, kappa, kappa + d)) {
-    return set_status(lll_obj.status);
-  }
-  return false;
-}
-
-template <class FT>
-bool BKZReduction<FT>::dsvp_reduction(int kappa, int block_size, const BKZParam &par)
-{
-  bool clean = true;
-
-  int lll_start = (par.flags & BKZ_BOUNDED_LLL) ? kappa : 0;
-
-  if (!lll_obj.lll(lll_start, kappa, kappa + block_size))
-  {
-    throw lll_obj.status;
-  }
-
-  clean &= (lll_obj.nSwaps == 0);
-
-  size_t trial                 = 0;
-  double remaining_probability = 1.0;
-
-  while (remaining_probability > 1. - par.min_success_probability)
-  {
-    if (trial > 0)
-    {
-      rerandomize_block(kappa, kappa + block_size - 1, par.rerandomization_density);
-    }
-
-    clean &= svp_preprocessing(kappa, block_size, par);
-
-    long max_dist_expo;
-    FT max_dist = m.getRExp(kappa + block_size - 1, kappa + block_size - 1, max_dist_expo);
-    max_dist.pow_si(max_dist, -1);
-    max_dist_expo *= -1;
-    FT delta_max_dist;
-    delta_max_dist = delta * max_dist;
-
-    if ((par.flags & BKZ_GH_BND) && block_size > 30)
-    {
-      FT root_det = get_root_det(m, kappa, kappa + block_size);
-      root_det.pow_si(root_det, -1);
-      compute_gaussian_heuristic(max_dist, max_dist_expo, block_size, root_det, par.gh_factor);
-    }
-
-    const Pruning &pruning = get_pruning(kappa, block_size, par);
-
-    vector<FT> &solCoord = evaluator.solCoord;
-    solCoord.clear();
-    Enumeration<FT> Enum(m, evaluator);
-    Enum.enumerate( kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(), vector<enumxt>(),
-                    pruning.coefficients, true);
-    nodes += Enum.getNodes();
-
-    if (solCoord.empty())
-    {
-      if (pruning.coefficients[0] == 1 && !(par.flags & BKZ_GH_BND))
-      {
-        throw RED_ENUM_FAILURE;
-      }
-    }
-
-    if (max_dist < delta_max_dist)
-    {
-      clean &= dsvp_postprocessing(kappa, block_size, solCoord);
-    }
-    remaining_probability *= (1 - pruning.probability);
-    trial += 1;
-  }
-  return clean;
-}
 
 FPLLL_END_NAMESPACE
 
