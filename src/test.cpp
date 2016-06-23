@@ -19,38 +19,47 @@
 using namespace std;
 using namespace fplll;
 
+
 int main(void) {
-  mpz_t q;
-  ZZ_mat<mpz_t> M(20, 20);
-  ZZ_mat<mpz_t> U(0, 0);
-  M.gen_uniform(3);
-  //mpz_init_set_str(q, "831", 16); 
-  M[2][2].set(q);
-  cout << M << endl;
-  MatGSO<Z_NR<mpz_t>, FP_NR<double> > gso(M,U,U,GSO_DEFAULT);
-  gso.updateGSO();
+#define N 56
 
 
-  cout << M << endl;
-  mpz_clear(q);
   Pruner<FP_NR<double>> pru;
-  pru.load_basis_shape<Z_NR<mpz_t>,FP_NR<double>>(gso);
-  double pr[20];
 
-  for (int i = 0; i < 20; ++i)
+  double rs[N];
+  double dcost[N];
+  double pr[N];
+  
+
+
+  for (int i = 0; i < N; ++i)
   {
-    pr[i] = 1;
+    rs[i] = pow(1.06, - i);
+    pr[i] = 1.;
   }
 
-  cerr << pru.get_svp_success_proba(pr) << endl;
 
-  for (int i = 2; i < 20; ++i)
+  pru.enumeration_radius = .85;
+  pru.target_success_proba = .50;
+  pru.preproc_cost = 1e10;
+
+  pru.load_basis_shape(N, rs);
+
+  cerr << "un-pruned cost" << pru.get_cost(pr) << endl;
+
+
+  pru.optimize_pruning_coeffs(pr);
+  cerr << "Success Proba " << pru.get_svp_success_proba(pr) << endl;
+  cerr << "Cost " << pru.get_cost(pr) << endl;
+
+
+  for (int i = 0; i < N; ++i)
   {
-    pr[i] = .25;
+    cerr << pr[i] << ", ";
   }
-
-  cerr << pru.get_svp_success_proba(pr) << endl;
+  cerr << endl;
 
 
   return 0;
 }
+
