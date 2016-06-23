@@ -201,19 +201,46 @@ bool Evaluator<Float>::getMaxErrorAux(const Float& maxDist,
 }
 
 void FastEvaluator<Float>::evalSol(const FloatVect& newSolCoord,
-        const enumf& newPartialDist, enumf& maxDist, long normExp) {
+        const enumf& newPartialDist, enumf& maxDist) 
+{
   // Assumes that the solution is valid
-  if (evalMode == EVALMODE_SV) {
+  if (evalMode == EVALMODE_SV) 
+  {
+    if (max_aux_sols != 0 && !solCoord.empty())
+    {
+      aux_solCoord.emplace_front( std::move(solCoord) );
+      aux_solDist.emplace_front( solDist );
+      if (aux_solCoord.size() > max_aux_sols)
+      {
+        aux_solCoord.pop_back();
+        aux_solDist.pop_back();
+      }
+    }
     solCoord = newSolCoord;
-    maxDist = newPartialDist;
+    maxDist = solDist = newPartialDist;
     lastPartialDist = newPartialDist; // Exact conversion
     lastPartialDist.mul_2si(lastPartialDist, normExp);
   }
-  else if (evalMode == EVALMODE_PRINT) {
+  else if (evalMode == EVALMODE_PRINT) 
+  {
     cout << newSolCoord << "\n";
   }
   newSolFlag = true;
   solCount++;
+}
+
+void FastEvaluator<Float>::evalSubSol(int offset, const FloatVect& newSubSolCoord,
+        const enumf& subDist) 
+{
+  sub_solCoord.resize( std::max(sub_solCoord.size(), std::size_t(offset+1)) );
+  sub_solDist.resize( sub_solCoord.size(), -1.0);
+  if (sub_solDist[offset] == -1.0 || subDist < sub_solDist[offset])
+  {
+    sub_solCoord[offset] = newSubSolCoord;
+    for (int i = 0; i < offset; ++i)
+      sub_solCoord[offset][i] = 0;
+    sub_solDist[offset] = subDist;
+  }
 }
 
 bool FastEvaluator<Float>::getMaxError(Float& maxError) {
@@ -241,7 +268,8 @@ bool ExactEvaluator::getMaxError(Float& maxError) {
 }
 
 void ExactEvaluator::evalSol(const FloatVect& newSolCoord,
-        const enumf& newPartialDist, enumf& maxDist, long normExp) {
+        const enumf& newPartialDist, enumf& maxDist) 
+{
   int n = matrix.getCols();
   Integer newSolDist, coord;
   IntVect newSol;
@@ -262,12 +290,25 @@ void ExactEvaluator::evalSol(const FloatVect& newSolCoord,
 
   if (intMaxDist < 0 || newSolDist <= intMaxDist) {
     if (evalMode == EVALMODE_SV) {
+      if (max_aux_sols != 0 && !solCoord.empty())
+      {
+        aux_solCoord.emplace_front( std::move(solCoord) );
+        aux_solDist.emplace_front( solDist );
+        aux_solintDist.emplace_front( intMaxDist );
+        if (aux_solCoord.size() > max_aux_sols)
+        {
+          aux_solCoord.pop_back();
+          aux_solDist.pop_back();
+          aux_solintDist.pop_back();
+        }
+      }
       // Updates the stored solution
       lastPartialDist = newPartialDist;
       lastPartialDist.mul_2si(lastPartialDist, normExp);
       solCoord = newSolCoord;
       intMaxDist = newSolDist;
-      updateMaxDist(maxDist, normExp);
+      updateMaxDist(maxDist);
+      solDist = maxDist;
     }
     else if (evalMode == EVALMODE_PRINT) {
       cout << newSolCoord << "\n";
@@ -277,8 +318,49 @@ void ExactEvaluator::evalSol(const FloatVect& newSolCoord,
   }
 }
 
+void ExactEvaluator::evalSubSol(int offset, const FloatVect& newSubSolCoord,
+        const enumf& subDist) 
+{
+  sub_solCoord.resize( std::max(sub_solCoord.size(), std::size_t(offset+1)) );
+  sub_solDist.resize( sub_solCoord.size(), -1.0 );
+  Integer minusone;
+  minusone = -1;
+  sub_solintDist.resize( sub_solCoord.size(), minusone);
+
+  int n = matrix.getCols();
+  Integer newSolDist, coord;
+  IntVect newSol;
+
+  genZeroVect(newSol, n);
+  newSolDist = 0;
+
+  // Computes the distance between x[[offset,d)] and zero
+  for (int i = offset; i < d; i++) 
+  {
+    coord.set_f(newSubSolCoord[i]);
+    for (int j = 0; j < n; j++)
+      newSol[j].addmul(coord, matrix(i, j));
+  }
+  for (int i = 0; i < n; i++) 
+  {
+    coord = newSol[i];
+    newSolDist.addmul(coord, coord);
+  }
+
+  if (sub_solintDist[offset] < 0 || newSolDist <= sub_solintDist[offset]) 
+  {
+    sub_solCoord[offset] = newSubSolCoord;
+    for (int i = 0; i < offset; ++i)
+      sub_solCoord[offset][i] = 0;
+    sub_solDist[offset] = subDist;
+    sub_solintDist[offset] = newSolDist;
+  }
+}
+
+
+
 // Decreases the bound of the algorithm when a solution is found
-void ExactEvaluator::updateMaxDist(enumf& maxDist, long normExp) {
+void ExactEvaluator::updateMaxDist(enumf& maxDist) {
   Float fMaxDist, maxDE;
   fMaxDist.set_z(intMaxDist, GMP_RNDU);
   bool result = getMaxErrorAux(fMaxDist, true, maxDE);
