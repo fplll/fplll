@@ -216,7 +216,7 @@ bool BKZReduction<FT>::svp_preprocessing(int kappa, int block_size, const BKZPar
   for (auto it = preproc.begin(); it != preproc.end(); ++it)
   {
     int dummy_kappa_max = num_rows;
-    BKZParam prepar   = BKZParam(*it, param.strategies);
+    BKZParam prepar = BKZParam(*it, param.strategies, LLL_DEF_DELTA, BKZ_GH_BND);
     clean &= tour(0, dummy_kappa_max, prepar, kappa, kappa + block_size);
   }
 
