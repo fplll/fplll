@@ -11,6 +11,18 @@ It also includes a floating-point implementation of the Kannan-Fincke-Pohst algo
 
 fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of the License, or, at your option, any later version) as published by the Free Software Foundation.
 
+### How to cite ###
+
+	@unpublished{fplll,
+	    Note = {Available at \url{https://github.com/fplll/fplll}},
+	    Title = {{fplll}, a lattice reduction library},
+	    Author = {The {FPLLL} development team},
+	    Year = 2016,
+	    url = {https://github.com/fplll/fplll}
+	}
+
+
+
 ## Dependencies ##
 
 ### Required ###
@@ -288,16 +300,6 @@ Thiemo Seufer, Allan Steel, Gilles Villard and Paul Zimmermann for their support
 suggestions that helped debugging and improving this code.
 
 - This project has been supported by ERC Starting Grant ERC-2013-StG-335086-LATTAC.
-
-### How to cite ###
-
-	@unpublished{fplll,
-	    Note = {Available at \url{https://github.com/fplll/fplll}},
-	    Title = {{fplll}, a lattice reduction library},
-	    Author = {The {FPLLL} development team},
-	    Year = 2016,
-	    url = {https://github.com/fplll/fplll}
-	}
 
 ## New releases and bug reports ##
 
