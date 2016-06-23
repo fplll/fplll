@@ -253,7 +253,6 @@ Math. Program. 66: 181-199 (1994)
 fplll is currently maintained by:
 
 - Martin Albrecht, <martinralbrecht@googlemail.com>
-- Damien Stehle, <damien.stehle@gmail.com>
 - Shi Bai, <shi.bai@gmail.com>
 
 ### Contributors ###
@@ -262,9 +261,12 @@ The following people have contributed to fplll:
 
 - Martin Albrecht
 - Shi Bai
+- Guillaume Bonnoron
 - David Cade
+- Leo Ducas
 - Xavier Pujol
 - Damien Stehle
+- Marc Stevens
 - Joop van de Pol
 - Michael Walter
 
@@ -285,12 +287,16 @@ Christoph Lauter, Andrew Novocin, Willem Jan Palenstijn, Patrick Pelissier, Mich
 Thiemo Seufer, Allan Steel, Gilles Villard and Paul Zimmermann for their support and for many
 suggestions that helped debugging and improving this code.
 
+- This project has been supported by ERC Starting Grant ERC-2013-StG-335086-LATTAC.
+
 ### How to cite ###
 
 	@unpublished{fplll,
-	    Note = {Available at \url{http://perso.ens-lyon.fr/damien.stehle}},
-	    Title = {{fplll-4.0}, a floating-point {LLL} implementation},
-	    Author = {Albrecht, M. and Bai, S. and Cad{\'e}, D. and Pujol, X. and Stehl{\'e}, D.}
+	    Note = {Available at \url{https://github.com/fplll/fplll}},
+	    Title = {{fplll}, a lattice reduction library},
+	    Author = {The {FPLLL} development team},
+	    Year = 2016,
+	    url = {https://github.com/fplll/fplll}
 	}
 
 ## New releases and bug reports ##
