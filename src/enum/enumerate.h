@@ -52,7 +52,8 @@ private:
     enumf mut[DMAX][DMAX];
     enumf centerPartSums[DMAX][DMAX];
     array<enumf, DMAX> rdiag, dist, center, centerPartSum, maxDists, alpha;
-    array<enumxt, DMAX> x, dx, ddx, centerLoopBg;
+    array<enumxt, DMAX> x, dx, ddx;
+    array<int, DMAX> centerLoopBg;
     array<enumf, DMAX> subsolDists;
     bool findbettersubsols;
     
@@ -82,7 +83,7 @@ private:
     void prepareEnumeration(enumf maxDist, const vector<enumxt>& subTree, bool solvingSVP);
   
     template<bool dualenum, bool dosubsols>
-    bool enumerateLoop(enumf& newMaxDist, int& newKMax);
+    bool enumerateLoop(enumf& newMaxDist);
 
     void enumerate(enumf& maxDist, long normExp, const vector<double>& pruning);
     

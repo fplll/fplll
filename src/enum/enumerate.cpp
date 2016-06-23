@@ -30,7 +30,7 @@ void Enumeration<FT,MaxDimension>::enumerate(int first, int last, FT& fMaxDist, 
     if (last == -1)
         last = _gso.d;
     d = last - first;
-    FPLLL_CHECK(d <= DMAX, "enumerate: dimension is too high");
+    FPLLL_CHECK(d < DMAX, "enumerate: dimension is too high");
     FPLLL_CHECK((solvingSVP || !dual), "CVP for dual not implemented! What does that even mean? ");
     FPLLL_CHECK((subTree.empty() || !dual), "Subtree enumeration for dual not implemented!");
 
@@ -158,7 +158,7 @@ void Enumeration<FT,MaxDimension>::prepareEnumeration(enumf maxDist, const vecto
 
 template<typename FT, int MaxDimension>
 template<bool dualenum, bool dosubsols>
-bool Enumeration<FT,MaxDimension>::enumerateLoop(enumf& newMaxDist, int& newKMax) 
+bool Enumeration<FT,MaxDimension>::enumerateLoop(enumf& newMaxDist) 
 {
     if (k >= kEnd)
         return false;
@@ -189,7 +189,6 @@ bool Enumeration<FT,MaxDimension>::enumerateLoop(enumf& newMaxDist, int& newKMax
             if (k < 0)
             {
                 newMaxDist = newDist;
-                newKMax = kMax;
                 return true;
             }
             
@@ -242,13 +241,13 @@ void Enumeration<FT,MaxDimension>::enumerate(enumf& maxDist, long normExp, const
                 maxDists[i] = pruning[i] * maxDist;
         }
 
-        if      ( dual &&  _evaluator.findsubsols && !enumerateLoop<true,true>(newMaxDist, kMax))
+        if      ( dual &&  _evaluator.findsubsols && !enumerateLoop<true,true>(newMaxDist))
             break;
-        else if (!dual &&  _evaluator.findsubsols && !enumerateLoop<false,true>(newMaxDist, kMax))
+        else if (!dual &&  _evaluator.findsubsols && !enumerateLoop<false,true>(newMaxDist))
             break;
-        else if ( dual && !_evaluator.findsubsols && !enumerateLoop<true,false>(newMaxDist, kMax))
+        else if ( dual && !_evaluator.findsubsols && !enumerateLoop<true,false>(newMaxDist))
             break;
-        else if (!dual && !_evaluator.findsubsols && !enumerateLoop<false,false>(newMaxDist, kMax))
+        else if (!dual && !_evaluator.findsubsols && !enumerateLoop<false,false>(newMaxDist))
             break;
             
         for (int j = 0; j < d; ++j)
