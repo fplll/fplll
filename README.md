@@ -276,10 +276,11 @@ The following people have contributed to fplll:
 - Guillaume Bonnoron
 - David Cade
 - Leo Ducas
+- Joop van de Pol
 - Xavier Pujol
 - Damien Stehle
 - Marc Stevens
-- Joop van de Pol
+- Gilles Villard
 - Michael Walter
 
 Please add yourself here if you make a contribution.
@@ -303,7 +304,7 @@ suggestions that helped debugging and improving this code.
 
 ## New releases and bug reports ##
 
-New releases will be announced on [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel)
+New releases will be announced on [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel).
 
 Bug reports may be sent to [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel) or via
 [https://github.com/fplll/fplll/issues](https://github.com/fplll/fplll/issues). 
