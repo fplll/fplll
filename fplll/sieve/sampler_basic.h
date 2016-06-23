@@ -17,7 +17,7 @@ class KleinSampler {
   public:
   bool verbose;
 
-  KleinSampler (ZZ_mat<ZT>& B, bool verbose);
+  KleinSampler (ZZ_mat<ZT>& B, bool verbose, int seed);
   ~KleinSampler();
   void print_param ();
   Z_NR<ZT> sampleZ(F c, F s);
@@ -33,7 +33,6 @@ class KleinSampler {
    */
   int nr, nc;
   double logn2;
-  gmp_randstate_t state;
   ZZ_mat<ZT> b, u, uInv;
   MatGSO<Z_NR<ZT>, F> *pGSO;
   Matrix<Z_NR<ZT> > g;

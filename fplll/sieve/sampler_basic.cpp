@@ -11,7 +11,7 @@
 
 
 template<class ZT, class F>
-KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B, bool ver)
+KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B, bool ver, int seed)
 {
   /* set dimensions */
   b = B;
@@ -41,16 +41,15 @@ KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B, bool ver)
   }
 
   /* verbose */
+  srand (seed);
   set_verbose(ver);
   print_param();
-  gmp_randinit_default(state);
 }
 
 
 template<class ZT, class F>
 KleinSampler<ZT, F>::~KleinSampler ()
 {
-  gmp_randclear(state);
   delete pGSO;
   delete s_prime;
 }
@@ -138,7 +137,6 @@ NumVect<Z_NR<ZT> > KleinSampler<ZT, F>::sample ()
   Z_NR<ZT> tmpz;
 
   // while(1) {
-    
     for (int i = 0; i < nr; i++) {
       ci[i] = 0;
       vec[i] = 0;

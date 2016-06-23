@@ -16,7 +16,7 @@ template<class ZT, class F>
 
 public:
   
-  Gauss_sieve (ZZ_mat<ZT>& B, int alg, bool ver);
+  Gauss_sieve (ZZ_mat<ZT>& B, int alg, bool ver, int seed);
   ~Gauss_sieve ();
 
   bool run_2sieve ();

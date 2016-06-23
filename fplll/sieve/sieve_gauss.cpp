@@ -20,7 +20,7 @@
  * constructor
  */
 template<class ZT, class F>
-Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg, bool ver)
+Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
 {
   
   /* stats */
@@ -67,7 +67,7 @@ Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg, bool ver)
   free_list_queue();
 
   /* initialize sampler */
-  Sampler = new KleinSampler<ZT, F> (b, verbose);
+  Sampler = new KleinSampler<ZT, F> (b, verbose, seed);
   
   /* initialize list */
   init_list ();

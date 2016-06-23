@@ -34,9 +34,9 @@ main_usage (char *myself) {
  * run sieve
  */
 template<class ZT>
-int main_run_sieve (ZZ_mat<ZT> B, Z_NR<ZT> goal_norm, int alg, int ver)
+int main_run_sieve (ZZ_mat<ZT> B, Z_NR<ZT> goal_norm, int alg, int ver, int seed)
 {
-  Gauss_sieve<ZT, FP_NR<double> > gsieve(B, alg, ver);
+  Gauss_sieve<ZT, FP_NR<double> > gsieve(B, alg, ver, seed);
   gsieve.set_goal_norm2 (goal_norm);
   if (gsieve.alg == 3)
     gsieve.run_3sieve();
@@ -57,7 +57,7 @@ int main (int argc, char** argv)
   char* input_file_name = NULL;
   char* goal_norm_s = NULL;
   bool flag_verbose = false, flag_file = false;
-  int option, alg, dim = 10;
+  int option, alg, dim = 10, seed=0;
 
   dot_time = 0;
   dot_num = 0;
@@ -69,7 +69,7 @@ int main (int argc, char** argv)
       main_usage(argv[0]);
       return -1;
   }
-  while((option = getopt (argc, argv, "a:f:r:t:v")) != -1) {
+  while((option = getopt (argc, argv, "a:f:r:t:v:s:")) != -1) {
     switch (option) {
     case 'a':
       alg = atoi(optarg);
@@ -84,6 +84,9 @@ int main (int argc, char** argv)
     case 'r':
       dim = atoi(optarg);
       flag_file = false;
+      break;
+    case 's':
+      seed = atoi(optarg);
       break;
     case 'v':
       flag_verbose = true;
@@ -166,11 +169,11 @@ int main (int argc, char** argv)
     for (int i = 0; i < B.getRows(); i ++)
       for (int j = 0; j < B.getCols(); j ++)
         B2(i, j) = B(i, j).get_si();
-    main_run_sieve<long>(B2, goal_norm_lt, alg, flag_verbose);
+    main_run_sieve<long>(B2, goal_norm_lt, alg, flag_verbose, seed);
   }
   else
 #endif
-    main_run_sieve<mpz_t>(B, goal_norm, alg, flag_verbose);
+    main_run_sieve<mpz_t>(B, goal_norm, alg, flag_verbose, seed);
   
   etime = clock();
   secs = (etime - stime) / (double) CLOCKS_PER_SEC;
