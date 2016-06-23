@@ -146,6 +146,11 @@ int main(int argc, char* argv[]) {
 	      m.gen_qary_withq(k,b);
 	      break;
 	    }
+	  case 'p':
+	    {
+	      m.gen_qary_prime(k,b);
+	      break;
+	    }
 	  }
 	break;
       }

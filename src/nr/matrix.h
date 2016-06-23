@@ -325,6 +325,7 @@ public:
 
   void gen_qary(int k, int bits);
   void gen_qary_withq(int k, int q);
+  void gen_qary_prime(int k, int bits);
 
   /** Construct a lower triangular matrices with specified diagonal coefficients
 and random sub-diagonal coefficients.

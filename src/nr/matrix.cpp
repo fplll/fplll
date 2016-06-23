@@ -231,7 +231,7 @@ int Matrix<T>::read()
 
 /* ZZ_mat */
 
-template <class ZT> inline void ZZ_mat<ZT>::gen_intrel(int bits) {
+template<class ZT> inline void ZZ_mat<ZT>::gen_intrel(int bits) {
   if (c != r + 1) {
     FPLLL_ABORT("gen_intrel called on an ill-formed matrix");
     return;
@@ -521,6 +521,38 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_qary(int k, int bits) {
   Z_NR<ZT> q;
 
   q.randb(bits);
+
+  for (i = 0; i < k; i++) 
+    for (j = k; j < d; j++)
+      matrix[i][j].randm(q);
+
+  for (i = 0; i < k; i++) 
+    for (j = 0; j < k; j++)
+      matrix[i][j] = 0;
+
+  for (i = 0; i < k; i++) 
+    matrix[i][i] = q;
+
+  for (i = k; i < d; i++)
+    for (j = k; j < d; j++)
+      matrix[i][j] = 0;
+
+  for (i = k; i < d; i++)
+    matrix[i][i] = 1;
+}
+
+template <class ZT> inline void ZZ_mat<ZT>::gen_qary_prime(int k, int bits) {
+
+  int i, j;
+  int d = r;
+  if (c != r || k > r) {
+    FPLLL_ABORT("gen_qary called on an ill-formed matrix");
+    return;
+  }
+  Z_NR<ZT> q;
+
+  q.randb(bits);
+  q.nextprime(q);
 
   for (i = 0; i < k; i++) 
     for (j = k; j < d; j++)

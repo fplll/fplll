@@ -274,6 +274,10 @@ inline void Z_NR<mpz_t>::randm_si(const Z_NR<mpz_t>& max) {
     mpz_neg(data, data);
 }
 
+template<>
+inline void Z_NR<mpz_t>::nextprime(const Z_NR<mpz_t>& nbr) {
+  mpz_nextprime(data, nbr.data);
+}
 
 /* FPLLL_V3_COMPAT */
 #ifdef FPLLL_V3_COMPAT
