@@ -59,7 +59,7 @@ int bkzReduction(IntMatrix* B, IntMatrix* U, const BKZParam& param, FloatType fl
 int bkzReduction(IntMatrix& b, int blockSize, int flags = BKZ_DEFAULT, FloatType floatType=FT_DEFAULT, int precision=0);
 int bkzReduction(IntMatrix& b, IntMatrix& u, int blockSize, int flags = BKZ_DEFAULT, FloatType floatType=FT_DEFAULT, int precision=0);
 
-int hkzReduction(IntMatrix& b, int flags = HKZ_DEFAULT);
+int hkzReduction(IntMatrix& b, int flags = HKZ_DEFAULT, FloatType floatType=FT_DEFAULT, int precision=0);
 
 /**
  * Returns the string corresponding to an error code of LLL/BKZ.

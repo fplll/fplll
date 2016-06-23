@@ -147,7 +147,7 @@ template<>
 int hkz(Options& o, ZZ_mat<mpz_t>& b) {
   int flags = 0;
   if (o.verbose) flags |= HKZ_VERBOSE;
-  int status = hkzReduction(b, flags);
+  int status = hkzReduction(b, flags, o.floatType, o.precision);
   cout << b << endl;
   if (status != RED_SUCCESS) {
     cerr << "Failure: " << getRedStatusStr(status) << endl;
