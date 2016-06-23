@@ -55,6 +55,8 @@ void Enumeration<FT,MaxDimension>::enumerate(int first, int last, FT& fMaxDist, 
     fMaxDistNorm.mul_2si(fMaxDist, dual ? normExp-maxDistExpo : maxDistExpo-normExp);
     enumf maxDist = fMaxDistNorm.get_d(GMP_RNDU);
 
+    _evaluator.set_normexp(normExp);
+
     if (dual)
     {
         for (int i = 0; i < d; ++i)
@@ -89,6 +91,9 @@ void Enumeration<FT,MaxDimension>::enumerate(int first, int last, FT& fMaxDist, 
             }
         }
     }
+
+    if (findbettersubsols)
+        subsolDists = rdiag;
     
     prepareEnumeration(maxDist, subTree, solvingSVP);
     enumerate(maxDist, normExp, pruning);
@@ -134,8 +139,6 @@ void Enumeration<FT,MaxDimension>::prepareEnumeration(enumf maxDist, const vecto
             center[k] = newCenter;
             dist[k] = newDist;
             dx[k] = ddx[k] = (((int)(newCenter >= newX) & 1) << 1) - 1;
-//            dx[k] = (enumxt)(0);
-//            ddx[k] = newCenter < newX ? enumxt(1) : enumxt(-1);
         }
         x[k] = newX;
         alpha[k] = newX - newCenter;
@@ -154,7 +157,7 @@ void Enumeration<FT,MaxDimension>::prepareEnumeration(enumf maxDist, const vecto
 }
 
 template<typename FT, int MaxDimension>
-template<bool dualenum>
+template<bool dualenum, bool dosubsols>
 bool Enumeration<FT,MaxDimension>::enumerateLoop(enumf& newMaxDist, int& newKMax) 
 {
     if (k >= kEnd)
@@ -172,6 +175,15 @@ bool Enumeration<FT,MaxDimension>::enumerateLoop(enumf& newMaxDist, int& newKMax
         enumf newDist = dist[k] + alpha[k]*alpha[k]*rdiag[k];
         if (newDist <= maxDists[k])
         {
+            if (dosubsols && newDist < subsolDists[k])
+            {
+                subsolDists[k] = newDist;
+                vector<FT> fx(d);
+                for (int i = k; i < d; ++i)
+                    fx[i] = x[i];
+                _evaluator.evalSubSol(k, fx, newDist);
+            }
+            
             --k;
             ++nodes;
             if (k < 0)
@@ -229,21 +241,20 @@ void Enumeration<FT,MaxDimension>::enumerate(enumf& maxDist, long normExp, const
             for (int i = 0; i < d; ++i)
                 maxDists[i] = pruning[i] * maxDist;
         }
-        if (dual)
-        {
-            if (!enumerateLoop<true>(newMaxDist, kMax))
-                break;
-        }
-        else
-        {
-            if (!enumerateLoop<false>(newMaxDist, kMax))
-                break;
-        }
+
+        if      ( dual &&  _evaluator.findsubsols && !enumerateLoop<true,true>(newMaxDist, kMax))
+            break;
+        else if (!dual &&  _evaluator.findsubsols && !enumerateLoop<false,true>(newMaxDist, kMax))
+            break;
+        else if ( dual && !_evaluator.findsubsols && !enumerateLoop<true,false>(newMaxDist, kMax))
+            break;
+        else if (!dual && !_evaluator.findsubsols && !enumerateLoop<false,false>(newMaxDist, kMax))
+            break;
             
         for (int j = 0; j < d; ++j)
             fX[j] = x[j];
             
-        _evaluator.evalSol(fX, newMaxDist, maxDist, normExp);
+        _evaluator.evalSol(fX, newMaxDist, maxDist);
         k = -1;
         
         nextPosUp();

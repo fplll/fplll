@@ -89,8 +89,12 @@ static bool enumerateSVP(int d, MatGSO<Integer, Float>& gso, Float& maxDist,
 
 static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
         SVPMethod method, const vector<double>& pruning, int flags,
-        EvaluatorMode evalMode, const Integer& argIntMaxDist,
-        long long& solCount) {
+        EvaluatorMode evalMode,
+        long long& solCount, 
+        vector<IntVect>* subsolCoord = nullptr, vector<enumf>* subsolDist = nullptr) 
+{
+  bool findsubsols = (subsolCoord != nullptr) && (subsolDist != nullptr);
+  
   // d = lattice dimension (note that it might decrease during preprocessing)
   int d = b.getRows();
   // n = dimension of the space
@@ -132,16 +136,10 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
       cout << "maxDist = " << maxDist << endl;
     }
   } else {
-    if (evalMode == EVALMODE_SV) {
       /* Computes a bound for the enumeration. This bound would work for an
          exact algorithm, but we will increase it later to ensure that the fp
          algorithm finds a solution */
       getBasisMin(intMaxDist, b, 0, d);
-    }
-    else {
-      /* Use the bound given as a parameter */
-      intMaxDist = argIntMaxDist;
-    }
     maxDist.set_z(intMaxDist, GMP_RNDU);
   }
 
@@ -149,11 +147,11 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
   Evaluator<Float>* evaluator;
   if (method == SVPM_FAST) {
     evaluator = new FastEvaluator<Float>(d, gso.getMuMatrix(),
-            gso.getRMatrix(), evalMode);
+            gso.getRMatrix(), evalMode, 0, findsubsols);
   }
   else if (method == SVPM_PROVED) {
     ExactEvaluator* p = new ExactEvaluator(d, b, gso.getMuMatrix(),
-            gso.getRMatrix(), evalMode);
+            gso.getRMatrix(), evalMode, 0, findsubsols);
     p->intMaxDist = intMaxDist;
     evaluator = p;
   }
@@ -187,6 +185,25 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
     }
     result = RED_SUCCESS;
   }
+  
+  if (findsubsols)
+  {
+    subsolCoord->clear();
+    subsolDist->clear();
+    subsolDist->resize(evaluator->sub_solCoord.size());
+    for (size_t i = 0; i < evaluator->sub_solCoord.size(); ++i)
+    {
+      (*subsolDist)[i] = evaluator->sub_solDist[i];
+
+      IntVect ssC;
+      for (size_t j = 0; j < evaluator->sub_solCoord[i].size(); ++j)
+      {
+        itmp1.set_f(evaluator->sub_solCoord[i][j]);
+        ssC.emplace_back(itmp1);
+      }
+      subsolCoord->emplace_back( std::move(ssC) );
+    }
+  }
 
   delete evaluator;
   Float::setprec(oldprec);
@@ -197,32 +214,22 @@ int shortestVector(IntMatrix& b, IntVect& solCoord,
                    SVPMethod method, int flags) {
   long long tmp;
   return shortestVectorEx(b, solCoord, method, vector<double>(), flags,
-          EVALMODE_SV, Integer(), tmp);
+          EVALMODE_SV, tmp);
 }
 
 int shortestVectorPruning(IntMatrix& b, IntVect& solCoord,
-                   const vector<double>& pruning, Integer& argIntMaxDist, int flags) {
+                   const vector<double>& pruning, int flags) {
   long long tmp;
   return shortestVectorEx(b, solCoord, SVPM_FAST, pruning, flags,
-          EVALMODE_SV, argIntMaxDist, tmp);
+          EVALMODE_SV, tmp);
 }
 
-long long countShortVectors(IntMatrix& b, const Integer& maxSqrNorm,
-        SVPMethod method, int flags) {
-  long long count;
-  IntVect tmp;
-  shortestVectorEx(b, tmp, method, vector<double>(), flags,
-        EVALMODE_COUNT, maxSqrNorm, count);
-  return count;
-}
-
-long long printShortVectors(IntMatrix& b, const Integer& maxSqrNorm,
-        SVPMethod method) {
-  long long count;
-  IntVect tmp;
-  shortestVectorEx(b, tmp, method, vector<double>(), SVP_DEFAULT,
-        EVALMODE_PRINT, maxSqrNorm, count);
-  return count;
+int shortestVectorPruning(IntMatrix& b, IntVect& solCoord, vector<IntVect>& subsolCoord, vector<enumf>& subsolDist,
+        const vector<double>& pruning, int flags)
+{
+  long long tmp;
+  return shortestVectorEx(b, solCoord, SVPM_FAST, pruning, flags,
+          EVALMODE_SV, tmp, &subsolCoord, &subsolDist);
 }
 
 /* Closest vector problem
