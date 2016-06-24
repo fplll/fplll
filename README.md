@@ -130,9 +130,10 @@ The options are:
 
 Options for LLL-reduction:
 
-* `-d delta` :     δ (default=0.99).
-* `-e eta` :       η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases.
-* `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz). See [A02] for the definition of Siegel condition.
+* `-d delta` : δ (default=0.99).
+* `-e eta` : η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases.
+* `-l lovasz` : if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz). 
+See [A02] for the definition of Siegel condition.
 
 * `-f mpfr` : sets the floating-point type to MPFR (default if `m=proved`).
 * `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
