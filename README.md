@@ -135,6 +135,7 @@ Options for LLL-reduction:
 * `-l lovasz` : if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz). 
 See [A02] for the definition of Siegel condition.
 
+
 * `-f mpfr` : sets the floating-point type to MPFR (default if `m=proved`).
 * `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
 * `-f dd` : sets the floating-point type to double-double.
@@ -142,6 +143,7 @@ See [A02] for the definition of Siegel condition.
 * `-f dpe` : sets the floating-point type to DPE (default if `m=heuristic/heuristicearly`).
 * `-f double` : sets the floating-point type to double (default if `m=fast/fastearly`).
 * `-f longdouble` : sets the floating-point type to long double.
+
 
 * `-z int` : sets the integer type to int.
 * `-z mpz` : sets the integer type to mpz, the integer type of GMP (default).
