@@ -132,18 +132,12 @@ The options are:
 
 Options for LLL-reduction:
 
-<<<<<<< HEAD
 
-* `-d delta` : δ (default=0.99).
-* `-e eta` : η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases.
-* `-l lovasz` : if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz). 
-See [A02] for the definition of Siegel condition.
-=======
 * `-d delta` :     δ (default=0.99)
 * `-e eta` :       η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases. 
 * `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz)
+See [A02] for the definition of Siegel condition.
 * `-p precision` : precision (in bits) of the floating-point arithmetic, works only with `-f mpfr`.
->>>>>>> master
 
 * `-f mpfr` : sets the floating-point type to MPFR (default if `m=proved`).
 * `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
@@ -171,7 +165,6 @@ and η'=2×η-1/2. For instance, with the default options, it is guaranteed that
 
 Options for BKZ-reduction:
 
-<<<<<<< HEAD
 * `-b blocksize` :             Block size, mandatory, between 2 and the number of vectors.
 
 * `-f float_type` :            Same as LLL (`-p` is required if `float_type=mpfr`).
@@ -190,19 +183,6 @@ Without any of the last three options, BKZ runs until no block has been updated 
 
 * `-bkzdumgso file_name` :     Dumps the log ||b_i*|| 's in specified file.
 
-
-
-=======
-* `-b blocksize`             Block size, mandatory, between 2 and the number of rows.
-* `-f float_type`            Same as LLL (`-p` is required if `float_type=mpfr`)
-* `-p precision`             Precision (in bits) of the floating-point arithmetic with `-f mpfr`
-* `-bkzmaxloops loops`       Maximum number of full loops.
-* `-bkzmaxtime time`         Stop after `time` seconds (up to loop completion).
-* `-bkzautoabort`            Heuristic, stop when the average slope of log(||b_i*||) does not decrease fast enough.
-* `-bpre blocksize`          Pre-processing block size. Between 2 and the block size.
-* `-bkzlinearpruning level`  Enables linear pruning in enumeration, such that the last level steps drop with slope -1/blockSize
-* `-bkzdumgso file_name`    Dumps the log ||b_i*|| 's in specified file.
->>>>>>> master
 
 ### llldiff ###
 
