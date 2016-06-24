@@ -115,21 +115,23 @@ to ensure reproducibility. The seed may be changed with the option
 
 ### fplll ###
 
-`fplll` does LLL, BKZ or SVP on a matrix (considered as a set of row
+`fplll` does LLL, BKZ, HKZ or SVP on a matrix (considered as a set of row
 vectors) given in stdin or in a file as parameter. 
 
 The options are:
 
 * `-a lll` : LLL-reduction (default).
 * `-a bkz` : BKZ-reduction.
-* `-a svp` : print a shortest vector of the lattice.
+* `-a hkz` : HKZ-reduction.
+* `-a svp` : prints a shortest non-zero vector of the lattice.
+* `-v` : verbose mode. 
 * `-r` `size`, `-c` `size` : ignored, provided for compatibility with previous versions of fplll.
 
 Options for LLL-reduction:
 
 * `-d delta` :     δ (default=0.99)
 * `-e eta` :       η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases. 
-* `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz)
+* `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz). See [A02] for the definition of Siegel condition.
 * `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
 
 * `-f mpfr` : sets the floating-point type to MPFR (default if `m=proved`).
@@ -156,15 +158,17 @@ and η'=2×η-1/2. For instance, with the default options, it is guaranteed that
 
 Options for BKZ-reduction:
 
-* `-b blocksize`             Block size, mandatory, between 2 and the number of rows.
+* `-b blocksize`             Block size, mandatory, between 2 and the number of vectors.
 * `-f float_type`            Same as LLL (`-p` is required if `float_type=mpfr`)
 * `-p precision`             Precision of the floating-point arithmetic with `-f mpfr`
-* `-bkzmaxloops loops`       Maximum number of full loops.
-* `-bkzmaxtime time`         Stop after `time` seconds (up to loop completion).
-* `-bkzautoabort`            Heuristic, stop when the average slope of log(||b_i*||) does not decrease fast enough.
+* `-bkzmaxloops loops`       Maximum number of full loop iterations.
+* `-bkzmaxtime time`         Stops after `time` seconds (up to completion of the current loop iteration).
+* `-bkzautoabort`            Stops when the average slope of the log ||b_i*||'s does not decrease fast enough.
+Without any of the last three options, BKZ runs until no block has been updated for a full loop iteration.
 * `-bpre blocksize`          Pre-processing block size. Between 2 and the block size.
-* `-bkzlinearpruning level`  Enables linear pruning in enumeration, such that the last level steps drop with slope -1/blockSize
-* `-bkzdumgso file_name`    Dumps the log ||b_i*|| 's in specified file.
+* `-bkzlinearpruning level`  Enables linear pruning in enumeration, such that the last level steps drop with slope -1/blockSize.
+* `-bkzdumgso file_name`     Dumps the log ||b_i*|| 's in specified file.
+* `-bkzboundedlll`	     Restricts the LLL call before considering a block to vector indices within that block.
 
 ### llldiff ###
 
@@ -228,6 +232,8 @@ See [API documentation](library.md).
    ```
 
 ## Bibliography ##
+
+[A02] A. Akhavi. Random lattices, threshold phenomena and efficient reduction algorithms. Theor. Comput. Sci. 287(2): 359-385 (2002)
 
 [CN11] Y. Chen and P. Q. Nguyen. BKZ 2.0: Better Lattice Security Estimates. ASIACRYPT 2011: 1-20
 
