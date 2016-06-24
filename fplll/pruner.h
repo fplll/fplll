@@ -21,6 +21,14 @@
 
 FPLLL_BEGIN_NAMESPACE
 
+// This file propose an implementation of the numerically optimized
+// pruning strategy of [GNR10]. 
+
+// Many details for implemantation follows from the thesis [Chen13]
+// Some simplification have been made, for example we restrict ourselves
+// to ``even vector bounds'' i.e., the bound at indices 2i and 2i+1 are
+// kept equal, as to allow volume estimation by pure integration 
+// (see [GNR10,Chen13])
 
 // naming conventions:
 // b is for bound (squared)
@@ -30,7 +38,7 @@ FPLLL_BEGIN_NAMESPACE
 // p is for polynomial
 
 // inside this code, b,pv,and R are in reversed order
-// as to conform with the algorithm desciption of [ChenThesis]
+// as to conform with the algorithm desciption of [Chen13]
 // reversing output and ouput is done by the C extern function
 
 // n is for the dimension of the basis to prune
@@ -151,12 +159,6 @@ void Pruner<FT>::set_tabulated_consts(){
   }
   return;
 }
-
-
-/// Autoprune function, hiding the Pruner class
-
-
-
 
 
 
@@ -532,6 +534,7 @@ void Pruner<FT>::init_prunning_coeffs(evec &b) {
 
 
 
+/// Autoprune function, hiding the Pruner class
 
 
 template<class FT, class GSO_ZT, class GSO_FT> 
