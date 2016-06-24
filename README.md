@@ -135,9 +135,7 @@ Options for LLL-reduction:
 
 * `-d delta` :     δ (default=0.99)
 * `-e eta` :       η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases. 
-* `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz)
-See [A02] for the definition of Siegel condition.
-* `-p precision` : precision (in bits) of the floating-point arithmetic, works only with `-f mpfr`.
+* `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz). See [A02] for the definition of Siegel condition.
 
 * `-f mpfr` : sets the floating-point type to MPFR (default if `m=proved`).
 * `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
@@ -151,7 +149,6 @@ See [A02] for the definition of Siegel condition.
 * `-z mpz` : sets the integer type to mpz, the integer type of GMP (default).
 * `-z double` : sets the integer type to double.
 
-
 * `-m wrapper` : uses the wrapper. (default if `z=mpz`).
 * `-m fast` : uses the fast method, works only with `-f double`.
 * `-m fastearly` : uses the fast method with early reduction, works only with `-f double`.
@@ -162,6 +159,7 @@ See [A02] for the definition of Siegel condition.
 With the wrapper or the proved version, it is guaranteed that the basis is LLL-reduced with δ'=2×δ-1
 and η'=2×η-1/2. For instance, with the default options, it is guaranteed that the basis is
 (0.98,0.52)-LLL-reduced.
+
 
 Options for BKZ-reduction:
 
