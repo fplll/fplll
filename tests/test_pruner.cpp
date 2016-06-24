@@ -242,7 +242,7 @@ int main(int argc, char *argv[]) {
   int status = 0;
   status |= test_unpruned<FP_NR<double> >();
   status |= test_unpruned<FP_NR<long double> >();
-  status |= test_unpruned<FP_NR<dd_real> >();
+  //status |= test_unpruned<FP_NR<dd_real> >();
   status |= test_unpruned<FP_NR<mpfr_t> >();
 
   status |= test_prepruned<FP_NR<double> >();
