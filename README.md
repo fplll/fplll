@@ -130,6 +130,7 @@ The options are:
 
 Options for LLL-reduction:
 
+
 * `-d delta` : δ (default=0.99).
 * `-e eta` : η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases.
 * `-l lovasz` : if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz). 
@@ -148,6 +149,7 @@ See [A02] for the definition of Siegel condition.
 * `-z int` : sets the integer type to int.
 * `-z mpz` : sets the integer type to mpz, the integer type of GMP (default).
 * `-z double` : sets the integer type to double.
+
 
 * `-m wrapper` : uses the wrapper. (default if `z=mpz`).
 * `-m fast` : uses the fast method, works only with `-f double`.
