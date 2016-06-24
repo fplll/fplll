@@ -132,8 +132,9 @@ Options for LLL-reduction:
 * `-d delta` :     δ (default=0.99)
 * `-e eta` :       η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases. 
 * `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz). See [A02] for the definition of Siegel condition.
-* `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
+
 * `-f mpfr` : sets the floating-point type to MPFR (default if `m=proved`).
+* `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
 * `-f dd` : sets the floating-point type to double-double.
 * `-f qd` : sets the floating-point type to quad-double.
 * `-f dpe` : sets the floating-point type to DPE (default if `m=heuristic/heuristicearly`).
@@ -157,9 +158,11 @@ and η'=2×η-1/2. For instance, with the default options, it is guaranteed that
 
 Options for BKZ-reduction:
 
-* `-b blocksize` :            Block size, mandatory, between 2 and the number of vectors.
+* `-b blocksize` :             Block size, mandatory, between 2 and the number of vectors.
+
 * `-f float_type` :            Same as LLL (`-p` is required if `float_type=mpfr`).
 * `-p precision` :             Precision of the floating-point arithmetic with `-f mpfr`.
+
 * `-bkzmaxloops loops` :       Maximum number of full loop iterations.
 * `-bkzmaxtime time` :         Stops after `time` seconds (up to completion of the current loop iteration).
 * `-bkzautoabort` :            Stops when the average slope of the log ||b_i*||'s does not decrease fast enough.
@@ -168,8 +171,11 @@ Without any of the last three options, BKZ runs until no block has been updated 
 
 * `-bpre blocksize` :          Pre-processing block size. Between 2 and the block size.
 * `-bkzlinearpruning level` :  Enables linear pruning in enumeration, such that the last level steps drop with slope -1/blockSize.
-* `-bkzdumgso file_name` :     Dumps the log ||b_i*|| 's in specified file.
+* `-bkzghbound factor` :       Multiplies the Gaussian heuristic by factor (of float type) to set the enumeration radius of the SVP calls.    
 * `-bkzboundedlll` :	       Restricts the LLL call before considering a block to vector indices within that block.
+
+* `-bkzdumgso file_name` :     Dumps the log ||b_i*|| 's in specified file.
+
 
 ### llldiff ###
 
