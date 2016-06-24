@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign
-TOPSRCDIR = $(srcdir)/../src/
-TOPBUILDDIR = $(builddir)/../src/
+TOPSRCDIR = $(srcdir)/../fplll
+TOPBUILDDIR = $(builddir)/../fplll/
 DEFINES =
 
 include_fpllldir=$(includedir)/fplll
@@ -13,6 +13,7 @@ AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPBUILDDIR)
 STAGEDIR := $(realpath -s $(TOPBUILDDIR)/.libs)
 AM_LDFLAGS = -L$(STAGEDIR) -Wl,-rpath,$(STAGEDIR) -lfplll
 LDFLAGS = -no-install
+LIBADD = $(LIBQD_LIBADD)
 
 TESTS = test_lll test_svp test_bkz test_nr test_pruner
 

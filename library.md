@@ -10,7 +10,7 @@ At the beginning of your code, type:
 See the example file `test.cpp` in the src directory.
 To compile it, assuming fplll has been installed in /tmp/fplll:
 
-	bash-3.00$ g++ -static -I /tmp/fplll/include test.cpp -L /tmp/fplll/lib -lfplll -lmpfr -lgmp
+	bash-3.00$ g++ -I /tmp/fplll/include test.cpp -L /tmp/fplll/lib -lfplll -lmpfr -lgmp -std=gnu++11
 	bash-3.00$ ./a.out
 	[[4 3 7]
 	[3 0 1]
