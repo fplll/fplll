@@ -267,6 +267,16 @@ void readOptions(int argc, char** argv, Options& o) {
         o.action = ACTION_SVP;
       else if (strcmp(argv[ac], "cvp") == 0)
         o.action = ACTION_CVP;
+      else if (strcmp(argv[ac], "sdbkz") == 0)
+      {
+        o.action = ACTION_BKZ;
+        o.bkz_flags |= BKZ_SD_VARIANT;
+      }
+      else if (strcmp(argv[ac], "sld") == 0)
+      {
+        o.action = ACTION_BKZ;
+        o.bkz_flags |= BKZ_SLD_RED;
+      }
       else
         ABORT_MSG("parse error in -a switch: lll or svp expected");
     }
