@@ -32,6 +32,7 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 - GNU MP 4.2.0 or higher [http://gmplib.org/](http://gmplib.org/)
 - MPFR 2.3.0 or higher, COMPLETE INSTALLATION [http://www.mpfr.org/](http://www.mpfr.org/)
 - autotools 2.61 or higher
+- g++ 4.9.3 or higher
 
 If GMP and/or MPFR include and lib files are not in the default directories `/usr/include` and
 `/usr/lib`, you have to set the environment variables `CFLAGS` and `LDFLAGS` for instance through the
@@ -129,8 +130,8 @@ The options are:
 
 Options for LLL-reduction:
 
-* `-d delta` :     δ (default=0.99)
-* `-e eta` :       η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases. 
+* `-d delta` :     δ (default=0.99).
+* `-e eta` :       η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases.
 * `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz). See [A02] for the definition of Siegel condition.
 
 * `-f mpfr` : sets the floating-point type to MPFR (default if `m=proved`).
