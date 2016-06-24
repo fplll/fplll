@@ -140,15 +140,20 @@ public:
     return mu;
   }
   
-    /**
+  /**
    * Returns the r matrix
    * Coefficients of the Gram Schmidt Orthogonalization
    * (lower triangular matrix)
    */
-  const Matrix<FT>& getRMatrix() {
-    return r;
-  }
+  const Matrix<FT>& getRMatrix() {return r;}
 
+  /**
+   * Returns the g matrix (Z_NR version of r)
+   * Coefficients of the Gram Schmidt Orthogonalization
+   * (lower triangular matrix)
+   */
+  const Matrix<ZT>& getGMatrix() {return g;}
+  
   /**
    * Returns f = mu(i, j) and expo such that
    * f * 2^expo = (b_i, b*_j) / ||b*_j||^2.
@@ -165,6 +170,16 @@ public:
    * Returns f = (b_i, b*_j) / ||b*_j||^2.
    */
   inline void getMu(FT& f, int i, int j);
+  
+  /**
+   * Return maximum bstar_i for all i
+   */
+  ZT getMaxGram();
+
+  /**
+   * Return maximum bstar_i for all i
+   */
+  FT getMaxBstar();
 
   /**
    * Returns f = r(i, j) and expo such that (b_i, b*_j) = f * 2^expo.
