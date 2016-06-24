@@ -171,7 +171,7 @@ Without any of the last three options, BKZ runs until no block has been updated 
 
 * `-bpre blocksize` :          Pre-processing block size. Between 2 and the block size.
 * `-bkzlinearpruning level` :  Enables linear pruning in enumeration, such that the last level steps drop with slope -1/blockSize.
-* `-bkzghbound factor` :       Multiplies the Gaussian heuristic by factor (of float type) to set the enumeration radius of the SVP calls.    
+* `-bkzghbound factor` :       Multiplies the Gaussian heuristic by factor (of float type) to set the enumeration radius of the SVP calls.
 * `-bkzboundedlll` :	       Restricts the LLL call before considering a block to vector indices within that block.
 
 * `-bkzdumgso file_name` :     Dumps the log ||b_i*|| 's in specified file.
