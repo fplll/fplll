@@ -80,6 +80,20 @@ void compute_gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size
 template<class FT>
 FT get_root_det(MatGSO<Integer, FT>& m, int start, int end);
 
+/**
+ * Compute the log of the (squared) determinant of the basis.
+ */
+
+template<class FT>
+FT get_log_det(MatGSO<Integer, FT>& m, int start, int end);
+
+/**
+ * Compute the slide potential of the basis.
+ */
+
+template<class FT>
+FT get_sld_potential(MatGSO<Integer, FT>& m, int start, int end, int block_size);
+
 /* The matrix must be LLL-reduced */
 template <class FT> class BKZReduction
 {
@@ -153,6 +167,34 @@ public:
   }
   
   bool hkz(int &kappaMax, const BKZParam &param, int min_row, int max_row);
+  
+  bool hkz_ex(int &kappaMax, const BKZParam &param, int min_row, int max_row, bool &clean)
+  {
+    try
+    {
+      clean = hkz(kappaMax, param, min_row, max_row);
+      return true;
+    } 
+    catch (RedStatus &e)
+    {
+      return set_status(e);
+    }
+  }
+  
+  bool slide_tour(const int loop, const BKZParam &param, int min_row, int max_row);
+  
+  bool slide_tour_ex(const int loop, const BKZParam &param, int min_row, int max_row, bool &clean)
+  {
+    try
+    {
+      clean = slide_tour(loop, param, min_row, max_row);
+      return true;
+    } 
+    catch (RedStatus &e)
+    {
+      return set_status(e);
+    }
+  }
 
   bool bkz();
 
@@ -201,11 +243,13 @@ private:
   LLLReduction<Integer, FT> &lll_obj;
   FastEvaluator<FT> evaluator;
   FT delta;
-
+  
+  const char* algorithm; 
   // Temporary data
   const vector<FT> empty_target, empty_sub_tree;
   FT max_dist, delta_max_dist;
   double cputime_start;
+  FT sld_potential;
 };
 
 FPLLL_END_NAMESPACE
