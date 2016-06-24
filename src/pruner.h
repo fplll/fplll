@@ -48,6 +48,8 @@ FPLLL_BEGIN_NAMESPACE
 template<class FT> 
 class Pruner{
   public:
+    class TestPruner;
+    friend class TestPruner;
 
     FT preproc_cost;
     FT target_success_proba;
@@ -63,7 +65,8 @@ class Pruner{
     //void set_parameters(FT preproc_cost, FT target_success_proba);
     
     void optimize_pruning_coeffs(/*io*/double* pr, /*i*/ int reset = 1);
-    double get_cost(/*i*/double* pr);
+    double get_enum_cost(/*i*/double* pr);
+    double get_enum_cost_with_retrials(/*i*/double* pr);
     double get_svp_success_proba(/*i*/double* pr);
 
 
@@ -120,9 +123,9 @@ Pruner<FT>::Pruner(){
   n = 0;
   d = 0;
   set_tabulated_consts();
-  epsilon = pow(2., -13);
-  min_step = pow(2., -12);
-  step_factor = pow(2, .5);
+  epsilon = std::pow(2., -13);
+  min_step = std::pow(2., -12);
+  step_factor = std::pow(2, .5);
   shell_ratio = .995;
   minus_one = -1.;
   one = 1.;
@@ -205,13 +208,16 @@ void Pruner<FT>::load_basis_shape(int dim, double* gso_sq_norms){
   for (int i = 0; i < n; ++i)
   {
     r[i] = gso_sq_norms[n - 1 - i];
+
     logvol += log(r[i]);
   }
   tmp = - n;
   renormalization_factor = exp(logvol / tmp);
+
   for (int i = 0; i < n; ++i)
   {
     r[i] *= renormalization_factor;
+
   }
   tmp = 1.;
   for (int i = 0; i < 2 * d; ++i) {
@@ -229,11 +235,19 @@ double Pruner<FT>::get_svp_success_proba(/*i*/double* pr){
 }
 
 template<class FT>
-double Pruner<FT>::get_cost(/*i*/double* pr){
+double Pruner<FT>::get_enum_cost(/*i*/double* pr){
   evec b;
   load_prunning_coeffs(pr, b);
   return cost(b).get_d();
 }
+
+template<class FT>
+double Pruner<FT>::get_enum_cost_with_retrials(/*i*/double* pr){
+  evec b;
+  load_prunning_coeffs(pr, b);
+  return cost_factor(b).get_d();
+}
+
 
 template<class FT>
 void Pruner<FT>::optimize_pruning_coeffs(/*io*/double* pr, /*i*/ int reset){
@@ -278,7 +292,6 @@ void Pruner<FT>::save_prunning_coeffs(/*o*/double* pr, /*i*/ evec& b){
   }
   pr[0] = 1.;
 }
-
 
 template<class FT>
 inline int Pruner<FT>::enforce(/*io*/ evec &b, /*opt i*/ int j){
@@ -345,6 +358,7 @@ inline FT Pruner<FT>::cost(/*i*/ evec &b){
   vec rv; // Relative volumes at each level
 
   for (int i = 0; i < d; ++i) {
+
     rv[2 * i + 1] = relative_volume(i + 1, b);
   }
 
@@ -358,8 +372,6 @@ inline FT Pruner<FT>::cost(/*i*/ evec &b){
   total = 0;
   FT normalized_radius;
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
-  // cerr << "enumeration_radius" << enumeration_radius.get_d() << endl;
-  // cerr << "normalized_radius" << normalized_radius.get_d() << endl;
   
   for (int i = 0; i < 2 * d; ++i) {
     FT tmp;
@@ -367,14 +379,14 @@ inline FT Pruner<FT>::cost(/*i*/ evec &b){
           rv[i] * tabulated_ball_vol[i + 1] *
           sqrt(pow_si(b[i / 2], 1 + i)) / pv[i];
 
-    // cerr << i << " bound " << b[i / 2] << " r[i] " << r[i] << endl;
-    // cerr << endl;
-    // cerr << pow_si(normalized_radius, 1 + i) << endl; 
-    // cerr << rv[i] << endl;
-    // cerr << tabulated_ball_vol[i + 1] << endl;
-    // cerr << sqrt(pow_si(b[i / 2], 1 + i)) << endl;
-    // cerr << pv[i].get_d() << endl;
-    // cerr << endl;
+
+
+
+
+
+
+
+
 
 
     total += tmp;
@@ -410,8 +422,6 @@ template<class FT>
 inline FT Pruner<FT>::cost_factor(/*i*/ evec &b){
 
   FT success_proba = svp_success_proba(b);
-  // // cerr << "SUCCESS PROBA (inside c_f) " << success_proba.get_d() << endl;
-  // // cerr << "COST (inside c_f) " << cost(b).get_d() << endl;
 
   if (success_proba >= target_success_proba)
     return cost(b);
@@ -437,16 +447,10 @@ FT Pruner<FT>::cost_factor_derivative(/*i*/ evec &b, /*o*/ evec &res){
     enforce(bpDb, i);
     FT Y = cost_factor(bpDb);
 
-    // // cerr << X.get_d() << " " << Y.get_d() << " " << epsilon.get_d() << endl;
+
 
     res[i] = (log(X) - log(Y)) / epsilon;
   }
-  // // cerr << "Derivative";
-  for (int i = 0; i < d; ++i)
-  {
-    // // cerr << res[i].get_d() << " , ";
-  }
-  // // cerr << endl;
 
 }  
 template<class FT>
@@ -458,13 +462,11 @@ int Pruner<FT>::improve(/*io*/ evec &b){
   evec gradient;
   cost_factor_derivative(b, gradient);
   FT norm = 0;
-  // cerr << "cf begin " << old_cf.get_d() << endl;
 
   for (int i = 0; i < d; ++i)
   {
-    // cerr << b[i].get_d() << " , ";
+
   }
-  // cerr << endl;
 
   // normalize the gradient
   for (int i = 0; i < d; ++i) {
@@ -475,12 +477,10 @@ int Pruner<FT>::improve(/*io*/ evec &b){
   norm = sqrt(norm /  (one * (1. * d)) );
   if (norm <= 0.)
     return 0;
-  // cerr << "gradient norm" << norm.get_d() << endl;
   for (int i = 0; i < d; ++i)
   {
-    // cerr << gradient[i].get_d() << " , ";
+
   }
-  // cerr << endl;
 
   for (int i = 0; i < d; ++i) {
     gradient[i] /= norm;
@@ -497,7 +497,7 @@ int Pruner<FT>::improve(/*io*/ evec &b){
 
     enforce(newb);
     new_cf = cost_factor(newb);
-    // cerr << i << " " << new_cf.get_d() << endl;
+
 
 
     if (new_cf >= cf){
@@ -511,7 +511,6 @@ int Pruner<FT>::improve(/*io*/ evec &b){
   if (cf > old_cf * min_cf_decrease){
     return 0;
   }
-  // cerr << "cf end " << cf.get_d() << endl;
   return i;
 }
 
