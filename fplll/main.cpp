@@ -267,7 +267,7 @@ void readOptions(int argc, char** argv, Options& o) {
         o.action = ACTION_SVP;
       else if (strcmp(argv[ac], "cvp") == 0)
         o.action = ACTION_CVP;
-      else if (strcmp(argv[ac], "sdbkz") == 0)
+      else if (strcmp(argv[ac], "sdb") == 0)
       {
         o.action = ACTION_BKZ;
         o.bkz_flags |= BKZ_SD_VARIANT;
@@ -423,7 +423,7 @@ void readOptions(int argc, char** argv, Options& o) {
            << "  -a [lll|svp|bkz|sld|sdbkz]\n"
            << "       lll = LLL-reduce the input matrix (default)\n"
            << "       bkz = BKZ-reduce the input matrix\n"
-           << "       sdbkz = reduce the input matrix using the self dual BKZ variant\n"
+           << "       sdb = reduce the input matrix using the self dual BKZ variant\n"
            << "       sld = slide reduce the input matrix\n"
            << "       svp = compute a shortest non-zero vector of the lattice\n"
            << "  -m [proved|heuristic|fast|wrapper]\n"
