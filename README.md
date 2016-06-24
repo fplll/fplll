@@ -126,7 +126,9 @@ The options are:
 * `-a hkz` : HKZ-reduction.
 * `-a svp` : prints a shortest non-zero vector of the lattice.
 * `-v` : verbose mode. 
+* `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution). 
 * `-r` `size`, `-c` `size` : ignored, provided for compatibility with previous versions of fplll.
+
 
 Options for LLL-reduction:
 
@@ -177,14 +179,11 @@ Without any of the last three options, BKZ runs until no block has been updated 
 * `-bkzlinearpruning level` :  Enables linear pruning in enumeration, such that the last level steps drop with slope -1/blockSize.
 * `-bkzghbound factor` :       Multiplies the Gaussian heuristic by factor (of float type) to set the enumeration radius of the SVP calls.
 * `-bkzboundedlll` :	       Restricts the LLL call before considering a block to vector indices within that block.
-* `-nolll` : 	   	       Removes the call to LLL that is made before running BKZ (the other LLL calls made during the BKZ execution still occur). 
 
 * `-bkzdumgso file_name` :     Dumps the log ||b_i*|| 's in specified file.
 
 
-Options for SVP:
 
-* `-nolll` : 	   	       Removes the call to LLL that is made before solving SVP. 
 
 ### llldiff ###
 
