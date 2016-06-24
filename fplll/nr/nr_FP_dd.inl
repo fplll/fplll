@@ -243,11 +243,7 @@ inline void FP_NR<dd_real>::rnd(const FP_NR<dd_real>& b) {
 
 template<>
 inline void FP_NR<dd_real>::rnd_we(const FP_NR<dd_real>& b, long expoAdd) {
-  /* double-double has same expo limit as double format*/
-  if (b.exponent() + expoAdd >= numeric_limits<double>::digits)
-    data = b.data;
-  else
-    data = ::ldexp(::nint(::ldexp(b.data, expoAdd)), -expoAdd);
+  data = ::ldexp(::nint(::ldexp(b.data, expoAdd)), -expoAdd);
 }
 
 template<>

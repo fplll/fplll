@@ -248,11 +248,7 @@ inline void FP_NR<qd_real>::rnd(const FP_NR<qd_real>& b) {
 
 template<>
 inline void FP_NR<qd_real>::rnd_we(const FP_NR<qd_real>& b, long expoAdd) {
-  /* quad-double has same expo limit as double format*/
-  if (b.exponent() + expoAdd >= numeric_limits<double>::digits)
-    data = b.data;
-  else
-    data = ::ldexp(::nint(::ldexp(b.data, expoAdd)), -expoAdd);
+  data = ::ldexp(::nint(::ldexp(b.data, expoAdd)), -expoAdd);
 }
 
 template<>
