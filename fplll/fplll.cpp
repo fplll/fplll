@@ -305,6 +305,8 @@ int bkzReductionF ( IntMatrix &b,
   MatGSO<Integer, FT> mGSO(b, u, uInv, gsoFlags);
   LLLReduction<Integer, FT> lllObj(mGSO, lllDelta, LLL_DEF_ETA, LLL_DEFAULT);
   BKZReduction<FT> bkzObj(mGSO, lllObj, param);
+
+
   bkzObj.bkz();
   return bkzObj.status;
 }
@@ -323,6 +325,8 @@ int bkzReduction(IntMatrix* B, IntMatrix *U, const BKZParam& param, FloatType fl
     u.gen_identity(B->getRows());
   }
 
+  
+  
   double lllDelta = param.delta < 1 ? param.delta : LLL_DEF_DELTA;
 
   FloatType selFT = (floatType != FT_DEFAULT) ? floatType : FT_DOUBLE;
