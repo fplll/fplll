@@ -66,6 +66,12 @@ public:
   void sub(const MatrixRow<T>& v, int n) {
     row.sub(v.row, n);
   }
+  void addmul(const MatrixRow<T>& v, T x) {
+    row.addmul(v.row, x);
+  }
+  void addmul(const MatrixRow<T>& v, T x, int n) {
+    row.addmul(v.row, x, n);
+  }
   void addmul_2exp(const MatrixRow<T>& v, const T& x, long expo, T& tmp) {
     row.addmul_2exp(v.row, x, expo, tmp);
   }
@@ -218,6 +224,7 @@ public:
   void rotateGramRight(int first, int last, int nValidRows);
   /** Transpose. */
   void transpose();
+  T getMax();
   long getMaxExp();
   /** Prints this matrix. No end-of-line is printed after the last line.
       @param os      output stream

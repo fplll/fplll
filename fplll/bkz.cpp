@@ -146,7 +146,7 @@ template <class FT>
 const Pruning &BKZReduction<FT>::get_pruning(int kappa, int block_size, const BKZParam &par) const
 {
 
-  FPLLL_DEBUG_CHECK(param.strategies.size() > blockSize);
+  FPLLL_DEBUG_CHECK(param.strategies.size() > block_size);
 
   Strategy &strat = par.strategies[block_size];
 
@@ -175,7 +175,7 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
     }
   }
 
-  FPLLL_DEBUG_CHECK(nzVectors > 0);
+  FPLLL_DEBUG_CHECK(nz_vectors > 0);
 
   if (nz_vectors == 1)
   {
