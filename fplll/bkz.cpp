@@ -66,21 +66,44 @@ template <class FT> double get_current_slope(MatGSO<Integer, FT> &m, int start_r
 }
 
 template<class FT>
-FT get_root_det(MatGSO<Integer, FT>& m, int start, int end) {
+FT get_root_det(MatGSO<Integer, FT>& m, int start, int end) 
+{
   FT root_det = 0;
   start = max(0, start);
-  end = min (m.d, end);
-  FT f,h;
-  for(int i = start; i < end; ++i)
-  {
-      m.getR(h,i,i);
-      h.log(h);
-      root_det += h;
-  }
-  h = (double)(end - start);
-  root_det /= h;
+  end = min(m.d, end);
+  FT h = (double)(end - start);
+  root_det = get_log_det(m, start, end)/h;
   root_det.exponential(root_det);
   return root_det;
+}
+
+template<class FT>
+FT get_log_det(MatGSO<Integer, FT>& m, int start, int end) 
+{
+  FT log_det = 0;
+  start = max(0, start);
+  end = min(m.d, end);
+  FT h;
+  for(int i = start; i < end; ++i)
+  {
+    m.getR(h,i,i);
+    log_det += log(h);
+  }
+  return log_det;
+}
+
+template<class FT>
+FT get_sld_potential(MatGSO<Integer, FT>& m, int start, int end, int block_size)
+{
+  FT potential = 0;
+  int p = (end - start)/block_size;
+  if ((end - start) % block_size == 0)
+    --p;
+  for (int i = 0; i < p; ++i)
+  {
+    potential += (p-i)*get_log_det(m, i*block_size, (i+1)*block_size);
+  }
+  return potential;
 }
 
 
@@ -291,7 +314,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
   int lll_start = (par.flags & BKZ_BOUNDED_LLL) ? kappa : 0;
 
-  if (!lll_obj.lll(lll_start, kappa, kappa + block_size))
+  if (!lll_obj.lll(lll_start, lll_start, kappa + block_size))
   {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
@@ -450,12 +473,66 @@ bool BKZReduction<FT>::sd_tour(const int loop, const BKZParam &par, int min_row,
   return clean;
 }
 
+template <class FT>
+bool BKZReduction<FT>::slide_tour(const int loop, const BKZParam &par, int min_row, int max_row) 
+{
+  int p = (max_row - min_row)/par.block_size;
+  if ((max_row - min_row) % par.block_size)
+    ++p;
+  bool clean; // this clean variable is only for the inner loop of slide reduction
+  do
+  {
+    clean = true;
+    // SVP reduction takes care of the LLL reduction as long as BKZ_BOUNDED_LLL is off
+    for (int i = 0; i < p; ++i) 
+    {
+      int kappa = min_row + i * par.block_size;
+      int block_size = min(max_row - kappa, par.block_size);
+      clean &= svp_reduction(kappa, block_size, par);
+    }
+  } while(!clean);
+  
+  for (int i = 0; i < p - 1; ++i)
+  {
+    int kappa = min_row + i * par.block_size + 1;
+    svp_reduction(kappa, par.block_size, par, true);
+  }
+  
+  FT new_potential = get_sld_potential(m, min_row, max_row, par.block_size);
+  
+  if (par.flags & BKZ_VERBOSE)
+  {
+    print_tour(loop, min_row, max_row);
+  }
+
+  if (par.flags & BKZ_DUMP_GSO)
+  {
+    std::ostringstream prefix;
+    prefix << "End of SLD loop " << std::setw(4) << loop;
+    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
+           << (cputime() - cputime_start) * 0.001 << "s)";
+    dump_gso(par.dump_gso_filename, prefix.str());
+  }
+
+  if (new_potential >= sld_potential)
+    return true;
+  
+  sld_potential = new_potential;
+  return false;
+}
+
 template <class FT> bool BKZReduction<FT>::bkz()
 {
   int flags        = param.flags;
   int final_status = RED_SUCCESS;
   nodes            = 0;
   bool sd = (flags & BKZ_SD_VARIANT);
+  bool sld = (flags & BKZ_SLD_RED);
+  algorithm = sd ? "SD-BKZ" : sld ? "SLD" : "BKZ";
+  
+  if (sd && sld) {
+    throw std::runtime_error("Invalid flags: SD-BKZ and Slide reduction are mutually exclusive!");
+  }
 
   if (flags & BKZ_DUMP_GSO)
   {
@@ -476,13 +553,16 @@ template <class FT> bool BKZReduction<FT>::bkz()
     cerr << "Warning: SD Variant of BKZ requires explicit termination condition. Turning auto abort on!" << endl;
     flags |= BKZ_AUTO_ABORT;
   }
+  
+  if (sld)
+  {
+    m.updateGSO();
+    sld_potential = get_sld_potential(m, 0, num_rows, param.block_size);
+  }
 
   if (flags & BKZ_VERBOSE)
   {
-    if (sd)
-      cerr << "Entering SD-BKZ:" << endl;
-    else
-      cerr << "Entering BKZ:" << endl;
+    cerr << "Entering " << algorithm << ":" << endl;
     print_params(param, cerr);
     cerr << endl;
   }
@@ -492,7 +572,7 @@ template <class FT> bool BKZReduction<FT>::bkz()
 
   int kappa_max;
   bool clean = true;
-  for (i = 0;; i++)
+  for (i = 0;; ++i)
   {
     if ((flags & BKZ_MAX_LOOPS) && i >= param.max_loops)
     {
@@ -512,10 +592,14 @@ template <class FT> bool BKZReduction<FT>::bkz()
 
     try
     {
-      if (flags & BKZ_SD_VARIANT)
+      if (sd)
       {
         clean = sd_tour(i, param, 0, num_rows);
       } 
+      else if (sld)
+      {
+        clean = slide_tour(i, param, 0, num_rows);
+      }
       else
       {
         clean = tour(i, kappa_max, param, 0, num_rows);
@@ -530,11 +614,31 @@ template <class FT> bool BKZReduction<FT>::bkz()
       break;
   }
   
-  if (flags & BKZ_SD_VARIANT) {
-    int dummy_kappa_max = num_rows;
+  int dummy_kappa_max = num_rows;
+  if (sd) {
     try
     {
       hkz(dummy_kappa_max, param, num_rows - param.block_size, num_rows);
+      print_tour(i, 0, num_rows);
+    }
+    catch (RedStatus &e)
+    {
+      return set_status(e);
+    }
+  }
+  if (sld) {
+    try
+    {
+      int p = num_rows/param.block_size;
+      if (num_rows % param.block_size)
+        ++p;
+      for (int j = 0; j < p; ++j) 
+      {
+        int kappa = j * param.block_size + 1;
+        int end = min(num_rows, kappa + param.block_size - 1);
+        hkz(dummy_kappa_max, param, kappa, end);
+      }
+      print_tour(i, 0, num_rows);
     }
     catch (RedStatus &e)
     {
@@ -561,7 +665,7 @@ template <class FT> void BKZReduction<FT>::print_tour(const int loop, int min_ro
   r0  = m.getRExp(min_row, min_row, expo);
   fr0 = r0.get_d();
   fr0.mul_2si(fr0, expo);
-  cerr << "End of BKZ loop " << std::setw(4) << loop << ", time = " << std::fixed << std::setw(9)
+  cerr << "End of " << algorithm << " loop " << std::setw(4) << loop << ", time = " << std::fixed << std::setw(9)
        << std::setprecision(3) << (cputime() - cputime_start) * 0.001 << "s";
   cerr << ", r_" << min_row << " = " << fr0;
   cerr << ", slope = " << std::setw(9) << std::setprecision(6)
@@ -596,9 +700,9 @@ template <class FT> bool BKZReduction<FT>::set_status(int newStatus)
   if (param.flags & BKZ_VERBOSE)
   {
     if (status == RED_SUCCESS)
-      cerr << "End of BKZ: success" << endl;
+      cerr << "End of " << algorithm << ": success" << endl;
     else
-      cerr << "End of BKZ: failure: " << RED_STATUS_STR[status] << endl;
+      cerr << "End of " << algorithm << ": failure: " << RED_STATUS_STR[status] << endl;
   }
   return status == RED_SUCCESS;
 }
