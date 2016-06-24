@@ -420,9 +420,11 @@ void readOptions(int argc, char** argv, Options& o) {
     else if ((strcmp(argv[ac], "-h") == 0) || (strcmp(argv[ac], "--help") == 0)) {
       cout << "Usage: " << argv[0] << " [options] [file]\n"
            << "List of options:\n"
-           << "  -a [lll|svp]\n"
+           << "  -a [lll|svp|bkz|sld|sdbkz]\n"
            << "       lll = LLL-reduce the input matrix (default)\n"
            << "       bkz = BKZ-reduce the input matrix\n"
+           << "       sdbkz = reduce the input matrix using the self dual BKZ variant\n"
+           << "       sld = slide reduce the input matrix\n"
            << "       svp = compute a shortest non-zero vector of the lattice\n"
            << "  -m [proved|heuristic|fast|wrapper]\n"
            << "       LLL version (default: wrapper)\n"
