@@ -316,7 +316,7 @@ Please add yourself here if you make a contribution.
 
 - Patrick Pelissier and Paul Zimmermann for `dpe`.
 
-- David H. Bailey for QD.
+- David H. Bailey for `QD`.
 
 - Sylvain Chevillard, Christoph Lauter and Gilles Villard for the `configure/make/make install`
 packaging.
