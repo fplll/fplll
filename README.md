@@ -7,7 +7,7 @@ fplll contains implementations of several lattice algorithms. The implementation
 
 It includes implementations of floating-point LLL reduction algorithms [NS09,MSV09], offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible [S10]. In the case of the wrapper, the succession of variants is oblivious to the user. 
 
-It includes an implementation of the BKZ reduction algorithm [SE94], including the BKZ-2.0 [CN11] improvements (extreme enumeration pruning, pre-processing of blocks, early termination).
+It includes an implementation of the BKZ reduction algorithm [SE94], including the BKZ-2.0 [CN11] improvements (extreme enumeration pruning, pre-processing of blocks, early termination). Additionally, Slide reduction [GN08] and self dual BKZ [MW16] are supported. 
 
 It also includes a floating-point implementation of the Kannan-Fincke-Pohst algorithm [K83,FP85] that finds a shortest non-zero lattice vector. For the same task, the GaussSieve algorithm [MV10] is also available in fplll. Finally, it contains a variant of the enumeration algorithm that computes a lattice vector closest to a given vector belonging to the real span of the lattice.
 
@@ -125,8 +125,11 @@ The options are:
 * `-a bkz` : BKZ-reduction.
 * `-a hkz` : HKZ-reduction.
 * `-a svp` : prints a shortest non-zero vector of the lattice.
+* `-a sdb` : self dual variant of BKZ-reduction.
+* `-a sld` : Slide reduction.
+* `-a svp` : print a shortest vector of the lattice.
 * `-v` : verbose mode. 
-* `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution). 
+* `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution).
 * `-r` `size`, `-c` `size` : ignored, provided for compatibility with previous versions of fplll.
 
 
@@ -252,6 +255,8 @@ See [API documentation](library.md).
 [GM03] D. Goldstein and A. Mayer. On the equidistribution of Hecke points.
 Forum Mathematicum, 15:165–189 (2003)
 
+[GN08] N. Gama and P. Q. Nguyen. Finding Short Lattice Vectors within Mordell's Inequality. STOC 2008: 207-216
+
 [HPS98] J. Hoffstein, J. Pipher, J. H. Silverman. NTRU: A Ring-Based Public Key Cryptosystem. ANTS 1998: 267-288
 
 [K83] R. Kannan.  Improved algorithms for integer programming and related lattice problems. STOC 1983, 99-108
@@ -266,6 +271,8 @@ H-LLL: using Householder inside LLL. ISSAC 2009: 271-278
 
 [MV10] D. Micciancio and P. Voulgaris.
 Faster Exponential Time Algorithms for the Shortest Vector Problem. SODA 2010: 1468-1480
+
+[MW16] D. Micciancio and M. Walter. Practical, Predictable Lattice Basis Reduction. EUROCRYPT 2016: 820-849
 
 [MR09] D. Micciancio and O. Regev. Post-Quantum Cryptography. Chapter of Lattice-based Cryptography, 147-191 (2009)
 
