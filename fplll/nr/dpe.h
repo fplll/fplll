@@ -59,7 +59,7 @@
 #if defined(DPE_USE_DOUBLE)
 # define DPE_DOUBLE double /* mantissa type */
 # define DPE_BITSIZE 53 /* bitsize of DPE_DOUBLE */
-# define DPE_2_POW_BITSIZE 0x1P53
+# define DPE_2_POW_BITSIZE 9007199254740992
 /* DPE_LDEXP(DPE_DOUBLE m, DPEEXP e) return x = m * 2^e */
 # define DPE_LDEXP ldexp
 /* DPE_FREXP(DPE_DOUBLE x, DPEEXP *e) returns m, e such that x = m * 2^e with
@@ -74,7 +74,7 @@
 #elif defined(DPE_USE_LONGDOUBLE)
 # define DPE_DOUBLE long double
 # define DPE_BITSIZE 64
-# define DPE_2_POW_BITSIZE 0x1P64
+# define DPE_2_POW_BITSIZE 18446744073709551616
 # define DPE_LDEXP ldexpl
 # define DPE_FREXP frexpl
 # define DPE_ROUND roundl
