@@ -70,6 +70,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
 libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD)
 libfplll_la_LDFLAGS=-no-undefined -version-info 1:0:1
+enum/enumerate_base.lo : CXXFLAGS+=-O3 -fno-math-errno -fno-signed-zeros -fno-trapping-math -fassociative-math -freciprocal-math -ffinite-math-only
 
 libfplllv_la_SOURCES=$(libfplll_la_SOURCES)
 EXTRA_libfplllv_la_SOURCES=$(EXTRA_libfplll_la_SOURCES)

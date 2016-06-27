@@ -19,12 +19,14 @@
 #define FPLLL_ENUMERATE_BASE_H
 
 #include <array>
+#include <cfenv>
+#include <cmath>
 #include "../nr/nr.h"
 
 FPLLL_BEGIN_NAMESPACE
 
-inline void roundto(int& dest, const double& src) { dest = lrint(src); }
-inline void roundto(double& dest, const double& src) { dest = rint(src); }
+inline void roundto(int& dest, const double& src) { dest = std::lrint(src); }
+inline void roundto(double& dest, const double& src) { dest = std::rint(src); }
 
 #define MAXDIMENSION           256
 #define MAXTEMPLATEDDIMENSION  80
@@ -60,18 +62,36 @@ protected:
    
     /* nodes count */
     uint64_t nodes;
+
+    template<int kk, bool dualenum, bool findsubsols>
+    struct opts
+    {};
     
+    template<int kk, bool dualenum, bool findsubsols>
+    inline void enumerate_recursive( opts<kk, dualenum, findsubsols> );
     template<bool dualenum, bool findsubsols>
-    bool enumerate_loop();
+    inline void enumerate_recursive( opts<-1, dualenum, findsubsols> );
+        
+    template<bool dualenum, bool findsubsols>
+    void enumerate_loop();
 
     virtual void process_solution(enumf newmaxdist) = 0; 
     virtual void process_subsolution(int offset, enumf newdist) = 0;
     
+    int rounding_backup;
+    void save_rounding()
+    {
+        rounding_backup = std::fegetround();
+        std::fesetround(FE_TONEAREST);
+    }
+    void restore_rounding()
+    {
+        std::fesetround(rounding_backup);
+    }
+    
     inline bool next_pos_up()
     {
         ++k;
-        if (k >= k_end)
-            return false;
         if (k < k_max)
         {
             x[k] += dx[k];
@@ -80,6 +100,8 @@ protected:
         }
         else
         {
+            if (k >= k_end)
+                return false;
             k_max = k;
             ++x[k];
         }

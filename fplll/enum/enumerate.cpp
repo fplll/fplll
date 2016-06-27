@@ -121,6 +121,7 @@ void Enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool so
         {
             // use subtree
             x[k] = subtree[k - k_end];
+
             if (x[k] != 0)
                 svpbeginning = false;
 
@@ -198,6 +199,8 @@ void Enumeration<FT>::do_enumerate()
 {
     nodes = 0;
 
+    save_rounding();
+    
     set_bounds();
     
     if      ( dual &&  _evaluator.findsubsols) 
@@ -208,7 +211,8 @@ void Enumeration<FT>::do_enumerate()
         enumerate_loop<true,false>();
     else if (!dual && !_evaluator.findsubsols)
         enumerate_loop<false,false>();
-            
+    
+    restore_rounding();        
 }
 
 template class Enumeration<FP_NR<double> >;

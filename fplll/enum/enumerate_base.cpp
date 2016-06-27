@@ -19,16 +19,116 @@
 
 FPLLL_BEGIN_NAMESPACE
 
+template<int kk, bool dualenum, bool findsubsols>
+inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, dualenum, findsubsols> )
+{
+    if (dualenum)
+    {
+        for (int j = center_partsum_begin[kk+1]; j > kk; --j)
+            center_partsums[kk][j] = center_partsums[kk][j+1] - alpha[j] * mut[kk][j];
+    }
+    else
+    {
+        for (int j = center_partsum_begin[kk+1]; j > kk; --j)
+            center_partsums[kk][j] = center_partsums[kk][j+1] - x[j] * mut[kk][j];
+    }
+    if (center_partsum_begin[kk+1] > center_partsum_begin[kk])
+        center_partsum_begin[kk] = center_partsum_begin[kk+1];
+    center_partsum_begin[kk+1] = kk+1;
+
+    enumf newcenter = center_partsums[kk][kk+1];
+    enumf newx;
+    roundto(newx, newcenter);
+    enumf alphak = newx - newcenter;
+    enumf newdist = partdist[kk] + alphak*alphak*rdiag[kk];
+
+    if (newdist > partdistbounds[kk])
+        return;
+
+    center[kk] = newcenter;
+    x[kk] = newx;
+    alpha[kk] = alphak;
+    dx[kk] = ddx[kk] = (((int)(newcenter >= newx) & 1) << 1) - 1;
+    
+    if (kk == 0)
+    {
+        if (newdist > 0.0 /* || is_cvp */)
+            process_solution(newdist);
+    }
+    else
+        partdist[kk-1] = newdist;
+    
+    if (findsubsols && newdist < subsoldists[kk])
+    {
+        subsoldists[kk] = newdist;
+        process_subsolution(kk, newdist);
+    }
+    
+    while (true)
+    {
+        enumerate_recursive( opts<kk-1,dualenum,findsubsols>() );
+
+        if (partdist[kk] != 0.0)
+        {
+            x[kk] += dx[kk];
+            ddx[kk] = -ddx[kk];
+            dx[kk] = ddx[kk] - dx[kk];
+            enumf alphak2 = x[kk] - center[kk];
+            enumf newdist2 = partdist[kk] + alphak2*alphak2*rdiag[kk];
+            if (newdist2 > partdistbounds[kk])
+                return;
+            alpha[kk] = alphak2;
+            if (kk == 0)
+            {
+                if (newdist2 > 0.0 /* || is_cvp */)
+                    process_solution(newdist2);
+            }
+            else
+                partdist[kk-1] = newdist2;
+        }
+        else
+        {
+            ++x[kk];
+            enumf alphak2 = x[kk] - center[kk];
+            enumf newdist2 = partdist[kk] + alphak2*alphak2*rdiag[kk];
+            if (newdist2 > partdistbounds[kk])
+                return;
+            alpha[kk] = alphak2;
+            if (kk == 0)
+            {
+                if (newdist2 > 0.0 /* || is_cvp */)
+                    process_solution(newdist2);
+            }
+            else
+                partdist[kk-1] = newdist2;
+        }
+    }
+}
+
 template<bool dualenum, bool findsubsols>
-bool EnumerationBase::enumerate_loop()
+inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<-1, dualenum, findsubsols> )
+{
+}
+
+
+template<bool dualenum, bool findsubsols>
+void EnumerationBase::enumerate_loop()
 {
     if (k >= k_end)
-        return false;
+        return;
     
     for (int i = 0; i < k_end; ++i)
     {
         center_partsum_begin[i+1] = k_end - 1;
         center_partsums[i][k_end] = center_partsum[i];
+    }
+    
+    if (k_end==52)
+    {
+        cout << k_end << endl;
+        enumerate_recursive( opts<51, dualenum, findsubsols>() );
+        k=52;
+        return;
     }
     
     while (true)
@@ -49,7 +149,7 @@ bool EnumerationBase::enumerate_loop()
             {
                 process_solution(newdist);
                 if (!next_pos_up())
-                    return false;
+                    break;
                 continue;
             }
             if (dualenum)
@@ -74,14 +174,14 @@ bool EnumerationBase::enumerate_loop()
         else
         {
             if (!next_pos_up())
-                return false;
+                break;
         }
     }
 }
 
-template bool EnumerationBase::enumerate_loop<false,false>();
-template bool EnumerationBase::enumerate_loop<false,true>();
-template bool EnumerationBase::enumerate_loop<true,false>();
-template bool EnumerationBase::enumerate_loop<true,true>();
+template void EnumerationBase::enumerate_loop<false,false>();
+template void EnumerationBase::enumerate_loop<false,true>();
+template void EnumerationBase::enumerate_loop<true,false>();
+template void EnumerationBase::enumerate_loop<true,true>();
 
 FPLLL_END_NAMESPACE
