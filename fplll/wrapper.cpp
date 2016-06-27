@@ -138,7 +138,6 @@ template<class Z, class F>
 int Wrapper::heuristicLLL(ZZ_mat<Z>& bz, ZZ_mat<Z>& uz,
                           ZZ_mat<Z>& uInvZ, int precision,
                           double delta, double eta) {
-
   return callLLL<Z, F>(bz, uz, uInvZ, LM_HEURISTIC, precision, delta, eta);
 }
 
@@ -210,7 +209,6 @@ int Wrapper::provedLoop(int precision) {
  * last call to LLL. Need to be provedLLL.
  */
 int Wrapper::lastLLL() {
-  cout << " ************** lastLLL, goodPrec  " << goodPrec << endl;  
 
   /* <long, FT> */
 #ifdef FPLLL_WITH_ZLONG
@@ -291,8 +289,7 @@ bool Wrapper::lll() {
 #else
     lastPrec = numeric_limits<double>::digits;
 #endif
-    cout << " ************** coming here " << endl;
-    
+
     /* try fastLLL<mpz_t, dd_real> */
 #ifdef FPLLL_WITH_QD
     if (lllFailure) {
@@ -300,7 +297,6 @@ bool Wrapper::lll() {
       lllFailure = kappa != 0;
     }
     lastPrec = PREC_DD;
-    cout << " ************** coming here " << lastPrec << endl;
 #else
 #ifdef FPLLL_WITH_LONG_DOUBLE
     lastPrec = numeric_limits<long double>::digits;
@@ -312,16 +308,10 @@ bool Wrapper::lll() {
     /* loop */
     if (lllFailure) {
       int precD = numeric_limits<double>::digits;
-      if (little(kappa, lastPrec)){
+      if (little(kappa, lastPrec))
         kappa = provedLoop(precD);
-      }
-      
-      else {
-                cout << " ************** failed  " << lastPrec << endl;  
-  
+      else
         kappa = heuristicLoop(increasePrec(precD));
-      }
-      
     }
   }
 

@@ -317,7 +317,6 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
   if (!lll_obj.lll(lll_start, lll_start, kappa + block_size))
   {
 
-    cout << " error here " << lll_start << ", " << kappa << endl;
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
 
