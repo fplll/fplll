@@ -242,7 +242,7 @@ int main(int argc, char *argv[]) {
   int status = 0;
   status |= test_unpruned<FP_NR<double> >();
   status |= test_unpruned<FP_NR<long double> >();
-  //status |= test_unpruned<FP_NR<dd_real> >();
+  status |= test_unpruned<FP_NR<dd_real> >();
   status |= test_unpruned<FP_NR<mpfr_t> >();
 
   status |= test_prepruned<FP_NR<double> >();
@@ -255,6 +255,13 @@ int main(int argc, char *argv[]) {
   status |= tp.test_eval_poly();
   status |= tp.test_integrate_poly();
   status |= tp.test_relative_volume();
+
+
+  Pruner<FP_NR<dd_real> >::TestPruner tp2;
+  status |= tp2.test_enforce();
+  status |= tp2.test_eval_poly();
+  status |= tp2.test_integrate_poly();
+  status |= tp2.test_relative_volume();
 
 
   if (status == 0) {

@@ -17,6 +17,8 @@ LIBADD = $(LIBQD_LIBADD)
 
 TESTS = test_lll test_svp test_bkz test_nr test_pruner
 
+test_pruner_LDADD=-lgmp -lmpfr $(LIBQD_LIBADD)
+
 test_lll_SOURCES = test_lll.cpp
 test_svp_SOURCES = test_svp.cpp
 test_bkz_SOURCES = test_bkz.cpp
