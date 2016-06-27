@@ -71,6 +71,9 @@ protected:
     inline void enumerate_recursive( opts<kk, dualenum, findsubsols> );
     template<bool dualenum, bool findsubsols>
     inline void enumerate_recursive( opts<-1, dualenum, findsubsols> );
+    
+    template<bool dualenum, bool findsubsols>
+    inline void enumerate_recursive_dispatch(int kk);
         
     template<bool dualenum, bool findsubsols>
     void enumerate_loop();

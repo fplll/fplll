@@ -22,19 +22,6 @@ FPLLL_BEGIN_NAMESPACE
 template<int kk, bool dualenum, bool findsubsols>
 inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, dualenum, findsubsols> )
 {
-    if (dualenum)
-    {
-        for (int j = center_partsum_begin[kk+1]; j > kk; --j)
-            center_partsums[kk][j] = center_partsums[kk][j+1] - alpha[j] * mut[kk][j];
-    }
-    else
-    {
-        for (int j = center_partsum_begin[kk+1]; j > kk; --j)
-            center_partsums[kk][j] = center_partsums[kk][j+1] - x[j] * mut[kk][j];
-    }
-    if (center_partsum_begin[kk+1] > center_partsum_begin[kk])
-        center_partsum_begin[kk] = center_partsum_begin[kk+1];
-    center_partsum_begin[kk+1] = kk+1;
 
     enumf newcenter = center_partsums[kk][kk+1];
     enumf newx;
@@ -56,8 +43,23 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, dual
             process_solution(newdist);
     }
     else
+    {
         partdist[kk-1] = newdist;
-    
+        if (dualenum)
+        {
+            for (int j = center_partsum_begin[kk-1+1]; j > kk-1; --j)
+                center_partsums[kk-1][j] = center_partsums[kk-1][j+1] - alpha[j] * mut[kk-1][j];
+        }
+        else
+        {
+            for (int j = center_partsum_begin[kk-1+1]; j > kk-1; --j)
+                center_partsums[kk-1][j] = center_partsums[kk-1][j+1] - x[j] * mut[kk-1][j];
+        }
+        if (center_partsum_begin[kk-1+1] > center_partsum_begin[kk-1])
+            center_partsum_begin[kk-1] = center_partsum_begin[kk-1+1];
+        center_partsum_begin[kk-1+1] = kk-1+1;
+    }
+
     if (findsubsols && newdist < subsoldists[kk])
     {
         subsoldists[kk] = newdist;
@@ -84,7 +86,14 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, dual
                     process_solution(newdist2);
             }
             else
+            {
                 partdist[kk-1] = newdist2;
+                if (dualenum)
+                    center_partsums[kk-1][kk-1+1] = center_partsums[kk-1][kk-1+1+1] - alpha[kk-1+1] * mut[kk-1][kk-1+1];
+                else
+                    center_partsums[kk-1][kk-1+1] = center_partsums[kk-1][kk-1+1+1] - x[kk-1+1] * mut[kk-1][kk-1+1];
+                center_partsum_begin[kk-1] = kk-1+1;
+            }
         }
         else
         {
@@ -100,7 +109,14 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, dual
                     process_solution(newdist2);
             }
             else
+            {
                 partdist[kk-1] = newdist2;
+                if (dualenum)
+                    center_partsums[kk-1][kk-1+1] = center_partsums[kk-1][kk-1+1+1] - alpha[kk-1+1] * mut[kk-1][kk-1+1];
+                else
+                    center_partsums[kk-1][kk-1+1] = center_partsums[kk-1][kk-1+1+1] - x[kk-1+1] * mut[kk-1][kk-1+1];
+                center_partsum_begin[kk-1] = kk-1+1;
+            }
         }
     }
 }
@@ -108,6 +124,13 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, dual
 template<bool dualenum, bool findsubsols>
 inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<-1, dualenum, findsubsols> )
 {
+}
+
+template<bool dualenum, bool findsubsols>
+inline void EnumerationBase::enumerate_recursive_dispatch(int kk)
+{
+//    typedef int (Foo::*Member)(int, int)
+//    static const 
 }
 
 
@@ -123,7 +146,7 @@ void EnumerationBase::enumerate_loop()
         center_partsums[i][k_end] = center_partsum[i];
     }
     
-    if (k_end==52)
+    if (k_end==52 && 0)
     {
         cout << k_end << endl;
         enumerate_recursive( opts<51, dualenum, findsubsols>() );
