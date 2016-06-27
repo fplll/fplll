@@ -418,4 +418,3 @@ const char* getRedStatusStr(int status) {
 
 
 FPLLL_END_NAMESPACE
-

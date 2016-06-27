@@ -47,9 +47,8 @@ LLLReduction<ZT, FT>::LLLReduction(MatGSO<ZT, FT>& m,
 template<class ZT, class FT>
 bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
   if (kappaEnd == -1) kappaEnd = m.d;
-  verbose = 1;
-  
-  
+
+
   FPLLL_DEBUG_CHECK(kappaMin <= kappaStart && kappaStart < kappaEnd && kappaEnd <= m.d);
   int startTime = cputime();
   int kappa = kappaStart + 1;
@@ -64,13 +63,6 @@ bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
   extendVect(babaiMu, kappaEnd);
   extendVect(babaiExpo, kappaEnd);
 
-  cout << " =====================!!" << delta << endl;
-  cout << " =====================!!" << eta << endl;  
-  cout << m.b << endl;
-  cout << " =====================!!" << delta << endl;
-  cout << " =====================!!" << eta << endl;  
-  
-  
   for (; zeros < d && m.b[0].is_zero(); zeros++) {
     m.moveRow(kappaMin, kappaEnd - 1 - zeros);
   }
@@ -103,8 +95,6 @@ bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
     // Lazy size reduction
     if (!babai(kappa, kappa)) {
       finalKappa = kappa;
-          cout << m.b << endl;
-
       return false;
     }
 
@@ -148,9 +138,8 @@ bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
     kappa++;
   }
 
-  if (kappa < kappaEnd - zeros){
+  if (kappa < kappaEnd - zeros)
     return setStatus(RED_LLL_FAILURE);
-  }
   else
     return setStatus(RED_SUCCESS);
 }
