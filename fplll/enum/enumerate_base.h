@@ -30,6 +30,7 @@ inline void roundto(double& dest, const double& src) { dest = std::rint(src); }
 
 #define MAXDIMENSION           256
 #define MAXTEMPLATEDDIMENSION  80
+#define USE_RECURSIVE_ENUM
 
 class EnumerationBase
 {
@@ -63,15 +64,23 @@ protected:
     /* nodes count */
     uint64_t nodes;
 
-    template<int kk, bool dualenum, bool findsubsols>
+    template<int kk, int kk_start, bool dualenum, bool findsubsols>
     struct opts
     {};
     
+    /* need templated function argument for support of integer specialization for kk==-1 */
+    template<int kk, int kk_start, bool dualenum, bool findsubsols>
+    inline void enumerate_recursive( opts<kk, kk_start, dualenum, findsubsols> );
+    template<int kk_start, bool dualenum, bool findsubsols>
+    inline void enumerate_recursive( opts<-1, kk_start, dualenum, findsubsols> );
+
+    /* simple wrapper with no function argument as helper for dispatcher */
     template<int kk, bool dualenum, bool findsubsols>
-    inline void enumerate_recursive( opts<kk, dualenum, findsubsols> );
-    template<bool dualenum, bool findsubsols>
-    inline void enumerate_recursive( opts<-1, dualenum, findsubsols> );
-    
+    void enumerate_recursive_wrapper()
+    {
+        enumerate_recursive( opts<kk,kk,dualenum,findsubsols>() );
+    }
+        
     template<bool dualenum, bool findsubsols>
     inline void enumerate_recursive_dispatch(int kk);
         
@@ -95,7 +104,7 @@ protected:
     inline bool next_pos_up()
     {
         ++k;
-        if (k < k_max)
+        if (partdist[k] != 0.0)
         {
             x[k] += dx[k];
             ddx[k] = -ddx[k];

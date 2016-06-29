@@ -177,6 +177,7 @@ void Enumeration<FT>::set_bounds()
 template<typename FT>
 void Enumeration<FT>::process_solution(enumf newmaxdist)
 {
+//    std::cout << "Sol dist: " << newmaxdist << " (nodes:" << nodes << ")" << endl;
     for (int j = 0; j < d; ++j)
         fx[j] = x[j];
     _evaluator.evalSol(fx, newmaxdist, maxdist);
