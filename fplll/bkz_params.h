@@ -160,7 +160,7 @@ public:
       strategies = vector<Strategy>();
       for (long b = 0; b <= block_size; ++b)
       {
-        strategies.emplace_back(std::move(Strategy::EmptyStrategy()));
+        strategies.emplace_back(Strategy::EmptyStrategy());
       }
     }
   };

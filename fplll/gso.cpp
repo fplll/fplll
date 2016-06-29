@@ -99,6 +99,33 @@ void MatGSO<ZT, FT>::discoverRow() {
 }
 
 template<class ZT, class FT>
+inline ZT MatGSO<ZT, FT>::getMaxGram() {
+  ZT tmp;
+  if (enableIntGram) {
+    tmp = g(0,0);
+    for (int i = 0; i < nKnownRows; i ++)
+      tmp = tmp.maxZ(g(i,i));
+  }
+  else{
+    FT tmp1 = gf(0,0);
+    for (int i = 0; i < nKnownRows; i ++)
+      tmp1 = tmp1.maxF(gf(i,i));
+    tmp.set_f(tmp1);
+  }
+  return tmp;
+}
+
+
+template<class ZT, class FT>
+  inline FT MatGSO<ZT, FT>::getMaxBstar() {
+  FT tmp;
+  tmp = r(0,0);
+  for (int i = 0; i < nKnownRows; i ++)
+    tmp = tmp.maxF(r(i,i));
+  return tmp;
+}
+
+template<class ZT, class FT>
 long MatGSO<ZT, FT>::getMaxMuExp(int i, int nColumns) {
   FPLLL_DEBUG_CHECK(i >= 0 && i < nKnownRows && gsoValidCols[i] >= nColumns);
   long maxExpo = LONG_MIN, expo;

@@ -169,6 +169,18 @@ inline void Z_NR<long>::set_f(const FP_NR<long double>& a) {
 }
 #endif
 
+#ifdef FPLLL_WITH_QD
+template<> template<>
+inline void Z_NR<long>::set_f(const FP_NR<dd_real>& a) {
+  data = a.get_si();
+}
+
+template<> template<>
+inline void Z_NR<long>::set_f(const FP_NR<qd_real>& a) {
+  data = a.get_si();
+}
+#endif
+
 #ifdef FPLLL_WITH_DPE
 template<> template<>
 inline void Z_NR<long>::set_f(const FP_NR<dpe_t>& a) {
@@ -205,6 +217,18 @@ inline void Z_NR<double>::set_f(const FP_NR<dpe_t>& a) {
 }
 #endif
 
+#ifdef FPLLL_WITH_QD
+template<> template<>
+inline void Z_NR<double>::set_f(const FP_NR<dd_real>& a) {
+  data = a.get_d();
+}
+
+template<> template<>
+inline void Z_NR<double>::set_f(const FP_NR<qd_real>& a) {
+  data = a.get_d();
+}
+#endif
+
 template<> template<>
 inline void Z_NR<double>::set_f(const FP_NR<mpfr_t>& a) {
   data = a.get_d();
@@ -228,6 +252,26 @@ inline void Z_NR<mpz_t>::set_f(const FP_NR<long double>& a) {
 template<> template<>
 inline void Z_NR<mpz_t>::set_f(const FP_NR<dpe_t>& a) {
   dpe_get_z(data, const_cast<dpe_t&>(a.getData()));
+}
+#endif
+
+#ifdef FPLLL_WITH_QD
+template<> template<>
+inline void Z_NR<mpz_t>::set_f(const FP_NR<dd_real>& a) {
+  mpfr_t t;
+  mpfr_init(t);
+  a.get_mpfr (t, GMP_RNDN);
+  mpfr_get_z(data, t, GMP_RNDN);  
+  mpfr_clear(t);
+}
+
+template<> template<>
+inline void Z_NR<mpz_t>::set_f(const FP_NR<qd_real>& a) {
+  mpfr_t t;
+  mpfr_init(t);
+  a.get_mpfr (t, GMP_RNDN);
+  mpfr_get_z(data, t, GMP_RNDN);  
+  mpfr_clear(t);
 }
 #endif
 
