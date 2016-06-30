@@ -176,7 +176,7 @@ const Pruning &BKZReduction<FT>::get_pruning(int kappa, int block_size, const BK
   long max_dist_expo;
   FT max_dist = m.getRExp(kappa, kappa, max_dist_expo);
 
-  FT gh_max_dist;
+  FT gh_max_dist = 0.0;
   FT root_det = get_root_det(m, kappa, kappa + block_size);
   compute_gaussian_heuristic(gh_max_dist, max_dist_expo, block_size, root_det, 1.0);
   return strat.get_pruning(max_dist.get_d() * pow(2, max_dist_expo),
