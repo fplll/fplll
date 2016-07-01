@@ -1,4 +1,6 @@
 include_fpllldir=$(includedir)/fplll
+strategydir = $(pkgdatadir)/strategies
+AM_CPPFLAGS = -DFPLLL_DEFAULT_STRATEGY_DIR=\"$(strategydir)\" -DFPLLL_DEFAULT_STRATEGY=\"$(strategydir)/default.json\"
 
 nobase_include_fplll_HEADERS=defs.h fplll.h \
   nr/dpe.h \

@@ -225,6 +225,14 @@ enum HKZFlags {
   HKZ_VERBOSE = 1
 };
 
+#ifndef FPLLL_DEFAULT_STRATEGY_DIR
+#define FPLLL_DEFAULT_STRATEGY_DIR ""
+#endif
+
+#ifndef FPLLL_DEFAULT_STRATEGY
+#define FPLLL_DEFAULT_STRATEGY ""
+#endif
+
 FPLLL_END_NAMESPACE
 
 #endif

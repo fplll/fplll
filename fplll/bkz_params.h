@@ -218,5 +218,23 @@ public:
 
 vector<Strategy> load_strategies_json(const char *filename);
 
+/**
+   Return default directory to search for strategies (if any)
+*/
+
+const char *default_strategy_directory();
+
+/**
+   Return default strategy (if any)
+*/
+
+const char *default_strategy();
+
+/**
+   Attempt to expand strategy path to full path
+*/
+
+const std::string strategy_full_path(const char *strategy_path);
+
 FPLLL_END_NAMESPACE
 #endif /* BKZ_PARAMS_H */
