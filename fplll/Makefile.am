@@ -27,8 +27,6 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	bkz_params.h \
 	enum/enumerate.h enum/enumerate_base.h
 
-EXTRA_DIST=pruning.txt
-
 bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff
 EXTRA_PROGRAMS=fplll_dbg latticegen_dbg test latsieve
