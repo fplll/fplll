@@ -1,5 +1,5 @@
-#ifndef BKZ_PARAMS_H
-#define BKZ_PARAMS_H
+#ifndef BKZ_PARAM_H
+#define BKZ_PARAM_H
 
 /* (C) 2014-2016 Martin Albrecht.
 
@@ -237,4 +237,4 @@ const char *default_strategy();
 const std::string strategy_full_path(const char *strategy_path);
 
 FPLLL_END_NAMESPACE
-#endif /* BKZ_PARAMS_H */
+#endif /* BKZ_PARAM_H */

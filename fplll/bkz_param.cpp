@@ -1,5 +1,5 @@
 #include <cstdio>
-#include "bkz_params.h"
+#include "bkz_param.h"
 #include "io/json.hpp"
 using json = nlohmann::json;
 

@@ -18,7 +18,7 @@
 #include <iomanip>
 
 #include "bkz.h"
-#include "bkz_params.h"
+#include "bkz_param.h"
 #include "enum/enumerate.h"
 #include <iomanip>
 
