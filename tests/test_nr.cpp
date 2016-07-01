@@ -21,11 +21,11 @@ using namespace fplll;
 
 template<class FT> int test_arithmetic() {
   FT a = 6.0, b=3.0, c=-2;
-  FT d = (a*b + 2*c + 2.0)/c;
+  FT d = 1.0 - (a*b + 2*c + 2.0)/c;
   int status = 0;
-  status |= d.cmp(-8);
+  status |= d.cmp(9);
   d += 1.0;
-  status |= d.cmp(-7);
+  status |= d.cmp(10);
   return status;
 }
 

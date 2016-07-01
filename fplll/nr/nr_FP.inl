@@ -351,11 +351,27 @@ template <class F> inline FP_NR<F> operator+(const FP_NR<F> &a, double b)
   return r;
 }
 
+template <class F> inline FP_NR<F> operator+(double a, const FP_NR<F> &b)
+{
+  FP_NR<F> r;
+  r = a;
+  r.add(r, b);
+  return r;
+}
+
 template <class F> inline FP_NR<F> operator+(const FP_NR<F> &a, long b)
 {
   FP_NR<F> r;
   r = b;
-  r.add(r, a);
+  r.add(a, r);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator+(long a, const FP_NR<F> &b)
+{
+  FP_NR<F> r;
+  r = a;
+  r.add(r, b);
   return r;
 }
 
@@ -373,6 +389,30 @@ template <class F> inline FP_NR<F> operator-(const FP_NR<F> &a, double b)
   FP_NR<F> r;
   r = b;
   r.sub(a, r);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator-(double a, const FP_NR<F> &b)
+{
+  FP_NR<F> r;
+  r = a;
+  r.sub(r, b);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator-(const FP_NR<F> &a, long b)
+{
+  FP_NR<F> r;
+  r = b;
+  r.sub(a, r);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator-(long a, const FP_NR<F> &b)
+{
+  FP_NR<F> r;
+  r = a;
+  r.sub(r, b);
   return r;
 }
 
