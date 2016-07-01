@@ -5,9 +5,9 @@ using json = nlohmann::json;
 
 FPLLL_BEGIN_NAMESPACE
 
-const char *default_strategy_directory()
+const char *default_strategy_path()
 {
-  return FPLLL_DEFAULT_STRATEGY_DIR;
+  return FPLLL_DEFAULT_STRATEGY_PATH;
 }
 
 const char *default_strategy()
@@ -25,9 +25,9 @@ const std::string strategy_full_path(const char *strategy_path)
     fclose(fh);
     path = strategy_path;
     return path;
-  } else if (strcmp(FPLLL_DEFAULT_STRATEGY_DIR, "") > 0)
+  } else if (strcmp(FPLLL_DEFAULT_STRATEGY_PATH, "") > 0)
   {
-    path += FPLLL_DEFAULT_STRATEGY_DIR;
+    path += FPLLL_DEFAULT_STRATEGY_PATH;
     path += "/";
     path += strategy_path;
     fh = fopen(path.c_str(), "r");

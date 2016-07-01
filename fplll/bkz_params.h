@@ -222,7 +222,7 @@ vector<Strategy> load_strategies_json(const char *filename);
    Return default directory to search for strategies (if any)
 */
 
-const char *default_strategy_directory();
+const char *default_strategy_path();
 
 /**
    Return default strategy (if any)
