@@ -55,7 +55,7 @@ class Pruner<FT>::TestPruner
       b[j] = .5;
 
       FT old_bj = b[j];
-      pru.enforce(b, j);
+      pru.enforce_bounds(b, j);
 
       status |= !((b[j] >= old_bj) && (b[j] <= old_bj));
       status |= !((b[D-1] >= 1.) && (b[D-1] <= 1.));
@@ -196,7 +196,7 @@ int test_prepruned(){
   double pr[N] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.937197, 0.937197, 0.871731, 0.871731, 0.814304, 0.814304, 0.762232, 0.762232, 0.713898, 0.713898, 0.668279, 0.668279, 0.624701, 0.624701, 0.58271, 0.58271, 0.541994, 0.541994, 0.502342, 0.502342, 0.463617, 0.463617, 0.425747, 0.425747, 0.388723, 0.388723, 0.35262, 0.35262, 0.317642, 0.317642, 0.284261, 0.284261, 0.254584, 0.254584, 0.254584, 0.254584, 0.254584, 0.254584, 0.111895, 0.111895, 0.111895, 0.111895};
 
   pru.enumeration_radius = .85;
-  double cost = pru.get_enum_cost(pr);
+  double cost = pru.get_single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
   if (abs(1 - cost / 1.7984e+07) > .01){
     return 1;
@@ -220,7 +220,7 @@ int test_unpruned(){
     pr[i] = 1.;
   }
   pru.enumeration_radius = .85;
-  double cost = pru.get_enum_cost(pr);
+  double cost = pru.get_single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
 
   if (abs(1 - cost / 3.20e+10) > .02){

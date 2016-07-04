@@ -63,22 +63,42 @@ class Pruner{
     class TestPruner;
     friend class TestPruner;
 
+    // Defines the cost of re-processing a basis for a retrial
+    // This cost should be expressed in terms of ``Nodes'' in an enumeration
+    // Roughly, a Node is equivalent to 100 CPU cycles
     FT preproc_cost;
+    // Defines the desired success probability after several retrial
     FT target_success_proba;
+    // Defines the enumeration radius (squared)
     FT enumeration_radius;
+
+    // Note: one can try to force success_proba = target_success_proba by
+    // setting a prohibitive preproc_cost. But beware: this may induces 
+    // numerical stability issue, especially with the gradient method.
+    // Melder-Mead should be more robust.
 
     
     Pruner();
 
+    // Load the shape of a basis from a MatGSO object. Can select a projected sub-lattice [beginning,end-1]
     template<class GSO_ZT,class GSO_FT>
     void load_basis_shape(const MatGSO<GSO_ZT, GSO_FT>& gso, const int beginning = 0, const int end = 0);
+    // Load the shape of a basis from a double*. Mostly for testing purposes ?
     void load_basis_shape(const int dim, const double* gso_sq_norms);
     
-    //void set_parameters(FT preproc_cost, FT target_success_proba);
+
+
     
+    // Optimize pruning coefficients. 
+    // Basis Shape and other parameters must have been set beforehands. 
+    // See auto_prune for an example of proper usage.
     void optimize_pruning_coeffs(/*io*/double* pr, /*i*/const int reset = 1);
-    double get_enum_cost(/*i*/const double* pr);
-    double get_enum_cost_with_retrials(/*i*/const double* pr);
+    // Compute the cost of a single enumeration
+    double get_single_enum_cost(/*i*/const double* pr);
+    // Compute the cost of r enumeration and (r-1) preprocessing, 
+    // where r is the required number of retrials to reach target_success_proba
+    double get_repeated_enum_cost(/*i*/const double* pr);
+    // Compute the success proba of a single enumeration
     double get_svp_success_proba(/*i*/const double* pr);
 
 
@@ -89,29 +109,45 @@ class Pruner{
           // Even vectors, i.e. only one every two entry is stored: V[2i] = V[2i+1] =E[i]
     using poly = array<FT, PRUNER_MAX_D + 1>;
 
-
+    // Load the constants for factorial and ball-volumes
     void set_tabulated_consts();
     int n;  // Dimension of the (sub)-basis
     int d;  // Degree d = floor(n/2)
 
-    vec r;
-    vec pv;
-    FT renormalization_factor;
+    vec r;  // Gram-Schmidt length (squared, inverted ordering)
+    vec pv; // Partial volumes (inverted ordering)
+    FT renormalization_factor; // internal renormalization factor to avoid over/underflows
 
 
+    // Sanity check: has a basis indeed been loaded ?
     int check_loaded_basis();
+    // Initialize pruning coefficients (linear pruning)
     void init_prunning_coeffs(evec &b);
+    // Load pruning coefficient from double*
     void load_prunning_coeffs(/*i*/const double* pr, /*o*/ evec& b);
+    // Save pruning coefficients to double*
     void save_prunning_coeffs(/*o*/double* pr, /*i*/const evec& b);
-    inline int enforce(/*io*/ evec &b, /*opt i*/const int j = 0);
+    // Enforce reasonable contraints on pruning bounds (inside [0,1], increasing). 
+    // Keeps index j unchanged when possible
+    inline int enforce_bounds(/*io*/ evec &b, /*opt i*/const int j = 0);
+    // Evaluate a polynomial
     inline FT eval_poly(const int ld,/*i*/const poly *p,const FT x);
+    // Integrate a polynomial
     inline void integrate_poly(const int ld,/*io*/ poly *p);
-    inline FT relative_volume(/*i*/const int rd,const evec &b);
-    inline FT cost(/*i*/const evec &b);
+    // Compute the relative volume of a cylinder interesection of dim rd, and bounds b[0:rd]
+    inline FT relative_volume(/*i*/const int rd, const evec &b);
+    // Compute the cost of a single enumeration
+    inline FT single_enum_cost(/*i*/const evec &b);
+    // Compute the success probability of a single enumeration
     inline FT svp_success_proba(/*i*/const evec &b);
-    inline FT cost_factor(/*i*/const evec &b);
-    FT cost_factor_derivative(/*i*/const evec &b, /*o*/ evec &res);
+    // Compute the cost of r enumeration and (r-1) preprocessing, 
+    // where r is the required number of retrials to reach target_success_proba
+    inline FT repeated_enum_cost(/*i*/const evec &b);
+    // Compute the gradient of the above function
+    void repeated_enum_cost_gradient(/*i*/const evec &b, /*o*/ evec &res);
+    // Improve the pruning bounds a bit,  using one gradient step
     int improve(/*io*/ evec &b);
+    // Run the whole escent to optimize pruning bounds
     void descent(/*io*/ evec &b);
 
     FT tabulated_factorial[PRUNER_MAX_N];
@@ -135,18 +171,20 @@ Pruner<FT>::Pruner(){
   n = 0;
   d = 0;
   set_tabulated_consts();
-  epsilon = std::pow(2., -13);
-  min_step = std::pow(2., -12);
-  step_factor = std::pow(2, .5);
-  shell_ratio = .995;
-  minus_one = -1.;
-  one = 1.;
-  preproc_cost = 0.;
-  enumeration_radius = 0.;
-  target_success_proba = .90;
-  preproc_cost = 0;
-  min_cf_decrease = .9999;
-  symmetry_factor = 2;
+
+  epsilon = std::pow(2., -13);    // Guesswork. Will become obsolete with Nelder-Mead
+  min_step = std::pow(2., -12);   // Guesswork. Will become obsolete with Nelder-Mead  
+  step_factor = std::pow(2, .5);  // Guesswork. Will become obsolete with Nelder-Mead 
+  shell_ratio = .995;             // This approximation means that SVP will in fact be approx-SVP with factor 1/.995. Sounds fair.
+  one = 1.;                       // Duh.
+  minus_one = -1.;                // minus Duh.
+  min_cf_decrease = .9999;        // We really want the gradient descent to reach the minima
+  symmetry_factor = 2;            // For now, we are just considering SVP
+
+  preproc_cost = 0.;              // Please set your own value before running.
+  enumeration_radius = 0.;        // Please set your own value before running.
+  target_success_proba = .90;     // Please set your own value before running.
+  preproc_cost = 0;               // Please set your own value before running.
 }
 
 
@@ -241,17 +279,17 @@ double Pruner<FT>::get_svp_success_proba(/*i*/const double* pr){
 }
 
 template<class FT>
-double Pruner<FT>::get_enum_cost(/*i*/const double* pr){
+double Pruner<FT>::get_single_enum_cost(/*i*/const double* pr){
   evec b;
   load_prunning_coeffs(pr, b);
-  return cost(b).get_d();
+  return single_enum_cost(b).get_d();
 }
 
 template<class FT>
-double Pruner<FT>::get_enum_cost_with_retrials(/*i*/const double* pr){
+double Pruner<FT>::get_repeated_enum_cost(/*i*/const double* pr){
   evec b;
   load_prunning_coeffs(pr, b);
-  return cost_factor(b).get_d();
+  return repeated_enum_cost(b).get_d();
 }
 
 
@@ -275,7 +313,7 @@ void Pruner<FT>::load_prunning_coeffs(/*i*/const double* pr, /*o*/ evec& b){
   for (int i = 0; i < d; ++i) {
     b[i] = pr[n - 1 - 2 * i];
   }
-  if (enforce(b)){
+  if (enforce_bounds(b)){
     throw std::runtime_error(
       "Inside Pruner : Ill formed pruning coefficients (must be decreasing, starting with two 1.0)");
   }
@@ -300,7 +338,7 @@ void Pruner<FT>::save_prunning_coeffs(/*o*/double* pr, /*i*/const evec& b){
 }
 
 template<class FT>
-inline int Pruner<FT>::enforce(/*io*/ evec &b, /*opt i*/const int j){
+inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt i*/const int j){
   int status = 0;
   if (b[d - 1] < 1){
     status = 1;
@@ -360,7 +398,7 @@ inline FT Pruner<FT>::relative_volume(const int rd, /*i*/const evec &b){
 }
 
 template<class FT>
-inline FT Pruner<FT>::cost(/*i*/const evec &b){
+inline FT Pruner<FT>::single_enum_cost(/*i*/const evec &b){
   vec rv; // Relative volumes at each level
 
   for (int i = 0; i < d; ++i) {
@@ -425,54 +463,48 @@ inline FT Pruner<FT>::svp_success_proba(/*i*/const evec &b){
 
 
 template<class FT>
-inline FT Pruner<FT>::cost_factor(/*i*/const evec &b){
+inline FT Pruner<FT>::repeated_enum_cost(/*i*/const evec &b){
 
   FT success_proba = svp_success_proba(b);
 
   if (success_proba >= target_success_proba)
-    return cost(b);
+    return single_enum_cost(b);
 
   FT trials =  log(one - target_success_proba) / log(one - success_proba);
-  return cost(b) * trials + preproc_cost * (trials-1);
+  return single_enum_cost(b) * trials + preproc_cost * (trials-1);
 }
 
 
 
 template<class FT>
-FT Pruner<FT>::cost_factor_derivative(/*i*/const evec &b, /*o*/ evec &res){
+void Pruner<FT>::repeated_enum_cost_gradient(/*i*/const evec &b, /*o*/ evec &res){
   evec bpDb;
   res[d - 1] = 0.;
   for (int i = 0; i < d-1; ++i) {
     bpDb = b;
     bpDb[i] *= (one - epsilon);
-    enforce(bpDb, i);
-    FT X = cost_factor(bpDb);
+    enforce_bounds(bpDb, i);
+    FT X = repeated_enum_cost(bpDb);
 
     bpDb = b;
     bpDb[i] *= (one + epsilon);
-    enforce(bpDb, i);
-    FT Y = cost_factor(bpDb);
-
-
-
+    enforce_bounds(bpDb, i);
+    FT Y = repeated_enum_cost(bpDb);
     res[i] = (log(X) - log(Y)) / epsilon;
   }
+}
 
-}  
+
+
 template<class FT>
 int Pruner<FT>::improve(/*io*/ evec &b){
 
-  FT cf = cost_factor(b);
+  FT cf = repeated_enum_cost(b);
   FT old_cf = cf;
   evec newb;
   evec gradient;
-  cost_factor_derivative(b, gradient);
+  repeated_enum_cost_gradient(b, gradient);
   FT norm = 0;
-
-  for (int i = 0; i < d; ++i)
-  {
-
-  }
 
   // normalize the gradient
   for (int i = 0; i < d; ++i) {
@@ -483,10 +515,6 @@ int Pruner<FT>::improve(/*io*/ evec &b){
   norm = sqrt(norm /  (one * (1. * d)) );
   if (norm <= 0.)
     return 0;
-  for (int i = 0; i < d; ++i)
-  {
-
-  }
 
   for (int i = 0; i < d; ++i) {
     gradient[i] /= norm;
@@ -501,8 +529,8 @@ int Pruner<FT>::improve(/*io*/ evec &b){
       newb[i] = newb[i] + step * gradient[i];
     }
 
-    enforce(newb);
-    new_cf = cost_factor(newb);
+    enforce_bounds(newb);
+    new_cf = repeated_enum_cost_factor(newb);
 
 
 
@@ -531,7 +559,7 @@ void Pruner<FT>::init_prunning_coeffs(evec &b) {
   for (int i = 0; i < d; ++i) {
     b[i] = .1 + ((1.*i) / d);
   }
-  enforce(b);
+  enforce_bounds(b);
 }
 
 
