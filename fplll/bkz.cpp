@@ -421,7 +421,7 @@ bool BKZReduction<FT>::trunc_dtour(const BKZParam &par, int min_row,
   bool clean = true;
   int block_size = par.block_size;
   
-  for (int kappa = max_row - block_size; kappa > 0; --kappa)
+  for (int kappa = max_row - block_size; kappa > min_row; --kappa)
   {
     clean &= svp_reduction(kappa, block_size, par, true);
   }
