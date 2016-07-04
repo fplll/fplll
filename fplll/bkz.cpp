@@ -68,7 +68,7 @@ template <class FT> double get_current_slope(MatGSO<Integer, FT> &m, int start_r
 template<class FT>
 FT get_root_det(MatGSO<Integer, FT>& m, int start, int end) 
 {
-  FT root_det = 0;
+  FT root_det = 0.0;
   start = max(0, start);
   end = min(m.d, end);
   FT h = (double)(end - start);
@@ -80,7 +80,7 @@ FT get_root_det(MatGSO<Integer, FT>& m, int start, int end)
 template<class FT>
 FT get_log_det(MatGSO<Integer, FT>& m, int start, int end) 
 {
-  FT log_det = 0;
+  FT log_det = 0.0;
   start = max(0, start);
   end = min(m.d, end);
   FT h;
@@ -95,7 +95,7 @@ FT get_log_det(MatGSO<Integer, FT>& m, int start, int end)
 template<class FT>
 FT get_sld_potential(MatGSO<Integer, FT>& m, int start, int end, int block_size)
 {
-  FT potential = 0;
+  FT potential = 0.0;
   int p = (end - start)/block_size;
   if ((end - start) % block_size == 0)
     --p;

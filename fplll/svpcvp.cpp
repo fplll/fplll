@@ -333,7 +333,7 @@ int closestVector(IntMatrix& b, const IntVect& intTarget,
 
   /* Computes a very large bound to make the algorithm work
       until the first solution is found */
-  maxDist = 0;
+  maxDist = 0.0;
   for (int i = 1; i < d; i++) {
     // getRExp(i, i) = r(i, i) because gso is initialized without GSO_ROW_EXPO
     maxDist.add(maxDist, gso.getRExp(i, i));

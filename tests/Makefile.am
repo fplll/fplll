@@ -11,9 +11,7 @@ EXTRA_DIST=lattices/dim55_in lattices/example_in lattices/example_svp_in lattice
 AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPBUILDDIR)
 
 STAGEDIR := $(realpath -s $(TOPBUILDDIR)/.libs)
-AM_LDFLAGS = -L$(STAGEDIR) -Wl,-rpath,$(STAGEDIR) -lfplll
-LDFLAGS = -no-install
-LIBADD = $(LIBQD_LIBADD)
+AM_LDFLAGS = -L$(STAGEDIR) -Wl,-rpath,$(STAGEDIR) -lfplll -no-install $(LIBQD_LIBADD)
 
 TESTS = test_lll test_svp test_bkz test_nr
 

@@ -107,6 +107,11 @@ inline void FP_NR<mpfr_t>::operator=(double a) {
 }
 
 template<>
+inline void FP_NR<mpfr_t>::operator=(const char *s) {
+  mpfr_set_str(data, s, 10, GMP_RNDN);
+}
+
+template<>
 inline void FP_NR<mpfr_t>::operator=(mpfr_t& a) {
   mpfr_set(data, a, GMP_RNDN);
 }

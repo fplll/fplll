@@ -31,6 +31,7 @@ public:
   inline FP_NR<F>(const FP_NR<F> &f);
   inline ~FP_NR<F>();
   inline FP_NR<F>(const double d) : FP_NR<F>() {*this = d;};
+  inline FP_NR<F>(const char *s) : FP_NR<F>() {*this = s;};
 
   /**
    * Returns the current precision for new FP_NR&lt;F&gt; objects.
@@ -149,6 +150,7 @@ public:
    * Operator
    */
   inline void operator=(const FP_NR<F> &a);
+  inline void operator=(const char *s);
   inline void operator=(double a);
   // inline void operator=(mpfr_t& a);
   inline void operator=(mpfr_t &a) { set_mpfr(a, MPFR_RNDN); };

@@ -144,7 +144,7 @@ template <class ZT> int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &c
 
   FloatVect alpha(d);
   Float mu, alpha2, r_inv;
-  norm = 0;
+  norm = 0.0;
   for (int i = 0; i < d; i++)
   {
     alpha[i] = coords_d[i];

@@ -19,6 +19,15 @@
 using namespace std;
 using namespace fplll;
 
+template <class FT> int test_str()
+{
+  int status = 0;
+  FT a = "1.01";
+  status |= !(abs(a - 1.01) < 0.001);
+  return status;
+}
+
+
 template <class FT> int test_arithmetic()
 {
   FT a = 6.0, b = 3.0, c = -2;
@@ -48,18 +57,63 @@ template <class FT> int test_std()
   status |= !(abs(exp(a) - std::exp(a.get_d())) < 0.001);
   status |= !(abs(floor(a) - std::floor(a.get_d())) < 0.001);
   status |= !(abs(pow_si(a, 2) - std::pow(a.get_d(), 2.0)) < 0.001);
-  status |= !(abs(root(a, 3.0) - std::pow(a.get_d(), 1 / 3.0)) < 0.001);
   return status;
 }
+
+template <class FT> int test_root()
+{
+  FT a;
+  a          = 6.1;
+  int status= !(abs(root(a, 3.0) - std::pow(a.get_d(), 1 / 3.0)) < 0.001);
+  return status;
+}
+
+
 
 int main(int argc, char *argv[])
 {
 
   int status = 0;
   status |= test_arithmetic<FP_NR<double>>();
+  status |= test_arithmetic<FP_NR<long double>>();
+#ifdef FPLLL_WITH_DPE
+  status |= test_arithmetic<FP_NR<dpe_t>>();
+#endif
+#ifdef FPLLL_WITH_QD
+  status |= test_arithmetic<FP_NR<dd_real>>();
+  status |= test_arithmetic<FP_NR<qd_real>>();
+#endif
   status |= test_arithmetic<FP_NR<mpfr_t>>();
+
   status |= test_std<FP_NR<double>>();
+  status |= test_std<FP_NR<long double>>();
+#ifdef FPLLL_WITH_DPE
+  status |= test_std<FP_NR<dpe_t>>();
+#endif
+#ifdef FPLLL_WITH_QD
+  status |= test_std<FP_NR<dd_real>>();
+  status |= test_std<FP_NR<qd_real>>();
+#endif
   status |= test_std<FP_NR<mpfr_t>>();
+
+  status |= test_root<FP_NR<double>>();
+  status |= test_root<FP_NR<long double>>();
+#ifdef FPLLL_WITH_QD
+  status |= test_root<FP_NR<dd_real>>();
+  status |= test_root<FP_NR<qd_real>>();
+#endif
+  status |= test_root<FP_NR<mpfr_t>>();
+
+  status |= test_str<FP_NR<double>>();
+  status |= test_str<FP_NR<long double>>();
+#ifdef FPLLL_WITH_DPE
+  status |= test_str<FP_NR<dpe_t>>();
+#endif
+#ifdef FPLLL_WITH_QD
+  status |= test_str<FP_NR<dd_real>>();
+  status |= test_str<FP_NR<qd_real>>();
+#endif
+  status |= test_str<FP_NR<mpfr_t>>();
 
   if (status == 0)
   {
