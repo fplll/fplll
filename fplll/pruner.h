@@ -168,6 +168,18 @@ class Pruner{
 };
 
 template<class FT>
+void Pruner<FT>::set_tabulated_consts()
+{
+  for (int i = 0; i < PRUNER_MAX_N; ++i)
+  {
+    tabulated_factorial[i] = pre_factorial[i];
+    tabulated_ball_vol[i] = pre_ball_vol[i];
+  }
+  return;
+}
+
+
+template<class FT>
 Pruner<FT>::Pruner(){
   n = 0;
   d = 0;
@@ -187,19 +199,6 @@ Pruner<FT>::Pruner(){
 }
 
 
-template<class FT>
-void Pruner<FT>::set_tabulated_consts(){
-  mpfr_t tmp;
-  mpfr_init2(tmp, PRUNER_MAX_PREC);
-  for (int i = 0; i < PRUNER_MAX_N; ++i)
-  {
-    mpfr_set_str(tmp, pre_factorial[i], 10, MPFR_RNDN);
-    tabulated_factorial[i] = tmp;
-    mpfr_set_str(tmp, pre_ball_vol[i], 10, MPFR_RNDN);
-    tabulated_ball_vol[i] = tmp;
-  }
-  return;
-}
 
 
 
