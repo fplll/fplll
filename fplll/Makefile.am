@@ -32,7 +32,7 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 
 bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff
-EXTRA_PROGRAMS=fplll_dbg latticegen_dbg test latsieve
+EXTRA_PROGRAMS=fplll_dbg latticegen_dbg latsieve
 lib_LTLIBRARIES=libfplll.la
 EXTRA_LTLIBRARIES=libfplllv.la libfpllld.la
 
@@ -52,9 +52,6 @@ latticegen_dbg_LDADD=libfpllld.la
 
 llldiff_SOURCES=llldiff.cpp
 llldiff_LDADD=libfplll.la
-
-test_SOURCES=test.cpp
-test_LDADD=libfplll.la
 
 # sieve
 latsieve_SOURCES=sieve/sieve_main.cpp sieve/sieve_gauss.cpp \
