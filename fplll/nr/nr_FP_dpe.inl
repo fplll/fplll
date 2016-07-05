@@ -108,6 +108,17 @@ inline void FP_NR<dpe_t>::operator=(double d) {
 }
 
 template<>
+inline void FP_NR<dpe_t>::operator=(const char* s) {
+  DPE_DOUBLE d;
+#ifdef DPE_USE_DOUBLE
+  d = strtod(s, NULL);
+#else
+  d = strtold(s, NULL);
+#endif
+  dpe_set_d(data, d);
+}
+
+template<>
 inline bool FP_NR<dpe_t>::operator<=(const FP_NR<dpe_t>& a) const {
   return dpe_cmp(data, a.data) <= 0;
 }
