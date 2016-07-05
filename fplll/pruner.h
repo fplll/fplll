@@ -157,9 +157,6 @@ class Pruner{
     FT tabulated_factorial[PRUNER_MAX_N];
     FT tabulated_ball_vol[PRUNER_MAX_N];
     
-    FT one;  // HACK: because we don't have (double - FT) (yet ?)
-    FT minus_one; // HACK: same here
-  
 
     FT epsilon;    // Epsilon to use for numerical differentiation
     FT min_step;    // Minimal step in a given direction 
@@ -180,8 +177,6 @@ Pruner<FT>::Pruner(){
   min_step = std::pow(2., -12);   // Guesswork. Will become obsolete with Nelder-Mead  
   step_factor = std::pow(2, .5);  // Guesswork. Will become obsolete with Nelder-Mead 
   shell_ratio = .995;             // This approximation means that SVP will in fact be approx-SVP with factor 1/.995. Sounds fair.
-  one = 1.;                       // Duh.
-  minus_one = -1.;                // minus Duh.
   min_cf_decrease = .9999;        // We really want the gradient descent to reach the minima
   symmetry_factor = 2;            // For now, we are just considering SVP
 
@@ -392,10 +387,10 @@ inline FT Pruner<FT>::relative_volume(const int rd, /*i*/const evec &b){
   for (int i = rd - 1; i >= 0; --i) {
     integrate_poly(ld, &P);
     ld++;
-    P[0] = minus_one * eval_poly(ld, &P, b[i] / b[rd - 1]);
+    P[0] = -1.0 * eval_poly(ld, &P, b[i] / b[rd - 1]);
   }
   if (rd % 2) {
-    return minus_one * P[0] * tabulated_factorial[rd];
+    return -1.0 * P[0] * tabulated_factorial[rd];
   } else {
     return P[0] * tabulated_factorial[rd];
   }
@@ -463,7 +458,7 @@ inline FT Pruner<FT>::repeated_enum_cost(/*i*/const evec &b){
   if (success_proba >= target_success_proba)
     return single_enum_cost(b);
 
-  FT trials =  log(one - target_success_proba) / log(one - success_proba);
+  FT trials =  log(1.0 - target_success_proba) / log(1.0 - success_proba);
   return single_enum_cost(b) * trials + preproc_cost * (trials-1);
 }
 
@@ -475,12 +470,12 @@ void Pruner<FT>::repeated_enum_cost_gradient(/*i*/const evec &b, /*o*/ evec &res
   res[d - 1] = 0.0;
   for (int i = 0; i < d-1; ++i) {
     bpDb = b;
-    bpDb[i] *= (one - epsilon);
+    bpDb[i] *= (1.0 - epsilon);
     enforce_bounds(bpDb, i);
     FT X = repeated_enum_cost(bpDb);
 
     bpDb = b;
-    bpDb[i] *= (one + epsilon);
+    bpDb[i] *= (1.0 + epsilon);
     enforce_bounds(bpDb, i);
     FT Y = repeated_enum_cost(bpDb);
     res[i] = (log(X) - log(Y)) / epsilon;
@@ -505,7 +500,7 @@ int Pruner<FT>::improve(/*io*/ evec &b){
     newb[i] = b[i];
   }
 
-  norm = sqrt(norm /  (one * (1. * d)) );
+  norm = sqrt(norm /  (1.0 * (1. * d)) );
   if (norm <= 0.)
     return 0;
 
