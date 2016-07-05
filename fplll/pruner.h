@@ -83,19 +83,19 @@ public:
   void load_basis_shape(const MatGSO<GSO_ZT, GSO_FT> &gso, const int beginning = 0,
                         const int end = 0);
   // Load the shape of a basis from a double*. Mostly for testing purposes ?
-  void load_basis_shape(const int dim, const double *gso_sq_norms);
+  void load_basis_shape(const vector<double> &gso_sq_norms);
 
   // Optimize pruning coefficients.
   // Basis Shape and other parameters must have been set beforehands.
   // See auto_prune for an example of proper usage.
-  void optimize_pruning_coeffs(/*io*/ double *pr, /*i*/ const int reset = 1);
+  void optimize_pruning_coeffs(/*io*/ const vector<double> &pr, /*i*/ const int reset = 1);
   // Compute the cost of a single enumeration
-  double get_single_enum_cost(/*i*/ const double *pr);
+  double get_single_enum_cost(/*i*/ const vector<double> &pr);
   // Compute the cost of r enumeration and (r-1) preprocessing,
   // where r is the required number of retrials to reach target_success_proba
-  double get_repeated_enum_cost(/*i*/ const double *pr);
+  double get_repeated_enum_cost(/*i*/ const vector<double> &pr);
   // Compute the success proba of a single enumeration
-  double get_svp_success_proba(/*i*/ const double *pr);
+  double get_svp_success_proba(/*i*/ const vector<double> &pr);
 
 private:
   using vec  = array<FT, PRUNER_MAX_N>;
@@ -117,9 +117,9 @@ private:
   // Initialize pruning coefficients (linear pruning)
   void init_prunning_coeffs(evec &b);
   // Load pruning coefficient from double*
-  void load_prunning_coeffs(/*i*/ const double *pr, /*o*/ evec &b);
+  void load_prunning_coeffs(/*i*/ const vector<double> &pr, /*o*/ evec &b);
   // Save pruning coefficients to double*
-  void save_prunning_coeffs(/*o*/ double *pr, /*i*/ const evec &b);
+  void save_prunning_coeffs(/*o*/ vector<double> &pr, /*i*/ const evec &b);
   // Enforce reasonable contraints on pruning bounds (inside [0,1], increasing).
   // Keeps index j unchanged when possible
   inline int enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j = 0);
@@ -146,14 +146,14 @@ private:
   FT tabulated_factorial[PRUNER_MAX_N];
   FT tabulated_ball_vol[PRUNER_MAX_N];
 
-  FT epsilon;          // Epsilon to use for numerical differentiation
-  FT min_step;         // Minimal step in a given direction
-  FT min_cf_decrease;  // Maximal ratio of two consectuive cf in the descent before stopping
+  FT epsilon;          //< Epsilon to use for numerical differentiation
+  FT min_step;         //< Minimal step in a given direction
+  FT min_cf_decrease;  //< Maximal ratio of two consectuive cf in the descent before stopping
 
-  FT step_factor;      // Increment factor for steps in a given direction
-  FT shell_ratio;      // Shell thickness Ratio when evaluating svp proba
-  FT symmetry_factor;  // Set at 2 for SVP enumeration assuming the implem only explore half the
-                       // space
+  FT step_factor;      //< Increment factor for steps in a given direction
+  FT shell_ratio;      //< Shell thickness Ratio when evaluating svp proba
+  FT symmetry_factor;  //< Set at 2 for SVP enumeration assuming the implem only explore half the
+                       //< space
 };
 
 template <class FT> void Pruner<FT>::set_tabulated_consts()
@@ -203,33 +203,19 @@ void Pruner<FT>::load_basis_shape(const MatGSO<GSO_ZT, GSO_FT> &gso, const int b
   {
     throw std::runtime_error("Inside Pruner : Needs a dimension n>1");
   }
+  vector<double> gso_sq_norms;
   GSO_FT f;
-  FT logvol, tmp;
-  logvol = 0.0;
   for (int i = 0; i < n; ++i)
   {
-    gso.getR(f, end - 1 - i, end - 1 - i);
-    r[i] = f;
-    logvol += log(f);
+    gso.getR(f, beginning+i, beginning+i);
+    gso_sq_norms.emplace_back(f.get_d());
   }
-  tmp                    = -n;
-  renormalization_factor = exp(logvol / tmp);
-  for (int i = 0; i < n; ++i)
-  {
-    r[i] *= renormalization_factor;
-  }
-
-  tmp = 1.;
-  for (int i = 0; i < 2 * d; ++i)
-  {
-    tmp *= sqrt(r[i]);
-    pv[i] = tmp;
-  }
+  load_basis_shape(gso_sq_norms);
 }
 
-template <class FT> void Pruner<FT>::load_basis_shape(const int dim, const double *gso_sq_norms)
+template <class FT> void Pruner<FT>::load_basis_shape(const vector<double> &gso_sq_norms)
 {
-  n = dim;
+  n = gso_sq_norms.size();
   d = n / 2;
   if (!d)
   {
@@ -258,21 +244,21 @@ template <class FT> void Pruner<FT>::load_basis_shape(const int dim, const doubl
   }
 }
 
-template <class FT> double Pruner<FT>::get_svp_success_proba(/*i*/ const double *pr)
+template <class FT> double Pruner<FT>::get_svp_success_proba(/*i*/ const vector<double> &pr)
 {
   evec b;
   load_prunning_coeffs(pr, b);
   return svp_success_proba(b).get_d();
 }
 
-template <class FT> double Pruner<FT>::get_single_enum_cost(/*i*/ const double *pr)
+template <class FT> double Pruner<FT>::get_single_enum_cost(/*i*/ const vector<double> &pr)
 {
   evec b;
   load_prunning_coeffs(pr, b);
   return single_enum_cost(b).get_d();
 }
 
-template <class FT> double Pruner<FT>::get_repeated_enum_cost(/*i*/ const double *pr)
+template <class FT> double Pruner<FT>::get_repeated_enum_cost(/*i*/ const vector<double> &pr)
 {
   evec b;
   load_prunning_coeffs(pr, b);
@@ -280,7 +266,7 @@ template <class FT> double Pruner<FT>::get_repeated_enum_cost(/*i*/ const double
 }
 
 template <class FT>
-void Pruner<FT>::optimize_pruning_coeffs(/*io*/ double *pr, /*i*/ const int reset)
+void Pruner<FT>::optimize_pruning_coeffs(/*io*/ const vector<double> &pr, /*i*/ const int reset)
 {
   evec b;
   if (reset)
@@ -297,7 +283,7 @@ void Pruner<FT>::optimize_pruning_coeffs(/*io*/ double *pr, /*i*/ const int rese
 
 // PRIVATE METHODS
 
-template <class FT> void Pruner<FT>::load_prunning_coeffs(/*i*/ const double *pr, /*o*/ evec &b)
+template <class FT> void Pruner<FT>::load_prunning_coeffs(/*i*/ const vector<double> &pr, /*o*/ evec &b)
 {
   for (int i = 0; i < d; ++i)
   {
@@ -320,7 +306,7 @@ template <class FT> int Pruner<FT>::check_loaded_basis()
   return 1;
 }
 
-template <class FT> void Pruner<FT>::save_prunning_coeffs(/*o*/ double *pr, /*i*/ const evec &b)
+template <class FT> void Pruner<FT>::save_prunning_coeffs(/*o*/ vector<double> &pr, /*i*/ const evec &b)
 {
   for (int i = 0; i < d; ++i)
   {
@@ -570,7 +556,7 @@ template <class FT> void Pruner<FT>::init_prunning_coeffs(evec &b)
 /// Autoprune function, hiding the Pruner class
 
 template <class FT, class GSO_ZT, class GSO_FT>
-void auto_prune(/*output*/ double *pr, double &success_proba,
+void auto_prune(/*output*/ const vector<double> &pr, double &success_proba,
                 /*inputs*/ const double enumeration_radius, const double preproc_cost,
                 const double target_success_proba, const MatGSO<GSO_ZT, GSO_FT> &gso,
                 int beginning = 0, int end = 0)
@@ -585,6 +571,24 @@ void auto_prune(/*output*/ double *pr, double &success_proba,
   pru.optimize_pruning_coeffs(pr);
   success_proba = pru.get_svp_success_proba(pr);
 }
+
+template <class FT, class GSO_ZT, class GSO_FT>
+void auto_prune(Pruning &pruning,
+                /*inputs*/ const double enumeration_radius, const double preproc_cost,
+                const double target_success_proba, const MatGSO<GSO_ZT, GSO_FT> &gso,
+                int beginning = 0, int end = 0)
+{
+
+  Pruner<FP_NR<double>> pru;
+  pru.enumeration_radius   = enumeration_radius;
+  pru.target_success_proba = target_success_proba;
+  pru.preproc_cost         = preproc_cost;
+  load_basis_shape(gso, beginning, end);
+  pru.optimize_pruning_coeffs(pruning.coefficients);
+  pruning.probability = pru.get_svp_success_proba(pruning.coefficients);
+}
+
+
 
 FPLLL_END_NAMESPACE
 
