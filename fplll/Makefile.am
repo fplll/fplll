@@ -27,7 +27,8 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	enum/evaluator.h \
 	fplll_config.h wrapper.h \
 	bkz_param.h \
-	enum/enumerate.h enum/enumerate_base.h
+	enum/enumerate.h enum/enumerate_base.h \
+	pruner.h pruner.cpp
 
 bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff

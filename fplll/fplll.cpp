@@ -17,7 +17,6 @@
 
 #include "fplll.h"
 #include "wrapper.h"
-
 #include "svpcvp.cpp"
 
 FPLLL_BEGIN_NAMESPACE

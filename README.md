@@ -250,12 +250,17 @@ See [API documentation](library.md).
 
 [A02] A. Akhavi. Random lattices, threshold phenomena and efficient reduction algorithms. Theor. Comput. Sci. 287(2): 359-385 (2002)
 
+[Chen13] Y. Chen, Lattice reduction and concrete security of fully homomorphic encryption.
+
 [CN11] Y. Chen and P. Q. Nguyen. BKZ 2.0: Better Lattice Security Estimates. ASIACRYPT 2011: 1-20
 
 [GM03] D. Goldstein and A. Mayer. On the equidistribution of Hecke points.
 Forum Mathematicum, 15:165–189 (2003)
 
 [GN08] N. Gama and P. Q. Nguyen. Finding Short Lattice Vectors within Mordell's Inequality. STOC 2008: 207-216
+
+[GNR13] N. Gama, P. Q. Nguyen and Oded Regev. Lattice Enumeration Using Extreme Pruning.
+
 
 [HPS98] J. Hoffstein, J. Pipher, J. H. Silverman. NTRU: A Ring-Based Public Key Cryptosystem. ANTS 1998: 267-288
 
