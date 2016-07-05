@@ -18,7 +18,7 @@
 #include <iomanip>
 
 #include "bkz.h"
-#include "bkz_params.h"
+#include "bkz_param.h"
 #include "enum/enumerate.h"
 #include <iomanip>
 
@@ -68,7 +68,7 @@ template <class FT> double get_current_slope(MatGSO<Integer, FT> &m, int start_r
 template<class FT>
 FT get_root_det(MatGSO<Integer, FT>& m, int start, int end) 
 {
-  FT root_det = 0;
+  FT root_det = 0.0;
   start = max(0, start);
   end = min(m.d, end);
   FT h = (double)(end - start);
@@ -80,7 +80,7 @@ FT get_root_det(MatGSO<Integer, FT>& m, int start, int end)
 template<class FT>
 FT get_log_det(MatGSO<Integer, FT>& m, int start, int end) 
 {
-  FT log_det = 0;
+  FT log_det = 0.0;
   start = max(0, start);
   end = min(m.d, end);
   FT h;
@@ -95,7 +95,7 @@ FT get_log_det(MatGSO<Integer, FT>& m, int start, int end)
 template<class FT>
 FT get_sld_potential(MatGSO<Integer, FT>& m, int start, int end, int block_size)
 {
-  FT potential = 0;
+  FT potential = 0.0;
   int p = (end - start)/block_size;
   if ((end - start) % block_size == 0)
     --p;
@@ -176,7 +176,7 @@ const Pruning &BKZReduction<FT>::get_pruning(int kappa, int block_size, const BK
   long max_dist_expo;
   FT max_dist = m.getRExp(kappa, kappa, max_dist_expo);
 
-  FT gh_max_dist;
+  FT gh_max_dist = 0.0;
   FT root_det = get_root_det(m, kappa, kappa + block_size);
   compute_gaussian_heuristic(gh_max_dist, max_dist_expo, block_size, root_det, 1.0);
   return strat.get_pruning(max_dist.get_d() * pow(2, max_dist_expo),
@@ -421,7 +421,7 @@ bool BKZReduction<FT>::trunc_dtour(const BKZParam &par, int min_row,
   bool clean = true;
   int block_size = par.block_size;
   
-  for (int kappa = max_row - block_size; kappa > 0; --kappa)
+  for (int kappa = max_row - block_size; kappa > min_row; --kappa)
   {
     clean &= svp_reduction(kappa, block_size, par, true);
   }
@@ -745,21 +745,27 @@ template <class FT> bool BKZAutoAbort<FT>::test_abort(double scale, int maxNoDec
 */
 
 template class BKZReduction<FP_NR<double> >;
+template class BKZAutoAbort<FP_NR<double> >;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class BKZReduction<FP_NR<long double> >;
+template class BKZAutoAbort<FP_NR<long double> >;
 #endif
 
 #ifdef FPLLL_WITH_QD
 template class BKZReduction<FP_NR<dd_real> >;
+template class BKZAutoAbort<FP_NR<dd_real> >;
 
 template class BKZReduction<FP_NR<qd_real> >;
+template class BKZAutoAbort<FP_NR<qd_real> >;
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template class BKZReduction<FP_NR<dpe_t> >;
+template class BKZAutoAbort<FP_NR<dpe_t> >;
 #endif
 
 template class BKZReduction<FP_NR<mpfr_t> >;
+template class BKZAutoAbort<FP_NR<mpfr_t> >;
 
 FPLLL_END_NAMESPACE

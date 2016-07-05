@@ -1,4 +1,6 @@
 include_fpllldir=$(includedir)/fplll
+strategydir = $(pkgdatadir)/strategies
+AM_CPPFLAGS = -DFPLLL_DEFAULT_STRATEGY_PATH=\"$(strategydir)\" -DFPLLL_DEFAULT_STRATEGY=\"$(strategydir)/default.json\"
 
 nobase_include_fplll_HEADERS=defs.h fplll.h \
   nr/dpe.h \
@@ -24,11 +26,9 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	svpcvp.h fplllv31.h bkz.h lll.h gso.h  \
 	enum/evaluator.h \
 	fplll_config.h wrapper.h \
-	bkz_params.h \
+	bkz_param.h \
 	enum/enumerate.h enum/enumerate_base.h \
 	pruner.h pruner.cpp
-
-EXTRA_DIST=pruning.txt
 
 bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff
@@ -71,7 +71,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	lll.cpp lll.h \
 	wrapper.cpp wrapper.h \
 	bkz.cpp bkz.h \
-	bkz_params.cpp bkz_params.h \
+	bkz_param.cpp bkz_param.h \
 	gso.cpp gso.h
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp

@@ -18,7 +18,7 @@
 #ifndef FPLLL_BKZ_H
 #define FPLLL_BKZ_H
 
-#include "bkz_params.h"
+#include "bkz_param.h"
 #include "enum/evaluator.h"
 #include "enum/enumerate.h"
 #include "lll.h"
@@ -100,12 +100,12 @@ template <class FT> class BKZReduction
 public:
 
 
-  BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lllObj, const BKZParam &param);
+  BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lll_obj, const BKZParam &param);
   ~BKZReduction();
 
   bool svp_preprocessing(int kappa, int block_size, const BKZParam &param);
 
-  bool svp_postprocessing(int kappa, int blockSize, const vector<FT> &solution);
+  bool svp_postprocessing(int kappa, int block_size, const vector<FT> &solution);
   
   bool dsvp_postprocessing(int kappa, int block_size, const vector<FT> &solution);
 
@@ -134,14 +134,14 @@ public:
     }
   }
 
-  bool tour(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow);
+  bool tour(const int loop, int &kappa_max, const BKZParam &param, int min_row, int max_row);
 
-  bool tour_ex(const int loop, int &kappaMax, const BKZParam &param, int minRow, int maxRow,
+  bool tour_ex(const int loop, int &kappa_max, const BKZParam &param, int min_row, int max_row,
                bool &clean)
   {
     try
     {
-      clean = tour(loop, kappaMax, param, minRow, maxRow);
+      clean = tour(loop, kappa_max, param, min_row, max_row);
       return true;
     }
     catch (RedStatus &e)
@@ -150,14 +150,14 @@ public:
     }
   }
   
-  bool sd_tour(const int loop, const BKZParam &param, int minRow, int maxRow);
+  bool sd_tour(const int loop, const BKZParam &param, int min_row, int max_row);
 
-  bool sd_tour_ex(const int loop, const BKZParam &param, int minRow, int maxRow,
+  bool sd_tour_ex(const int loop, const BKZParam &param, int min_row, int max_row,
                bool &clean)
   {
     try
     {
-      clean = sd_tour(loop, param, minRow, maxRow);
+      clean = sd_tour(loop, param, min_row, max_row);
       return true;
     }
     catch (RedStatus &e)
@@ -166,13 +166,13 @@ public:
     }
   }
   
-  bool hkz(int &kappaMax, const BKZParam &param, int min_row, int max_row);
+  bool hkz(int &kappa_max, const BKZParam &param, int min_row, int max_row);
   
-  bool hkz_ex(int &kappaMax, const BKZParam &param, int min_row, int max_row, bool &clean)
+  bool hkz_ex(int &kappa_max, const BKZParam &param, int min_row, int max_row, bool &clean)
   {
     try
     {
-      clean = hkz(kappaMax, param, min_row, max_row);
+      clean = hkz(kappa_max, param, min_row, max_row);
       return true;
     } 
     catch (RedStatus &e)
@@ -212,7 +212,7 @@ public:
     transformation matrix
 **/
 
-  void rerandomize_block(int minRow, int maxRow, int density);
+  void rerandomize_block(int min_row, int max_row, int density);
 
   /** I/O **/
 

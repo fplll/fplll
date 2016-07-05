@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(libfplll,4.0.5)
+AC_INIT(fplll,4.0.5)
 AC_CONFIG_SRCDIR([fplll/fplll.cpp])
 
 # cf http://comments.gmane.org/gmane.comp.sysutils.autoconf.general/15737

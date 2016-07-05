@@ -92,10 +92,10 @@ class Pruner<FT>::TestPruner
     Pruner<FT>::poly p;
     int ld = 3;
     int status = 0;
-    p[0] = 1;
-    p[1] = 1;
-    p[2] = 2;
-    p[3] = 3;
+    p[0] = 1.;
+    p[1] = 1.;
+    p[2] = 2.;
+    p[3] = 3.;
     pru.integrate_poly(ld, &p);
     cerr << "Testing integrate_poly" << endl;
     for (int i = 0; i < 5; ++i)
@@ -103,8 +103,8 @@ class Pruner<FT>::TestPruner
       cerr << p[i] << " ";
     }
     cerr << endl;
-    status |= abs(p[0] - 0) > 1e-10;
-    status |= abs(p[1] - 1) > 1e-10;
+    status |= abs(p[0] - 0.0) > 1e-10;
+    status |= abs(p[1] - 1.0) > 1e-10;
     status |= abs(p[2] - 1./2) > 1e-10;
     status |= abs(p[3] - 2./3) > 1e-10;
     status |= abs(p[4] - 3./4) > 1e-10;

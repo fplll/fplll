@@ -127,8 +127,10 @@ public:
    * If enableRowExpo=false, returns the dot product (b[i], b[j]).
    * If enableRowExpo=true, returns
    * (b[i], b[j]) / 2 ^ (rowExpo[i] + rowExpo[j]).
+   *
+   * Returns reference to `f`.
    */
-  inline void getGram(FT& f, int i, int j);
+  inline FT& getGram(FT& f, int i, int j);
 
   /**
    * Returns the mu matrix
@@ -168,8 +170,10 @@ public:
 
   /**
    * Returns f = (b_i, b*_j) / ||b*_j||^2.
+   *
+   * Returns reference to `f`.
    */
-  inline void getMu(FT& f, int i, int j);
+  inline FT& getMu(FT& f, int i, int j);
   
   /**
    * Return maximum bstar_i for all i
@@ -194,8 +198,10 @@ public:
 
   /**
    * Returns f = (b_i, b*_j).
+   *
+   * Returns reference to `f`.
    */
-  inline void getR(FT& f, int i, int j);
+  inline FT& getR(FT& f, int i, int j);
 
   /** 
    * Returns expo such that mu(i, j) &lt; 2^expo for all j &lt; nColumns.
@@ -452,7 +458,7 @@ private:
 };
 
 template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::getGram(FT& f, int i, int j) {
+inline FT& MatGSO<ZT, FT>::getGram(FT& f, int i, int j) {
   FPLLL_DEBUG_CHECK(i >= 0 && i < nKnownRows && j >= 0 && j <= i
                     && j < nSourceRows && !inRowOpRange(i));
   if (enableIntGram)
@@ -463,6 +469,7 @@ inline void MatGSO<ZT, FT>::getGram(FT& f, int i, int j) {
     }
     f = gf(i, j);
   }
+  return f;
 }
 
 template<class ZT, class FT>
@@ -484,12 +491,13 @@ inline const FT& MatGSO<ZT, FT>::getMuExp(int i, int j) {
 }
 
 template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::getMu(FT& f, int i, int j) {
+inline FT& MatGSO<ZT, FT>::getMu(FT& f, int i, int j) {
   FPLLL_DEBUG_CHECK(i >= 0 && i < nKnownRows && j >= 0 && j < i
                     && j < gsoValidCols[i] && !inRowOpRange(i));
   f = mu(i, j);
   if (enableRowExpo)
     f.mul_2si(f, rowExpo[i] - rowExpo[j]);
+  return f;
 }
 
 template<class ZT, class FT>
@@ -511,12 +519,13 @@ inline const FT& MatGSO<ZT, FT>::getRExp(int i, int j) {
 }
 
 template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::getR(FT& f, int i, int j) {
+inline FT& MatGSO<ZT, FT>::getR(FT& f, int i, int j) {
   FPLLL_DEBUG_CHECK(i >= 0 && i < nKnownRows && j >= 0
                     && j < gsoValidCols[i] && !inRowOpRange(i));
   f = r(i, j);
   if (enableRowExpo)
     f.mul_2si(f, rowExpo[i] + rowExpo[j]);
+  return f;
 }
 
 template<class ZT, class FT>

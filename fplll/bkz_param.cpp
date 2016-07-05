@@ -1,9 +1,44 @@
-#include "bkz_params.h"
-
+#include <cstdio>
+#include "bkz_param.h"
 #include "io/json.hpp"
 using json = nlohmann::json;
 
 FPLLL_BEGIN_NAMESPACE
+
+const char *default_strategy_path()
+{
+  return FPLLL_DEFAULT_STRATEGY_PATH;
+}
+
+const char *default_strategy()
+{
+  return FPLLL_DEFAULT_STRATEGY;
+}
+
+const std::string strategy_full_path(const char *strategy_path)
+{
+  FILE *fh = fopen(strategy_path, "r");
+  string path;
+
+  if (fh)
+  {
+    fclose(fh);
+    path = strategy_path;
+    return path;
+  } else if (strcmp(FPLLL_DEFAULT_STRATEGY_PATH, "") > 0)
+  {
+    path += FPLLL_DEFAULT_STRATEGY_PATH;
+    path += "/";
+    path += strategy_path;
+    fh = fopen(path.c_str(), "r");
+    if (fh) {
+      fclose(fh);
+    }
+    return path;
+  }
+  path = "";
+  return path;
+}
 
 const Pruning &Strategy::get_pruning(double radius, double gh) const
 {
@@ -100,3 +135,4 @@ vector<Strategy> load_strategies_json(const char* filename)
 }
 
 FPLLL_END_NAMESPACE
+

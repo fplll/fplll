@@ -181,10 +181,10 @@ Pruner<FT>::Pruner(){
   min_cf_decrease = .9999;        // We really want the gradient descent to reach the minima
   symmetry_factor = 2;            // For now, we are just considering SVP
 
-  preproc_cost = 0.;              // Please set your own value before running.
-  enumeration_radius = 0.;        // Please set your own value before running.
+  preproc_cost = 0.0;              // Please set your own value before running.
+  enumeration_radius = 0.0;        // Please set your own value before running.
   target_success_proba = .90;     // Please set your own value before running.
-  preproc_cost = 0;               // Please set your own value before running.
+  preproc_cost = 0.0;               // Please set your own value before running.
 }
 
 
@@ -219,7 +219,7 @@ void Pruner<FT>::load_basis_shape(const MatGSO<GSO_ZT, GSO_FT>& gso,const int be
   }
   GSO_FT f;
   FT logvol,tmp;
-  logvol = 0;
+  logvol = 0.0;
   for (int i = 0; i < n; ++i)
   {
     gso.getR(f, end - 1 - i, end - 1 - i);
@@ -248,7 +248,7 @@ void Pruner<FT>::load_basis_shape(const int dim,const double* gso_sq_norms){
     throw std::runtime_error("Inside Pruner : Needs a dimension n>1");
   }
   FT logvol,tmp;
-  logvol = 0;
+  logvol = 0.0;
   for (int i = 0; i < n; ++i)
   {
     r[i] = gso_sq_norms[n - 1 - i];
@@ -345,7 +345,7 @@ inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt i*/const int j){
   }
   b[d - 1] = 1;
   for (int i = 0; i < d; ++i){
-    if (b[i] > 1) {b[i] = 1; status = 1;}
+    if (b[i] > 1) {b[i] = 1.0; status = 1;}
     if (b[i] <= .1) b[i] = .1;
   }
   for (int i = j; i < d - 1; ++i){
@@ -375,7 +375,7 @@ inline void Pruner<FT>::integrate_poly(const int ld,/*io*/ poly *p){
     tmp = i + 1.;
     (*p)[i + 1] = (*p)[i] / tmp;
   }
-  (*p)[0] = 0;
+  (*p)[0] = 0.0;
 }
 
 
@@ -413,7 +413,7 @@ inline FT Pruner<FT>::single_enum_cost(/*i*/const evec &b){
   }
 
   FT total;
-  total = 0;
+  total = 0.0;
   FT normalized_radius;
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
   
@@ -422,17 +422,6 @@ inline FT Pruner<FT>::single_enum_cost(/*i*/const evec &b){
     tmp = pow_si(normalized_radius, 1 + i) *
           rv[i] * tabulated_ball_vol[i + 1] *
           sqrt(pow_si(b[i / 2], 1 + i)) / pv[i];
-
-
-
-
-
-
-
-
-
-
-
     total += tmp;
   }
   total /= symmetry_factor;  
@@ -479,7 +468,7 @@ inline FT Pruner<FT>::repeated_enum_cost(/*i*/const evec &b){
 template<class FT>
 void Pruner<FT>::repeated_enum_cost_gradient(/*i*/const evec &b, /*o*/ evec &res){
   evec bpDb;
-  res[d - 1] = 0.;
+  res[d - 1] = 0.0;
   for (int i = 0; i < d-1; ++i) {
     bpDb = b;
     bpDb[i] *= (one - epsilon);

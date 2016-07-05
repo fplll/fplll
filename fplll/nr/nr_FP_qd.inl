@@ -111,6 +111,11 @@ inline void FP_NR<qd_real>::operator=(double d) {
 }
 
 template<>
+inline void FP_NR<qd_real>::operator=(const char* s) {
+  data.read(s, data);
+}
+
+template<>
 inline bool FP_NR<qd_real>::operator<=(const FP_NR<qd_real>& a) const {
   return data <= a.data;
 }
