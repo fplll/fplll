@@ -1,3 +1,6 @@
+#ifndef FPLLL_PRUNER_H
+#define FPLLL_PRUNER_H
+
 /* Copyright (C) 2015-2016 Martin Albrecht, Leo Ducas.
 
    This file is part of fplll. fplll is free software: you
@@ -17,7 +20,8 @@
 #include <array>
 #include "factorial.const"
 #include "ballvol.const"
-#include "fplll.h"
+#include "defs.h"
+#include "gso.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -575,15 +579,6 @@ void auto_prune(/*output*/ double* pr, double& success_proba,
 }
 
 
-
-
-
 FPLLL_END_NAMESPACE
 
-
-
-
-
-
-
-
+#endif /* FPLLL_PRUNER_H */
