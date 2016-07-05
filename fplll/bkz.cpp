@@ -158,10 +158,7 @@ template <class FT> void BKZReduction<FT>::rerandomize_block(int min_row, int ma
     }
   }
   m.rowOpEnd(min_row, max_row);
-
-  // 3. LLL reduce
-  if (!lll_obj.lll(0, min_row, max_row))
-    throw lll_obj.status;
+  
   return;
 }
 
@@ -310,16 +307,14 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
 template <class FT>
 bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &par, bool dual)
 {
-  bool clean = true;
-
   int lll_start = (par.flags & BKZ_BOUNDED_LLL) ? kappa : 0;
-
-  if (!lll_obj.lll(lll_start, lll_start, kappa + block_size))
-  {
-    throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
-  }
-
-  clean &= (lll_obj.nSwaps == 0);
+  
+  int first = dual ? kappa + block_size - 1 : kappa;
+  
+  // ensure we are computing something sensible
+  m.updateGSORow(0, first);
+  FT old_first;
+  m.getR(old_first, first, first);
 
   bool rerandomize                 = false;
   double remaining_probability = 1.0;
@@ -330,11 +325,15 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     {
       rerandomize_block(kappa + 1, kappa + block_size, par.rerandomization_density);
     }
-
-    clean &= svp_preprocessing(kappa, block_size, par);
+    
+    if (!lll_obj.lll(lll_start, lll_start, kappa + block_size))
+    {
+      throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
+    }
+    
+    svp_preprocessing(kappa, block_size, par);
     
     long max_dist_expo;
-    int first = dual ? kappa + block_size - 1 : kappa;
     FT max_dist = m.getRExp(first, first, max_dist_expo);
     if (dual) {
       max_dist.pow_si(max_dist, -1, GMP_RNDU);
@@ -359,14 +358,21 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
     if (!sol_coord.empty())
     {
-      clean &= dual ? dsvp_postprocessing(kappa, block_size, sol_coord) : svp_postprocessing(kappa, block_size, sol_coord);
+      if (dual)
+        dsvp_postprocessing(kappa, block_size, sol_coord);
+      else
+        svp_postprocessing(kappa, block_size, sol_coord);
       rerandomize = false;
     } else {
       rerandomize = true;
     }
     remaining_probability *= (1 - pruning.probability);
   }
-  return clean;
+  
+  m.updateGSORow(0, first);
+  FT new_first;
+  m.getR(new_first, first, first);
+  return (dual) ? (old_first >= new_first) : (old_first <= new_first);
 }
 
 template <class FT>
