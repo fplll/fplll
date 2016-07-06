@@ -469,34 +469,143 @@ void MatGSO<ZT, FT>::sizeIncreased() {
   }
 }
 
+template<class ZT, class FT>
+double MatGSO<ZT, FT>::get_current_slope(int start_row, int stop_row)
+{
+  FT f, log_F;
+  long expo;
+  vector<double> x;
+  x.resize(stop_row);
+  for (int i = start_row; i < stop_row; i++)
+  {
+    updateGSORow(i);
+    f = getRExp(i, i, expo);
+    log_F.log(f, GMP_RNDU);
+    x[i] = log_F.get_d() + expo * std::log(2.0);
+  }
+  int n         = stop_row - start_row;
+  double i_mean = (n - 1) * 0.5 + start_row, x_mean = 0, v1 = 0, v2 = 0;
+  for (int i = start_row; i < stop_row; i++)
+  {
+    x_mean += x[i];
+  }
+  x_mean /= n;
+  for (int i = start_row; i < stop_row; i++)
+  {
+    v1 += (i - i_mean) * (x[i] - x_mean);
+    v2 += (i - i_mean) * (i - i_mean);
+  }
+  return v1 / v2;
+}
+
+template<class ZT, class FT>
+FT MatGSO<ZT, FT>::get_root_det(int start_row, int end_row)
+{
+  FT root_det = 0.0;
+  start_row = max(0, start_row);
+  end_row = min(d, end_row);
+  FT h = (double)(end_row - start_row);
+  root_det = get_log_det(start_row, end_row)/h;
+  root_det.exponential(root_det);
+  return root_det;
+}
+
+template<class ZT, class FT>
+FT MatGSO<ZT, FT>::get_log_det(int start_row, int end_row)
+{
+  FT log_det = 0.0;
+  start_row = max(0, start_row);
+  end_row = min(d, end_row);
+  FT h;
+  for(int i = start_row; i < end_row; ++i)
+  {
+    getR(h,i,i);
+    log_det += log(h);
+  }
+  return log_det;
+}
+
+template<class ZT, class FT>
+FT MatGSO<ZT, FT>::get_slide_potential(int start_row, int end_row, int block_size)
+{
+  FT potential = 0.0;
+  int p = (end_row - start_row)/block_size;
+  if ((end_row - start_row) % block_size == 0)
+  {
+    --p;
+  }
+  for (int i = 0; i < p; ++i)
+  {
+    potential += (p-i)*get_log_det(i*block_size, (i+1)*block_size);
+  }
+  return potential;
+}
+
+
+
+template <class FT>
+void gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det, double gh_factor)
+{
+  double t = (double)block_size / 2.0 + 1;
+  t = tgamma(t);
+  t = pow(t, 2.0 / (double)block_size);
+  t = t / M_PI;
+  FT f = t;
+  f = f * root_det;
+  f.mul_2si(f, -max_dist_expo);
+  f = f * gh_factor;
+  if (f < max_dist)
+  {
+    max_dist = f;
+  }
+}
+
 template class MatGSO<Z_NR<long>, FP_NR<double> >;
 template class MatGSO<Z_NR<double>, FP_NR<double> >;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<double> >;
+template void gaussian_heuristic<FP_NR<double> >(FP_NR<double> &max_dist, long max_dist_expo,
+                                                         int block_size, const FP_NR<double> &root_det,
+                                                         double gh_factor);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class MatGSO<Z_NR<long>, FP_NR<long double> >;
 template class MatGSO<Z_NR<double>, FP_NR<long double> >;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<long double> >;
+template void gaussian_heuristic<FP_NR<long double> >(FP_NR<long double> &max_dist, long max_dist_expo,
+                                                              int block_size, const FP_NR<long double> &root_det,
+                                                              double gh_factor);
+
 #endif
 
 #ifdef FPLLL_WITH_QD
 template class MatGSO<Z_NR<long>, FP_NR<dd_real> >;
 template class MatGSO<Z_NR<double>, FP_NR<dd_real> >;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<dd_real> >;
-
+template void gaussian_heuristic<FP_NR<dd_real> >(FP_NR<dd_real> &max_dist, long max_dist_expo,
+                                                          int block_size, const FP_NR<dd_real> &root_det,
+                                                          double gh_factor);
 template class MatGSO<Z_NR<long>, FP_NR<qd_real> >;
 template class MatGSO<Z_NR<double>, FP_NR<qd_real> >;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<qd_real> >;
+template void gaussian_heuristic<FP_NR<qd_real> >(FP_NR<qd_real> &max_dist, long max_dist_expo,
+                                                          int block_size, const FP_NR<qd_real> &root_det,
+                                                          double gh_factor);
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template class MatGSO<Z_NR<long>, FP_NR<dpe_t> >;
 template class MatGSO<Z_NR<double>, FP_NR<dpe_t> >;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t> >;
+template void gaussian_heuristic<FP_NR<dpe_t> >(FP_NR<dpe_t> &max_dist, long max_dist_expo,
+                                                        int block_size, const FP_NR<dpe_t> &root_det,
+                                                        double gh_factor);
 #endif
 
 template class MatGSO<Z_NR<long>, FP_NR<mpfr_t> >;
 template class MatGSO<Z_NR<double>, FP_NR<mpfr_t> >;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t> >;
+template void gaussian_heuristic<FP_NR<mpfr_t> >(FP_NR<mpfr_t> &max_dist, long max_dist_expo,
+                                                         int block_size, const FP_NR<mpfr_t> &root_det,
+                                                         double gh_factor);
 
 FPLLL_END_NAMESPACE

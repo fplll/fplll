@@ -52,47 +52,6 @@ private:
   int start_row;
 };
 
-/** Finds the slope of the curve fitted to the lengths of the vectors from
-    startRow to stopRow. The slope gives an indication of the quality of the
-    LLL-reduced basis.
-*/
-template <class FT> double get_current_slope(MatGSO<Integer, FT> &m, int startRow, int stopRow);
-
-/**
-   @brief Use the Gaussian Heuristic to compute a bound on the length
-   of the shortest vector.
-
-   @param max_dist         output
-   @param max_dist_expo    exponent of output
-   @param block_size       block size
-   @param root_det
-   @param gh_factor
-   @return
-*/
-
-template <class FT>
-void compute_gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det, double gh_factor);
-
-/**
- * Compute the (squared) root determinant of the basis.
- */
-
-template<class FT>
-FT get_root_det(MatGSO<Integer, FT>& m, int start, int end);
-
-/**
- * Compute the log of the (squared) determinant of the basis.
- */
-
-template<class FT>
-FT get_log_det(MatGSO<Integer, FT>& m, int start, int end);
-
-/**
- * Compute the slide potential of the basis.
- */
-
-template<class FT>
-FT get_sld_potential(MatGSO<Integer, FT>& m, int start, int end, int block_size);
 
 /* The matrix must be LLL-reduced */
 template <class FT> class BKZReduction

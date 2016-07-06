@@ -30,6 +30,22 @@ enum MatGSOFlags {
 };
 
 /**
+   @brief Use Gaussian Heuristic to compute a bound on the length of the
+   shortest vector
+
+   @param max_dist         output
+   @param max_dist_expo    exponent of output
+   @param block_size       block size
+   @param root_det         root determinant of lattice
+   @param gh_factor        factor by which to multiple bound
+
+   @return new bound if `gh_factor * GH` is shorter than `max_dist`, otherwise `max_dist` is unchanged.
+*/
+
+template <class FT>
+void gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det, double gh_factor);
+
+/**
  * MatGSO provides an interface for performing elementary operations on a basis
  * and computing its Gram matrix and its Gram-Schmidt orthogonalization.
  * The Gram-Schmidt coefficients are computed on demand. The object keeps track
@@ -334,6 +350,47 @@ public:
 
   inline void dumpR_d(double* r, int offset=0, int blocksize=-1);
   inline void dumpR_d(vector<double> r, int offset=0, int blocksize=-1);
+
+  /**
+     @brief Return slope of the curve fitted to the lengths of the vectors from
+     `start_row` to `stop_row`.
+
+     The slope gives an indication of the quality of the basis.
+
+     @param start_row start row (inclusive)
+     @param stop_row  stop row (exclusive)
+     @return
+  */
+
+  double get_current_slope(int start_row, int stop_row);
+
+  /**
+     @brief Return (squared) root determinant of the basis.
+
+     @param start_row start row (inclusive)
+     @param end_row   stop row (exclusive)
+  */
+
+  FT get_root_det(int start_row, int end_row);
+
+  /**
+     @brief Return log of the (squared) determinant of the basis.
+
+     @param start_row start row (inclusive)
+     @param end_row   stop row (exclusive)
+  */
+
+  FT get_log_det(int start_row, int end_row);
+
+  /**
+     @brief Return slide potential of the basis
+
+     @param start_row  start row (inclusive)
+     @param end_row    stop row (exclusive)
+     @param block_size block size
+  */
+
+  FT get_slide_potential(int start_row, int end_row, int block_size);
 
   /** Exact computation of dot products (i.e. with type ZT instead of FT) */
   const bool enableIntGram;

@@ -17,7 +17,7 @@
 #include "ballvol.const"
 #include "factorial.const"
 #include "pruner.h"
-#include "bkz.h"
+#include "gso.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -430,8 +430,8 @@ void prune(Pruning &pruning,
 
   long expo = 0;
   FT gh_radius = m.getRExp(start_row, start_row, expo);
-  FT root_det = get_root_det(m, start_row, end_row);
-  compute_gaussian_heuristic(gh_radius, expo, end_row - start_row, root_det, 1.0);
+  FT root_det = m.get_root_det(start_row, end_row);
+  gaussian_heuristic(gh_radius, expo, end_row - start_row, root_det, 1.0);
 
   pru.optimize_coefficients(pruning.coefficients);
   pruning.probability = pru.svp_probability(pruning.coefficients);
@@ -441,24 +441,27 @@ void prune(Pruning &pruning,
 /** instantiate functions **/
 
 template class Pruner<FP_NR<double> >;
-
 template void prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<double> >&, int, int);
-
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class Pruner<FP_NR<long double> >;
+template void prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<long double> >&, int, int);
 #endif
 
 #ifdef FPLLL_WITH_QD
 template class Pruner<FP_NR<dd_real> >;
+template void prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dd_real> >&, int, int);;
 
 template class Pruner<FP_NR<qd_real> >;
+template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<qd_real> >&, int, int);
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template class Pruner<FP_NR<dpe_t> >;
+template void prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t> >&, int, int);
 #endif
 
 template class Pruner<FP_NR<mpfr_t> >;
+template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t> >&, int, int);
 
 FPLLL_END_NAMESPACE
