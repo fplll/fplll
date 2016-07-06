@@ -148,7 +148,7 @@ public:
       pr[i + (Nbis / 2)] = .3;
     }
 
-    proba = pru.get_svp_success_proba(pr);
+    proba = pru.svp_success_proba(pr);
     error = std::abs(1 - proba / 0.07822479096);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -159,7 +159,7 @@ public:
       pr[i + (Nbis / 2)] = .5;
     }
 
-    proba = pru.get_svp_success_proba(pr);
+    proba = pru.svp_success_proba(pr);
     error = std::abs(1 - proba / 0.5);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -170,7 +170,7 @@ public:
       pr[i + (Nbis / 2)] = .7;
     }
 
-    proba = pru.get_svp_success_proba(pr);
+    proba = pru.svp_success_proba(pr);
     error = std::abs(1 - proba / 0.92177520904);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -205,13 +205,13 @@ template <class FT> int test_prepruned()
                        0.254584, 0.254584, 0.254584, 0.254584, 0.111895, 0.111895, 0.111895, 0.111895};
 
   pru.enumeration_radius = .85;
-  double cost            = pru.get_single_enum_cost(pr);
+  double cost            = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
   if (abs(1 - cost / 1.7984e+07) > .01)
   {
     return 1;
   }
-  double proba = pru.get_svp_success_proba(pr);
+  double proba = pru.svp_success_proba(pr);
   cerr << "success proba " << proba << endl;
   return (abs(1 - proba / .506) > .01);
 }
@@ -230,16 +230,37 @@ template <class FT> int test_unpruned()
     pr.emplace_back(1.);
   }
   pru.enumeration_radius = .85;
-  double cost            = pru.get_single_enum_cost(pr);
+  double cost            = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
 
   if (abs(1 - cost / 3.20e+10) > .02)
   {
     return 1;
   }
-  double proba = pru.get_svp_success_proba(pr);
+  double proba = pru.svp_success_proba(pr);
   cerr << "success proba " << proba << endl;
   return (abs(1 - proba) > .02);
+}
+
+template <class FT> int test_auto_prune(size_t n) {
+  int status = 0;
+  IntMatrix A(2*n, 2*n);
+  A.gen_ntrulike(30);
+  IntMatrix U;
+  MatGSO<Z_NR<mpz_t>, FT> M(A, U, U, GSO_DEFAULT);
+  LLLReduction<Z_NR<mpz_t>, FT> lll_obj = LLLReduction<Z_NR<mpz_t>, FT>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
+  status |= lll_obj.lll();
+  Pruning pruning;
+  FT radius;
+  M.getR(radius, 0, 0);
+  auto_prune<FT, Z_NR<mpz_t>, FT >(pruning, radius.get_d(), 10000.0, 0.67, M);
+
+  status |= !(pruning.probability <= 1.0);
+  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.radius_factor >= 1.0);
+  status |= !(pruning.coefficients[0] == 1.0);
+
+  return status;
 }
 
 int main(int argc, char *argv[])
@@ -268,6 +289,9 @@ int main(int argc, char *argv[])
   status |= tp2.test_integrate_poly();
   status |= tp2.test_relative_volume();
 #endif
+
+  status |= test_auto_prune<FP_NR<double> >(30);
+  status |= test_auto_prune<FP_NR<double> >(35);
 
   if (status == 0)
   {

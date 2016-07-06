@@ -109,17 +109,17 @@ public:
 
   /** @brief Compute the cost of a single enumeration */
 
-  double get_single_enum_cost(/*i*/ const vector<double> &pr);
+  double single_enum_cost(/*i*/ const vector<double> &pr);
 
   /** @brief Compute the cost of r enumeration and (r-1) preprocessing, where r
       is the required number of retrials to reach target_success_proba
   */
-  double get_repeated_enum_cost(/*i*/ const vector<double> &pr);
+  double repeated_enum_cost(/*i*/ const vector<double> &pr);
 
   /**
      @brief Compute the success proba of a single enumeration
   */
-  double get_svp_success_proba(/*i*/ const vector<double> &pr);
+  double svp_success_proba(/*i*/ const vector<double> &pr);
 
 private:
   using vec  = array<FT, PRUNER_MAX_N>;
@@ -267,21 +267,21 @@ template <class FT> void Pruner<FT>::load_basis_shape(const vector<double> &gso_
   }
 }
 
-template <class FT> double Pruner<FT>::get_svp_success_proba(/*i*/ const vector<double> &pr)
+template <class FT> double Pruner<FT>::svp_success_proba(/*i*/ const vector<double> &pr)
 {
   evec b;
   load_prunning_coeffs(pr, b);
   return svp_success_proba(b).get_d();
 }
 
-template <class FT> double Pruner<FT>::get_single_enum_cost(/*i*/ const vector<double> &pr)
+template <class FT> double Pruner<FT>::single_enum_cost(/*i*/ const vector<double> &pr)
 {
   evec b;
   load_prunning_coeffs(pr, b);
   return single_enum_cost(b).get_d();
 }
 
-template <class FT> double Pruner<FT>::get_repeated_enum_cost(/*i*/ const vector<double> &pr)
+template <class FT> double Pruner<FT>::repeated_enum_cost(/*i*/ const vector<double> &pr)
 {
   evec b;
   load_prunning_coeffs(pr, b);
@@ -331,6 +331,7 @@ template <class FT> int Pruner<FT>::check_loaded_basis()
 
 template <class FT> void Pruner<FT>::save_prunning_coeffs(/*o*/ vector<double> &pr, /*i*/ const evec &b)
 {
+  pr.resize(n);
   for (int i = 0; i < d; ++i)
   {
     pr[n - 1 - 2 * i] = b[i].get_d();
@@ -543,7 +544,7 @@ template <class FT> int Pruner<FT>::improve(/*io*/ evec &b)
     }
 
     enforce_bounds(newb);
-    new_cf = get_repeated_enum_cost_factor(newb);
+    new_cf = repeated_enum_cost(newb);
 
     if (new_cf >= cf)
     {
@@ -592,7 +593,7 @@ void auto_prune(/*output*/ vector<double> &pr, double &success_proba,
   pru.preproc_cost         = preproc_cost;
   pru.load_basis_shape(gso, start_row, end_row);
   pru.optimize_pruning_coeffs(pr);
-  success_proba = pru.get_svp_success_proba(pr);
+  success_proba = pru.svp_success_proba(pr);
 }
 
 template <class FT, class GSO_ZT, class GSO_FT>
@@ -615,7 +616,7 @@ void auto_prune(Pruning &pruning,
   compute_gaussian_heuristic(gh_radius, expo, end_row - start_row, root_det, 1.0);
 
   pru.optimize_pruning_coeffs(pruning.coefficients);
-  pruning.probability = pru.get_svp_success_proba(pruning.coefficients);
+  pruning.probability = pru.svp_success_proba(pruning.coefficients);
   pruning.radius_factor = enumeration_radius/(gh_radius.get_d() * pow(2,expo) );
 }
 
