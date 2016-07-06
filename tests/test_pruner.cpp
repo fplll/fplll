@@ -80,7 +80,7 @@ public:
     p[2]   = 2;
     p[3]   = 3;
 
-    y = pru.eval_poly(ld, &p, x);
+    y = pru.eval_poly(ld, p, x);
     cerr << "Testing eval_poly" << endl;
     cerr << y << endl;
     return abs(y - 1.561) > 1e-10;
@@ -94,7 +94,7 @@ public:
     p[1]       = 1.;
     p[2]       = 2.;
     p[3]       = 3.;
-    pru.integrate_poly(ld, &p);
+    pru.integrate_poly(ld, p);
     cerr << "Testing integrate_poly" << endl;
     for (int i = 0; i < 5; ++i)
     {

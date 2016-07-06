@@ -158,9 +158,9 @@ private:
   // Keeps index j unchanged when possible
   int enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j = 0);
   // Evaluate a polynomial
-  FT eval_poly(const int ld, /*i*/ const poly *p, const FT x);
+  FT eval_poly(const int ld, /*i*/ const poly &p, const FT x);
   // Integrate a polynomial
-  void integrate_poly(const int ld, /*io*/ poly *p);
+  void integrate_poly(const int ld, /*io*/ poly &p);
   // Compute the relative volume of a cylinder interesection of dim rd, and bounds b[0:rd]
   FT relative_volume(/*i*/ const int rd, const evec &b);
   // Compute the cost of a single enumeration
