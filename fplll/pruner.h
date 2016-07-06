@@ -94,6 +94,7 @@ public:
   */
   template <class GSO_ZT, class GSO_FT>
   void load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &gso, int start_row = 0, int end_row = 0);
+
   /** @brief load the shape of a basis from vector<double>. Mostly for testing purposes */
 
   void load_basis_shape(const vector<double> &gso_sq_norms);
