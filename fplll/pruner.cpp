@@ -104,9 +104,67 @@ template <class FT> void Pruner<FT>::load_basis_shape(const vector<double> &gso_
   for (int i = 0; i < 2 * d; ++i)
   {
     tmp *= sqrt(r[i]);
-    pv[i] = tmp;
+    ipv[i] = 1.0 / tmp;
   }
 }
+
+template <class FT> 
+void Pruner<FT>::load_basis_shapes(const vector<vector<double> > &gso_sq_norms_vec)
+{
+  vec sum_ipv;
+  n = gso_sq_norms_vec[0].size();
+  for (int i = 0; i < n; ++i)
+  {
+    sum_ipv[i] = 0.;
+  }
+  int count = gso_sq_norms_vec.size();
+  for (int k = 0; k < count; ++k)
+  {
+    if (gso_sq_norms_vec[k].size() != n)
+    {
+      throw std::runtime_error("Inside Pruner : loading several bases with different dimensions");  
+    }
+    load_basis_shape(gso_sq_norms_vec[k]);
+    for (int i = 0; i < n; ++i)
+    {
+      sum_ipv[i] += ipv[i];
+    }
+  }
+  for (int i = 0; i < n; ++i){
+    ipv[i] = sum_ipv[i] / (1.0 * count);
+  }
+}
+
+template <class FT> 
+template <class GSO_ZT, class GSO_FT>
+void Pruner<FT>::load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> >&m_vec, int start_row, int end_row)
+{
+  vec sum_ipv;
+  if (!end_row)
+  {
+    end_row = m_vec[0].d;
+  }
+  n = end_row - start_row;
+  d = n / 2;
+
+  for (int i = 0; i < n; ++i)
+  {
+    sum_ipv[i] = 0.;
+  }
+  int count = m_vec.size();
+  for (int k = 0; k < count; ++k)
+  {
+    load_basis_shape(m_vec[k], start_row, end_row);
+    for (int i = 0; i < n; ++i)
+    {
+      sum_ipv[i] += ipv[i];
+    }
+  }
+  for (int i = 0; i < n; ++i){
+    ipv[i] = sum_ipv[i] / (1.0 * count);
+  }
+}
+
 
 template <class FT>
 void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const int reset)
@@ -266,7 +324,7 @@ template <class FT> inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b)
   {
     FT tmp;
     tmp = pow_si(normalized_radius, 1 + i) * rv[i] * tabulated_ball_vol[i + 1] *
-          sqrt(pow_si(b[i / 2], 1 + i)) / pv[i];
+          sqrt(pow_si(b[i / 2], 1 + i)) * ipv[i];
     total += tmp;
   }
   total /= symmetry_factor;

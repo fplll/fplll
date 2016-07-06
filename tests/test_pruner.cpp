@@ -190,6 +190,7 @@ void set_up_gso_norms(vector<double> &gso_sq_norms)
 
 template <class FT> int test_prepruned()
 {
+  int status = 0;
   cerr << "Checking Pre-pruned" << endl;
   Pruner<FT> pru;
   vector<double> gso_sq_norms;
@@ -207,17 +208,16 @@ template <class FT> int test_prepruned()
   pru.enumeration_radius = .85;
   double cost            = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
-  if (abs(1 - cost / 1.7984e+07) > .01)
-  {
-    return 1;
-  }
+  status |= (abs(1 - cost / 1.7984e+07) > .01);
   double proba = pru.svp_probability(pr);
   cerr << "success proba " << proba << endl;
-  return (abs(1 - proba / .506) > .01);
+  status |= (abs(1 - proba / .506) > .01);
+  return status;
 }
 
 template <class FT> int test_unpruned()
 {
+  int status = 0;
   cerr << "Checking Un-pruned" << endl;
   Pruner<FT> pru;
   vector<double> gso_sq_norms;
@@ -233,13 +233,30 @@ template <class FT> int test_unpruned()
   double cost            = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
 
-  if (abs(1 - cost / 3.20e+10) > .02)
-  {
-    return 1;
-  }
+  status = (abs(1 - cost / 3.20e+10) > .02);
   double proba = pru.svp_probability(pr);
   cerr << "success proba " << proba << endl;
-  return (abs(1 - proba) > .02);
+  status |= (abs(1 - proba) > .02);
+
+
+  vector<vector<double> > gso_sq_norms_vec;
+  gso_sq_norms_vec.emplace_back(gso_sq_norms);
+  gso_sq_norms_vec.emplace_back(gso_sq_norms);
+  gso_sq_norms_vec.emplace_back(gso_sq_norms);
+  pru.load_basis_shapes(gso_sq_norms_vec);
+
+  cerr << "Repeating same checks with 3 bases" << endl;
+
+  pru.enumeration_radius = .85;
+  cost            = pru.single_enum_cost(pr);
+  cerr << "Cost per enum " << cost << endl;
+
+  status = (abs(1 - cost / 3.20e+10) > .02);
+  proba = pru.svp_probability(pr);
+  cerr << "success proba " << proba << endl;
+  status |= (abs(1 - proba) > .02);
+
+
 }
 
 template <class FT> int test_auto_prune(size_t n) {

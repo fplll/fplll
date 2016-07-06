@@ -39,7 +39,7 @@ FPLLL_BEGIN_NAMESPACE
 
    - b is for bound (squared)
 
-   - pv is for partial volumes (NOT squared)
+   - ipv is for inverse partial volumes (NOT squared)
 
    - r is for gram schmidt length (squared). Automatically renormalized to avoid
    overflowing partial volumes
@@ -95,9 +95,20 @@ public:
   template <class GSO_ZT, class GSO_FT>
   void load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &gso, int start_row = 0, int end_row = 0);
 
+  /** @brief load the shapes of several bases from a MatGSO object. Can select a
+      projected sub-lattice [start_row,end_row-1]
+  */
+  template <class GSO_ZT, class GSO_FT>
+  void load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> > &gsos, int start_row = 0, int end_row = 0);
+
+
   /** @brief load the shape of a basis from vector<double>. Mostly for testing purposes */
 
   void load_basis_shape(const vector<double> &gso_sq_norms);
+
+  /** @brief load the shapes of may bases from vector<vector<double>> . Cost are average over all bases. Mostly for testing purposes */
+
+  void load_basis_shapes(const vector<vector<double> > &gso_sq_norms_vec);
 
   /** @brief optimize pruning coefficients
 
@@ -144,7 +155,7 @@ private:
   int d;  // Degree d = floor(n/2)
 
   vec r;                      // Gram-Schmidt length (squared, inverted ordering)
-  vec pv;                     // Partial volumes (inverted ordering)
+  vec ipv;                     // Partial volumes (inverted ordering)
   FT renormalization_factor;  // internal renormalization factor to avoid over/underflows
 
   // Sanity check: has a basis indeed been loaded ?
