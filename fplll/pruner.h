@@ -24,32 +24,39 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-// This file provides an implementation of the numerically optimized
-// pruning strategy of [GNR10].
+/**
+   This file provides an implementation of the numerically optimized pruning
+   strategy of [GNR10].
 
-// Many details for implementation follows from the thesis [Chen13]
-// Some simplifications have been made, for example we restrict ourselves
-// to ``even vector bounds'' i.e., the bound at indices 2i and 2i+1 are
-// kept equal, as to allow volume estimation by pure integration
-// (see [GNR10,Chen13])
+   Many details for implementation follows from the thesis [Chen13] Some
+   simplifications have been made, for example we restrict ourselves to ``even
+   vector bounds'' i.e., the bound at indices 2i and 2i+1 are kept equal, as to
+   allow volume estimation by pure integration (see [GNR10,Chen13])
 
-// The current descent method use gradients, but alternative algorithms (Nelder-Mead)
-// May be added soon.
+   The current descent method use gradients, but alternative algorithms
+   (Nelder-Mead) May be added soon.
 
-// naming conventions:
-// b is for bound (squared)
-// pv is for partial volumes (NOT squared)
-// r is for gram schmidt length (squared). Automatically renormalized
-// to avoid overflowing partial volumes
-// p is for polynomial
+   naming conventions:
 
-// inside this code, b,pv,and R are in reversed order
-// as to conform with the algorithm desciption of [Chen13]
-// reversing the order is handled by the load and save methods.
+   - b is for bound (squared)
 
-// n is for the dimension of the basis to prune
-// d is for degrees of polynomials. md is for max_degree
-// d is floor(n/2 at most). Odd n are dealt with by ignoring the first component
+   - pv is for partial volumes (NOT squared)
+
+   - r is for gram schmidt length (squared). Automatically renormalized to avoid
+   overflowing partial volumes
+
+   - p is for polynomial
+
+   inside this code, b,pv,and R are in reversed order as to conform with the
+   algorithm desciption of [Chen13] reversing the order is handled by the load
+   and save methods.
+
+   - n is for the dimension of the basis to prune
+
+   - d is for degrees of polynomials. md is for max_degree
+
+   - d is floor(n/2 at most). Odd n are dealt with by ignoring the first component
+*/
 
 #define PRUNER_MAX_PREC 1000
 #define PRUNER_MAX_D 1023
@@ -61,40 +68,57 @@ public:
   class TestPruner;
   friend class TestPruner;
 
-  // Defines the cost of re-processing a basis for a retrial
-  // This cost should be expressed in terms of ``Nodes'' in an enumeration
-  // Roughly, a Node is equivalent to 100 CPU cycles
-  FT preproc_cost;
-  // Defines the desired success probability after several retrial
-  FT target_success_proba;
-  // Defines the enumeration radius (squared)
-  FT enumeration_radius;
+  /** @brief cost of pre-processing a basis for a retrial
 
-  // Note: one can try to force success_proba = target_success_proba by
-  // setting a prohibitive preproc_cost. But beware: this may induces
-  // numerical stability issue, especially with the gradient method.
-  // Melder-Mead should be more robust.
+      This cost should be expressed in terms of ``nodes'' in an enumeration.
+      Roughly, a node is equivalent to 100 CPU cycles.
+  */
+  FT preproc_cost;
+
+  /** @brief desired success probability after several retrial
+
+      @note one can try to force success_proba = target_success_proba by setting
+      a prohibitive preproc_cost. But beware: this may induces numerical
+      stability issue, especially with the gradient method. Melder-Mead should
+      be more robust.
+  */
+
+  FT target_success_proba;
+
+  /** @brief enumeration radius (squared) */
+  FT enumeration_radius;
 
   Pruner();
 
-  // Load the shape of a basis from a MatGSO object. Can select a projected sub-lattice
-  // [beginning,end-1]
+  /** @brief load the shape of a basis from a MatGSO object. Can select a
+      projected sub-lattice [beginning,end-1]
+  */
   template <class GSO_ZT, class GSO_FT>
   void load_basis_shape(const MatGSO<GSO_ZT, GSO_FT> &gso, const int beginning = 0,
                         const int end = 0);
-  // Load the shape of a basis from a double*. Mostly for testing purposes ?
+  /** @brief load the shape of a basis from vector<double>. Mostly for testing purposes */
+
   void load_basis_shape(const vector<double> &gso_sq_norms);
 
-  // Optimize pruning coefficients.
-  // Basis Shape and other parameters must have been set beforehands.
-  // See auto_prune for an example of proper usage.
+  /** @brief optimize pruning coefficients
+
+      @note Basis Shape and other parameters must have been set beforehand. See
+      auto_prune for an example of proper usage.
+  */
   void optimize_pruning_coeffs(/*io*/ const vector<double> &pr, /*i*/ const int reset = 1);
-  // Compute the cost of a single enumeration
+
+  /** @brief Compute the cost of a single enumeration */
+
   double get_single_enum_cost(/*i*/ const vector<double> &pr);
-  // Compute the cost of r enumeration and (r-1) preprocessing,
-  // where r is the required number of retrials to reach target_success_proba
+
+  /** @brief Compute the cost of r enumeration and (r-1) preprocessing, where r
+      is the required number of retrials to reach target_success_proba
+  */
   double get_repeated_enum_cost(/*i*/ const vector<double> &pr);
-  // Compute the success proba of a single enumeration
+
+  /**
+     @brief Compute the success proba of a single enumeration
+  */
   double get_svp_success_proba(/*i*/ const vector<double> &pr);
 
 private:
