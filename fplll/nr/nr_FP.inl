@@ -464,6 +464,18 @@ template <class F> inline FP_NR<F> operator/(const FP_NR<F> &a, const FP_NR<F> &
   return r;
 }
 
+template <class F> inline FP_NR<F> operator/(const FP_NR<F> &a, const double b) {
+  FP_NR<F> r;
+  r.div(a, b);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator/(const double a, const FP_NR<F> &b) {
+  FP_NR<F> r;
+  r.div(a, b);
+  return r;
+}
+
 template <class F> inline FP_NR<F> sqrt(const FP_NR<F> &a) {
   FP_NR<F> r;
   r.sqrt(a);
