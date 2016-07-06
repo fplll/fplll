@@ -5,39 +5,27 @@ using json = nlohmann::json;
 
 FPLLL_BEGIN_NAMESPACE
 
-const char *default_strategy_path()
+const std::string& default_strategy_path()
 {
-  return FPLLL_DEFAULT_STRATEGY_PATH;
+  static const std::string ret(FPLLL_DEFAULT_STRATEGY_PATH);
+  return ret;
 }
 
-const char *default_strategy()
+const std::string strategy_full_path(const std::string& strategy_path)
 {
-  return FPLLL_DEFAULT_STRATEGY;
-}
-
-const std::string strategy_full_path(const char *strategy_path)
-{
-  FILE *fh = fopen(strategy_path, "r");
-  string path;
-
-  if (fh)
-  {
-    fclose(fh);
-    path = strategy_path;
+  if ( std::ifstream(strategy_path).good() )
+    return strategy_path;
+  std::string path = default_strategy_path() + "/" + strategy_path;
+  if ( std::ifstream(path).good() )
     return path;
-  } else if (strcmp(FPLLL_DEFAULT_STRATEGY_PATH, "") > 0)
-  {
-    path += FPLLL_DEFAULT_STRATEGY_PATH;
-    path += "/";
-    path += strategy_path;
-    fh = fopen(path.c_str(), "r");
-    if (fh) {
-      fclose(fh);
-    }
-    return path;
-  }
-  path = "";
+  path.clear();
   return path;
+}
+
+const std::string& default_strategy()
+{
+  static const std::string ret(FPLLL_DEFAULT_STRATEGY);
+  return ret;
 }
 
 const Pruning &Strategy::get_pruning(double radius, double gh) const
@@ -58,13 +46,15 @@ const Pruning &Strategy::get_pruning(double radius, double gh) const
   return *best;
 }
 
-vector<Strategy> load_strategies_json(const char* filename)
+vector<Strategy> load_strategies_json(const std::string &filename)
 {
-  std::fstream fs;
-  fs.open(filename, std::fstream::in);
   json js;
-  js << fs;
-  fs.close();
+  {
+    std::ifstream fs(filename);
+    if (fs.fail())
+      throw std::runtime_error("Cannot open strategies file.");
+    fs >> js;
+  }
 
   vector<Strategy> strategies;
 

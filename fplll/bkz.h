@@ -216,7 +216,7 @@ public:
 
   /** I/O **/
 
-  void dump_gso(const std::string filename, const std::string prefix, bool append = true);
+  void dump_gso(const std::string& filename, const std::string& prefix, bool append = true);
 
   int status;
 
