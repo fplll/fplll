@@ -28,7 +28,7 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	fplll_config.h wrapper.h \
 	bkz_param.h \
 	enum/enumerate.h enum/enumerate_base.h \
-	pruner.h pruner.cpp
+	pruner.h
 
 bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff
@@ -69,7 +69,8 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	wrapper.cpp wrapper.h \
 	bkz.cpp bkz.h \
 	bkz_param.cpp bkz_param.h \
-	gso.cpp gso.h
+	gso.cpp gso.h \
+	pruner.cpp  pruner.h
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
 libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD)
