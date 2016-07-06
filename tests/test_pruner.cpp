@@ -261,11 +261,13 @@ int main(int argc, char *argv[])
   status |= tp.test_integrate_poly();
   status |= tp.test_relative_volume();
 
+#ifdef FPLLL_WITH_QD
   Pruner<FP_NR<dd_real>>::TestPruner tp2;
   status |= tp2.test_enforce();
   status |= tp2.test_eval_poly();
   status |= tp2.test_integrate_poly();
   status |= tp2.test_relative_volume();
+#endif
 
   if (status == 0)
   {
