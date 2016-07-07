@@ -240,9 +240,19 @@ template <class FT> int test_unpruned()
 
 
   vector<vector<double> > gso_sq_norms_vec;
-  gso_sq_norms_vec.emplace_back(gso_sq_norms);
-  gso_sq_norms_vec.emplace_back(gso_sq_norms);
-  gso_sq_norms_vec.emplace_back(gso_sq_norms);
+  vector<double> v1,v2,v3;
+  v1 = gso_sq_norms;
+  v2 = gso_sq_norms;
+  v3 = gso_sq_norms;
+
+  gso_sq_norms_vec.emplace_back(v1);
+  gso_sq_norms_vec.emplace_back(v2);
+  for (int i = 0; i < N; ++i)
+  {
+    v3[i] *= 20;
+  }
+
+  gso_sq_norms_vec.emplace_back(v3);
   pru.load_basis_shapes(gso_sq_norms_vec);
 
   cerr << "Repeating same checks with 3 bases" << endl;
@@ -251,7 +261,7 @@ template <class FT> int test_unpruned()
   cost            = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
 
-  status = (abs(1 - cost / 3.20e+10) > .02);
+  status = (abs(1 - 3./2. * cost / 3.20e+10) > .02);
   proba = pru.svp_probability(pr);
   cerr << "success proba " << proba << endl;
   status |= (abs(1 - proba) > .02);

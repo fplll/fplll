@@ -55,7 +55,7 @@ template <class FT> void Pruner<FT>::set_tabulated_consts()
 
 template <class FT>
 template <class GSO_ZT, class GSO_FT>
-void Pruner<FT>::load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &m, int start_row, int end_row)
+void Pruner<FT>::load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &m, int start_row, int end_row, int reset_renorm)
 {
   if (!end_row)
   {
@@ -77,7 +77,7 @@ void Pruner<FT>::load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &m, int start_row, int 
   load_basis_shape(gso_sq_norms);
 }
 
-template <class FT> void Pruner<FT>::load_basis_shape(const vector<double> &gso_sq_norms)
+template <class FT> void Pruner<FT>::load_basis_shape(const vector<double> &gso_sq_norms, int reset_renorm)
 {
   n = gso_sq_norms.size();
   d = n / 2;
@@ -93,8 +93,9 @@ template <class FT> void Pruner<FT>::load_basis_shape(const vector<double> &gso_
 
     logvol += log(r[i]);
   }
-  tmp                    = -n;
-  renormalization_factor = exp(logvol / tmp);
+  if (reset_renorm){
+    renormalization_factor = exp(logvol / (-1.0 * n));
+  }
 
   for (int i = 0; i < n; ++i)
   {
@@ -124,7 +125,8 @@ void Pruner<FT>::load_basis_shapes(const vector<vector<double> > &gso_sq_norms_v
     {
       throw std::runtime_error("Inside Pruner : loading several bases with different dimensions");  
     }
-    load_basis_shape(gso_sq_norms_vec[k]);
+    int reset_renorm = (k==0);
+    load_basis_shape(gso_sq_norms_vec[k], reset_renorm);
     for (int i = 0; i < n; ++i)
     {
       sum_ipv[i] += ipv[i];
@@ -154,7 +156,8 @@ void Pruner<FT>::load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> >&m_vec, int st
   int count = m_vec.size();
   for (int k = 0; k < count; ++k)
   {
-    load_basis_shape(m_vec[k], start_row, end_row);
+    int reset_renorm = (k==0);    
+    load_basis_shape(m_vec[k], start_row, end_row, reset_renorm);
     for (int i = 0; i < n; ++i)
     {
       sum_ipv[i] += ipv[i];
