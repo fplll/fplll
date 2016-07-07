@@ -255,8 +255,7 @@ template <class FT> int test_unpruned()
   proba = pru.svp_probability(pr);
   cerr << "success proba " << proba << endl;
   status |= (abs(1 - proba) > .02);
-
-
+  return status;
 }
 
 template <class FT> int test_auto_prune(size_t n) {
