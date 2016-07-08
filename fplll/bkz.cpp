@@ -312,9 +312,12 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
   int first = dual ? kappa + block_size - 1 : kappa;
   
   // ensure we are computing something sensible
-  m.updateGSORow(0, first);
+  if (!lll_obj.sizeReduction(0, first + 1)) {
+    throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
+  }
   FT old_first;
-  m.getR(old_first, first, first);
+  long old_first_expo;
+  old_first = FT(m.getRExp(first, first, old_first_expo));
 
   bool rerandomize                 = false;
   double remaining_probability = 1.0;
@@ -340,7 +343,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
       max_dist_expo *= -1;
     }
     max_dist *= delta;
-
+    
     if ((par.flags & BKZ_GH_BND) && block_size > 30)
     {
       FT root_det = get_root_det(m, kappa, kappa + block_size);
@@ -369,9 +372,12 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     remaining_probability *= (1 - pruning.probability);
   }
   
-  m.updateGSORow(0, first);
-  FT new_first;
-  m.getR(new_first, first, first);
+  if (!lll_obj.sizeReduction(0, first + 1)) {
+    throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
+  }
+  long new_first_expo;
+  FT new_first = m.getRExp(first, first, new_first_expo);
+  new_first.mul_2si(new_first, new_first_expo - old_first_expo);
   return (dual) ? (old_first >= new_first) : (old_first <= new_first);
 }
 
