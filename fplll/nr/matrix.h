@@ -327,12 +327,32 @@ public:
   void gen_ntrulike2(int bits);
   void gen_ntrulike2_withq(int q);
 
-  /** Construct a matrix ``[[qI,0],[H,I]]`` where ``H`` is uniform mod q, of dimensions k x (n-k).
+  /** Construct a matrix ``[[I,H],[0,Iq]]`` where ``H`` is uniform mod q, of dimensions (n-k) x k.
   */
 
-  void gen_qary(int k, int bits);
-  void gen_qary_withq(int k, int q);
-  void gen_qary_prime(int k, int bits);
+  void gen_qary(int k, Z_NR<ZT>& q);
+
+  void gen_qary(int k, int bits)
+  {
+    Z_NR<ZT> q;
+    q.randb(bits);
+    gen_qary(k, q);
+  }
+
+  void gen_qary_withq(int k, int q)
+  {
+    Z_NR<ZT> q2;
+    q2.set(q);
+    gen_qary(k, q2);
+  }
+
+  void gen_qary_prime(int k, int bits)
+  {
+    Z_NR<ZT> q;
+    q.randb(bits);
+    q.nextprime(q);
+    gen_qary(k, q);
+  }
 
   /** Construct a lower triangular matrices with specified diagonal coefficients
 and random sub-diagonal coefficients.
