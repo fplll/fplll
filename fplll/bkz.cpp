@@ -311,7 +311,13 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
   
   int first = dual ? kappa + block_size - 1 : kappa;
   
-  // ensure we are computing something sensible
+  // ensure we are computing something sensible.
+  // note that the size reduction here is required, since 
+  // we're calling this function on unreduced blocks at times 
+  // (e.g. in bkz, after the previous block was reduced by a vector 
+  // already in the basis). if size reduction is not called,
+  // old_first might be incorrect (e.g. close to 0) and the function
+  // will return an incorrect clean flag
   if (!lll_obj.sizeReduction(0, first + 1)) {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
