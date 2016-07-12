@@ -15,7 +15,10 @@
 
 #include <cstring>
 #include <fplll.h>
+
+#ifdef FPLLL_WITH_QD
 #include <qd/dd_real.h>
+#endif
 
 using namespace std;
 using namespace fplll;
