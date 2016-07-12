@@ -483,12 +483,6 @@ template <class FT> bool BKZReduction<FT>::bkz()
     cerr << "Warning: SD Variant of BKZ requires explicit termination condition. Turning auto abort on!" << endl;
     flags |= BKZ_AUTO_ABORT;
   }
-  
-  if (sld)
-  {
-    m.updateGSO();
-    sld_potential = m.get_slide_potential(0, num_rows, param.block_size);
-  }
 
   if (flags & BKZ_VERBOSE)
   {
@@ -499,6 +493,18 @@ template <class FT> bool BKZReduction<FT>::bkz()
   cputime_start = cputime();
 
   m.discoverAllRows();
+  
+  if (sld)
+  {
+    m.updateGSO();
+    sld_potential = m.get_slide_potential(0, num_rows, param.block_size);
+  }
+  
+  // the following is necessary, since sd-bkz starts with a dual tour and 
+  // svp_reduction calls size_reduction, which needs to be preceeded by a 
+  // call to lll lower blocks to avoid seg faults
+  if (sd)
+    lll_obj.lll(0, 0, num_rows);
 
   int kappa_max;
   bool clean = true;
