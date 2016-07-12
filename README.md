@@ -103,7 +103,7 @@ The options are:
 * `u` `d` `b` : generates a d x d matrix whose entries are independent integers of bit-lengths <=b.
 * `n` `d` `b` `c` : generates an ntru-like matrix. If char is 'b', then it first samples an integer q of bit-length <=b, whereas if char is 'q', then it sets q to the provided value. Then it samples a uniform h in the ring Z_q[x]/(x^n-1). It finally returns the 2 x 2 block matrix [[I, Rot(h)], [0, q*I]], where each block is d x d, the first row of Rot(h) is the coefficient vector of h, and the i-th row of Rot(h) is the shift of the (i-1)-th (with last entry put back in first position), for all i>1. Warning: this does not produce a genuine ntru lattice with h a genuine public key (see [HPS98]).   
 * `N` `d` `b` `c` : as the previous option, except that the contructed matrix is [[q*I, 0], [Rot(h), I]]. 
-* `q` `d` `k` `b` `c` : generates a q-ary matrix. If char is 'b', then it first samples an integer q of bit-length <=b; if char is 'p', it does the same and updates q to the smallest (probabilistic) prime that is greater; if char is 'q', then it sets q to the provided value. It returns a 2 x 2 block matrix [[q*I, 0], [H, I]], where H is k x (d-k) and uniformly random modulo q. These bases correspond to the SIS/LWE q-ary lattices (see [MR09]). Goldstein-Mayer lattices correspond to k=1 and q prime (see [GM03]).   
+* `q` `d` `k` `b` `c` : generates a q-ary matrix. If char is 'b', then it first samples an integer q of bit-length <=b; if char is 'p', it does the same and updates q to the smallest (probabilistic) prime that is greater; if char is 'q', then it sets q to the provided value. It returns a 2 x 2 block matrix [[I, H], [0, q*I]], where H is (d-k) x k and uniformly random modulo q. These bases correspond to the SIS/LWE q-ary lattices (see [MR09]). Goldstein-Mayer lattices correspond to k=1 and q prime (see [GM03]).
 * `t` `d` `f` : generates a d x d lower-triangular matrix B with B_ii = 2^(d-i+1)^f for all i, and B_ij is uniform between -B_jj/2 and B_jj/2 for all j<i.
 * `T` `d` : also takes as input a d-dimensional vector vec read from a file. It generates a d x d lower-triangular matrix B with B_ii = vec[i] for all i and B_ij is uniform between -B_jj/2 and B_jj/2 for all j<i.
 
@@ -250,12 +250,17 @@ See [API documentation](library.md).
 
 [A02] A. Akhavi. Random lattices, threshold phenomena and efficient reduction algorithms. Theor. Comput. Sci. 287(2): 359-385 (2002)
 
+[Chen13] Y. Chen, Lattice reduction and concrete security of fully homomorphic encryption.
+
 [CN11] Y. Chen and P. Q. Nguyen. BKZ 2.0: Better Lattice Security Estimates. ASIACRYPT 2011: 1-20
 
 [GM03] D. Goldstein and A. Mayer. On the equidistribution of Hecke points.
 Forum Mathematicum, 15:165–189 (2003)
 
 [GN08] N. Gama and P. Q. Nguyen. Finding Short Lattice Vectors within Mordell's Inequality. STOC 2008: 207-216
+
+[GNR13] N. Gama, P. Q. Nguyen and Oded Regev. Lattice Enumeration Using Extreme Pruning.
+
 
 [HPS98] J. Hoffstein, J. Pipher, J. H. Silverman. NTRU: A Ring-Based Public Key Cryptosystem. ANTS 1998: 267-288
 

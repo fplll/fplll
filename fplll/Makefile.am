@@ -27,11 +27,12 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	enum/evaluator.h \
 	fplll_config.h wrapper.h \
 	bkz_param.h \
-	enum/enumerate.h enum/enumerate_base.h
+	enum/enumerate.h enum/enumerate_base.h \
+	pruner.h
 
 bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff
-EXTRA_PROGRAMS=fplll_dbg latticegen_dbg test latsieve
+EXTRA_PROGRAMS=fplll_dbg latticegen_dbg latsieve
 lib_LTLIBRARIES=libfplll.la
 EXTRA_LTLIBRARIES=libfplllv.la libfpllld.la
 
@@ -52,9 +53,6 @@ latticegen_dbg_LDADD=libfpllld.la
 llldiff_SOURCES=llldiff.cpp
 llldiff_LDADD=libfplll.la
 
-test_SOURCES=test.cpp
-test_LDADD=libfplll.la
-
 # sieve
 latsieve_SOURCES=sieve/sieve_main.cpp sieve/sieve_gauss.cpp \
 	sieve/sieve_gauss_2sieve.cpp sieve/sieve_gauss_3sieve.cpp \
@@ -71,7 +69,8 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	wrapper.cpp wrapper.h \
 	bkz.cpp bkz.h \
 	bkz_param.cpp bkz_param.h \
-	gso.cpp gso.h
+	gso.cpp gso.h \
+	pruner.cpp  pruner.h
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
 libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD)

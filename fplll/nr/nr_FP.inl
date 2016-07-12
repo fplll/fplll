@@ -171,7 +171,7 @@ public:
   inline FP_NR<F> &operator+=(const double a) { FP_NR<F> t=a; this->add(*this, t); return *this;};
   inline FP_NR<F> &operator-=(const double a) { FP_NR<F> t=a; this->sub(*this, t); return *this;};
   inline FP_NR<F> &operator*=(const double a) { this->mul_d(*this, a); return *this;};
-  inline FP_NR<F> &operator/=(const double a) { this->div_d(*this, a); return *this;};
+  inline FP_NR<F> &operator/=(const double a) { this->div(*this, FP_NR<F>(a)); return *this;};
 
 
   /**
@@ -459,6 +459,18 @@ template <class F> inline FP_NR<F>&& operator*(FP_NR<F> &&a, double b) {
 }
 
 template <class F> inline FP_NR<F> operator/(const FP_NR<F> &a, const FP_NR<F> &b) {
+  FP_NR<F> r;
+  r.div(a, b);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator/(const FP_NR<F> &a, const double b) {
+  FP_NR<F> r;
+  r.div(a, b);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator/(const double a, const FP_NR<F> &b) {
   FP_NR<F> r;
   r.div(a, b);
   return r;

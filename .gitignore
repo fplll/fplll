@@ -56,3 +56,4 @@ stamp-h1
 /m4/ltversion.m4
 /m4/lt~obsolete.m4
 /tests/test_nr
+/tests/test_pruner
