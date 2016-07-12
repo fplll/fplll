@@ -71,10 +71,7 @@ template <class FT> void BKZReduction<FT>::rerandomize_block(int min_row, int ma
     }
   }
   m.rowOpEnd(min_row, max_row);
-
-  // 3. LLL reduce
-  if (!lll_obj.lll(0, min_row, max_row))
-    throw lll_obj.status;
+  
   return;
 }
 
@@ -222,16 +219,23 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
 template <class FT>
 bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &par, bool dual)
 {
-  bool clean = true;
-
   int lll_start = (par.flags & BKZ_BOUNDED_LLL) ? kappa : 0;
-
-  if (!lll_obj.lll(lll_start, lll_start, kappa + block_size))
-  {
+  
+  int first = dual ? kappa + block_size - 1 : kappa;
+  
+  // ensure we are computing something sensible.
+  // note that the size reduction here is required, since 
+  // we're calling this function on unreduced blocks at times 
+  // (e.g. in bkz, after the previous block was reduced by a vector 
+  // already in the basis). if size reduction is not called,
+  // old_first might be incorrect (e.g. close to 0) and the function
+  // will return an incorrect clean flag
+  if (!lll_obj.sizeReduction(0, first + 1)) {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
-
-  clean &= (lll_obj.nSwaps == 0);
+  FT old_first;
+  long old_first_expo;
+  old_first = FT(m.getRExp(first, first, old_first_expo));
 
   bool rerandomize                 = false;
   double remaining_probability = 1.0;
@@ -242,18 +246,22 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     {
       rerandomize_block(kappa + 1, kappa + block_size, par.rerandomization_density);
     }
-
-    clean &= svp_preprocessing(kappa, block_size, par);
+    
+    if (!lll_obj.lll(lll_start, lll_start, kappa + block_size))
+    {
+      throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
+    }
+    
+    svp_preprocessing(kappa, block_size, par);
     
     long max_dist_expo;
-    int first = dual ? kappa + block_size - 1 : kappa;
     FT max_dist = m.getRExp(first, first, max_dist_expo);
     if (dual) {
       max_dist.pow_si(max_dist, -1, GMP_RNDU);
       max_dist_expo *= -1;
     }
     max_dist *= delta;
-
+    
     if ((par.flags & BKZ_GH_BND) && block_size > 30)
     {
       FT root_det = m.get_root_det(kappa, kappa + block_size);
@@ -271,14 +279,24 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
     if (!sol_coord.empty())
     {
-      clean &= dual ? dsvp_postprocessing(kappa, block_size, sol_coord) : svp_postprocessing(kappa, block_size, sol_coord);
+      if (dual)
+        dsvp_postprocessing(kappa, block_size, sol_coord);
+      else
+        svp_postprocessing(kappa, block_size, sol_coord);
       rerandomize = false;
     } else {
       rerandomize = true;
     }
     remaining_probability *= (1 - pruning.probability);
   }
-  return clean;
+  
+  if (!lll_obj.sizeReduction(0, first + 1)) {
+    throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
+  }
+  long new_first_expo;
+  FT new_first = m.getRExp(first, first, new_first_expo);
+  new_first.mul_2si(new_first, new_first_expo - old_first_expo);
+  return (dual) ? (old_first >= new_first) : (old_first <= new_first);
 }
 
 template <class FT>
@@ -465,12 +483,6 @@ template <class FT> bool BKZReduction<FT>::bkz()
     cerr << "Warning: SD Variant of BKZ requires explicit termination condition. Turning auto abort on!" << endl;
     flags |= BKZ_AUTO_ABORT;
   }
-  
-  if (sld)
-  {
-    m.updateGSO();
-    sld_potential = m.get_slide_potential(0, num_rows, param.block_size);
-  }
 
   if (flags & BKZ_VERBOSE)
   {
@@ -481,6 +493,18 @@ template <class FT> bool BKZReduction<FT>::bkz()
   cputime_start = cputime();
 
   m.discoverAllRows();
+  
+  if (sld)
+  {
+    m.updateGSO();
+    sld_potential = m.get_slide_potential(0, num_rows, param.block_size);
+  }
+  
+  // the following is necessary, since sd-bkz starts with a dual tour and 
+  // svp_reduction calls size_reduction, which needs to be preceeded by a 
+  // call to lll lower blocks to avoid seg faults
+  if (sd)
+    lll_obj.lll(0, 0, num_rows);
 
   int kappa_max;
   bool clean = true;
