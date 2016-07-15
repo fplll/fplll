@@ -272,26 +272,6 @@ inline void FP_NR<dd_real>::swap(FP_NR<dd_real>& a) {
   data = t;
 }
 
-
-/* #ifdef FPLLL_V3_COMPAT */
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void FP_NR<dd_real>::print() const {
-  cout << data;
-}
-
-template<>
-inline void FP_NR<dd_real>::printerr() const {
-  cerr << data;
-}
-
-template<>
-inline void FP_NR<dd_real>::set(unsigned int s) {
-  data = static_cast<double>(s);
-}
-#endif
-
 FPLLL_END_NAMESPACE
 
 #endif

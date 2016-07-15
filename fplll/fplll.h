@@ -71,8 +71,4 @@ const char* get_red_status_str(int status);
 
 FPLLL_END_NAMESPACE
 
-#ifdef FPLLL_V3_COMPAT
-#include "fplllv31.h"
-#endif
-
 #endif

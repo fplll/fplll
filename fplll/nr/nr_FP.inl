@@ -314,21 +314,6 @@ public:
    */
   inline void swap(FP_NR<F> &a);
 
-#ifdef FPLLL_V3_COMPAT
-  // Old interface (do not use)
-  inline void print() const;
-  inline void printerr() const;
-  inline double get() const { return get_d(); }
-  inline void set(const FP_NR<F> &s) { *this = s; }
-  inline void set(double s) { *this = s; }
-  inline void set(unsigned int s);
-  inline void mul_2ui(const FP_NR<F> &b, unsigned int c) { mul_2si(b, static_cast<long>(c)); }
-  inline void div_2ui(const FP_NR<F> &b, unsigned int c) { mul_2si(b, -static_cast<long>(c)); }
-  inline int exp() const { return static_cast<int>(exponent()); };
-  inline F &GetData() { return data; }
-  inline const F &GetData() const { return data; }
-#endif
-
 };  // End class FP_NR
 
 template <class F> inline FP_NR<F> operator+(const FP_NR<F> &a, const FP_NR<F> &b)

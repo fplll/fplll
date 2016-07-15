@@ -281,28 +281,6 @@ inline void FP_NR<mpfr_t>::swap(FP_NR<mpfr_t>& a) {
 }
 
 
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void FP_NR<mpfr_t>::print() const {
-  mpfr_out_str(stdout,10,10,data,GMP_RNDN);
-  fflush(stdout);
-}
-
-template<>
-inline void FP_NR<mpfr_t>::printerr() const {
-  mpfr_out_str(stderr,10,5,data,GMP_RNDN);
-  fflush(stderr);
-}
-
-template<>
-inline void FP_NR<mpfr_t>::set(unsigned int s) {
-  mpfr_set_ui(data,s,GMP_RNDN);
-}
-
-#endif // #ifdef FPLLL_V3_COMPAT
-
-
 /* operators FP_NR<mpfr_t> */
 template<>
 inline ostream& operator<<(ostream& os, const FP_NR<mpfr_t>& x) {

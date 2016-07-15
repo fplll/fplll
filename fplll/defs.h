@@ -26,7 +26,6 @@
 #define FPLLL_WITH_DPE
 #define FPLLL_WITH_ZDOUBLE
 #define FPLLL_WITH_ZLONG
-#define FPLLL_V3_COMPAT
 #define FPLLL_WITH_GETRUSAGE
 
 #include <cstddef>

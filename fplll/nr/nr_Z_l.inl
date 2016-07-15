@@ -299,59 +299,6 @@ inline void Z_NR<long>::nextprime(const Z_NR<long>& nbr) {
 }
 
 
-
-/* FPLLL_V3_COMPAT */
-#ifdef FPLLL_V3_COMPAT
-
-inline int sizeinbase2(long data) {
-  long y = abs(data);
-  int resul = 0;
-  if (y == 0) resul=1;
-  else {
-    while (y > 1) {
-      resul++;
-      y >>= 1;  //y /= 2;
-    }
-  }
-  return resul;
-}
-
-template<>
-inline void Z_NR<long>::print() const {
-  cout << data;
-}
-
-template<>
-inline void Z_NR<long>::printerr() const {
-  cerr << data;
-}
-
-template<>
-inline void Z_NR<long>::read() {
-  cin >> data;
-}
-
-template<>
-inline double Z_NR<long>::get_d_2exp(long* expo) const {
-  int intExpo = 0;
-  double x = frexp(static_cast<double>(data), &intExpo);
-  *expo = intExpo;
-  return x;
-}
-
-template<>
-inline void Z_NR<long>::set(/*const*/ long& s) {
-  data = s;
-}
-
-template<>
-inline void Z_NR<long>::set(unsigned long s) {
-  data = static_cast<long>(s);
-}
-
-#endif // #ifdef FPLLL_V3_COMPAT
-
-
 /* operators Z_NR<long> */
 template<>
 inline ostream& operator<<(ostream& os, const Z_NR<long>& x) {

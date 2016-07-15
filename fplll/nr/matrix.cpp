@@ -202,76 +202,6 @@ template <class T> void Matrix<T>::read(istream &is)
   }
 }
 
-#ifdef FPLLL_V3_COMPAT
-
-template <class T> void Matrix<T>::print(int d, int n)
-{
-  cout << "[";
-  for (int i = 0; i < d; i++)
-  {
-    cout << "[";
-    for (int j = 0; j < n; j++)
-    {
-      matrix[i][j].print();
-      cout << " ";
-    }
-    cout << "]\n";
-  }
-  cout << "]" << endl;
-}
-
-inline char next_non_blank_char(char &ch)
-{
-
-  ch = getchar();
-  while (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n')
-    ch = getchar();
-  return ch;
-}
-
-template <class T> int Matrix<T>::read()
-{
-  char ch;
-
-  next_non_blank_char(ch);
-
-  if (ch != '[')
-  {
-    FPLLL_INFO("[ expected instead of " << ch);
-    return 1;
-  }
-  for (int i = 0; i < r; i++)
-  {
-    next_non_blank_char(ch);
-    if (ch != '[')
-    {
-      FPLLL_INFO("error at row " << i << " '[' expected instead of " << ch);
-      return 1;
-    }
-    for (int j = 0; j < c; j++)
-    {
-      matrix[i][j].read();
-    }
-
-    next_non_blank_char(ch);
-    if (ch != ']')
-    {
-      FPLLL_INFO("error: ']' expected at line " << i);
-      return 1;
-    }
-  }
-
-  next_non_blank_char(ch);
-  if (ch != ']')
-  {
-    FPLLL_INFO("error: ']' expected");
-    return 1;
-  }
-
-  return 0;
-}
-
-#endif  // #ifdef FPLLL_V3_COMPAT
 
 /* ZZ_mat */
 
@@ -668,30 +598,6 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_trg2(FP_NR<mpfr_t> *w)
     }
   }
 }
-
-#ifdef FPLLL_V3_COMPAT
-
-template <class ZT> int ZZ_mat<ZT>::getShift()
-{
-  int n     = get_cols();
-  int shift = 0;
-  for (int i = 0; i < get_rows(); i++)
-  {
-    int j;
-    for (j = n - 1; j >= 0 && matrix[i][j].sgn() == 0; j--)
-    {
-    }
-    if (shift < j - i)
-      shift = j - i;
-  }
-
-#ifdef DEBUG
-  cerr << "Shift  =  " << shift << ", ";
-#endif
-  return shift;
-}
-
-#endif  // #ifdef FPLLL_V3_COMPAT
 
 FPLLL_END_NAMESPACE
 

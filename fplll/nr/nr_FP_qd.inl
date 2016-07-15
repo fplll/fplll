@@ -278,26 +278,6 @@ inline void FP_NR<qd_real>::swap(FP_NR<qd_real>& a) {
 }
 
 
-/* #ifdef FPLLL_V3_COMPAT */
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void FP_NR<qd_real>::print() const {
-  cout << data;
-}
-
-template<>
-inline void FP_NR<qd_real>::printerr() const {
-  cerr << data;
-}
-
-template<>
-inline void FP_NR<qd_real>::set(unsigned int s) {
-  data = static_cast<double>(s);
-}
-
-#endif
-
 FPLLL_END_NAMESPACE
 
 #endif

@@ -225,22 +225,6 @@ public:
   */
   inline void nextprime(const Z_NR<Z>& nbr);
 
-#ifdef FPLLL_V3_COMPAT
-  // Old interface (do not use)
-  inline void print() const;
-  inline void printerr() const;
-  inline void read();
-  inline double get_d_2exp(long* expo) const;
-  inline void set_si(long s) {*this = s;}
-  inline void set(const Z_NR<Z>& s)     {*this = s;}
-  inline void set(/*const*/ Z& s);
-  inline void set(unsigned long s);
-  inline void mul_2exp(const Z_NR<Z>& a, long expo) {mul_2si(a, expo);}
-  inline void div_2exp(const Z_NR<Z>& a, long expo) {div_2si(a, expo);}
-  inline Z& GetData()             {return data;}
-  inline const Z& GetData() const {return data;}
-#endif
-
 };
 
 

@@ -204,21 +204,6 @@ public:
   /** Reads this matrix from a stream. */
   void read(istream &is);
 
-#ifdef FPLLL_V3_COMPAT
-  // Old interface (do not use)
-  int GetNumCols() const { return c; }
-  int GetNumRows() const { return r; }
-  void SetNumCols(int cols) { resize(r, cols); }
-  void SetNumRows(int rows) { resize(rows, c); }
-  T &Get(int i, int j) { return matrix[i][j]; }
-  void Set(int i, int j, T &s) { matrix[i][j] = s; }
-  T *GetVec(int i) { return &matrix[i][0]; }
-  const T *GetVecC(int i) const { return &matrix[i][0]; }
-  void print(int d, int n);
-  void print() { print(r, c); }
-  int read();
-#endif
-
   static int set_print_mode(int newPrintMode)
   {
     int oldMode = print_mode;
@@ -334,10 +319,6 @@ and random sub-diagonal coefficients.
 
   void gen_trg(double alpha);
   void gen_trg2(FP_NR<mpfr_t> *w);
-
-#ifdef FPLLL_V3_COMPAT
-  int getShift();
-#endif
 };
 
 /** FP_mat is a matrix of floating-point numbers. */

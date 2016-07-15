@@ -275,24 +275,6 @@ inline void FP_NR<long double>::swap(FP_NR<long double>& a) {
 }
 
 
-/* #ifdef FPLLL_V3_COMPAT */
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void FP_NR<long double>::print() const {
-  cout << data;
-}
-template<>
-inline void FP_NR<long double>::printerr() const {
-  cerr << data;
-}
-template<>
-inline void FP_NR<long double>::set(unsigned int s) {
-  data = static_cast<long double>(s);
-}
-#endif
-
-
 #endif // End FPLLL_WITH_LONG_DOUBLE
 
 FPLLL_END_NAMESPACE

@@ -275,46 +275,6 @@ inline void Z_NR<double>::nextprime(const Z_NR<double>& nbr) {
   mpz_clear(temp2);
 }
 
-
-/* FPLLL_V3_COMPAT */
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void Z_NR<double>::print() const {
-  cout << data;
-}
-
-template<>
-inline void Z_NR<double>::printerr() const {
-  cerr << data;
-}
-
-template<>
-inline void Z_NR<double>::read() {
-  cin >> data;
-}
-
-template<>
-inline double Z_NR<double>::get_d_2exp(long* expo) const {
-  int intExpo = 0;
-  double x = frexp(data, &intExpo);
-  *expo = intExpo;
-  return x;
-}
-
-template<>
-inline void Z_NR<double>::set(/*const*/ double& s) {
-  data = s;
-}
-
-template<>
-inline void Z_NR<double>::set(unsigned long s) {
-  data = static_cast<double>(s);
-}
-
-#endif // #ifdef FPLLL_V3_COMPAT
-
-
 /* operator Z_NR<double> */
 template<>
 inline ostream& operator<<(ostream& os, const Z_NR<double>& x) {

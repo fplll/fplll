@@ -275,27 +275,6 @@ inline void FP_NR<dpe_t>::swap(FP_NR<dpe_t>& a) {
 }
 
 
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void FP_NR<dpe_t>::print() const {
-  dpe_out_str(stdout,10, data);
-  fflush(stdout);
-}
-
-template<>
-inline void FP_NR<dpe_t>::printerr() const {
-  dpe_out_str(stderr,10, data);
-  fflush(stderr);
-}
-
-template<>
-inline void FP_NR<dpe_t>::set(unsigned int s) {
-  dpe_set_d(data, static_cast<double>(s));
-}
-
-#endif // #ifdef FPLLL_V3_COMPAT
-
 
 /* operators FP_NR<dpe_t> */
 template<>

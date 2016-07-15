@@ -279,41 +279,6 @@ inline void Z_NR<mpz_t>::nextprime(const Z_NR<mpz_t>& nbr) {
   mpz_nextprime(data, nbr.data);
 }
 
-/* FPLLL_V3_COMPAT */
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void Z_NR<mpz_t>::print() const {
-  mpz_out_str(stdout, 10, data);
-}
-
-template<>
-inline void Z_NR<mpz_t>::printerr() const {
-  mpz_out_str(stderr, 10, data);
-}
-
-template<>
-inline void Z_NR<mpz_t>::read() {
-  mpz_inp_str(data, stdin, 0);
-}
-
-template<>
-inline double Z_NR<mpz_t>::get_d_2exp(long* expo) const {
-  return mpz_get_d_2exp(expo,data);
-}
-
-template<>
-inline void Z_NR<mpz_t>::set(/*const*/ mpz_t& d) {
-  mpz_set(data,d);
-}
-
-template<>
-inline void Z_NR<mpz_t>::set(unsigned long d) {
-  mpz_set_ui(data,d);
-}
-
-#endif // #ifdef FPLLL_V3_COMPAT
-
 
 /* operators Z_NR<mpz_t> */
 template<>
