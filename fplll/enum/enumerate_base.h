@@ -21,6 +21,7 @@
 #include <array>
 #include <cfenv>
 #include <cmath>
+#include "../fplll_config.h"
 #include "../nr/nr.h"
 
 FPLLL_BEGIN_NAMESPACE
