@@ -237,11 +237,11 @@ template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &
     if (o.no_lll)
       sol_coord_2 = sol_coord;
     else
-      vectMatrixProduct(sol_coord_2, sol_coord, u);
+      vector_matrix_product(sol_coord_2, sol_coord, u);
   }
   if (with_coord_std)
   {
-    vectMatrixProduct(solution, sol_coord, b);
+    vector_matrix_product(solution, sol_coord, b);
   }
 
   for (int i = 0; format[i]; i++)

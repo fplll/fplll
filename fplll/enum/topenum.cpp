@@ -36,7 +36,7 @@ bool Enumerator::enumNext(const Float& maxsqrlength) {
 
   if (svpInitNeeded) {
     for (k = d - 1; k > kmin; k--) {
-      costEstimate(volume, maxsqrlength, r, k - 1);
+      cost_estimate(volume, maxsqrlength, r, k - 1);
       if (volume <= maxVolume) break;
     }
     kmax = k;
@@ -53,7 +53,7 @@ bool Enumerator::enumNext(const Float& maxsqrlength) {
 
     if (newdist <= maxsqrlength) {
       rtmp1.sub(maxsqrlength, newdist);
-      costEstimate(volume, rtmp1, r, k - 1);
+      cost_estimate(volume, rtmp1, r, k - 1);
       if (k > kmin && volume >= maxVolume) {
         k--;
         //FPLLL_TRACE("  Go down, newdist=" << newdist);

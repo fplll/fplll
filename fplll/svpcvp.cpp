@@ -47,11 +47,11 @@ static void get_basis_min(Integer &basis_min, const IntMatrix &b, int first, int
 {
   Integer sq_norm;
   int n = b.get_cols();
-  sqrNorm(basis_min, b[first], n);
+  sqr_norm(basis_min, b[first], n);
 
   for (int i = first + 1; i < last; i++)
   {
-    sqrNorm(sq_norm, b[i], n);
+    sqr_norm(sq_norm, b[i], n);
     if (sq_norm < basis_min)
       basis_min = sq_norm;
   }
@@ -113,7 +113,7 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   // Sets the floating-point precision
   // Error bounds on GSO are valid if prec >= minprec
   double rho;
-  int minPrec = gsoMinPrec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
+  int minPrec = gso_min_prec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
   int prec    = max(53, minPrec + 10);
   int oldprec = Float::set_prec(prec);
 
@@ -306,7 +306,7 @@ int closest_vector(IntMatrix &b, const IntVect &intTarget, IntVect &sol_coord, i
   // Sets the floating-point precision
   // Error bounds on GSO are valid if prec >= minprec
   double rho;
-  int minPrec = gsoMinPrec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
+  int minPrec = gso_min_prec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
   int prec    = max(53, minPrec + 10);
   int oldprec = Float::set_prec(prec);
 

@@ -114,7 +114,7 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
               "LLL method 'proved' with early reduction is not implemented");
 
   /* computes the parameters required for the proved version */
-  int good_prec = l2MinPrec(b.get_rows(), delta, eta, LLL_DEF_EPSILON);
+  int good_prec = l2_min_prec(b.get_rows(), delta, eta, LLL_DEF_EPSILON);
 
   /* sets the parameters and checks the consistency */
   int sel_prec = 0;

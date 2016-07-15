@@ -88,8 +88,8 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, IntVect &b)
     return status;
   }
 
-  vectMatrixProduct(sol_coord2, sol_coord, u);
-  vectMatrixProduct(solution, sol_coord, A);
+  vector_matrix_product(sol_coord2, sol_coord, u);
+  vector_matrix_product(solution, sol_coord, A);
 
   Z_NR<ZT> tmp;
   Z_NR<ZT> norm_s;

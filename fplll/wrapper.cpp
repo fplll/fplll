@@ -51,7 +51,7 @@ Wrapper::Wrapper(IntMatrix &b, IntMatrix &u, IntMatrix &u_inv, double delta, dou
   max_exponent = b.get_max_exp() + (int)ceil(0.5 * log2((double)d * n));
 
   // Computes the parameters required for the proved version
-  good_prec = l2MinPrec(d, delta, eta, LLL_DEF_EPSILON);
+  good_prec = l2_min_prec(d, delta, eta, LLL_DEF_EPSILON);
 }
 
 bool Wrapper::little(int kappa, int precision)

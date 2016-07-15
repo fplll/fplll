@@ -251,7 +251,7 @@ inline void Z_NR<mpz_t>::randb(int bits) {
   mpz_urandomb(data, RandGen::getGMPState(), bits);
   if (bits > 32){ 
     unsigned long int tmp = mpz_get_ui(data);  
-    gmp_randseed_ui(RandGen::gmpState, tmp*tmp);
+    gmp_randseed_ui(RandGen::gmp_state, tmp*tmp);
     }
 }
 

@@ -13,21 +13,21 @@ class RandGen {
 public:
   static void init() {
     initialized = true;
-    gmp_randinit_default(gmpState);
+    gmp_randinit_default(gmp_state);
   }
   static void initWithSeed(unsigned long seed) {
     init();
-    gmp_randseed_ui(gmpState, seed);
+    gmp_randseed_ui(gmp_state, seed);
   }
   static void initWithTime() {
     init();
-    gmp_randseed_ui(gmpState, time(NULL));
+    gmp_randseed_ui(gmp_state, time(NULL));
   }
   static void initWithTime2() {
     init();
     struct timeval time; 
     gettimeofday(&time,NULL);
-    gmp_randseed_ui(gmpState, (time.tv_sec * 1000)
+    gmp_randseed_ui(gmp_state, (time.tv_sec * 1000)
                     + (time.tv_usec / 1000));
   }
   static bool getInitialized() {
@@ -35,9 +35,9 @@ public:
   }
   static gmp_randstate_t& getGMPState() {
     if (!initialized) init();
-    return gmpState;
+    return gmp_state;
   }
-  static gmp_randstate_t gmpState;
+  static gmp_randstate_t gmp_state;
 private:
   static bool initialized;
 };

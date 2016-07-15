@@ -282,22 +282,22 @@ public:
 
 private:
   static inline void initTemp() {
-    if (!tempInitialized) {
+    if (!temp_initialized) {
       mpfr_init2(temp, numeric_limits<long double>::digits);
-      tempInitialized = true;
+      temp_initialized = true;
     }
   }
 
   static inline void freeTemp() {
-    if (tempInitialized) {
+    if (temp_initialized) {
       mpfr_clear(temp);
-      tempInitialized = false;
+      temp_initialized = false;
     }
   }
 
   // These static members are initialized in util.cpp
   static mpfr_t temp;
-  static bool tempInitialized;
+  static bool temp_initialized;
 };
 
 #endif
