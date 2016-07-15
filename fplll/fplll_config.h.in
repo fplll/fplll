@@ -22,9 +22,6 @@
 /* fplll version info */
 #define FPLLL_VERSION_INFO @FPLLL_VERSION_INFO@
 
-/* enable recursive enumeration */
-#undef FPLLL_WITH_RECURSIVE_ENUM
-
 /* Maximum supported enumeration dimension */
 #define FPLLL_MAX_ENUM_DIMENSION @FPLLL_MAX_ENUM_DIMENSION@
 

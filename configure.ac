@@ -98,18 +98,6 @@ AC_C_VOLATILE
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([floor pow rint sqrt strtol])
 
-
-# Recursive enumeration
-AC_ARG_ENABLE([recursive-enumation],
-    AS_HELP_STRING([--disable-recursive-enumation], [Disable (faster) recursive enumeration implementation.]))
-
-AS_IF([test "x$enable_recursive_enumation" != "xno"],
-      [have_recursive_enum=yes],
-      [have_recursive_enum=no])
-
-AS_IF([test "x$have_recursive_enum" = "xyes"],
-      AC_DEFINE([FPLLL_WITH_RECURSIVE_ENUM], [1], [defined when recursive enumeration is used]))
-
 # enumeration dimension
 max_enumeration_dimension=256
 
