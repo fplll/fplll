@@ -151,8 +151,8 @@ private:
 
   // Load the constants for factorial and ball-volumes
   void set_tabulated_consts();
-  int n;  // Dimension of the (sub)-basis
-  int d;  // Degree d = floor(n/2)
+  size_t n;  // Dimension of the (sub)-basis
+  size_t d;  // Degree d = floor(n/2)
 
   vec r;                      // Gram-Schmidt length (squared, inverted ordering)
   vec ipv;                     // Partial volumes (inverted ordering)

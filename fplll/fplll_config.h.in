@@ -22,4 +22,7 @@
 /* fplll version info */
 #define FPLLL_VERSION_INFO @FPLLL_VERSION_INFO@
 
+/* Maximum supported enumeration dimension */
+#define FPLLL_MAX_ENUM_DIMENSION @FPLLL_MAX_ENUM_DIMENSION@
+
 #endif //FPLLL_CONFIG__H

@@ -22,10 +22,9 @@ AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 AC_CONFIG_HEADER(config.h)
 
-DEFAULT_CFLAGS="-O2 -Wall"
+DEFAULT_CXXFLAGS="-O3 -Wall"
 
-CFLAGS=${CFLAGS:-$DEFAULT_CFLAGS}
-CXXFLAGS=${CXXFLAGS:-$DEFAULT_CFLAGS}
+CXXFLAGS=${CXXFLAGS:-$DEFAULT_CXXFLAGS}
 
 #AC_DISABLE_SHARED
 AC_PROG_LIBTOOL
@@ -41,10 +40,10 @@ AX_CXX_COMPILE_STDCXX([11],[noext],[mandatory])
 
 # Checks for libraries.
 AC_ARG_WITH(gmp,
-   [  --with-gmp=DIR          GMP install directory ], [
+   AS_HELP_STRING([--with-gmp=@<:@=DIR@:>@], [GMP install directory]), [
       CPPFLAGS="$CPPFLAGS -I$withval/include"
-       LDFLAGS="$LDFLAGS -L$withval/lib"
-       gmp_lib_path="$withval/lib"
+      LDFLAGS="$LDFLAGS -L$withval/lib"
+      gmp_lib_path="$withval/lib"
    ])
 
 AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
@@ -54,7 +53,7 @@ AC_CHECK_LIB(gmp, __gmp_get_memory_functions, , [AC_MSG_ERROR(
 [GMP version too old, need >= 4.2.0, see http://gmplib.org])])
 
 AC_ARG_WITH(mpfr,
-   [  --with-mpfr=DIR          MPFR install directory ], [
+   AS_HELP_STRING([--with-mpfr=@<:@=DIR@:>@], [MPFR install directory]), [
       CPPFLAGS="$CPPFLAGS -I$withval/include"
        LDFLAGS="$LDFLAGS -L$withval/lib"
        mpfr_lib_path="$withval/lib"
@@ -67,7 +66,7 @@ AC_CHECK_LIB(mpfr, mpfr_fms, , [AC_MSG_ERROR(
 [MPFR version too old, need >= 2.3.0, see http://www.mpfr.org])])
 
 AC_ARG_WITH(qd,
-   [  --with-qd=DIR          quaddouble install directory ], [
+   AS_HELP_STRING([--with-qd=@<:@=DIR@:>@], [quaddouble install directory]), [
       CPPFLAGS="$CPPFLAGS -I$withval/include"
        LDFLAGS="$LDFLAGS -L$withval/lib"
        qd_lib_path="$withval/lib"
@@ -79,7 +78,7 @@ AC_CHECK_HEADER(qd/dd_real.h,
 
 if test "x${have_libqd}" = "xyes"; then
    LIBQD_LIBADD="-lqd"
-   AC_DEFINE([FPLLL_WITH_QD], [1], [define if libqd-dev is available])
+   AC_DEFINE([FPLLL_WITH_QD], [1], [defined when libqd-dev is available])
 fi
 
 AC_SUBST(LIBQD_LIBADD)
@@ -98,6 +97,18 @@ AC_C_VOLATILE
 # Checks for library functions.
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([floor pow rint sqrt strtol])
+
+# enumeration dimension
+max_enumeration_dimension=256
+
+AC_ARG_WITH(max-enumeration-dimension,
+        AS_HELP_STRING([--with-max-enumeration-dimension@<:@=DIM@:>@],
+         [Maximum supported enumeration dimension (default: 256).]),
+        [max_enumeration_dimension=$withval])
+
+AC_DEFINE_UNQUOTED([FPLLL_MAX_ENUM_DIMENSION], $max_enumeration_dimension, [maximum supported enumeration dimension])
+
+# Store version numbers in header
 
 AC_DEFINE_UNQUOTED([FPLLL_MAJOR_VERSION],[$FPLLL_MAJOR_VERSION],[major version])
 AC_DEFINE_UNQUOTED([FPLLL_MINOR_VERSION],[$FPLLL_MINOR_VERSION],[minor version])

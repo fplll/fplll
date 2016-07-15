@@ -1,5 +1,6 @@
 include_fpllldir=$(includedir)/fplll
 strategydir = $(pkgdatadir)/strategies
+# see https://stackoverflow.com/questions/5867136/autoconf-how-to-get-installation-paths-into-config-h
 AM_CPPFLAGS = -DFPLLL_DEFAULT_STRATEGY_PATH=\"$(strategydir)\" -DFPLLL_DEFAULT_STRATEGY=\"$(strategydir)/default.json\"
 
 nobase_include_fplll_HEADERS=defs.h fplll.h \

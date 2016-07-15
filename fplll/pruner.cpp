@@ -69,7 +69,7 @@ void Pruner<FT>::load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &m, int start_row, int 
   }
   vector<double> gso_sq_norms;
   GSO_FT f;
-  for (int i = 0; i < n; ++i)
+  for (size_t i = 0; i < n; ++i)
   {
     m.getR(f, start_row+i, start_row+i);
     gso_sq_norms.emplace_back(f.get_d());
@@ -87,7 +87,7 @@ template <class FT> void Pruner<FT>::load_basis_shape(const vector<double> &gso_
   }
   FT logvol, tmp;
   logvol = 0.0;
-  for (int i = 0; i < n; ++i)
+  for (size_t i = 0; i < n; ++i)
   {
     r[i] = gso_sq_norms[n - 1 - i];
 
@@ -97,12 +97,12 @@ template <class FT> void Pruner<FT>::load_basis_shape(const vector<double> &gso_
     renormalization_factor = exp(logvol / (-1.0 * n));
   }
 
-  for (int i = 0; i < n; ++i)
+  for (size_t i = 0; i < n; ++i)
   {
     r[i] *= renormalization_factor;
   }
   tmp = 1.;
-  for (int i = 0; i < 2 * d; ++i)
+  for (size_t i = 0; i < 2 * d; ++i)
   {
     tmp *= sqrt(r[i]);
     ipv[i] = 1.0 / tmp;
@@ -114,7 +114,7 @@ void Pruner<FT>::load_basis_shapes(const vector<vector<double> > &gso_sq_norms_v
 {
   vec sum_ipv;
   n = gso_sq_norms_vec[0].size();
-  for (int i = 0; i < n; ++i)
+  for (size_t i = 0; i < n; ++i)
   {
     sum_ipv[i] = 0.;
   }
@@ -127,12 +127,12 @@ void Pruner<FT>::load_basis_shapes(const vector<vector<double> > &gso_sq_norms_v
     }
     int reset_renorm = (k==0);
     load_basis_shape(gso_sq_norms_vec[k], reset_renorm);
-    for (int i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i)
     {
       sum_ipv[i] += ipv[i];
     }
   }
-  for (int i = 0; i < n; ++i){
+  for (size_t i = 0; i < n; ++i){
     ipv[i] = sum_ipv[i] / (1.0 * count);
   }
 }
@@ -149,7 +149,7 @@ void Pruner<FT>::load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> >&m_vec, int st
   n = end_row - start_row;
   d = n / 2;
 
-  for (int i = 0; i < n; ++i)
+  for (size_t i = 0; i < n; ++i)
   {
     sum_ipv[i] = 0.;
   }
@@ -158,12 +158,12 @@ void Pruner<FT>::load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> >&m_vec, int st
   {
     int reset_renorm = (k==0);    
     load_basis_shape(m_vec[k], start_row, end_row, reset_renorm);
-    for (int i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i)
     {
       sum_ipv[i] += ipv[i];
     }
   }
-  for (int i = 0; i < n; ++i){
+  for (size_t i = 0; i < n; ++i){
     ipv[i] = sum_ipv[i] / (1.0 * count);
   }
 }
@@ -189,7 +189,7 @@ void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const in
 
 template <class FT> void Pruner<FT>::load_coefficients(/*i*/ const vector<double> &pr, /*o*/ evec &b)
 {
-  for (int i = 0; i < d; ++i)
+  for (size_t i = 0; i < d; ++i)
   {
     b[i] = pr[n - 1 - 2 * i];
   }
@@ -213,7 +213,7 @@ template <class FT> int Pruner<FT>::check_basis_loaded()
 template <class FT> void Pruner<FT>::save_coefficients(/*o*/ vector<double> &pr, /*i*/ const evec &b)
 {
   pr.resize(n);
-  for (int i = 0; i < d; ++i)
+  for (size_t i = 0; i < d; ++i)
   {
     pr[n - 1 - 2 * i] = b[i].get_d();
     pr[n - 2 - 2 * i] = b[i].get_d();
@@ -229,7 +229,7 @@ template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt 
     status = 1;
   }
   b[d - 1] = 1;
-  for (int i = 0; i < d; ++i)
+  for (size_t i = 0; i < d; ++i)
   {
     if (b[i] > 1)
     {
@@ -239,7 +239,7 @@ template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt 
     if (b[i] <= .1)
       b[i] = .1;
   }
-  for (int i = j; i < d - 1; ++i)
+  for (size_t i = j; i < d - 1; ++i)
   {
     if (b[i + 1] < b[i])
     {
@@ -306,14 +306,14 @@ template <class FT> inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b)
 {
   vec rv;  // Relative volumes at each level
 
-  for (int i = 0; i < d; ++i)
+  for (size_t i = 0; i < d; ++i)
   {
 
     rv[2 * i + 1] = relative_volume(i + 1, b);
   }
 
   rv[0] = 1;
-  for (int i = 1; i < d; ++i)
+  for (size_t i = 1; i < d; ++i)
   {
     rv[2 * i] = sqrt(rv[2 * i - 1] * rv[2 * i + 1]);  // Interpolate even values
   }
@@ -323,7 +323,7 @@ template <class FT> inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b)
   FT normalized_radius;
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
 
-  for (int i = 0; i < 2 * d; ++i)
+  for (size_t i = 0; i < 2 * d; ++i)
   {
     FT tmp;
     tmp = pow_si(normalized_radius, 1 + i) * rv[i] * tabulated_ball_vol[i + 1] *
@@ -341,7 +341,7 @@ template <class FT> inline FT Pruner<FT>::svp_probability(/*i*/ const evec &b)
   evec b_minus_db;
   FT dx = shell_ratio;
 
-  for (int i = 0; i < d; ++i)
+  for (size_t i = 0; i < d; ++i)
   {
     b_minus_db[i] = b[i] / (dx * dx);
     if (b_minus_db[i] > 1)
@@ -371,7 +371,7 @@ void Pruner<FT>::repeated_enum_cost_gradient(/*i*/ const evec &b, /*o*/ evec &re
 {
   evec bpDb;
   res[d - 1] = 0.0;
-  for (int i = 0; i < d - 1; ++i)
+  for (size_t i = 0; i < d - 1; ++i)
   {
     bpDb = b;
     bpDb[i] *= (1.0 - epsilon);
@@ -397,7 +397,7 @@ template <class FT> int Pruner<FT>::improve(/*io*/ evec &b)
   FT norm = 0.0;
 
   // normalize the gradient
-  for (int i = 0; i < d; ++i)
+  for (size_t i = 0; i < d; ++i)
   {
     norm += gradient[i] * gradient[i];
     newb[i] = b[i];
@@ -408,18 +408,18 @@ template <class FT> int Pruner<FT>::improve(/*io*/ evec &b)
   if (norm <= 0.)
     return 0;
 
-  for (int i = 0; i < d; ++i)
+  for (size_t i = 0; i < d; ++i)
   {
     gradient[i] /= norm;
   }
   FT new_cf;
 
   FT step = min_step;
-  int i;
+  size_t i;
 
   for (i = 0;; ++i)
   {
-    for (int i = 0; i < d; ++i)
+    for (size_t i = 0; i < d; ++i)
     {
       newb[i] = newb[i] + step * gradient[i];
     }
@@ -451,7 +451,7 @@ template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
 
 template <class FT> void Pruner<FT>::init_coefficients(evec &b)
 {
-  for (int i = 0; i < d; ++i)
+  for (size_t i = 0; i < d; ++i)
   {
     b[i] = .1 + ((1. * i) / d);
   }

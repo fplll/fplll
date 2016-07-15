@@ -19,11 +19,157 @@
 
 FPLLL_BEGIN_NAMESPACE
 
+#ifdef FPLLL_WITH_RECURSIVE_ENUM
+template<int kk, int kk_start, bool dualenum, bool findsubsols>
+inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_start, dualenum, findsubsols> )
+{
+    enumf alphak = x[kk] - center[kk];
+    enumf newdist = partdist[kk] + alphak*alphak*rdiag[kk];
+
+    if (!(newdist <= partdistbounds[kk]))
+        return;
+    ++nodes;
+    
+    alpha[kk] = alphak;
+    if (findsubsols && newdist < subsoldists[kk])
+    {
+        subsoldists[kk] = newdist;
+        process_subsolution(kk, newdist);
+    }
+    
+    if (kk == 0)
+    {
+        if (newdist > 0.0 /* || is_cvp */)
+            process_solution(newdist);
+    }
+    else
+    {
+        partdist[kk-1] = newdist;
+        if (dualenum)
+        {
+            for (int j = center_partsum_begin[kk]; j > kk-1; --j)
+                center_partsums[kk-1][j] = center_partsums[kk-1][j+1] - alpha[j] * mut[kk-1][j];
+        }
+        else
+        {
+            for (int j = center_partsum_begin[kk]; j > kk-1; --j)
+                center_partsums[kk-1][j] = center_partsums[kk-1][j+1] - x[j] * mut[kk-1][j];
+        }
+        if (center_partsum_begin[kk] > center_partsum_begin[kk-1])
+            center_partsum_begin[kk-1] = center_partsum_begin[kk];
+        center_partsum_begin[kk] = kk;
+        center[kk-1] = center_partsums[kk-1][kk];    
+        roundto(x[kk-1], center[kk-1]);
+        dx[kk-1] = ddx[kk-1] = (((int)(center[kk-1] >= x[kk-1]) & 1) << 1) - 1;
+    }
+
+    
+    while (true)
+    {
+        enumerate_recursive( opts<kk-1,kk_start,dualenum,findsubsols>() );
+
+        if (partdist[kk] != 0.0)
+        {
+            x[kk] += dx[kk];
+            ddx[kk] = -ddx[kk];
+            dx[kk] = ddx[kk] - dx[kk];
+
+            enumf alphak2 = x[kk] - center[kk];
+            enumf newdist2 = partdist[kk] + alphak2*alphak2*rdiag[kk];
+            if (!(newdist2 <= partdistbounds[kk]))
+                return;
+            ++nodes;
+            alpha[kk] = alphak2;
+            if (kk == 0)
+            {
+                if (newdist2 > 0.0 /* || is_cvp */)
+                    process_solution(newdist2);
+            }
+            else
+            {
+                partdist[kk-1] = newdist2;
+                if (dualenum)
+                    center_partsums[kk-1][kk-1+1] = center_partsums[kk-1][kk-1+1+1] - alpha[kk-1+1] * mut[kk-1][kk-1+1];
+                else
+                    center_partsums[kk-1][kk-1+1] = center_partsums[kk-1][kk-1+1+1] - x[kk-1+1] * mut[kk-1][kk-1+1];
+                if (kk > center_partsum_begin[kk-1])
+                    center_partsum_begin[kk-1] = kk;
+                center[kk-1] = center_partsums[kk-1][kk-1+1];    
+                roundto(x[kk-1], center[kk-1]);
+                dx[kk-1] = ddx[kk-1] = (((int)(center[kk-1] >= x[kk-1]) & 1) << 1) - 1;
+            }
+        }
+        else
+        {
+            ++x[kk];
+
+            enumf alphak2 = x[kk] - center[kk];
+            enumf newdist2 = partdist[kk] + alphak2*alphak2*rdiag[kk];
+            if (!(newdist2 <= partdistbounds[kk]))
+                return;
+            ++nodes;
+            alpha[kk] = alphak2;
+            if (kk == 0)
+            {
+                if (newdist2 > 0.0 /* || is_cvp */)
+                    process_solution(newdist2);
+            }
+            else
+            {
+                partdist[kk-1] = newdist2;
+                if (dualenum)
+                    center_partsums[kk-1][kk-1+1] = center_partsums[kk-1][kk-1+1+1] - alpha[kk-1+1] * mut[kk-1][kk-1+1];
+                else
+                    center_partsums[kk-1][kk-1+1] = center_partsums[kk-1][kk-1+1+1] - x[kk-1+1] * mut[kk-1][kk-1+1];
+                if (kk > center_partsum_begin[kk-1])
+                    center_partsum_begin[kk-1] = kk;
+                center[kk-1] = center_partsums[kk-1][kk-1+1];    
+                roundto(x[kk-1], center[kk-1]);
+                dx[kk-1] = ddx[kk-1] = (((int)(center[kk-1] >= x[kk-1]) & 1) << 1) - 1;
+            }
+        }
+    }
+}
+
+#define ENUM_TABLE_FILL8(a) \
+            & EnumerationBase::enumerate_recursive_wrapper< a+0,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+1,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+2,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+3,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+4,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+5,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+6,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+7,dualenum,findsubsols>
+#define ENUM_TABLE_FILL64(a) \
+            ENUM_TABLE_FILL8(a), ENUM_TABLE_FILL8(a+8), ENUM_TABLE_FILL8(a+16), ENUM_TABLE_FILL8(a+24), \
+            ENUM_TABLE_FILL8(a+32), ENUM_TABLE_FILL8(a+40), ENUM_TABLE_FILL8(a+48), ENUM_TABLE_FILL8(a+56)
+#define ENUM_TABLE_FILL256(a) \
+            ENUM_TABLE_FILL64(a), ENUM_TABLE_FILL64(a+64), ENUM_TABLE_FILL64(a+128), ENUM_TABLE_FILL64(a+192)
+            
 template<bool dualenum, bool findsubsols>
-bool EnumerationBase::enumerate_loop()
+inline void EnumerationBase::enumerate_recursive_dispatch(int kk)
+{
+    typedef void (EnumerationBase::*enum_recur_type)();
+    static const enum_recur_type lookup[] = {
+        ENUM_TABLE_FILL256(0),
+        ENUM_TABLE_FILL256(256),
+        ENUM_TABLE_FILL256(512),
+        ENUM_TABLE_FILL256(768),
+        ENUM_TABLE_FILL256(1024),
+        ENUM_TABLE_FILL256(1280),
+        ENUM_TABLE_FILL256(1536),
+        ENUM_TABLE_FILL256(1792),
+    };
+    (this->*lookup[kk])();
+}
+
+#endif
+
+template<bool dualenum, bool findsubsols>
+void EnumerationBase::enumerate_loop()
 {
     if (k >= k_end)
-        return false;
+        return;
     
     for (int i = 0; i < k_end; ++i)
     {
@@ -31,6 +177,16 @@ bool EnumerationBase::enumerate_loop()
         center_partsums[i][k_end] = center_partsum[i];
     }
     
+    partdist[k_end] = 0.0; // needed to make next_pos_up() work properly
+
+    nodes -= k_end - k;
+    k = k_end - 1;
+
+#ifdef FPLLL_WITH_RECURSIVE_ENUM
+    enumerate_recursive_dispatch<dualenum, findsubsols>(k);
+    return;
+#endif
+
     while (true)
     {
         enumf alphak = x[k] - center[k];
@@ -47,9 +203,10 @@ bool EnumerationBase::enumerate_loop()
             --k;
             if (k < 0)
             {
-                process_solution(newdist);
+                if (newdist > 0.0)
+                    process_solution(newdist);
                 if (!next_pos_up())
-                    return false;
+                    break;
                 continue;
             }
             if (dualenum)
@@ -62,10 +219,10 @@ bool EnumerationBase::enumerate_loop()
                 for (int j = center_partsum_begin[k+1]; j > k; --j)
                     center_partsums[k][j] = center_partsums[k][j+1] - x[j] * mut[k][j];
             }
-            enumf newcenter = center_partsums[k][k+1];
             center_partsum_begin[k] = max(center_partsum_begin[k], center_partsum_begin[k+1]);
             center_partsum_begin[k+1] = k+1;
             
+            enumf newcenter = center_partsums[k][k+1];
             center[k] = newcenter;
             partdist[k] = newdist;
             roundto(x[k], newcenter);
@@ -74,14 +231,14 @@ bool EnumerationBase::enumerate_loop()
         else
         {
             if (!next_pos_up())
-                return false;
+                break;
         }
     }
 }
 
-template bool EnumerationBase::enumerate_loop<false,false>();
-template bool EnumerationBase::enumerate_loop<false,true>();
-template bool EnumerationBase::enumerate_loop<true,false>();
-template bool EnumerationBase::enumerate_loop<true,true>();
+template void EnumerationBase::enumerate_loop<false,false>();
+template void EnumerationBase::enumerate_loop<false,true>();
+template void EnumerationBase::enumerate_loop<true,false>();
+template void EnumerationBase::enumerate_loop<true,true>();
 
 FPLLL_END_NAMESPACE

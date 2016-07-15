@@ -19,21 +19,42 @@
 #define FPLLL_ENUMERATE_BASE_H
 
 #include <array>
+#include <cfenv>
+#include <cmath>
+#include "../fplll_config.h"
 #include "../nr/nr.h"
 
 FPLLL_BEGIN_NAMESPACE
 
-inline void roundto(int& dest, const double& src) { dest = lrint(src); }
-inline void roundto(double& dest, const double& src) { dest = rint(src); }
+inline void roundto(int& dest, const double& src) { dest = std::lrint(src); }
+inline void roundto(double& dest, const double& src) { dest = std::rint(src); }
 
-#define MAXDIMENSION           256
-#define MAXTEMPLATEDDIMENSION  80
+/* config */
+#define FPLLL_WITH_RECURSIVE_ENUM 1
+#define MAXTEMPLATEDDIMENSION  80 // unused
+//#define FORCE_ENUM_INLINE // not recommended
+/* end config */
+
+
+#ifndef __has_attribute
+#define __has_attribute(x) 0  // Compatibility with non - GCC/clang compilers.
+#endif
+#if __has_attribute(always_inline)
+#define ALWAYS_INLINE __attribute__((always_inline))
+#else
+#define ALWAYS_INLINE
+#endif
+
+#ifndef FORCE_ENUM_INLINE
+#define ENUM_ALWAYS_INLINE
+#else
+#define ENUM_ALWAYS_INLINE ALWAYS_INLINE
+#endif
 
 class EnumerationBase
 {
 public:
-    static const int maxdim = MAXDIMENSION;
-    static const int maxdim_opt = MAXTEMPLATEDDIMENSION;
+    static const int maxdim = FPLLL_MAX_ENUM_DIMENSION;
     
     inline uint64_t getNodes() const { return nodes; }
     
@@ -60,19 +81,50 @@ protected:
    
     /* nodes count */
     uint64_t nodes;
+
+    template<int kk, int kk_start, bool dualenum, bool findsubsols>
+    struct opts
+    {};
     
+    /* need templated function argument for support of integer specialization for kk==-1 */
+    template<int kk, int kk_start, bool dualenum, bool findsubsols>
+    inline void enumerate_recursive( opts<kk, kk_start, dualenum, findsubsols> ) ENUM_ALWAYS_INLINE;
+    template<int kk_start, bool dualenum, bool findsubsols>
+    inline void enumerate_recursive( opts<-1, kk_start, dualenum, findsubsols> ) 
+    {
+    }
+
+    /* simple wrapper with no function argument as helper for dispatcher */
+    template<int kk, bool dualenum, bool findsubsols>
+    void enumerate_recursive_wrapper()
+    {
+        enumerate_recursive( opts<(kk<maxdim ? kk : -1),0,dualenum,findsubsols>() );
+    }
+        
     template<bool dualenum, bool findsubsols>
-    bool enumerate_loop();
+    inline void enumerate_recursive_dispatch(int kk);
+        
+    template<bool dualenum, bool findsubsols>
+    void enumerate_loop();
 
     virtual void process_solution(enumf newmaxdist) = 0; 
     virtual void process_subsolution(int offset, enumf newdist) = 0;
     
+    int rounding_backup;
+    void save_rounding()
+    {
+        rounding_backup = std::fegetround();
+        std::fesetround(FE_TONEAREST);
+    }
+    void restore_rounding()
+    {
+        std::fesetround(rounding_backup);
+    }
+    
     inline bool next_pos_up()
     {
         ++k;
-        if (k >= k_end)
-            return false;
-        if (k < k_max)
+        if (partdist[k] != 0.0)
         {
             x[k] += dx[k];
             ddx[k] = -ddx[k];
@@ -80,6 +132,8 @@ protected:
         }
         else
         {
+            if (k >= k_end)
+                return false;
             k_max = k;
             ++x[k];
         }
