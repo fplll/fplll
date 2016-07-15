@@ -103,7 +103,7 @@ AC_CHECK_FUNCS([floor pow rint sqrt strtol])
 AC_ARG_ENABLE([recursive-enumation],
     AS_HELP_STRING([--disable-recursive-enumation], [Disable (faster) recursive enumeration implementation.]))
 
-AS_IF([test "x$enable_recursive_enum" != "xno"],
+AS_IF([test "x$enable_recursive_enumation" != "xno"],
       [have_recursive_enum=yes],
       [have_recursive_enum=no])
 
