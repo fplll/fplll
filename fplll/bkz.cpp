@@ -114,7 +114,7 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
     // Yes, it is another vector
     FPLLL_DEBUG_CHECK(i_vector != -1 && i_vector != 0);
     m.move_row(kappa + i_vector, kappa);
-    if (!lll_obj.sizeReduction(kappa, kappa + 1))
+    if (!lll_obj.size_reduction(kappa, kappa + 1))
       throw lll_obj.status;
   }
   else
@@ -230,7 +230,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
   // already in the basis). if size reduction is not called,
   // old_first might be incorrect (e.g. close to 0) and the function
   // will return an incorrect clean flag
-  if (!lll_obj.sizeReduction(0, first + 1)) {
+  if (!lll_obj.size_reduction(0, first + 1)) {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
   FT old_first;
@@ -290,7 +290,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     remaining_probability *= (1 - pruning.probability);
   }
   
-  if (!lll_obj.sizeReduction(0, first + 1)) {
+  if (!lll_obj.size_reduction(0, first + 1)) {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
   long new_first_expo;
@@ -630,9 +630,9 @@ template <class FT> void BKZReduction<FT>::print_params(const BKZParam &param, o
   out << endl;
 }
 
-template <class FT> bool BKZReduction<FT>::set_status(int newStatus)
+template <class FT> bool BKZReduction<FT>::set_status(int new_status)
 {
-  status = newStatus;
+  status = new_status;
   if (param.flags & BKZ_VERBOSE)
   {
     if (status == RED_SUCCESS)

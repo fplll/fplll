@@ -38,10 +38,10 @@ static inline int cputime() {
    x.size() must be equal to m.GetNumRows()) */
 template<class ZT>
 void vectMatrixProduct(vector<ZT>& result, const vector<ZT>& x, const Matrix<ZT>& m) {
-  int nRows = m.get_rows(), nCols = m.get_cols();
-  gen_zero_vect(result, nCols);
-  for (int i = 0; i < nRows; i++)
-    for (int j = 0; j < nCols; j++)
+  int nrows = m.get_rows(), ncols = m.get_cols();
+  gen_zero_vect(result, ncols);
+  for (int i = 0; i < nrows; i++)
+    for (int j = 0; j < ncols; j++)
       result[j].addmul(x[i], m(i, j));
 }
 
@@ -49,10 +49,10 @@ void vectMatrixProduct(vector<ZT>& result, const vector<ZT>& x, const Matrix<ZT>
    x.size() must be equal to m.GetNumRows()) */
 template<class ZT>
 void vectMatrixProduct(NumVect<ZT>& result, const NumVect<ZT>& x, const Matrix<ZT>& m) {
-  int nRows = m.get_rows(), nCols = m.get_cols();
-  result.gen_zero(nCols);
-  for (int i = 0; i < nRows; i++)
-    for (int j = 0; j < nCols; j++)
+  int nrows = m.get_rows(), ncols = m.get_cols();
+  result.gen_zero(ncols);
+  for (int i = 0; i < nrows; i++)
+    for (int j = 0; j < ncols; j++)
       result[j].addmul(x[i], m(i, j));
 }
 

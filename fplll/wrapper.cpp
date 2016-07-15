@@ -44,7 +44,7 @@ const double eta_dep[10]=
 Wrapper::Wrapper(IntMatrix& b, IntMatrix& u, IntMatrix& uInv,
                  double delta, double eta, int flags) :
   status(RED_SUCCESS), b(b), u(u), uInv(uInv), delta(delta), eta(eta),
-  useLong(false), lastEarlyRed(0)
+  useLong(false), last_early_red(0)
 {
   n = b.get_cols();
   d = b.get_rows();
@@ -103,10 +103,10 @@ int Wrapper::callLLL(ZZ_mat<Z>& bz, ZZ_mat<Z>& uz, ZZ_mat<Z>& uInvZ,
   }
   MatGSO<ZT, FT> mGSO(bz, uz, uInvZ, gsoFlags);
   LLLReduction<ZT, FT> lllObj(mGSO, delta, eta, flags);
-  lllObj.lastEarlyRed = lastEarlyRed;
+  lllObj.last_early_red = last_early_red;
   lllObj.lll();
   status = lllObj.status;
-  lastEarlyRed = max(lastEarlyRed, lllObj.lastEarlyRed);
+  last_early_red = max(last_early_red, lllObj.last_early_red);
   if (precision > 0) {
     Float::set_prec(oldprec);
   }
@@ -120,7 +120,7 @@ int Wrapper::callLLL(ZZ_mat<Z>& bz, ZZ_mat<Z>& uz, ZZ_mat<Z>& uInvZ,
     return 0;
   else if (lllObj.status == RED_GSO_FAILURE
             || lllObj.status == RED_BABAI_FAILURE)
-    return lllObj.finalKappa;
+    return lllObj.final_kappa;
   else
     return -1;
 }

@@ -119,21 +119,21 @@ long Matrix<T>::getMaxExp() {
 }
 
 template<class T>
-void Matrix<T>::print(ostream& os, int nRows, int nCols) const {
-  if (nRows < 0 || nRows > r) nRows = r;
-  if (nCols < 0 || nCols > c) nCols = c;
+void Matrix<T>::print(ostream& os, int nrows, int ncols) const {
+  if (nrows < 0 || nrows > r) nrows = r;
+  if (ncols < 0 || ncols > c) ncols = c;
   os << '[';
-  for (int i = 0; i < nRows; i++) {
+  for (int i = 0; i < nrows; i++) {
     if (i > 0) os << '\n';
     os << '[';
-    for (int j = 0; j < nCols; j++) {
+    for (int j = 0; j < ncols; j++) {
       if (j > 0) os << ' ';
       os << matrix[i][j];
     }
-    if (printMode == MAT_PRINT_REGULAR && nCols > 0) os << ' ';
+    if (printMode == MAT_PRINT_REGULAR && ncols > 0) os << ' ';
     os << ']';
   }
-  if (printMode == MAT_PRINT_REGULAR && nRows > 0) os << '\n';
+  if (printMode == MAT_PRINT_REGULAR && nrows > 0) os << '\n';
   os << ']';
 }
 

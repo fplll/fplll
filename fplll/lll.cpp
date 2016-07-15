@@ -22,199 +22,228 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-static inline bool isPowerOf2(int i) {
-  return (i & (i - 1)) == 0;
-}
+static inline bool is_power_of_2(int i) { return (i & (i - 1)) == 0; }
 
-template<class ZT, class FT>
-LLLReduction<ZT, FT>::LLLReduction(MatGSO<ZT, FT>& m,
-        double delta, double eta, int flags) :
-  status(RED_SUCCESS), lastEarlyRed(0), m(m)
+template <class ZT, class FT>
+LLLReduction<ZT, FT>::LLLReduction(MatGSO<ZT, FT> &m, double delta, double eta, int flags)
+    : status(RED_SUCCESS), last_early_red(0), m(m)
 {
   /* No early reduction in proved mode (i.e. enable_int_gram=true).
      NOTE: To make this possible, the hypothesis "g(i, j) is valid if
      0 <= i < n_known_rows and j <= i" in gso.h should be changed and
      MatGSO<ZT, FT>::discover_row() should be rewritten. */
-  enableEarlyRed = (flags & LLL_EARLY_RED) && !m.enable_int_gram;
-  siegel = flags & LLL_SIEGEL;
-  verbose = flags & LLL_VERBOSE;
-  this->delta = delta;
-  this->eta = eta;
-  swapThreshold = siegel ? delta - eta * eta : delta;
-  zeros = 0;
+  enable_early_red = (flags & LLL_EARLY_RED) && !m.enable_int_gram;
+  siegel           = flags & LLL_SIEGEL;
+  verbose          = flags & LLL_VERBOSE;
+  this->delta      = delta;
+  this->eta        = eta;
+  swap_threshold   = siegel ? delta - eta * eta : delta;
+  zeros            = 0;
 }
 
-template<class ZT, class FT>
-bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
-  if (kappaEnd == -1) kappaEnd = m.d;
+template <class ZT, class FT>
+bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end)
+{
+  if (kappa_end == -1)
+    kappa_end = m.d;
 
+  FPLLL_DEBUG_CHECK(kappa_min <= kappa_start && kappa_start < kappa_end && kappa_end <= m.d);
+  int start_time = cputime();
+  int kappa      = kappa_start + 1;
+  int kappa_max  = 0;
+  int d          = kappa_end - kappa_min;
 
-  FPLLL_DEBUG_CHECK(kappaMin <= kappaStart && kappaStart < kappaEnd && kappaEnd <= m.d);
-  int startTime = cputime();
-  int kappa = kappaStart + 1;
-  int kappaMax = 0;
-  int d = kappaEnd - kappaMin;
+  zeros       = 0;
+  n_swaps     = 0;
+  final_kappa = 0;
+  if (verbose)
+    print_params();
+  extend_vect(lovasz_tests, kappa_end);
+  extend_vect(babai_mu, kappa_end);
+  extend_vect(babai_expo, kappa_end);
 
-  zeros = 0;
-  nSwaps = 0;
-  finalKappa = 0;
-  if (verbose) printParams();
-  extend_vect(lovaszTests, kappaEnd);
-  extend_vect(babaiMu, kappaEnd);
-  extend_vect(babaiExpo, kappaEnd);
-
-  for (; zeros < d && m.b[0].is_zero(); zeros++) {
-    m.move_row(kappaMin, kappaEnd - 1 - zeros);
+  for (; zeros < d && m.b[0].is_zero(); zeros++)
+  {
+    m.move_row(kappa_min, kappa_end - 1 - zeros);
   }
 
-  if (zeros < d && ((kappaStart > 0 && !babai(kappaStart, kappaStart))
-                    || !m.update_gso_row(kappaStart))) {
-    finalKappa = kappaStart;
+  if (zeros < d &&
+      ((kappa_start > 0 && !babai(kappa_start, kappa_start)) || !m.update_gso_row(kappa_start)))
+  {
+    final_kappa = kappa_start;
     return false;
   }
 
-  long long iter, maxIter;
-  maxIter = static_cast<long long>(d - 2 * d * (d + 1)
-                                   * ((m.b.getMaxExp() + 3) / std::log(delta.get_d())));
+  long long iter, max_iter;
+  max_iter = static_cast<long long>(
+      d - 2 * d * (d + 1) * ((m.b.getMaxExp() + 3) / std::log(delta.get_d())));
 
-  for (iter = 0; iter < maxIter && kappa < kappaEnd - zeros; iter++) {
-    if (kappa > kappaMax) {
-      if (verbose) {
-        cerr << "Discovering vector " << kappa - kappaMin + 1 + zeros << "/"
-             << d << " cputime=" << cputime() - startTime << endl;
+  for (iter = 0; iter < max_iter && kappa < kappa_end - zeros; iter++)
+  {
+    if (kappa > kappa_max)
+    {
+      if (verbose)
+      {
+        cerr << "Discovering vector " << kappa - kappa_min + 1 + zeros << "/" << d
+             << " cputime=" << cputime() - start_time << endl;
       }
-      kappaMax = kappa;
-      if (enableEarlyRed && isPowerOf2(kappa) && kappa > lastEarlyRed) {
-        if (!earlyReduction(kappa)) {
-          finalKappa = kappa;
+      kappa_max = kappa;
+      if (enable_early_red && is_power_of_2(kappa) && kappa > last_early_red)
+      {
+        if (!early_reduction(kappa))
+        {
+          final_kappa = kappa;
           return false;
         }
       }
     }
 
     // Lazy size reduction
-    if (!babai(kappa, kappa)) {
-      finalKappa = kappa;
+    if (!babai(kappa, kappa))
+    {
+      final_kappa = kappa;
       return false;
     }
 
-
     // Tests Lovasz's condition
-    m.get_gram(lovaszTests[0], kappa, kappa);
-    for (int i = 1; i <= kappa; i++) {
+    m.get_gram(lovasz_tests[0], kappa, kappa);
+    for (int i = 1; i <= kappa; i++)
+    {
       ftmp1.mul(m.get_mu_exp(kappa, i - 1), m.get_r_exp(kappa, i - 1));
-      lovaszTests[i].sub(lovaszTests[i - 1], ftmp1);
+      lovasz_tests[i].sub(lovasz_tests[i - 1], ftmp1);
     }
-    ftmp1.mul(m.get_r_exp(kappa - 1, kappa - 1), swapThreshold);
-    if (m.enable_row_expo) {
+    ftmp1.mul(m.get_r_exp(kappa - 1, kappa - 1), swap_threshold);
+    if (m.enable_row_expo)
+    {
       ftmp1.mul_2si(ftmp1, 2 * (m.row_expo[kappa - 1] - m.row_expo[kappa]));
     }
 
-    if (ftmp1 > lovaszTests[siegel ? kappa : kappa - 1]) {
-      nSwaps++;
+    if (ftmp1 > lovasz_tests[siegel ? kappa : kappa - 1])
+    {
+      n_swaps++;
       // Failure, computes the insertion index
       int oldK = kappa;
-      for (kappa--; kappa > kappaStart; kappa--) {
-        ftmp1.mul(m.get_r_exp(kappa - 1, kappa - 1), swapThreshold);
-        if (m.enable_row_expo) {
+      for (kappa--; kappa > kappa_start; kappa--)
+      {
+        ftmp1.mul(m.get_r_exp(kappa - 1, kappa - 1), swap_threshold);
+        if (m.enable_row_expo)
+        {
           ftmp1.mul_2si(ftmp1, 2 * (m.row_expo[kappa - 1] - m.row_expo[oldK]));
         }
-        if (ftmp1 < lovaszTests[siegel ? kappa : kappa - 1]) break;
+        if (ftmp1 < lovasz_tests[siegel ? kappa : kappa - 1])
+          break;
       }
-      //FPLLL_TRACE("Lovasz's condition is not satisfied, kappa=" << kappa << " old_kappa=" << oldK);
+      // FPLLL_TRACE("Lovasz's condition is not satisfied, kappa=" << kappa << " old_kappa=" <<
+      // oldK);
       // Moves the vector
-      if (lovaszTests[kappa] > 0) {
+      if (lovasz_tests[kappa] > 0)
+      {
         m.move_row(oldK, kappa);
       }
-      else {
+      else
+      {
         zeros++;
-        m.move_row(oldK, kappaEnd - zeros);
+        m.move_row(oldK, kappa_end - zeros);
         kappa = oldK;
         continue;
       }
     }
 
-    m.set_r(kappa, kappa, lovaszTests[kappa]);
+    m.set_r(kappa, kappa, lovasz_tests[kappa]);
     kappa++;
   }
 
-  if (kappa < kappaEnd - zeros)
-    return setStatus(RED_LLL_FAILURE);
+  if (kappa < kappa_end - zeros)
+    return set_status(RED_LLL_FAILURE);
   else
-    return setStatus(RED_SUCCESS);
+    return set_status(RED_SUCCESS);
 }
 
-template<class ZT, class FT>
-bool LLLReduction<ZT, FT>::babai(int kappa, int nCols) {
-  //FPLLL_TRACE_IN("kappa=" << kappa);
+template <class ZT, class FT> bool LLLReduction<ZT, FT>::babai(int kappa, int ncols)
+{
+  // FPLLL_TRACE_IN("kappa=" << kappa);
   long max_expo = LONG_MAX;
 
-  for (int iter = 0;; iter++) {
-    if (!m.update_gso_row(kappa, nCols - 1))
-      return setStatus(RED_GSO_FAILURE);
+  for (int iter = 0;; iter++)
+  {
+    if (!m.update_gso_row(kappa, ncols - 1))
+      return set_status(RED_GSO_FAILURE);
 
-    bool loopNeeded = false;
-    for (int j = nCols - 1; j >= 0 && !loopNeeded; j--) {
+    bool loop_needed = false;
+    for (int j = ncols - 1; j >= 0 && !loop_needed; j--)
+    {
       m.get_mu(ftmp1, kappa, j);
       ftmp1.abs(ftmp1);
-      if (ftmp1 > eta) loopNeeded = true;
+      if (ftmp1 > eta)
+        loop_needed = true;
     }
-    if (!loopNeeded) break;
+    if (!loop_needed)
+      break;
 
-    if (iter >= 2) {
-      long newMaxExpo = m.get_max_mu_exp(kappa, nCols);
-      if (newMaxExpo > max_expo - SIZE_RED_FAILURE_THRESH) {
-        return setStatus(RED_BABAI_FAILURE);
+    if (iter >= 2)
+    {
+      long new_max_expo = m.get_max_mu_exp(kappa, ncols);
+      if (new_max_expo > max_expo - SIZE_RED_FAILURE_THRESH)
+      {
+        return set_status(RED_BABAI_FAILURE);
       }
-      max_expo = newMaxExpo;
+      max_expo = new_max_expo;
     }
 
-    for (int j = 0; j < nCols; j++) {
-      babaiMu[j] = m.get_mu_exp(kappa, j, babaiExpo[j]);
+    for (int j = 0; j < ncols; j++)
+    {
+      babai_mu[j] = m.get_mu_exp(kappa, j, babai_expo[j]);
     }
     m.row_op_begin(kappa, kappa + 1);
-    for (int j = nCols - 1; j >= 0; j--) {
-      muMant.rnd_we(babaiMu[j], babaiExpo[j]);
-      if (muMant.zero_p()) continue;
+    for (int j = ncols - 1; j >= 0; j--)
+    {
+      mu_m_ant.rnd_we(babai_mu[j], babai_expo[j]);
+      if (mu_m_ant.zero_p())
+        continue;
       // Approximative update of the mu_(kappa,k)'s
-      for (int k = 0; k < j; k++) {
-        ftmp1.mul(muMant, m.get_mu_exp(j, k));
+      for (int k = 0; k < j; k++)
+      {
+        ftmp1.mul(mu_m_ant, m.get_mu_exp(j, k));
         /* When enable_row_expo=true, the following line relies on the fact that
            get_mu_exp(a, b, expo) returns expo = row_expo[a] - row_expo[b]. */
-        babaiMu[k].sub(babaiMu[k], ftmp1);
+        babai_mu[k].sub(babai_mu[k], ftmp1);
       }
       // Operation on the basis
-      //FPLLL_TRACE("Babai : row[" << kappa << "] += " << muMant << " * 2^" << babaiExpo[j] << " * row[" << j << "]");
-      muMant.neg(muMant);
-      m.row_addmul_we(kappa, j, muMant, babaiExpo[j]);
+      // FPLLL_TRACE("Babai : row[" << kappa << "] += " << mu_m_ant << " * 2^" << babai_expo[j] << "
+      // * row[" << j << "]");
+      mu_m_ant.neg(mu_m_ant);
+      m.row_addmul_we(kappa, j, mu_m_ant, babai_expo[j]);
     }
     m.row_op_end(kappa, kappa + 1);
   }
   return true;
 }
 
-template<class ZT, class FT>
-bool isLLLReduced(MatGSO<ZT, FT>& m, double delta, double eta) {
+template <class ZT, class FT> bool is_lll_reduced(MatGSO<ZT, FT> &m, double delta, double eta)
+{
   FT ftmp1;
   FT ftmp2;
   FT delta_;
   delta_.set(delta);
   m.update_gso();
-  for(int i=0; i<m.d; i++) {
-    for(int j=0; j<i; j++) {
+  for (int i = 0; i < m.d; i++)
+  {
+    for (int j = 0; j < i; j++)
+    {
       m.get_mu(ftmp1, i, j);
       ftmp1.abs(ftmp1);
       if (ftmp1 > eta)
         return false;
     }
   }
-  for(int i=1; i<m.d; i++) {
-    m.get_mu(ftmp2, i, i-1);
-    ftmp2.mul(ftmp2, ftmp2); // μ^2
+  for (int i = 1; i < m.d; i++)
+  {
+    m.get_mu(ftmp2, i, i - 1);
+    ftmp2.mul(ftmp2, ftmp2);  // μ^2
 
-    ftmp2.sub(delta_, ftmp2); // δ - μ^2
-    m.get_r(ftmp1, i-1, i-1);
-    ftmp2.mul(ftmp1, ftmp2); // (δ - μ^2) ⋅ r_{i-1,i-1}
+    ftmp2.sub(delta_, ftmp2);  // δ - μ^2
+    m.get_r(ftmp1, i - 1, i - 1);
+    ftmp2.mul(ftmp1, ftmp2);  // (δ - μ^2) ⋅ r_{i-1,i-1}
 
     m.get_r(ftmp1, i, i);  // r_{i,i}
 
@@ -226,43 +255,49 @@ bool isLLLReduced(MatGSO<ZT, FT>& m, double delta, double eta) {
 
 /** instantiate functions **/
 
-template class LLLReduction<Z_NR<long>, FP_NR<double> >;
-template class LLLReduction<Z_NR<double>, FP_NR<double> >;
-template class LLLReduction<Z_NR<mpz_t>, FP_NR<double> >;
-template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<double> >(MatGSO<Z_NR<mpz_t>, FP_NR<double> >& m, double delta, double eta);
+template class LLLReduction<Z_NR<long>, FP_NR<double>>;
+template class LLLReduction<Z_NR<double>, FP_NR<double>>;
+template class LLLReduction<Z_NR<mpz_t>, FP_NR<double>>;
+template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<double>>(MatGSO<Z_NR<mpz_t>, FP_NR<double>> &m,
+                                                         double delta, double eta);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class LLLReduction<Z_NR<long>, FP_NR<long double> >;
-template class LLLReduction<Z_NR<double>, FP_NR<long double> >;
-template class LLLReduction<Z_NR<mpz_t>, FP_NR<long double> >;
+template class LLLReduction<Z_NR<long>, FP_NR<long double>>;
+template class LLLReduction<Z_NR<double>, FP_NR<long double>>;
+template class LLLReduction<Z_NR<mpz_t>, FP_NR<long double>>;
 
-template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<long double> >(MatGSO<Z_NR<mpz_t>, FP_NR<long double> >& m, double delta, double eta);
+template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<long double>>(MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &m,
+                                                              double delta, double eta);
 #endif
 
 #ifdef FPLLL_WITH_QD
-template class LLLReduction<Z_NR<long>, FP_NR<dd_real> >;
-template class LLLReduction<Z_NR<double>, FP_NR<dd_real> >;
-template class LLLReduction<Z_NR<mpz_t>, FP_NR<dd_real> >;
+template class LLLReduction<Z_NR<long>, FP_NR<dd_real>>;
+template class LLLReduction<Z_NR<double>, FP_NR<dd_real>>;
+template class LLLReduction<Z_NR<mpz_t>, FP_NR<dd_real>>;
 
-template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<dd_real> >(MatGSO<Z_NR<mpz_t>, FP_NR<dd_real> >& m, double delta, double eta);
+template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<dd_real>>(MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &m,
+                                                          double delta, double eta);
 
-template class LLLReduction<Z_NR<long>, FP_NR<qd_real> >;
-template class LLLReduction<Z_NR<double>, FP_NR<qd_real> >;
-template class LLLReduction<Z_NR<mpz_t>, FP_NR<qd_real> >;
+template class LLLReduction<Z_NR<long>, FP_NR<qd_real>>;
+template class LLLReduction<Z_NR<double>, FP_NR<qd_real>>;
+template class LLLReduction<Z_NR<mpz_t>, FP_NR<qd_real>>;
 
-template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<qd_real> >(MatGSO<Z_NR<mpz_t>, FP_NR<qd_real> >& m, double delta, double eta);
+template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<qd_real>>(MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &m,
+                                                          double delta, double eta);
 #endif
 
 #ifdef FPLLL_WITH_DPE
-template class LLLReduction<Z_NR<long>, FP_NR<dpe_t> >;
-template class LLLReduction<Z_NR<double>, FP_NR<dpe_t> >;
-template class LLLReduction<Z_NR<mpz_t>, FP_NR<dpe_t> >;
-template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<dpe_t> >(MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t> >& m, double delta, double eta);
+template class LLLReduction<Z_NR<long>, FP_NR<dpe_t>>;
+template class LLLReduction<Z_NR<double>, FP_NR<dpe_t>>;
+template class LLLReduction<Z_NR<mpz_t>, FP_NR<dpe_t>>;
+template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<dpe_t>>(MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &m,
+                                                        double delta, double eta);
 #endif
 
-template class LLLReduction<Z_NR<long>, FP_NR<mpfr_t> >;
-template class LLLReduction<Z_NR<double>, FP_NR<mpfr_t> >;
-template class LLLReduction<Z_NR<mpz_t>, FP_NR<mpfr_t> >;
-template bool isLLLReduced<Z_NR<mpz_t>, FP_NR<mpfr_t> >(MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t> >& m, double delta, double eta);
+template class LLLReduction<Z_NR<long>, FP_NR<mpfr_t>>;
+template class LLLReduction<Z_NR<double>, FP_NR<mpfr_t>>;
+template class LLLReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
+template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<mpfr_t>>(MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &m,
+                                                         double delta, double eta);
 
 FPLLL_END_NAMESPACE

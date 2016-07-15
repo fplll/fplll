@@ -186,15 +186,15 @@ public:
   long nodes;
 
 private:
-  void print_tour(const int loop, int minRow, int maxRow);
+  void print_tour(const int loop, int min_row, int max_row);
   void print_params(const BKZParam &param, ostream &out);
 
-  bool set_status(int newStatus);
+  bool set_status(int new_status);
 
   const Pruning &get_pruning(int kappa, int block_size, const BKZParam &par) const;
 
-  bool trunc_tour(int &kappaMax, const BKZParam &param, int minRow, int maxRow);
-  bool trunc_dtour(const BKZParam &param, int minRow, int maxRow);
+  bool trunc_tour(int &kappa_max, const BKZParam &param, int min_row, int max_row);
+  bool trunc_dtour(const BKZParam &param, int min_row, int max_row);
 
   const BKZParam &param;
   int num_rows;

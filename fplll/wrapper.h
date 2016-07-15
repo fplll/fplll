@@ -79,7 +79,7 @@ private:
   int max_exponent;
   int n;
   int d;
-  int lastEarlyRed;
+  int last_early_red;
 };
 
 FPLLL_END_NAMESPACE

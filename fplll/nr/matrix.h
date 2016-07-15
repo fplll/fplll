@@ -228,9 +228,9 @@ public:
   long getMaxExp();
   /** Prints this matrix. No end-of-line is printed after the last line.
       @param os      output stream
-      @param nRows   maximum number of rows to display (optional)
-      @param nCols   maximum number of columns to display (optional) */
-  void print(ostream& os, int nRows = -1, int nCols = -1) const;
+      @param nrows   maximum number of rows to display (optional)
+      @param ncols   maximum number of columns to display (optional) */
+  void print(ostream& os, int nrows = -1, int ncols = -1) const;
   /** Reads this matrix from a stream. */
   void read(istream& is);
 
