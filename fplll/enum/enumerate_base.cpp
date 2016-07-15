@@ -19,7 +19,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-#ifdef USE_RECURSIVE_ENUM
+#ifdef FPLLL_WITH_RECURSIVE_ENUM
 template<int kk, int kk_start, bool dualenum, bool findsubsols>
 inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_start, dualenum, findsubsols> )
 {
@@ -177,7 +177,7 @@ void EnumerationBase::enumerate_loop()
     nodes -= (k_end - 1 - k) + 1;
     k = k_end - 1;
 
-#ifdef USE_RECURSIVE_ENUM
+#ifdef FPLLL_WITH_RECURSIVE_ENUM
     if ((k & 7) == 7 && k <= 127)
     {
         enumerate_recursive_dispatch<dualenum, findsubsols>(k);
@@ -230,7 +230,7 @@ void EnumerationBase::enumerate_loop()
             roundto(x[k], newcenter);
             dx[k] = ddx[k] = (((int)(newcenter >= x[k]) & 1) << 1) - 1;
 
-#ifdef USE_RECURSIVE_ENUM
+#ifdef FPLLL_WITH_RECURSIVE_ENUM
             if ((k & 7) == 7 && k <= 127)
             {
                 enumerate_recursive_dispatch<dualenum, findsubsols>(k);
