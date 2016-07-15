@@ -28,18 +28,19 @@ FPLLL_BEGIN_NAMESPACE
  * with delta=LLL_DEF_DELTA and eta=LLL_DEF_ETA.
  * The result is guaranteed if method = SVPM_PROVED.
  */
-int shortestVector(IntMatrix& b, IntVect& solCoord,
-        SVPMethod method = SVPM_PROVED, int flags = SVP_DEFAULT);
+int shortest_vector(IntMatrix &b, IntVect &sol_coord, SVPMethod method = SVPM_PROVED,
+                    int flags = SVP_DEFAULT);
 
-int shortestVectorPruning(IntMatrix& b, IntVect& solCoord,
-        const vector<double>& pruning, int flags = SVP_DEFAULT);
+int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, const vector<double> &pruning,
+                            int flags = SVP_DEFAULT);
 
-int shortestVectorPruning(IntMatrix& b, IntVect& solCoord, vector<IntVect>& subsolCoord, vector<double>& subsolDist,
-        const vector<double>& pruning, int flags = SVP_DEFAULT);
+int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &subsol_coord,
+                            vector<double> &subsol_dist, const vector<double> &pruning,
+                            int flags = SVP_DEFAULT);
 
 // Experimental. Do not use.
-int closestVector(IntMatrix& b, const IntVect& intTarget,
-                  vector<Integer>& solCoord, int flags = CVP_DEFAULT);
+int closest_vector(IntMatrix &b, const IntVect &int_target, vector<Integer> &sol_coord,
+                   int flags = CVP_DEFAULT);
 
 FPLLL_END_NAMESPACE
 

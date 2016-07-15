@@ -270,7 +270,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
     const Pruning &pruning = get_pruning(kappa, block_size, par);
 
-    vector<FT>& sol_coord = evaluator.solCoord;
+    vector<FT>& sol_coord = evaluator.sol_coord;
     sol_coord.clear();
     Enumeration<FT> Enum(m, evaluator);
     Enum.enumerate( kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(), vector<enumxt>(),

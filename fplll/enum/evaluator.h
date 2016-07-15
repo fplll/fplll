@@ -53,20 +53,20 @@ public:
   virtual void set_normexp(long normExp) {}
 
   /** Coordinates of the solution in the lattice */
-  vector<FT> solCoord;
+  vector<FT> sol_coord;
   enumf solDist;
   
   /** Other solutions found in the lattice */
   size_t max_aux_sols;
-  std::deque< vector<FT> > aux_solCoord;
+  std::deque< vector<FT> > aux_sol_coord;
   std::deque< enumf > aux_solDist;
   
   /** Subsolutions found in the lattice */
   bool findsubsols;
-  vector< vector<FT> > sub_solCoord;
+  vector< vector<FT> > sub_sol_coord;
   vector< enumf > sub_solDist;
 
-  /** Set to true when solCoord is updated */
+  /** Set to true when sol_coord is updated */
   bool newSolFlag;
 };
 
@@ -78,12 +78,12 @@ public:
 template<class FT>
 class FastEvaluator : public Evaluator<FT> {
 public:
-  using Evaluator<FT>::solCoord;
+  using Evaluator<FT>::sol_coord;
   using Evaluator<FT>::solDist;
   using Evaluator<FT>::newSolFlag;
-  using Evaluator<FT>::aux_solCoord;
+  using Evaluator<FT>::aux_sol_coord;
   using Evaluator<FT>::aux_solDist;
-  using Evaluator<FT>::sub_solCoord;
+  using Evaluator<FT>::sub_sol_coord;
   using Evaluator<FT>::sub_solDist;
   using Evaluator<FT>::max_aux_sols;
 
@@ -108,30 +108,30 @@ public:
   virtual void evalSol(const vector<FT>& newSolCoord,
                        const enumf& newPartialDist, enumf& maxDist) 
   {
-    if (max_aux_sols != 0 && !solCoord.empty())
+    if (max_aux_sols != 0 && !sol_coord.empty())
     {
-      aux_solCoord.emplace_front( std::move(solCoord) );
+      aux_sol_coord.emplace_front( std::move(sol_coord) );
       aux_solDist.emplace_front( solDist );
-      if (aux_solCoord.size() > max_aux_sols)
+      if (aux_sol_coord.size() > max_aux_sols)
       {
-        aux_solCoord.pop_back();
+        aux_sol_coord.pop_back();
         aux_solDist.pop_back();
       }
     }
-    solCoord = newSolCoord;
+    sol_coord = newSolCoord;
     maxDist = solDist = newPartialDist;
     newSolFlag = true;
   }
   
   virtual void evalSubSol(int offset, const vector<FT>& newSubSolCoord, const enumf& subDist)
   {
-    sub_solCoord.resize( std::max(sub_solCoord.size(), std::size_t(offset+1)) );
-    sub_solDist.resize( sub_solCoord.size(), -1.0 );
+    sub_sol_coord.resize( std::max(sub_sol_coord.size(), std::size_t(offset+1)) );
+    sub_solDist.resize( sub_sol_coord.size(), -1.0 );
     if (sub_solDist[offset] == -1.0 || subDist < sub_solDist[offset])
     {
-      sub_solCoord[offset] = newSubSolCoord;
+      sub_sol_coord[offset] = newSubSolCoord;
       for (int i = 0; i < offset; ++i)
-        sub_solCoord[offset][i] = 0.0;
+        sub_sol_coord[offset][i] = 0.0;
       sub_solDist[offset] = subDist;
     }
   }
@@ -190,22 +190,22 @@ public:
   bool get_max_error_aux(const Float& maxDist, bool boundOnExactVal, Float& maxDE);
 
   /** Coordinates of the solution in the lattice */
-  FloatVect solCoord;
+  FloatVect sol_coord;
   enumf solDist;
 
   /** Other solutions found in the lattice */
   size_t max_aux_sols;
-  std::deque< FloatVect > aux_solCoord;
+  std::deque< FloatVect > aux_sol_coord;
   std::deque< enumf > aux_solDist;
   
   /** Subsolutions found in the lattice */
   bool findsubsols;
-  vector< FloatVect > sub_solCoord;
+  vector< FloatVect > sub_sol_coord;
   vector< enumf > sub_solDist;
 
-  /** Set to true when solCoord is updated */
+  /** Set to true when sol_coord is updated */
   bool newSolFlag;
-  /** Incremented when solCoord is updated */
+  /** Incremented when sol_coord is updated */
   long long solCount;
   int evalMode;
 

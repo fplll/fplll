@@ -223,9 +223,9 @@ template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &
   }
 
   if (target.empty())
-    status = shortestVector(b, sol_coord, SVPM_PROVED, flags);
+    status = shortest_vector(b, sol_coord, SVPM_PROVED, flags);
   else
-    status = closestVector(b, target, sol_coord, flags);
+    status = closest_vector(b, target, sol_coord, flags);
 
   if (status != RED_SUCCESS)
   {

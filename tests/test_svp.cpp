@@ -80,7 +80,7 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, IntVect &b)
     return status;
   }
 
-  status = shortestVector(A, sol_coord, SVPM_PROVED, SVP_DEFAULT);
+  status = shortest_vector(A, sol_coord, SVPM_PROVED, SVP_DEFAULT);
 
   if (status != RED_SUCCESS)
   {
@@ -172,7 +172,7 @@ template <class ZT> int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &c
 
 template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b)
 {
-  IntVect solCoord;  // In the LLL-reduced basis
+  IntVect sol_coord;  // In the LLL-reduced basis
   IntVect solution;
   IntMatrix u;
 
@@ -190,7 +190,7 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b)
     return status;
   }
 
-  status = shortestVector(A, solCoord, SVPM_FAST, SVP_DUAL);
+  status = shortest_vector(A, sol_coord, SVPM_FAST, SVP_DUAL);
 
   if (status != RED_SUCCESS)
   {
@@ -199,7 +199,7 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b)
   }
 
   Float norm_sol;
-  if (dual_length(norm_sol, A, solCoord))
+  if (dual_length(norm_sol, A, sol_coord))
   {
     return 1;
   }

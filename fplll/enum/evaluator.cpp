@@ -206,17 +206,17 @@ void FastEvaluator<Float>::evalSol(const FloatVect& newSolCoord,
   // Assumes that the solution is valid
   if (evalMode == EVALMODE_SV) 
   {
-    if (max_aux_sols != 0 && !solCoord.empty())
+    if (max_aux_sols != 0 && !sol_coord.empty())
     {
-      aux_solCoord.emplace_front( std::move(solCoord) );
+      aux_sol_coord.emplace_front( std::move(sol_coord) );
       aux_solDist.emplace_front( solDist );
-      if (aux_solCoord.size() > max_aux_sols)
+      if (aux_sol_coord.size() > max_aux_sols)
       {
-        aux_solCoord.pop_back();
+        aux_sol_coord.pop_back();
         aux_solDist.pop_back();
       }
     }
-    solCoord = newSolCoord;
+    sol_coord = newSolCoord;
     maxDist = solDist = newPartialDist;
     lastPartialDist = newPartialDist; // Exact conversion
     lastPartialDist.mul_2si(lastPartialDist, normExp);
@@ -232,13 +232,13 @@ void FastEvaluator<Float>::evalSol(const FloatVect& newSolCoord,
 void FastEvaluator<Float>::evalSubSol(int offset, const FloatVect& newSubSolCoord,
         const enumf& subDist) 
 {
-  sub_solCoord.resize( std::max(sub_solCoord.size(), std::size_t(offset+1)) );
-  sub_solDist.resize( sub_solCoord.size(), -1.0);
+  sub_sol_coord.resize( std::max(sub_sol_coord.size(), std::size_t(offset+1)) );
+  sub_solDist.resize( sub_sol_coord.size(), -1.0);
   if (sub_solDist[offset] == -1.0 || subDist < sub_solDist[offset])
   {
-    sub_solCoord[offset] = newSubSolCoord;
+    sub_sol_coord[offset] = newSubSolCoord;
     for (int i = 0; i < offset; ++i)
-      sub_solCoord[offset][i] = 0.0;
+      sub_sol_coord[offset][i] = 0.0;
     sub_solDist[offset] = subDist;
   }
 }
@@ -246,7 +246,7 @@ void FastEvaluator<Float>::evalSubSol(int offset, const FloatVect& newSubSolCoor
 bool FastEvaluator<Float>::get_max_error(Float& maxError) {
   Float maxE, maxDE, maxOptDE, minOptE, one;
 
-  if (solCoord.empty() || !inputErrorDefined) return false;
+  if (sol_coord.empty() || !inputErrorDefined) return false;
   if (!get_max_error_aux(lastPartialDist, false, maxDE)) return false;
 
   // Exact norm of an optimal solution <= Exact norm of the result <= maxE
@@ -290,14 +290,14 @@ void ExactEvaluator::evalSol(const FloatVect& newSolCoord,
 
   if (intMaxDist < 0 || newSolDist <= intMaxDist) {
     if (evalMode == EVALMODE_SV) {
-      if (max_aux_sols != 0 && !solCoord.empty())
+      if (max_aux_sols != 0 && !sol_coord.empty())
       {
-        aux_solCoord.emplace_front( std::move(solCoord) );
+        aux_sol_coord.emplace_front( std::move(sol_coord) );
         aux_solDist.emplace_front( solDist );
         aux_solintDist.emplace_front( intMaxDist );
-        if (aux_solCoord.size() > max_aux_sols)
+        if (aux_sol_coord.size() > max_aux_sols)
         {
-          aux_solCoord.pop_back();
+          aux_sol_coord.pop_back();
           aux_solDist.pop_back();
           aux_solintDist.pop_back();
         }
@@ -305,7 +305,7 @@ void ExactEvaluator::evalSol(const FloatVect& newSolCoord,
       // Updates the stored solution
       lastPartialDist = newPartialDist;
       lastPartialDist.mul_2si(lastPartialDist, normExp);
-      solCoord = newSolCoord;
+      sol_coord = newSolCoord;
       intMaxDist = newSolDist;
       updateMaxDist(maxDist);
       solDist = maxDist;
@@ -321,11 +321,11 @@ void ExactEvaluator::evalSol(const FloatVect& newSolCoord,
 void ExactEvaluator::evalSubSol(int offset, const FloatVect& newSubSolCoord,
         const enumf& subDist) 
 {
-  sub_solCoord.resize( std::max(sub_solCoord.size(), std::size_t(offset+1)) );
-  sub_solDist.resize( sub_solCoord.size(), -1.0 );
+  sub_sol_coord.resize( std::max(sub_sol_coord.size(), std::size_t(offset+1)) );
+  sub_solDist.resize( sub_sol_coord.size(), -1.0 );
   Integer minusone;
   minusone = -1;
-  sub_solintDist.resize( sub_solCoord.size(), minusone);
+  sub_solintDist.resize( sub_sol_coord.size(), minusone);
 
   int n = matrix.get_cols();
   Integer newSolDist, coord;
@@ -349,9 +349,9 @@ void ExactEvaluator::evalSubSol(int offset, const FloatVect& newSubSolCoord,
 
   if (sub_solintDist[offset] < 0 || newSolDist <= sub_solintDist[offset]) 
   {
-    sub_solCoord[offset] = newSubSolCoord;
+    sub_sol_coord[offset] = newSubSolCoord;
     for (int i = 0; i < offset; ++i)
-      sub_solCoord[offset][i] = 0.0;
+      sub_sol_coord[offset][i] = 0.0;
     sub_solDist[offset] = subDist;
     sub_solintDist[offset] = newSolDist;
   }

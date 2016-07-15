@@ -198,8 +198,8 @@ Same as above, but also computes the transform matrix u such that b<sub>new</sub
 ## SVP ##
 
 <table>
-<tr><td><tt>int shortestVector(IntMatrix&amp; b, vector&lt;Integer&gt;&amp;
-solCoord, SVPMethod method = SVPM_PROVED, int flags = SVP_DEFAULT)</tt><br>
+<tr><td><tt>int shortest_vector(IntMatrix&amp; b, vector&lt;Integer&gt;&amp;
+sol_coord, SVPMethod method = SVPM_PROVED, int flags = SVP_DEFAULT)</tt><br>
 <p>Computes a shortest non-zero vector of a lattice.
 The basis must be LLL-reduced with delta = 0.99 and eta = 0.51.
 The result is guaranteed if method = SVPM_PROVED.</p>
@@ -208,7 +208,7 @@ The result is guaranteed if method = SVPM_PROVED.</p>
   <dl>
     <dt>b
       <dd>LLL-reduced input basis.</dd>
-    <dt>solCoord
+    <dt>sol_coord
       <dd>Output: coordinates of a shortest vector non-zero of L(b) in the basis <code>b</code>.
     <dt>method
       <dd>SVPM_PROVED (the result is guaranteed provided that the basis is (0.99,0.51)-LLL-reduced) or SVPM_FAST (nothing is guaranteed).
