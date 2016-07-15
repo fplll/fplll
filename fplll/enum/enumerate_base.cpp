@@ -174,7 +174,10 @@ void EnumerationBase::enumerate_loop()
         center_partsum_begin[i+1] = k_end - 1;
         center_partsums[i][k_end] = center_partsum[i];
     }
-    nodes -= (k_end - 1 - k) + 1;
+    
+    partdist[k_end] = 0.0; // needed to make next_pos_up() work properly
+
+    nodes -= k_end - k;
     k = k_end - 1;
 
 #ifdef USE_RECURSIVE_ENUM
@@ -182,13 +185,10 @@ void EnumerationBase::enumerate_loop()
     {
         enumerate_recursive_dispatch<dualenum, findsubsols>(k);
         if (!next_pos_up())
-        {
-//            std::cout << "Nodes: " << nodes << std::endl;
             return;
-        }
     }
 #endif
-    
+
     while (true)
     {
         enumf alphak = x[k] - center[k];
@@ -246,7 +246,6 @@ void EnumerationBase::enumerate_loop()
                 break;
         }
     }
-//    std::cout << "Nodes: " << nodes << std::endl;
 }
 
 template void EnumerationBase::enumerate_loop<false,false>();

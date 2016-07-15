@@ -28,9 +28,28 @@ FPLLL_BEGIN_NAMESPACE
 inline void roundto(int& dest, const double& src) { dest = std::lrint(src); }
 inline void roundto(double& dest, const double& src) { dest = std::rint(src); }
 
+/* config */
 #define MAXDIMENSION           256
 #define MAXTEMPLATEDDIMENSION  80
 #define USE_RECURSIVE_ENUM
+//#define FORCE_ENUM_INLINE
+/* end config */
+
+
+#ifndef __has_attribute
+#define __has_attribute(x) 0  // Compatibility with non - GCC/clang compilers.
+#endif
+#if __has_attribute(always_inline)
+#define ALWAYS_INLINE __attribute__((always_inline))
+#else
+#define ALWAYS_INLINE
+#endif
+
+#ifndef FORCE_ENUM_INLINE
+#define ENUM_ALWAYS_INLINE
+#else
+#define ENUM_ALWAYS_INLINE ALWAYS_INLINE
+#endif
 
 class EnumerationBase
 {
@@ -70,7 +89,7 @@ protected:
     
     /* need templated function argument for support of integer specialization for kk==-1 */
     template<int kk, int kk_start, bool dualenum, bool findsubsols>
-    inline void enumerate_recursive( opts<kk, kk_start, dualenum, findsubsols> );
+    inline void enumerate_recursive( opts<kk, kk_start, dualenum, findsubsols> ) ENUM_ALWAYS_INLINE;
     template<int kk_start, bool dualenum, bool findsubsols>
     inline void enumerate_recursive( opts<-1, kk_start, dualenum, findsubsols> );
 
@@ -78,7 +97,7 @@ protected:
     template<int kk, bool dualenum, bool findsubsols>
     void enumerate_recursive_wrapper()
     {
-        enumerate_recursive( opts<kk,kk,dualenum,findsubsols>() );
+        enumerate_recursive( opts<kk,0,dualenum,findsubsols>() );
     }
         
     template<bool dualenum, bool findsubsols>
