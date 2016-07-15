@@ -301,7 +301,7 @@ public:
   void gen_qary_withq(int k, int q)
   {
     Z_NR<ZT> q2;
-    q2.set(q);
+    q2 = q;
     gen_qary(k, q2);
   }
 

@@ -223,8 +223,7 @@ template <class ZT, class FT> bool is_lll_reduced(MatGSO<ZT, FT> &m, double delt
 {
   FT ftmp1;
   FT ftmp2;
-  FT delta_;
-  delta_.set(delta);
+  FT delta_ =delta;
   m.update_gso();
   for (int i = 0; i < m.d; i++)
   {

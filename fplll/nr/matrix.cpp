@@ -281,8 +281,8 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits)
 
   q.randb(bits);
   if (q.sgn() == 0)
-    q.set(1);
-  h[0].set(0);
+    q = 1;
+  h[0] = 0;
   for (i = 1; i < d; i++)
   {
     h[i].randm(q);
@@ -347,8 +347,8 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike_withq(int q)
   Z_NR<ZT> *h = new Z_NR<ZT>[d];
   Z_NR<ZT> q2;
 
-  q2.set(q);
-  h[0].set(0);
+  q2 = q;
+  h[0] = 0;
   for (i = 1; i < d; i++)
   {
     h[i].randm(q2);
@@ -412,7 +412,7 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(int bits)
   Z_NR<ZT> q;
 
   q.randb(bits);
-  h[0].set(0);
+  h[0] = 0;
   for (i = 1; i < d; i++)
   {
     h[i].randm(q);
@@ -465,8 +465,8 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2_withq(int q)
   Z_NR<ZT> *h = new Z_NR<ZT>[d];
   Z_NR<ZT> q2;
 
-  q2.set(q);
-  h[0].set(0);
+  q2 = q;
+  h[0] = 0;
   for (i = 1; i < d; i++)
   {
     h[i].randm(q2);

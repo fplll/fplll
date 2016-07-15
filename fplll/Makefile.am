@@ -24,7 +24,7 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	nr/nr_Z_mpz.inl \
 	nr/numvect.h \
 	util.h \
-	svpcvp.h fplllv31.h bkz.h lll.h gso.h  \
+	svpcvp.h bkz.h lll.h gso.h  \
 	enum/evaluator.h \
 	fplll_config.h wrapper.h \
 	bkz_param.h \
