@@ -191,7 +191,7 @@ void Gauss_sieve<ZT, F>::init_list_rand ()
   /* set */
   for (int i = 0; i < nr; i++ ) {
     for (int j = 0; j < nc; j++ ) {
-      tmpZ = (NewZ[i][j]).getData();
+      tmpZ = (NewZ[i][j]).get_data();
       tmpZ.get_mpz(tmp);
       New[i][j] = tmp;
     }

@@ -206,7 +206,7 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b)
 
   Float error;
   error = 1;
-  error.mul_2si(error, -(int)error.getprec());
+  error.mul_2si(error, -(int)error.get_prec());
   normb += error;
   if (norm_sol > normb)
   {
@@ -272,7 +272,7 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, IntVect &b)
 
   Float error;
   error = 1;
-  error.mul_2si(error, -(int)error.getprec());
+  error.mul_2si(error, -(int)error.get_prec());
   normb += error;
   if (norm_sol > normb)
   {

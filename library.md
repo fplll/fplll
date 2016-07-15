@@ -293,8 +293,8 @@ Adds x &times; y to the current value.
 Subtracts x &times; y from the current value.
 <tr><td><tt>void swap(Z_NR&lt;Z&gt;&amp; a)</tt><br>
 Efficiently swaps the values of two Z_NR.
-<tr><td><tt>T&amp; getData()</tt><br>
-<tt>const T&amp; getData() const</tt><br>
+<tr><td><tt>T&amp; get_data()</tt><br>
+<tt>const T&amp; get_data() const</tt><br>
 Returns the internal representation of the data.
 </table>
 
@@ -380,17 +380,17 @@ value := NaN.
 Returns non-zero if the current value is NaN, 0 otherwise.
 <tr><td><tt>void swap(FP_NR&lt;F&gt;&amp; x)</tt><br>
 Efficiently swaps the values of two FP_NR.
-<tr><td><tt>T&amp; getData()</tt><br>
-<tt>const T&amp; getData() const</tt><br>
+<tr><td><tt>T&amp; get_data()</tt><br>
+<tt>const T&amp; get_data() const</tt><br>
 Returns the internal representation of the data.
 </table>
 
 Static members:
 
 <table cellpadding="5">
-<tr><td><tt>static unsigned int getprec()</tt><br>
+<tr><td><tt>static unsigned int get_prec()</tt><br>
 Returns the current precision for new FP_NR&lt;F&gt; objects.
-<tr><td><tt>static inline unsigned int setprec(unsigned int prec)</tt><br>
+<tr><td><tt>static inline unsigned int set_prec(unsigned int prec)</tt><br>
 Sets the precision of new FP_NR&lt;F&gt; objects. Returns the previous value.
 This has no effect is F != mpfr_t.
 </table>

@@ -86,7 +86,7 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags = L
     return status;
   }
 
-  const int oldPrec = prec ? FP_NR<mpfr_t>::setprec(prec) : 0;
+  const int oldPrec = prec ? FP_NR<mpfr_t>::set_prec(prec) : 0;
 
   MatGSO<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, U, UT, 0);
 
@@ -94,7 +94,7 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags = L
   status = isLLLReduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
 
   if (prec)
-    FP_NR<mpfr_t>::setprec(oldPrec);
+    FP_NR<mpfr_t>::set_prec(oldPrec);
 
   if (status == 0)
     cerr << "Output of LLL reduction is not LLL reduced with method " << LLL_METHOD_STR[method]

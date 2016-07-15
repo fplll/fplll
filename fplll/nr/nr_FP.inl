@@ -36,25 +36,25 @@ public:
   /**
    * Returns the current precision for new FP_NR&lt;F&gt; objects.
    */
-  static inline unsigned int getprec();
+  static inline unsigned int get_prec();
 
   /**
    * Sets the precision of new FP_NR&lt;F&gt; objects. Returns the
    # previous value. This has no effect is F != mpfr_t.
    */
-  static inline unsigned int setprec(unsigned int prec);
+  static inline unsigned int set_prec(unsigned int prec);
 
   /** get data */
 
   /**
    * Returns the internal representation of the data.
    */
-  inline F &getData() { return data; }
+  inline F &get_data() { return data; }
 
   /**
    * Returns the internal representation of the data.
    */
-  inline const F &getData() const { return data; }
+  inline const F &get_data() const { return data; }
 
   /**
    * Converts this object to a double. If it does not fit in a double,
@@ -177,7 +177,7 @@ public:
   /**
    * max between a and b
    */
-  inline FP_NR &maxF(FP_NR<F> &b)
+  inline FP_NR &max_f(FP_NR<F> &b)
   {
     if ((*this) <= b)
       return b;
@@ -581,7 +581,7 @@ template <class F> inline bool FP_NR<F>::operator>(double a) const { return cmp(
 /**
  * Prints x on stream os.
  */
-template <class T> ostream &operator<<(ostream &os, const FP_NR<T> &x) { return os << x.getData(); }
+template <class T> ostream &operator<<(ostream &os, const FP_NR<T> &x) { return os << x.get_data(); }
 
 #ifdef FPLLL_WITH_DPE
 template <> ostream &operator<<(ostream &os, const FP_NR<dpe_t> &x);

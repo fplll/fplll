@@ -355,12 +355,12 @@ inline void Z_NR<long>::set(unsigned long s) {
 /* operators Z_NR<long> */
 template<>
 inline ostream& operator<<(ostream& os, const Z_NR<long>& x) {
-  return os << x.getData();
+  return os << x.get_data();
 }
 
 template<>
 inline istream& operator>>(istream& is, Z_NR<long>& x) {
-  return is >> x.getData();
+  return is >> x.get_data();
 }
 
 

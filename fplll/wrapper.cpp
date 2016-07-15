@@ -97,9 +97,9 @@ int Wrapper::callLLL(ZZ_mat<Z>& bz, ZZ_mat<Z>& uz, ZZ_mat<Z>& uInvZ,
   if (method == LM_FAST) gsoFlags |= GSO_ROW_EXPO;
   if (method != LM_PROVED && precision == 0) gsoFlags |= GSO_OP_FORCE_LONG;
 
-  int oldprec = Float::getprec();
+  int oldprec = Float::get_prec();
   if (precision > 0) {
-    Float::setprec(precision);
+    Float::set_prec(precision);
   }
   MatGSO<ZT, FT> mGSO(bz, uz, uInvZ, gsoFlags);
   LLLReduction<ZT, FT> lllObj(mGSO, delta, eta, flags);
@@ -108,7 +108,7 @@ int Wrapper::callLLL(ZZ_mat<Z>& bz, ZZ_mat<Z>& uz, ZZ_mat<Z>& uInvZ,
   status = lllObj.status;
   lastEarlyRed = max(lastEarlyRed, lllObj.lastEarlyRed);
   if (precision > 0) {
-    Float::setprec(oldprec);
+    Float::set_prec(oldprec);
   }
 
   if (flags & LLL_VERBOSE) {

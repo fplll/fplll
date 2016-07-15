@@ -22,13 +22,13 @@ template<>
 inline FP_NR<mpfr_t>::~FP_NR() {mpfr_clear(data);}
 
 template<>
-inline unsigned int FP_NR<mpfr_t>::getprec() {
+inline unsigned int FP_NR<mpfr_t>::get_prec() {
   return mpfr_get_default_prec();
 }
 
 template<>
-inline unsigned int FP_NR<mpfr_t>::setprec(unsigned int prec) {
-  int oldprec = getprec();
+inline unsigned int FP_NR<mpfr_t>::set_prec(unsigned int prec) {
+  int oldprec = get_prec();
   mpfr_set_default_prec(prec);
   return oldprec;
 }
@@ -307,7 +307,7 @@ inline void FP_NR<mpfr_t>::set(unsigned int s) {
 template<>
 inline ostream& operator<<(ostream& os, const FP_NR<mpfr_t>& x) {
   mp_exp_t e;
-  char* s = mpfr_get_str(NULL, &e, 10, os.precision(), x.getData(), GMP_RNDN);
+  char* s = mpfr_get_str(NULL, &e, 10, os.precision(), x.get_data(), GMP_RNDN);
   char* p = s;
   if (*p == '-') {
     os << *p;

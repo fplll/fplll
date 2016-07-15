@@ -109,7 +109,7 @@ inline ZT MatGSO<ZT, FT>::get_max_gram() {
   else{
     FT tmp1 = gf(0,0);
     for (int i = 0; i < n_known_rows; i ++)
-      tmp1 = tmp1.maxF(gf(i,i));
+      tmp1 = tmp1.max_f(gf(i,i));
     tmp.set_f(tmp1);
   }
   return tmp;
@@ -121,7 +121,7 @@ template<class ZT, class FT>
   FT tmp;
   tmp = r(0,0);
   for (int i = 0; i < n_known_rows; i ++)
-    tmp = tmp.maxF(r(i,i));
+    tmp = tmp.max_f(r(i,i));
   return tmp;
 }
 

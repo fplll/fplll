@@ -36,12 +36,12 @@ public:
   /**
    * Returns the internal representation of the data.
    */
-  inline Z& getData()             {return data;}
+  inline Z& get_data()             {return data;}
 
   /**
    * Returns the internal representation of the data.
    */
-  inline const Z& getData() const {return data;}
+  inline const Z& get_data() const {return data;}
 
   /**
    * Converts this object to a double. If it does not fit in 

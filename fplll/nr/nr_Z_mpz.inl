@@ -318,9 +318,9 @@ inline void Z_NR<mpz_t>::set(unsigned long d) {
 /* operators Z_NR<mpz_t> */
 template<>
 inline ostream& operator<<(ostream& os, const Z_NR<mpz_t>& x) {
-  int size = mpz_sizeinbase(x.getData(), 10) + 2;
+  int size = mpz_sizeinbase(x.get_data(), 10) + 2;
   char* s = new char[size];
-  mpz_get_str(s, 10, x.getData());
+  mpz_get_str(s, 10, x.get_data());
   os << s;
   delete [] s;
   return os;
@@ -352,7 +352,7 @@ inline istream& operator>>(istream& is, Z_NR<mpz_t>& x) {
   else
     is.putback(c); 
 
-  if (mpz_set_str(x.getData(), s.c_str(), 10)) {
+  if (mpz_set_str(x.get_data(), s.c_str(), 10)) {
     is.setstate(ios::failbit);
   }
   return is;

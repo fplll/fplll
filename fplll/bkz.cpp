@@ -316,7 +316,7 @@ bool BKZReduction<FT>::tour(const int loop, int &kappa_max, const BKZParam &par,
   {
     std::ostringstream prefix;
     prefix << "End of BKZ loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
+    prefix << " (" << std::fixed << std::setw(9) << std::set_precision(3)
            << (cputime() - cputime_start) * 0.001 << "s)";
     dump_gso(par.dump_gso_filename, prefix.str());
   }
@@ -395,7 +395,7 @@ bool BKZReduction<FT>::sd_tour(const int loop, const BKZParam &par, int min_row,
   {
     std::ostringstream prefix;
     prefix << "End of SD-BKZ loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
+    prefix << " (" << std::fixed << std::setw(9) << std::set_precision(3)
            << (cputime() - cputime_start) * 0.001 << "s)";
     dump_gso(par.dump_gso_filename, prefix.str());
   }
@@ -439,7 +439,7 @@ bool BKZReduction<FT>::slide_tour(const int loop, const BKZParam &par, int min_r
   {
     std::ostringstream prefix;
     prefix << "End of SLD loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
+    prefix << " (" << std::fixed << std::setw(9) << std::set_precision(3)
            << (cputime() - cputime_start) * 0.001 << "s)";
     dump_gso(par.dump_gso_filename, prefix.str());
   }
@@ -586,7 +586,7 @@ template <class FT> bool BKZReduction<FT>::bkz()
   {
     std::ostringstream prefix;
     prefix << "Output ";
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
+    prefix << " (" << std::fixed << std::setw(9) << std::set_precision(3)
            << (cputime() - cputime_start) * 0.001 << "s)";
     dump_gso(param.dump_gso_filename, prefix.str());
   }
@@ -602,11 +602,11 @@ template <class FT> void BKZReduction<FT>::print_tour(const int loop, int min_ro
   fr0 = r0.get_d();
   fr0.mul_2si(fr0, expo);
   cerr << "End of " << algorithm << " loop " << std::setw(4) << loop << ", time = " << std::fixed << std::setw(9)
-       << std::setprecision(3) << (cputime() - cputime_start) * 0.001 << "s";
+       << std::set_precision(3) << (cputime() - cputime_start) * 0.001 << "s";
   cerr << ", r_" << min_row << " = " << fr0;
-  cerr << ", slope = " << std::setw(9) << std::setprecision(6)
+  cerr << ", slope = " << std::setw(9) << std::set_precision(6)
        << m.get_current_slope(min_row, max_row);
-  cerr << ", log2(nodes) = " << std::setw(9) << std::setprecision(6) << log2(nodes) << endl;
+  cerr << ", log2(nodes) = " << std::setw(9) << std::set_precision(6) << log2(nodes) << endl;
 }
 
 template <class FT> void BKZReduction<FT>::print_params(const BKZParam &param, ostream &out)
@@ -615,11 +615,11 @@ template <class FT> void BKZReduction<FT>::print_params(const BKZParam &param, o
   out << "flags: 0x" << std::setw(4) << setfill('0') << std::hex << param.flags << ", " << std::dec
       << std::setfill(' ');
   out << "max_loops: " << std::setw(3) << param.max_loops << ", ";
-  out << "max_time: " << std::setw(0) << std::fixed << std::setprecision(1) << param.max_time
+  out << "max_time: " << std::setw(0) << std::fixed << std::set_precision(1) << param.max_time
       << ", ";
   if (param.flags & BKZ_AUTO_ABORT)
   {
-    out << "autoAbort: (" << std::setw(0) << std::fixed << std::setprecision(4)
+    out << "autoAbort: (" << std::setw(0) << std::fixed << std::set_precision(4)
         << param.auto_abort_scale;
     out << ", " << std::setw(2) << param.auto_abort_max_no_dec << "), ";
   }
@@ -659,7 +659,7 @@ void BKZReduction<FT>::dump_gso(const std::string& filename, const std::string& 
     m.update_gso_row(i);
     f = m.get_r_exp(i, i, expo);
     logF.log(f, GMP_RNDU);
-    dump << std::setprecision(8) << logF.get_d() + expo * std::log(2.0) << " ";
+    dump << std::set_precision(8) << logF.get_d() + expo * std::log(2.0) << " ";
   }
   dump << std::endl;
   dump.close();

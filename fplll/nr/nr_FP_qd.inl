@@ -24,13 +24,13 @@ template<>
 inline FP_NR<qd_real>::~FP_NR() {}
 
 template<>
-inline unsigned int FP_NR<qd_real>::getprec() {
+inline unsigned int FP_NR<qd_real>::get_prec() {
   return PREC_QD;
 }
 
 template<>
-inline unsigned int FP_NR<qd_real>::setprec(unsigned int) {
-  return getprec(); // ignored
+inline unsigned int FP_NR<qd_real>::set_prec(unsigned int) {
+  return get_prec(); // ignored
 }
 
 /* return data */
@@ -41,7 +41,7 @@ inline double FP_NR<qd_real>::get_d(mp_rnd_t /*rnd*/) const {
 
 template<>
 inline void FP_NR<qd_real>::get_mpfr(mpfr_t r, mp_rnd_t rnd) const {
-  mpfr_set_prec (r, getprec());
+  mpfr_set_prec (r, get_prec());
   mpfr_set_d (r, data.x[0], rnd);
   mpfr_add_d (r, r, data.x[1], rnd);
   mpfr_add_d (r, r, data.x[2], rnd);

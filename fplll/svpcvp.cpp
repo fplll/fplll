@@ -108,7 +108,7 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
   double rho;
   int minPrec = gsoMinPrec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
   int prec = max(53, minPrec + 10);
-  int oldprec = Float::setprec(prec);
+  int oldprec = Float::set_prec(prec);
 
   // Allocates space for vectors and matrices in constructors
   IntMatrix emptyMat;
@@ -206,7 +206,7 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
   }
 
   delete evaluator;
-  Float::setprec(oldprec);
+  Float::set_prec(oldprec);
   return result;
 }
 
@@ -284,7 +284,7 @@ int closestVector(IntMatrix& b, const IntVect& intTarget,
   double rho;
   int minPrec = gsoMinPrec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
   int prec = max(53, minPrec + 10);
-  int oldprec = Float::setprec(prec);
+  int oldprec = Float::set_prec(prec);
 
   // Allocates space for vectors and matrices in constructors
   IntMatrix emptyMat;
@@ -358,7 +358,7 @@ int closestVector(IntMatrix& b, const IntVect& intTarget,
     result = RED_SUCCESS;
   }
 
-  Float::setprec(oldprec);
+  Float::set_prec(oldprec);
   return result;
 }
 

@@ -102,7 +102,7 @@ inline void LLLReduction<ZT, FT>::printParams() {
   cerr << "Entering LLL"
        << "\ndelta = " << delta
        << "\neta = " << eta
-       << "\nprecision = " << FT::getprec()
+       << "\nprecision = " << FT::get_prec()
        << "\nexact_dot_product = " << static_cast<int>(m.enable_int_gram)
        << "\nrow_expo = " << static_cast<int>(m.enable_row_expo)
        << "\nearly_red = " << static_cast<int>(enableEarlyRed)

@@ -23,11 +23,11 @@ template<>
 inline FP_NR<dd_real>::~FP_NR() {}
 
 template<>
-inline unsigned int FP_NR<dd_real>::getprec() {return PREC_DD;}
+inline unsigned int FP_NR<dd_real>::get_prec() {return PREC_DD;}
 
 template<>
-inline unsigned int FP_NR<dd_real>::setprec(unsigned int) {
-  return getprec(); // ignored
+inline unsigned int FP_NR<dd_real>::set_prec(unsigned int) {
+  return get_prec(); // ignored
 }
 
 /* return data */
@@ -38,7 +38,7 @@ inline double FP_NR<dd_real>::get_d(mp_rnd_t) const {
 
 template<>
 inline void FP_NR<dd_real>::get_mpfr(mpfr_t r, mp_rnd_t rnd) const {
-  mpfr_set_prec (r, getprec());
+  mpfr_set_prec (r, get_prec());
   mpfr_set_d (r, data._lo(), rnd);
   mpfr_add_d (r, r, data._hi(), rnd);
 }

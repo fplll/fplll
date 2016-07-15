@@ -25,13 +25,13 @@ template<>
 inline FP_NR<dpe_t>::~FP_NR() {dpe_clear(data);}
 
 template<>
-inline unsigned int FP_NR<dpe_t>::getprec() {
+inline unsigned int FP_NR<dpe_t>::get_prec() {
   return DPE_BITSIZE;
 }
 
 template<>
-inline unsigned int FP_NR<dpe_t>::setprec(unsigned int /*prec*/) {
-  return getprec(); // ignored
+inline unsigned int FP_NR<dpe_t>::set_prec(unsigned int /*prec*/) {
+  return get_prec(); // ignored
 }
 
 /* return data */
@@ -300,11 +300,11 @@ inline void FP_NR<dpe_t>::set(unsigned int s) {
 /* operators FP_NR<dpe_t> */
 template<>
 inline ostream& operator<<(ostream& os, const FP_NR<dpe_t>& x) {
-  double m = DPE_MANT(x.getData());
+  double m = DPE_MANT(x.get_data());
   if (!isfinite(m))
     os << m;
   else {
-    double mm = DPE_EXP(x.getData()) * log10(2.0);
+    double mm = DPE_EXP(x.get_data()) * log10(2.0);
     long e10 = static_cast<long>(mm);
     m *= pow(10.0, mm - e10);
     while (m != 0 && fabs(m) < 1) {

@@ -144,13 +144,13 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
     if (method == LM_FAST)
       sel_ft = FT_DOUBLE;
 #ifdef FPLLL_WITH_DPE
-    else if (sel_prec <= static_cast<int>(FP_NR<dpe_t>::getprec()))
+    else if (sel_prec <= static_cast<int>(FP_NR<dpe_t>::get_prec()))
       sel_ft = FT_DPE;
 #endif
 #ifdef FPLLL_WITH_QD
-    else if (sel_prec <= static_cast<int>(FP_NR<dd_real>::getprec()))
+    else if (sel_prec <= static_cast<int>(FP_NR<dd_real>::get_prec()))
       sel_ft = FT_DD;
-    else if (sel_prec <= static_cast<int>(FP_NR<qd_real>::getprec()))
+    else if (sel_prec <= static_cast<int>(FP_NR<qd_real>::get_prec()))
       sel_ft = FT_QD;
 #endif
     else
@@ -164,20 +164,20 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
   }
 
   if (sel_ft == FT_DOUBLE)
-    sel_prec = FP_NR<double>::getprec();
+    sel_prec = FP_NR<double>::get_prec();
 #ifdef FPLLL_WITH_LONG_DOUBLE
   else if (sel_ft == FT_LONG_DOUBLE)
-    sel_prec = FP_NR<long double>::getprec();
+    sel_prec = FP_NR<long double>::get_prec();
 #endif
 #ifdef FPLLL_WITH_DPE
   else if (sel_ft == FT_DPE)
-    sel_prec = FP_NR<dpe_t>::getprec();
+    sel_prec = FP_NR<dpe_t>::get_prec();
 #endif
 #ifdef FPLLL_WITH_QD
   else if (sel_ft == FT_DD)
-    sel_prec = FP_NR<dd_real>::getprec();
+    sel_prec = FP_NR<dd_real>::get_prec();
   else if (sel_ft == FT_QD)
-    sel_prec = FP_NR<qd_real>::getprec();
+    sel_prec = FP_NR<qd_real>::get_prec();
 #endif
 
   if (flags & LLL_VERBOSE)
@@ -236,9 +236,9 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
 #endif
   else if (sel_ft == FT_MPFR)
   {
-    int old_prec = FP_NR<mpfr_t>::setprec(sel_prec);
+    int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
     status = lll_reduction_zf<ZT, mpfr_t>(b, u, u_inv, delta, eta, method, flags);
-    FP_NR<mpfr_t>::setprec(old_prec);
+    FP_NR<mpfr_t>::set_prec(old_prec);
   }
   else
   {
@@ -377,9 +377,9 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType f
 #endif
   else if (sel_ft == FT_MPFR)
   {
-    int old_prec = FP_NR<mpfr_t>::setprec(precision);
+    int old_prec = FP_NR<mpfr_t>::set_prec(precision);
     status = bkz_reduction_f<FP_NR<mpfr_t>>(*B, param, sel_ft, lll_delta, u, u_inv);
-    FP_NR<mpfr_t>::setprec(old_prec);
+    FP_NR<mpfr_t>::set_prec(old_prec);
   }
   else
   {

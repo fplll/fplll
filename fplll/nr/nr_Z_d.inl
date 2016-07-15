@@ -318,12 +318,12 @@ inline void Z_NR<double>::set(unsigned long s) {
 /* operator Z_NR<double> */
 template<>
 inline ostream& operator<<(ostream& os, const Z_NR<double>& x) {
-  return os << x.getData();
+  return os << x.get_data();
 }
 
 template<>
 inline istream& operator>>(istream& is, Z_NR<double>& x) {
-  return is >> x.getData();
+  return is >> x.get_data();
 }
 
 

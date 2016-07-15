@@ -25,13 +25,13 @@ template<>
 inline FP_NR<long double>::~FP_NR() {}
 
 template<>
-inline unsigned int FP_NR<long double>::getprec() {
+inline unsigned int FP_NR<long double>::get_prec() {
   return numeric_limits<long double>::digits;
 }
 
 template<>
-inline unsigned int FP_NR<long double>::setprec(unsigned int /*prec*/) {
-  return getprec(); // ignored
+inline unsigned int FP_NR<long double>::set_prec(unsigned int /*prec*/) {
+  return get_prec(); // ignored
 }
 
 /* return data */

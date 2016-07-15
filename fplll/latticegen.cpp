@@ -188,7 +188,7 @@ int main(int argc, char* argv[]) {
 	FP_NR<mpfr_t>* w = new FP_NR<mpfr_t>[d];
 
 	for (int i=0; i<d; i++)
-	  mpfr_inp_str(w[i].getData(), stdin, 10, GMP_RNDN);
+          mpfr_inp_str(w[i].get_data(), stdin, 10, GMP_RNDN);
 
 	m.resize(d, d);
 	m.gen_trg2(w);

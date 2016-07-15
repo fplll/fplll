@@ -25,11 +25,11 @@ template<>
 inline FP_NR<double>::~FP_NR() {}
 
 template<>
-inline unsigned int FP_NR<double>::getprec() {return PREC_DOUBLE;}
+inline unsigned int FP_NR<double>::get_prec() {return PREC_DOUBLE;}
 
 template<>
-inline unsigned int FP_NR<double>::setprec(unsigned int) {
-  return getprec(); // ignored
+inline unsigned int FP_NR<double>::set_prec(unsigned int) {
+  return get_prec(); // ignored
 }
 
 /* return data */
