@@ -177,7 +177,7 @@ void Gauss_sieve<ZT, F>::init_list_rand ()
   for (int i = 0; i < nr; i++ ) {
     for (int k = 0; k < nr; k++ ) {
       if (i != k) {
-        x = sampleZ_basic_alt<ZT, FP_NR<double> >(c, t);
+        x = sample_z_basic_alt<ZT, FP_NR<double> >(c, t);
         x.get_mpz(tmp);
         tmpZ = tmp;
         (NewZ[i]).addmul(NewZ[k], tmpZ, (NewZ[k]).size());

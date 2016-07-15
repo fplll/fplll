@@ -131,8 +131,8 @@ template <class ZT> int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &c
     coords_d[i] = coords[i].get_d();
   }
 
-  IntMatrix emptyMat;
-  MatGSO<Integer, Float> gso(A, emptyMat, emptyMat, GSO_INT_GRAM);
+  IntMatrix empty_mat;
+  MatGSO<Integer, Float> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
   if (!gso.update_gso())
   {
     cerr << "GSO Failure." << endl;

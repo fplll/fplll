@@ -36,12 +36,12 @@ public:
     
     void enumerate(int first, int last,
                 FT& fmaxdist, long fmaxdistexpo, 
-                const vector<FT>& targetcoord = vector<FT>(),
+                const vector<FT>& target_coord = vector<FT>(),
                 const vector<enumxt>& subtree = vector<enumxt>(),
                 const vector<enumf>& pruning = vector<enumf>(),
                 bool dual = false);
 
-    inline uint64_t getNodes() const { return nodes; }
+    inline uint64_t get_nodes() const { return nodes; }
     
 private:
     MatGSO<Integer, FT>& _gso; 

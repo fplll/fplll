@@ -57,19 +57,19 @@ static void get_basis_min(Integer &basis_min, const IntMatrix &b, int first, int
   }
 }
 
-static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &maxDist,
+static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
                           Evaluator<Float> &evaluator, const vector<enumf> &pruning, int flags)
 {
   Enumeration<Float> enumobj(gso, evaluator);
   bool dual = (flags & SVP_DUAL);
   if (d == 1 || !pruning.empty() || dual)
   {
-    enumobj.enumerate(0, d, maxDist, 0, vector<Float>(), vector<enumxt>(), pruning, dual);
+    enumobj.enumerate(0, d, max_dist, 0, vector<Float>(), vector<enumxt>(), pruning, dual);
   }
   else
   {
     Enumerator enumerator(d, gso.get_mu_matrix(), gso.get_r_matrix());
-    while (enumerator.enumNext(maxDist))
+    while (enumerator.enumNext(max_dist))
     {
       if (flags & SVP_VERBOSE)
       {
@@ -81,7 +81,7 @@ static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &maxDist,
 
       /* Enumerates short vectors only in enumerator.getSubTree()
         (about maxVolume iterations or less) */
-      enumobj.enumerate(0, d, maxDist, 0, FloatVect(), enumerator.getSubTree(), pruning);
+      enumobj.enumerate(0, d, max_dist, 0, FloatVect(), enumerator.getSubTree(), pruning);
 
       if (flags & SVP_VERBOSE)
       {
@@ -118,10 +118,10 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   int oldprec = Float::set_prec(prec);
 
   // Allocates space for vectors and matrices in constructors
-  IntMatrix emptyMat;
-  MatGSO<Integer, Float> gso(b, emptyMat, emptyMat, GSO_INT_GRAM);
-  Float maxDist;
-  Integer intMaxDist;
+  IntMatrix empty_mat;
+  MatGSO<Integer, Float> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
+  Float max_dist;
+  Integer int_max_dist;
   Integer itmp1;
 
   // Computes the Gram-Schmidt orthogonalization in floating-point
@@ -138,13 +138,13 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
 
   if (flags & SVP_DUAL)
   {
-    maxDist = gso.get_r_exp(d - 1, d - 1);
+    max_dist = gso.get_r_exp(d - 1, d - 1);
     Float one;
     one = 1.0;
-    maxDist.div(one, maxDist);
+    max_dist.div(one, max_dist);
     if (flags & SVP_VERBOSE)
     {
-      cout << "maxDist = " << maxDist << endl;
+      cout << "max_dist = " << max_dist << endl;
     }
   }
   else
@@ -152,8 +152,8 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
     /* Computes a bound for the enumeration. This bound would work for an
        exact algorithm, but we will increase it later to ensure that the fp
        algorithm finds a solution */
-    get_basis_min(intMaxDist, b, 0, d);
-    maxDist.set_z(intMaxDist, GMP_RNDU);
+    get_basis_min(int_max_dist, b, 0, d);
+    max_dist.set_z(int_max_dist, GMP_RNDU);
   }
 
   // Initializes the evaluator of solutions
@@ -167,25 +167,25 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   {
     ExactEvaluator *p =
         new ExactEvaluator(d, b, gso.get_mu_matrix(), gso.get_r_matrix(), evalMode, 0, findsubsols);
-    p->intMaxDist = intMaxDist;
+    p->int_max_dist = int_max_dist;
     evaluator     = p;
   }
   else
   {
     FPLLL_ABORT("shortestVector: invalid evaluator type");
   }
-  evaluator->initDeltaDef(prec, rho, true);
+  evaluator->init_delta_def(prec, rho, true);
 
   if (!(flags & SVP_OVERRIDE_BND) && (evalMode == EVALMODE_SV || method == SVPM_PROVED))
   {
     Float ftmp1;
-    bool result = evaluator->get_max_error_aux(maxDist, true, ftmp1);
+    bool result = evaluator->get_max_error_aux(max_dist, true, ftmp1);
     FPLLL_CHECK(result, "shortestVector: cannot compute an initial bound");
-    maxDist.add(maxDist, ftmp1, GMP_RNDU);
+    max_dist.add(max_dist, ftmp1, GMP_RNDU);
   }
 
   // Main loop of the enumeration
-  enumerate_svp(d, gso, maxDist, *evaluator, pruning, flags);
+  enumerate_svp(d, gso, max_dist, *evaluator, pruning, flags);
 
   int result = RED_ENUM_FAILURE;
   if (evalMode != EVALMODE_SV)
@@ -280,16 +280,16 @@ static void get_gscoords(const Matrix<Float> &matrix, const Matrix<Float> &mu,
 }
 
 static void babai(const FloatMatrix &matrix, const Matrix<Float> &mu, const Matrix<Float> &r,
-                  const FloatVect &target, FloatVect &targetcoord)
+                  const FloatVect &target, FloatVect &target_coord)
 {
 
   int d = matrix.get_rows();
-  get_gscoords(matrix, mu, r, target, targetcoord);
+  get_gscoords(matrix, mu, r, target, target_coord);
   for (int i = d - 1; i >= 0; i--)
   {
-    targetcoord[i].rnd(targetcoord[i]);
+    target_coord[i].rnd(target_coord[i]);
     for (int j = 0; j < i; j++)
-      targetcoord[j].submul(mu(i, j), targetcoord[i]);
+      target_coord[j].submul(mu(i, j), target_coord[i]);
   }
 }
 
@@ -311,10 +311,10 @@ int closest_vector(IntMatrix &b, const IntVect &intTarget, IntVect &sol_coord, i
   int oldprec = Float::set_prec(prec);
 
   // Allocates space for vectors and matrices in constructors
-  IntMatrix emptyMat;
-  MatGSO<Integer, Float> gso(b, emptyMat, emptyMat, GSO_INT_GRAM);
-  FloatVect targetCoord;
-  Float maxDist;
+  IntMatrix empty_mat;
+  MatGSO<Integer, Float> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
+  FloatVect target_coord;
+  Float max_dist;
   Integer itmp1;
 
   // Computes the Gram-Schmidt orthogonalization in floating-point
@@ -357,29 +357,29 @@ int closest_vector(IntMatrix &b, const IntVect &intTarget, IntVect &sol_coord, i
     }
   }
   // FPLLL_TRACE("BabaiSol=" << sol_coord);
-  get_gscoords(floatMatrix, gso.get_mu_matrix(), gso.get_r_matrix(), target, targetCoord);
+  get_gscoords(floatMatrix, gso.get_mu_matrix(), gso.get_r_matrix(), target, target_coord);
 
   /* Computes a very large bound to make the algorithm work
       until the first solution is found */
-  maxDist = 0.0;
+  max_dist = 0.0;
   for (int i = 1; i < d; i++)
   {
     // get_r_exp(i, i) = r(i, i) because gso is initialized without GSO_ROW_EXPO
-    maxDist.add(maxDist, gso.get_r_exp(i, i));
+    max_dist.add(max_dist, gso.get_r_exp(i, i));
   }
 
   FastEvaluator<Float> evaluator(n, gso.get_mu_matrix(), gso.get_r_matrix(), EVALMODE_CV);
 
   // Main loop of the enumeration
   Enumeration<Float> enumobj(gso, evaluator);
-  enumobj.enumerate(0, d, maxDist, 0, targetCoord, vector<enumxt>(), vector<enumf>());
+  enumobj.enumerate(0, d, max_dist, 0, target_coord, vector<enumxt>(), vector<enumf>());
 
   int result = RED_ENUM_FAILURE;
   if (!evaluator.sol_coord.empty())
   {
     // FPLLL_TRACE("evaluator.sol_coord=" << evaluator.sol_coord);
     if (flags & CVP_VERBOSE)
-      FPLLL_INFO("maxDist=" << maxDist);
+      FPLLL_INFO("max_dist=" << max_dist);
     for (int i = 0; i < d; i++)
     {
       itmp1.set_f(evaluator.sol_coord[i]);

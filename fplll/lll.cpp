@@ -26,7 +26,7 @@ static inline bool is_power_of_2(int i) { return (i & (i - 1)) == 0; }
 
 template <class ZT, class FT>
 LLLReduction<ZT, FT>::LLLReduction(MatGSO<ZT, FT> &m, double delta, double eta, int flags)
-    : status(RED_SUCCESS), last_early_red(0), m(m)
+  : status(RED_SUCCESS), final_kappa(0), last_early_red(0), n_swaps(0), m(m)
 {
   /* No early reduction in proved mode (i.e. enable_int_gram=true).
      NOTE: To make this possible, the hypothesis "g(i, j) is valid if
@@ -122,29 +122,29 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end)
     {
       n_swaps++;
       // Failure, computes the insertion index
-      int oldK = kappa;
+      int old_k = kappa;
       for (kappa--; kappa > kappa_start; kappa--)
       {
         ftmp1.mul(m.get_r_exp(kappa - 1, kappa - 1), swap_threshold);
         if (m.enable_row_expo)
         {
-          ftmp1.mul_2si(ftmp1, 2 * (m.row_expo[kappa - 1] - m.row_expo[oldK]));
+          ftmp1.mul_2si(ftmp1, 2 * (m.row_expo[kappa - 1] - m.row_expo[old_k]));
         }
         if (ftmp1 < lovasz_tests[siegel ? kappa : kappa - 1])
           break;
       }
       // FPLLL_TRACE("Lovasz's condition is not satisfied, kappa=" << kappa << " old_kappa=" <<
-      // oldK);
+      // old_k);
       // Moves the vector
       if (lovasz_tests[kappa] > 0)
       {
-        m.move_row(oldK, kappa);
+        m.move_row(old_k, kappa);
       }
       else
       {
         zeros++;
-        m.move_row(oldK, kappa_end - zeros);
-        kappa = oldK;
+        m.move_row(old_k, kappa_end - zeros);
+        kappa = old_k;
         continue;
       }
     }

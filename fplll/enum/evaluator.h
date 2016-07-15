@@ -42,10 +42,10 @@ public:
      Input: newSolCoord = coordinates of the solution in Gram-Schmidt basis
      newPartialDist = estimated distance between the solution and the
      orthogonal projection of target on the lattice space
-     maxDist = current bound of the algorithm
-     Output: maxDist can be decreased */
+     max_dist = current bound of the algorithm
+     Output: max_dist can be decreased */
   virtual void evalSol(const vector<FT>& newSolCoord,
-          const enumf& newPartialDist, enumf& maxDist) = 0;
+          const enumf& newPartialDist, enumf& max_dist) = 0;
           
   virtual void evalSubSol(int offset, const vector<FT>& newSubSolCoord,
           const enumf& subDist) = 0;
@@ -96,17 +96,17 @@ public:
 
   /**
    * Called by enumerate when a solution is found.
-   * FastEvaluator always accepts the solution and sets the bound maxDist to
+   * FastEvaluator always accepts the solution and sets the bound max_dist to
    * newPartialDist.
    *
    * @param newSolCoord    Coordinates of the solution in the lattice
    * @param newPartialDist Floating-point evaluation of the norm of the solution
-   * @param maxDist        Bound of the enumeration (updated by the function)
+   * @param max_dist        Bound of the enumeration (updated by the function)
    * @param normExp        r(i, i) is divided by 2^normExp in enumerate before
    *                       being converted to double
    */
   virtual void evalSol(const vector<FT>& newSolCoord,
-                       const enumf& newPartialDist, enumf& maxDist) 
+                       const enumf& newPartialDist, enumf& max_dist)
   {
     if (max_aux_sols != 0 && !sol_coord.empty())
     {
@@ -119,7 +119,7 @@ public:
       }
     }
     sol_coord = newSolCoord;
-    maxDist = solDist = newPartialDist;
+    max_dist = solDist = newPartialDist;
     newSolFlag = true;
   }
   
@@ -161,7 +161,7 @@ public:
   }
   long normExp;
 
-  void initDeltaDef(int prec, double rho, bool withRoundingToEnumf);
+  void init_delta_def(int prec, double rho, bool withRoundingToEnumf);
 
   /**
    * Computes maxError such that
@@ -173,21 +173,21 @@ public:
   /**
    * Called by enumerate when a solution is found.
    * The default implementation always accepts the solution and sets the bound
-   * maxDist to newPartialDist.
+   * max_dist to newPartialDist.
    *
    * @param newSolCoord    Coordinates of the solution
    * @param newPartialDist Floating-point estimation of the norm of the solution
-   * @param maxDist        Bound of the enumeration (updated by the function)
+   * @param max_dist        Bound of the enumeration (updated by the function)
    * @param normExp        It is assumed that r(i, i) is divided by 2^normExp
    *                       in enumerate
    */
   virtual void evalSol(const FloatVect& newSolCoord,
-          const enumf& newPartialDist, enumf& maxDist) = 0;
+          const enumf& newPartialDist, enumf& max_dist) = 0;
   virtual void evalSubSol(int offset, const FloatVect& newSubSolCoord,
           const enumf& subDist) = 0;
 
   // Internal use
-  bool get_max_error_aux(const Float& maxDist, bool boundOnExactVal, Float& maxDE);
+  bool get_max_error_aux(const Float& max_dist, bool boundOnExactVal, Float& maxDE);
 
   /** Coordinates of the solution in the lattice */
   FloatVect sol_coord;
@@ -237,7 +237,7 @@ public:
 
   virtual bool get_max_error(Float& maxError);
   virtual void evalSol(const FloatVect& newSolCoord,
-          const enumf& newPartialDist, enumf& maxDist);
+          const enumf& newPartialDist, enumf& max_dist);
   virtual void evalSubSol(int offset, const FloatVect& newSubSolCoord,
           const enumf& subDist);
 };
@@ -252,7 +252,7 @@ public:
                  const Matrix<Float>& r, int evalMode, size_t max_aux_solutions = 0, bool findsubsolutions = false) :
     Evaluator<Float>(d, mu, r, evalMode, max_aux_solutions, findsubsolutions), matrix(matrix)
   {
-    intMaxDist = -1;
+    int_max_dist = -1;
   }
 
   /**
@@ -261,18 +261,18 @@ public:
   virtual bool get_max_error(Float& maxError);
 
   virtual void evalSol(const FloatVect& newSolCoord,
-          const enumf& newPartialDist, enumf& maxDist);
+          const enumf& newPartialDist, enumf& max_dist);
 
   virtual void evalSubSol(int offset, const FloatVect& newSubSolCoord,
           const enumf& subDist);
 
-  Integer intMaxDist;       // Exact norm of the last vector
+  Integer int_max_dist;       // Exact norm of the last vector
 
   std::deque< Integer > aux_solintDist; // Exact norm of aux vectors
   vector< Integer> sub_solintDist; // Exact norm of sub vectors
 
 private:
-  void updateMaxDist(enumf& maxDist);
+  void updateMaxDist(enumf& max_dist);
 
   const IntMatrix& matrix;  // matrix of the lattice
 };

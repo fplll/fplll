@@ -306,9 +306,9 @@ void MatGSO<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
     u[i].addmul_2exp(u[j], x, expo, ztmp1);
     if (enable_inverse_transform)
     {
-      ZT minusX;
-      minusX.neg(x);
-      u_inv_t[j].addmul_2exp(u_inv_t[i], minusX, expo, ztmp1);
+      ZT minus_x;
+      minus_x.neg(x);
+      u_inv_t[j].addmul_2exp(u_inv_t[i], minus_x, expo, ztmp1);
     }
   }
 
@@ -470,28 +470,28 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::unlock_cols()
 template <class ZT, class FT>
 void MatGSO<ZT, FT>::apply_transform(const Matrix<FT> &transform, int src_base, int target_base)
 {
-  int targetSize = transform.get_rows(), srcSize = transform.get_cols();
-  int oldD = d;
-  create_rows(targetSize);
-  for (int i = 0; i < targetSize; i++)
+  int target_size = transform.get_rows(), src_size = transform.get_cols();
+  int old_d = d;
+  create_rows(target_size);
+  for (int i = 0; i < target_size; i++)
   {
-    for (int j = 0; j < srcSize; j++)
+    for (int j = 0; j < src_size; j++)
     {
-      row_addmul(oldD + i, src_base + j, transform(i, j));
+      row_addmul(old_d + i, src_base + j, transform(i, j));
     }
   }
-  row_op_begin(target_base, target_base + targetSize);
-  for (int i = 0; i < targetSize; i++)
+  row_op_begin(target_base, target_base + target_size);
+  for (int i = 0; i < target_size; i++)
   {
-    row_swap(target_base + i, oldD + i);
+    row_swap(target_base + i, old_d + i);
   }
-  row_op_end(target_base, target_base + targetSize);
-  remove_last_rows(targetSize);
+  row_op_end(target_base, target_base + target_size);
+  remove_last_rows(target_size);
 }
 
 template <class ZT, class FT> void MatGSO<ZT, FT>::size_increased()
 {
-  int oldD = mu.get_rows();
+  int old_d = mu.get_rows();
 
   if (d > alloc_dim)
   {
@@ -513,7 +513,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::size_increased()
     alloc_dim = d;
   }
 
-  for (int i = oldD; i < d; i++)
+  for (int i = old_d; i < d; i++)
   {
     init_row_size[i] = max(b[i].size_nz(), 1);
     if (!enable_int_gram)

@@ -275,10 +275,10 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
     vector<FT> &sol_coord = evaluator.sol_coord;
     sol_coord.clear();
-    Enumeration<FT> Enum(m, evaluator);
-    Enum.enumerate(kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(),
-                   vector<enumxt>(), pruning.coefficients, dual);
-    nodes += Enum.getNodes();
+    Enumeration<FT> enum_obj(m, evaluator);
+    enum_obj.enumerate(kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(),
+                       vector<enumxt>(), pruning.coefficients, dual);
+    nodes += enum_obj.get_nodes();
 
     if (!sol_coord.empty())
     {
@@ -286,6 +286,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
         dsvp_postprocessing(kappa, block_size, sol_coord);
       else
         svp_postprocessing(kappa, block_size, sol_coord);
+
       rerandomize = false;
     }
     else
@@ -661,14 +662,14 @@ void BKZReduction<FT>::dump_gso(const std::string &filename, const std::string &
   else
     dump.open(filename.c_str());
   dump << std::setw(4) << prefix << ": ";
-  FT f, logF;
+  FT f, log_f;
   long expo;
   for (int i = 0; i < num_rows; i++)
   {
     m.update_gso_row(i);
     f = m.get_r_exp(i, i, expo);
-    logF.log(f, GMP_RNDU);
-    dump << std::setprecision(8) << logF.get_d() + expo * std::log(2.0) << " ";
+    log_f.log(f, GMP_RNDU);
+    dump << std::setprecision(8) << log_f.get_d() + expo * std::log(2.0) << " ";
   }
   dump << std::endl;
   dump.close();

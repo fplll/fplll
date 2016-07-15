@@ -81,7 +81,7 @@ void KleinSampler<ZT, F>::print_param ()
  * sampling Z by rejection sampling
  */
 template<class ZT, class F>
-Z_NR<ZT> KleinSampler<ZT, F>::sampleZ_basic (F c, F s)
+Z_NR<ZT> KleinSampler<ZT, F>::sample_z_basic (F c, F s)
 {
   F min, max, st, range, tmp, tmp1;
   double r, e;
@@ -122,9 +122,9 @@ Z_NR<ZT> KleinSampler<ZT, F>::sampleZ_basic (F c, F s)
  *   mpz_t, mpfr_t
  */
 template<class ZT, class F>
-Z_NR<ZT> KleinSampler<ZT, F>::sampleZ (F c, F s)
+Z_NR<ZT> KleinSampler<ZT, F>::sample_z (F c, F s)
 {
-  return sampleZ_basic (c, s);
+  return sample_z_basic (c, s);
 }
 
 
@@ -143,7 +143,7 @@ NumVect<Z_NR<ZT> > KleinSampler<ZT, F>::sample ()
     }
 
     for (int i = nr - 1; i >= 0; i--) {
-      tmpz = sampleZ (ci[i], (*s_prime)[i]);
+      tmpz = sample_z (ci[i], (*s_prime)[i]);
       (ci[i]).set_z(tmpz);
       for (int j = 0; j < i; j++) {
         tmp.mul(ci[i], mu(i,j), GMP_RNDN);

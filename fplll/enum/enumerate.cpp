@@ -21,12 +21,12 @@ FPLLL_BEGIN_NAMESPACE
 
 template<typename FT>
 void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdistexpo,
-                                const vector<FT>& targetcoord,
+                                const vector<FT>& target_coord,
                                 const vector<enumxt>& subtree,
                                 const vector<enumf>& pruning,
                                 bool _dual)
 {
-    bool solvingsvp = targetcoord.empty();
+    bool solvingsvp = target_coord.empty();
     dual = _dual;
     pruning_bounds = pruning;
     if (last == -1)
@@ -45,7 +45,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
     else
     {
         for (int i = 0; i < d; ++i)
-            center_partsum[i] = targetcoord[i + first].get_d();
+            center_partsum[i] = target_coord[i + first].get_d();
     }
     
     FT fr, fmu, fmaxdistnorm;
