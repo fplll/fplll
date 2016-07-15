@@ -179,7 +179,7 @@ void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const in
   }
   else
   {
-    load_coefficients(pr, b);
+    load_coefficients(b, pr);
   }
   descent(b);
   save_coefficients(pr, b);
@@ -187,7 +187,7 @@ void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const in
 
 // PRIVATE METHODS
 
-template <class FT> void Pruner<FT>::load_coefficients(/*i*/ const vector<double> &pr, /*o*/ evec &b)
+template <class FT> void Pruner<FT>::load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr)
 {
   for (int i = 0; i < d; ++i)
   {

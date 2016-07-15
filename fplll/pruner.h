@@ -121,7 +121,7 @@ public:
 
   double single_enum_cost(/*i*/ const vector<double> &pr) {
     evec b;
-    load_coefficients(pr, b);
+    load_coefficients(b, pr);
     return single_enum_cost(b).get_d();
   }
 
@@ -130,7 +130,7 @@ public:
   */
   double repeated_enum_cost(/*i*/ const vector<double> &pr) {
     evec b;
-    load_coefficients(pr, b);
+    load_coefficients(b, pr);
     return repeated_enum_cost(b).get_d();
   }
 
@@ -139,7 +139,7 @@ public:
   */
   double svp_probability(/*i*/ const vector<double> &pr) {
     evec b;
-    load_coefficients(pr, b);
+    load_coefficients(b, pr);
     return svp_probability(b).get_d();
   }
 
@@ -163,7 +163,7 @@ private:
   // Initialize pruning coefficients (linear pruning)
   void init_coefficients(evec &b);
   // Load pruning coefficient from double*
-  void load_coefficients(/*i*/ const vector<double> &pr, /*o*/ evec &b);
+  void load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr);
   // Save pruning coefficients to double*
   void save_coefficients(/*o*/ vector<double> &pr, /*i*/ const evec &b);
   // Enforce reasonable contraints on pruning bounds (inside [0,1], increasing).
