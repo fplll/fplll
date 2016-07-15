@@ -147,7 +147,7 @@ bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
 template<class ZT, class FT>
 bool LLLReduction<ZT, FT>::babai(int kappa, int nCols) {
   //FPLLL_TRACE_IN("kappa=" << kappa);
-  long maxExpo = LONG_MAX;
+  long max_expo = LONG_MAX;
 
   for (int iter = 0;; iter++) {
     if (!m.update_gso_row(kappa, nCols - 1))
@@ -163,10 +163,10 @@ bool LLLReduction<ZT, FT>::babai(int kappa, int nCols) {
 
     if (iter >= 2) {
       long newMaxExpo = m.get_max_mu_exp(kappa, nCols);
-      if (newMaxExpo > maxExpo - SIZE_RED_FAILURE_THRESH) {
+      if (newMaxExpo > max_expo - SIZE_RED_FAILURE_THRESH) {
         return setStatus(RED_BABAI_FAILURE);
       }
-      maxExpo = newMaxExpo;
+      max_expo = newMaxExpo;
     }
 
     for (int j = 0; j < nCols; j++) {

@@ -22,10 +22,11 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-enum MatGSOFlags {
-  GSO_DEFAULT = 0,
-  GSO_INT_GRAM = 1,
-  GSO_ROW_EXPO = 2,
+enum MatGSOFlags
+{
+  GSO_DEFAULT       = 0,
+  GSO_INT_GRAM      = 1,
+  GSO_ROW_EXPO      = 2,
   GSO_OP_FORCE_LONG = 4
 };
 
@@ -39,11 +40,13 @@ enum MatGSOFlags {
    @param root_det         root determinant of lattice
    @param gh_factor        factor by which to multiple bound
 
-   @return new bound if `gh_factor * GH` is shorter than `max_dist`, otherwise `max_dist` is unchanged.
+   @return new bound if `gh_factor * GH` is shorter than `max_dist`, otherwise `max_dist` is
+   unchanged.
 */
 
 template <class FT>
-void gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det, double gh_factor);
+void gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det,
+                        double gh_factor);
 
 /**
  * MatGSO provides an interface for performing elementary operations on a basis
@@ -51,8 +54,8 @@ void gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const 
  * The Gram-Schmidt coefficients are computed on demand. The object keeps track
  * of which coefficients are valid after each row operation.
  */
-template<class ZT, class FT>
-class MatGSO {
+template <class ZT, class FT> class MatGSO
+{
 public:
   /**
    * Constructor.
@@ -87,26 +90,22 @@ public:
    *   See the documentation of row_addmul.
    */
   //~ MatGSO(Matrix<ZT>& b, Matrix<ZT>& u, Matrix<ZT>& u_inv_t, int flags);
-  MatGSO(Matrix<ZT>& arg_b, Matrix<ZT>& arg_u, Matrix<ZT>& arg_uinv_t, int flags) :
-    b(arg_b),
-    enable_int_gram(flags & GSO_INT_GRAM),
-    enable_row_expo(flags & GSO_ROW_EXPO),
-    enable_transform(arg_u.get_rows() > 0),
-    enable_inverse_transform(arg_uinv_t.get_rows() > 0),
-    row_op_force_long(flags & GSO_OP_FORCE_LONG),
-    u(arg_u), u_inv_t(arg_uinv_t),
-    n_known_rows(0), n_source_rows(0), n_known_cols(0),
-    cols_locked(false), alloc_dim(0)
+  MatGSO(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
+      : b(arg_b), enable_int_gram(flags & GSO_INT_GRAM), enable_row_expo(flags & GSO_ROW_EXPO),
+        enable_transform(arg_u.get_rows() > 0), enable_inverse_transform(arg_uinv_t.get_rows() > 0),
+        row_op_force_long(flags & GSO_OP_FORCE_LONG), u(arg_u), u_inv_t(arg_uinv_t),
+        n_known_rows(0), n_source_rows(0), n_known_cols(0), cols_locked(false), alloc_dim(0)
   {
     FPLLL_DEBUG_CHECK(!(enable_int_gram && enable_row_expo));
     d = b.get_rows();
-    if (enable_row_expo) {
+    if (enable_row_expo)
+    {
       tmp_col_expo.resize(b.get_cols());
     }
     size_increased();
-  #ifdef DEBUG
+#ifdef DEBUG
     row_op_first = row_op_last = -1;
-  #endif
+#endif
   }
 
   /**
@@ -118,7 +117,7 @@ public:
   /**
    * Basis of the lattice
    */
-  Matrix<ZT>& b;
+  Matrix<ZT> &b;
 
   /**
    * When enable_row_expo=true, row_expo[i] is the smallest non-negative integer
@@ -146,7 +145,7 @@ public:
    *
    * Returns reference to `f`.
    */
-  inline FT& get_gram(FT& f, int i, int j);
+  inline FT &get_gram(FT &f, int i, int j);
 
   /**
    * Returns the mu matrix
@@ -154,24 +153,22 @@ public:
    * (lower triangular matrix)
    * mu(i, j) = r(i, j) / ||b*_j||^2.
    */
-  const Matrix<FT>& get_mu_matrix() {
-    return mu;
-  }
-  
+  const Matrix<FT> &get_mu_matrix() { return mu; }
+
   /**
    * Returns the r matrix
    * Coefficients of the Gram Schmidt Orthogonalization
    * (lower triangular matrix)
    */
-  const Matrix<FT>& get_r_matrix() {return r;}
+  const Matrix<FT> &get_r_matrix() { return r; }
 
   /**
    * Returns the g matrix (Z_NR version of r)
    * Coefficients of the Gram Schmidt Orthogonalization
    * (lower triangular matrix)
    */
-  const Matrix<ZT>& get_g_matrix() {return g;}
-  
+  const Matrix<ZT> &get_g_matrix() { return g; }
+
   /**
    * Returns f = mu(i, j) and expo such that
    * f * 2^expo = (b_i, b*_j) / ||b*_j||^2.
@@ -181,16 +178,16 @@ public:
    * The returned value is a reference to the coefficient of the internal
    * matrix, which may change if the matrix is modified.
    */
-  inline const FT& get_mu_exp(int i, int j, long& expo);
-  inline const FT& get_mu_exp(int i, int j);
+  inline const FT &get_mu_exp(int i, int j, long &expo);
+  inline const FT &get_mu_exp(int i, int j);
 
   /**
    * Returns f = (b_i, b*_j) / ||b*_j||^2.
    *
    * Returns reference to `f`.
    */
-  inline FT& get_mu(FT& f, int i, int j);
-  
+  inline FT &get_mu(FT &f, int i, int j);
+
   /**
    * Return maximum bstar_i for all i
    */
@@ -209,17 +206,17 @@ public:
    * The returned value is a reference to the coefficient of the internal
    * matrix, which may change if the matrix is modified
    */
-  inline const FT& get_r_exp(int i, int j, long& expo);
-  inline const FT& get_r_exp(int i, int j);
+  inline const FT &get_r_exp(int i, int j, long &expo);
+  inline const FT &get_r_exp(int i, int j);
 
   /**
    * Returns f = (b_i, b*_j).
    *
    * Returns reference to `f`.
    */
-  inline FT& get_r(FT& f, int i, int j);
+  inline FT &get_r(FT &f, int i, int j);
 
-  /** 
+  /**
    * Returns expo such that mu(i, j) &lt; 2^expo for all j &lt; n_columns.
    * It is assumed that mu(i, j) is valid for all j &lt; n_columns.
    */
@@ -256,7 +253,7 @@ public:
    * are computed by the algorithm. They are set directly to avoid double
    * computation.
    */
-  void set_r(int i, int j, FT& f);
+  void set_r(int i, int j, FT &f);
 
   /**
    * Row old_r becomes row new_r and intermediate rows are shifted.
@@ -273,7 +270,7 @@ public:
    * of (2^expo * ZT), which is faster if ZT=mpz_t but might lead to a loss of
    * precision (in LLL, more Babai iterations are needed).
    */
-  inline void row_addmul(int i, int j, const FT& x);
+  inline void row_addmul(int i, int j, const FT &x);
 
   /**
    * b[i] := b[i] + x * 2^expo_add * b[j].
@@ -284,13 +281,13 @@ public:
    * of (2^expo * ZT), which is faster if ZT=mpz_t but might lead to a loss of
    * precision (in LLL, more Babai iterations are needed).
    */
-  void row_addmul_we(int i, int j, const FT& x, long expo_add);
+  void row_addmul_we(int i, int j, const FT &x, long expo_add);
 
   // b[i] += b[j] / b[i] -= b[j] (i > j)
   void row_add(int i, int j);
   void row_sub(int i, int j);
 
-  /** 
+  /**
    * Early reduction
    * Allowed when enable_int_gram=false,
    * n_known_cols large enough to compute all the g(i,j)
@@ -319,9 +316,10 @@ public:
    * Calculating new entries, swapping the new rows with previous ones,
    * And then removing the excess rows
    */
-  void apply_transform(const Matrix<FT>& transform, int src_base, int target_base);
+  void apply_transform(const Matrix<FT> &transform, int src_base, int target_base);
 
-  void apply_transform(const Matrix<FT>& transform, int src_base) {
+  void apply_transform(const Matrix<FT> &transform, int src_base)
+  {
     apply_transform(transform, src_base, src_base);
   }
 
@@ -335,8 +333,8 @@ public:
    * @note No row discovery or update is performed prior to dumping the matrix.
    */
 
-  inline void dump_mu_d(double* mu, int offset=0, int block_size=-1);
-  inline void dump_mu_d(vector<double> mu, int offset=0, int block_size=-1);
+  inline void dump_mu_d(double *mu, int offset = 0, int block_size = -1);
+  inline void dump_mu_d(vector<double> mu, int offset = 0, int block_size = -1);
 
   /**
    * Dump r vector to parameter `r`.
@@ -348,8 +346,8 @@ public:
    * @note No row discovery or update is performed prior to dumping the matrix.
    */
 
-  inline void dump_r_d(double* r, int offset=0, int block_size=-1);
-  inline void dump_r_d(vector<double> r, int offset=0, int block_size=-1);
+  inline void dump_r_d(double *r, int offset = 0, int block_size = -1);
+  inline void dump_r_d(vector<double> r, int offset = 0, int block_size = -1);
 
   /**
      @brief Return slope of the curve fitted to the lengths of the vectors from
@@ -433,27 +431,25 @@ private:
   void row_addmul_si(int i, int j, long x);
   // b[i] <- b[i] + (2^expo * x) * b[j] (i > j)
   void row_addmul_si_2exp(int i, int j, long x, long expo);
-  void row_addmul_2exp(int i, int j, const ZT& x, long expo);
+  void row_addmul_2exp(int i, int j, const ZT &x, long expo);
   // b[i] <-> b[j] (i < j)
   void row_swap(int i, int j);
 
-  inline ZT& sym_g(int i, int j) {
-    return (i >= j) ? g(i, j) : g(j, i);
-  }
+  inline ZT &sym_g(int i, int j) { return (i >= j) ? g(i, j) : g(j, i); }
 
   /* Floating-point representation of the basis. It is used when
      enable_int_gram=true. */
   Matrix<FT> bf;
 
-  Matrix<ZT>& u;        // Transform
-  Matrix<ZT>& u_inv_t;    // Transposed inverse transform
+  Matrix<ZT> &u;        // Transform
+  Matrix<ZT> &u_inv_t;  // Transposed inverse transform
 
   // init_row_size[i] = (last non-zero column in the i-th row of b) + 1
   vector<int> init_row_size;
 
   // bf[i], g[i], gf[i], mu[i] and r[i] are invalid for i >= n_known_rows
   int n_known_rows;
-  int n_source_rows; // Known rows before the beginning of early reduction
+  int n_source_rows;  // Known rows before the beginning of early reduction
   int n_known_cols;
   bool cols_locked;
   int alloc_dim;
@@ -508,20 +504,20 @@ private:
 #ifdef DEBUG
   /* Used only in debug mode. */
   int row_op_first, row_op_last;
-  bool in_row_op_range(int i) {
-    return i >= row_op_first && i < row_op_last;
-  }
+  bool in_row_op_range(int i) { return i >= row_op_first && i < row_op_last; }
 #endif
 };
 
-template<class ZT, class FT>
-inline FT& MatGSO<ZT, FT>::get_gram(FT& f, int i, int j) {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j <= i
-                    && j < n_source_rows && !in_row_op_range(i));
+template <class ZT, class FT> inline FT &MatGSO<ZT, FT>::get_gram(FT &f, int i, int j)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j <= i && j < n_source_rows &&
+                    !in_row_op_range(i));
   if (enable_int_gram)
     f.set_z(g(i, j));
-  else {
-    if (gf(i, j).is_nan()) {
+  else
+  {
+    if (gf(i, j).is_nan())
+    {
       dot_product(gf(i, j), bf[i], bf[j], n_known_cols);
     }
     f = gf(i, j);
@@ -529,10 +525,10 @@ inline FT& MatGSO<ZT, FT>::get_gram(FT& f, int i, int j) {
   return f;
 }
 
-template<class ZT, class FT>
-inline const FT& MatGSO<ZT, FT>::get_mu_exp(int i, int j, long& expo) {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i
-                    && j < gso_valid_cols[i] && !in_row_op_range(i));
+template <class ZT, class FT> inline const FT &MatGSO<ZT, FT>::get_mu_exp(int i, int j, long &expo)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i && j < gso_valid_cols[i] &&
+                    !in_row_op_range(i));
   if (enable_row_expo)
     expo = row_expo[i] - row_expo[j];
   else
@@ -540,27 +536,27 @@ inline const FT& MatGSO<ZT, FT>::get_mu_exp(int i, int j, long& expo) {
   return mu(i, j);
 }
 
-template<class ZT, class FT>
-inline const FT& MatGSO<ZT, FT>::get_mu_exp(int i, int j) {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i
-                    && j < gso_valid_cols[i] && !in_row_op_range(i));
+template <class ZT, class FT> inline const FT &MatGSO<ZT, FT>::get_mu_exp(int i, int j)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i && j < gso_valid_cols[i] &&
+                    !in_row_op_range(i));
   return mu(i, j);
 }
 
-template<class ZT, class FT>
-inline FT& MatGSO<ZT, FT>::get_mu(FT& f, int i, int j) {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i
-                    && j < gso_valid_cols[i] && !in_row_op_range(i));
+template <class ZT, class FT> inline FT &MatGSO<ZT, FT>::get_mu(FT &f, int i, int j)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i && j < gso_valid_cols[i] &&
+                    !in_row_op_range(i));
   f = mu(i, j);
   if (enable_row_expo)
     f.mul_2si(f, row_expo[i] - row_expo[j]);
   return f;
 }
 
-template<class ZT, class FT>
-inline const FT& MatGSO<ZT, FT>::get_r_exp(int i, int j, long& expo) {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0
-                    && j < gso_valid_cols[i] && !in_row_op_range(i));
+template <class ZT, class FT> inline const FT &MatGSO<ZT, FT>::get_r_exp(int i, int j, long &expo)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < gso_valid_cols[i] &&
+                    !in_row_op_range(i));
   if (enable_row_expo)
     expo = row_expo[i] + row_expo[j];
   else
@@ -568,163 +564,175 @@ inline const FT& MatGSO<ZT, FT>::get_r_exp(int i, int j, long& expo) {
   return r(i, j);
 }
 
-template<class ZT, class FT>
-inline const FT& MatGSO<ZT, FT>::get_r_exp(int i, int j) {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0
-                    && j < gso_valid_cols[i] && !in_row_op_range(i));
+template <class ZT, class FT> inline const FT &MatGSO<ZT, FT>::get_r_exp(int i, int j)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < gso_valid_cols[i] &&
+                    !in_row_op_range(i));
   return r(i, j);
 }
 
-template<class ZT, class FT>
-inline FT& MatGSO<ZT, FT>::get_r(FT& f, int i, int j) {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0
-                    && j < gso_valid_cols[i] && !in_row_op_range(i));
+template <class ZT, class FT> inline FT &MatGSO<ZT, FT>::get_r(FT &f, int i, int j)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < gso_valid_cols[i] &&
+                    !in_row_op_range(i));
   f = r(i, j);
   if (enable_row_expo)
     f.mul_2si(f, row_expo[i] + row_expo[j]);
   return f;
 }
 
-template<class ZT, class FT>
-inline bool MatGSO<ZT, FT>::update_gso_row(int i) {
+template <class ZT, class FT> inline bool MatGSO<ZT, FT>::update_gso_row(int i)
+{
   return update_gso_row(i, i);
 }
 
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::set_r(int i, int j, FT& f) {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && gso_valid_cols[i] >= j
-                    && j >= 0 && j < n_source_rows);
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::set_r(int i, int j, FT &f)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && gso_valid_cols[i] >= j && j >= 0 &&
+                    j < n_source_rows);
   r(i, j) = f;
-  if (gso_valid_cols[i] == j) gso_valid_cols[i]++;
+  if (gso_valid_cols[i] == j)
+    gso_valid_cols[i]++;
 }
 
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::row_addmul(int i, int j, const FT& x) {
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::row_addmul(int i, int j, const FT &x)
+{
   row_addmul_we(i, j, x, 0);
 }
 
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::create_row() {
-  create_rows(1);
-}
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::create_row() { create_rows(1); }
 
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::remove_last_row() {
-  remove_last_rows(1);
-}
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::remove_last_row() { remove_last_rows(1); }
 
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::create_rows(int n_new_rows) {
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::create_rows(int n_new_rows)
+{
   FPLLL_DEBUG_CHECK(!cols_locked);
   int old_d = d;
   d += n_new_rows;
   b.set_rows(d);
-  for (int i = old_d; i < d; i++) {
-    for (int j = 0; j < b.get_cols(); j++) {
+  for (int i = old_d; i < d; i++)
+  {
+    for (int j = 0; j < b.get_cols(); j++)
+    {
       b[i][j] = 0;
     }
   }
-  if (enable_transform) {
+  if (enable_transform)
+  {
     u.set_rows(d);
     for (int i = old_d; i < d; i++)
       for (int j = 0; j < u.get_cols(); j++)
-        u[i][j] = 0;
+        u[i][j]  = 0;
   }
   size_increased();
-  if (n_known_rows == old_d) discover_all_rows();
+  if (n_known_rows == old_d)
+    discover_all_rows();
 }
 
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::remove_last_rows(int n_removed_rows) {
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::remove_last_rows(int n_removed_rows)
+{
   FPLLL_DEBUG_CHECK(!cols_locked && d >= n_removed_rows);
   d -= n_removed_rows;
-  n_known_rows = min(n_known_rows, d);
+  n_known_rows  = min(n_known_rows, d);
   n_source_rows = n_known_rows;
   b.set_rows(d);
   if (enable_transform)
     u.set_rows(d);
 }
 
-
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::discover_all_rows() {
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::discover_all_rows()
+{
   while (n_known_rows < d)
     discover_row();
 }
 
-template<class ZT, class FT>
-inline bool MatGSO<ZT, FT>::update_gso() {
-  for (int i = 0; i < d; i++) {
+template <class ZT, class FT> inline bool MatGSO<ZT, FT>::update_gso()
+{
+  for (int i = 0; i < d; i++)
+  {
     if (!update_gso_row(i))
       return false;
   }
   return true;
 }
 
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::row_op_begin(int first, int last) {
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::row_op_begin(int first, int last)
+{
 #ifdef DEBUG
   FPLLL_DEBUG_CHECK(row_op_first == -1);
   row_op_first = first;
-  row_op_last = last;
+  row_op_last  = last;
 #endif
 }
 
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::dump_mu_d(double* mu, int offset, int block_size){
+template <class ZT, class FT>
+inline void MatGSO<ZT, FT>::dump_mu_d(double *mu, int offset, int block_size)
+{
   FT e;
-  if (block_size <= 0) {
+  if (block_size <= 0)
+  {
     block_size = b.get_rows();
   }
 
-  for (int i = 0; i < block_size; ++i) {
-    for (int j = 0; j < block_size; ++j) {
-      get_mu(e,offset+i,offset+j);
-      mu[i*block_size+j] = e.get_d();
+  for (int i = 0; i < block_size; ++i)
+  {
+    for (int j = 0; j < block_size; ++j)
+    {
+      get_mu(e, offset + i, offset + j);
+      mu[i * block_size + j] = e.get_d();
     }
   }
 }
 
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::dump_mu_d(vector<double> mu, int offset, int block_size){
+template <class ZT, class FT>
+inline void MatGSO<ZT, FT>::dump_mu_d(vector<double> mu, int offset, int block_size)
+{
   FT e;
-  if (block_size <= 0) {
+  if (block_size <= 0)
+  {
     block_size = b.get_rows();
   }
 
-  mu.reserve(mu.size() + block_size*block_size);
-  for (int i = 0; i < block_size; ++i) {
-    for (int j = 0; j < block_size; ++j) {
-      get_mu(e,offset+i,offset+j);
+  mu.reserve(mu.size() + block_size * block_size);
+  for (int i = 0; i < block_size; ++i)
+  {
+    for (int j = 0; j < block_size; ++j)
+    {
+      get_mu(e, offset + i, offset + j);
       mu.push_back(e.get_d());
     }
   }
 }
 
-
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::dump_r_d(double* r, int offset, int block_size){
+template <class ZT, class FT>
+inline void MatGSO<ZT, FT>::dump_r_d(double *r, int offset, int block_size)
+{
   FT e;
-  if (block_size <= 0) {
+  if (block_size <= 0)
+  {
     block_size = b.get_rows();
   }
 
-  for (int i = 0; i < block_size; ++i) {
-    get_r(e,offset+i, offset+i);
+  for (int i = 0; i < block_size; ++i)
+  {
+    get_r(e, offset + i, offset + i);
     r[i] = e.get_d();
   }
 }
 
-template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::dump_r_d(vector<double> r, int offset, int block_size){
+template <class ZT, class FT>
+inline void MatGSO<ZT, FT>::dump_r_d(vector<double> r, int offset, int block_size)
+{
   FT e;
-  if (block_size <= 0) {
+  if (block_size <= 0)
+  {
     block_size = b.get_rows();
   }
 
-  r.reserve(r.size() + block_size*block_size);
-  for (int i = 0; i < block_size; ++i) {
-    get_r(e,offset+i,offset+i);
+  r.reserve(r.size() + block_size * block_size);
+  for (int i = 0; i < block_size; ++i)
+  {
+    get_r(e, offset + i, offset + i);
     r.push_back(e.get_d());
   }
 }

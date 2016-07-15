@@ -132,7 +132,7 @@ public:
   /**
    * max between a and b
    */
-  inline Z_NR& maxZ(Z_NR<Z>& b) {
+  inline Z_NR& max_z(Z_NR<Z>& b) {
     if ((*this)<=b)
       return b;
     else

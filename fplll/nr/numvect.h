@@ -297,11 +297,11 @@ void NumVect<T>::addmul_si_2exp(const NumVect<T>& v, long x,
 
 template<class T>
 long NumVect<T>::get_max_exponent() {
-  long maxExpo = 0;
+  long max_expo = 0;
   for (int i = 0; i < size(); i++) {
-    maxExpo = max(maxExpo, data[i].exponent());
+    max_expo = max(max_expo, data[i].exponent());
   }
-  return maxExpo;
+  return max_expo;
 }
 
 template<class T>

@@ -76,7 +76,7 @@ private:
   void setUseLong(bool value);
   int increasePrec(int precision);
 
-  int maxExponent;
+  int max_exponent;
   int n;
   int d;
   int lastEarlyRed;

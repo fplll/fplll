@@ -49,7 +49,7 @@ Wrapper::Wrapper(IntMatrix& b, IntMatrix& u, IntMatrix& uInv,
   n = b.get_cols();
   d = b.get_rows();
   this->flags = flags;
-  maxExponent = b.getMaxExp() + (int) ceil(0.5 * log2((double) d * n));
+  max_exponent = b.getMaxExp() + (int) ceil(0.5 * log2((double) d * n));
 
   // Computes the parameters required for the proved version
   goodPrec = l2MinPrec(d, delta, eta, LLL_DEF_EPSILON);
@@ -182,7 +182,7 @@ int Wrapper::provedLoop(int precision) {
   if (precision > numeric_limits<double>::digits)
 #endif
     kappa = provedLLL<mpz_t, mpfr_t>(b, u, uInv, precision, delta, eta);
-  else if (maxExponent * 2 > MAX_EXP_DOUBLE) {
+  else if (max_exponent * 2 > MAX_EXP_DOUBLE) {
 #ifdef FPLLL_WITH_DPE
     kappa = provedLLL<mpz_t, dpe_t>(b, u, uInv, 0, delta, eta);
 #else
@@ -253,9 +253,9 @@ bool Wrapper::lll() {
     return RED_SUCCESS;
 
 #ifdef FPLLL_WITH_ZLONG
-  bool heuristicWithLong = maxExponent < numeric_limits<long>::digits - 2
+  bool heuristicWithLong = max_exponent < numeric_limits<long>::digits - 2
             && u.empty() && uInv.empty();
-  bool provedWithLong = 2 * maxExponent < numeric_limits<long>::digits - 2
+  bool provedWithLong = 2 * max_exponent < numeric_limits<long>::digits - 2
             && u.empty() && uInv.empty();
 #else
   bool heuristicWithLong = false, provedWithLong = false;
