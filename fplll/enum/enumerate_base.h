@@ -31,7 +31,6 @@ inline void roundto(double& dest, const double& src) { dest = std::rint(src); }
 /* config */
 #define MAXDIMENSION           256
 #define MAXTEMPLATEDDIMENSION  80
-#define USE_RECURSIVE_ENUM
 //#define FORCE_ENUM_INLINE
 /* end config */
 

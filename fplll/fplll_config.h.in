@@ -22,4 +22,7 @@
 /* fplll version info */
 #define FPLLL_VERSION_INFO @FPLLL_VERSION_INFO@
 
+/* enable recursive enumeration */
+#undef FPLLL_WITH_RECURSIVE_ENUM
+
 #endif //FPLLL_CONFIG__H
