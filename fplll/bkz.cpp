@@ -644,7 +644,7 @@ template <class FT> bool BKZReduction<FT>::set_status(int newStatus)
 }
 
 template <class FT>
-void BKZReduction<FT>::dump_gso(const std::string filename, const std::string prefix, bool append)
+void BKZReduction<FT>::dump_gso(const std::string& filename, const std::string& prefix, bool append)
 {
   ofstream dump;
   if (append)

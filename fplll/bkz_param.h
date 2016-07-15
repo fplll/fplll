@@ -216,25 +216,25 @@ public:
    @note All parameters except pruning and preprocessing are silently ignored.
 */
 
-vector<Strategy> load_strategies_json(const char *filename);
+vector<Strategy> load_strategies_json(const std::string &filename);
 
 /**
    Return default directory to search for strategies (if any)
 */
 
-const char *default_strategy_path();
+const std::string &default_strategy_path();
 
 /**
    Return default strategy (if any)
 */
 
-const char *default_strategy();
+const std::string &default_strategy();
 
 /**
    Attempt to expand strategy path to full path
 */
 
-const std::string strategy_full_path(const char *strategy_path);
+const std::string strategy_full_path(const string &strategy_path);
 
 FPLLL_END_NAMESPACE
 #endif /* BKZ_PARAM_H */

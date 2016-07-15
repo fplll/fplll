@@ -109,7 +109,7 @@ template <> int bkz(Options &o, IntMatrix &b)
   vector<Strategy> strategies;
   if (!o.bkz_strategy_file.empty())
   {
-    strategies = load_strategies_json(strategy_full_path(o.bkz_strategy_file.c_str()).c_str());
+    strategies = load_strategies_json(strategy_full_path(o.bkz_strategy_file));
   }
 
   BKZParam param(o.block_size, strategies);
