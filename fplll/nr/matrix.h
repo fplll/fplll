@@ -48,8 +48,8 @@ public:
   bool is_zero(int from = 0) const {
     return row.is_zero(from);
   }
-  int sizeNZ() const {
-    return row.sizeNZ();
+  int size_nz() const {
+    return row.size_nz();
   }
   void fill(long value) {
     row.fill(value);
@@ -98,7 +98,7 @@ private:
 };
 
 template<class T>
-void dotProduct(T& result, const MatrixRow<T>& v1,
+void dot_product(T& result, const MatrixRow<T>& v1,
                        const MatrixRow<T>& v2, int n) {
   FPLLL_DEBUG_CHECK(n > 0 && n <= v1.size() && v1.size() == v2.size()
                     && (v1.is_zero(n) || v2.is_zero(n)));
@@ -109,8 +109,8 @@ void dotProduct(T& result, const MatrixRow<T>& v1,
 }
 
 template<class T>
-inline void dotProduct(T& result, const MatrixRow<T>& v1, const MatrixRow<T>& v2) {
-  dotProduct(result, v1, v2, v1.size());
+inline void dot_product(T& result, const MatrixRow<T>& v1, const MatrixRow<T>& v2) {
+  dot_product(result, v1, v2, v1.size());
 }
 
 /** Prints a MatrixRow on stream os. */
@@ -202,25 +202,25 @@ public:
   }
   /** Rows permutation.
       (m[first],...,m[last]) becomes (m[first+1],...,m[last],m[first]) */
-  void rotateLeft(int first, int last) {
-    rotateLeftBySwap(matrix, first, last);
+  void rotate_left(int first, int last) {
+    rotate_left_by_swap(matrix, first, last);
   }
   /** Rows permutation.
       (m[first],...,m[last]) becomes (m[last],m[first],...,m[last-1]) */
-  void rotateRight(int first, int last) {
-    rotateRightBySwap(matrix, first, last);
+  void rotate_right(int first, int last) {
+    rotate_right_by_swap(matrix, first, last);
   }
   /** Rows permutation.
       (m[first],...,m[middle-1],m[middle],m[last]) becomes
       (m[middle],...,m[last],m[first],...,m[middle-1]) */
   void rotate(int first, int middle, int last) {
-    rotateBySwap(matrix, first, middle, last);
+    rotate_by_swap(matrix, first, middle, last);
   }
   /** Transformation needed to update the lower triangular Gram matrix when
-     rotateLeft(first, last) is done on the basis of the lattice. */
+     rotate_left(first, last) is done on the basis of the lattice. */
   void rotateGramLeft(int first, int last, int nValidRows);
   /** Transformation needed to update the lower triangular Gram matrix when
-      rotateRight(first, last) is done on the basis of the lattice. */
+      rotate_right(first, last) is done on the basis of the lattice. */
   void rotateGramRight(int first, int last, int nValidRows);
   /** Transpose. */
   void transpose();

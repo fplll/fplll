@@ -62,18 +62,18 @@ void Matrix<T>::rotateGramLeft(int first, int last, int nValidRows) {
     matrix[i + 1][first].swap(matrix[first][i]);
   }
   for (int i = first; i < nValidRows; i++) {
-    matrix[i].rotateLeft(first, min(last, i)); // most expensive step
+    matrix[i].rotate_left(first, min(last, i)); // most expensive step
   }
-  rotateLeft(first, last);
+  rotate_left(first, last);
 }
 
 template<class T>
 void Matrix<T>::rotateGramRight(int first, int last, int nValidRows) {
   FPLLL_DEBUG_CHECK(0 <= first && first <= last && last < nValidRows &&
           nValidRows <= r);
-  rotateRight(first, last);
+  rotate_right(first, last);
   for (int i = first; i < nValidRows; i++) {
-    matrix[i].rotateRight(first, min(last, i)); // most expensive step
+    matrix[i].rotate_right(first, min(last, i)); // most expensive step
   }
   for (int i = first; i < last; i++) {
     matrix[i + 1][first].swap(matrix[first][i]);
@@ -83,7 +83,7 @@ void Matrix<T>::rotateGramRight(int first, int last, int nValidRows) {
 
 template<class T>
 void Matrix<T>::transpose() {
-  extendVect(matrix, c);
+  extend_vect(matrix, c);
   for (int i = 0; i < c; i++) {
     matrix[i].extend(r);
   }

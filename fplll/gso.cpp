@@ -90,7 +90,7 @@ void MatGSO<ZT, FT>::discover_row() {
   }
   if (enable_int_gram) {
     for (int j = 0; j <= i; j++)
-      dotProduct(g(i, j), b[i], b[j], n_known_cols);
+      dot_product(g(i, j), b[i], b[j], n_known_cols);
   }
   else {
     invalidate_gram_row(i);
@@ -354,19 +354,19 @@ void MatGSO<ZT, FT>::move_row(int old_r, int new_r) {
     }
     rotate(gso_valid_cols.begin() + new_r, gso_valid_cols.begin() + old_r,
            gso_valid_cols.begin() + old_r + 1);
-    mu.rotateRight(new_r, old_r);
-    r.rotateRight(new_r, old_r);
-    b.rotateRight(new_r, old_r);
+    mu.rotate_right(new_r, old_r);
+    r.rotate_right(new_r, old_r);
+    b.rotate_right(new_r, old_r);
     if (enable_transform) {
-      u.rotateRight(new_r, old_r);
+      u.rotate_right(new_r, old_r);
       if (enable_inverse_transform)
-        u_inv_t.rotateRight(new_r, old_r);
+        u_inv_t.rotate_right(new_r, old_r);
     }
     if (enable_int_gram)
       g.rotateGramRight(new_r, old_r, n_known_rows);
     else {
       gf.rotateGramRight(new_r, old_r, n_known_rows);
-      bf.rotateRight(new_r, old_r);
+      bf.rotate_right(new_r, old_r);
     }
     if (enable_row_expo)
       rotate(row_expo.begin() + new_r, row_expo.begin() + old_r,
@@ -378,13 +378,13 @@ void MatGSO<ZT, FT>::move_row(int old_r, int new_r) {
     }
     rotate(gso_valid_cols.begin() + old_r, gso_valid_cols.begin() + old_r + 1,
            gso_valid_cols.begin() + new_r + 1);
-    mu.rotateLeft(old_r, new_r);
-    r.rotateLeft(old_r, new_r);
-    b.rotateLeft(old_r, new_r);
+    mu.rotate_left(old_r, new_r);
+    r.rotate_left(old_r, new_r);
+    b.rotate_left(old_r, new_r);
     if (enable_transform) {
-      u.rotateLeft(old_r, new_r);
+      u.rotate_left(old_r, new_r);
       if (enable_inverse_transform)
-        u_inv_t.rotateLeft(old_r, new_r);
+        u_inv_t.rotate_left(old_r, new_r);
     }
     if (enable_int_gram) {
       if (old_r < n_known_rows - 1)
@@ -393,7 +393,7 @@ void MatGSO<ZT, FT>::move_row(int old_r, int new_r) {
     else {
       if (old_r < n_known_rows - 1)
         gf.rotateGramLeft(old_r, min(new_r, n_known_rows - 1), n_known_rows);
-      bf.rotateLeft(old_r, new_r);
+      bf.rotate_left(old_r, new_r);
     }
     if (enable_row_expo)
       rotate(row_expo.begin() + old_r, row_expo.begin() + old_r + 1,
@@ -404,7 +404,7 @@ void MatGSO<ZT, FT>::move_row(int old_r, int new_r) {
       if (old_r < n_known_rows) {
         n_known_rows--;
         n_source_rows = n_known_rows;
-        init_row_size[new_r] = max(b[new_r].sizeNZ(), 1);
+        init_row_size[new_r] = max(b[new_r].size_nz(), 1);
       }
     }
   }
@@ -461,7 +461,7 @@ void MatGSO<ZT, FT>::size_increased() {
   }
 
   for (int i = oldD; i < d; i++) {
-    init_row_size[i] = max(b[i].sizeNZ(), 1);
+    init_row_size[i] = max(b[i].size_nz(), 1);
     if (!enable_int_gram) {
       bf[i].fill(0); // update_bf might not copy all the zeros of b[i]
       update_bf(i);

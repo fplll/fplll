@@ -39,7 +39,7 @@ static inline int cputime() {
 template<class ZT>
 void vectMatrixProduct(vector<ZT>& result, const vector<ZT>& x, const Matrix<ZT>& m) {
   int nRows = m.get_rows(), nCols = m.get_cols();
-  genZeroVect(result, nCols);
+  gen_zero_vect(result, nCols);
   for (int i = 0; i < nRows; i++)
     for (int j = 0; j < nCols; j++)
       result[j].addmul(x[i], m(i, j));

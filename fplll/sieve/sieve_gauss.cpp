@@ -109,7 +109,7 @@ template<class ZT, class F>
 void Gauss_sieve<ZT, F>::add_mat_list (ZZ_mat<ZT> &B)
 {
   Z_NR<ZT> t, current_norm;
-  dotProduct(best_sqr_norm, B[0], B[0]);
+  dot_product(best_sqr_norm, B[0], B[0]);
   ListPoint<ZT>* p;
 
   for (int i = 0; i < nr; ++i) {

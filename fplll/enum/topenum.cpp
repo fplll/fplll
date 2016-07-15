@@ -22,11 +22,11 @@ Enumerator::Enumerator(int d, const Matrix<Float>& mu, const Matrix<Float>& r,
   mu(mu), r(r), kmin(minLevel), d(d)
 {
   maxVolume = argMaxVolume > 0 ? argMaxVolume : ENUM_MAX_VOLUME;
-  genZeroVect(center, d);
-  genZeroVect(dist, d);
-  genZeroVect(x, d);
-  genZeroVect(dx, d);
-  genZeroVect(ddx, d);
+  gen_zero_vect(center, d);
+  gen_zero_vect(dist, d);
+  gen_zero_vect(x, d);
+  gen_zero_vect(dx, d);
+  gen_zero_vect(ddx, d);
   svpInitNeeded = true;
 }
 

@@ -522,7 +522,7 @@ inline FT& MatGSO<ZT, FT>::get_gram(FT& f, int i, int j) {
     f.set_z(g(i, j));
   else {
     if (gf(i, j).is_nan()) {
-      dotProduct(gf(i, j), bf[i], bf[j], n_known_cols);
+      dot_product(gf(i, j), bf[i], bf[j], n_known_cols);
     }
     f = gf(i, j);
   }

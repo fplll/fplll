@@ -119,7 +119,7 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
 
   // Computes the Gram-Schmidt orthogonalization in floating-point
   gso.update_gso();
-  genZeroVect(solCoord, d);
+  gen_zero_vect(solCoord, d);
 
   // If the last b_i* are too large, removes them to avoid an underflow
   int newD = lastUsefulIndex(gso.get_r_matrix());
@@ -295,7 +295,7 @@ int closestVector(IntMatrix& b, const IntVect& intTarget,
 
   // Computes the Gram-Schmidt orthogonalization in floating-point
   gso.update_gso();
-  genZeroVect(solCoord, d);
+  gen_zero_vect(solCoord, d);
 
   /* Applies Babai's algorithm. Because we use fp, it might be necessary to
       do it several times (if ||target|| >> ||b_i||) */

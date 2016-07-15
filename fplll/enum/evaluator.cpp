@@ -274,7 +274,7 @@ void ExactEvaluator::evalSol(const FloatVect& newSolCoord,
   Integer newSolDist, coord;
   IntVect newSol;
 
-  genZeroVect(newSol, n);
+  gen_zero_vect(newSol, n);
   newSolDist = 0;
 
   // Computes the distance between x and zero
@@ -331,7 +331,7 @@ void ExactEvaluator::evalSubSol(int offset, const FloatVect& newSubSolCoord,
   Integer newSolDist, coord;
   IntVect newSol;
 
-  genZeroVect(newSol, n);
+  gen_zero_vect(newSol, n);
   newSolDist = 0;
 
   // Computes the distance between x[[offset,d)] and zero

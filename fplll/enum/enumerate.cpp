@@ -104,7 +104,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
     fmaxdist.mul_2si(fmaxdistnorm, dual ? fmaxdistexpo-normexp : normexp-fmaxdistexpo);
   
     if (dual && !_evaluator.solCoord.empty())
-        reverseBySwap(_evaluator.solCoord, 0, d-1);
+        reverse_by_swap(_evaluator.solCoord, 0, d-1);
 }
 
 template<typename FT>

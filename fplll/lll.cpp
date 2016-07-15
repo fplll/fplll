@@ -59,9 +59,9 @@ bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
   nSwaps = 0;
   finalKappa = 0;
   if (verbose) printParams();
-  extendVect(lovaszTests, kappaEnd);
-  extendVect(babaiMu, kappaEnd);
-  extendVect(babaiExpo, kappaEnd);
+  extend_vect(lovaszTests, kappaEnd);
+  extend_vect(babaiMu, kappaEnd);
+  extend_vect(babaiExpo, kappaEnd);
 
   for (; zeros < d && m.b[0].is_zero(); zeros++) {
     m.move_row(kappaMin, kappaEnd - 1 - zeros);
