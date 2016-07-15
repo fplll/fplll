@@ -59,12 +59,12 @@ inline long FP_NR<dd_real>::exponent() const {
 }
 
 template<>
-inline long FP_NR<dd_real>::get_si_exp_we(long& expo, long expoAdd) const {
+inline long FP_NR<dd_real>::get_si_exp_we(long& expo, long expo_add) const {
   if (data == 0)
     expo = 0;
   else
-    expo = max(exponent() + expoAdd - numeric_limits<long>::digits, 0L);
-  return static_cast<long>((::ldexp(data, expoAdd - expo)).x[0]);
+    expo = max(exponent() + expo_add - numeric_limits<long>::digits, 0L);
+  return static_cast<long>((::ldexp(data, expo_add - expo)).x[0]);
 }
 
 template<>
@@ -247,12 +247,12 @@ inline void FP_NR<dd_real>::rnd(const FP_NR<dd_real>& b) {
 }
 
 template<>
-inline void FP_NR<dd_real>::rnd_we(const FP_NR<dd_real>& b, long expoAdd) {
+inline void FP_NR<dd_real>::rnd_we(const FP_NR<dd_real>& b, long expo_add) {
   /* double-double has same expo limit as double format*/
-  if (b.exponent() + expoAdd >= numeric_limits<double>::digits)
+  if (b.exponent() + expo_add >= numeric_limits<double>::digits)
     data = b.data;
   else
-    data = ::ldexp(::nint(::ldexp(b.data, expoAdd)), -expoAdd);
+    data = ::ldexp(::nint(::ldexp(b.data, expo_add)), -expo_add);
 }
 
 template<>

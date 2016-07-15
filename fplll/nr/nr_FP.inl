@@ -87,12 +87,12 @@ public:
 
   /**
    * Returns x and defines expo such that
-   *  trunc(value * 2^expoAdd) ~= x * 2^expo
-   * The '~=' is an equality if trunc(value * 2^expoAdd) <= LONG_MAX.
+   *  trunc(value * 2^expo_add) ~= x * 2^expo
+   * The '~=' is an equality if trunc(value * 2^expo_add) <= LONG_MAX.
    * expo is the minimum non-negative value such that x <= LONG_MAX.
-   * expoAdd must be 0 if T=dpe_t or T=mpfr_t.
+   * expo_add must be 0 if T=dpe_t or T=mpfr_t.
    */
-  inline long get_si_exp_we(long &expo, long expoAdd) const;
+  inline long get_si_exp_we(long &expo, long expo_add) const;
 
   /**
    * Returns x and defines expo such that trunc(value) ~= x * 2^expo.
@@ -111,12 +111,12 @@ public:
   template <class Z> inline void get_z_exp(Z_NR<Z> &a, long &expo) const;
 
   /**
-   * Computes a and expo such that trunc(value) * 2^expoAdd ~= a * 2^expo.
+   * Computes a and expo such that trunc(value) * 2^expo_add ~= a * 2^expo.
    * The '~=' is an equality if Z=mpz_t. expo is always non-negative.
-   * expoAdd must be 0 if T=dpe_t or T=mpfr_t.
+   * expo_add must be 0 if T=dpe_t or T=mpfr_t.
    *  (in nr_FP_misc.h)
    */
-  template <class Z> inline void get_z_exp_we(Z_NR<Z> &a, long &expo, long expoAdd) const;
+  template <class Z> inline void get_z_exp_we(Z_NR<Z> &a, long &expo, long expo_add) const;
 
   /** set data */
 
@@ -294,10 +294,10 @@ public:
   inline void rnd(const FP_NR<F> &b);
 
   /**
-   * value <- (rounding of a * 2^expoAdd) / 2^expoAdd, but never overflows.
-   * expoAdd must be 0 if T=dpe_t or T=mpfr_t.
+   * value <- (rounding of a * 2^expo_add) / 2^expo_add, but never overflows.
+   * expo_add must be 0 if T=dpe_t or T=mpfr_t.
    */
-  inline void rnd_we(const FP_NR<F> &b, long expoAdd);
+  inline void rnd_we(const FP_NR<F> &b, long expo_add);
 
   /**
    * value := largest integer not greater than b.

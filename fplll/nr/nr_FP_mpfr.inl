@@ -75,8 +75,8 @@ inline long FP_NR<mpfr_t>::get_si_exp(long& expo) const {
 }
 
 template<>
-inline long FP_NR<mpfr_t>::get_si_exp_we(long& expo, long /*expoAdd*/) const {
-  return get_si_exp(expo);  // NOTE: expoAdd = 0
+inline long FP_NR<mpfr_t>::get_si_exp_we(long& expo, long /*expo_add*/) const {
+  return get_si_exp(expo);  // NOTE: expo_add = 0
 }
 
 /*  comparison */
@@ -262,8 +262,8 @@ inline void FP_NR<mpfr_t>::rnd(const FP_NR<mpfr_t>& a) {
   mpfr_round(data, a.data);
 }
 template<>
-inline void FP_NR<mpfr_t>::rnd_we(const FP_NR<mpfr_t>& a, long /*expoAdd*/) {
-  mpfr_round(data, a.data); // NOTE: expoAdd = 0
+inline void FP_NR<mpfr_t>::rnd_we(const FP_NR<mpfr_t>& a, long /*expo_add*/) {
+  mpfr_round(data, a.data); // NOTE: expo_add = 0
 }
 template<>
 inline void FP_NR<mpfr_t>::floor(const FP_NR<mpfr_t>& a) {

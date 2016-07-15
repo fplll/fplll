@@ -15,8 +15,8 @@ KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B, bool ver, int seed)
 {
   /* set dimensions */
   b = B;
-  nr = b.getRows();
-  nc = b.getCols();
+  nr = b.get_rows();
+  nc = b.get_cols();
   //t = log(nr);
   t = 2;
   logn2 = log(nr)*log(nr);
@@ -24,13 +24,13 @@ KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B, bool ver, int seed)
   /* gso, flag 1 to have g matrix valid */
   pGSO = new MatGSO<Z_NR<ZT>, F> (b, u, uInv, 1);
 
-  pGSO->updateGSO();
-  mu = pGSO->getMuMatrix();
-  r = pGSO->getRMatrix();
-  g = pGSO->getGMatrix();
+  pGSO->update_gso();
+  mu = pGSO->get_mu_matrix();
+  r = pGSO->get_r_matrix();
+  g = pGSO->get_g_matrix();
   
   /* compute variances for sampling */
-  maxbistar2 = pGSO->getMaxBstar();
+  maxbistar2 = pGSO->get_max_bstar();
   s2.mul_d (maxbistar2, logn2, GMP_RNDN);
   s_prime = new NumVect<F> (nr);
   F tmp;

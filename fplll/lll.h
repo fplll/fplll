@@ -77,7 +77,7 @@ template<class ZT, class FT>
 inline bool LLLReduction<ZT, FT>::sizeReduction(int kappaMin, int kappaEnd) {
   if (kappaEnd == -1) kappaEnd = m.d;
   for (int k = kappaMin; k < kappaEnd; k++) {
-    if ((k > 0 && !babai(k, k)) || !m.updateGSORow(k))
+    if ((k > 0 && !babai(k, k)) || !m.update_gso_row(k))
       return false;
   }
   return setStatus(RED_SUCCESS);
@@ -85,14 +85,14 @@ inline bool LLLReduction<ZT, FT>::sizeReduction(int kappaMin, int kappaEnd) {
 
 template<class ZT, class FT>
 inline bool LLLReduction<ZT, FT>::earlyReduction(int start) {
-  m.lockCols();
+  m.lock_cols();
   if (verbose) {
     cerr << "Early reduction start=" << start + 1 << endl;
   }
   for (int i = start; i < m.d; i++) {
     if (!babai(i, start)) return false;
   }
-  m.unlockCols();
+  m.unlock_cols();
   lastEarlyRed = start;
   return true;
 }
@@ -103,11 +103,11 @@ inline void LLLReduction<ZT, FT>::printParams() {
        << "\ndelta = " << delta
        << "\neta = " << eta
        << "\nprecision = " << FT::getprec()
-       << "\nexact_dot_product = " << static_cast<int>(m.enableIntGram)
-       << "\nrow_expo = " << static_cast<int>(m.enableRowExpo)
+       << "\nexact_dot_product = " << static_cast<int>(m.enable_int_gram)
+       << "\nrow_expo = " << static_cast<int>(m.enable_row_expo)
        << "\nearly_red = " << static_cast<int>(enableEarlyRed)
        << "\nsiegel_cond = " << static_cast<int>(siegel)
-       << "\nlong_in_babai = " << static_cast<int>(m.rowOpForceLong) << endl;
+       << "\nlong_in_babai = " << static_cast<int>(m.row_op_force_long) << endl;
 }
 
 template<class ZT, class FT>

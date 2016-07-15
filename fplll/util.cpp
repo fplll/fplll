@@ -141,13 +141,13 @@ void costEstimate(Float& cost, const Float& bound,
 #ifdef FPLLL_V3_COMPAT
 
 void gramSchmidt(const IntMatrix& b, Matrix<Float>& mu, FloatVect& rdiag) {
-  int d = b.getRows();
-  int n = b.getCols();
+  int d = b.get_rows();
+  int n = b.get_cols();
   Matrix<Float> r(d, d);
   Integer dotProd;
   Float coeff;
 
-  FPLLL_DEBUG_CHECK(mu.getRows() == d && mu.getCols() == d);
+  FPLLL_DEBUG_CHECK(mu.get_rows() == d && mu.get_cols() == d);
   if (static_cast<int>(rdiag.size()) != d) rdiag.resize(d);
 
   for (int i = 0; i < d; i++) {

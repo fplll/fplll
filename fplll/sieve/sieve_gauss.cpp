@@ -25,8 +25,8 @@ Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
   
   /* stats */
   b = B;
-  nr = b.getRows();
-  nc = b.getCols();
+  nr = b.get_rows();
+  nc = b.get_cols();
   max_list_size = 0;
   iterations = 0;
   collisions = 0;

@@ -23,7 +23,7 @@ FPLLL_BEGIN_NAMESPACE
 
 template <class ZT> void zeros_first(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv_t)
 {
-  int i, d = b.getRows();
+  int i, d = b.get_rows();
   for (i = d; i > 0 && b[i - 1].is_zero(); i--)
   {
   }
@@ -39,7 +39,7 @@ template <class ZT> void zeros_first(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u
 
 template <class ZT> void zeros_last(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv_t)
 {
-  int i, d = b.getRows();
+  int i, d = b.get_rows();
   for (i = 0; i < d && b[i].is_zero(); i++)
   {
   }
@@ -65,7 +65,7 @@ int lll_reduction_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
                      LLLMethod method, int flags)
 {
   int gso_flags = 0;
-  if (b.getRows() == 0 || b.getCols() == 0)
+  if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;
   if (method == LM_PROVED)
     gso_flags |= GSO_INT_GRAM;
@@ -114,7 +114,7 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
               "LLL method 'proved' with early reduction is not implemented");
 
   /* computes the parameters required for the proved version */
-  int good_prec = l2MinPrec(b.getRows(), delta, eta, LLL_DEF_EPSILON);
+  int good_prec = l2MinPrec(b.get_rows(), delta, eta, LLL_DEF_EPSILON);
 
   /* sets the parameters and checks the consistency */
   int sel_prec = 0;
@@ -266,7 +266,7 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
   {                                                                                                \
     ZZ_mat<T> empty_mat;                                                                            \
     if (!u.empty())                                                                                \
-      u.gen_identity(b.getRows());                                                                 \
+      u.gen_identity(b.get_rows());                                                                 \
     return lll_reduction_z<T>(b, u, empty_mat, delta, eta, method, id_t, float_type, precision, flags); \
   }                                                                                                \
                                                                                                    \
@@ -274,9 +274,9 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
                    LLLMethod method, FloatType float_type, int precision, int flags)                \
   {                                                                                                \
     if (!u.empty())                                                                                \
-      u.gen_identity(b.getRows());                                                                 \
+      u.gen_identity(b.get_rows());                                                                 \
     if (!u_inv.empty())                                                                             \
-      u_inv.gen_identity(b.getRows());                                                              \
+      u_inv.gen_identity(b.get_rows());                                                              \
     u_inv.transpose();                                                                              \
     int status =                                                                                   \
         lll_reduction_z<T>(b, u, u_inv, delta, eta, method, id_t, float_type, precision, flags);        \
@@ -304,7 +304,7 @@ int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_
                     IntMatrix &u_inv)
 {
   int gso_flags = 0;
-  if (b.getRows() == 0 || b.getCols() == 0)
+  if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;
   if (sel_ft == FT_DOUBLE || sel_ft == FT_LONG_DOUBLE)
     gso_flags |= GSO_ROW_EXPO;
@@ -328,7 +328,7 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType f
 
   if (U && (!u.empty()))
   {
-    u.gen_identity(B->getRows());
+    u.gen_identity(B->get_rows());
   }
 
   double lll_delta = param.delta < 1 ? param.delta : LLL_DEF_DELTA;
@@ -413,8 +413,8 @@ int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags, FloatTy
 int hkz_reduction(IntMatrix &b, int flags, FloatType float_type, int precision)
 {
   vector<Strategy> strategies;
-  BKZParam param(b.getRows(), strategies);
-  param.block_size = b.getRows();
+  BKZParam param(b.get_rows(), strategies);
+  param.block_size = b.get_rows();
   param.delta      = 1;
   if (flags & HKZ_VERBOSE)
     param.flags |= BKZ_VERBOSE;

@@ -69,11 +69,11 @@ public:
   bool dsvp_postprocessing(int kappa, int block_size, const vector<FT> &solution);
 
   /**
-     Run enumeration to find a new shortest vector in the sublattice B[kappa,kappa+blockSize]
+     Run enumeration to find a new shortest vector in the sublattice B[kappa,kappa+block_size]
 
      @param kappa Start row
-     @param block_size Block size to use, this may be < param.blockSize
-     @param param Parameters to use for this enumeration (blockSize is ignored)
+     @param block_size Block size to use, this may be < param.block_size
+     @param param Parameters to use for this enumeration (block_size is ignored)
 
      ``_ex`` variant is exception handling.
   */
@@ -191,7 +191,7 @@ private:
 
   bool set_status(int newStatus);
 
-  const Pruning &get_pruning(int kappa, int blockSize, const BKZParam &par) const;
+  const Pruning &get_pruning(int kappa, int block_size, const BKZParam &par) const;
 
   bool trunc_tour(int &kappaMax, const BKZParam &param, int minRow, int maxRow);
   bool trunc_dtour(const BKZParam &param, int minRow, int maxRow);

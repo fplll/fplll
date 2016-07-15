@@ -618,9 +618,9 @@ template<class ZT> inline void ZZ_mat<ZT>::gen_trg2(FP_NR<mpfr_t> *w)
 
 template<class ZT> int ZZ_mat<ZT>::getShift()
 {
-  int n = getCols();
+  int n = get_cols();
   int shift=0;
-  for (int i = 0; i < getRows(); i++) {
+  for (int i = 0; i < get_rows(); i++) {
     int j;
     for (j = n - 1; j >= 0 && matrix[i][j].sgn() == 0; j--) {}
     if (shift < j - i) shift = j - i;

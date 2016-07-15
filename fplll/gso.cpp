@@ -22,25 +22,25 @@
 FPLLL_BEGIN_NAMESPACE
 
 template<class ZT, class FT>
-inline void MatGSO<ZT, FT>::invalidateGSORow(int i, int newValidCols) {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < nKnownRows
-                    && newValidCols >= 0 && newValidCols <= i + 1);
-  gsoValidCols[i] = min(gsoValidCols[i], newValidCols);
+inline void MatGSO<ZT, FT>::invalidate_gso_row(int i, int new_valid_cols) {
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows
+                    && new_valid_cols >= 0 && new_valid_cols <= i + 1);
+  gso_valid_cols[i] = min(gso_valid_cols[i], new_valid_cols);
 }
 
 template<class ZT, class FT>
-void MatGSO<ZT, FT>::updateBF(int i) {
-  int n = max(nKnownCols, initRowSize[i]);
-  if (enableRowExpo) {
+void MatGSO<ZT, FT>::update_bf(int i) {
+  int n = max(n_known_cols, init_row_size[i]);
+  if (enable_row_expo) {
     long maxExpo = LONG_MIN;
     for (int j = 0; j < n; j++) {
-      b(i, j).get_f_exp(bf(i, j), tmpColExpo[j]);
-      maxExpo = max(maxExpo, tmpColExpo[j]);
+      b(i, j).get_f_exp(bf(i, j), tmp_col_expo[j]);
+      maxExpo = max(maxExpo, tmp_col_expo[j]);
     }
     for (int j = 0; j < n; j++) {
-      bf(i, j).mul_2si(bf(i, j), tmpColExpo[j] - maxExpo);
+      bf(i, j).mul_2si(bf(i, j), tmp_col_expo[j] - maxExpo);
     }
-    rowExpo[i] = maxExpo;
+    row_expo[i] = maxExpo;
   }
   else {
     for (int j = 0; j < n; j++) {
@@ -50,65 +50,65 @@ void MatGSO<ZT, FT>::updateBF(int i) {
 }
 
 template<class ZT, class FT>
-void MatGSO<ZT, FT>::invalidateGramRow(int i) {
+void MatGSO<ZT, FT>::invalidate_gram_row(int i) {
   for (int j = 0; j <= i; j++)
     gf(i, j).set_nan();
 }
 
 template<class ZT, class FT>
-void MatGSO<ZT, FT>::rowOpEnd(int first, int last) {
+void MatGSO<ZT, FT>::row_op_end(int first, int last) {
 #ifdef DEBUG
-  FPLLL_DEBUG_CHECK(rowOpFirst == first && rowOpLast == last);
-  rowOpFirst = rowOpLast = -1;
+  FPLLL_DEBUG_CHECK(row_op_first == first && row_op_last == last);
+  row_op_first = row_op_last = -1;
 #endif
   for (int i = first; i < last; i++) {
-    if (!enableIntGram) {
-      updateBF(i);
-      invalidateGramRow(i);
-      for (int j = i + 1; j < nKnownRows; j++)
+    if (!enable_int_gram) {
+      update_bf(i);
+      invalidate_gram_row(i);
+      for (int j = i + 1; j < n_known_rows; j++)
         gf(j, i).set_nan();
     }
-    invalidateGSORow(i, 0);
+    invalidate_gso_row(i, 0);
   }
-  for (int i = last; i < nKnownRows; i++) {
-    invalidateGSORow(i, first);
+  for (int i = last; i < n_known_rows; i++) {
+    invalidate_gso_row(i, first);
   }
 }
 
 template<class ZT, class FT>
-void MatGSO<ZT, FT>::discoverRow() {
-  FPLLL_DEBUG_CHECK(nKnownRows < d);
-  /* Early reduction (colsLocked=true) is not allowed when enableIntGram=true,
-     since nKnownCols might be too small to compute all the g(i,j). */
-  FPLLL_DEBUG_CHECK(!(colsLocked && enableIntGram));
-  int i = nKnownRows;
+void MatGSO<ZT, FT>::discover_row() {
+  FPLLL_DEBUG_CHECK(n_known_rows < d);
+  /* Early reduction (cols_locked=true) is not allowed when enable_int_gram=true,
+     since n_known_cols might be too small to compute all the g(i,j). */
+  FPLLL_DEBUG_CHECK(!(cols_locked && enable_int_gram));
+  int i = n_known_rows;
 
-  nKnownRows++;
-  if (!colsLocked) {
-    nSourceRows = nKnownRows;
-    nKnownCols = max(nKnownCols, initRowSize[i]);
+  n_known_rows++;
+  if (!cols_locked) {
+    n_source_rows = n_known_rows;
+    n_known_cols = max(n_known_cols, init_row_size[i]);
   }
-  if (enableIntGram) {
+  if (enable_int_gram) {
     for (int j = 0; j <= i; j++)
-      dotProduct(g(i, j), b[i], b[j], nKnownCols);
+      dotProduct(g(i, j), b[i], b[j], n_known_cols);
   }
   else {
-    invalidateGramRow(i);
+    invalidate_gram_row(i);
   }
-  gsoValidCols[i] = 0;
+  gso_valid_cols[i] = 0;
 }
 
 template<class ZT, class FT>
-inline ZT MatGSO<ZT, FT>::getMaxGram() {
+inline ZT MatGSO<ZT, FT>::get_max_gram() {
   ZT tmp;
-  if (enableIntGram) {
+  if (enable_int_gram) {
     tmp = g(0,0);
-    for (int i = 0; i < nKnownRows; i ++)
+    for (int i = 0; i < n_known_rows; i ++)
       tmp = tmp.maxZ(g(i,i));
   }
   else{
     FT tmp1 = gf(0,0);
-    for (int i = 0; i < nKnownRows; i ++)
+    for (int i = 0; i < n_known_rows; i ++)
       tmp1 = tmp1.maxF(gf(i,i));
     tmp.set_f(tmp1);
   }
@@ -117,40 +117,40 @@ inline ZT MatGSO<ZT, FT>::getMaxGram() {
 
 
 template<class ZT, class FT>
-  inline FT MatGSO<ZT, FT>::getMaxBstar() {
+  inline FT MatGSO<ZT, FT>::get_max_bstar() {
   FT tmp;
   tmp = r(0,0);
-  for (int i = 0; i < nKnownRows; i ++)
+  for (int i = 0; i < n_known_rows; i ++)
     tmp = tmp.maxF(r(i,i));
   return tmp;
 }
 
 template<class ZT, class FT>
-long MatGSO<ZT, FT>::getMaxMuExp(int i, int nColumns) {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < nKnownRows && gsoValidCols[i] >= nColumns);
+long MatGSO<ZT, FT>::get_max_mu_exp(int i, int n_columns) {
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && gso_valid_cols[i] >= n_columns);
   long maxExpo = LONG_MIN, expo;
-  for (int j = 0; j < nColumns; j++) {
-    long expo2 = getMuExp(i, j, expo).exponent();
+  for (int j = 0; j < n_columns; j++) {
+    long expo2 = get_mu_exp(i, j, expo).exponent();
     maxExpo = max(maxExpo, expo + expo2);
   }
   return maxExpo;
 }
 
 template<class ZT, class FT>
-bool MatGSO<ZT, FT>::updateGSORow(int i, int lastJ) {
-  //FPLLL_TRACE_IN("Updating GSO up to (" << i << ", " << lastJ << ")");
-  //FPLLL_TRACE("nKnownRows=" << nKnownRows << " nSourceRows=" << nSourceRows);
-  if (i >= nKnownRows) {
-    discoverRow();
+bool MatGSO<ZT, FT>::update_gso_row(int i, int last_j) {
+  //FPLLL_TRACE_IN("Updating GSO up to (" << i << ", " << last_j << ")");
+  //FPLLL_TRACE("n_known_rows=" << n_known_rows << " n_source_rows=" << n_source_rows);
+  if (i >= n_known_rows) {
+    discover_row();
   }
-  FPLLL_DEBUG_CHECK(i >= 0 && i < nKnownRows
-                    && lastJ >= 0 && lastJ < nSourceRows);
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows
+                    && last_j >= 0 && last_j < n_source_rows);
 
-  int j = max(0, gsoValidCols[i]);
+  int j = max(0, gso_valid_cols[i]);
 
-  for (; j <= lastJ; j++) {
-    getGram(ftmp1, i, j);
-    FPLLL_DEBUG_CHECK(j == i || gsoValidCols[j] >= j);
+  for (; j <= last_j; j++) {
+    get_gram(ftmp1, i, j);
+    FPLLL_DEBUG_CHECK(j == i || gso_valid_cols[j] >= j);
     for (int k = 0; k < j; k++) {
       ftmp2.mul(mu(j, k), r(i, k));
       ftmp1.sub(ftmp1, ftmp2);
@@ -162,7 +162,7 @@ bool MatGSO<ZT, FT>::updateGSORow(int i, int lastJ) {
     }
   }
 
-  gsoValidCols[i] = j; // = max(0, gsoValidCols[i], lastJ + 1)
+  gso_valid_cols[i] = j; // = max(0, gso_valid_cols[i], last_j + 1)
   //FPLLL_TRACE_OUT("End of GSO update");
   return true;
 }
@@ -170,56 +170,56 @@ bool MatGSO<ZT, FT>::updateGSORow(int i, int lastJ) {
 
 template<class ZT, class FT>
 void MatGSO<ZT, FT>::row_add(int i, int j) {
-  b[i].add(b[j], nKnownCols);
-  if (enableTransform) {
+  b[i].add(b[j], n_known_cols);
+  if (enable_transform) {
     u[i].add(u[j]);
-    if (enableInvTransform)
-      uInvT[j].sub(uInvT[i]);
+    if (enable_inverse_transform)
+      u_inv_t[j].sub(u_inv_t[i]);
   }
 
-  if (enableIntGram) {
+  if (enable_int_gram) {
     // g(i, i) += 2 * g(i, j) + g(j, j)
     ztmp1.mul_2si(g(i, j), 1);
     ztmp1.add(ztmp1, g(j, j));
     g(i, i).add(g(i, i), ztmp1);
 
-    for (int k = 0; k < nKnownRows; k++)
+    for (int k = 0; k < n_known_rows; k++)
       if (k != i)
-        symG(i, k).add(symG(i, k), symG(j, k));
+        sym_g(i, k).add(sym_g(i, k), sym_g(j, k));
   }
 }
 
 template<class ZT, class FT>
 void MatGSO<ZT, FT>::row_sub(int i, int j) {
-  b[i].sub(b[j], nKnownCols);
-  if (enableTransform) {
+  b[i].sub(b[j], n_known_cols);
+  if (enable_transform) {
     u[i].sub(u[j]);
-    if (enableInvTransform)
-      uInvT[j].add(uInvT[i]);
+    if (enable_inverse_transform)
+      u_inv_t[j].add(u_inv_t[i]);
   }
 
-  if (enableIntGram) {
+  if (enable_int_gram) {
     // g(i, i) += g(j, j) - 2 * g(i, j)
     ztmp1.mul_2si(g(i, j), 1);
     ztmp1.sub(g(j, j), ztmp1);
     g(i, i).add(g(i, i), ztmp1);
 
-    for (int k = 0; k < nKnownRows; k++)
+    for (int k = 0; k < n_known_rows; k++)
       if (k != i)
-        symG(i, k).sub(symG(i, k), symG(j, k));
+        sym_g(i, k).sub(sym_g(i, k), sym_g(j, k));
   }
 }
 
 template<class ZT, class FT>
 void MatGSO<ZT, FT>::row_addmul_si(int i, int j, long x) {
-  b[i].addmul_si(b[j], x, nKnownCols);
-  if (enableTransform) {
+  b[i].addmul_si(b[j], x, n_known_cols);
+  if (enable_transform) {
     u[i].addmul_si(u[j], x);
-    if (enableInvTransform)
-      uInvT[j].addmul_si(uInvT[i], -x);
+    if (enable_inverse_transform)
+      u_inv_t[j].addmul_si(u_inv_t[i], -x);
   }
 
-  if (enableIntGram) {
+  if (enable_int_gram) {
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
       (must be done before updating g(i, j)) */
     ztmp1.mul_si(g(i, j), x);
@@ -230,10 +230,10 @@ void MatGSO<ZT, FT>::row_addmul_si(int i, int j, long x) {
     g(i, i).add(g(i, i), ztmp1);
 
     // g(i, k) += g(j, k) * (2^e * x) for k != i
-    for (int k = 0; k < nKnownRows; k++) {
+    for (int k = 0; k < n_known_rows; k++) {
       if (k == i) continue;
-      ztmp1.mul_si(symG(j, k), x);
-      symG(i, k).add(symG(i, k), ztmp1);
+      ztmp1.mul_si(sym_g(j, k), x);
+      sym_g(i, k).add(sym_g(i, k), ztmp1);
     }
   }
 }
@@ -241,14 +241,14 @@ void MatGSO<ZT, FT>::row_addmul_si(int i, int j, long x) {
 template<class ZT, class FT>
 void MatGSO<ZT, FT>::row_addmul_si_2exp(int i, int j,
         long x, long expo) {
-  b[i].addmul_si_2exp(b[j], x, expo, nKnownCols, ztmp1);
-  if (enableTransform) {
+  b[i].addmul_si_2exp(b[j], x, expo, n_known_cols, ztmp1);
+  if (enable_transform) {
     u[i].addmul_si_2exp(u[j], x, expo, ztmp1);
-    if (enableInvTransform)
-      uInvT[j].addmul_si_2exp(uInvT[i], -x, expo, ztmp1);
+    if (enable_inverse_transform)
+      u_inv_t[j].addmul_si_2exp(u_inv_t[i], -x, expo, ztmp1);
   }
 
-  if (enableIntGram) {
+  if (enable_int_gram) {
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
       (must be done before updating g(i, j)) */
     ztmp1.mul_si(g(i, j), x);
@@ -260,28 +260,28 @@ void MatGSO<ZT, FT>::row_addmul_si_2exp(int i, int j,
     g(i, i).add(g(i, i), ztmp1);
 
     // g(i, k) += g(j, k) * (2^e * x) for k != i
-    for (int k = 0; k < nKnownRows; k++) {
+    for (int k = 0; k < n_known_rows; k++) {
       if (k == i) continue;
-      ztmp1.mul_si(symG(j, k), x);
+      ztmp1.mul_si(sym_g(j, k), x);
       ztmp1.mul_2si(ztmp1, expo);
-      symG(i, k).add(symG(i, k), ztmp1);
+      sym_g(i, k).add(sym_g(i, k), ztmp1);
     }
   }
 }
 
 template<class ZT, class FT>
 void MatGSO<ZT, FT>::row_addmul_2exp(int i, int j, const ZT& x, long expo) {
-  b[i].addmul_2exp(b[j], x, expo, nKnownCols, ztmp1);
-  if (enableTransform) {
+  b[i].addmul_2exp(b[j], x, expo, n_known_cols, ztmp1);
+  if (enable_transform) {
     u[i].addmul_2exp(u[j], x, expo, ztmp1);
-    if (enableInvTransform) {
+    if (enable_inverse_transform) {
       ZT minusX;
       minusX.neg(x);
-      uInvT[j].addmul_2exp(uInvT[i], minusX, expo, ztmp1);
+      u_inv_t[j].addmul_2exp(u_inv_t[i], minusX, expo, ztmp1);
     }
   }
 
-  if (enableIntGram) {
+  if (enable_int_gram) {
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
       (must be done before updating g(i, j)) */
     ztmp1.mul(g(i, j), x);
@@ -293,20 +293,20 @@ void MatGSO<ZT, FT>::row_addmul_2exp(int i, int j, const ZT& x, long expo) {
     g(i, i).add(g(i, i), ztmp1);
 
     // g(i, k) += g(j, k) * (2^e * x) for k != i
-    for (int k = 0; k < nKnownRows; k++) {
+    for (int k = 0; k < n_known_rows; k++) {
       if (k == i) continue;
-      ztmp1.mul(symG(j, k), x);
+      ztmp1.mul(sym_g(j, k), x);
       ztmp1.mul_2si(ztmp1, expo);
-      symG(i, k).add(symG(i, k), ztmp1);
+      sym_g(i, k).add(sym_g(i, k), ztmp1);
     }
   }
 }
 
 template<class ZT, class FT>
-void MatGSO<ZT, FT>::row_addmul_we(int i, int j, const FT& x, long expoAdd) {
-  FPLLL_DEBUG_CHECK(j >= 0 && /*i > j &&*/ i < nKnownRows && j < nSourceRows);
+void MatGSO<ZT, FT>::row_addmul_we(int i, int j, const FT& x, long expo_add) {
+  FPLLL_DEBUG_CHECK(j >= 0 && /*i > j &&*/ i < n_known_rows && j < n_source_rows);
   long expo;
-  long lx = x.get_si_exp_we(expo, expoAdd);
+  long lx = x.get_si_exp_we(expo, expo_add);
 
   if (expo == 0) {
     if (lx == 1)
@@ -316,155 +316,155 @@ void MatGSO<ZT, FT>::row_addmul_we(int i, int j, const FT& x, long expoAdd) {
     else if (lx != 0)
       row_addmul_si(i, j, lx);
   }
-  else if (rowOpForceLong) {
+  else if (row_op_force_long) {
     row_addmul_si_2exp(i, j, lx, expo);
   }
   else {
-    x.get_z_exp_we(ztmp2, expo, expoAdd);
+    x.get_z_exp_we(ztmp2, expo, expo_add);
     row_addmul_2exp(i, j, ztmp2, expo);
   }
 }
 
 template<class ZT, class FT>
-void MatGSO<ZT, FT>::rowSwap(int i, int j) {
-  FPLLL_DEBUG_CHECK(!enableInvTransform);
+void MatGSO<ZT, FT>::row_swap(int i, int j) {
+  FPLLL_DEBUG_CHECK(!enable_inverse_transform);
   b.swapRows(i, j);
-  if (enableTransform) {
+  if (enable_transform) {
     u.swapRows(i, j);
   }
 
-  if (enableIntGram) {
+  if (enable_int_gram) {
     for (int k = 0; k < i; k++)
       g(i, k).swap(g(j, k));
     for (int k = i + 1; k < j; k++)
       g(k, i).swap(g(j, k));
-    for (int k = j + 1; k < nKnownRows; k++)
+    for (int k = j + 1; k < n_known_rows; k++)
       g(k, i).swap(g(k, j));
     g(i, i).swap(g(j, j));
   }
 }
 
 template<class ZT, class FT>
-void MatGSO<ZT, FT>::moveRow(int oldR, int newR) {
-  FPLLL_DEBUG_CHECK(!colsLocked);
-  if (newR < oldR) {
-    FPLLL_DEBUG_CHECK(oldR < nKnownRows && !colsLocked);
-    for (int i = newR; i < nKnownRows; i++) {
-      invalidateGSORow(i, newR);
+void MatGSO<ZT, FT>::move_row(int old_r, int new_r) {
+  FPLLL_DEBUG_CHECK(!cols_locked);
+  if (new_r < old_r) {
+    FPLLL_DEBUG_CHECK(old_r < n_known_rows && !cols_locked);
+    for (int i = new_r; i < n_known_rows; i++) {
+      invalidate_gso_row(i, new_r);
     }
-    rotate(gsoValidCols.begin() + newR, gsoValidCols.begin() + oldR,
-           gsoValidCols.begin() + oldR + 1);
-    mu.rotateRight(newR, oldR);
-    r.rotateRight(newR, oldR);
-    b.rotateRight(newR, oldR);
-    if (enableTransform) {
-      u.rotateRight(newR, oldR);
-      if (enableInvTransform)
-        uInvT.rotateRight(newR, oldR);
+    rotate(gso_valid_cols.begin() + new_r, gso_valid_cols.begin() + old_r,
+           gso_valid_cols.begin() + old_r + 1);
+    mu.rotateRight(new_r, old_r);
+    r.rotateRight(new_r, old_r);
+    b.rotateRight(new_r, old_r);
+    if (enable_transform) {
+      u.rotateRight(new_r, old_r);
+      if (enable_inverse_transform)
+        u_inv_t.rotateRight(new_r, old_r);
     }
-    if (enableIntGram)
-      g.rotateGramRight(newR, oldR, nKnownRows);
+    if (enable_int_gram)
+      g.rotateGramRight(new_r, old_r, n_known_rows);
     else {
-      gf.rotateGramRight(newR, oldR, nKnownRows);
-      bf.rotateRight(newR, oldR);
+      gf.rotateGramRight(new_r, old_r, n_known_rows);
+      bf.rotateRight(new_r, old_r);
     }
-    if (enableRowExpo)
-      rotate(rowExpo.begin() + newR, rowExpo.begin() + oldR,
-             rowExpo.begin() + oldR + 1);
+    if (enable_row_expo)
+      rotate(row_expo.begin() + new_r, row_expo.begin() + old_r,
+             row_expo.begin() + old_r + 1);
   }
-  else if (newR > oldR) {
-    for (int i = oldR; i < nKnownRows; i++) {
-      invalidateGSORow(i, oldR);
+  else if (new_r > old_r) {
+    for (int i = old_r; i < n_known_rows; i++) {
+      invalidate_gso_row(i, old_r);
     }
-    rotate(gsoValidCols.begin() + oldR, gsoValidCols.begin() + oldR + 1,
-           gsoValidCols.begin() + newR + 1);
-    mu.rotateLeft(oldR, newR);
-    r.rotateLeft(oldR, newR);
-    b.rotateLeft(oldR, newR);
-    if (enableTransform) {
-      u.rotateLeft(oldR, newR);
-      if (enableInvTransform)
-        uInvT.rotateLeft(oldR, newR);
+    rotate(gso_valid_cols.begin() + old_r, gso_valid_cols.begin() + old_r + 1,
+           gso_valid_cols.begin() + new_r + 1);
+    mu.rotateLeft(old_r, new_r);
+    r.rotateLeft(old_r, new_r);
+    b.rotateLeft(old_r, new_r);
+    if (enable_transform) {
+      u.rotateLeft(old_r, new_r);
+      if (enable_inverse_transform)
+        u_inv_t.rotateLeft(old_r, new_r);
     }
-    if (enableIntGram) {
-      if (oldR < nKnownRows - 1)
-        g.rotateGramLeft(oldR, min(newR, nKnownRows - 1), nKnownRows);
+    if (enable_int_gram) {
+      if (old_r < n_known_rows - 1)
+        g.rotateGramLeft(old_r, min(new_r, n_known_rows - 1), n_known_rows);
     }
     else {
-      if (oldR < nKnownRows - 1)
-        gf.rotateGramLeft(oldR, min(newR, nKnownRows - 1), nKnownRows);
-      bf.rotateLeft(oldR, newR);
+      if (old_r < n_known_rows - 1)
+        gf.rotateGramLeft(old_r, min(new_r, n_known_rows - 1), n_known_rows);
+      bf.rotateLeft(old_r, new_r);
     }
-    if (enableRowExpo)
-      rotate(rowExpo.begin() + oldR, rowExpo.begin() + oldR + 1,
-             rowExpo.begin() + newR + 1);
-    if (newR >= nKnownRows) {
-      rotate(initRowSize.begin() + oldR, initRowSize.begin() + oldR + 1,
-             initRowSize.begin() + newR + 1);
-      if (oldR < nKnownRows) {
-        nKnownRows--;
-        nSourceRows = nKnownRows;
-        initRowSize[newR] = max(b[newR].sizeNZ(), 1);
+    if (enable_row_expo)
+      rotate(row_expo.begin() + old_r, row_expo.begin() + old_r + 1,
+             row_expo.begin() + new_r + 1);
+    if (new_r >= n_known_rows) {
+      rotate(init_row_size.begin() + old_r, init_row_size.begin() + old_r + 1,
+             init_row_size.begin() + new_r + 1);
+      if (old_r < n_known_rows) {
+        n_known_rows--;
+        n_source_rows = n_known_rows;
+        init_row_size[new_r] = max(b[new_r].sizeNZ(), 1);
       }
     }
   }
 }
 
 template<class ZT, class FT>
-void MatGSO<ZT, FT>::lockCols() {
-  colsLocked = true;
+void MatGSO<ZT, FT>::lock_cols() {
+  cols_locked = true;
 }
 
 template<class ZT, class FT>
-void MatGSO<ZT, FT>::unlockCols() {
-  nKnownRows = nSourceRows;
-  colsLocked = false;
+void MatGSO<ZT, FT>::unlock_cols() {
+  n_known_rows = n_source_rows;
+  cols_locked = false;
 }
 
 template<class ZT, class FT>
-void MatGSO<ZT, FT>::applyTransform(const Matrix<FT>& transform, int srcBase, int targetBase) {
-  int targetSize = transform.getRows(), srcSize = transform.getCols();
+void MatGSO<ZT, FT>::apply_transform(const Matrix<FT>& transform, int src_base, int target_base) {
+  int targetSize = transform.get_rows(), srcSize = transform.get_cols();
   int oldD = d;
-  createRows(targetSize);
+  create_rows(targetSize);
   for (int i = 0; i < targetSize; i++) {
     for (int j = 0; j < srcSize; j++) {
-      row_addmul(oldD + i, srcBase + j, transform(i, j));
+      row_addmul(oldD + i, src_base + j, transform(i, j));
     }
   }
-  rowOpBegin(targetBase, targetBase + targetSize);
+  row_op_begin(target_base, target_base + targetSize);
   for (int i = 0; i < targetSize; i++) {
-    rowSwap(targetBase + i, oldD + i);
+    row_swap(target_base + i, oldD + i);
   }
-  rowOpEnd(targetBase, targetBase + targetSize);
-  removeLastRows(targetSize);
+  row_op_end(target_base, target_base + targetSize);
+  remove_last_rows(targetSize);
 }
 
 template<class ZT, class FT>
-void MatGSO<ZT, FT>::sizeIncreased() {
-  int oldD = mu.getRows();
+void MatGSO<ZT, FT>::size_increased() {
+  int oldD = mu.get_rows();
 
-  if (d > allocDim) {
-    if (enableIntGram)
+  if (d > alloc_dim) {
+    if (enable_int_gram)
       g.resize(d, d);
     else {
-      bf.resize(d, b.getCols());
+      bf.resize(d, b.get_cols());
       gf.resize(d, d);
     }
     mu.resize(d, d);
     r.resize(d, d);
-    gsoValidCols.resize(d);
-    initRowSize.resize(d);
-    if (enableRowExpo) {
-      rowExpo.resize(d);
+    gso_valid_cols.resize(d);
+    init_row_size.resize(d);
+    if (enable_row_expo) {
+      row_expo.resize(d);
     }
-    allocDim = d;
+    alloc_dim = d;
   }
 
   for (int i = oldD; i < d; i++) {
-    initRowSize[i] = max(b[i].sizeNZ(), 1);
-    if (!enableIntGram) {
-      bf[i].fill(0); // updateBF might not copy all the zeros of b[i]
-      updateBF(i);
+    init_row_size[i] = max(b[i].sizeNZ(), 1);
+    if (!enable_int_gram) {
+      bf[i].fill(0); // update_bf might not copy all the zeros of b[i]
+      update_bf(i);
     }
   }
 }
@@ -478,8 +478,8 @@ double MatGSO<ZT, FT>::get_current_slope(int start_row, int stop_row)
   x.resize(stop_row);
   for (int i = start_row; i < stop_row; i++)
   {
-    updateGSORow(i);
-    f = getRExp(i, i, expo);
+    update_gso_row(i);
+    f = get_r_exp(i, i, expo);
     log_F.log(f, GMP_RNDU);
     x[i] = log_F.get_d() + expo * std::log(2.0);
   }
@@ -519,7 +519,7 @@ FT MatGSO<ZT, FT>::get_log_det(int start_row, int end_row)
   FT h;
   for(int i = start_row; i < end_row; ++i)
   {
-    getR(h,i,i);
+    get_r(h,i,i);
     log_det += log(h);
   }
   return log_det;

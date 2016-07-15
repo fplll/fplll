@@ -31,11 +31,11 @@ LLLReduction<ZT, FT>::LLLReduction(MatGSO<ZT, FT>& m,
         double delta, double eta, int flags) :
   status(RED_SUCCESS), lastEarlyRed(0), m(m)
 {
-  /* No early reduction in proved mode (i.e. enableIntGram=true).
+  /* No early reduction in proved mode (i.e. enable_int_gram=true).
      NOTE: To make this possible, the hypothesis "g(i, j) is valid if
-     0 <= i < nKnownRows and j <= i" in gso.h should be changed and
-     MatGSO<ZT, FT>::discoverRow() should be rewritten. */
-  enableEarlyRed = (flags & LLL_EARLY_RED) && !m.enableIntGram;
+     0 <= i < n_known_rows and j <= i" in gso.h should be changed and
+     MatGSO<ZT, FT>::discover_row() should be rewritten. */
+  enableEarlyRed = (flags & LLL_EARLY_RED) && !m.enable_int_gram;
   siegel = flags & LLL_SIEGEL;
   verbose = flags & LLL_VERBOSE;
   this->delta = delta;
@@ -64,11 +64,11 @@ bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
   extendVect(babaiExpo, kappaEnd);
 
   for (; zeros < d && m.b[0].is_zero(); zeros++) {
-    m.moveRow(kappaMin, kappaEnd - 1 - zeros);
+    m.move_row(kappaMin, kappaEnd - 1 - zeros);
   }
 
   if (zeros < d && ((kappaStart > 0 && !babai(kappaStart, kappaStart))
-                    || !m.updateGSORow(kappaStart))) {
+                    || !m.update_gso_row(kappaStart))) {
     finalKappa = kappaStart;
     return false;
   }
@@ -100,14 +100,14 @@ bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
 
 
     // Tests Lovasz's condition
-    m.getGram(lovaszTests[0], kappa, kappa);
+    m.get_gram(lovaszTests[0], kappa, kappa);
     for (int i = 1; i <= kappa; i++) {
-      ftmp1.mul(m.getMuExp(kappa, i - 1), m.getRExp(kappa, i - 1));
+      ftmp1.mul(m.get_mu_exp(kappa, i - 1), m.get_r_exp(kappa, i - 1));
       lovaszTests[i].sub(lovaszTests[i - 1], ftmp1);
     }
-    ftmp1.mul(m.getRExp(kappa - 1, kappa - 1), swapThreshold);
-    if (m.enableRowExpo) {
-      ftmp1.mul_2si(ftmp1, 2 * (m.rowExpo[kappa - 1] - m.rowExpo[kappa]));
+    ftmp1.mul(m.get_r_exp(kappa - 1, kappa - 1), swapThreshold);
+    if (m.enable_row_expo) {
+      ftmp1.mul_2si(ftmp1, 2 * (m.row_expo[kappa - 1] - m.row_expo[kappa]));
     }
 
     if (ftmp1 > lovaszTests[siegel ? kappa : kappa - 1]) {
@@ -115,26 +115,26 @@ bool LLLReduction<ZT, FT>::lll(int kappaMin, int kappaStart, int kappaEnd) {
       // Failure, computes the insertion index
       int oldK = kappa;
       for (kappa--; kappa > kappaStart; kappa--) {
-        ftmp1.mul(m.getRExp(kappa - 1, kappa - 1), swapThreshold);
-        if (m.enableRowExpo) {
-          ftmp1.mul_2si(ftmp1, 2 * (m.rowExpo[kappa - 1] - m.rowExpo[oldK]));
+        ftmp1.mul(m.get_r_exp(kappa - 1, kappa - 1), swapThreshold);
+        if (m.enable_row_expo) {
+          ftmp1.mul_2si(ftmp1, 2 * (m.row_expo[kappa - 1] - m.row_expo[oldK]));
         }
         if (ftmp1 < lovaszTests[siegel ? kappa : kappa - 1]) break;
       }
       //FPLLL_TRACE("Lovasz's condition is not satisfied, kappa=" << kappa << " old_kappa=" << oldK);
       // Moves the vector
       if (lovaszTests[kappa] > 0) {
-        m.moveRow(oldK, kappa);
+        m.move_row(oldK, kappa);
       }
       else {
         zeros++;
-        m.moveRow(oldK, kappaEnd - zeros);
+        m.move_row(oldK, kappaEnd - zeros);
         kappa = oldK;
         continue;
       }
     }
 
-    m.setR(kappa, kappa, lovaszTests[kappa]);
+    m.set_r(kappa, kappa, lovaszTests[kappa]);
     kappa++;
   }
 
@@ -150,19 +150,19 @@ bool LLLReduction<ZT, FT>::babai(int kappa, int nCols) {
   long maxExpo = LONG_MAX;
 
   for (int iter = 0;; iter++) {
-    if (!m.updateGSORow(kappa, nCols - 1))
+    if (!m.update_gso_row(kappa, nCols - 1))
       return setStatus(RED_GSO_FAILURE);
 
     bool loopNeeded = false;
     for (int j = nCols - 1; j >= 0 && !loopNeeded; j--) {
-      m.getMu(ftmp1, kappa, j);
+      m.get_mu(ftmp1, kappa, j);
       ftmp1.abs(ftmp1);
       if (ftmp1 > eta) loopNeeded = true;
     }
     if (!loopNeeded) break;
 
     if (iter >= 2) {
-      long newMaxExpo = m.getMaxMuExp(kappa, nCols);
+      long newMaxExpo = m.get_max_mu_exp(kappa, nCols);
       if (newMaxExpo > maxExpo - SIZE_RED_FAILURE_THRESH) {
         return setStatus(RED_BABAI_FAILURE);
       }
@@ -170,17 +170,17 @@ bool LLLReduction<ZT, FT>::babai(int kappa, int nCols) {
     }
 
     for (int j = 0; j < nCols; j++) {
-      babaiMu[j] = m.getMuExp(kappa, j, babaiExpo[j]);
+      babaiMu[j] = m.get_mu_exp(kappa, j, babaiExpo[j]);
     }
-    m.rowOpBegin(kappa, kappa + 1);
+    m.row_op_begin(kappa, kappa + 1);
     for (int j = nCols - 1; j >= 0; j--) {
       muMant.rnd_we(babaiMu[j], babaiExpo[j]);
       if (muMant.zero_p()) continue;
       // Approximative update of the mu_(kappa,k)'s
       for (int k = 0; k < j; k++) {
-        ftmp1.mul(muMant, m.getMuExp(j, k));
-        /* When enableRowExpo=true, the following line relies on the fact that
-           getMuExp(a, b, expo) returns expo = rowExpo[a] - rowExpo[b]. */
+        ftmp1.mul(muMant, m.get_mu_exp(j, k));
+        /* When enable_row_expo=true, the following line relies on the fact that
+           get_mu_exp(a, b, expo) returns expo = row_expo[a] - row_expo[b]. */
         babaiMu[k].sub(babaiMu[k], ftmp1);
       }
       // Operation on the basis
@@ -188,7 +188,7 @@ bool LLLReduction<ZT, FT>::babai(int kappa, int nCols) {
       muMant.neg(muMant);
       m.row_addmul_we(kappa, j, muMant, babaiExpo[j]);
     }
-    m.rowOpEnd(kappa, kappa + 1);
+    m.row_op_end(kappa, kappa + 1);
   }
   return true;
 }
@@ -199,24 +199,24 @@ bool isLLLReduced(MatGSO<ZT, FT>& m, double delta, double eta) {
   FT ftmp2;
   FT delta_;
   delta_.set(delta);
-  m.updateGSO();
+  m.update_gso();
   for(int i=0; i<m.d; i++) {
     for(int j=0; j<i; j++) {
-      m.getMu(ftmp1, i, j);
+      m.get_mu(ftmp1, i, j);
       ftmp1.abs(ftmp1);
       if (ftmp1 > eta)
         return false;
     }
   }
   for(int i=1; i<m.d; i++) {
-    m.getMu(ftmp2, i, i-1);
+    m.get_mu(ftmp2, i, i-1);
     ftmp2.mul(ftmp2, ftmp2); // μ^2
 
     ftmp2.sub(delta_, ftmp2); // δ - μ^2
-    m.getR(ftmp1, i-1, i-1);
+    m.get_r(ftmp1, i-1, i-1);
     ftmp2.mul(ftmp1, ftmp2); // (δ - μ^2) ⋅ r_{i-1,i-1}
 
-    m.getR(ftmp1, i, i);  // r_{i,i}
+    m.get_r(ftmp1, i, i);  // r_{i,i}
 
     if (ftmp1 < ftmp2)
       return false;

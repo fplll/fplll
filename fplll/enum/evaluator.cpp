@@ -270,7 +270,7 @@ bool ExactEvaluator::getMaxError(Float& maxError) {
 void ExactEvaluator::evalSol(const FloatVect& newSolCoord,
         const enumf& newPartialDist, enumf& maxDist) 
 {
-  int n = matrix.getCols();
+  int n = matrix.get_cols();
   Integer newSolDist, coord;
   IntVect newSol;
 
@@ -327,7 +327,7 @@ void ExactEvaluator::evalSubSol(int offset, const FloatVect& newSubSolCoord,
   minusone = -1;
   sub_solintDist.resize( sub_solCoord.size(), minusone);
 
-  int n = matrix.getCols();
+  int n = matrix.get_cols();
   Integer newSolDist, coord;
   IntVect newSol;
 

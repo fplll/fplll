@@ -38,7 +38,7 @@ static inline int cputime() {
    x.size() must be equal to m.GetNumRows()) */
 template<class ZT>
 void vectMatrixProduct(vector<ZT>& result, const vector<ZT>& x, const Matrix<ZT>& m) {
-  int nRows = m.getRows(), nCols = m.getCols();
+  int nRows = m.get_rows(), nCols = m.get_cols();
   genZeroVect(result, nCols);
   for (int i = 0; i < nRows; i++)
     for (int j = 0; j < nCols; j++)
@@ -49,7 +49,7 @@ void vectMatrixProduct(vector<ZT>& result, const vector<ZT>& x, const Matrix<ZT>
    x.size() must be equal to m.GetNumRows()) */
 template<class ZT>
 void vectMatrixProduct(NumVect<ZT>& result, const NumVect<ZT>& x, const Matrix<ZT>& m) {
-  int nRows = m.getRows(), nCols = m.getCols();
+  int nRows = m.get_rows(), nCols = m.get_cols();
   result.gen_zero(nCols);
   for (int i = 0; i < nRows; i++)
     for (int j = 0; j < nCols; j++)

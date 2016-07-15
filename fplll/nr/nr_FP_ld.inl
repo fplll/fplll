@@ -61,12 +61,12 @@ inline long FP_NR<long double>::exponent() const {
 }
 
 template<>
-inline long FP_NR<long double>::get_si_exp_we(long& expo, long expoAdd) const {
+inline long FP_NR<long double>::get_si_exp_we(long& expo, long expo_add) const {
   if (data == 0.0)
     expo = 0;
   else
-    expo = max(exponent() + expoAdd - numeric_limits<long>::digits, 0L);
-  return static_cast<long>(ldexpl(data, expoAdd - expo));
+    expo = max(exponent() + expo_add - numeric_limits<long>::digits, 0L);
+  return static_cast<long>(ldexpl(data, expo_add - expo));
 }
 
 template<>
@@ -251,12 +251,12 @@ inline void FP_NR<long double>::rnd(const FP_NR<long double>& b) {
 }
 
 template<>
-inline void FP_NR<long double>::rnd_we(const FP_NR<long double>& b, long expoAdd) {
+inline void FP_NR<long double>::rnd_we(const FP_NR<long double>& b, long expo_add) {
   // If data == 0.0, exponent() is undefined, but both branches will work
-  if (b.exponent() + expoAdd >= numeric_limits<long double>::digits)
+  if (b.exponent() + expo_add >= numeric_limits<long double>::digits)
     data = b.data;
   else
-    data = ldexpl(rintl(ldexpl(b.data, expoAdd)), -expoAdd);
+    data = ldexpl(rintl(ldexpl(b.data, expo_add)), -expo_add);
 }
 
 template<>

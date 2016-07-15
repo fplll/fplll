@@ -103,8 +103,8 @@ main (int argc, char ** argv)
   if (argv[ac])
     delete inputStream;
 
-  r = mat1.getRows();
-  c = mat1.getCols();
+  r = mat1.get_rows();
+  c = mat1.get_cols();
 
   int difference = !llldiff<mpz_t>(mat1, mat2, c, r);
 

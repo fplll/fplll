@@ -95,7 +95,7 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, IntVect &b)
   Z_NR<ZT> norm_s;
   Z_NR<ZT> norm_b;
 
-  for (int i = 0; i < A.getCols(); i++)
+  for (int i = 0; i < A.get_cols(); i++)
   {
     tmp.mul(solution[i], solution[i]);
     norm_s.add(norm_s, tmp);
@@ -119,10 +119,10 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, IntVect &b)
 template <class ZT> int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &coords)
 {
   int d = coords.size();
-  if (A.getRows() != d)
+  if (A.get_rows() != d)
   {
     cerr << "DSVP length error: Coefficient vector has wrong dimension: ";
-    cerr << A.getRows() << " vs " << d << endl;
+    cerr << A.get_rows() << " vs " << d << endl;
     return 1;
   }
   FloatVect coords_d(d);
@@ -133,13 +133,13 @@ template <class ZT> int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &c
 
   IntMatrix emptyMat;
   MatGSO<Integer, Float> gso(A, emptyMat, emptyMat, GSO_INT_GRAM);
-  if (!gso.updateGSO())
+  if (!gso.update_gso())
   {
     cerr << "GSO Failure." << endl;
     return 1;
   }
   Float tmp;
-  gso.getR(tmp, d - 1, d - 1);
+  gso.get_r(tmp, d - 1, d - 1);
   tmp.pow_si(tmp, -1);
 
   FloatVect alpha(d);
@@ -150,10 +150,10 @@ template <class ZT> int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &c
     alpha[i] = coords_d[i];
     for (int j = 0; j < i; j++)
     {
-      gso.getMu(mu, i, j);
+      gso.get_mu(mu, i, j);
       alpha[i] -= mu * alpha[j];
     }
-    gso.getR(r_inv, i, i);
+    gso.get_r(r_inv, i, i);
     r_inv.pow_si(r_inv, -1);
     alpha2.pow_si(alpha[i], 2);
     norm += alpha2 * r_inv;
@@ -227,7 +227,7 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b)
 template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, IntVect &b)
 {
   IntMatrix u;
-  int d = A.getRows();
+  int d = A.get_rows();
 
   Float normb;
   if (dual_length(normb, A, b))

@@ -149,7 +149,7 @@ public:
   void resize(int rows, int cols);
   /** Sets the number of rows. Content is not erased except for deleted rows.
       The value of new elements is undefined. */
-  void setRows(int rows) {
+  void set_rows(int rows) {
     resize(rows, c);
   }
   /** Sets the number of columns. Content is not erased except for deleted
@@ -168,11 +168,11 @@ public:
   }
 
   /** Returns the number of rows */
-  int getRows() const {
+  int get_rows() const {
     return r;
   }
   /** Returns the number of columns */
-  int getCols() const {
+  int get_cols() const {
     return c;
   }
   /** Returns a reference to the element (i, j). */
@@ -286,8 +286,8 @@ public:
   using Matrix<T>::c;
   using Matrix<T>::matrix;
   using Matrix<T>::resize;
-  using Matrix<T>::getCols;
-  using Matrix<T>::getRows;
+  using Matrix<T>::get_cols;
+  using Matrix<T>::get_rows;
 
   /** Creates an empty matrix (0 x 0). */
   ZZ_mat() : Matrix<T>() {}

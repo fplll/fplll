@@ -81,7 +81,7 @@ public:
 };
 
 /**
-   A strategy covers pruning parameters and preprocessing blocksizes
+   A strategy covers pruning parameters and preprocessing block_sizes
 */
 
 class Strategy
@@ -94,7 +94,7 @@ public:
 
   /** For each block size we run one tour */
 
-  vector<int> preprocessing_blocksizes;
+  vector<int> preprocessing_block_sizes;
 
   /** Construct an empty strategy
 

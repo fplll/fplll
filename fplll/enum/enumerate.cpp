@@ -52,7 +52,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
     long rexpo, normexp = -1;
     for (int i = 0; i < d; ++i)
     {
-        fr = _gso.getRExp(i + first, i + first, rexpo);
+        fr = _gso.get_r_exp(i + first, i + first, rexpo);
         normexp = max(normexp, rexpo + fr.exponent());
     }
     fmaxdistnorm.mul_2si(fmaxdist, dual ? normexp-fmaxdistexpo : fmaxdistexpo-normexp);
@@ -64,7 +64,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
     {
         for (int i = 0; i < d; ++i)
         {
-            fr = _gso.getRExp(i + first, i + first, rexpo);
+            fr = _gso.get_r_exp(i + first, i + first, rexpo);
             fr.mul_2si(fr, rexpo - normexp);
             rdiag[d-i-1] = enumf(1.0)/fr.get_d();
         }
@@ -72,7 +72,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
         {
             for (int j = i + 1; j < d; ++j)
             {
-                _gso.getMu(fmu, j + first, i + first);
+                _gso.get_mu(fmu, j + first, i + first);
                 mut[d-j-1][d-i-1] = -fmu.get_d();
             }
         }
@@ -81,7 +81,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
     {
         for (int i = 0; i < d; ++i)
         {
-            fr = _gso.getRExp(i + first, i + first, rexpo);
+            fr = _gso.get_r_exp(i + first, i + first, rexpo);
             fr.mul_2si(fr, rexpo - normexp);
             rdiag[i] = fr.get_d();
         }
@@ -89,7 +89,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
         {
             for (int j = i + 1; j < d; ++j)
             {
-                _gso.getMu(fmu, j + first, i + first);
+                _gso.get_mu(fmu, j + first, i + first);
                 mut[i][j] = fmu.get_d();
             }
         }

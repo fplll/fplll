@@ -75,15 +75,15 @@ template <class ZT> int test_bkz_param(ZZ_mat<ZT> &A, const int block_size, int 
     Strategy strategy = Strategy::EmptyStrategy();
     if (b == 10)
     {
-      strategy.preprocessing_blocksizes.emplace_back(5);
+      strategy.preprocessing_block_sizes.emplace_back(5);
     }
     else if (b == 20)
     {
-      strategy.preprocessing_blocksizes.emplace_back(10);
+      strategy.preprocessing_block_sizes.emplace_back(10);
     }
     else if (b == 30)
     {
-      strategy.preprocessing_blocksizes.emplace_back(15);
+      strategy.preprocessing_block_sizes.emplace_back(15);
     }
     strategies.emplace_back(std::move(strategy));
   }

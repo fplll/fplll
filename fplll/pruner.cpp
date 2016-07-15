@@ -71,7 +71,7 @@ void Pruner<FT>::load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &m, int start_row, int 
   GSO_FT f;
   for (size_t i = 0; i < n; ++i)
   {
-    m.getR(f, start_row+i, start_row+i);
+    m.get_r(f, start_row+i, start_row+i);
     gso_sq_norms.emplace_back(f.get_d());
   }
   load_basis_shape(gso_sq_norms);
@@ -490,7 +490,7 @@ void prune(Pruning &pruning,
   pru.load_basis_shape(m, start_row, end_row);
 
   long expo = 0;
-  FT gh_radius = m.getRExp(start_row, start_row, expo);
+  FT gh_radius = m.get_r_exp(start_row, start_row, expo);
   FT root_det = m.get_root_det(start_row, end_row);
   gaussian_heuristic(gh_radius, expo, end_row - start_row, root_det, 1.0);
 

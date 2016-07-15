@@ -32,7 +32,7 @@ static int lastUsefulIndex(const Matrix<Float>& r) {
   int i;
   Float rdiagMinValue;
   rdiagMinValue.mul_2si(r(0, 0), 1);
-  for (i = r.getRows() - 1; i > 0; i--) {
+  for (i = r.get_rows() - 1; i > 0; i--) {
     if (r(i, i) <= rdiagMinValue) break;
   }
   return i + 1;
@@ -43,7 +43,7 @@ static int lastUsefulIndex(const Matrix<Float>& r) {
 static void getBasisMin(Integer& basisMin, const IntMatrix& b,
                         int first, int last) {
   Integer sqNorm;
-  int n = b.getCols();
+  int n = b.get_cols();
   sqrNorm(basisMin, b[first], n);
 
   for (int i = first + 1; i < last; i++) {
@@ -63,7 +63,7 @@ static bool enumerateSVP(int d, MatGSO<Integer, Float>& gso, Float& maxDist,
     enumobj.enumerate(0, d, maxDist, 0, vector<Float>(), vector<enumxt>(), pruning, dual);
   }
   else {
-    Enumerator enumerator(d, gso.getMuMatrix(), gso.getRMatrix());
+    Enumerator enumerator(d, gso.get_mu_matrix(), gso.get_r_matrix());
     while (enumerator.enumNext(maxDist)) {
       if (flags & SVP_VERBOSE) {
         evaluator.newSolFlag = false;
@@ -96,9 +96,9 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
   bool findsubsols = (subsolCoord != nullptr) && (subsolDist != nullptr);
   
   // d = lattice dimension (note that it might decrease during preprocessing)
-  int d = b.getRows();
+  int d = b.get_rows();
   // n = dimension of the space
-  int n = b.getCols();
+  int n = b.get_cols();
 
   FPLLL_CHECK(d > 0 && n > 0, "shortestVector: empty matrix");
   FPLLL_CHECK(d <= n, "shortestVector: number of vectors > size of the vectors");
@@ -118,18 +118,18 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
   Integer itmp1;
 
   // Computes the Gram-Schmidt orthogonalization in floating-point
-  gso.updateGSO();
+  gso.update_gso();
   genZeroVect(solCoord, d);
 
   // If the last b_i* are too large, removes them to avoid an underflow
-  int newD = lastUsefulIndex(gso.getRMatrix());
+  int newD = lastUsefulIndex(gso.get_r_matrix());
   if (newD < d) {
     //FPLLL_TRACE("Ignoring the last " << d - newD << " vector(s)");
     d = newD;
   }
   
   if (flags & SVP_DUAL) {
-    maxDist = gso.getRExp(d - 1, d - 1);
+    maxDist = gso.get_r_exp(d - 1, d - 1);
     Float one; one = 1.0;
     maxDist.div(one, maxDist);
     if (flags & SVP_VERBOSE) {
@@ -146,12 +146,12 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
   // Initializes the evaluator of solutions
   Evaluator<Float>* evaluator;
   if (method == SVPM_FAST) {
-    evaluator = new FastEvaluator<Float>(d, gso.getMuMatrix(),
-            gso.getRMatrix(), evalMode, 0, findsubsols);
+    evaluator = new FastEvaluator<Float>(d, gso.get_mu_matrix(),
+            gso.get_r_matrix(), evalMode, 0, findsubsols);
   }
   else if (method == SVPM_PROVED) {
-    ExactEvaluator* p = new ExactEvaluator(d, b, gso.getMuMatrix(),
-            gso.getRMatrix(), evalMode, 0, findsubsols);
+    ExactEvaluator* p = new ExactEvaluator(d, b, gso.get_mu_matrix(),
+            gso.get_r_matrix(), evalMode, 0, findsubsols);
     p->intMaxDist = intMaxDist;
     evaluator = p;
   }
@@ -238,11 +238,11 @@ int shortestVectorPruning(IntMatrix& b, IntVect& solCoord, vector<IntVect>& subs
 static void getGSCoords(const Matrix<Float>& matrix, const Matrix<Float>& mu,
   const Matrix<Float>& r, const FloatVect& v, FloatVect& vcoord) {
 
-  int n = matrix.getRows(), m = matrix.getCols();
+  int n = matrix.get_rows(), m = matrix.get_cols();
 
   if (static_cast<int>(vcoord.size()) != n) vcoord.resize(n);
-  FPLLL_DEBUG_CHECK(mu.getRows() == n && mu.getCols() == n &&
-    r.getRows() == n && r.getCols() == n &&
+  FPLLL_DEBUG_CHECK(mu.get_rows() == n && mu.get_cols() == n &&
+    r.get_rows() == n && r.get_cols() == n &&
     static_cast<int>(v.size()) == m);
 
   for (int i = 0; i < n; i++) {
@@ -260,7 +260,7 @@ static void getGSCoords(const Matrix<Float>& matrix, const Matrix<Float>& mu,
 static void babai(const FloatMatrix& matrix, const Matrix<Float>& mu,
   const Matrix<Float>& r, const FloatVect& target, FloatVect& targetcoord) {
 
-  int d = matrix.getRows();
+  int d = matrix.get_rows();
   getGSCoords(matrix, mu, r, target, targetcoord);
   for (int i = d - 1; i >= 0; i--) {
     targetcoord[i].rnd(targetcoord[i]);
@@ -272,9 +272,9 @@ static void babai(const FloatMatrix& matrix, const Matrix<Float>& mu,
 int closestVector(IntMatrix& b, const IntVect& intTarget,
                   IntVect& solCoord, int flags) {
   // d = lattice dimension (note that it might decrease during preprocessing)
-  int d = b.getRows();
+  int d = b.get_rows();
   // n = dimension of the space
-  int n = b.getCols();
+  int n = b.get_cols();
 
   FPLLL_CHECK(d > 0 && n > 0, "closestVector: empty matrix");
   FPLLL_CHECK(d <= n, "closestVector: number of vectors > size of the vectors");
@@ -294,7 +294,7 @@ int closestVector(IntMatrix& b, const IntVect& intTarget,
   Integer itmp1;
 
   // Computes the Gram-Schmidt orthogonalization in floating-point
-  gso.updateGSO();
+  gso.update_gso();
   genZeroVect(solCoord, d);
 
   /* Applies Babai's algorithm. Because we use fp, it might be necessary to
@@ -314,7 +314,7 @@ int closestVector(IntMatrix& b, const IntVect& intTarget,
     for (int i = 0; i < n; i++) {
       target[i].set_z(intNewTarget[i]);
     }
-    babai(floatMatrix, gso.getMuMatrix(), gso.getRMatrix(), target, babaiSol);
+    babai(floatMatrix, gso.get_mu_matrix(), gso.get_r_matrix(), target, babaiSol);
     int idx;
     for (idx = 0; idx < d && babaiSol[idx] >= -1 && babaiSol[idx] <= 1;
           idx++) {}
@@ -328,18 +328,18 @@ int closestVector(IntMatrix& b, const IntVect& intTarget,
     }
   }
   //FPLLL_TRACE("BabaiSol=" << solCoord);
-  getGSCoords(floatMatrix, gso.getMuMatrix(), gso.getRMatrix(), target,
+  getGSCoords(floatMatrix, gso.get_mu_matrix(), gso.get_r_matrix(), target,
           targetCoord);
 
   /* Computes a very large bound to make the algorithm work
       until the first solution is found */
   maxDist = 0.0;
   for (int i = 1; i < d; i++) {
-    // getRExp(i, i) = r(i, i) because gso is initialized without GSO_ROW_EXPO
-    maxDist.add(maxDist, gso.getRExp(i, i));
+    // get_r_exp(i, i) = r(i, i) because gso is initialized without GSO_ROW_EXPO
+    maxDist.add(maxDist, gso.get_r_exp(i, i));
   }
 
-  FastEvaluator<Float> evaluator(n, gso.getMuMatrix(), gso.getRMatrix(),
+  FastEvaluator<Float> evaluator(n, gso.get_mu_matrix(), gso.get_r_matrix(),
           EVALMODE_CV);
 
   // Main loop of the enumeration

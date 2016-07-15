@@ -79,11 +79,11 @@ vector<Strategy> load_strategies_json(const std::string &filename)
       {
         if ((*p_it).is_number())
         {
-          strategy.preprocessing_blocksizes.emplace_back((*p_it).get<int>());
+          strategy.preprocessing_block_sizes.emplace_back((*p_it).get<int>());
         }
         else
         {
-          strategy.preprocessing_blocksizes.emplace_back((*p_it)["block_size"]);
+          strategy.preprocessing_block_sizes.emplace_back((*p_it)["block_size"]);
         }
       }
     }

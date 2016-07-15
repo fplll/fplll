@@ -163,24 +163,24 @@ inline void FP_NR<mpfr_t>::set_z(const Z_NR<mpz_t>& a, mp_rnd_t rnd) {
 /* get_z_exp_we (double --> Z_NR) */
 #ifdef FPLLL_WITH_ZLONG
 template<> template<>
-inline void FP_NR<double>::get_z_exp_we(Z_NR<long>& a, long& expo, long expoAdd) const {
+inline void FP_NR<double>::get_z_exp_we(Z_NR<long>& a, long& expo, long expo_add) const {
   expo = 0;
-  a = static_cast<long>(ldexp(data, expoAdd));
+  a = static_cast<long>(ldexp(data, expo_add));
 }
 #endif
 
 #ifdef FPLLL_WITH_ZDOUBLE
 template<> template<>
-inline void FP_NR<double>::get_z_exp_we(Z_NR<double>& a, long& expo, long expoAdd) const {
+inline void FP_NR<double>::get_z_exp_we(Z_NR<double>& a, long& expo, long expo_add) const {
   expo = 0;
-  a.getData() = trunc(ldexp(data, expoAdd));
+  a.getData() = trunc(ldexp(data, expo_add));
 }
 #endif
 
 template<> template<>
-inline void FP_NR<double>::get_z_exp_we(Z_NR<mpz_t>& a, long& expo, long expoAdd) const {
-  expo = max(exponent() + expoAdd - numeric_limits<double>::digits, 0L);
-  mpz_set_d(a.getData(), ldexp(data, expoAdd - expo));
+inline void FP_NR<double>::get_z_exp_we(Z_NR<mpz_t>& a, long& expo, long expo_add) const {
+  expo = max(exponent() + expo_add - numeric_limits<double>::digits, 0L);
+  mpz_set_d(a.getData(), ldexp(data, expo_add - expo));
 }
 
 template<> template<class Z>
@@ -194,27 +194,27 @@ inline void FP_NR<double>::get_z_exp(Z_NR<Z>& a, long& expo) const {
 
 #ifdef FPLLL_WITH_ZLONG
 template<> template<>
-inline void FP_NR<long double>::get_z_exp_we(Z_NR<long>& a, long& expo, long expoAdd) const {
+inline void FP_NR<long double>::get_z_exp_we(Z_NR<long>& a, long& expo, long expo_add) const {
   expo = 0;
-  a = static_cast<long>(ldexpl(data, expoAdd));
+  a = static_cast<long>(ldexpl(data, expo_add));
 }
 #endif
 
 #ifdef FPLLL_WITH_ZDOUBLE
 template<> template<>
-inline void FP_NR<long double>::get_z_exp_we(Z_NR<double>& a, long& expo, long expoAdd) const {
+inline void FP_NR<long double>::get_z_exp_we(Z_NR<double>& a, long& expo, long expo_add) const {
   expo = 0;
-  a.getData() = trunc(static_cast<double>(ldexpl(data, expoAdd)));
+  a.getData() = trunc(static_cast<double>(ldexpl(data, expo_add)));
 }
 #endif
 
 template<> template<>
-inline void FP_NR<long double>::get_z_exp_we(Z_NR<mpz_t>& a, long& expo, long expoAdd) const {
-  expo = max(exponent() + expoAdd - numeric_limits<long double>::digits, 0L);
+inline void FP_NR<long double>::get_z_exp_we(Z_NR<mpz_t>& a, long& expo, long expo_add) const {
+  expo = max(exponent() + expo_add - numeric_limits<long double>::digits, 0L);
   /* If expo > 0, then
-     expoAdd - expo = numeric_limits<long double>::digits - exponent()
-     which implies that ldexpl(data, expoAdd - expo) is an integer */
-  LDConvHelper::mpz_set_ld(a.getData(), trunc(ldexpl(data, expoAdd - expo)));
+     expo_add - expo = numeric_limits<long double>::digits - exponent()
+     which implies that ldexpl(data, expo_add - expo) is an integer */
+  LDConvHelper::mpz_set_ld(a.getData(), trunc(ldexpl(data, expo_add - expo)));
 }
 
 template<> template<class Z>
@@ -251,7 +251,7 @@ inline void FP_NR<dpe_t>::get_z_exp(Z_NR<mpz_t>& a, long& expo) const {
 }
 
 template<> template<class Z>
-inline void FP_NR<dpe_t>::get_z_exp_we(Z_NR<Z>& a, long& expo, long expoAdd) const {
+inline void FP_NR<dpe_t>::get_z_exp_we(Z_NR<Z>& a, long& expo, long expo_add) const {
   return get_z_exp(a, expo);
 }
 
@@ -262,39 +262,39 @@ inline void FP_NR<dpe_t>::get_z_exp_we(Z_NR<Z>& a, long& expo, long expoAdd) con
 #ifdef FPLLL_WITH_QD
 
 template<> template<>
-inline void FP_NR<dd_real>::get_z_exp_we(Z_NR<mpz_t>& a, long& expo, long expoAdd) const {
+inline void FP_NR<dd_real>::get_z_exp_we(Z_NR<mpz_t>& a, long& expo, long expo_add) const {
   // double-double has almost the same exp as double
-  expo = max(exponent() + expoAdd - numeric_limits<double>::digits, 0L);
+  expo = max(exponent() + expo_add - numeric_limits<double>::digits, 0L);
   // losing precision here
-  mpz_set_d(a.getData(),::to_double(::ldexp(data, expoAdd - expo)));
+  mpz_set_d(a.getData(),::to_double(::ldexp(data, expo_add - expo)));
 }
 template<> template<>
-inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<mpz_t>& a, long& expo, long expoAdd) const {
-  expo = max(exponent() + expoAdd - numeric_limits<double>::digits, 0L);
-  mpz_set_d(a.getData(),::to_double(::ldexp(data, expoAdd - expo)));
+inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<mpz_t>& a, long& expo, long expo_add) const {
+  expo = max(exponent() + expo_add - numeric_limits<double>::digits, 0L);
+  mpz_set_d(a.getData(),::to_double(::ldexp(data, expo_add - expo)));
 }
 
 #ifdef FPLLL_WITH_ZLONG
 template<> template<>
-inline void FP_NR<dd_real>::get_z_exp_we(Z_NR<long>& a, long& expo, long expoAdd) const {
+inline void FP_NR<dd_real>::get_z_exp_we(Z_NR<long>& a, long& expo, long expo_add) const {
   expo = 0;
-  a = ::to_int(::ldexp(data, expoAdd));
+  a = ::to_int(::ldexp(data, expo_add));
 }
 template<> template<>
-inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<long>& a, long& expo, long expoAdd) const {
+inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<long>& a, long& expo, long expo_add) const {
   expo = 0;
-  a = ::to_int(::ldexp(data, expoAdd));
+  a = ::to_int(::ldexp(data, expo_add));
 }
 #endif
 
 #ifdef FPLLL_WITH_ZDOUBLE
 template<> template<>
-inline void FP_NR<dd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long expoAdd) const {
+inline void FP_NR<dd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long expo_add) const {
   expo = 0;
   a = get_si();
 }
 template<> template<>
-inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long expoAdd) const {
+inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long expo_add) const {
   expo = 0;
   a = get_si();
 }
@@ -339,7 +339,7 @@ inline void FP_NR<mpfr_t>::get_z_exp(Z_NR<mpz_t>& a, long& expo) const {
 }
 
 template<> template<class Z>
-inline void FP_NR<mpfr_t>::get_z_exp_we(Z_NR<Z>& a, long& expo, long expoAdd) const {
+inline void FP_NR<mpfr_t>::get_z_exp_we(Z_NR<Z>& a, long& expo, long expo_add) const {
   return get_z_exp(a, expo);
 }
 

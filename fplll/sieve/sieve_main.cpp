@@ -121,7 +121,7 @@ int main (int argc, char** argv)
     }
     if(flag_verbose) {
       cout << "# [info] reading lattice of dimension "
-           << B.getRows() << "x" << B.getCols() << endl;
+           << B.get_rows() << "x" << B.get_cols() << endl;
     }
   }
   else {
@@ -165,9 +165,9 @@ int main (int argc, char** argv)
     long goal_norm_l = abs(goal_norm.get_si());
     Z_NR<long> goal_norm_lt;
     goal_norm_lt = goal_norm_l;
-    ZZ_mat<long> B2(B.getRows(),B.getCols());
-    for (int i = 0; i < B.getRows(); i ++)
-      for (int j = 0; j < B.getCols(); j ++)
+    ZZ_mat<long> B2(B.get_rows(),B.get_cols());
+    for (int i = 0; i < B.get_rows(); i ++)
+      for (int j = 0; j < B.get_cols(); j ++)
         B2(i, j) = B(i, j).get_si();
     main_run_sieve<long>(B2, goal_norm_lt, alg, flag_verbose, seed);
   }

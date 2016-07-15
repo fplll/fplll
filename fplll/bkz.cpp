@@ -53,11 +53,11 @@ template <class FT> void BKZReduction<FT>::rerandomize_block(int min_row, int ma
     {
       b = gmp_urandomm_ui(RandGen::getGMPState(), max_row - min_row - 1) + min_row;
     }
-    m.moveRow(b, a);
+    m.move_row(b, a);
   }
 
   // 2. triangular transformation matrix with coefficients in -1,0,1
-  m.rowOpBegin(min_row, max_row);
+  m.row_op_begin(min_row, max_row);
   FT x;
   for (long a = min_row; a < max_row - 2; ++a)
   {
@@ -70,7 +70,7 @@ template <class FT> void BKZReduction<FT>::rerandomize_block(int min_row, int ma
         m.row_sub(a, b);
     }
   }
-  m.rowOpEnd(min_row, max_row);
+  m.row_op_end(min_row, max_row);
   
   return;
 }
@@ -84,7 +84,7 @@ const Pruning &BKZReduction<FT>::get_pruning(int kappa, int block_size, const BK
   Strategy &strat = par.strategies[block_size];
 
   long max_dist_expo;
-  FT max_dist    = m.getRExp(kappa, kappa, max_dist_expo);
+  FT max_dist    = m.get_r_exp(kappa, kappa, max_dist_expo);
   FT gh_max_dist = max_dist;
   FT root_det    = m.get_root_det(kappa, kappa + block_size);
   gaussian_heuristic(gh_max_dist, max_dist_expo, block_size, root_det, 1.0);
@@ -113,7 +113,7 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
   {
     // Yes, it is another vector
     FPLLL_DEBUG_CHECK(i_vector != -1 && i_vector != 0);
-    m.moveRow(kappa + i_vector, kappa);
+    m.move_row(kappa + i_vector, kappa);
     if (!lll_obj.sizeReduction(kappa, kappa + 1))
       throw lll_obj.status;
   }
@@ -121,19 +121,19 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
   {
     // No, general case
     int d = m.d;
-    m.createRow();
-    m.rowOpBegin(d, d + 1);
+    m.create_row();
+    m.row_op_begin(d, d + 1);
     for (int i = 0; i < block_size; i++)
     {
       m.row_addmul(d, kappa + i, solution[i]);
     }
-    m.rowOpEnd(d, d + 1);
-    m.moveRow(d, kappa);
+    m.row_op_end(d, d + 1);
+    m.move_row(d, kappa);
     if (!lll_obj.lll(kappa, kappa, kappa + block_size + 1))
       throw lll_obj.status;
     FPLLL_DEBUG_CHECK(m.b[kappa + block_size].is_zero());
-    m.moveRow(kappa + block_size, d);
-    m.removeLastRow();
+    m.move_row(kappa + block_size, d);
+    m.remove_last_row();
   }
   return false;
 }
@@ -145,7 +145,7 @@ bool BKZReduction<FT>::svp_preprocessing(int kappa, int block_size, const BKZPar
 
   FPLLL_DEBUG_CHECK(param.strategies.size() > block_size);
 
-  auto &preproc = param.strategies[block_size].preprocessing_blocksizes;
+  auto &preproc = param.strategies[block_size].preprocessing_block_sizes;
   for (auto it = preproc.begin(); it != preproc.end(); ++it)
   {
     int dummy_kappa_max = num_rows;
@@ -162,14 +162,14 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
   vector<FT> x = solution;
   
   int d = block_size;
-  m.rowOpBegin(kappa, kappa + d);
+  m.row_op_begin(kappa, kappa + d);
   // don't want to deal with negativ coefficients
   for (int i = 0; i < d; i++) 
   {
     if (x[i] < 0) 
     {
       x[i].neg(x[i]);
-      for (int j = 0; j < m.b.getCols(); j++) 
+      for (int j = 0; j < m.b.get_cols(); j++)
       {
         m.b[i + kappa][j].neg(m.b[i + kappa][j]);
       }
@@ -209,7 +209,7 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
     off *= 2;
   }
   
-  m.rowOpEnd(kappa, kappa + d);
+  m.row_op_end(kappa, kappa + d);
   if (!lll_obj.lll(kappa, kappa, kappa + d)) {
     return set_status(lll_obj.status);
   }
@@ -235,7 +235,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
   }
   FT old_first;
   long old_first_expo;
-  old_first = FT(m.getRExp(first, first, old_first_expo));
+  old_first = FT(m.get_r_exp(first, first, old_first_expo));
 
   bool rerandomize                 = false;
   double remaining_probability = 1.0;
@@ -255,7 +255,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     svp_preprocessing(kappa, block_size, par);
     
     long max_dist_expo;
-    FT max_dist = m.getRExp(first, first, max_dist_expo);
+    FT max_dist = m.get_r_exp(first, first, max_dist_expo);
     if (dual) {
       max_dist.pow_si(max_dist, -1, GMP_RNDU);
       max_dist_expo *= -1;
@@ -294,7 +294,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
   long new_first_expo;
-  FT new_first = m.getRExp(first, first, new_first_expo);
+  FT new_first = m.get_r_exp(first, first, new_first_expo);
   new_first.mul_2si(new_first, new_first_expo - old_first_expo);
   return (dual) ? (old_first >= new_first) : (old_first <= new_first);
 }
@@ -492,11 +492,11 @@ template <class FT> bool BKZReduction<FT>::bkz()
   }
   cputime_start = cputime();
 
-  m.discoverAllRows();
+  m.discover_all_rows();
   
   if (sld)
   {
-    m.updateGSO();
+    m.update_gso();
     sld_potential = m.get_slide_potential(0, num_rows, param.block_size);
   }
   
@@ -598,7 +598,7 @@ template <class FT> void BKZReduction<FT>::print_tour(const int loop, int min_ro
   FT r0;
   Float fr0;
   long expo;
-  r0  = m.getRExp(min_row, min_row, expo);
+  r0  = m.get_r_exp(min_row, min_row, expo);
   fr0 = r0.get_d();
   fr0.mul_2si(fr0, expo);
   cerr << "End of " << algorithm << " loop " << std::setw(4) << loop << ", time = " << std::fixed << std::setw(9)
@@ -656,8 +656,8 @@ void BKZReduction<FT>::dump_gso(const std::string& filename, const std::string& 
   long expo;
   for (int i = 0; i < num_rows; i++)
   {
-    m.updateGSORow(i);
-    f = m.getRExp(i, i, expo);
+    m.update_gso_row(i);
+    f = m.get_r_exp(i, i, expo);
     logF.log(f, GMP_RNDU);
     dump << std::setprecision(8) << logF.get_d() + expo * std::log(2.0) << " ";
   }

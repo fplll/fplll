@@ -528,7 +528,7 @@ void read_options(int argc, char **argv, Options &o)
            << "  -s <filename.json> load BKZ strategies from filename"
            << "  -y\n"
            << "       Enable early reduction\n"
-           << "  -b <blocksize>\n"
+           << "  -b <block_size>\n"
            << "       Size of BKZ blocks\n"
            << "  -v\n"
            << "       Enable verbose mode\n";

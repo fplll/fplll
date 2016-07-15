@@ -46,8 +46,8 @@ Wrapper::Wrapper(IntMatrix& b, IntMatrix& u, IntMatrix& uInv,
   status(RED_SUCCESS), b(b), u(u), uInv(uInv), delta(delta), eta(eta),
   useLong(false), lastEarlyRed(0)
 {
-  n = b.getCols();
-  d = b.getRows();
+  n = b.get_cols();
+  d = b.get_rows();
   this->flags = flags;
   maxExponent = b.getMaxExp() + (int) ceil(0.5 * log2((double) d * n));
 
@@ -249,7 +249,7 @@ int Wrapper::lastLLL() {
  *  - provedLLL()
  */
 bool Wrapper::lll() {
-  if (b.getRows() == 0 || b.getCols() == 0)
+  if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;
 
 #ifdef FPLLL_WITH_ZLONG
