@@ -5,6 +5,9 @@
 #ifndef FPLLL_NR_FP_D_H
 #define FPLLL_NR_FP_D_H
 
+#include "../defs.h"
+#include "nr_FP.inl"
+
 FPLLL_BEGIN_NAMESPACE
 
 
@@ -100,6 +103,11 @@ inline void FP_NR<double>::operator=(const FP_NR<double>& f) {
 template<>
 inline void FP_NR<double>::operator=(double d) {
   data = d;
+}
+
+template<>
+inline void FP_NR<double>::operator=(const char *s) {
+  data = strtod(s, NULL);
 }
 
 template<>

@@ -189,7 +189,7 @@ template<typename FT>
 void Enumeration<FT>::process_subsolution(int offset, enumf newdist)
 {
     for (int j = 0; j < offset; ++j)
-        fx[j] = 0;
+        fx[j] = 0.0;
     for (int j = offset; j < d; ++j)
         fx[j] = x[j];
     _evaluator.evalSubSol(k, fx, newdist);

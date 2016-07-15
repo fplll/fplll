@@ -18,7 +18,7 @@
 #include <iomanip>
 
 #include "bkz.h"
-#include "bkz_params.h"
+#include "bkz_param.h"
 #include "enum/enumerate.h"
 #include <iomanip>
 
@@ -36,93 +36,6 @@ BKZReduction<FT>::BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT>
 }
 
 template <class FT> BKZReduction<FT>::~BKZReduction() {}
-
-template <class FT> double get_current_slope(MatGSO<Integer, FT> &m, int start_row, int stop_row)
-{
-  FT f, log_F;
-  long expo;
-  vector<double> x;
-  x.resize(stop_row);
-  for (int i = start_row; i < stop_row; i++)
-  {
-    m.updateGSORow(i);
-    f = m.getRExp(i, i, expo);
-    log_F.log(f, GMP_RNDU);
-    x[i] = log_F.get_d() + expo * std::log(2.0);
-  }
-  int n         = stop_row - start_row;
-  double i_mean = (n - 1) * 0.5 + start_row, x_mean = 0, v1 = 0, v2 = 0;
-  for (int i = start_row; i < stop_row; i++)
-  {
-    x_mean += x[i];
-  }
-  x_mean /= n;
-  for (int i = start_row; i < stop_row; i++)
-  {
-    v1 += (i - i_mean) * (x[i] - x_mean);
-    v2 += (i - i_mean) * (i - i_mean);
-  }
-  return v1 / v2;
-}
-
-template<class FT>
-FT get_root_det(MatGSO<Integer, FT>& m, int start, int end) 
-{
-  FT root_det = 0;
-  start = max(0, start);
-  end = min(m.d, end);
-  FT h = (double)(end - start);
-  root_det = get_log_det(m, start, end)/h;
-  root_det.exponential(root_det);
-  return root_det;
-}
-
-template<class FT>
-FT get_log_det(MatGSO<Integer, FT>& m, int start, int end) 
-{
-  FT log_det = 0;
-  start = max(0, start);
-  end = min(m.d, end);
-  FT h;
-  for(int i = start; i < end; ++i)
-  {
-    m.getR(h,i,i);
-    log_det += log(h);
-  }
-  return log_det;
-}
-
-template<class FT>
-FT get_sld_potential(MatGSO<Integer, FT>& m, int start, int end, int block_size)
-{
-  FT potential = 0;
-  int p = (end - start)/block_size;
-  if ((end - start) % block_size == 0)
-    --p;
-  for (int i = 0; i < p; ++i)
-  {
-    potential += (p-i)*get_log_det(m, i*block_size, (i+1)*block_size);
-  }
-  return potential;
-}
-
-
-template <class FT>
-void compute_gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det, double gh_factor)
-{
-  double t = (double)block_size / 2.0 + 1;
-  t        = tgamma(t);
-  t        = pow(t, 2.0 / (double)block_size);
-  t        = t / M_PI;
-  FT f     = t;
-  f        = f * root_det;
-  f.mul_2si(f, -max_dist_expo);
-  f = f * gh_factor;
-  if (f < max_dist)
-  {
-    max_dist = f;
-  }
-}
 
 template <class FT> void BKZReduction<FT>::rerandomize_block(int min_row, int max_row, int density)
 {
@@ -158,10 +71,7 @@ template <class FT> void BKZReduction<FT>::rerandomize_block(int min_row, int ma
     }
   }
   m.rowOpEnd(min_row, max_row);
-
-  // 3. LLL reduce
-  if (!lll_obj.lll(0, min_row, max_row))
-    throw lll_obj.status;
+  
   return;
 }
 
@@ -174,11 +84,10 @@ const Pruning &BKZReduction<FT>::get_pruning(int kappa, int block_size, const BK
   Strategy &strat = par.strategies[block_size];
 
   long max_dist_expo;
-  FT max_dist = m.getRExp(kappa, kappa, max_dist_expo);
-
-  FT gh_max_dist;
-  FT root_det = get_root_det(m, kappa, kappa + block_size);
-  compute_gaussian_heuristic(gh_max_dist, max_dist_expo, block_size, root_det, 1.0);
+  FT max_dist    = m.getRExp(kappa, kappa, max_dist_expo);
+  FT gh_max_dist = max_dist;
+  FT root_det    = m.get_root_det(kappa, kappa + block_size);
+  gaussian_heuristic(gh_max_dist, max_dist_expo, block_size, root_det, 1.0);
   return strat.get_pruning(max_dist.get_d() * pow(2, max_dist_expo),
                            gh_max_dist.get_d() * pow(2, max_dist_expo));
 }
@@ -310,16 +219,23 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
 template <class FT>
 bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &par, bool dual)
 {
-  bool clean = true;
-
   int lll_start = (par.flags & BKZ_BOUNDED_LLL) ? kappa : 0;
-
-  if (!lll_obj.lll(lll_start, lll_start, kappa + block_size))
-  {
+  
+  int first = dual ? kappa + block_size - 1 : kappa;
+  
+  // ensure we are computing something sensible.
+  // note that the size reduction here is required, since 
+  // we're calling this function on unreduced blocks at times 
+  // (e.g. in bkz, after the previous block was reduced by a vector 
+  // already in the basis). if size reduction is not called,
+  // old_first might be incorrect (e.g. close to 0) and the function
+  // will return an incorrect clean flag
+  if (!lll_obj.sizeReduction(0, first + 1)) {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
-
-  clean &= (lll_obj.nSwaps == 0);
+  FT old_first;
+  long old_first_expo;
+  old_first = FT(m.getRExp(first, first, old_first_expo));
 
   bool rerandomize                 = false;
   double remaining_probability = 1.0;
@@ -330,22 +246,26 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     {
       rerandomize_block(kappa + 1, kappa + block_size, par.rerandomization_density);
     }
-
-    clean &= svp_preprocessing(kappa, block_size, par);
+    
+    if (!lll_obj.lll(lll_start, lll_start, kappa + block_size))
+    {
+      throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
+    }
+    
+    svp_preprocessing(kappa, block_size, par);
     
     long max_dist_expo;
-    int first = dual ? kappa + block_size - 1 : kappa;
     FT max_dist = m.getRExp(first, first, max_dist_expo);
     if (dual) {
       max_dist.pow_si(max_dist, -1, GMP_RNDU);
       max_dist_expo *= -1;
     }
     max_dist *= delta;
-
+    
     if ((par.flags & BKZ_GH_BND) && block_size > 30)
     {
-      FT root_det = get_root_det(m, kappa, kappa + block_size);
-      compute_gaussian_heuristic(max_dist, max_dist_expo, block_size, root_det, par.gh_factor);
+      FT root_det = m.get_root_det(kappa, kappa + block_size);
+      gaussian_heuristic(max_dist, max_dist_expo, block_size, root_det, par.gh_factor);
     }
 
     const Pruning &pruning = get_pruning(kappa, block_size, par);
@@ -359,14 +279,24 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
     if (!sol_coord.empty())
     {
-      clean &= dual ? dsvp_postprocessing(kappa, block_size, sol_coord) : svp_postprocessing(kappa, block_size, sol_coord);
+      if (dual)
+        dsvp_postprocessing(kappa, block_size, sol_coord);
+      else
+        svp_postprocessing(kappa, block_size, sol_coord);
       rerandomize = false;
     } else {
       rerandomize = true;
     }
     remaining_probability *= (1 - pruning.probability);
   }
-  return clean;
+  
+  if (!lll_obj.sizeReduction(0, first + 1)) {
+    throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
+  }
+  long new_first_expo;
+  FT new_first = m.getRExp(first, first, new_first_expo);
+  new_first.mul_2si(new_first, new_first_expo - old_first_expo);
+  return (dual) ? (old_first >= new_first) : (old_first <= new_first);
 }
 
 template <class FT>
@@ -421,7 +351,7 @@ bool BKZReduction<FT>::trunc_dtour(const BKZParam &par, int min_row,
   bool clean = true;
   int block_size = par.block_size;
   
-  for (int kappa = max_row - block_size; kappa > 0; --kappa)
+  for (int kappa = max_row - block_size; kappa > min_row; --kappa)
   {
     clean &= svp_reduction(kappa, block_size, par, true);
   }
@@ -498,7 +428,7 @@ bool BKZReduction<FT>::slide_tour(const int loop, const BKZParam &par, int min_r
     svp_reduction(kappa, par.block_size, par, true);
   }
   
-  FT new_potential = get_sld_potential(m, min_row, max_row, par.block_size);
+  FT new_potential = m.get_slide_potential(min_row, max_row, par.block_size);
   
   if (par.flags & BKZ_VERBOSE)
   {
@@ -553,12 +483,6 @@ template <class FT> bool BKZReduction<FT>::bkz()
     cerr << "Warning: SD Variant of BKZ requires explicit termination condition. Turning auto abort on!" << endl;
     flags |= BKZ_AUTO_ABORT;
   }
-  
-  if (sld)
-  {
-    m.updateGSO();
-    sld_potential = get_sld_potential(m, 0, num_rows, param.block_size);
-  }
 
   if (flags & BKZ_VERBOSE)
   {
@@ -569,6 +493,18 @@ template <class FT> bool BKZReduction<FT>::bkz()
   cputime_start = cputime();
 
   m.discoverAllRows();
+  
+  if (sld)
+  {
+    m.updateGSO();
+    sld_potential = m.get_slide_potential(0, num_rows, param.block_size);
+  }
+  
+  // the following is necessary, since sd-bkz starts with a dual tour and 
+  // svp_reduction calls size_reduction, which needs to be preceeded by a 
+  // call to lll lower blocks to avoid seg faults
+  if (sd)
+    lll_obj.lll(0, 0, num_rows);
 
   int kappa_max;
   bool clean = true;
@@ -669,7 +605,7 @@ template <class FT> void BKZReduction<FT>::print_tour(const int loop, int min_ro
        << std::setprecision(3) << (cputime() - cputime_start) * 0.001 << "s";
   cerr << ", r_" << min_row << " = " << fr0;
   cerr << ", slope = " << std::setw(9) << std::setprecision(6)
-       << get_current_slope(m, min_row, max_row);
+       << m.get_current_slope(min_row, max_row);
   cerr << ", log2(nodes) = " << std::setw(9) << std::setprecision(6) << log2(nodes) << endl;
 }
 
@@ -731,7 +667,7 @@ void BKZReduction<FT>::dump_gso(const std::string filename, const std::string pr
 
 template <class FT> bool BKZAutoAbort<FT>::test_abort(double scale, int maxNoDec)
 {
-  double new_slope = -get_current_slope(m, start_row, num_rows);
+  double new_slope = -m.get_current_slope(start_row, num_rows);
   if (no_dec == -1 || new_slope < scale * old_slope)
     no_dec = 0;
   else
@@ -745,21 +681,27 @@ template <class FT> bool BKZAutoAbort<FT>::test_abort(double scale, int maxNoDec
 */
 
 template class BKZReduction<FP_NR<double> >;
+template class BKZAutoAbort<FP_NR<double> >;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class BKZReduction<FP_NR<long double> >;
+template class BKZAutoAbort<FP_NR<long double> >;
 #endif
 
 #ifdef FPLLL_WITH_QD
 template class BKZReduction<FP_NR<dd_real> >;
+template class BKZAutoAbort<FP_NR<dd_real> >;
 
 template class BKZReduction<FP_NR<qd_real> >;
+template class BKZAutoAbort<FP_NR<qd_real> >;
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template class BKZReduction<FP_NR<dpe_t> >;
+template class BKZAutoAbort<FP_NR<dpe_t> >;
 #endif
 
 template class BKZReduction<FP_NR<mpfr_t> >;
+template class BKZAutoAbort<FP_NR<mpfr_t> >;
 
 FPLLL_END_NAMESPACE

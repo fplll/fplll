@@ -88,7 +88,7 @@ struct wrapper {
   wrapper(ZZ_mat<mpz_t>* B, int /*precision*/ = 0, double eta = LLL_DEF_ETA,
           double delta = LLL_DEF_DELTA) : B(B), eta(eta), delta(delta) {}
   int LLL() {
-    int s = lllReduction(*B, delta, eta, LM_WRAPPER);
+    int s = lll_reduction(*B, delta, eta, LM_WRAPPER);
     return s != RED_SUCCESS ? -1 : 0;
   }
   ZZ_mat<mpz_t>* GetBase() {return B;}

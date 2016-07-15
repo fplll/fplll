@@ -20,7 +20,7 @@
 using namespace std;
 using namespace fplll;
 
-enum Test 
+enum Test
 {
   SVP_ENUM,
   DSVP_ENUM,
@@ -35,8 +35,8 @@ enum Test
    @return
 */
 
-template<class ZT>
-void read_matrix(ZZ_mat<ZT> &A, const char *input_filename) {
+template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
+{
   istream *is = new ifstream(input_filename);
   *is >> A;
   delete is;
@@ -50,8 +50,8 @@ void read_matrix(ZZ_mat<ZT> &A, const char *input_filename) {
    @return
 */
 
-template<class ZT>
-void read_vector(vector<Z_NR<ZT> > &b, const char *input_filename) {
+template <class ZT> void read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
+{
   istream *is = new ifstream(input_filename);
   *is >> b;
   delete is;
@@ -65,23 +65,26 @@ void read_vector(vector<Z_NR<ZT> > &b, const char *input_filename) {
    @return
 */
 
-template<class ZT>
-int test_svp(ZZ_mat<ZT> &A, IntVect &b) {
-  IntVect sol_coord;  // In the LLL-reduced basis
-  IntVect sol_coord2; // In the initial basis
+template <class ZT> int test_svp(ZZ_mat<ZT> &A, IntVect &b)
+{
+  IntVect sol_coord;   // In the LLL-reduced basis
+  IntVect sol_coord2;  // In the initial basis
   IntVect solution;
   IntMatrix u;
 
-  int status = lllReduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
-  if (status != RED_SUCCESS) {
-    cerr << "LLL reduction failed: " << getRedStatusStr(status) << endl;
+  int status =
+      lll_reduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
+  if (status != RED_SUCCESS)
+  {
+    cerr << "LLL reduction failed: " << get_red_status_str(status) << endl;
     return status;
   }
 
   status = shortestVector(A, sol_coord, SVPM_PROVED, SVP_DEFAULT);
 
-  if (status != RED_SUCCESS) {
-    cerr << "Failure: " << getRedStatusStr(status) << endl;
+  if (status != RED_SUCCESS)
+  {
+    cerr << "Failure: " << get_red_status_str(status) << endl;
     return status;
   }
 
@@ -92,7 +95,8 @@ int test_svp(ZZ_mat<ZT> &A, IntVect &b) {
   Z_NR<ZT> norm_s;
   Z_NR<ZT> norm_b;
 
-  for(int i=0; i<A.getCols(); i++) {
+  for (int i = 0; i < A.getCols(); i++)
+  {
     tmp.mul(solution[i], solution[i]);
     norm_s.add(norm_s, tmp);
 
@@ -112,44 +116,49 @@ int test_svp(ZZ_mat<ZT> &A, IntVect &b) {
    @param b              coefficients of shortest dual vector
    @return
 */
-template<class ZT>
-int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &coords) {
+template <class ZT> int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &coords)
+{
   int d = coords.size();
-  if (A.getRows() != d) {
+  if (A.getRows() != d)
+  {
     cerr << "DSVP length error: Coefficient vector has wrong dimension: ";
     cerr << A.getRows() << " vs " << d << endl;
     return 1;
   }
   FloatVect coords_d(d);
-  for (int i = 0; i < d; i++) {
+  for (int i = 0; i < d; i++)
+  {
     coords_d[i] = coords[i].get_d();
   }
-  
+
   IntMatrix emptyMat;
   MatGSO<Integer, Float> gso(A, emptyMat, emptyMat, GSO_INT_GRAM);
-  if (!gso.updateGSO()) {
+  if (!gso.updateGSO())
+  {
     cerr << "GSO Failure." << endl;
     return 1;
   }
   Float tmp;
-  gso.getR(tmp, d-1, d-1);
+  gso.getR(tmp, d - 1, d - 1);
   tmp.pow_si(tmp, -1);
-  
+
   FloatVect alpha(d);
   Float mu, alpha2, r_inv;
-  norm = 0;
-  for (int i = 0; i < d; i++) {
+  norm = 0.0;
+  for (int i = 0; i < d; i++)
+  {
     alpha[i] = coords_d[i];
-    for (int j = 0; j < i; j++) {
+    for (int j = 0; j < i; j++)
+    {
       gso.getMu(mu, i, j);
-      alpha[i] -= mu*alpha[j];
+      alpha[i] -= mu * alpha[j];
     }
     gso.getR(r_inv, i, i);
     r_inv.pow_si(r_inv, -1);
     alpha2.pow_si(alpha[i], 2);
     norm += alpha2 * r_inv;
   }
-  
+
   return 0;
 }
 
@@ -161,46 +170,52 @@ int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &coords) {
    @return
 */
 
-template<class ZT>
-int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b) {
+template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b)
+{
   IntVect solCoord;  // In the LLL-reduced basis
   IntVect solution;
   IntMatrix u;
 
   Float normb;
-  if (dual_length(normb, A, b)) {
+  if (dual_length(normb, A, b))
+  {
     return 1;
   }
-  
-  int status = lllReduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
-  if (status != RED_SUCCESS) {
-    cerr << "LLL reduction failed: " << getRedStatusStr(status) << endl;
+
+  int status =
+      lll_reduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
+  if (status != RED_SUCCESS)
+  {
+    cerr << "LLL reduction failed: " << get_red_status_str(status) << endl;
     return status;
   }
 
   status = shortestVector(A, solCoord, SVPM_FAST, SVP_DUAL);
 
-  if (status != RED_SUCCESS) {
-    cerr << "Failure: " << getRedStatusStr(status) << endl;
+  if (status != RED_SUCCESS)
+  {
+    cerr << "Failure: " << get_red_status_str(status) << endl;
     return status;
   }
-  
+
   Float norm_sol;
-  if (dual_length(norm_sol, A, solCoord)) {
+  if (dual_length(norm_sol, A, solCoord))
+  {
     return 1;
   }
-  
-  Float error; error = 1;
+
+  Float error;
+  error = 1;
   error.mul_2si(error, -(int)error.getprec());
   normb += error;
-  if (norm_sol > normb) {
+  if (norm_sol > normb)
+  {
     cerr << "Returned dual vector too long by more than " << error << endl;
     return 1;
   }
 
   return 0;
 }
-
 
 /**
    @brief Test if dual SVP reduction returns reduced basis.
@@ -209,51 +224,58 @@ int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b) {
    @param b              shortest dual vector
    @return
 */
-template<class ZT>
-int test_dsvp_reduce(ZZ_mat<ZT> &A, IntVect &b) {
+template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, IntVect &b)
+{
   IntMatrix u;
   int d = A.getRows();
-  
+
   Float normb;
-  if (dual_length(normb, A, b)) {
+  if (dual_length(normb, A, b))
+  {
     return 1;
   }
-  
-  int status = lllReduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
-  if (status != RED_SUCCESS) {
-    cerr << "LLL reduction failed: " << getRedStatusStr(status) << endl;
+
+  int status =
+      lll_reduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
+  if (status != RED_SUCCESS)
+  {
+    cerr << "LLL reduction failed: " << get_red_status_str(status) << endl;
     return status;
   }
-  
-  
+
   IntMatrix empty_mat;
   MatGSO<Integer, Float> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
   LLLReduction<Integer, Float> lll_obj(gso, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
-  
+
   vector<Strategy> strategies;
   BKZParam dummy(d, strategies);
   BKZReduction<Float> bkz_obj(gso, lll_obj, dummy);
   bool clean = true;
-  
+
   bkz_obj.svp_reduction_ex(0, d, dummy, clean, true);
   status = bkz_obj.status;
-  if (status != RED_SUCCESS) {
-    cerr << "Failure: " << getRedStatusStr(status) << endl;
+  if (status != RED_SUCCESS)
+  {
+    cerr << "Failure: " << get_red_status_str(status) << endl;
     return status;
   }
-  
+
   Float norm_sol;
-  Integer zero; zero = 0;
+  Integer zero;
+  zero = 0;
   IntVect e_n(d, zero);
-  e_n[d-1] = 1;
-  if (dual_length(norm_sol, A, e_n)) {
+  e_n[d - 1] = 1;
+  if (dual_length(norm_sol, A, e_n))
+  {
     return 1;
   }
-  
-  Float error; error = 1;
+
+  Float error;
+  error = 1;
   error.mul_2si(error, -(int)error.getprec());
   normb += error;
-  if (norm_sol > normb) {
+  if (norm_sol > normb)
+  {
     cerr << "Last dual vector too long by more than " << error << endl;
     return 1;
   }
@@ -269,20 +291,26 @@ int test_dsvp_reduce(ZZ_mat<ZT> &A, IntVect &b) {
    @return
 */
 
-template<class ZT>
-int test_filename(const char *input_filename, const char *output_filename, const Test test = SVP_ENUM) {
+template <class ZT>
+int test_filename(const char *input_filename, const char *output_filename,
+                  const Test test = SVP_ENUM)
+{
   ZZ_mat<ZT> A;
   read_matrix(A, input_filename);
 
   IntVect b;
   read_vector(b, output_filename);
-  
-  switch(test) {
-    case SVP_ENUM     : return test_svp<ZT>(A, b);
-    case DSVP_ENUM    : return test_dual_svp<ZT>(A, b);
-    case DSVP_REDUCE  : return test_dsvp_reduce<ZT>(A, b);
+
+  switch (test)
+  {
+  case SVP_ENUM:
+    return test_svp<ZT>(A, b);
+  case DSVP_ENUM:
+    return test_dual_svp<ZT>(A, b);
+  case DSVP_REDUCE:
+    return test_dsvp_reduce<ZT>(A, b);
   }
-  
+
   cerr << "Unknown test." << endl;
   return 1;
 }
@@ -295,17 +323,23 @@ int test_filename(const char *input_filename, const char *output_filename, const
    @return
 */
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
   int status = 0;
   status |= test_filename<mpz_t>("lattices/example_svp_in", "lattices/example_svp_out");
-  status |= test_filename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", DSVP_ENUM);
-  status |= test_filename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", DSVP_REDUCE);
-  
-  if (status == 0) {
+  status |=
+      test_filename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", DSVP_ENUM);
+  status |=
+      test_filename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", DSVP_REDUCE);
+
+  if (status == 0)
+  {
     cerr << "All tests passed." << endl;
     return 0;
-  } else {
+  }
+  else
+  {
     return -1;
   }
 

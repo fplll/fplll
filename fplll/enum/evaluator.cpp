@@ -238,7 +238,7 @@ void FastEvaluator<Float>::evalSubSol(int offset, const FloatVect& newSubSolCoor
   {
     sub_solCoord[offset] = newSubSolCoord;
     for (int i = 0; i < offset; ++i)
-      sub_solCoord[offset][i] = 0;
+      sub_solCoord[offset][i] = 0.0;
     sub_solDist[offset] = subDist;
   }
 }
@@ -351,7 +351,7 @@ void ExactEvaluator::evalSubSol(int offset, const FloatVect& newSubSolCoord,
   {
     sub_solCoord[offset] = newSubSolCoord;
     for (int i = 0; i < offset; ++i)
-      sub_solCoord[offset][i] = 0;
+      sub_solCoord[offset][i] = 0.0;
     sub_solDist[offset] = subDist;
     sub_solintDist[offset] = newSolDist;
   }

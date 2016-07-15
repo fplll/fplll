@@ -5,8 +5,10 @@
 #ifndef FPLLL_NR_FP_LD_H
 #define FPLLL_NR_FP_LD_H
 
-FPLLL_BEGIN_NAMESPACE
+#include "../defs.h"
+#include "nr_FP.inl"
 
+FPLLL_BEGIN_NAMESPACE
 
 /* LD specialization if defined */
 #ifdef FPLLL_WITH_LONG_DOUBLE
@@ -104,6 +106,12 @@ template<>
 inline void FP_NR<long double>::operator=(double d) {
   data = d;
 }
+
+template<>
+inline void FP_NR<long double>::operator=(const char *s) {
+  data = strtold(s, NULL);
+}
+
 
 template<>
 inline bool FP_NR<long double>::operator<=(const FP_NR<long double>& a) const {

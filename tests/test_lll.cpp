@@ -19,8 +19,8 @@
 using namespace std;
 using namespace fplll;
 
-template<class ZT>
-void readMatrix(ZZ_mat<ZT> &A, const char *input_filename) {
+template <class ZT> void readMatrix(ZZ_mat<ZT> &A, const char *input_filename)
+{
   istream *is = new ifstream(input_filename);
   *is >> A;
   delete is;
@@ -33,14 +33,14 @@ void readMatrix(ZZ_mat<ZT> &A, const char *input_filename) {
    @return zero on success.
 */
 
-template<class ZT>
-int testTest(ZZ_mat<ZT> &A) {
+template <class ZT> int testTest(ZZ_mat<ZT> &A)
+{
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
 
-  MatGSO<Z_NR<ZT>, FP_NR<mpfr_t> > M(A, U, UT, 0);
+  MatGSO<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, U, UT, 0);
 
-  int is_reduced = isLLLReduced<Z_NR<ZT>, FP_NR<mpfr_t> >(M, LLL_DEF_DELTA, LLL_DEF_ETA);
+  int is_reduced = isLLLReduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
 
   if (is_reduced)
     cerr << "isLLLReduced reports success when it should not" << endl;
@@ -60,8 +60,10 @@ int testTest(ZZ_mat<ZT> &A) {
    @return zero on success.
 */
 
-template<class ZT>
-int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL_DEFAULT, int prec=0) {
+template <class ZT>
+int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags = LLL_DEFAULT,
+            int prec = 0)
+{
 
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
@@ -69,15 +71,16 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL
   int status = 0;
 
   // zero on success
-  if (testTest(A)){
+  if (testTest(A))
+  {
     return 0;
-
   }
 
   // zero on success
-  status = lllReduction(A, LLL_DEF_DELTA, LLL_DEF_ETA, method, float_type, 0, flags);
-  if (status != RED_SUCCESS) {
-    cerr << "LLL reduction failed with error '" << getRedStatusStr(status);
+  status = lll_reduction(A, LLL_DEF_DELTA, LLL_DEF_ETA, method, float_type, 0, flags);
+  if (status != RED_SUCCESS)
+  {
+    cerr << "LLL reduction failed with error '" << get_red_status_str(status);
     cerr << "' for method " << LLL_METHOD_STR[method];
     cerr << " and float type " << FLOAT_TYPE_STR[float_type] << endl;
     return status;
@@ -85,16 +88,17 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL
 
   const int oldPrec = prec ? FP_NR<mpfr_t>::setprec(prec) : 0;
 
-  MatGSO<Z_NR<ZT>, FP_NR<mpfr_t> > M(A, U, UT, 0);
+  MatGSO<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, U, UT, 0);
 
   // one on success
-  status = isLLLReduced<Z_NR<ZT>, FP_NR<mpfr_t> >(M, LLL_DEF_DELTA, LLL_DEF_ETA);
+  status = isLLLReduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
 
   if (prec)
     FP_NR<mpfr_t>::setprec(oldPrec);
 
   if (status == 0)
-    cerr << "Output of LLL reduction is not LLL reduced with method " << LLL_METHOD_STR[method] << endl;
+    cerr << "Output of LLL reduction is not LLL reduced with method " << LLL_METHOD_STR[method]
+         << endl;
 
   return (status == 0);
 }
@@ -111,8 +115,10 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags=LLL
    @return zero on success
 */
 
-template<class ZT>
-int testFilename(const char *input_filename, LLLMethod method, FloatType float_type=FT_DEFAULT, int flags=LLL_DEFAULT, int prec=0) {
+template <class ZT>
+int testFilename(const char *input_filename, LLLMethod method, FloatType float_type = FT_DEFAULT,
+                 int flags = LLL_DEFAULT, int prec = 0)
+{
   ZZ_mat<ZT> A;
   readMatrix(A, input_filename);
   return testLLL<ZT>(A, method, float_type, flags, prec);
@@ -131,15 +137,18 @@ int testFilename(const char *input_filename, LLLMethod method, FloatType float_t
    @return zero on success
 */
 
-template<class ZT>
-int testIntRel(int d, int b, LLLMethod method, FloatType float_type=FT_DEFAULT, int flags=LLL_DEFAULT, int prec=0) {
+template <class ZT>
+int testIntRel(int d, int b, LLLMethod method, FloatType float_type = FT_DEFAULT,
+               int flags = LLL_DEFAULT, int prec = 0)
+{
   ZZ_mat<ZT> A;
   A.resize(d, d + 1);
   A.gen_intrel(b);
   return testLLL<ZT>(A, method, float_type, flags, prec);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
   int status = 0;
   status |= testFilename<mpz_t>("lattices/dim55_in", LM_WRAPPER, FT_DEFAULT, LLL_DEFAULT, 128);
@@ -152,17 +161,21 @@ int main(int argc, char *argv[]) {
   status |= testIntRel<mpz_t>(30, 2000, LM_PROVED, FT_DPE);
   status |= testIntRel<mpz_t>(30, 2000, LM_PROVED, FT_MPFR);
 
-
   status |= testFilename<mpz_t>("lattices/example_in", LM_HEURISTIC);
   status |= testFilename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE);
   status |= testFilename<mpz_t>("lattices/example_in", LM_PROVED, FT_MPFR);
-  status |= testFilename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE, LLL_DEFAULT | LLL_EARLY_RED);
-  status |= testFilename<mpz_t>("lattices/example_in", LM_HEURISTIC, FT_DEFAULT, LLL_DEFAULT | LLL_EARLY_RED);
+  status |=
+      testFilename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE, LLL_DEFAULT | LLL_EARLY_RED);
+  status |= testFilename<mpz_t>("lattices/example_in", LM_HEURISTIC, FT_DEFAULT,
+                                LLL_DEFAULT | LLL_EARLY_RED);
 
-  if (status == 0) {
+  if (status == 0)
+  {
     cerr << "All tests passed." << endl;
     return 0;
-  } else {
+  }
+  else
+  {
     return -1;
   }
 

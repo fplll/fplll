@@ -31,6 +31,7 @@ public:
   inline FP_NR<F>(const FP_NR<F> &f);
   inline ~FP_NR<F>();
   inline FP_NR<F>(const double d) : FP_NR<F>() {*this = d;};
+  inline FP_NR<F>(const char *s) : FP_NR<F>() {*this = s;};
 
   /**
    * Returns the current precision for new FP_NR&lt;F&gt; objects.
@@ -149,6 +150,7 @@ public:
    * Operator
    */
   inline void operator=(const FP_NR<F> &a);
+  inline void operator=(const char *s);
   inline void operator=(double a);
   // inline void operator=(mpfr_t& a);
   inline void operator=(mpfr_t &a) { set_mpfr(a, MPFR_RNDN); };
@@ -169,7 +171,7 @@ public:
   inline FP_NR<F> &operator+=(const double a) { FP_NR<F> t=a; this->add(*this, t); return *this;};
   inline FP_NR<F> &operator-=(const double a) { FP_NR<F> t=a; this->sub(*this, t); return *this;};
   inline FP_NR<F> &operator*=(const double a) { this->mul_d(*this, a); return *this;};
-  inline FP_NR<F> &operator/=(const double a) { this->div_d(*this, a); return *this;};
+  inline FP_NR<F> &operator/=(const double a) { this->div(*this, FP_NR<F>(a)); return *this;};
 
 
   /**
@@ -351,11 +353,27 @@ template <class F> inline FP_NR<F> operator+(const FP_NR<F> &a, double b)
   return r;
 }
 
+template <class F> inline FP_NR<F> operator+(double a, const FP_NR<F> &b)
+{
+  FP_NR<F> r;
+  r = a;
+  r.add(r, b);
+  return r;
+}
+
 template <class F> inline FP_NR<F> operator+(const FP_NR<F> &a, long b)
 {
   FP_NR<F> r;
   r = b;
-  r.add(r, a);
+  r.add(a, r);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator+(long a, const FP_NR<F> &b)
+{
+  FP_NR<F> r;
+  r = a;
+  r.add(r, b);
   return r;
 }
 
@@ -373,6 +391,30 @@ template <class F> inline FP_NR<F> operator-(const FP_NR<F> &a, double b)
   FP_NR<F> r;
   r = b;
   r.sub(a, r);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator-(double a, const FP_NR<F> &b)
+{
+  FP_NR<F> r;
+  r = a;
+  r.sub(r, b);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator-(const FP_NR<F> &a, long b)
+{
+  FP_NR<F> r;
+  r = b;
+  r.sub(a, r);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator-(long a, const FP_NR<F> &b)
+{
+  FP_NR<F> r;
+  r = a;
+  r.sub(r, b);
   return r;
 }
 
@@ -417,6 +459,18 @@ template <class F> inline FP_NR<F>&& operator*(FP_NR<F> &&a, double b) {
 }
 
 template <class F> inline FP_NR<F> operator/(const FP_NR<F> &a, const FP_NR<F> &b) {
+  FP_NR<F> r;
+  r.div(a, b);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator/(const FP_NR<F> &a, const double b) {
+  FP_NR<F> r;
+  r.div(a, b);
+  return r;
+}
+
+template <class F> inline FP_NR<F> operator/(const double a, const FP_NR<F> &b) {
   FP_NR<F> r;
   r.div(a, b);
   return r;
