@@ -32,7 +32,7 @@ inline void roundto(double& dest, const double& src) { dest = std::rint(src); }
 /* config */
 #define FPLLL_WITH_RECURSIVE_ENUM 1
 #define MAXTEMPLATEDDIMENSION  80 // unused
-//#define FORCE_ENUM_INLINE
+//#define FORCE_ENUM_INLINE // not recommended
 /* end config */
 
 
@@ -55,7 +55,6 @@ class EnumerationBase
 {
 public:
     static const int maxdim = FPLLL_MAX_ENUM_DIMENSION;
-    static const int maxdim_opt = MAXTEMPLATEDDIMENSION;
     
     inline uint64_t getNodes() const { return nodes; }
     
@@ -91,13 +90,15 @@ protected:
     template<int kk, int kk_start, bool dualenum, bool findsubsols>
     inline void enumerate_recursive( opts<kk, kk_start, dualenum, findsubsols> ) ENUM_ALWAYS_INLINE;
     template<int kk_start, bool dualenum, bool findsubsols>
-    inline void enumerate_recursive( opts<-1, kk_start, dualenum, findsubsols> );
+    inline void enumerate_recursive( opts<-1, kk_start, dualenum, findsubsols> ) 
+    {
+    }
 
     /* simple wrapper with no function argument as helper for dispatcher */
     template<int kk, bool dualenum, bool findsubsols>
     void enumerate_recursive_wrapper()
     {
-        enumerate_recursive( opts<kk,0,dualenum,findsubsols>() );
+        enumerate_recursive( opts<(kk<maxdim ? kk : -1),0,dualenum,findsubsols>() );
     }
         
     template<bool dualenum, bool findsubsols>

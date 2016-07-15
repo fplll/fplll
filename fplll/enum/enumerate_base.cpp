@@ -131,36 +131,38 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
     }
 }
 
-template<int kk_start, bool dualenum, bool findsubsols>
-inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<-1, kk_start, dualenum, findsubsols> )
-{
-}
-
+#define ENUM_TABLE_FILL8(a) \
+            & EnumerationBase::enumerate_recursive_wrapper< a+0,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+1,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+2,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+3,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+4,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+5,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+6,dualenum,findsubsols>, \
+            & EnumerationBase::enumerate_recursive_wrapper< a+7,dualenum,findsubsols>
+#define ENUM_TABLE_FILL64(a) \
+            ENUM_TABLE_FILL8(a), ENUM_TABLE_FILL8(a+8), ENUM_TABLE_FILL8(a+16), ENUM_TABLE_FILL8(a+24), \
+            ENUM_TABLE_FILL8(a+32), ENUM_TABLE_FILL8(a+40), ENUM_TABLE_FILL8(a+48), ENUM_TABLE_FILL8(a+56)
+#define ENUM_TABLE_FILL256(a) \
+            ENUM_TABLE_FILL64(a), ENUM_TABLE_FILL64(a+64), ENUM_TABLE_FILL64(a+128), ENUM_TABLE_FILL64(a+192)
+            
 template<bool dualenum, bool findsubsols>
 inline void EnumerationBase::enumerate_recursive_dispatch(int kk)
 {
     typedef void (EnumerationBase::*enum_recur_type)();
-    static const enum_recur_type lookup[] = 
-        { 
-            & EnumerationBase::enumerate_recursive_wrapper<  7,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper< 15,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper< 23,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper< 31,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper< 39,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper< 47,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper< 55,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper< 63,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper< 71,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper< 79,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper< 87,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper< 95,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper<103,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper<111,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper<119,dualenum,findsubsols>,
-            & EnumerationBase::enumerate_recursive_wrapper<127,dualenum,findsubsols>
-        };
-    (this->*lookup[kk/8])();
+    static const enum_recur_type lookup[] = {
+        ENUM_TABLE_FILL256(0),
+        ENUM_TABLE_FILL256(256),
+        ENUM_TABLE_FILL256(512),
+        ENUM_TABLE_FILL256(768),
+        ENUM_TABLE_FILL256(1024),
+        ENUM_TABLE_FILL256(1280),
+        ENUM_TABLE_FILL256(1536),
+        ENUM_TABLE_FILL256(1792),
+    };
+    (this->*lookup[kk])();
 }
+
 #endif
 
 template<bool dualenum, bool findsubsols>
@@ -181,12 +183,8 @@ void EnumerationBase::enumerate_loop()
     k = k_end - 1;
 
 #ifdef FPLLL_WITH_RECURSIVE_ENUM
-    if ((k & 7) == 7 && k <= 127)
-    {
-        enumerate_recursive_dispatch<dualenum, findsubsols>(k);
-        if (!next_pos_up())
-            return;
-    }
+    enumerate_recursive_dispatch<dualenum, findsubsols>(k);
+    return;
 #endif
 
     while (true)
@@ -229,16 +227,6 @@ void EnumerationBase::enumerate_loop()
             partdist[k] = newdist;
             roundto(x[k], newcenter);
             dx[k] = ddx[k] = (((int)(newcenter >= x[k]) & 1) << 1) - 1;
-
-#ifdef FPLLL_WITH_RECURSIVE_ENUM
-            if ((k & 7) == 7 && k <= 127)
-            {
-                enumerate_recursive_dispatch<dualenum, findsubsols>(k);
-                if (!next_pos_up())
-                    break;
-            }
-#endif
-
         }
         else
         {
