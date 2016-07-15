@@ -41,10 +41,10 @@ AX_CXX_COMPILE_STDCXX([11],[noext],[mandatory])
 
 # Checks for libraries.
 AC_ARG_WITH(gmp,
-   [  --with-gmp=DIR          GMP install directory ], [
+   AS_HELP_STRING([--with-gmp=DIR], [GMP install directory]), [
       CPPFLAGS="$CPPFLAGS -I$withval/include"
-       LDFLAGS="$LDFLAGS -L$withval/lib"
-       gmp_lib_path="$withval/lib"
+      LDFLAGS="$LDFLAGS -L$withval/lib"
+      gmp_lib_path="$withval/lib"
    ])
 
 AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
@@ -54,7 +54,7 @@ AC_CHECK_LIB(gmp, __gmp_get_memory_functions, , [AC_MSG_ERROR(
 [GMP version too old, need >= 4.2.0, see http://gmplib.org])])
 
 AC_ARG_WITH(mpfr,
-   [  --with-mpfr=DIR          MPFR install directory ], [
+   AS_HELP_STRING([--with-mpfr=DIR], [MPFR install directory]), [
       CPPFLAGS="$CPPFLAGS -I$withval/include"
        LDFLAGS="$LDFLAGS -L$withval/lib"
        mpfr_lib_path="$withval/lib"
@@ -67,7 +67,7 @@ AC_CHECK_LIB(mpfr, mpfr_fms, , [AC_MSG_ERROR(
 [MPFR version too old, need >= 2.3.0, see http://www.mpfr.org])])
 
 AC_ARG_WITH(qd,
-   [  --with-qd=DIR          quaddouble install directory ], [
+   AS_HELP_STRING([--with-qd=DIR], [quaddouble install directory]), [
       CPPFLAGS="$CPPFLAGS -I$withval/include"
        LDFLAGS="$LDFLAGS -L$withval/lib"
        qd_lib_path="$withval/lib"
@@ -79,7 +79,7 @@ AC_CHECK_HEADER(qd/dd_real.h,
 
 if test "x${have_libqd}" = "xyes"; then
    LIBQD_LIBADD="-lqd"
-   AC_DEFINE([FPLLL_WITH_QD], [1], [define if libqd-dev is available])
+   AC_DEFINE([FPLLL_WITH_QD], [1], [defined when libqd-dev is available])
 fi
 
 AC_SUBST(LIBQD_LIBADD)
