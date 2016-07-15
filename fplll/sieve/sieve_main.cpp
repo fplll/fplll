@@ -158,7 +158,7 @@ int main (int argc, char** argv)
 
   /* decide integer type */
   stime = clock();
-  max = B.getMax();
+  max = B.get_max();
 
 #if 1
   if (max < std::numeric_limits<int>::max()) {

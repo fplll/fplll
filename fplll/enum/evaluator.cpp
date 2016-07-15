@@ -68,7 +68,7 @@ void Evaluator<Float>::initDeltaDef(int prec, double rho, bool withRoundingToEnu
    - a,b,c,... represent exact values
    - a~,b~,c~,... are approx. values used or computed by the fp algorithm */
 
-bool Evaluator<Float>::getMaxErrorAux(const Float& maxDist,
+bool Evaluator<Float>::get_max_error_aux(const Float& maxDist,
   bool boundOnExactVal, Float& maxDE) {
 
   FPLLL_CHECK(inputErrorDefined,
@@ -243,16 +243,16 @@ void FastEvaluator<Float>::evalSubSol(int offset, const FloatVect& newSubSolCoor
   }
 }
 
-bool FastEvaluator<Float>::getMaxError(Float& maxError) {
+bool FastEvaluator<Float>::get_max_error(Float& maxError) {
   Float maxE, maxDE, maxOptDE, minOptE, one;
 
   if (solCoord.empty() || !inputErrorDefined) return false;
-  if (!getMaxErrorAux(lastPartialDist, false, maxDE)) return false;
+  if (!get_max_error_aux(lastPartialDist, false, maxDE)) return false;
 
   // Exact norm of an optimal solution <= Exact norm of the result <= maxE
   maxE.add(lastPartialDist, maxDE, GMP_RNDU);
   // Error on the norm of an optimal solution <= maxOptDE
-  if (!getMaxErrorAux(maxE, true, maxOptDE)) return false;
+  if (!get_max_error_aux(maxE, true, maxOptDE)) return false;
   // Approx. norm of an optimal solution >= minOptE
   minOptE.sub(lastPartialDist, maxOptDE, GMP_RNDD);
 
@@ -262,7 +262,7 @@ bool FastEvaluator<Float>::getMaxError(Float& maxError) {
   return true;
 }
 
-bool ExactEvaluator::getMaxError(Float& maxError) {
+bool ExactEvaluator::get_max_error(Float& maxError) {
   maxError = 0.0;
   return true;
 }
@@ -363,7 +363,7 @@ void ExactEvaluator::evalSubSol(int offset, const FloatVect& newSubSolCoord,
 void ExactEvaluator::updateMaxDist(enumf& maxDist) {
   Float fMaxDist, maxDE;
   fMaxDist.set_z(intMaxDist, GMP_RNDU);
-  bool result = getMaxErrorAux(fMaxDist, true, maxDE);
+  bool result = get_max_error_aux(fMaxDist, true, maxDE);
   FPLLL_CHECK(result, "ExactEvaluator: error cannot be bounded");
   FPLLL_CHECK(maxDE <= r(0, 0), "ExactEvaluator: max error is too large");
   fMaxDist.add(fMaxDist, maxDE);

@@ -20,7 +20,7 @@
 
 template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
 {
-  ZZ_mat<ZT> u, uInv;
+  ZZ_mat<ZT> u, u_inv;
   const char *format = o.output_format ? o.output_format : "b";
   int status, flags = 0;
   if (o.verbose)
@@ -33,7 +33,7 @@ template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
   if (strchr(format, 'v') != NULL)
   {
     // LLL-reduction with transform and inverse transform
-    status = lll_reduction(b, u, uInv, o.delta, o.eta, o.method, o.float_type, o.precision, flags);
+    status = lll_reduction(b, u, u_inv, o.delta, o.eta, o.method, o.float_type, o.precision, flags);
   }
   else if (strchr(format, 'u') != NULL)
   {
@@ -56,7 +56,7 @@ template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
       cout << u << endl;
       break;
     case 'v':
-      cout << uInv << endl;
+      cout << u_inv << endl;
       break;
     case 't':
       cout << status << endl;
@@ -563,7 +563,7 @@ int main(int argc, char **argv)
   int result;
   Options o;
   read_options(argc, argv, o);
-  IntMatrix::setPrintMode(MAT_PRINT_REGULAR);
+  IntMatrix::set_print_mode(MAT_PRINT_REGULAR);
   switch (o.int_type)
   {
   case ZT_MPZ:

@@ -25,56 +25,55 @@ FPLLL_BEGIN_NAMESPACE
 /* The matrix b must not be modified before calling lll().
    lll() must be called only once. */
 
-class Wrapper {
+class Wrapper
+{
 public:
   /* u must be either empty or the identity matrix */
-  Wrapper(IntMatrix& b, IntMatrix& u, IntMatrix& uInv,
-          double delta, double eta, int flags);
+  Wrapper(IntMatrix &b, IntMatrix &u, IntMatrix &u_inv, double delta, double eta, int flags);
 
   bool lll();
 
   int status;
 
 private:
-  IntMatrix& b;
-  IntMatrix& u;
-  IntMatrix& uInv;
+  IntMatrix &b;
+  IntMatrix &u;
+  IntMatrix &u_inv;
 
 #ifdef FPLLL_WITH_ZLONG
-  ZZ_mat<long> bLong;
-  ZZ_mat<long> uLong;    // Always empty
-  ZZ_mat<long> uInvLong; // Always empty
+  ZZ_mat<long> b_long;
+  ZZ_mat<long> u_long;      // Always empty
+  ZZ_mat<long> u_inv_long;  // Always empty
 #endif
 
   double delta;
   double eta;
-  int goodPrec;
-  bool useLong;
+  int good_prec;
+  bool use_long;
   int flags;
 
-  bool little(int kappa,int precision);
+  bool little(int kappa, int precision);
 
-  template<class Z, class F>
-  int callLLL(ZZ_mat<Z>& bz, ZZ_mat<Z>& uz, ZZ_mat<Z>& uInvZ,
-              LLLMethod method, int precision, double delta, double eta);
+  template <class Z, class F>
+  int call_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_inv_z, LLLMethod method, int precision,
+               double delta, double eta);
 
-  template<class F>
-  int fastLLL(double delta, double eta);
+  template <class F> int fast_lll(double delta, double eta);
 
-  template<class Z, class F>
-  int heuristicLLL(ZZ_mat<Z>& bz, ZZ_mat<Z>& uz, ZZ_mat<Z>& uInvZ,
-                   int precision, double delta, double eta);
+  template <class Z, class F>
+  int heuristic_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_inv_z, int precision, double delta,
+                    double eta);
 
-  template<class Z, class F>
-  int provedLLL(ZZ_mat<Z>& bz, ZZ_mat<Z>& uz, ZZ_mat<Z>& uInvZ,
-                int precision, double delta, double eta);
+  template <class Z, class F>
+  int proved_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_inv_z, int precision, double delta,
+                 double eta);
 
-  int heuristicLoop(int precision);
-  int provedLoop(int precision);
-  int lastLLL();
+  int heuristic_loop(int precision);
+  int proved_loop(int precision);
+  int last_lll();
 
-  void setUseLong(bool value);
-  int increasePrec(int precision);
+  void set_use_long(bool value);
+  int increase_prec(int precision);
 
   int max_exponent;
   int n;

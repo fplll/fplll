@@ -162,7 +162,7 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
 
   if (!(flags & SVP_OVERRIDE_BND) && (evalMode == EVALMODE_SV || method == SVPM_PROVED)) {
     Float ftmp1;
-    bool result = evaluator->getMaxErrorAux(maxDist, true, ftmp1);
+    bool result = evaluator->get_max_error_aux(maxDist, true, ftmp1);
     FPLLL_CHECK(result, "shortestVector: cannot compute an initial bound");
     maxDist.add(maxDist, ftmp1, GMP_RNDU);
   }
@@ -177,7 +177,7 @@ static int shortestVectorEx(IntMatrix& b, IntVect& solCoord,
   }
   else if (!evaluator->solCoord.empty()) {
     /*Float fMaxError;
-    validMaxError = evaluator->getMaxError(fMaxError);
+    validMaxError = evaluator->get_max_error(fMaxError);
     maxError = fMaxError.get_d(GMP_RNDU);*/
     for (int i = 0; i < d; i++) {
       itmp1.set_f(evaluator->solCoord[i]);

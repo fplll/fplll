@@ -168,7 +168,7 @@ public:
    * normOfSolution^2 <= (1 + maxError) * lambda_1(L)^2.
    * The default implementation might fail (i.e. return false).
    */
-  virtual bool getMaxError(Float& maxError) = 0;
+  virtual bool get_max_error(Float& maxError) = 0;
 
   /**
    * Called by enumerate when a solution is found.
@@ -187,7 +187,7 @@ public:
           const enumf& subDist) = 0;
 
   // Internal use
-  bool getMaxErrorAux(const Float& maxDist, bool boundOnExactVal, Float& maxDE);
+  bool get_max_error_aux(const Float& maxDist, bool boundOnExactVal, Float& maxDE);
 
   /** Coordinates of the solution in the lattice */
   FloatVect solCoord;
@@ -235,7 +235,7 @@ public:
     Evaluator<Float>(d, mu, r, evalMode, max_aux_solutions, findsubsolutions) {}
   virtual ~FastEvaluator() {}
 
-  virtual bool getMaxError(Float& maxError);
+  virtual bool get_max_error(Float& maxError);
   virtual void evalSol(const FloatVect& newSolCoord,
           const enumf& newPartialDist, enumf& maxDist);
   virtual void evalSubSol(int offset, const FloatVect& newSubSolCoord,
@@ -258,7 +258,7 @@ public:
   /**
    * Sets maxError to 0: the result is guaranteed.
    */
-  virtual bool getMaxError(Float& maxError);
+  virtual bool get_max_error(Float& maxError);
 
   virtual void evalSol(const FloatVect& newSolCoord,
           const enumf& newPartialDist, enumf& maxDist);

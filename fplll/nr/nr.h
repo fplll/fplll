@@ -55,23 +55,23 @@ typedef double enumxt;
 /**
  * return type
  */
-template<class T> inline const char* numTypeStr()       {return "";}
+template<class T> inline const char* num_type_str()       {return "";}
 #ifdef FPLLL_WITH_ZLONG
-template<> inline const char* numTypeStr<long>()        {return "long";}
+template<> inline const char* num_type_str<long>()        {return "long";}
 #endif
-template<> inline const char* numTypeStr<double>()      {return "double";}
-template<> inline const char* numTypeStr<mpz_t>()       {return "mpz_t";}
+template<> inline const char* num_type_str<double>()      {return "double";}
+template<> inline const char* num_type_str<mpz_t>()       {return "mpz_t";}
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template<> inline const char* numTypeStr<long double>() {return "long double";}
+template<> inline const char* num_type_str<long double>() {return "long double";}
 #endif
 #ifdef FPLLL_WITH_DPE
-template<> inline const char* numTypeStr<dpe_t>()       {return "dpe_t";}
+template<> inline const char* num_type_str<dpe_t>()       {return "dpe_t";}
 #endif
 #ifdef FPLLL_WITH_QD
-template<> inline const char* numTypeStr<dd_real>()       {return "dd_real";}
-template<> inline const char* numTypeStr<qd_real>()       {return "qd_real";}
+template<> inline const char* num_type_str<dd_real>()       {return "dd_real";}
+template<> inline const char* num_type_str<qd_real>()       {return "qd_real";}
 #endif
-template<> inline const char* numTypeStr<mpfr_t>()      {return "mpfr_t";}
+template<> inline const char* num_type_str<mpfr_t>()      {return "mpfr_t";}
 
 
 FPLLL_END_NAMESPACE

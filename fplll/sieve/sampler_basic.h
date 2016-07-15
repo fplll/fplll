@@ -33,7 +33,7 @@ class KleinSampler {
    */
   int nr, nc;
   double logn2;
-  ZZ_mat<ZT> b, u, uInv;
+  ZZ_mat<ZT> b, u, u_inv;
   MatGSO<Z_NR<ZT>, F> *pGSO;
   Matrix<Z_NR<ZT> > g;
   Matrix<F> mu, r;

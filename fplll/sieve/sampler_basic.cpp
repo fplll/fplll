@@ -22,7 +22,7 @@ KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B, bool ver, int seed)
   logn2 = log(nr)*log(nr);
 
   /* gso, flag 1 to have g matrix valid */
-  pGSO = new MatGSO<Z_NR<ZT>, F> (b, u, uInv, 1);
+  pGSO = new MatGSO<Z_NR<ZT>, F> (b, u, u_inv, 1);
 
   pGSO->update_gso();
   mu = pGSO->get_mu_matrix();

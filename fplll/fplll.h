@@ -42,7 +42,7 @@ int lll_reduction(ZZ_mat<T>& b, ZZ_mat<T>& u,                                \
         LLLMethod method = LM_WRAPPER, FloatType floatType = FT_DEFAULT,    \
         int precision = 0, int flags = LLL_DEFAULT);                        \
                                                                             \
-int lll_reduction(ZZ_mat<T>& b, ZZ_mat<T>& u, ZZ_mat<T>& uInv,               \
+int lll_reduction(ZZ_mat<T>& b, ZZ_mat<T>& u, ZZ_mat<T>& u_inv,               \
         double delta = LLL_DEF_DELTA, double eta = LLL_DEF_ETA,             \
         LLLMethod method = LM_WRAPPER, FloatType floatType = FT_DEFAULT,    \
         int precision = 0, int flags = LLL_DEFAULT);

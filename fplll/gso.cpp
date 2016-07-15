@@ -406,10 +406,10 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::move_row(int old_r, int new_r
         u_inv_t.rotate_right(new_r, old_r);
     }
     if (enable_int_gram)
-      g.rotateGramRight(new_r, old_r, n_known_rows);
+      g.rotate_gram_right(new_r, old_r, n_known_rows);
     else
     {
-      gf.rotateGramRight(new_r, old_r, n_known_rows);
+      gf.rotate_gram_right(new_r, old_r, n_known_rows);
       bf.rotate_right(new_r, old_r);
     }
     if (enable_row_expo)
@@ -435,12 +435,12 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::move_row(int old_r, int new_r
     if (enable_int_gram)
     {
       if (old_r < n_known_rows - 1)
-        g.rotateGramLeft(old_r, min(new_r, n_known_rows - 1), n_known_rows);
+        g.rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
     }
     else
     {
       if (old_r < n_known_rows - 1)
-        gf.rotateGramLeft(old_r, min(new_r, n_known_rows - 1), n_known_rows);
+        gf.rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
       bf.rotate_left(old_r, new_r);
     }
     if (enable_row_expo)
