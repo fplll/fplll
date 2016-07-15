@@ -29,8 +29,7 @@ inline void roundto(int& dest, const double& src) { dest = std::lrint(src); }
 inline void roundto(double& dest, const double& src) { dest = std::rint(src); }
 
 /* config */
-#define MAXDIMENSION           256
-#define MAXTEMPLATEDDIMENSION  80
+#define MAXTEMPLATEDDIMENSION  80 // unused
 //#define FORCE_ENUM_INLINE
 /* end config */
 
@@ -53,7 +52,7 @@ inline void roundto(double& dest, const double& src) { dest = std::rint(src); }
 class EnumerationBase
 {
 public:
-    static const int maxdim = MAXDIMENSION;
+    static const int maxdim = FPLLL_MAX_ENUM_DIMENSION;
     static const int maxdim_opt = MAXTEMPLATEDDIMENSION;
     
     inline uint64_t getNodes() const { return nodes; }

@@ -111,6 +111,16 @@ AS_IF([test "x$enable_recursive_enum" != "xno"],
 AS_IF([test "x$have_recursive_enum" = "xyes"],
       AC_DEFINE([FPLLL_WITH_RECURSIVE_ENUM], [1], [defined when recursive enumeration is used]))
 
+# enumeration dimension
+max_enumeration_dimension=256
+
+AC_ARG_WITH(max-enumeration-dimension,
+        AS_HELP_STRING([--with-max-enumeration-dimension@<:@=DIM@:>@],
+         [Maximum supported enumeration dimension (default: 256).]),
+        [max_enumeration_dimension=$withval])
+
+AC_DEFINE_UNQUOTED([FPLLL_MAX_ENUM_DIMENSION], $max_enumeration_dimension, [maximum supported enumeration dimension])
+
 # Store version numbers in header
 
 AC_DEFINE_UNQUOTED([FPLLL_MAJOR_VERSION],[$FPLLL_MAJOR_VERSION],[major version])
