@@ -27,7 +27,7 @@ FPLLL_BEGIN_NAMESPACE
 template <class FT>
 BKZReduction<FT>::BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lll_obj,
                                const BKZParam &param)
-    : status(RED_SUCCESS), param(param), m(m), lll_obj(lll_obj)
+  : status(RED_SUCCESS), nodes(0), param(param), m(m), lll_obj(lll_obj), algorithm(NULL), cputime_start(0)
 {
   for (num_rows = m.d; num_rows > 0 && m.b[num_rows - 1].is_zero(); num_rows--)
   {

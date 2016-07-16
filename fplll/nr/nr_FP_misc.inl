@@ -251,7 +251,7 @@ inline void FP_NR<dpe_t>::get_z_exp(Z_NR<mpz_t>& a, long& expo) const {
 }
 
 template<> template<class Z>
-inline void FP_NR<dpe_t>::get_z_exp_we(Z_NR<Z>& a, long& expo, long expo_add) const {
+inline void FP_NR<dpe_t>::get_z_exp_we(Z_NR<Z>& a, long& expo, long /*expo_add*/) const {
   return get_z_exp(a, expo);
 }
 
@@ -339,7 +339,7 @@ inline void FP_NR<mpfr_t>::get_z_exp(Z_NR<mpz_t>& a, long& expo) const {
 }
 
 template<> template<class Z>
-inline void FP_NR<mpfr_t>::get_z_exp_we(Z_NR<Z>& a, long& expo, long expo_add) const {
+inline void FP_NR<mpfr_t>::get_z_exp_we(Z_NR<Z>& a, long& expo, long /*expo_add*/) const {
   return get_z_exp(a, expo);
 }
 

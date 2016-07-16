@@ -46,7 +46,7 @@ inline void FP_NR<dpe_t>::get_mpfr(mpfr_t r, mp_rnd_t rnd) const {
 }
 
 template<>
-inline void FP_NR<dpe_t>::set_mpfr(mpfr_t r, mp_rnd_t rnd) {
+inline void FP_NR<dpe_t>::set_mpfr(mpfr_t r, mp_rnd_t /*rnd*/) {
   dpe_set_mpfr (data, r);
 }
 

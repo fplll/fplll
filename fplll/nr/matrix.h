@@ -18,7 +18,7 @@
 #ifndef FPLLL_MATRIX_H
 #define FPLLL_MATRIX_H
 
-#include "numvect.h"
+#include "fplll/nr/numvect.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -58,7 +58,7 @@ public:
   {
     row.addmul_2exp(v.row, x, expo, tmp);
   }
-  void addmul_2exp(const MatrixRow<T> &v, const T &x, long expo, int n, T &tmp)
+  void addmul_2exp(const MatrixRow<T> &v, const T &x, long expo, int /*n*/, T &tmp)
   {
     row.addmul_2exp(v.row, x, expo, tmp);
   }
@@ -338,6 +338,6 @@ typedef FP_mat<FloatT> FloatMatrix;
 
 FPLLL_END_NAMESPACE
 
-#include "matrix.cpp"
+#include "fplll/nr/matrix.cpp"
 
 #endif

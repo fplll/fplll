@@ -33,7 +33,7 @@ inline void Z_NR<long>::get_f_exp(FP_NR<long double>& f, long& expo) {
 
 #ifdef FPLLL_WITH_DPE
 template<> template<>
-inline void Z_NR<long>::get_f_exp(FP_NR<dpe_t>& f, long& expo) {
+inline void Z_NR<long>::get_f_exp(FP_NR<dpe_t>& /*f*/, long& /*expo*/) {
   FPLLL_DEBUG_ABORT("get_f_exp unimplemented for dpe_t");
 }
 #endif

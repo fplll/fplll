@@ -162,8 +162,8 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   }
   else if (method == SVPM_PROVED)
   {
-    ExactEvaluator *p =
-        new ExactEvaluator(d, b, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode, 0, findsubsols);
+    ExactEvaluator *p = new ExactEvaluator(d, b, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode,
+                                           0, findsubsols);
     p->int_max_dist = int_max_dist;
     evaluator       = p;
   }
@@ -187,7 +187,7 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   int result = RED_ENUM_FAILURE;
   if (eval_mode != EVALMODE_SV)
   {
-    result   = RED_SUCCESS;
+    result    = RED_SUCCESS;
     sol_count = evaluator->sol_count * 2;
   }
   else if (!evaluator->sol_coord.empty())

@@ -656,14 +656,17 @@ template <class ZT, class FT> inline bool MatGSO<ZT, FT>::update_gso()
   return true;
 }
 
+#ifdef DEBUG
 template <class ZT, class FT> inline void MatGSO<ZT, FT>::row_op_begin(int first, int last)
 {
-#ifdef DEBUG
   FPLLL_DEBUG_CHECK(row_op_first == -1);
   row_op_first = first;
   row_op_last  = last;
-#endif
 }
+#else
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::row_op_begin(int /*first*/, int /*last*/) { }
+#endif
+
 
 template <class ZT, class FT>
 inline void MatGSO<ZT, FT>::dump_mu_d(double *mu, int offset, int block_size)

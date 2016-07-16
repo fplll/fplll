@@ -21,27 +21,25 @@
 FPLLL_BEGIN_NAMESPACE
 
 const double ENUM_MAX_VOLUME = 20000000;
-const int ENUM_MIN_LEVEL = 20;
+const int ENUM_MIN_LEVEL     = 20;
 
-class Enumerator {
+class Enumerator
+{
 public:
-  Enumerator(int d, const Matrix<Float>& mu, const Matrix<Float>& r,
-             double maxVolume = ENUM_MAX_VOLUME,
-             int minLevel = ENUM_MIN_LEVEL);
-  bool enum_next(const Float& maxsqrlength);
-  inline const vector<enumxt>& get_sub_tree() {
-    return subTree;
-  }
+  Enumerator(int d, const Matrix<Float> &mu, const Matrix<Float> &r,
+             double max_volume = ENUM_MAX_VOLUME, int min_level = ENUM_MIN_LEVEL);
+  bool enum_next(const Float &max_sqr_length);
+  inline const vector<enumxt> &get_sub_tree() { return sub_tree; }
 private:
-  const Matrix<Float>& mu;
-  const Matrix<Float>& r;
+  const Matrix<Float> &mu;
+  const Matrix<Float> &r;
   int k, kmin, kmax, d;
   FloatVect center, dist;
   FloatVect x, dx, ddx;
-//  FloatVect subTree;
-  vector<enumxt> subTree;
-  Float maxVolume;
-  bool svpInitNeeded;
+  //  FloatVect sub_tree;
+  vector<enumxt> sub_tree;
+  Float max_volume;
+  bool svp_init_needed;
 };
 
 FPLLL_END_NAMESPACE
