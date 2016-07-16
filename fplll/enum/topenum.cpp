@@ -30,7 +30,7 @@ Enumerator::Enumerator(int d, const Matrix<Float>& mu, const Matrix<Float>& r,
   svpInitNeeded = true;
 }
 
-bool Enumerator::enumNext(const Float& maxsqrlength) {
+bool Enumerator::enum_next(const Float& maxsqrlength) {
   Float newdist, newcenter, y, volume, rtmp1;
   bool notFound = true;
 

@@ -134,7 +134,7 @@ public:
   void set_rows(int rows) { resize(rows, c); }
   /** Sets the number of columns. Content is not erased except for deleted
       columns. The value of new elements is undefined. */
-  void setCols(int cols) { resize(r, cols); }
+  void set_cols(int cols) { resize(r, cols); }
   /** Fills this matrix with a given value. */
   template <class U> void fill(U value);
   /** Efficiently swaps two matrices. */
@@ -175,7 +175,7 @@ public:
     return MatrixRow<T>(matrix[i]);
   }
   /** Rows swap. */
-  void swapRows(int r1, int r2) { matrix[r1].swap(matrix[r2]); }
+  void swap_rows(int r1, int r2) { matrix[r1].swap(matrix[r2]); }
   /** Rows permutation.
       (m[first],...,m[last]) becomes (m[first+1],...,m[last],m[first]) */
   void rotate_left(int first, int last) { rotate_left_by_swap(matrix, first, last); }
@@ -188,10 +188,10 @@ public:
   void rotate(int first, int middle, int last) { rotate_by_swap(matrix, first, middle, last); }
   /** Transformation needed to update the lower triangular Gram matrix when
      rotate_left(first, last) is done on the basis of the lattice. */
-  void rotate_gram_left(int first, int last, int nValidRows);
+  void rotate_gram_left(int first, int last, int n_valid_rows);
   /** Transformation needed to update the lower triangular Gram matrix when
       rotate_right(first, last) is done on the basis of the lattice. */
-  void rotate_gram_right(int first, int last, int nValidRows);
+  void rotate_gram_right(int first, int last, int n_valid_rows);
   /** Transpose. */
   void transpose();
   T get_max();
@@ -204,11 +204,11 @@ public:
   /** Reads this matrix from a stream. */
   void read(istream &is);
 
-  static int set_print_mode(int newPrintMode)
+  static int set_print_mode(int new_print_mode)
   {
-    int oldMode = print_mode;
-    print_mode   = newPrintMode;
-    return oldMode;
+    int old_mode = print_mode;
+    print_mode   = new_print_mode;
+    return old_mode;
   }
 
 protected:

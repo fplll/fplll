@@ -106,7 +106,7 @@ int Wrapper::call_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_invZ, LLLMethod
   if (method != LM_PROVED && precision == 0)
     gso_flags |= GSO_OP_FORCE_LONG;
 
-  int oldprec = Float::get_prec();
+  int old_prec = Float::get_prec();
   if (precision > 0)
   {
     Float::set_prec(precision);
@@ -119,7 +119,7 @@ int Wrapper::call_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_invZ, LLLMethod
   last_early_red = max(last_early_red, lll_obj.last_early_red);
   if (precision > 0)
   {
-    Float::set_prec(oldprec);
+    Float::set_prec(old_prec);
   }
 
   if (flags & LLL_VERBOSE)

@@ -28,8 +28,8 @@ public:
   Enumerator(int d, const Matrix<Float>& mu, const Matrix<Float>& r,
              double maxVolume = ENUM_MAX_VOLUME,
              int minLevel = ENUM_MIN_LEVEL);
-  bool enumNext(const Float& maxsqrlength);
-  inline const vector<enumxt>& getSubTree() {
+  bool enum_next(const Float& maxsqrlength);
+  inline const vector<enumxt>& get_sub_tree() {
     return subTree;
   }
 private:

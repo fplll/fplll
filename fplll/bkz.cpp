@@ -47,11 +47,11 @@ template <class FT> void BKZReduction<FT>::rerandomize_block(int min_row, int ma
 
   for (size_t i = 0; i < niter; ++i)
   {
-    size_t a = gmp_urandomm_ui(RandGen::getGMPState(), max_row - min_row - 1) + min_row;
+    size_t a = gmp_urandomm_ui(RandGen::get_gmp_state(), max_row - min_row - 1) + min_row;
     size_t b = a;
     while (b == a)
     {
-      b = gmp_urandomm_ui(RandGen::getGMPState(), max_row - min_row - 1) + min_row;
+      b = gmp_urandomm_ui(RandGen::get_gmp_state(), max_row - min_row - 1) + min_row;
     }
     m.move_row(b, a);
   }
@@ -63,8 +63,8 @@ template <class FT> void BKZReduction<FT>::rerandomize_block(int min_row, int ma
   {
     for (long i = 0; i < density; i++)
     {
-      size_t b = gmp_urandomm_ui(RandGen::getGMPState(), max_row - (a + 1) - 1) + a + 1;
-      if (gmp_urandomm_ui(RandGen::getGMPState(), 2))
+      size_t b = gmp_urandomm_ui(RandGen::get_gmp_state(), max_row - (a + 1) - 1) + a + 1;
+      if (gmp_urandomm_ui(RandGen::get_gmp_state(), 2))
         m.row_add(a, b);
       else
         m.row_sub(a, b);
@@ -189,7 +189,7 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
         if (x[k] < x[k - off])
         {
           x[k].swap(x[k - off]);
-          m.b.swapRows(kappa + k, kappa + k - off);
+          m.b.swap_rows(kappa + k, kappa + k - off);
         }
 
         while (!x[k - off].is_zero())
@@ -201,7 +201,7 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
           }
 
           x[k].swap(x[k - off]);
-          m.b.swapRows(kappa + k, kappa + k - off);
+          m.b.swap_rows(kappa + k, kappa + k - off);
         }
       }
       k -= 2 * off;

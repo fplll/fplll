@@ -28,9 +28,9 @@ inline unsigned int FP_NR<mpfr_t>::get_prec() {
 
 template<>
 inline unsigned int FP_NR<mpfr_t>::set_prec(unsigned int prec) {
-  int oldprec = get_prec();
+  int old_prec = get_prec();
   mpfr_set_default_prec(prec);
-  return oldprec;
+  return old_prec;
 }
 
 /* return data */
@@ -67,10 +67,10 @@ inline long FP_NR<mpfr_t>::get_si_exp(long& expo) const {
   else {
     expo = max(exponent() - numeric_limits<long>::digits, 0L);
   }
-  mpfr_t& ncData = const_cast<mpfr_t&>(data);
-  mpfr_div_2si(ncData, ncData, expo, GMP_RNDN);
-  long result = mpfr_get_si(ncData, GMP_RNDZ);
-  mpfr_mul_2si(ncData, ncData, expo, GMP_RNDN);
+  mpfr_t& nc_data = const_cast<mpfr_t&>(data);
+  mpfr_div_2si(nc_data, nc_data, expo, GMP_RNDN);
+  long result = mpfr_get_si(nc_data, GMP_RNDZ);
+  mpfr_mul_2si(nc_data, nc_data, expo, GMP_RNDN);
   return result;
 }
 

@@ -63,10 +63,10 @@ int main(int argc, char* argv[]) {
     iArg++;
     if (argc - iArg < 1) fatalError("option '-randseed' requires an argument");
     if (strcmp(argv[iArg], "time") == 0) {
-      RandGen::initWithTime();
+      RandGen::init_with_time();
     }
     else {
-      RandGen::initWithSeed(atol(argv[iArg]));
+      RandGen::init_with_seed(atol(argv[iArg]));
     }
     iArg++;
   }

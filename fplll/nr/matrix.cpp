@@ -25,11 +25,11 @@ FPLLL_BEGIN_NAMESPACE
 
 template <class T> void Matrix<T>::resize(int rows, int cols)
 {
-  int oldSize = matrix.size();
-  if (oldSize < rows)
+  int old_size = matrix.size();
+  if (old_size < rows)
   {
-    vector<NumVect<T>> m2(max(oldSize * 2, rows));
-    for (int i = 0; i < oldSize; i++)
+    vector<NumVect<T>> m2(max(old_size * 2, rows));
+    for (int i = 0; i < old_size; i++)
     {
       matrix[i].swap(m2[i]);
     }
@@ -62,26 +62,26 @@ template <class T> template <class U> void Matrix<T>::fill(U value)
   }
 }
 
-template <class T> void Matrix<T>::rotate_gram_left(int first, int last, int nValidRows)
+template <class T> void Matrix<T>::rotate_gram_left(int first, int last, int n_valid_rows)
 {
-  FPLLL_DEBUG_CHECK(0 <= first && first <= last && last < nValidRows && nValidRows <= r);
+  FPLLL_DEBUG_CHECK(0 <= first && first <= last && last < n_valid_rows && n_valid_rows <= r);
   matrix[first][first].swap(matrix[first][last]);
   for (int i = first; i < last; i++)
   {
     matrix[i + 1][first].swap(matrix[first][i]);
   }
-  for (int i = first; i < nValidRows; i++)
+  for (int i = first; i < n_valid_rows; i++)
   {
     matrix[i].rotate_left(first, min(last, i));  // most expensive step
   }
   rotate_left(first, last);
 }
 
-template <class T> void Matrix<T>::rotate_gram_right(int first, int last, int nValidRows)
+template <class T> void Matrix<T>::rotate_gram_right(int first, int last, int n_valid_rows)
 {
-  FPLLL_DEBUG_CHECK(0 <= first && first <= last && last < nValidRows && nValidRows <= r);
+  FPLLL_DEBUG_CHECK(0 <= first && first <= last && last < n_valid_rows && n_valid_rows <= r);
   rotate_right(first, last);
-  for (int i = first; i < nValidRows; i++)
+  for (int i = first; i < n_valid_rows; i++)
   {
     matrix[i].rotate_right(first, min(last, i));  // most expensive step
   }
@@ -126,11 +126,11 @@ template <class T> T Matrix<T>::get_max()
 
 template <class T> long Matrix<T>::get_max_exp()
 {
-  long maxExp = 0;
+  long max_exp = 0;
   for (int i = 0; i < r; i++)
     for (int j = 0; j < c; j++)
-      maxExp = max(maxExp, matrix[i][j].exponent());
-  return maxExp;
+      max_exp = max(max_exp, matrix[i][j].exponent());
+  return max_exp;
 }
 
 template <class T> void Matrix<T>::print(ostream &os, int nrows, int ncols) const
@@ -190,11 +190,11 @@ template <class T> void Matrix<T>::read(istream &is)
   }
   for (int i = 0; i < r; i++)
   {
-    int oldC = matrix[i].size();
-    if (oldC < c)
+    int old_c = matrix[i].size();
+    if (old_c < c)
     {
       matrix[i].resize(c);
-      for (int j = oldC; j < c; j++)
+      for (int j = old_c; j < c; j++)
       {
         matrix[i][j] = 0;
       }

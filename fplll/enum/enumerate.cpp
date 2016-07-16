@@ -180,7 +180,7 @@ void Enumeration<FT>::process_solution(enumf newmaxdist)
 //    std::cout << "Sol dist: " << newmaxdist << " (nodes:" << nodes << ")" << endl;
     for (int j = 0; j < d; ++j)
         fx[j] = x[j];
-    _evaluator.evalSol(fx, newmaxdist, maxdist);
+    _evaluator.eval_sol(fx, newmaxdist, maxdist);
     
     set_bounds();
 }
@@ -192,7 +192,7 @@ void Enumeration<FT>::process_subsolution(int offset, enumf newdist)
         fx[j] = 0.0;
     for (int j = offset; j < d; ++j)
         fx[j] = x[j];
-    _evaluator.evalSubSol(k, fx, newdist);
+    _evaluator.eval_sub_sol(k, fx, newdist);
 }
 
 template<typename FT>

@@ -26,7 +26,7 @@ void Evaluator<Float>::init_delta_def(int prec, double rho, bool withRoundingToE
       |r~_i - r_i| <= r_i * maxRelDR <= (r~_i + |r~_i - r_i| * maxRelDR)
       ==> |r~_i - r_i| <= r~_i * maxRelDR / (1 - maxRelDR)  */
   Float rhoPow, maxRelDR, ftmp1;
-  inputErrorDefined = true;
+  input_error_defined = true;
   for (int j = 0; j < d; j++) {
     rhoPow = rho;
     rhoPow.pow_si(rhoPow, j + 1, GMP_RNDU);      // >= rho ^ (j + 1)
@@ -37,19 +37,19 @@ void Evaluator<Float>::init_delta_def(int prec, double rho, bool withRoundingToE
     ftmp1.sub(ftmp1, maxRelDR, GMP_RNDD);        // <= 1 - maxRelDR
     ftmp1.div(maxRelDR, ftmp1, GMP_RNDU);        // >= maxRelDR/(1-maxRelDR)
     ftmp1.mul(ftmp1, r(j, j));                   // >= |r~_j - r_j|
-    maxDRdiag[j] = ftmp1;
+    max_dr_diag[j] = ftmp1;
 
     ftmp1 = d;
     ftmp1.mul_2si(ftmp1, 4 - prec);              // = d * 2 ^ (4 - prec)
     ftmp1.mul(ftmp1, rhoPow, GMP_RNDU);          // >= |mu~_(?,j) - mu_(?,j)|
-    maxDMu[j] = ftmp1;
+    max_dm_u[j] = ftmp1;
   }
   if (withRoundingToEnumf) {
     Float halfULP;
     halfULP = numeric_limits<double>::epsilon() * 0.5;
     for (int j = 0; j < d; j++) {
-      maxDRdiag[j].addmul(r(j, j), halfULP, GMP_RNDU); // >= |double(r~_j) - r_j|
-      maxDMu[j].add(maxDMu[j], halfULP, GMP_RNDU);
+      max_dr_diag[j].addmul(r(j, j), halfULP, GMP_RNDU); // >= |double(r~_j) - r_j|
+      max_dm_u[j].add(max_dm_u[j], halfULP, GMP_RNDU);
     }
   }
 }
@@ -61,7 +61,7 @@ void Evaluator<Float>::init_delta_def(int prec, double rho, bool withRoundingToE
      computed_squared_norm(vector) <= max_dist (when boundOnExactVal = false)
    then
      |exact_squared_norm(vector) - computed_squared_norm(vector)| <= maxDE
-   (computed_squared_norm(vector) is the variable 'newDist' is enumerateLoop)
+   (computed_squared_norm(vector) is the variable 'new_dist' is enumerateLoop)
 
    In the following comments:
    - The symbols +~ and *~ represent rounded fp addition and multiplication
@@ -71,7 +71,7 @@ void Evaluator<Float>::init_delta_def(int prec, double rho, bool withRoundingToE
 bool Evaluator<Float>::get_max_error_aux(const Float& max_dist,
   bool boundOnExactVal, Float& maxDE) {
 
-  FPLLL_CHECK(inputErrorDefined,
+  FPLLL_CHECK(input_error_defined,
     "Evaluator: error evaluation failed because the input error is undefined");
 
   Float ulp, halfULP, K, tmp1, tmp2;
@@ -102,12 +102,12 @@ bool Evaluator<Float>::get_max_error_aux(const Float& max_dist,
        DC = |C - C~|  */
     for (int j = d - 1; j > i; j--) {
       maxMu.abs(mu(j, i));
-      maxMu.add(maxMu, maxDMu[i], GMP_RNDU);        // >= |mu(j,i)|
+      maxMu.add(maxMu, max_dm_u[i], GMP_RNDU);        // >= |mu(j,i)|
       maxC.addmul(maxMu, maxX[j], GMP_RNDU);
       // now maxC >= |mu(d-1,i)| * |x_(d-1)| + ... + |mu(j,i)| * |x_j|
       muTilde = fabs(mu(j, i).get_d());             // = |mu~(j,i)|
       maxMuTildeX.mul(muTilde, maxX[j], GMP_RNDU);  // >= mu~(j,i) * x_j
-      maxDC.addmul(maxDMu[i], maxX[j]);             // err1: initial error on mu
+      maxDC.addmul(max_dm_u[i], maxX[j]);             // err1: initial error on mu
       maxDC.addmul(maxMuTildeX, halfULP, GMP_RNDU); // err2: rounding after *
       maxMuTildeX.mul(maxMuTildeX, K, GMP_RNDU);    // >= mu~(j,i) *~ x_j
       maxCTilde.addmul(maxMuTildeX, K, GMP_RNDU);
@@ -119,7 +119,7 @@ bool Evaluator<Float>::get_max_error_aux(const Float& max_dist,
 
     if (boundOnExactVal) {
       // We have dist <= max_dist
-      minRDiag.sub(r(i, i), maxDRdiag[i], GMP_RNDD); // <= r_i
+      minRDiag.sub(r(i, i), max_dr_diag[i], GMP_RNDD); // <= r_i
       if (minRDiag <= 0.0) return false;
       tmp1.div(max_dist, minRDiag, GMP_RNDU);        // >= dist / r_i
       maxY.sqrt(tmp1, GMP_RNDU);                    // >= |y_i|      
@@ -168,11 +168,11 @@ bool Evaluator<Float>::get_max_error_aux(const Float& max_dist,
     maxDY2.addmul(maxY2Tilde, halfULP, GMP_RNDU);
     /* now, we have maxDY2 <= |y~_i *~ y~_i - y_i * y_i| */
     maxY2Tilde.mul(maxY2Tilde, K, GMP_RNDU);        // >= y~_i *~ y~_i
-    maxRDiag.add(r(i, i), maxDRdiag[i], GMP_RNDU); // >= r_i
+    maxRDiag.add(r(i, i), max_dr_diag[i], GMP_RNDU); // >= r_i
     maxRY2Tilde.mul(rdiagTilde, maxY2Tilde, GMP_RNDU); // >= y~_i *~ y~_i * r~_i
 
     maxDRY2.mul(maxRDiag, maxDY2, GMP_RNDU);
-    maxDRY2.addmul(maxY2Tilde, maxDRdiag[i], GMP_RNDU);
+    maxDRY2.addmul(maxY2Tilde, max_dr_diag[i], GMP_RNDU);
     maxDRY2.addmul(maxRY2Tilde, halfULP, GMP_RNDU);
     /* now maxDRY2 >= |y~_i *~ y~_i - y_i * y_i| * r_i +
                       |y~_i *~ y~_i| * |r~_i - r_i| +
@@ -200,167 +200,167 @@ bool Evaluator<Float>::get_max_error_aux(const Float& max_dist,
   return true;
 }
 
-void FastEvaluator<Float>::evalSol(const FloatVect& newSolCoord,
-        const enumf& newPartialDist, enumf& max_dist)
+void FastEvaluator<Float>::eval_sol(const FloatVect& new_sol_coord,
+        const enumf& new_partial_dist, enumf& max_dist)
 {
   // Assumes that the solution is valid
-  if (evalMode == EVALMODE_SV) 
+  if (eval_mode == EVALMODE_SV)
   {
     if (max_aux_sols != 0 && !sol_coord.empty())
     {
       aux_sol_coord.emplace_front( std::move(sol_coord) );
-      aux_solDist.emplace_front( solDist );
+      aux_sol_dist.emplace_front( sol_dist );
       if (aux_sol_coord.size() > max_aux_sols)
       {
         aux_sol_coord.pop_back();
-        aux_solDist.pop_back();
+        aux_sol_dist.pop_back();
       }
     }
-    sol_coord = newSolCoord;
-    max_dist = solDist = newPartialDist;
-    lastPartialDist = newPartialDist; // Exact conversion
-    lastPartialDist.mul_2si(lastPartialDist, normExp);
+    sol_coord = new_sol_coord;
+    max_dist = sol_dist = new_partial_dist;
+    last_partial_dist = new_partial_dist; // Exact conversion
+    last_partial_dist.mul_2si(last_partial_dist, normExp);
   }
-  else if (evalMode == EVALMODE_PRINT) 
+  else if (eval_mode == EVALMODE_PRINT)
   {
-    cout << newSolCoord << "\n";
+    cout << new_sol_coord << "\n";
   }
-  newSolFlag = true;
-  solCount++;
+  new_sol_flag = true;
+  sol_count++;
 }
 
-void FastEvaluator<Float>::evalSubSol(int offset, const FloatVect& newSubSolCoord,
-        const enumf& subDist) 
+void FastEvaluator<Float>::eval_sub_sol(int offset, const FloatVect& new_sub_sol_coord,
+        const enumf& sub_dist)
 {
   sub_sol_coord.resize( std::max(sub_sol_coord.size(), std::size_t(offset+1)) );
-  sub_solDist.resize( sub_sol_coord.size(), -1.0);
-  if (sub_solDist[offset] == -1.0 || subDist < sub_solDist[offset])
+  sub_sol_dist.resize( sub_sol_coord.size(), -1.0);
+  if (sub_sol_dist[offset] == -1.0 || sub_dist < sub_sol_dist[offset])
   {
-    sub_sol_coord[offset] = newSubSolCoord;
+    sub_sol_coord[offset] = new_sub_sol_coord;
     for (int i = 0; i < offset; ++i)
       sub_sol_coord[offset][i] = 0.0;
-    sub_solDist[offset] = subDist;
+    sub_sol_dist[offset] = sub_dist;
   }
 }
 
-bool FastEvaluator<Float>::get_max_error(Float& maxError) {
+bool FastEvaluator<Float>::get_max_error(Float& max_error) {
   Float maxE, maxDE, maxOptDE, minOptE, one;
 
-  if (sol_coord.empty() || !inputErrorDefined) return false;
-  if (!get_max_error_aux(lastPartialDist, false, maxDE)) return false;
+  if (sol_coord.empty() || !input_error_defined) return false;
+  if (!get_max_error_aux(last_partial_dist, false, maxDE)) return false;
 
   // Exact norm of an optimal solution <= Exact norm of the result <= maxE
-  maxE.add(lastPartialDist, maxDE, GMP_RNDU);
+  maxE.add(last_partial_dist, maxDE, GMP_RNDU);
   // Error on the norm of an optimal solution <= maxOptDE
   if (!get_max_error_aux(maxE, true, maxOptDE)) return false;
   // Approx. norm of an optimal solution >= minOptE
-  minOptE.sub(lastPartialDist, maxOptDE, GMP_RNDD);
+  minOptE.sub(last_partial_dist, maxOptDE, GMP_RNDD);
 
   one = 1.0;
-  maxError.div(maxE, minOptE, GMP_RNDU);
-  maxError.sub(maxError, one, GMP_RNDU);
+  max_error.div(maxE, minOptE, GMP_RNDU);
+  max_error.sub(max_error, one, GMP_RNDU);
   return true;
 }
 
-bool ExactEvaluator::get_max_error(Float& maxError) {
-  maxError = 0.0;
+bool ExactEvaluator::get_max_error(Float& max_error) {
+  max_error = 0.0;
   return true;
 }
 
-void ExactEvaluator::evalSol(const FloatVect& newSolCoord,
-        const enumf& newPartialDist, enumf& max_dist)
+void ExactEvaluator::eval_sol(const FloatVect& new_sol_coord,
+        const enumf& new_partial_dist, enumf& max_dist)
 {
   int n = matrix.get_cols();
-  Integer newSolDist, coord;
-  IntVect newSol;
+  Integer new_sol_dist, coord;
+  IntVect new_sol;
 
-  gen_zero_vect(newSol, n);
-  newSolDist = 0;
+  gen_zero_vect(new_sol, n);
+  new_sol_dist = 0;
 
   // Computes the distance between x and zero
   for (int i = 0; i < d; i++) {
-    coord.set_f(newSolCoord[i]);
+    coord.set_f(new_sol_coord[i]);
     for (int j = 0; j < n; j++)
-      newSol[j].addmul(coord, matrix(i, j));
+      new_sol[j].addmul(coord, matrix(i, j));
   }
   for (int i = 0; i < n; i++) {
-    coord = newSol[i];
-    newSolDist.addmul(coord, coord);
+    coord = new_sol[i];
+    new_sol_dist.addmul(coord, coord);
   }
 
-  if (int_max_dist < 0 || newSolDist <= int_max_dist) {
-    if (evalMode == EVALMODE_SV) {
+  if (int_max_dist < 0 || new_sol_dist <= int_max_dist) {
+    if (eval_mode == EVALMODE_SV) {
       if (max_aux_sols != 0 && !sol_coord.empty())
       {
         aux_sol_coord.emplace_front( std::move(sol_coord) );
-        aux_solDist.emplace_front( solDist );
-        aux_solintDist.emplace_front( int_max_dist );
+        aux_sol_dist.emplace_front( sol_dist );
+        aux_sol_int_dist.emplace_front( int_max_dist );
         if (aux_sol_coord.size() > max_aux_sols)
         {
           aux_sol_coord.pop_back();
-          aux_solDist.pop_back();
-          aux_solintDist.pop_back();
+          aux_sol_dist.pop_back();
+          aux_sol_int_dist.pop_back();
         }
       }
       // Updates the stored solution
-      lastPartialDist = newPartialDist;
-      lastPartialDist.mul_2si(lastPartialDist, normExp);
-      sol_coord = newSolCoord;
-      int_max_dist = newSolDist;
-      updateMaxDist(max_dist);
-      solDist = max_dist;
+      last_partial_dist = new_partial_dist;
+      last_partial_dist.mul_2si(last_partial_dist, normExp);
+      sol_coord = new_sol_coord;
+      int_max_dist = new_sol_dist;
+      update_max_dist(max_dist);
+      sol_dist = max_dist;
     }
-    else if (evalMode == EVALMODE_PRINT) {
-      cout << newSolCoord << "\n";
+    else if (eval_mode == EVALMODE_PRINT) {
+      cout << new_sol_coord << "\n";
     }
-    newSolFlag = true;
-    solCount++;
+    new_sol_flag = true;
+    sol_count++;
   }
 }
 
-void ExactEvaluator::evalSubSol(int offset, const FloatVect& newSubSolCoord,
-        const enumf& subDist) 
+void ExactEvaluator::eval_sub_sol(int offset, const FloatVect& new_sub_sol_coord,
+        const enumf& sub_dist)
 {
   sub_sol_coord.resize( std::max(sub_sol_coord.size(), std::size_t(offset+1)) );
-  sub_solDist.resize( sub_sol_coord.size(), -1.0 );
+  sub_sol_dist.resize( sub_sol_coord.size(), -1.0 );
   Integer minusone;
   minusone = -1;
-  sub_solintDist.resize( sub_sol_coord.size(), minusone);
+  sub_sol_int_dist.resize( sub_sol_coord.size(), minusone);
 
   int n = matrix.get_cols();
-  Integer newSolDist, coord;
-  IntVect newSol;
+  Integer new_sol_dist, coord;
+  IntVect new_sol;
 
-  gen_zero_vect(newSol, n);
-  newSolDist = 0;
+  gen_zero_vect(new_sol, n);
+  new_sol_dist = 0;
 
   // Computes the distance between x[[offset,d)] and zero
   for (int i = offset; i < d; i++) 
   {
-    coord.set_f(newSubSolCoord[i]);
+    coord.set_f(new_sub_sol_coord[i]);
     for (int j = 0; j < n; j++)
-      newSol[j].addmul(coord, matrix(i, j));
+      new_sol[j].addmul(coord, matrix(i, j));
   }
   for (int i = 0; i < n; i++) 
   {
-    coord = newSol[i];
-    newSolDist.addmul(coord, coord);
+    coord = new_sol[i];
+    new_sol_dist.addmul(coord, coord);
   }
 
-  if (sub_solintDist[offset] < 0 || newSolDist <= sub_solintDist[offset]) 
+  if (sub_sol_int_dist[offset] < 0 || new_sol_dist <= sub_sol_int_dist[offset])
   {
-    sub_sol_coord[offset] = newSubSolCoord;
+    sub_sol_coord[offset] = new_sub_sol_coord;
     for (int i = 0; i < offset; ++i)
       sub_sol_coord[offset][i] = 0.0;
-    sub_solDist[offset] = subDist;
-    sub_solintDist[offset] = newSolDist;
+    sub_sol_dist[offset] = sub_dist;
+    sub_sol_int_dist[offset] = new_sol_dist;
   }
 }
 
 
 
 // Decreases the bound of the algorithm when a solution is found
-void ExactEvaluator::updateMaxDist(enumf& max_dist) {
+void ExactEvaluator::update_max_dist(enumf& max_dist) {
   Float fMaxDist, maxDE;
   fMaxDist.set_z(int_max_dist, GMP_RNDU);
   bool result = get_max_error_aux(fMaxDist, true, maxDE);

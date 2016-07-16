@@ -238,13 +238,13 @@ class LDConvHelper {
 public:
   /** Converts op to a long double with rounding to nearest. */
   static long double mpz_get_ld(const mpz_t op) {
-    initTemp();
+    init_temp();
     mpfr_set_z(temp, op, GMP_RNDN);
     return mpfr_get_ld(temp, GMP_RNDN); // exact
   }
 
   static void free() {
-    freeTemp();
+    free_temp();
   }
 
   /**
@@ -252,27 +252,27 @@ public:
    * to op rounded to the nearest long double.
    */
   static long double mpz_get_ld_2exp(long* exp, const mpz_t op) {
-    initTemp();
+    init_temp();
     mpfr_set_z(temp, op, GMP_RNDN);
     return mpfr_get_ld_2exp(exp, temp, GMP_RNDN); // exact
   }
 
   /** Sets the value of rop from op. */
   static void mpz_set_ld(mpz_t rop, long double op) {
-    initTemp();
+    init_temp();
     mpfr_set_ld(temp, op, GMP_RNDN); // exact
     mpfr_get_z(rop, temp, GMP_RNDN);
   }
 
 private:
-  static inline void initTemp() {
+  static inline void init_temp() {
     if (!temp_initialized) {
       mpfr_init2(temp, numeric_limits<long double>::digits);
       temp_initialized = true;
     }
   }
 
-  static inline void freeTemp() {
+  static inline void free_temp() {
     if (temp_initialized) {
       mpfr_clear(temp);
       temp_initialized = false;

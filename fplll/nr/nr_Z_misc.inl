@@ -17,17 +17,17 @@ FPLLL_BEGIN_NAMESPACE
 
 template<> template<>
 inline void Z_NR<long>::get_f_exp(FP_NR<double>& f, long& expo) {
-  int intExpo;
-  f.get_data() = frexp(static_cast<double>(data), &intExpo);
-  expo = intExpo;
+  int int_expo;
+  f.get_data() = frexp(static_cast<double>(data), &int_expo);
+  expo = int_expo;
 }
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template<> template<>
 inline void Z_NR<long>::get_f_exp(FP_NR<long double>& f, long& expo) {
-  int intExpo;
-  f.get_data() = frexpl(static_cast<long double>(data), &intExpo);
-  expo = intExpo;
+  int int_expo;
+  f.get_data() = frexpl(static_cast<long double>(data), &int_expo);
+  expo = int_expo;
 }
 #endif
 
@@ -41,15 +41,15 @@ inline void Z_NR<long>::get_f_exp(FP_NR<dpe_t>& f, long& expo) {
 #ifdef FPLLL_WITH_QD
 template<> template<>
 inline void Z_NR<long>::get_f_exp(FP_NR<dd_real>& f, long& expo) {
-  int intExpo;
-  f.get_data() = frexp(static_cast<double>(data), &intExpo);
-  expo = intExpo;
+  int int_expo;
+  f.get_data() = frexp(static_cast<double>(data), &int_expo);
+  expo = int_expo;
 }
 template<> template<>
 inline void Z_NR<long>::get_f_exp(FP_NR<qd_real>& f, long& expo) {
-  int intExpo;
-  f.get_data() = frexp(static_cast<double>(data), &intExpo);
-  expo = intExpo;
+  int int_expo;
+  f.get_data() = frexp(static_cast<double>(data), &int_expo);
+  expo = int_expo;
 }
 #endif
 
@@ -66,17 +66,17 @@ inline void Z_NR<long>::get_f_exp(FP_NR<mpfr_t>& /*f*/, long& /*expo*/) {
 
 template<> template<>
 inline void Z_NR<double>::get_f_exp(FP_NR<double>& f, long& expo) {
-  int intExpo;
-  f.get_data() = frexp(data, &intExpo);
-  expo = intExpo;
+  int int_expo;
+  f.get_data() = frexp(data, &int_expo);
+  expo = int_expo;
 }
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template<> template<>
 inline void Z_NR<double>::get_f_exp(FP_NR<long double>& f, long& expo) {
-  int intExpo;
-  f.get_data() = static_cast<long double>(frexp(data, &intExpo));
-  expo = intExpo;
+  int int_expo;
+  f.get_data() = static_cast<long double>(frexp(data, &int_expo));
+  expo = int_expo;
 }
 #endif
 
@@ -90,23 +90,23 @@ inline void Z_NR<double>::get_f_exp(FP_NR<dpe_t>& /*f*/, long& /*expo*/) {
 #ifdef FPLLL_WITH_QD
 template<> template<>
 inline void Z_NR<double>::get_f_exp(FP_NR<dd_real>& f, long& expo) {
-  int intExpo;
-  f.get_data() = frexp(data, &intExpo);
-  expo = intExpo;
+  int int_expo;
+  f.get_data() = frexp(data, &int_expo);
+  expo = int_expo;
 }
 template<> template<>
 inline void Z_NR<double>::get_f_exp(FP_NR<qd_real>& f, long& expo) {
-  int intExpo;
-  f.get_data() = frexp(data, &intExpo);
-  expo = intExpo;
+  int int_expo;
+  f.get_data() = frexp(data, &int_expo);
+  expo = int_expo;
 }
 #endif
 
 template<> template<>
 inline void Z_NR<double>::get_f_exp(FP_NR<mpfr_t>& f, long& expo) {
-  int intExpo;
-  f = frexp(data, &intExpo);
-  expo = intExpo;
+  int int_expo;
+  f = frexp(data, &int_expo);
+  expo = int_expo;
   FPLLL_DEBUG_ABORT("get_f_exp unimplemented for mpfr_t");
 }
 

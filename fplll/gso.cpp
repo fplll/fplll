@@ -366,10 +366,10 @@ void MatGSO<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_add)
 template <class ZT, class FT> void MatGSO<ZT, FT>::row_swap(int i, int j)
 {
   FPLLL_DEBUG_CHECK(!enable_inverse_transform);
-  b.swapRows(i, j);
+  b.swap_rows(i, j);
   if (enable_transform)
   {
-    u.swapRows(i, j);
+    u.swap_rows(i, j);
   }
 
   if (enable_int_gram)

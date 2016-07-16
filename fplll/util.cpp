@@ -42,7 +42,7 @@ gmp_randstate_t RandGen::gmp_state;
 static int compute_min_prec(double &rho, int d, double delta, double eta, double epsilon,
                             MinPrecAlgo algo)
 {
-  int oldprec = Float::set_prec(53);
+  int old_prec = Float::set_prec(53);
   Float f_minprec, f_rho, f_d, f_eta, f_delta, f_epsilon, tmp1, tmp2;
 
   // These four conversions are exact
@@ -90,7 +90,7 @@ static int compute_min_prec(double &rho, int d, double delta, double eta, double
   f_minprec.add(tmp1, tmp2, GMP_RNDU);
   int minprec = static_cast<int>(ceil(f_minprec.get_d(GMP_RNDU)));
   mpfr_free_cache();
-  Float::set_prec(oldprec);
+  Float::set_prec(old_prec);
   return minprec;
 }
 

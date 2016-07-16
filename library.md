@@ -423,7 +423,7 @@ Sets number of rows and the number of columns to 0.
 Sets the dimensions of the matrix, preserving as much as possible of the content. The content of new cells is undefined.
 <tr><td><tt>void set_rows(int rows)</tt><br>
 Sets the number of rows (content is not erased except for deleted rows).
-<tr><td><tt>void setCols(int cols)</tt><br>
+<tr><td><tt>void set_cols(int cols)</tt><br>
 Sets the number of columns (content is not erased except for deleted columns).
 <tr><td><tt>template&lt;class U&gt; void fill(U value)</tt><br>
 Fills the matrix with a given value.
@@ -451,7 +451,7 @@ Reads matrix m from stream <code>is</code>.
 </table>
 
 Note: a call to <tt>clear</tt>, <tt>resize</tt>, <tt>set_rows</tt>,
-<tt>setCols</tt> or <tt>swap</tt> invalidates all references returned by
+<tt>set_cols</tt> or <tt>swap</tt> invalidates all references returned by
 operator() and MatrixRow objects returned by operator[].
 
 #### MatrixRow&lt;T&gt; ####

@@ -69,25 +69,25 @@ static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
   else
   {
     Enumerator enumerator(d, gso.get_mu_matrix(), gso.get_r_matrix());
-    while (enumerator.enumNext(max_dist))
+    while (enumerator.enum_next(max_dist))
     {
       if (flags & SVP_VERBOSE)
       {
-        evaluator.newSolFlag = false;
-        cerr << enumerator.getSubTree();
-        if (evaluator.evalMode != EVALMODE_SV)
-          cerr << " (count=2*" << evaluator.solCount << ")";
+        evaluator.new_sol_flag = false;
+        cerr << enumerator.get_sub_tree();
+        if (evaluator.eval_mode != EVALMODE_SV)
+          cerr << " (count=2*" << evaluator.sol_count << ")";
       }
 
-      /* Enumerates short vectors only in enumerator.getSubTree()
+      /* Enumerates short vectors only in enumerator.get_sub_tree()
         (about maxVolume iterations or less) */
-      enumobj.enumerate(0, d, max_dist, 0, FloatVect(), enumerator.getSubTree(), pruning);
+      enumobj.enumerate(0, d, max_dist, 0, FloatVect(), enumerator.get_sub_tree(), pruning);
 
       if (flags & SVP_VERBOSE)
       {
         cerr << "\r" << (char)27 << "[K";
-        if (evaluator.evalMode == EVALMODE_SV && evaluator.newSolFlag)
-          cerr << "Solution norm^2=" << evaluator.lastPartialDist
+        if (evaluator.eval_mode == EVALMODE_SV && evaluator.new_sol_flag)
+          cerr << "Solution norm^2=" << evaluator.last_partial_dist
                << " value=" << evaluator.sol_coord << endl;
       }
     }
@@ -96,11 +96,11 @@ static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
 }
 
 static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method,
-                              const vector<double> &pruning, int flags, EvaluatorMode evalMode,
-                              long long &solCount, vector<IntVect> *subsol_coord = nullptr,
-                              vector<enumf> *subsolDist = nullptr)
+                              const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
+                              long long &sol_count, vector<IntVect> *subsol_coord = nullptr,
+                              vector<enumf> *subsol_dist = nullptr)
 {
-  bool findsubsols = (subsol_coord != nullptr) && (subsolDist != nullptr);
+  bool findsubsols = (subsol_coord != nullptr) && (subsol_dist != nullptr);
 
   // d = lattice dimension (note that it might decrease during preprocessing)
   int d = b.get_rows();
@@ -113,9 +113,9 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   // Sets the floating-point precision
   // Error bounds on GSO are valid if prec >= minprec
   double rho;
-  int minPrec = gso_min_prec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
-  int prec    = max(53, minPrec + 10);
-  int oldprec = Float::set_prec(prec);
+  int min_prec = gso_min_prec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
+  int prec     = max(53, min_prec + 10);
+  int old_prec = Float::set_prec(prec);
 
   // Allocates space for vectors and matrices in constructors
   IntMatrix empty_mat;
@@ -129,19 +129,16 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   gen_zero_vect(sol_coord, d);
 
   // If the last b_i* are too large, removes them to avoid an underflow
-  int newD = last_useful_index(gso.get_r_matrix());
-  if (newD < d)
+  int new_d = last_useful_index(gso.get_r_matrix());
+  if (new_d < d)
   {
-    // FPLLL_TRACE("Ignoring the last " << d - newD << " vector(s)");
-    d = newD;
+    // FPLLL_TRACE("Ignoring the last " << d - new_d << " vector(s)");
+    d = new_d;
   }
 
   if (flags & SVP_DUAL)
   {
-    max_dist = gso.get_r_exp(d - 1, d - 1);
-    Float one;
-    one = 1.0;
-    max_dist.div(one, max_dist);
+    max_dist = 1.0 / gso.get_r_exp(d - 1, d - 1);
     if (flags & SVP_VERBOSE)
     {
       cout << "max_dist = " << max_dist << endl;
@@ -160,15 +157,15 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   Evaluator<Float> *evaluator;
   if (method == SVPM_FAST)
   {
-    evaluator = new FastEvaluator<Float>(d, gso.get_mu_matrix(), gso.get_r_matrix(), evalMode, 0,
+    evaluator = new FastEvaluator<Float>(d, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode, 0,
                                          findsubsols);
   }
   else if (method == SVPM_PROVED)
   {
     ExactEvaluator *p =
-        new ExactEvaluator(d, b, gso.get_mu_matrix(), gso.get_r_matrix(), evalMode, 0, findsubsols);
+        new ExactEvaluator(d, b, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode, 0, findsubsols);
     p->int_max_dist = int_max_dist;
-    evaluator     = p;
+    evaluator       = p;
   }
   else
   {
@@ -176,7 +173,7 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   }
   evaluator->init_delta_def(prec, rho, true);
 
-  if (!(flags & SVP_OVERRIDE_BND) && (evalMode == EVALMODE_SV || method == SVPM_PROVED))
+  if (!(flags & SVP_OVERRIDE_BND) && (eval_mode == EVALMODE_SV || method == SVPM_PROVED))
   {
     Float ftmp1;
     bool result = evaluator->get_max_error_aux(max_dist, true, ftmp1);
@@ -188,16 +185,16 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   enumerate_svp(d, gso, max_dist, *evaluator, pruning, flags);
 
   int result = RED_ENUM_FAILURE;
-  if (evalMode != EVALMODE_SV)
+  if (eval_mode != EVALMODE_SV)
   {
     result   = RED_SUCCESS;
-    solCount = evaluator->solCount * 2;
+    sol_count = evaluator->sol_count * 2;
   }
   else if (!evaluator->sol_coord.empty())
   {
     /*Float fMaxError;
     validMaxError = evaluator->get_max_error(fMaxError);
-    maxError = fMaxError.get_d(GMP_RNDU);*/
+    max_error = fMaxError.get_d(GMP_RNDU);*/
     for (int i = 0; i < d; i++)
     {
       itmp1.set_f(evaluator->sol_coord[i]);
@@ -209,24 +206,24 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   if (findsubsols)
   {
     subsol_coord->clear();
-    subsolDist->clear();
-    subsolDist->resize(evaluator->sub_sol_coord.size());
+    subsol_dist->clear();
+    subsol_dist->resize(evaluator->sub_sol_coord.size());
     for (size_t i = 0; i < evaluator->sub_sol_coord.size(); ++i)
     {
-      (*subsolDist)[i] = evaluator->sub_solDist[i];
+      (*subsol_dist)[i] = evaluator->sub_sol_dist[i];
 
-      IntVect ssC;
+      IntVect ss_c;
       for (size_t j = 0; j < evaluator->sub_sol_coord[i].size(); ++j)
       {
         itmp1.set_f(evaluator->sub_sol_coord[i][j]);
-        ssC.emplace_back(itmp1);
+        ss_c.emplace_back(itmp1);
       }
-      subsol_coord->emplace_back(std::move(ssC));
+      subsol_coord->emplace_back(std::move(ss_c));
     }
   }
 
   delete evaluator;
-  Float::set_prec(oldprec);
+  Float::set_prec(old_prec);
   return result;
 }
 
@@ -244,11 +241,11 @@ int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, const vector<doubl
 }
 
 int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &subsol_coord,
-                            vector<enumf> &subsolDist, const vector<double> &pruning, int flags)
+                            vector<enumf> &subsol_dist, const vector<double> &pruning, int flags)
 {
   long long tmp;
   return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp,
-                            &subsol_coord, &subsolDist);
+                            &subsol_coord, &subsol_dist);
 }
 
 /* Closest vector problem
@@ -293,7 +290,7 @@ static void babai(const FloatMatrix &matrix, const Matrix<Float> &mu, const Matr
   }
 }
 
-int closest_vector(IntMatrix &b, const IntVect &intTarget, IntVect &sol_coord, int flags)
+int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, int flags)
 {
   // d = lattice dimension (note that it might decrease during preprocessing)
   int d = b.get_rows();
@@ -306,9 +303,9 @@ int closest_vector(IntMatrix &b, const IntVect &intTarget, IntVect &sol_coord, i
   // Sets the floating-point precision
   // Error bounds on GSO are valid if prec >= minprec
   double rho;
-  int minPrec = gso_min_prec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
-  int prec    = max(53, minPrec + 10);
-  int oldprec = Float::set_prec(prec);
+  int min_prec = gso_min_prec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
+  int prec     = max(53, min_prec + 10);
+  int old_prec = Float::set_prec(prec);
 
   // Allocates space for vectors and matrices in constructors
   IntMatrix empty_mat;
@@ -323,26 +320,26 @@ int closest_vector(IntMatrix &b, const IntVect &intTarget, IntVect &sol_coord, i
 
   /* Applies Babai's algorithm. Because we use fp, it might be necessary to
       do it several times (if ||target|| >> ||b_i||) */
-  FloatMatrix floatMatrix(d, n);
-  FloatVect target(n), babaiSol;
-  IntVect intNewTarget = intTarget;
+  FloatMatrix float_matrix(d, n);
+  FloatVect target(n), babai_sol;
+  IntVect int_new_target = int_target;
 
   for (int i = 0; i < d; i++)
     for (int j = 0; j < n; j++)
-      floatMatrix(i, j).set_z(b(i, j));
+      float_matrix(i, j).set_z(b(i, j));
 
-  for (int loopIdx = 0;; loopIdx++)
+  for (int loop_idx = 0;; loop_idx++)
   {
-    if (loopIdx >= 0x100 && ((loopIdx & (loopIdx - 1)) == 0))
+    if (loop_idx >= 0x100 && ((loop_idx & (loop_idx - 1)) == 0))
       FPLLL_INFO("warning: possible infinite loop in Babai's algorithm");
 
     for (int i = 0; i < n; i++)
     {
-      target[i].set_z(intNewTarget[i]);
+      target[i].set_z(int_new_target[i]);
     }
-    babai(floatMatrix, gso.get_mu_matrix(), gso.get_r_matrix(), target, babaiSol);
+    babai(float_matrix, gso.get_mu_matrix(), gso.get_r_matrix(), target, babai_sol);
     int idx;
-    for (idx = 0; idx < d && babaiSol[idx] >= -1 && babaiSol[idx] <= 1; idx++)
+    for (idx = 0; idx < d && babai_sol[idx] >= -1 && babai_sol[idx] <= 1; idx++)
     {
     }
     if (idx == d)
@@ -350,14 +347,14 @@ int closest_vector(IntMatrix &b, const IntVect &intTarget, IntVect &sol_coord, i
 
     for (int i = 0; i < d; i++)
     {
-      itmp1.set_f(babaiSol[i]);
+      itmp1.set_f(babai_sol[i]);
       sol_coord[i].add(sol_coord[i], itmp1);
       for (int j = 0; j < n; j++)
-        intNewTarget[j].submul(itmp1, b(i, j));
+        int_new_target[j].submul(itmp1, b(i, j));
     }
   }
   // FPLLL_TRACE("BabaiSol=" << sol_coord);
-  get_gscoords(floatMatrix, gso.get_mu_matrix(), gso.get_r_matrix(), target, target_coord);
+  get_gscoords(float_matrix, gso.get_mu_matrix(), gso.get_r_matrix(), target, target_coord);
 
   /* Computes a very large bound to make the algorithm work
       until the first solution is found */
@@ -388,7 +385,7 @@ int closest_vector(IntMatrix &b, const IntVect &intTarget, IntVect &sol_coord, i
     result = RED_SUCCESS;
   }
 
-  Float::set_prec(oldprec);
+  Float::set_prec(old_prec);
   return result;
 }
 
