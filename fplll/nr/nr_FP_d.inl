@@ -25,11 +25,11 @@ template<>
 inline FP_NR<double>::~FP_NR() {}
 
 template<>
-inline unsigned int FP_NR<double>::getprec() {return PREC_DOUBLE;}
+inline unsigned int FP_NR<double>::get_prec() {return PREC_DOUBLE;}
 
 template<>
-inline unsigned int FP_NR<double>::setprec(unsigned int) {
-  return getprec(); // ignored
+inline unsigned int FP_NR<double>::set_prec(unsigned int) {
+  return get_prec(); // ignored
 }
 
 /* return data */
@@ -59,12 +59,12 @@ inline long FP_NR<double>::exponent() const {
 }
 
 template<>
-inline long FP_NR<double>::get_si_exp_we(long& expo, long expoAdd) const {
+inline long FP_NR<double>::get_si_exp_we(long& expo, long expo_add) const {
   if (data == 0)
     expo = 0;
   else
-    expo = max(exponent() + expoAdd - numeric_limits<long>::digits, 0L);
-  return static_cast<long>(ldexp(data, expoAdd - expo));
+    expo = max(exponent() + expo_add - numeric_limits<long>::digits, 0L);
+  return static_cast<long>(ldexp(data, expo_add - expo));
 }
 
 template<>
@@ -248,12 +248,12 @@ inline void FP_NR<double>::rnd(const FP_NR<double>& b) {
 }
 
 template<>
-inline void FP_NR<double>::rnd_we(const FP_NR<double>& b, long expoAdd) {
+inline void FP_NR<double>::rnd_we(const FP_NR<double>& b, long expo_add) {
   // If data == 0.0, exponent() is undefined, but both branches will work
-  if (b.exponent() + expoAdd >= numeric_limits<double>::digits)
+  if (b.exponent() + expo_add >= numeric_limits<double>::digits)
     data = b.data;
   else
-    data = ldexp(::rint(ldexp(b.data, expoAdd)), -expoAdd);
+    data = ldexp(::rint(ldexp(b.data, expo_add)), -expo_add);
 }
 
 template<>
@@ -270,23 +270,6 @@ template<>
 inline void FP_NR<double>::swap(FP_NR<double>& a) {
   std::swap(data, a.data);
 }
-
-
-/* #ifdef FPLLL_V3_COMPAT */
-#ifdef FPLLL_V3_COMPAT
-template<>
-inline void FP_NR<double>::print() const {
-  cout << data;
-}
-template<>
-inline void FP_NR<double>::printerr() const {
-  cerr << data;
-}
-template<>
-inline void FP_NR<double>::set(unsigned int s) {
-  data = static_cast<double>(s);
-}
-#endif 
 
 
 FPLLL_END_NAMESPACE

@@ -15,22 +15,22 @@ KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B, bool ver, int seed)
 {
   /* set dimensions */
   b = B;
-  nr = b.getRows();
-  nc = b.getCols();
+  nr = b.get_rows();
+  nc = b.get_cols();
   //t = log(nr);
   t = 2;
   logn2 = log(nr)*log(nr);
 
   /* gso, flag 1 to have g matrix valid */
-  pGSO = new MatGSO<Z_NR<ZT>, F> (b, u, uInv, 1);
+  pGSO = new MatGSO<Z_NR<ZT>, F> (b, u, u_inv, 1);
 
-  pGSO->updateGSO();
-  mu = pGSO->getMuMatrix();
-  r = pGSO->getRMatrix();
-  g = pGSO->getGMatrix();
+  pGSO->update_gso();
+  mu = pGSO->get_mu_matrix();
+  r = pGSO->get_r_matrix();
+  g = pGSO->get_g_matrix();
   
   /* compute variances for sampling */
-  maxbistar2 = pGSO->getMaxBstar();
+  maxbistar2 = pGSO->get_max_bstar();
   s2.mul_d (maxbistar2, logn2, GMP_RNDN);
   s_prime = new NumVect<F> (nr);
   F tmp;
@@ -81,7 +81,7 @@ void KleinSampler<ZT, F>::print_param ()
  * sampling Z by rejection sampling
  */
 template<class ZT, class F>
-Z_NR<ZT> KleinSampler<ZT, F>::sampleZ_basic (F c, F s)
+Z_NR<ZT> KleinSampler<ZT, F>::sample_z_basic (F c, F s)
 {
   F min, max, st, range, tmp, tmp1;
   double r, e;
@@ -122,9 +122,9 @@ Z_NR<ZT> KleinSampler<ZT, F>::sampleZ_basic (F c, F s)
  *   mpz_t, mpfr_t
  */
 template<class ZT, class F>
-Z_NR<ZT> KleinSampler<ZT, F>::sampleZ (F c, F s)
+Z_NR<ZT> KleinSampler<ZT, F>::sample_z (F c, F s)
 {
-  return sampleZ_basic (c, s);
+  return sample_z_basic (c, s);
 }
 
 
@@ -143,7 +143,7 @@ NumVect<Z_NR<ZT> > KleinSampler<ZT, F>::sample ()
     }
 
     for (int i = nr - 1; i >= 0; i--) {
-      tmpz = sampleZ (ci[i], (*s_prime)[i]);
+      tmpz = sample_z (ci[i], (*s_prime)[i]);
       (ci[i]).set_z(tmpz);
       for (int j = 0; j < i; j++) {
         tmp.mul(ci[i], mu(i,j), GMP_RNDN);

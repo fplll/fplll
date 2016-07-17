@@ -25,8 +25,8 @@ Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
   
   /* stats */
   b = B;
-  nr = b.getRows();
-  nc = b.getCols();
+  nr = b.get_rows();
+  nc = b.get_cols();
   max_list_size = 0;
   iterations = 0;
   collisions = 0;
@@ -109,7 +109,7 @@ template<class ZT, class F>
 void Gauss_sieve<ZT, F>::add_mat_list (ZZ_mat<ZT> &B)
 {
   Z_NR<ZT> t, current_norm;
-  dotProduct(best_sqr_norm, B[0], B[0]);
+  dot_product(best_sqr_norm, B[0], B[0]);
   ListPoint<ZT>* p;
 
   for (int i = 0; i < nr; ++i) {
@@ -177,7 +177,7 @@ void Gauss_sieve<ZT, F>::init_list_rand ()
   for (int i = 0; i < nr; i++ ) {
     for (int k = 0; k < nr; k++ ) {
       if (i != k) {
-        x = sampleZ_basic_alt<ZT, FP_NR<double> >(c, t);
+        x = sample_z_basic_alt<ZT, FP_NR<double> >(c, t);
         x.get_mpz(tmp);
         tmpZ = tmp;
         (NewZ[i]).addmul(NewZ[k], tmpZ, (NewZ[k]).size());
@@ -191,7 +191,7 @@ void Gauss_sieve<ZT, F>::init_list_rand ()
   /* set */
   for (int i = 0; i < nr; i++ ) {
     for (int j = 0; j < nc; j++ ) {
-      tmpZ = (NewZ[i][j]).getData();
+      tmpZ = (NewZ[i][j]).get_data();
       tmpZ.get_mpz(tmp);
       New[i][j] = tmp;
     }

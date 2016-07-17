@@ -21,12 +21,12 @@ FPLLL_BEGIN_NAMESPACE
 
 template<typename FT>
 void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdistexpo,
-                                const vector<FT>& targetcoord,
+                                const vector<FT>& target_coord,
                                 const vector<enumxt>& subtree,
                                 const vector<enumf>& pruning,
                                 bool _dual)
 {
-    bool solvingsvp = targetcoord.empty();
+    bool solvingsvp = target_coord.empty();
     dual = _dual;
     pruning_bounds = pruning;
     if (last == -1)
@@ -45,14 +45,14 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
     else
     {
         for (int i = 0; i < d; ++i)
-            center_partsum[i] = targetcoord[i + first].get_d();
+            center_partsum[i] = target_coord[i + first].get_d();
     }
     
     FT fr, fmu, fmaxdistnorm;
     long rexpo, normexp = -1;
     for (int i = 0; i < d; ++i)
     {
-        fr = _gso.getRExp(i + first, i + first, rexpo);
+        fr = _gso.get_r_exp(i + first, i + first, rexpo);
         normexp = max(normexp, rexpo + fr.exponent());
     }
     fmaxdistnorm.mul_2si(fmaxdist, dual ? normexp-fmaxdistexpo : fmaxdistexpo-normexp);
@@ -64,7 +64,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
     {
         for (int i = 0; i < d; ++i)
         {
-            fr = _gso.getRExp(i + first, i + first, rexpo);
+            fr = _gso.get_r_exp(i + first, i + first, rexpo);
             fr.mul_2si(fr, rexpo - normexp);
             rdiag[d-i-1] = enumf(1.0)/fr.get_d();
         }
@@ -72,7 +72,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
         {
             for (int j = i + 1; j < d; ++j)
             {
-                _gso.getMu(fmu, j + first, i + first);
+                _gso.get_mu(fmu, j + first, i + first);
                 mut[d-j-1][d-i-1] = -fmu.get_d();
             }
         }
@@ -81,7 +81,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
     {
         for (int i = 0; i < d; ++i)
         {
-            fr = _gso.getRExp(i + first, i + first, rexpo);
+            fr = _gso.get_r_exp(i + first, i + first, rexpo);
             fr.mul_2si(fr, rexpo - normexp);
             rdiag[i] = fr.get_d();
         }
@@ -89,7 +89,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
         {
             for (int j = i + 1; j < d; ++j)
             {
-                _gso.getMu(fmu, j + first, i + first);
+                _gso.get_mu(fmu, j + first, i + first);
                 mut[i][j] = fmu.get_d();
             }
         }
@@ -103,8 +103,8 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
   
     fmaxdist.mul_2si(fmaxdistnorm, dual ? fmaxdistexpo-normexp : normexp-fmaxdistexpo);
   
-    if (dual && !_evaluator.solCoord.empty())
-        reverseBySwap(_evaluator.solCoord, 0, d-1);
+    if (dual && !_evaluator.sol_coord.empty())
+        reverse_by_swap(_evaluator.sol_coord, 0, d-1);
 }
 
 template<typename FT>
@@ -180,7 +180,7 @@ void Enumeration<FT>::process_solution(enumf newmaxdist)
 //    std::cout << "Sol dist: " << newmaxdist << " (nodes:" << nodes << ")" << endl;
     for (int j = 0; j < d; ++j)
         fx[j] = x[j];
-    _evaluator.evalSol(fx, newmaxdist, maxdist);
+    _evaluator.eval_sol(fx, newmaxdist, maxdist);
     
     set_bounds();
 }
@@ -192,7 +192,7 @@ void Enumeration<FT>::process_subsolution(int offset, enumf newdist)
         fx[j] = 0.0;
     for (int j = offset; j < d; ++j)
         fx[j] = x[j];
-    _evaluator.evalSubSol(k, fx, newdist);
+    _evaluator.eval_sub_sol(k, fx, newdist);
 }
 
 template<typename FT>

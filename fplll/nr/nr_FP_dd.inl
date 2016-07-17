@@ -23,11 +23,11 @@ template<>
 inline FP_NR<dd_real>::~FP_NR() {}
 
 template<>
-inline unsigned int FP_NR<dd_real>::getprec() {return PREC_DD;}
+inline unsigned int FP_NR<dd_real>::get_prec() {return PREC_DD;}
 
 template<>
-inline unsigned int FP_NR<dd_real>::setprec(unsigned int) {
-  return getprec(); // ignored
+inline unsigned int FP_NR<dd_real>::set_prec(unsigned int) {
+  return get_prec(); // ignored
 }
 
 /* return data */
@@ -38,7 +38,7 @@ inline double FP_NR<dd_real>::get_d(mp_rnd_t) const {
 
 template<>
 inline void FP_NR<dd_real>::get_mpfr(mpfr_t r, mp_rnd_t rnd) const {
-  mpfr_set_prec (r, getprec());
+  mpfr_set_prec (r, get_prec());
   mpfr_set_d (r, data._lo(), rnd);
   mpfr_add_d (r, r, data._hi(), rnd);
 }
@@ -59,12 +59,12 @@ inline long FP_NR<dd_real>::exponent() const {
 }
 
 template<>
-inline long FP_NR<dd_real>::get_si_exp_we(long& expo, long expoAdd) const {
+inline long FP_NR<dd_real>::get_si_exp_we(long& expo, long expo_add) const {
   if (data == 0)
     expo = 0;
   else
-    expo = max(exponent() + expoAdd - numeric_limits<long>::digits, 0L);
-  return static_cast<long>((::ldexp(data, expoAdd - expo)).x[0]);
+    expo = max(exponent() + expo_add - numeric_limits<long>::digits, 0L);
+  return static_cast<long>((::ldexp(data, expo_add - expo)).x[0]);
 }
 
 template<>
@@ -247,12 +247,12 @@ inline void FP_NR<dd_real>::rnd(const FP_NR<dd_real>& b) {
 }
 
 template<>
-inline void FP_NR<dd_real>::rnd_we(const FP_NR<dd_real>& b, long expoAdd) {
+inline void FP_NR<dd_real>::rnd_we(const FP_NR<dd_real>& b, long expo_add) {
   /* double-double has same expo limit as double format*/
-  if (b.exponent() + expoAdd >= numeric_limits<double>::digits)
+  if (b.exponent() + expo_add >= numeric_limits<double>::digits)
     data = b.data;
   else
-    data = ::ldexp(::nint(::ldexp(b.data, expoAdd)), -expoAdd);
+    data = ::ldexp(::nint(::ldexp(b.data, expo_add)), -expo_add);
 }
 
 template<>
@@ -271,26 +271,6 @@ inline void FP_NR<dd_real>::swap(FP_NR<dd_real>& a) {
   a.data = data;
   data = t;
 }
-
-
-/* #ifdef FPLLL_V3_COMPAT */
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void FP_NR<dd_real>::print() const {
-  cout << data;
-}
-
-template<>
-inline void FP_NR<dd_real>::printerr() const {
-  cerr << data;
-}
-
-template<>
-inline void FP_NR<dd_real>::set(unsigned int s) {
-  data = static_cast<double>(s);
-}
-#endif
 
 FPLLL_END_NAMESPACE
 

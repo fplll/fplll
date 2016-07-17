@@ -43,7 +43,7 @@ inline void Z_NR<long>::get_mpz(mpz_t r) const {
   mpz_set_si (r, data);
 }
 
-inline long computeLongExponent(long data) {
+inline long compute_long_exponent(long data) {
   unsigned long y = static_cast<unsigned long>(abs(data));
   long e;
   for (e = 0; y; e++, y >>= 1) {}
@@ -52,12 +52,12 @@ inline long computeLongExponent(long data) {
 
 template<>
 inline long Z_NR<long>::exponent() const {
-  int intExpo;
-  double fNorm = frexp(static_cast<double>(data), &intExpo);
-  if (data > MAX_LONG_FAST && fabs(fNorm) == 0.5)
-    return computeLongExponent(data);
+  int int_expo;
+  double f_norm = frexp(static_cast<double>(data), &int_expo);
+  if (data > MAX_LONG_FAST && fabs(f_norm) == 0.5)
+    return compute_long_exponent(data);
   else
-    return static_cast<long>(intExpo);
+    return static_cast<long>(int_expo);
 }
 
 /** set data */
@@ -256,7 +256,7 @@ template<>
 inline void Z_NR<long>::randb(int bits) {
   mpz_t temp;
   mpz_init(temp);
-  mpz_urandomb(temp, RandGen::getGMPState(), bits);
+  mpz_urandomb(temp, RandGen::get_gmp_state(), bits);
   data = mpz_get_si(temp);
   mpz_clear(temp);
 }
@@ -264,7 +264,7 @@ inline void Z_NR<long>::randb(int bits) {
 template<>
 inline void Z_NR<long>::randb_si(int bits) {
   randb (bits);
-  data = data * RandGenInt::getBit();
+  data = data * RandGenInt::get_bit();
 }
 
 template<>
@@ -273,7 +273,7 @@ inline void Z_NR<long>::randm(const Z_NR<long>& max) {
   mpz_init(temp);
   mpz_init(lim);
   mpz_set_si(lim, max.data);
-  mpz_urandomm(temp, RandGen::getGMPState(), lim);
+  mpz_urandomm(temp, RandGen::get_gmp_state(), lim);
   data = mpz_get_si(temp);
   mpz_clear(temp);
   mpz_clear(lim);
@@ -282,7 +282,7 @@ inline void Z_NR<long>::randm(const Z_NR<long>& max) {
 template<>
 inline void Z_NR<long>::randm_si(const Z_NR<long>& max) {
   randm (max);
-  data = data * RandGenInt::getBit();
+  data = data * RandGenInt::get_bit();
 }
 
 
@@ -299,68 +299,15 @@ inline void Z_NR<long>::nextprime(const Z_NR<long>& nbr) {
 }
 
 
-
-/* FPLLL_V3_COMPAT */
-#ifdef FPLLL_V3_COMPAT
-
-inline int sizeinbase2(long data) {
-  long y = abs(data);
-  int resul = 0;
-  if (y == 0) resul=1;
-  else {
-    while (y > 1) {
-      resul++;
-      y >>= 1;  //y /= 2;
-    }
-  }
-  return resul;
-}
-
-template<>
-inline void Z_NR<long>::print() const {
-  cout << data;
-}
-
-template<>
-inline void Z_NR<long>::printerr() const {
-  cerr << data;
-}
-
-template<>
-inline void Z_NR<long>::read() {
-  cin >> data;
-}
-
-template<>
-inline double Z_NR<long>::get_d_2exp(long* expo) const {
-  int intExpo = 0;
-  double x = frexp(static_cast<double>(data), &intExpo);
-  *expo = intExpo;
-  return x;
-}
-
-template<>
-inline void Z_NR<long>::set(/*const*/ long& s) {
-  data = s;
-}
-
-template<>
-inline void Z_NR<long>::set(unsigned long s) {
-  data = static_cast<long>(s);
-}
-
-#endif // #ifdef FPLLL_V3_COMPAT
-
-
 /* operators Z_NR<long> */
 template<>
 inline ostream& operator<<(ostream& os, const Z_NR<long>& x) {
-  return os << x.getData();
+  return os << x.get_data();
 }
 
 template<>
 inline istream& operator>>(istream& is, Z_NR<long>& x) {
-  return is >> x.getData();
+  return is >> x.get_data();
 }
 
 

@@ -63,10 +63,10 @@ int main(int argc, char* argv[]) {
     iArg++;
     if (argc - iArg < 1) fatalError("option '-randseed' requires an argument");
     if (strcmp(argv[iArg], "time") == 0) {
-      RandGen::initWithTime();
+      RandGen::init_with_time();
     }
     else {
-      RandGen::initWithSeed(atol(argv[iArg]));
+      RandGen::init_with_seed(atol(argv[iArg]));
     }
     iArg++;
   }
@@ -188,7 +188,7 @@ int main(int argc, char* argv[]) {
 	FP_NR<mpfr_t>* w = new FP_NR<mpfr_t>[d];
 
 	for (int i=0; i<d; i++)
-	  mpfr_inp_str(w[i].getData(), stdin, 10, GMP_RNDN);
+          mpfr_inp_str(w[i].get_data(), stdin, 10, GMP_RNDN);
 
 	m.resize(d, d);
 	m.gen_trg2(w);

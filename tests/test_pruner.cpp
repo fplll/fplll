@@ -281,7 +281,7 @@ template <class FT> int test_auto_prune(size_t n) {
   lll_obj.lll();
   Pruning pruning;
   FT radius;
-  M.getR(radius, 0, 0);
+  M.get_r(radius, 0, 0);
   prune<FT, Z_NR<mpz_t>, FT >(pruning, radius.get_d(), 10000.0, 0.67, M);
 
   status |= !(pruning.probability <= 1.0);

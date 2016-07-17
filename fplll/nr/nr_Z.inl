@@ -36,12 +36,12 @@ public:
   /**
    * Returns the internal representation of the data.
    */
-  inline Z& getData()             {return data;}
+  inline Z& get_data()             {return data;}
 
   /**
    * Returns the internal representation of the data.
    */
-  inline const Z& getData() const {return data;}
+  inline const Z& get_data() const {return data;}
 
   /**
    * Converts this object to a double. If it does not fit in 
@@ -132,7 +132,7 @@ public:
   /**
    * max between a and b
    */
-  inline Z_NR& maxZ(Z_NR<Z>& b) {
+  inline Z_NR& max_z(Z_NR<Z>& b) {
     if ((*this)<=b)
       return b;
     else
@@ -225,22 +225,6 @@ public:
   */
   inline void nextprime(const Z_NR<Z>& nbr);
 
-#ifdef FPLLL_V3_COMPAT
-  // Old interface (do not use)
-  inline void print() const;
-  inline void printerr() const;
-  inline void read();
-  inline double get_d_2exp(long* expo) const;
-  inline void set_si(long s) {*this = s;}
-  inline void set(const Z_NR<Z>& s)     {*this = s;}
-  inline void set(/*const*/ Z& s);
-  inline void set(unsigned long s);
-  inline void mul_2exp(const Z_NR<Z>& a, long expo) {mul_2si(a, expo);}
-  inline void div_2exp(const Z_NR<Z>& a, long expo) {div_2si(a, expo);}
-  inline Z& GetData()             {return data;}
-  inline const Z& GetData() const {return data;}
-#endif
-
 };
 
 
@@ -254,13 +238,13 @@ class LDConvHelper {
 public:
   /** Converts op to a long double with rounding to nearest. */
   static long double mpz_get_ld(const mpz_t op) {
-    initTemp();
+    init_temp();
     mpfr_set_z(temp, op, GMP_RNDN);
     return mpfr_get_ld(temp, GMP_RNDN); // exact
   }
 
   static void free() {
-    freeTemp();
+    free_temp();
   }
 
   /**
@@ -268,36 +252,36 @@ public:
    * to op rounded to the nearest long double.
    */
   static long double mpz_get_ld_2exp(long* exp, const mpz_t op) {
-    initTemp();
+    init_temp();
     mpfr_set_z(temp, op, GMP_RNDN);
     return mpfr_get_ld_2exp(exp, temp, GMP_RNDN); // exact
   }
 
   /** Sets the value of rop from op. */
   static void mpz_set_ld(mpz_t rop, long double op) {
-    initTemp();
+    init_temp();
     mpfr_set_ld(temp, op, GMP_RNDN); // exact
     mpfr_get_z(rop, temp, GMP_RNDN);
   }
 
 private:
-  static inline void initTemp() {
-    if (!tempInitialized) {
+  static inline void init_temp() {
+    if (!temp_initialized) {
       mpfr_init2(temp, numeric_limits<long double>::digits);
-      tempInitialized = true;
+      temp_initialized = true;
     }
   }
 
-  static inline void freeTemp() {
-    if (tempInitialized) {
+  static inline void free_temp() {
+    if (temp_initialized) {
       mpfr_clear(temp);
-      tempInitialized = false;
+      temp_initialized = false;
     }
   }
 
   // These static members are initialized in util.cpp
   static mpfr_t temp;
-  static bool tempInitialized;
+  static bool temp_initialized;
 };
 
 #endif

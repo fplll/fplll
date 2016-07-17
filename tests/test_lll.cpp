@@ -40,10 +40,10 @@ template <class ZT> int testTest(ZZ_mat<ZT> &A)
 
   MatGSO<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, U, UT, 0);
 
-  int is_reduced = isLLLReduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
+  int is_reduced = is_lll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
 
   if (is_reduced)
-    cerr << "isLLLReduced reports success when it should not" << endl;
+    cerr << "is_lll_reduced reports success when it should not" << endl;
 
   return is_reduced;
 }
@@ -55,7 +55,7 @@ template <class ZT> int testTest(ZZ_mat<ZT> &A)
    @param method           LLL method to test
    @param float_type       floating point type to test
    @param flags            flags to use
-   @param prec             precision used for isLLLReduced
+   @param prec             precision used for is_lll_reduced
 
    @return zero on success.
 */
@@ -86,15 +86,15 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags = L
     return status;
   }
 
-  const int oldPrec = prec ? FP_NR<mpfr_t>::setprec(prec) : 0;
+  const int old_prec = prec ? FP_NR<mpfr_t>::set_prec(prec) : 0;
 
   MatGSO<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, U, UT, 0);
 
   // one on success
-  status = isLLLReduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
+  status = is_lll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
 
   if (prec)
-    FP_NR<mpfr_t>::setprec(oldPrec);
+    FP_NR<mpfr_t>::set_prec(old_prec);
 
   if (status == 0)
     cerr << "Output of LLL reduction is not LLL reduced with method " << LLL_METHOD_STR[method]
@@ -110,7 +110,7 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags = L
    @param method           LLL method to test
    @param float_type       floating point type to test
    @param flags            flags to use
-   @param prec             precision used for isLLLReduced
+   @param prec             precision used for is_lll_reduced
 
    @return zero on success
 */
@@ -132,7 +132,7 @@ int testFilename(const char *input_filename, LLLMethod method, FloatType float_t
    @param method           LLL method to test
    @param float_type       floating point type to test
    @param flags            flags to use
-   @param prec             precision used for isLLLReduced
+   @param prec             precision used for is_lll_reduced
 
    @return zero on success
 */

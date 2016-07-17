@@ -25,13 +25,13 @@ template<>
 inline FP_NR<dpe_t>::~FP_NR() {dpe_clear(data);}
 
 template<>
-inline unsigned int FP_NR<dpe_t>::getprec() {
+inline unsigned int FP_NR<dpe_t>::get_prec() {
   return DPE_BITSIZE;
 }
 
 template<>
-inline unsigned int FP_NR<dpe_t>::setprec(unsigned int /*prec*/) {
-  return getprec(); // ignored
+inline unsigned int FP_NR<dpe_t>::set_prec(unsigned int /*prec*/) {
+  return get_prec(); // ignored
 }
 
 /* return data */
@@ -46,7 +46,7 @@ inline void FP_NR<dpe_t>::get_mpfr(mpfr_t r, mp_rnd_t rnd) const {
 }
 
 template<>
-inline void FP_NR<dpe_t>::set_mpfr(mpfr_t r, mp_rnd_t rnd) {
+inline void FP_NR<dpe_t>::set_mpfr(mpfr_t r, mp_rnd_t /*rnd*/) {
   dpe_set_mpfr (data, r);
 }
 
@@ -76,8 +76,8 @@ inline long FP_NR<dpe_t>::get_si_exp(long& expo) const {
 }
 
 template<>
-inline long FP_NR<dpe_t>::get_si_exp_we(long& expo, long /*expoAdd*/) const {
-  return get_si_exp(expo); // NOTE: expoAdd = 0
+inline long FP_NR<dpe_t>::get_si_exp_we(long& expo, long /*expo_add*/) const {
+  return get_si_exp(expo); // NOTE: expo_add = 0
 }
 
 /*  comparison */
@@ -254,8 +254,8 @@ inline void FP_NR<dpe_t>::rnd(const FP_NR<dpe_t>& a) {
 }
 
 template<>
-inline void FP_NR<dpe_t>::rnd_we(const FP_NR<dpe_t>& a, long /*expoAdd*/) {
-  dpe_round(data, a.data); // NOTE: expoAdd = 0
+inline void FP_NR<dpe_t>::rnd_we(const FP_NR<dpe_t>& a, long /*expo_add*/) {
+  dpe_round(data, a.data); // NOTE: expo_add = 0
 }
 
 template<>
@@ -275,36 +275,15 @@ inline void FP_NR<dpe_t>::swap(FP_NR<dpe_t>& a) {
 }
 
 
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void FP_NR<dpe_t>::print() const {
-  dpe_out_str(stdout,10, data);
-  fflush(stdout);
-}
-
-template<>
-inline void FP_NR<dpe_t>::printerr() const {
-  dpe_out_str(stderr,10, data);
-  fflush(stderr);
-}
-
-template<>
-inline void FP_NR<dpe_t>::set(unsigned int s) {
-  dpe_set_d(data, static_cast<double>(s));
-}
-
-#endif // #ifdef FPLLL_V3_COMPAT
-
 
 /* operators FP_NR<dpe_t> */
 template<>
 inline ostream& operator<<(ostream& os, const FP_NR<dpe_t>& x) {
-  double m = DPE_MANT(x.getData());
+  double m = DPE_MANT(x.get_data());
   if (!isfinite(m))
     os << m;
   else {
-    double mm = DPE_EXP(x.getData()) * log10(2.0);
+    double mm = DPE_EXP(x.get_data()) * log10(2.0);
     long e10 = static_cast<long>(mm);
     m *= pow(10.0, mm - e10);
     while (m != 0 && fabs(m) < 1) {

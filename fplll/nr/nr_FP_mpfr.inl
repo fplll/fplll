@@ -22,15 +22,15 @@ template<>
 inline FP_NR<mpfr_t>::~FP_NR() {mpfr_clear(data);}
 
 template<>
-inline unsigned int FP_NR<mpfr_t>::getprec() {
+inline unsigned int FP_NR<mpfr_t>::get_prec() {
   return mpfr_get_default_prec();
 }
 
 template<>
-inline unsigned int FP_NR<mpfr_t>::setprec(unsigned int prec) {
-  int oldprec = getprec();
+inline unsigned int FP_NR<mpfr_t>::set_prec(unsigned int prec) {
+  int old_prec = get_prec();
   mpfr_set_default_prec(prec);
-  return oldprec;
+  return old_prec;
 }
 
 /* return data */
@@ -67,16 +67,16 @@ inline long FP_NR<mpfr_t>::get_si_exp(long& expo) const {
   else {
     expo = max(exponent() - numeric_limits<long>::digits, 0L);
   }
-  mpfr_t& ncData = const_cast<mpfr_t&>(data);
-  mpfr_div_2si(ncData, ncData, expo, GMP_RNDN);
-  long result = mpfr_get_si(ncData, GMP_RNDZ);
-  mpfr_mul_2si(ncData, ncData, expo, GMP_RNDN);
+  mpfr_t& nc_data = const_cast<mpfr_t&>(data);
+  mpfr_div_2si(nc_data, nc_data, expo, GMP_RNDN);
+  long result = mpfr_get_si(nc_data, GMP_RNDZ);
+  mpfr_mul_2si(nc_data, nc_data, expo, GMP_RNDN);
   return result;
 }
 
 template<>
-inline long FP_NR<mpfr_t>::get_si_exp_we(long& expo, long /*expoAdd*/) const {
-  return get_si_exp(expo);  // NOTE: expoAdd = 0
+inline long FP_NR<mpfr_t>::get_si_exp_we(long& expo, long /*expo_add*/) const {
+  return get_si_exp(expo);  // NOTE: expo_add = 0
 }
 
 /*  comparison */
@@ -262,8 +262,8 @@ inline void FP_NR<mpfr_t>::rnd(const FP_NR<mpfr_t>& a) {
   mpfr_round(data, a.data);
 }
 template<>
-inline void FP_NR<mpfr_t>::rnd_we(const FP_NR<mpfr_t>& a, long /*expoAdd*/) {
-  mpfr_round(data, a.data); // NOTE: expoAdd = 0
+inline void FP_NR<mpfr_t>::rnd_we(const FP_NR<mpfr_t>& a, long /*expo_add*/) {
+  mpfr_round(data, a.data); // NOTE: expo_add = 0
 }
 template<>
 inline void FP_NR<mpfr_t>::floor(const FP_NR<mpfr_t>& a) {
@@ -281,33 +281,11 @@ inline void FP_NR<mpfr_t>::swap(FP_NR<mpfr_t>& a) {
 }
 
 
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void FP_NR<mpfr_t>::print() const {
-  mpfr_out_str(stdout,10,10,data,GMP_RNDN);
-  fflush(stdout);
-}
-
-template<>
-inline void FP_NR<mpfr_t>::printerr() const {
-  mpfr_out_str(stderr,10,5,data,GMP_RNDN);
-  fflush(stderr);
-}
-
-template<>
-inline void FP_NR<mpfr_t>::set(unsigned int s) {
-  mpfr_set_ui(data,s,GMP_RNDN);
-}
-
-#endif // #ifdef FPLLL_V3_COMPAT
-
-
 /* operators FP_NR<mpfr_t> */
 template<>
 inline ostream& operator<<(ostream& os, const FP_NR<mpfr_t>& x) {
   mp_exp_t e;
-  char* s = mpfr_get_str(NULL, &e, 10, os.precision(), x.getData(), GMP_RNDN);
+  char* s = mpfr_get_str(NULL, &e, 10, os.precision(), x.get_data(), GMP_RNDN);
   char* p = s;
   if (*p == '-') {
     os << *p;

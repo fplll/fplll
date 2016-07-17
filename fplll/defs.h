@@ -26,7 +26,6 @@
 #define FPLLL_WITH_DPE
 #define FPLLL_WITH_ZDOUBLE
 #define FPLLL_WITH_ZLONG
-#define FPLLL_V3_COMPAT
 #define FPLLL_WITH_GETRUSAGE
 
 #include <cstddef>
@@ -70,14 +69,14 @@
 
 #ifdef DEBUG
   #include <cassert>
-  extern int debugDepth;
-  #define FPLLL_TRACE(x) std::cerr << "TRACE: " << std::string(debugDepth * 2, ' ') << x << std::endl
+  extern int debug_depth;
+  #define FPLLL_TRACE(x) std::cerr << "TRACE: " << std::string(debug_depth * 2, ' ') << x << std::endl
   struct DebugTracer {
     DebugTracer(const char* f) : f(f) {
-      debugDepth++;
+      debug_depth++;
     }
     ~DebugTracer() {
-      debugDepth--;
+      debug_depth--;
       FPLLL_TRACE("</" << f << ">");
     }
     std::string f;

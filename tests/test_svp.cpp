@@ -80,7 +80,7 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, IntVect &b)
     return status;
   }
 
-  status = shortestVector(A, sol_coord, SVPM_PROVED, SVP_DEFAULT);
+  status = shortest_vector(A, sol_coord, SVPM_PROVED, SVP_DEFAULT);
 
   if (status != RED_SUCCESS)
   {
@@ -88,14 +88,14 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, IntVect &b)
     return status;
   }
 
-  vectMatrixProduct(sol_coord2, sol_coord, u);
-  vectMatrixProduct(solution, sol_coord, A);
+  vector_matrix_product(sol_coord2, sol_coord, u);
+  vector_matrix_product(solution, sol_coord, A);
 
   Z_NR<ZT> tmp;
   Z_NR<ZT> norm_s;
   Z_NR<ZT> norm_b;
 
-  for (int i = 0; i < A.getCols(); i++)
+  for (int i = 0; i < A.get_cols(); i++)
   {
     tmp.mul(solution[i], solution[i]);
     norm_s.add(norm_s, tmp);
@@ -119,10 +119,10 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, IntVect &b)
 template <class ZT> int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &coords)
 {
   int d = coords.size();
-  if (A.getRows() != d)
+  if (A.get_rows() != d)
   {
     cerr << "DSVP length error: Coefficient vector has wrong dimension: ";
-    cerr << A.getRows() << " vs " << d << endl;
+    cerr << A.get_rows() << " vs " << d << endl;
     return 1;
   }
   FloatVect coords_d(d);
@@ -131,15 +131,15 @@ template <class ZT> int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &c
     coords_d[i] = coords[i].get_d();
   }
 
-  IntMatrix emptyMat;
-  MatGSO<Integer, Float> gso(A, emptyMat, emptyMat, GSO_INT_GRAM);
-  if (!gso.updateGSO())
+  IntMatrix empty_mat;
+  MatGSO<Integer, Float> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
+  if (!gso.update_gso())
   {
     cerr << "GSO Failure." << endl;
     return 1;
   }
   Float tmp;
-  gso.getR(tmp, d - 1, d - 1);
+  gso.get_r(tmp, d - 1, d - 1);
   tmp.pow_si(tmp, -1);
 
   FloatVect alpha(d);
@@ -150,10 +150,10 @@ template <class ZT> int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &c
     alpha[i] = coords_d[i];
     for (int j = 0; j < i; j++)
     {
-      gso.getMu(mu, i, j);
+      gso.get_mu(mu, i, j);
       alpha[i] -= mu * alpha[j];
     }
-    gso.getR(r_inv, i, i);
+    gso.get_r(r_inv, i, i);
     r_inv.pow_si(r_inv, -1);
     alpha2.pow_si(alpha[i], 2);
     norm += alpha2 * r_inv;
@@ -172,7 +172,7 @@ template <class ZT> int dual_length(Float &norm, ZZ_mat<ZT> &A, const IntVect &c
 
 template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b)
 {
-  IntVect solCoord;  // In the LLL-reduced basis
+  IntVect sol_coord;  // In the LLL-reduced basis
   IntVect solution;
   IntMatrix u;
 
@@ -190,7 +190,7 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b)
     return status;
   }
 
-  status = shortestVector(A, solCoord, SVPM_FAST, SVP_DUAL);
+  status = shortest_vector(A, sol_coord, SVPM_FAST, SVP_DUAL);
 
   if (status != RED_SUCCESS)
   {
@@ -199,14 +199,14 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b)
   }
 
   Float norm_sol;
-  if (dual_length(norm_sol, A, solCoord))
+  if (dual_length(norm_sol, A, sol_coord))
   {
     return 1;
   }
 
   Float error;
   error = 1;
-  error.mul_2si(error, -(int)error.getprec());
+  error.mul_2si(error, -(int)error.get_prec());
   normb += error;
   if (norm_sol > normb)
   {
@@ -227,7 +227,7 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, IntVect &b)
 template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, IntVect &b)
 {
   IntMatrix u;
-  int d = A.getRows();
+  int d = A.get_rows();
 
   Float normb;
   if (dual_length(normb, A, b))
@@ -272,7 +272,7 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, IntVect &b)
 
   Float error;
   error = 1;
-  error.mul_2si(error, -(int)error.getprec());
+  error.mul_2si(error, -(int)error.get_prec());
   normb += error;
   if (norm_sol > normb)
   {

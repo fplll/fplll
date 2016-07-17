@@ -25,10 +25,10 @@ int main()
 
   /* sample Z */
   for (int i = 0; i < 1000; i ++) {
-    x1 = S1.sampleZ_dgs(c, t, flag);
+    x1 = S1.sample_z_dgs(c, t, flag);
     //cout << x1 << endl;
   }
-  cout << "# [done] (long, double) sampleZ_dgs()"  << endl;
+  cout << "# [done] (long, double) sample_z_dgs()"  << endl;
 
   /* sample vec */
   NumVect<Z_NR<long> > vec;
@@ -54,10 +54,10 @@ int main()
 
   /* sample Z */
   for (int i = 0; i < 1000; i ++) {
-    x2 = S2.sampleZ(c, t);
+    x2 = S2.sample_z(c, t);
     //cout << x2 << endl;
   }
-  cout << "# [done] (mpz_t, double) sampleZ_basic()"  << endl;
+  cout << "# [done] (mpz_t, double) sample_z_basic()"  << endl;
 
   /* sample vec */
   NumVect<Z_NR<mpz_t> > vec2;
@@ -86,9 +86,9 @@ int main()
 
   /* sample Z */
   for (int i = 0; i < 1000; i ++) {
-    x3 = S3.sampleZ(c2, t2);
+    x3 = S3.sample_z(c2, t2);
   }
-  cout << "# [done] (mpz_t, mpfr_t) sampleZ_dgs()"  << endl;
+  cout << "# [done] (mpz_t, mpfr_t) sample_z_dgs()"  << endl;
 
   /* sample vec */
   NumVect<Z_NR<mpz_t> > vec3;

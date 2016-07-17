@@ -25,8 +25,8 @@ FPLLL_BEGIN_NAMESPACE
 /* The precision of FT must be defined before creating an instance of
    LLLReduction. The matrix b can be modified between each call to lll. */
 
-template<class ZT, class FT>
-class LLLReduction {
+template <class ZT, class FT> class LLLReduction
+{
 public:
   /**
    * Constructor.
@@ -34,86 +34,87 @@ public:
    * class and must remain the same until the object is destroyed (or no longer
    * needed).
    */
-  LLLReduction(MatGSO<ZT, FT>& m, double delta, double eta,
-               int flags);
+  LLLReduction(MatGSO<ZT, FT> &m, double delta, double eta, int flags);
 
-  ~LLLReduction() {
-    LDConvHelper::free();
-  }
-  
-  bool lll(int kappaMin = 0, int kappaStart = 0, int kappaEnd = -1);
-  inline bool sizeReduction(int kappaMin = 0, int kappaEnd = -1);
+  ~LLLReduction() { LDConvHelper::free(); }
+
+  bool lll(int kappa_min = 0, int kappa_start = 0, int kappa_end = -1);
+  inline bool size_reduction(int kappa_min = 0, int kappa_end = -1);
 
   int status;
-  int finalKappa;
-  int lastEarlyRed;
+  int final_kappa;
+  int last_early_red;
   int zeros;
-  int nSwaps;
+  int n_swaps;
 
 private:
-  bool babai(int kappa, int nCols);
-  inline bool earlyReduction(int start);
-  inline void printParams();
-  inline bool setStatus(int newStatus);
+  bool babai(int kappa, int ncols);
+  inline bool early_reduction(int start);
+  inline void print_params();
+  inline bool set_status(int new_status);
 
-  MatGSO<ZT, FT>& m;
-  FT delta, eta, swapThreshold;
+  MatGSO<ZT, FT> &m;
+  FT delta, eta, swap_threshold;
 
-  bool enableEarlyRed;
+  bool enable_early_red;
   bool siegel;
   bool verbose;
 
-  vector<FT> lovaszTests;
-  vector<FT> babaiMu;
-  vector<long> babaiExpo;
+  vector<FT> lovasz_tests;
+  vector<FT> babai_mu;
+  vector<long> babai_expo;
   ZT ztmp1;
-  FT muMant, ftmp1;
+  FT mu_m_ant, ftmp1;
 };
 
-template<class ZT, class FT>
-bool isLLLReduced(MatGSO<ZT, FT>& m, double delta, double eta);
+template <class ZT, class FT> bool is_lll_reduced(MatGSO<ZT, FT> &m, double delta, double eta);
 
-template<class ZT, class FT>
-inline bool LLLReduction<ZT, FT>::sizeReduction(int kappaMin, int kappaEnd) {
-  if (kappaEnd == -1) kappaEnd = m.d;
-  for (int k = kappaMin; k < kappaEnd; k++) {
-    if ((k > 0 && !babai(k, k)) || !m.updateGSORow(k))
+template <class ZT, class FT>
+inline bool LLLReduction<ZT, FT>::size_reduction(int kappa_min, int kappa_end)
+{
+  if (kappa_end == -1)
+    kappa_end = m.d;
+  for (int k = kappa_min; k < kappa_end; k++)
+  {
+    if ((k > 0 && !babai(k, k)) || !m.update_gso_row(k))
       return false;
   }
-  return setStatus(RED_SUCCESS);
+  return set_status(RED_SUCCESS);
 }
 
-template<class ZT, class FT>
-inline bool LLLReduction<ZT, FT>::earlyReduction(int start) {
-  m.lockCols();
-  if (verbose) {
+template <class ZT, class FT> inline bool LLLReduction<ZT, FT>::early_reduction(int start)
+{
+  m.lock_cols();
+  if (verbose)
+  {
     cerr << "Early reduction start=" << start + 1 << endl;
   }
-  for (int i = start; i < m.d; i++) {
-    if (!babai(i, start)) return false;
+  for (int i = start; i < m.d; i++)
+  {
+    if (!babai(i, start))
+      return false;
   }
-  m.unlockCols();
-  lastEarlyRed = start;
+  m.unlock_cols();
+  last_early_red = start;
   return true;
 }
 
-template<class ZT, class FT>
-inline void LLLReduction<ZT, FT>::printParams() {
+template <class ZT, class FT> inline void LLLReduction<ZT, FT>::print_params()
+{
   cerr << "Entering LLL"
-       << "\ndelta = " << delta
-       << "\neta = " << eta
-       << "\nprecision = " << FT::getprec()
-       << "\nexact_dot_product = " << static_cast<int>(m.enableIntGram)
-       << "\nrow_expo = " << static_cast<int>(m.enableRowExpo)
-       << "\nearly_red = " << static_cast<int>(enableEarlyRed)
+       << "\ndelta = " << delta << "\neta = " << eta << "\nprecision = " << FT::get_prec()
+       << "\nexact_dot_product = " << static_cast<int>(m.enable_int_gram)
+       << "\nrow_expo = " << static_cast<int>(m.enable_row_expo)
+       << "\nearly_red = " << static_cast<int>(enable_early_red)
        << "\nsiegel_cond = " << static_cast<int>(siegel)
-       << "\nlong_in_babai = " << static_cast<int>(m.rowOpForceLong) << endl;
+       << "\nlong_in_babai = " << static_cast<int>(m.row_op_force_long) << endl;
 }
 
-template<class ZT, class FT>
-inline bool LLLReduction<ZT, FT>::setStatus(int newStatus) {
-  status = newStatus;
-  if (verbose) {
+template <class ZT, class FT> inline bool LLLReduction<ZT, FT>::set_status(int new_status)
+{
+  status = new_status;
+  if (verbose)
+  {
     if (status == RED_SUCCESS)
       cerr << "End of LLL: success" << endl;
     else
@@ -121,7 +122,6 @@ inline bool LLLReduction<ZT, FT>::setStatus(int newStatus) {
   }
   return status == RED_SUCCESS;
 }
-
 
 FPLLL_END_NAMESPACE
 

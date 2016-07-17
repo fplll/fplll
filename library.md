@@ -105,7 +105,7 @@ LLL-reduces a basis of Z\_NR&lt;double&gt;. There is no guarantee and the LM\_WR
 ## BKZ ##
 
 <table cellpadding="5">
-<tr><td><tt>int bkzReduction(IntMatrix&amp; b, int blockSize, int flags = BKZ_DEFAULT)
+<tr><td><tt>int bkzReduction(IntMatrix&amp; b, int block_size, int flags = BKZ_DEFAULT)
 </tt><br>
 <p>BKZ-reduces a basis of Integers.</p>
 <p>Parameters:</p>
@@ -113,8 +113,8 @@ LLL-reduces a basis of Z\_NR&lt;double&gt;. There is no guarantee and the LM\_WR
   <dl>
     <dt><code>b</code>
       <dd>Input basis. It is reduced in place.</dd>
-    <dt><code>blockSize</code>
-      <dd>Controls the strength of the reduction (as low as LLL if blockSize=2, as high as HKZ when blockSize=b.getRows()).
+    <dt><code>block_size</code>
+      <dd>Controls the strength of the reduction (as low as LLL if block_size=2, as high as HKZ when block_size=b.get_rows()).
     <dt><code>flags</code>
       <dd>Can be BKZ_DEFAULT or a combination of the following values:
       <table cellpadding="3">
@@ -138,7 +138,7 @@ LLL-reduces a basis of Z\_NR&lt;double&gt;. There is no guarantee and the LM\_WR
   </table>
   <p>Even if an error occurs, it is guaranteed that <code>b</code> remains a basis of the same lattice.</p>
 </blockquote>
-<tr><td><tt>int bkzReduction(IntMatrix&amp; b, IntMatrix&amp; u, int blockSize, int flags = BKZ_DEFAULT)</tt><br>
+<tr><td><tt>int bkzReduction(IntMatrix&amp; b, IntMatrix&amp; u, int block_size, int flags = BKZ_DEFAULT)</tt><br>
 Same as above, but also computes the transform matrix u such that b<sub>new</sub> = u &times; b<sub>old</sub>.
 <tr><td><tt>int bkzReduction(const BKZParam&amp; param)</tt><br>
 <p>Same as above with more options.</p>
@@ -146,12 +146,12 @@ Same as above, but also computes the transform matrix u such that b<sub>new</sub
 <blockquote>
   <pre>
   struct BKZParam {
-    BKZParam() : b(NULL), u(NULL), blockSize(0), delta(LLL_DEF_DELTA),
+    BKZParam() : b(NULL), u(NULL), block_size(0), delta(LLL_DEF_DELTA),
       floatType(FT_DEFAULT), precision(0), flags(BKZ_DEFAULT),
       maxLoops(0), maxTime(0) {}
     IntMatrix* b;
     IntMatrix* u;
-    int blockSize;
+    int block_size;
     double delta;
     FloatType floatType;
     int precision;
@@ -166,8 +166,8 @@ Same as above, but also computes the transform matrix u such that b<sub>new</sub
       <dd>Pointer to the matrix to reduce in place.</dd>
     <dt><code>u</code>
       <dd>Pointer to the transform matrix (can be null if not needed).</dd>
-    <dt><code>blockSize</code>
-      <dd>Between 2 and b.getRows(), controls the strength of the reduction.
+    <dt><code>block_size</code>
+      <dd>Between 2 and b.get_rows(), controls the strength of the reduction.
     <dt><code>delta</code>
       <dd>Used by the LLL subroutine.
     <dt><code>floatType</code>
@@ -188,8 +188,8 @@ Same as above, but also computes the transform matrix u such that b<sub>new</sub
     <dt><code>maxTime</code>
       <dd>Forced stop after around maxTime seconds (enabled by the BKZ_MAX_TIME flag, the condition is checked only after each full loop).
     <dt><code>pruning</code>
-      <dd>Vector of size <i>blockSize</i> that enables heuristic speed-up of the enumeration subroutine.
-        If not empty, it must contain <i>blockSize</i> values in the interval (0,1], starting with 1, in non-increasing order.
+      <dd>Vector of size <i>block_size</i> that enables heuristic speed-up of the enumeration subroutine.
+        If not empty, it must contain <i>block_size</i> values in the interval (0,1], starting with 1, in non-increasing order.
   </dl>
 </blockquote>
 <p>Return value: Same as above.</p>
@@ -198,8 +198,8 @@ Same as above, but also computes the transform matrix u such that b<sub>new</sub
 ## SVP ##
 
 <table>
-<tr><td><tt>int shortestVector(IntMatrix&amp; b, vector&lt;Integer&gt;&amp;
-solCoord, SVPMethod method = SVPM_PROVED, int flags = SVP_DEFAULT)</tt><br>
+<tr><td><tt>int shortest_vector(IntMatrix&amp; b, vector&lt;Integer&gt;&amp;
+sol_coord, SVPMethod method = SVPM_PROVED, int flags = SVP_DEFAULT)</tt><br>
 <p>Computes a shortest non-zero vector of a lattice.
 The basis must be LLL-reduced with delta = 0.99 and eta = 0.51.
 The result is guaranteed if method = SVPM_PROVED.</p>
@@ -208,7 +208,7 @@ The result is guaranteed if method = SVPM_PROVED.</p>
   <dl>
     <dt>b
       <dd>LLL-reduced input basis.</dd>
-    <dt>solCoord
+    <dt>sol_coord
       <dd>Output: coordinates of a shortest vector non-zero of L(b) in the basis <code>b</code>.
     <dt>method
       <dd>SVPM_PROVED (the result is guaranteed provided that the basis is (0.99,0.51)-LLL-reduced) or SVPM_FAST (nothing is guaranteed).
@@ -293,8 +293,8 @@ Adds x &times; y to the current value.
 Subtracts x &times; y from the current value.
 <tr><td><tt>void swap(Z_NR&lt;Z&gt;&amp; a)</tt><br>
 Efficiently swaps the values of two Z_NR.
-<tr><td><tt>T&amp; getData()</tt><br>
-<tt>const T&amp; getData() const</tt><br>
+<tr><td><tt>T&amp; get_data()</tt><br>
+<tt>const T&amp; get_data() const</tt><br>
 Returns the internal representation of the data.
 </table>
 
@@ -380,17 +380,17 @@ value := NaN.
 Returns non-zero if the current value is NaN, 0 otherwise.
 <tr><td><tt>void swap(FP_NR&lt;F&gt;&amp; x)</tt><br>
 Efficiently swaps the values of two FP_NR.
-<tr><td><tt>T&amp; getData()</tt><br>
-<tt>const T&amp; getData() const</tt><br>
+<tr><td><tt>T&amp; get_data()</tt><br>
+<tt>const T&amp; get_data() const</tt><br>
 Returns the internal representation of the data.
 </table>
 
 Static members:
 
 <table cellpadding="5">
-<tr><td><tt>static unsigned int getprec()</tt><br>
+<tr><td><tt>static unsigned int get_prec()</tt><br>
 Returns the current precision for new FP_NR&lt;F&gt; objects.
-<tr><td><tt>static inline unsigned int setprec(unsigned int prec)</tt><br>
+<tr><td><tt>static inline unsigned int set_prec(unsigned int prec)</tt><br>
 Sets the precision of new FP_NR&lt;F&gt; objects. Returns the previous value.
 This has no effect is F != mpfr_t.
 </table>
@@ -421,17 +421,17 @@ Creates a matrix of dimensions rows &times; cols. All elements are initialized w
 Sets number of rows and the number of columns to 0.
 <tr><td><tt>void resize(int rows, int cols)</tt><br>
 Sets the dimensions of the matrix, preserving as much as possible of the content. The content of new cells is undefined.
-<tr><td><tt>void setRows(int rows)</tt><br>
+<tr><td><tt>void set_rows(int rows)</tt><br>
 Sets the number of rows (content is not erased except for deleted rows).
-<tr><td><tt>void setCols(int cols)</tt><br>
+<tr><td><tt>void set_cols(int cols)</tt><br>
 Sets the number of columns (content is not erased except for deleted columns).
 <tr><td><tt>template&lt;class U&gt; void fill(U value)</tt><br>
 Fills the matrix with a given value.
 <tr><td><tt>void swap(Matrix<T>&amp; m)</tt><br>
 Efficiently swaps two matrices.
-<tr><td><tt>int getRows() const</tt><br>
+<tr><td><tt>int get_rows() const</tt><br>
 Returns the number of rows.
-<tr><td><tt>int getCols() const</tt><br>
+<tr><td><tt>int get_cols() const</tt><br>
 Returns the number of columns.
 <tr><td><tt>T&amp; operator()(int i, int j)</tt><br>
 <tt>const T&amp; operator()(int i, int j)</tt><br>
@@ -450,8 +450,8 @@ Prints matrix m on stream <code>os</code>.
 Reads matrix m from stream <code>is</code>.
 </table>
 
-Note: a call to <tt>clear</tt>, <tt>resize</tt>, <tt>setRows</tt>,
-<tt>setCols</tt> or <tt>swap</tt> invalidates all references returned by
+Note: a call to <tt>clear</tt>, <tt>resize</tt>, <tt>set_rows</tt>,
+<tt>set_cols</tt> or <tt>swap</tt> invalidates all references returned by
 operator() and MatrixRow objects returned by operator[].
 
 #### MatrixRow&lt;T&gt; ####

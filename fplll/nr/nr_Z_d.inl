@@ -45,9 +45,9 @@ inline void Z_NR<double>::get_mpz(mpz_t r) const {
 
 template<>
 inline long Z_NR<double>::exponent() const {
-  int intExpo;
-  frexp(data, &intExpo);
-  return static_cast<long>(intExpo);
+  int int_expo;
+  frexp(data, &int_expo);
+  return static_cast<long>(int_expo);
 }
 
 /** set data */
@@ -233,7 +233,7 @@ template<>
 inline void Z_NR<double>::randb(int bits) {
   mpz_t temp;
   mpz_init(temp);
-  mpz_urandomb(temp, RandGen::getGMPState(), bits);
+  mpz_urandomb(temp, RandGen::get_gmp_state(), bits);
   data = mpz_get_d(temp);
   mpz_clear(temp);
 }
@@ -241,7 +241,7 @@ inline void Z_NR<double>::randb(int bits) {
 template<>
 inline void Z_NR<double>::randb_si(int bits) {
   randb (bits);
-  data = data * RandGenInt::getBit();
+  data = data * RandGenInt::get_bit();
 }
 
 template<>
@@ -250,7 +250,7 @@ inline void Z_NR<double>::randm(const Z_NR<double>& max) {
   mpz_init(temp);
   mpz_init(lim);
   mpz_set_d(lim, max.data);
-  mpz_urandomm(temp, RandGen::getGMPState(), lim);
+  mpz_urandomm(temp, RandGen::get_gmp_state(), lim);
   data = mpz_get_d(temp);
   mpz_clear(temp);
   mpz_clear(lim);
@@ -259,7 +259,7 @@ inline void Z_NR<double>::randm(const Z_NR<double>& max) {
 template<>
 inline void Z_NR<double>::randm_si(const Z_NR<double>& max) {
   randm (max);
-  data = data * RandGenInt::getBit();
+  data = data * RandGenInt::get_bit();
 }
 
 
@@ -275,55 +275,15 @@ inline void Z_NR<double>::nextprime(const Z_NR<double>& nbr) {
   mpz_clear(temp2);
 }
 
-
-/* FPLLL_V3_COMPAT */
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void Z_NR<double>::print() const {
-  cout << data;
-}
-
-template<>
-inline void Z_NR<double>::printerr() const {
-  cerr << data;
-}
-
-template<>
-inline void Z_NR<double>::read() {
-  cin >> data;
-}
-
-template<>
-inline double Z_NR<double>::get_d_2exp(long* expo) const {
-  int intExpo = 0;
-  double x = frexp(data, &intExpo);
-  *expo = intExpo;
-  return x;
-}
-
-template<>
-inline void Z_NR<double>::set(/*const*/ double& s) {
-  data = s;
-}
-
-template<>
-inline void Z_NR<double>::set(unsigned long s) {
-  data = static_cast<double>(s);
-}
-
-#endif // #ifdef FPLLL_V3_COMPAT
-
-
 /* operator Z_NR<double> */
 template<>
 inline ostream& operator<<(ostream& os, const Z_NR<double>& x) {
-  return os << x.getData();
+  return os << x.get_data();
 }
 
 template<>
 inline istream& operator>>(istream& is, Z_NR<double>& x) {
-  return is >> x.getData();
+  return is >> x.get_data();
 }
 
 

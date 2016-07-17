@@ -36,25 +36,25 @@ public:
   /**
    * Returns the current precision for new FP_NR&lt;F&gt; objects.
    */
-  static inline unsigned int getprec();
+  static inline unsigned int get_prec();
 
   /**
    * Sets the precision of new FP_NR&lt;F&gt; objects. Returns the
    # previous value. This has no effect is F != mpfr_t.
    */
-  static inline unsigned int setprec(unsigned int prec);
+  static inline unsigned int set_prec(unsigned int prec);
 
   /** get data */
 
   /**
    * Returns the internal representation of the data.
    */
-  inline F &getData() { return data; }
+  inline F &get_data() { return data; }
 
   /**
    * Returns the internal representation of the data.
    */
-  inline const F &getData() const { return data; }
+  inline const F &get_data() const { return data; }
 
   /**
    * Converts this object to a double. If it does not fit in a double,
@@ -87,12 +87,12 @@ public:
 
   /**
    * Returns x and defines expo such that
-   *  trunc(value * 2^expoAdd) ~= x * 2^expo
-   * The '~=' is an equality if trunc(value * 2^expoAdd) <= LONG_MAX.
+   *  trunc(value * 2^expo_add) ~= x * 2^expo
+   * The '~=' is an equality if trunc(value * 2^expo_add) <= LONG_MAX.
    * expo is the minimum non-negative value such that x <= LONG_MAX.
-   * expoAdd must be 0 if T=dpe_t or T=mpfr_t.
+   * expo_add must be 0 if T=dpe_t or T=mpfr_t.
    */
-  inline long get_si_exp_we(long &expo, long expoAdd) const;
+  inline long get_si_exp_we(long &expo, long expo_add) const;
 
   /**
    * Returns x and defines expo such that trunc(value) ~= x * 2^expo.
@@ -111,12 +111,12 @@ public:
   template <class Z> inline void get_z_exp(Z_NR<Z> &a, long &expo) const;
 
   /**
-   * Computes a and expo such that trunc(value) * 2^expoAdd ~= a * 2^expo.
+   * Computes a and expo such that trunc(value) * 2^expo_add ~= a * 2^expo.
    * The '~=' is an equality if Z=mpz_t. expo is always non-negative.
-   * expoAdd must be 0 if T=dpe_t or T=mpfr_t.
+   * expo_add must be 0 if T=dpe_t or T=mpfr_t.
    *  (in nr_FP_misc.h)
    */
-  template <class Z> inline void get_z_exp_we(Z_NR<Z> &a, long &expo, long expoAdd) const;
+  template <class Z> inline void get_z_exp_we(Z_NR<Z> &a, long &expo, long expo_add) const;
 
   /** set data */
 
@@ -177,7 +177,7 @@ public:
   /**
    * max between a and b
    */
-  inline FP_NR &maxF(FP_NR<F> &b)
+  inline FP_NR &max_f(FP_NR<F> &b)
   {
     if ((*this) <= b)
       return b;
@@ -294,10 +294,10 @@ public:
   inline void rnd(const FP_NR<F> &b);
 
   /**
-   * value <- (rounding of a * 2^expoAdd) / 2^expoAdd, but never overflows.
-   * expoAdd must be 0 if T=dpe_t or T=mpfr_t.
+   * value <- (rounding of a * 2^expo_add) / 2^expo_add, but never overflows.
+   * expo_add must be 0 if T=dpe_t or T=mpfr_t.
    */
-  inline void rnd_we(const FP_NR<F> &b, long expoAdd);
+  inline void rnd_we(const FP_NR<F> &b, long expo_add);
 
   /**
    * value := largest integer not greater than b.
@@ -313,21 +313,6 @@ public:
    * Efficiently swaps the values of two FP_NR.
    */
   inline void swap(FP_NR<F> &a);
-
-#ifdef FPLLL_V3_COMPAT
-  // Old interface (do not use)
-  inline void print() const;
-  inline void printerr() const;
-  inline double get() const { return get_d(); }
-  inline void set(const FP_NR<F> &s) { *this = s; }
-  inline void set(double s) { *this = s; }
-  inline void set(unsigned int s);
-  inline void mul_2ui(const FP_NR<F> &b, unsigned int c) { mul_2si(b, static_cast<long>(c)); }
-  inline void div_2ui(const FP_NR<F> &b, unsigned int c) { mul_2si(b, -static_cast<long>(c)); }
-  inline int exp() const { return static_cast<int>(exponent()); };
-  inline F &GetData() { return data; }
-  inline const F &GetData() const { return data; }
-#endif
 
 };  // End class FP_NR
 
@@ -581,7 +566,7 @@ template <class F> inline bool FP_NR<F>::operator>(double a) const { return cmp(
 /**
  * Prints x on stream os.
  */
-template <class T> ostream &operator<<(ostream &os, const FP_NR<T> &x) { return os << x.getData(); }
+template <class T> ostream &operator<<(ostream &os, const FP_NR<T> &x) { return os << x.get_data(); }
 
 #ifdef FPLLL_WITH_DPE
 template <> ostream &operator<<(ostream &os, const FP_NR<dpe_t> &x);

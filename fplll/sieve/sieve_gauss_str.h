@@ -108,7 +108,7 @@ inline bool half_2reduce ( ListPoint<ZT>* p1,
   long startt = 1000000 * time.tv_sec + time.tv_usec;
 #endif
 
-  dotProduct(dot, p1->v, p2->v);
+  dot_product(dot, p1->v, p2->v);
 
 #if 1
   gettimeofday(&time, 0);
@@ -173,7 +173,7 @@ inline bool check_2reduce_order ( const ListPoint<ZT>* p1,
                                   const ListPoint<ZT>* p2 )
 {
   Z_NR<ZT> dot, t;
-  dotProduct(dot, p1->v, p2->v);
+  dot_product(dot, p1->v, p2->v);
   t.mul_ui(dot, 2);
   t.abs(t);
   if (t > p2->norm)
@@ -252,9 +252,9 @@ inline int check_3reduce_order ( const ListPoint<ZT>* p1,
 
   /* check 3-reduced condition */
   Z_NR<ZT> dot12, dot13, dot23;
-  dotProduct(dot12, p1->v, p2->v);
-  dotProduct(dot13, p1->v, p3->v);
-  dotProduct(dot23, p2->v, p3->v);
+  dot_product(dot12, p1->v, p2->v);
+  dot_product(dot13, p1->v, p3->v);
+  dot_product(dot23, p2->v, p3->v);
 
   if (dot12.sgn()*dot13.sgn()*dot23.sgn() != -1)
     return 1;
@@ -266,7 +266,7 @@ inline int check_3reduce_order ( const ListPoint<ZT>* p1,
     c = p3->v;
     a.addmul_si(b, -dot12.sgn());
     a.addmul_si(c, -dot13.sgn());
-    dotProduct(t, a, a);
+    dot_product(t, a, a);
     if (t < p3->norm) {
       set_listpoint_numvect(a, t, pnew);
 
@@ -438,7 +438,7 @@ inline int check_4reduce_order ( const ListPoint<ZT>* p1,
         sum.addmul_si(a, i);
         sum.addmul_si(b, j);
         sum.addmul_si(c, k);
-        dotProduct(t, sum, sum);
+        dot_product(t, sum, sum);
         if (t < p4_update->norm) {
           flag = 0;
           /*
@@ -663,7 +663,7 @@ bool apply_filtering ( const ListPoint<ZT>* p1,
                        const ListPoint<ZT>* p2 )
 {
   Z_NR<ZT> dot;
-  dotProduct(dot, p1->v, p2->v);
+  dot_product(dot, p1->v, p2->v);
   //cout << " dot is " << dot << endl;
   double t, t1, t2;
   t = dot.get_d();

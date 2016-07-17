@@ -20,8 +20,8 @@ class KleinSampler {
   KleinSampler (ZZ_mat<ZT>& B, bool verbose, int seed);
   ~KleinSampler();
   void print_param ();
-  Z_NR<ZT> sampleZ(F c, F s);
-  Z_NR<ZT> sampleZ_basic(F c, F s);
+  Z_NR<ZT> sample_z(F c, F s);
+  Z_NR<ZT> sample_z_basic(F c, F s);
   void set_verbose (bool verbose);
 
   NumVect<Z_NR<ZT> > sample();
@@ -33,7 +33,7 @@ class KleinSampler {
    */
   int nr, nc;
   double logn2;
-  ZZ_mat<ZT> b, u, uInv;
+  ZZ_mat<ZT> b, u, u_inv;
   MatGSO<Z_NR<ZT>, F> *pGSO;
   Matrix<Z_NR<ZT> > g;
   Matrix<F> mu, r;
@@ -60,7 +60,7 @@ class KleinSampler {
  * sampling Z by rejection sampling (not a class member)
  */
 template<class ZT, class F>
-Z_NR<ZT> sampleZ_basic_alt (F c, F s)
+Z_NR<ZT> sample_z_basic_alt (F c, F s)
 {
   F min, max, st, range, tmp, tmp1;
   double r, e;

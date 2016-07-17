@@ -248,29 +248,29 @@ inline void Z_NR<mpz_t>::swap(Z_NR<mpz_t>& a) {
 /** random numbers */
 template<>
 inline void Z_NR<mpz_t>::randb(int bits) {
-  mpz_urandomb(data, RandGen::getGMPState(), bits);
+  mpz_urandomb(data, RandGen::get_gmp_state(), bits);
   if (bits > 32){ 
     unsigned long int tmp = mpz_get_ui(data);  
-    gmp_randseed_ui(RandGen::gmpState, tmp*tmp);
+    gmp_randseed_ui(RandGen::gmp_state, tmp*tmp);
     }
 }
 
 template<> 
 inline void Z_NR<mpz_t>::randb_si(int bits)  {
   randb(bits);
-  if (RandGenInt::getBit() < 0)
+  if (RandGenInt::get_bit() < 0)
     mpz_neg(data, data);
 }
 
 template<>
 inline void Z_NR<mpz_t>::randm(const Z_NR<mpz_t>& max) {
-  mpz_urandomm(data, RandGen::getGMPState(), max.data);
+  mpz_urandomm(data, RandGen::get_gmp_state(), max.data);
 }
 
 template<>
 inline void Z_NR<mpz_t>::randm_si(const Z_NR<mpz_t>& max) {
   randm(max);
-  if (RandGenInt::getBit() < 0)
+  if (RandGenInt::get_bit() < 0)
     mpz_neg(data, data);
 }
 
@@ -279,48 +279,13 @@ inline void Z_NR<mpz_t>::nextprime(const Z_NR<mpz_t>& nbr) {
   mpz_nextprime(data, nbr.data);
 }
 
-/* FPLLL_V3_COMPAT */
-#ifdef FPLLL_V3_COMPAT
-
-template<>
-inline void Z_NR<mpz_t>::print() const {
-  mpz_out_str(stdout, 10, data);
-}
-
-template<>
-inline void Z_NR<mpz_t>::printerr() const {
-  mpz_out_str(stderr, 10, data);
-}
-
-template<>
-inline void Z_NR<mpz_t>::read() {
-  mpz_inp_str(data, stdin, 0);
-}
-
-template<>
-inline double Z_NR<mpz_t>::get_d_2exp(long* expo) const {
-  return mpz_get_d_2exp(expo,data);
-}
-
-template<>
-inline void Z_NR<mpz_t>::set(/*const*/ mpz_t& d) {
-  mpz_set(data,d);
-}
-
-template<>
-inline void Z_NR<mpz_t>::set(unsigned long d) {
-  mpz_set_ui(data,d);
-}
-
-#endif // #ifdef FPLLL_V3_COMPAT
-
 
 /* operators Z_NR<mpz_t> */
 template<>
 inline ostream& operator<<(ostream& os, const Z_NR<mpz_t>& x) {
-  int size = mpz_sizeinbase(x.getData(), 10) + 2;
+  int size = mpz_sizeinbase(x.get_data(), 10) + 2;
   char* s = new char[size];
-  mpz_get_str(s, 10, x.getData());
+  mpz_get_str(s, 10, x.get_data());
   os << s;
   delete [] s;
   return os;
@@ -352,7 +317,7 @@ inline istream& operator>>(istream& is, Z_NR<mpz_t>& x) {
   else
     is.putback(c); 
 
-  if (mpz_set_str(x.getData(), s.c_str(), 10)) {
+  if (mpz_set_str(x.get_data(), s.c_str(), 10)) {
     is.setstate(ios::failbit);
   }
   return is;

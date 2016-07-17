@@ -22,7 +22,7 @@ Main changes in fplll-4.0.1:
 - Compiler warnings about unused parameters fixed
 
 Main changes in fplll-4.0.0:
-- BKZ reduction, available with 'fplll -a bkz -b blocksize'
+- BKZ reduction, available with 'fplll -a bkz -b block_size'
 
 *******************************************************************
 Changes in fplll-3.1.3:
