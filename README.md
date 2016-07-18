@@ -190,6 +190,25 @@ Without any of the last three options, BKZ runs until no block has been updated 
 `llldiff` compares two bases (b1,...,bd) and (c1,...c_d'): they are considered
 equal iff d=d' and for any i, bi = +- ci. Concretely, if basis B is in file 'B.txt' and if basis C is in file 'C.txt' (in the fplll format), then one may run `cat B.txt C.txt | ./llldiff`.
 
+
+### latsieve ###
+
+`latsieve` does (tuple) lattice sieve on a matrix (considered as a set of row
+vectors) given in a file as parameter. You may compile it by using `make latsieve`.
+ It will generate the executable file
+ `latsieve` in `fplll/` which is a wrapper of `fplll/.libs/latsieve`.
+
+
+The options are:
+
+* `-a nnn` : nnn is the tuple algorithm to use (default 2 corresponding to GaussSieve)
+* `-f filename` : follows input matrix
+* `-b nnn` : BKZ preprocessing of blocksize nnn (optional)
+* `-t nnn` : targeted square norm for stoping sieving (optional)
+* `-s nnn` : using seed=nnn (optional)
+* `-v` : verbose toggle
+
+
 ### How to use as a library ###
 
 See [API documentation](library.md).

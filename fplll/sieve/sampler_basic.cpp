@@ -138,8 +138,8 @@ NumVect<Z_NR<ZT> > KleinSampler<ZT, F>::sample ()
 
   // while(1) {
     for (int i = 0; i < nr; i++) {
-      ci[i] = 0;
-      vec[i] = 0;
+      ci[i] = 0.0;
+      vec[i] = 0.0;
     }
 
     for (int i = nr - 1; i >= 0; i--) {
