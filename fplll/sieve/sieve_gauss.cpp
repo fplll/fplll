@@ -1,3 +1,4 @@
+
 /*
   test small svp challenges
   --------------------------------------
@@ -186,8 +187,8 @@ void Gauss_sieve<ZT, F>::init_list_rand ()
   }
   
   /* reduce */
-  lll_reduction(NewZ, 0.99, 0.51, LM_FAST);
-
+  lll_reduction(NewZ, LLL_DEF_DELTA, LLL_DEF_ETA, LM_FAST);
+  
   /* set */
   for (int i = 0; i < nr; i++ ) {
     for (int j = 0; j < nc; j++ ) {
