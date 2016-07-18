@@ -205,7 +205,7 @@ The options are:
 * `-f filename` : follows input matrix
 * `-b nnn` : BKZ preprocessing of blocksize nnn (optional)
 * `-t nnn` : targeted square norm for stoping sieving (optional)
-* `-s nnn` : using seed=nnn
+* `-s nnn` : using seed=nnn (optional)
 * `-v` : verbose toggle
 
 
