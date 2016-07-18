@@ -24,6 +24,10 @@ main_usage (char *myself) {
        << "     Generate a random instance of dimension nnn\n"
        << "  -t nnn\n"
        << "     Targeted norm^2=nnn\n"
+       << "  -s nnn\n"
+       << "     Using seed=nnn\n"
+       << "  -b nnn\n"
+       << "     BKZ preprocessing of blocksize=nnn\n"
        << "  -v\n"
        << "     Verbose mode\n";
   exit(0);
@@ -57,7 +61,7 @@ int main (int argc, char** argv)
   char* input_file_name = NULL;
   char* goal_norm_s = NULL;
   bool flag_verbose = false, flag_file = false;
-  int option, alg, dim = 10, seed=0;
+  int option, alg, dim = 10, seed=0, bs=0;
 
   dot_time = 0;
   dot_num = 0;
@@ -69,7 +73,7 @@ int main (int argc, char** argv)
       main_usage(argv[0]);
       return -1;
   }
-  while((option = getopt (argc, argv, "a:f:r:t:v:s:")) != -1) {
+  while((option = getopt (argc, argv, "a:f:r:t:s:b:v")) != -1) {
     switch (option) {
     case 'a':
       alg = atoi(optarg);
@@ -87,6 +91,9 @@ int main (int argc, char** argv)
       break;
     case 's':
       seed = atoi(optarg);
+      break;
+    case 'b':
+      bs = atoi(optarg);
       break;
     case 'v':
       flag_verbose = true;
@@ -147,13 +154,20 @@ int main (int argc, char** argv)
   
   /* preprocessing of basis */
   clock_t stime = clock();
-  lllReduction(B, 0.75, 0.51, LM_WRAPPER);
-  //bkzReduction(B, 20, BKZ_DEFAULT, FT_DEFAULT, 0);
+  if (bs > 0)
+    bkz_reduction(B, bs, BKZ_DEFAULT, FT_DEFAULT, 0);
+  else
+    lll_reduction(B, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER);
 
   clock_t etime = clock();
   double secs = (etime - stime) / (double) CLOCKS_PER_SEC;
-  if(flag_verbose)
-    cout << "# [info] LLL took time " << secs << " s" << endl;
+  if(flag_verbose) {
+    if (bs > 0)
+      cout << "# [info] BKZ took time " << secs << " s" << endl;
+    else
+      cout << "# [info] LLL took time " << secs << " s" << endl;
+  }
+  
   //cout << B << endl;
 
   /* decide integer type */
