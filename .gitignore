@@ -59,3 +59,4 @@ stamp-h1
 /tests/test_pruner
 /compile_commands.json
 /.clang-tidy
+doc/html/
