@@ -9,7 +9,7 @@
  * pairwisely 2-reduced and return lp_it_k as indicator of larger norms
  */
 template<class ZT, class F>
-Z_NR<ZT> Gauss_sieve<ZT, F>::update_p_3reduce_2reduce
+Z_NR<ZT> GaussSieve<ZT, F>::update_p_3reduce_2reduce
 (ListPoint<ZT>* p, typename list<ListPoint<ZT> *>::iterator &lp_it_k)
 {
   typename list<ListPoint<ZT> *>::iterator lp_it, tmp_lp_it;
@@ -68,7 +68,7 @@ Z_NR<ZT> Gauss_sieve<ZT, F>::update_p_3reduce_2reduce
  * 3-reduce the point p w.r.t to the list
  */
 template<class ZT, class F>
-Z_NR<ZT> Gauss_sieve<ZT, F>::update_p_3reduce (ListPoint<ZT>* p)
+Z_NR<ZT> GaussSieve<ZT, F>::update_p_3reduce (ListPoint<ZT>* p)
 {
   typename list<ListPoint<ZT> *>::iterator lp_it1, lp_it2,
     lp_it_k, tmp_lp_it;
@@ -184,7 +184,7 @@ Z_NR<ZT> Gauss_sieve<ZT, F>::update_p_3reduce (ListPoint<ZT>* p)
  * 3-sieve
  */
 template<class ZT, class F>
-bool Gauss_sieve<ZT, F>::run_3sieve ()
+bool GaussSieve<ZT, F>::run_3sieve ()
 {
 
   ListPoint<ZT>* current_point;

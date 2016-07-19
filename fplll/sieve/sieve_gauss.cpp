@@ -21,7 +21,7 @@
  * constructor
  */
 template<class ZT, class F>
-Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
+GaussSieve<ZT, F>::GaussSieve (ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
 {
   
   /* stats */
@@ -96,7 +96,7 @@ Gauss_sieve<ZT, F>::Gauss_sieve (ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
  * deconstructor
  */
 template<class ZT, class F>
-Gauss_sieve<ZT, F>::~Gauss_sieve ()
+GaussSieve<ZT, F>::~GaussSieve ()
 {
   free_list_queue();
   free_sampler();
@@ -107,7 +107,7 @@ Gauss_sieve<ZT, F>::~Gauss_sieve ()
  * put matrix vectors to list
  */
 template<class ZT, class F>
-void Gauss_sieve<ZT, F>::add_mat_list (ZZ_mat<ZT> &B)
+void GaussSieve<ZT, F>::add_mat_list (ZZ_mat<ZT> &B)
 {
   Z_NR<ZT> t, current_norm;
   dot_product(best_sqr_norm, B[0], B[0]);
@@ -143,7 +143,7 @@ void Gauss_sieve<ZT, F>::add_mat_list (ZZ_mat<ZT> &B)
  * init function (used in constructor)
  */
 template<class ZT, class F>
-void Gauss_sieve<ZT, F>::init_list ()
+void GaussSieve<ZT, F>::init_list ()
 {
   add_mat_list(b);
 }
@@ -153,7 +153,7 @@ void Gauss_sieve<ZT, F>::init_list ()
  * init pool of samples (used later)
  */
 template<class ZT, class F>
-void Gauss_sieve<ZT, F>::init_list_rand ()
+void GaussSieve<ZT, F>::init_list_rand ()
 {
   /* after transformation, the size could be large */
   ZZ_mat<mpz_t> NewZ (nr, nc);
@@ -208,7 +208,7 @@ void Gauss_sieve<ZT, F>::init_list_rand ()
  * free list and queue
  */
 template<class ZT, class F>
-void Gauss_sieve<ZT, F>::free_list_queue ()
+void GaussSieve<ZT, F>::free_list_queue ()
 {
   /* clean list */
   typename list<ListPoint<ZT>* >::iterator lp_it;
@@ -235,7 +235,7 @@ void Gauss_sieve<ZT, F>::free_list_queue ()
  * free sampler
  */
 template<class ZT, class F>
-void Gauss_sieve<ZT, F>::free_sampler ()
+void GaussSieve<ZT, F>::free_sampler ()
 {
   delete Sampler;
 }
@@ -246,7 +246,7 @@ void Gauss_sieve<ZT, F>::free_sampler ()
  * set targeted norm^2 
  */
 template<class ZT, class F>
-void Gauss_sieve<ZT, F>::set_goal_norm2 (Z_NR<ZT> norm) 
+void GaussSieve<ZT, F>::set_goal_norm2 (Z_NR<ZT> norm)
 {
   goal_sqr_norm = norm;
 }
@@ -256,7 +256,7 @@ void Gauss_sieve<ZT, F>::set_goal_norm2 (Z_NR<ZT> norm)
  * set verbose
  */
 template<class ZT, class F>
-void Gauss_sieve<ZT, F>::set_verbose (bool ver) 
+void GaussSieve<ZT, F>::set_verbose (bool ver)
 {
   verbose = ver;
 }
@@ -266,7 +266,7 @@ void Gauss_sieve<ZT, F>::set_verbose (bool ver)
  * print current info
  */
 template<class ZT, class F>
-void Gauss_sieve<ZT, F>::print_curr_info () 
+void GaussSieve<ZT, F>::print_curr_info ()
 {
   if (verbose) {
     if (iterations % iterations_step == 0) {
@@ -287,7 +287,7 @@ void Gauss_sieve<ZT, F>::print_curr_info ()
  * print final info
  */
 template<class ZT, class F>
-void Gauss_sieve<ZT, F>::print_final_info () 
+void GaussSieve<ZT, F>::print_final_info ()
 {
   long first_size = 0;
   vector<long>::iterator it2 = iters_ls.begin();
@@ -320,5 +320,5 @@ void Gauss_sieve<ZT, F>::print_final_info ()
   }
 }
 
-template class Gauss_sieve<mpz_t, FP_NR<double> >;
-template class Gauss_sieve<long, FP_NR<double> >;
+template class GaussSieve<mpz_t, FP_NR<double> >;
+template class GaussSieve<long, FP_NR<double> >;

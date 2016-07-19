@@ -9,7 +9,7 @@
  * with bigger norm that can be reduced with it.
  */
 template<class ZT, class F>
-Z_NR<ZT> Gauss_sieve<ZT, F>::update_p_2reduce (ListPoint<ZT>* p)
+Z_NR<ZT> GaussSieve<ZT, F>::update_p_2reduce (ListPoint<ZT>* p)
 {
 
 #if 0
@@ -87,7 +87,7 @@ Z_NR<ZT> Gauss_sieve<ZT, F>::update_p_2reduce (ListPoint<ZT>* p)
  * 2-sieve
  */
 template<class ZT, class F>
-bool Gauss_sieve<ZT, F>::run_2sieve () {
+bool GaussSieve<ZT, F>::run_2sieve () {
 
   ListPoint<ZT>* current_point;
   NumVect<Z_NR<ZT> > vec(nc);

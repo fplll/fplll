@@ -40,7 +40,7 @@ main_usage (char *myself) {
 template<class ZT>
 int main_run_sieve (ZZ_mat<ZT> B, Z_NR<ZT> goal_norm, int alg, int ver, int seed)
 {
-  Gauss_sieve<ZT, FP_NR<double> > gsieve(B, alg, ver, seed);
+  GaussSieve<ZT, FP_NR<double> > gsieve(B, alg, ver, seed);
   gsieve.set_goal_norm2 (goal_norm);
   if (gsieve.alg == 3)
     gsieve.run_3sieve();

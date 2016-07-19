@@ -12,12 +12,12 @@ using namespace fplll;
  * Gauss sieve
  */
 template<class ZT, class F>
-  class Gauss_sieve {
+  class GaussSieve {
 
 public:
   
-  Gauss_sieve (ZZ_mat<ZT>& B, int alg, bool ver, int seed);
-  ~Gauss_sieve ();
+  GaussSieve (ZZ_mat<ZT>& B, int alg, bool ver, int seed);
+  ~GaussSieve ();
 
   bool run_2sieve ();
   bool run_3sieve ();
