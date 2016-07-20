@@ -19,7 +19,7 @@
 using namespace std;
 using namespace fplll;
 
-template <class ZT> void readMatrix(ZZ_mat<ZT> &A, const char *input_filename)
+template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 {
   istream *is = new ifstream(input_filename);
   *is >> A;
@@ -33,7 +33,7 @@ template <class ZT> void readMatrix(ZZ_mat<ZT> &A, const char *input_filename)
    @return zero on success.
 */
 
-template <class ZT> int testTest(ZZ_mat<ZT> &A)
+template <class ZT> int test_test(ZZ_mat<ZT> &A)
 {
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
@@ -61,8 +61,8 @@ template <class ZT> int testTest(ZZ_mat<ZT> &A)
 */
 
 template <class ZT>
-int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags = LLL_DEFAULT,
-            int prec = 0)
+int test_lll(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags = LLL_DEFAULT,
+             int prec = 0)
 {
 
   ZZ_mat<ZT> U;
@@ -71,7 +71,7 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags = L
   int status = 0;
 
   // zero on success
-  if (testTest(A))
+  if (test_test(A))
   {
     return 0;
   }
@@ -116,12 +116,12 @@ int testLLL(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags = L
 */
 
 template <class ZT>
-int testFilename(const char *input_filename, LLLMethod method, FloatType float_type = FT_DEFAULT,
-                 int flags = LLL_DEFAULT, int prec = 0)
+int test_filename(const char *input_filename, LLLMethod method, FloatType float_type = FT_DEFAULT,
+                  int flags = LLL_DEFAULT, int prec = 0)
 {
   ZZ_mat<ZT> A;
-  readMatrix(A, input_filename);
-  return testLLL<ZT>(A, method, float_type, flags, prec);
+  read_matrix(A, input_filename);
+  return test_lll<ZT>(A, method, float_type, flags, prec);
 }
 
 /**
@@ -138,36 +138,36 @@ int testFilename(const char *input_filename, LLLMethod method, FloatType float_t
 */
 
 template <class ZT>
-int testIntRel(int d, int b, LLLMethod method, FloatType float_type = FT_DEFAULT,
-               int flags = LLL_DEFAULT, int prec = 0)
+int test_int_rel(int d, int b, LLLMethod method, FloatType float_type = FT_DEFAULT,
+                 int flags = LLL_DEFAULT, int prec = 0)
 {
   ZZ_mat<ZT> A;
   A.resize(d, d + 1);
   A.gen_intrel(b);
-  return testLLL<ZT>(A, method, float_type, flags, prec);
+  return test_lll<ZT>(A, method, float_type, flags, prec);
 }
 
-int main(int argc, char *argv[])
+int main(int /*argc*/, char ** /*argv*/)
 {
 
   int status = 0;
-  status |= testFilename<mpz_t>("lattices/dim55_in", LM_WRAPPER, FT_DEFAULT, LLL_DEFAULT, 128);
-  status |= testFilename<mpz_t>("lattices/dim55_in", LM_PROVED, FT_MPFR);
+  status |= test_filename<mpz_t>("lattices/dim55_in", LM_WRAPPER, FT_DEFAULT, LLL_DEFAULT, 128);
+  status |= test_filename<mpz_t>("lattices/dim55_in", LM_PROVED, FT_MPFR);
 
-  status |= testIntRel<mpz_t>(50, 1000, LM_FAST, FT_DOUBLE);
-  status |= testIntRel<mpz_t>(50, 1000, LM_PROVED, FT_MPFR);
+  status |= test_int_rel<mpz_t>(50, 1000, LM_FAST, FT_DOUBLE);
+  status |= test_int_rel<mpz_t>(50, 1000, LM_PROVED, FT_MPFR);
 
-  status |= testIntRel<mpz_t>(30, 2000, LM_HEURISTIC, FT_DPE);
-  status |= testIntRel<mpz_t>(30, 2000, LM_PROVED, FT_DPE);
-  status |= testIntRel<mpz_t>(30, 2000, LM_PROVED, FT_MPFR);
+  status |= test_int_rel<mpz_t>(30, 2000, LM_HEURISTIC, FT_DPE);
+  status |= test_int_rel<mpz_t>(30, 2000, LM_PROVED, FT_DPE);
+  status |= test_int_rel<mpz_t>(30, 2000, LM_PROVED, FT_MPFR);
 
-  status |= testFilename<mpz_t>("lattices/example_in", LM_HEURISTIC);
-  status |= testFilename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE);
-  status |= testFilename<mpz_t>("lattices/example_in", LM_PROVED, FT_MPFR);
+  status |= test_filename<mpz_t>("lattices/example_in", LM_HEURISTIC);
+  status |= test_filename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE);
+  status |= test_filename<mpz_t>("lattices/example_in", LM_PROVED, FT_MPFR);
   status |=
-      testFilename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE, LLL_DEFAULT | LLL_EARLY_RED);
-  status |= testFilename<mpz_t>("lattices/example_in", LM_HEURISTIC, FT_DEFAULT,
-                                LLL_DEFAULT | LLL_EARLY_RED);
+      test_filename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE, LLL_DEFAULT | LLL_EARLY_RED);
+  status |= test_filename<mpz_t>("lattices/example_in", LM_HEURISTIC, FT_DEFAULT,
+                                 LLL_DEFAULT | LLL_EARLY_RED);
 
   if (status == 0)
   {

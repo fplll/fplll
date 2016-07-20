@@ -621,7 +621,7 @@ inline void check_0_list (const list<ListPoint<ZT>* > List)
  * Use to convert MatrixRow to ListPoint
  */
 template<class ZT>
-inline void MatrixRowToListPoint ( const MatrixRow<Z_NR<ZT> > &row,
+inline void matrix_row_to_list_point ( const MatrixRow<Z_NR<ZT> > &row,
                                    ListPoint<ZT>* p )
 {
   int dims = row.size();
@@ -641,7 +641,7 @@ inline void MatrixRowToListPoint ( const MatrixRow<Z_NR<ZT> > &row,
  * Use to convert sample() results NumVect to ListPoint
  */
 template<class ZT>
-inline ListPoint<ZT>* NumVectToListPoint ( const NumVect<Z_NR<ZT> > &vec, 
+inline ListPoint<ZT>* num_vec_to_list_point ( const NumVect<Z_NR<ZT> > &vec,
                                            int n )
 {
   ListPoint<ZT> *p = new_listpoint<ZT>(n);

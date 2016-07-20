@@ -115,7 +115,7 @@ void Gauss_sieve<ZT, F>::add_mat_list (ZZ_mat<ZT> &B)
 
   for (int i = 0; i < nr; ++i) {
     p = new_listpoint<ZT>(nc);
-    MatrixRowToListPoint(B[i], p);
+    matrix_row_to_list_point(B[i], p);
 
     //cout << "# [info] init: additing point ";
     //cout << p->v << endl;

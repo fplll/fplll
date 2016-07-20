@@ -200,7 +200,7 @@ bool Gauss_sieve<ZT, F>::run_3sieve ()
 
     if (Queue.empty()) {
       vec = Sampler->sample();
-      current_point = NumVectToListPoint (vec, nc);
+      current_point = num_vec_to_list_point (vec, nc);
       samples++;
     }
     else {

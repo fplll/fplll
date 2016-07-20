@@ -319,7 +319,7 @@ bool Gauss_sieve<ZT, F>::run_4sieve () {
 
     if (Queue.empty()) {
       vec = Sampler->sample();
-      current_point = NumVectToListPoint (vec, nc);
+      current_point = num_vec_to_list_point (vec, nc);
       samples++;
     }
     else {
