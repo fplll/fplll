@@ -57,7 +57,8 @@ public:
     static const int maxdim = FPLLL_MAX_ENUM_DIMENSION;
     
     inline uint64_t get_nodes() const { return nodes; }
-    
+    virtual ~EnumerationBase() {}
+
 protected:
     /* configuration */
     bool dual;
