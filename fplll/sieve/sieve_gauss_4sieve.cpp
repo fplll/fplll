@@ -8,7 +8,7 @@
  * auxiliary function, return the indicator of larger norms
  */
 template<class ZT, class F>
-void Gauss_sieve<ZT, F>::update_p_4reduce_aux
+void GaussSieve<ZT, F>::update_p_4reduce_aux
 (ListPoint<ZT>* p, typename list<ListPoint<ZT> *>::iterator &lp_it_k)
 {
   typename list<ListPoint<ZT> *>::iterator lp_it;
@@ -27,7 +27,7 @@ void Gauss_sieve<ZT, F>::update_p_4reduce_aux
  * Note p could be deleted !
  */
 template<class ZT, class F>
-Z_NR<ZT> Gauss_sieve<ZT, F>::update_p_4reduce_3reduce (ListPoint<ZT>* p)
+Z_NR<ZT> GaussSieve<ZT, F>::update_p_4reduce_3reduce (ListPoint<ZT>* p)
 {
   typename list<ListPoint<ZT> *>::iterator lp_it1, lp_it2,
     lp_it_k, tmp_lp_it;
@@ -156,7 +156,7 @@ Z_NR<ZT> Gauss_sieve<ZT, F>::update_p_4reduce_3reduce (ListPoint<ZT>* p)
  * note p could be deleted
  */
 template<class ZT, class F>
-Z_NR<ZT> Gauss_sieve<ZT, F>::update_p_4reduce (ListPoint<ZT>* p)
+Z_NR<ZT> GaussSieve<ZT, F>::update_p_4reduce (ListPoint<ZT>* p)
 {
   typename list<ListPoint<ZT> *>::iterator lp_it1, lp_it2, lp_it3,
     lp_it_k, tmp_lp_it;
@@ -304,7 +304,7 @@ Z_NR<ZT> Gauss_sieve<ZT, F>::update_p_4reduce (ListPoint<ZT>* p)
  * 4-sieve
  */
 template<class ZT, class F>
-bool Gauss_sieve<ZT, F>::run_4sieve () {
+bool GaussSieve<ZT, F>::run_4sieve () {
 
   ListPoint<ZT>* current_point;
   NumVect<Z_NR<ZT> > vec(nc);
