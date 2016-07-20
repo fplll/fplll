@@ -206,10 +206,14 @@ The options are:
 * `-v` : verbose toggle
 
 
+### How to use as a library
+
+See [API documentation](https://fplll.github.io/fplll/).
+
 ### Alternative interfaces ###
 
-- fplll is included in [Sage](http://sagemath.org), see documentation for [IntegerMatrix](http://doc.sagemath.org/html/en/reference/matrices/sage/matrix/matrix_integer_dense.html) and [IntegerLattice](http://doc.sagemath.org/html/en/reference/modules/sage/modules/free_module_integer.html).
 - [fpylll](https://github.com/malb/fpylll) is a stand-alone Python interface for fplll.
+- fplll is included in [Sage](http://sagemath.org), see documentation for [IntegerMatrix](http://doc.sagemath.org/html/en/reference/matrices/sage/matrix/matrix_integer_dense.html) and [IntegerLattice](http://doc.sagemath.org/html/en/reference/modules/sage/modules/free_module_integer.html).
 
 
 ## Examples ##
