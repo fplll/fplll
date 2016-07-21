@@ -242,20 +242,20 @@ template <class FT> int test_unpruned()
   status |= (abs(1 - proba) > .02);
 
 
-  vector<vector<double> > gso_sq_norms_vec;
+  vector<vector<double> *> gso_sq_norms_vec;
   vector<double> v1,v2,v3;
   v1 = gso_sq_norms;
   v2 = gso_sq_norms;
   v3 = gso_sq_norms;
 
-  gso_sq_norms_vec.emplace_back(v1);
-  gso_sq_norms_vec.emplace_back(v2);
+  gso_sq_norms_vec.emplace_back(&v1);
+  gso_sq_norms_vec.emplace_back(&v2);
   for (int i = 0; i < N; ++i)
   {
     v3[i] *= 20;
   }
 
-  gso_sq_norms_vec.emplace_back(v3);
+  gso_sq_norms_vec.emplace_back(&v3);
   pru.load_basis_shapes(gso_sq_norms_vec);
 
   cerr << "Repeating same checks with 3 bases" << endl;
@@ -279,10 +279,9 @@ template <class FT> int test_auto_prune(size_t n) {
   MatGSO<Z_NR<mpz_t>, FT> M(A, U, U, GSO_DEFAULT);
   LLLReduction<Z_NR<mpz_t>, FT> lll_obj = LLLReduction<Z_NR<mpz_t>, FT>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
   lll_obj.lll();
-  Pruning pruning;
   FT radius;
   M.get_r(radius, 0, 0);
-  prune<FT, Z_NR<mpz_t>, FT >(pruning, radius.get_d(), 10000.0, 0.67, M);
+  Pruning pruning = prune<FT, Z_NR<mpz_t>, FT >(radius.get_d(), 10000.0, 0.67, M);
 
   status |= !(pruning.probability <= 1.0);
   status |= !(pruning.probability > 0.0);
