@@ -163,8 +163,6 @@ public:
   Pruner(FT enumeration_radius=0.0, FT preproc_cost=0.0, FT target_probability=0.9, size_t n=0, size_t d=0):
     enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target_probability(target_probability), n(n), d(d)
   {
-    n = 0;
-    d = 0;
     set_tabulated_consts();
 
     epsilon     = std::pow(2., -13);  // Guesswork. Will become obsolete with Nelder-Mead
