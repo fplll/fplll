@@ -67,6 +67,9 @@ public:
   class TestPruner;
   friend class TestPruner;
 
+  /** @brief enumeration radius (squared) */
+  FT enumeration_radius;
+
   /** @brief cost of pre-processing a basis for a retrial
 
       This cost should be expressed in terms of ``nodes'' in an enumeration.
@@ -84,10 +87,20 @@ public:
 
   FT target_probability;
 
-  /** @brief enumeration radius (squared) */
-  FT enumeration_radius;
+  Pruner(FT enumeration_radius=0.0, FT preproc_cost=0.0, FT target_probability=0.9, size_t n=0, size_t d=0):
+    enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target_probability(target_probability), n(n), d(d)
+  {
+    n = 0;
+    d = 0;
+    set_tabulated_consts();
 
-  Pruner();
+    epsilon     = std::pow(2., -13);  // Guesswork. Will become obsolete with Nelder-Mead
+    min_step    = std::pow(2., -12);  // Guesswork. Will become obsolete with Nelder-Mead
+    step_factor = std::pow(2, .5);    // Guesswork. Will become obsolete with Nelder-Mead
+    shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor 1/.995. Sounds fair.
+    min_cf_decrease = .9999;  // We really want the gradient descent to reach the minima
+    symmetry_factor = 2;      // For now, we are just considering SVP
+  }
 
   /** @brief load the shape of a basis from a MatGSO object. Can select a
       projected sub-lattice [start_row,end_row-1]
