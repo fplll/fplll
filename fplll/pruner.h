@@ -61,44 +61,62 @@ FPLLL_BEGIN_NAMESPACE
 #define PRUNER_MAX_D 1023
 #define PRUNER_MAX_N 2047
 
-
 /**
    @brief prune function, hiding the Pruner class
 
-   @param pr
-   @param probability
-   @param enumeration_radius
-   @param preproc_cost
-   @param target_probability
-   @param m
-   @param start_row
-   @param end_row
+   @param pr store pruning coefficients here
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrix
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m,
+           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
            int start_row = 0, int end_row = 0);
 
 /**
    @brief prune function, hiding the Pruner class
 
-   @param pruning
-   @param enumeration_radius
-   @param preproc_cost
-   @param target_probability
-   @param m
-   @param start_row
-   @param end_row
-   @return
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrix
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
+
+   @return Pruning object.
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
-void prune(Pruning &pruning,
-           /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
-           int start_row = 0, int end_row = 0);
+Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
+              const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
+              int start_row = 0, int end_row = 0);
+
+/**
+   @brief prune function averaging over several bases
+
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrices
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
+
+   @return Pruning object.
+*/
+
+template <class FT, class GSO_ZT, class GSO_FT>
+Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
+              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT> *> &m,
+              int start_row = 0, int end_row = 0);
 
 
 /**
@@ -167,7 +185,7 @@ public:
       projected sub-lattice [start_row,end_row-1]
   */
   template <class GSO_ZT, class GSO_FT>
-  void load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> > &gsos, int start_row = 0, int end_row = 0);
+  void load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> *> &gsos, int start_row = 0, int end_row = 0);
 
 
   /** @brief load the shape of a basis from vector<double>. Mostly for testing purposes */
@@ -176,7 +194,7 @@ public:
 
   /** @brief load the shapes of may bases from vector<vector<double>> . Cost are average over all bases. Mostly for testing purposes */
 
-  void load_basis_shapes(const vector<vector<double> > &gso_sq_norms_vec);
+  void load_basis_shapes(const vector<vector<double> *> &gso_sq_norms_vec);
 
   /** @brief optimize pruning coefficients
 
