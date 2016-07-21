@@ -35,7 +35,7 @@ template <class FT> void Pruner<FT>::set_tabulated_consts()
 
 template <class FT>
 template <class GSO_ZT, class GSO_FT>
-void Pruner<FT>::load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &m, int start_row, int end_row, int reset_renorm)
+void Pruner<FT>::load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &m, int start_row, int end_row, int /*reset_renorm*/)
 {
   if (!end_row)
   {
