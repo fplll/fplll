@@ -242,20 +242,20 @@ template <class FT> int test_unpruned()
   status |= (abs(1 - proba) > .02);
 
 
-  vector<vector<double> *> gso_sq_norms_vec;
+  vector<vector<double> > gso_sq_norms_vec;
   vector<double> v1,v2,v3;
   v1 = gso_sq_norms;
   v2 = gso_sq_norms;
   v3 = gso_sq_norms;
 
-  gso_sq_norms_vec.emplace_back(&v1);
-  gso_sq_norms_vec.emplace_back(&v2);
+  gso_sq_norms_vec.emplace_back(v1);
+  gso_sq_norms_vec.emplace_back(v2);
   for (int i = 0; i < N; ++i)
   {
     v3[i] *= 20;
   }
 
-  gso_sq_norms_vec.emplace_back(&v3);
+  gso_sq_norms_vec.emplace_back(v3);
   pru.load_basis_shapes(gso_sq_norms_vec);
 
   cerr << "Repeating same checks with 3 bases" << endl;
