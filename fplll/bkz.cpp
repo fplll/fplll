@@ -93,6 +93,32 @@ const Pruning &BKZReduction<FT>::get_pruning(int kappa, int block_size, const BK
 }
 
 template <class FT>
+bool BKZReduction<FT>::svp_preprocessing(int kappa, int block_size, const BKZParam &param)
+{
+  bool clean = true;
+
+  FPLLL_DEBUG_CHECK(param.strategies.size() > block_size);
+
+  int lll_start = (param.flags & BKZ_BOUNDED_LLL) ? kappa : 0;
+  if (!lll_obj.lll(lll_start, lll_start, kappa + block_size))
+  {
+    throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
+  }
+  if (lll_obj.n_swaps > 0)
+    clean = false;
+
+  auto &preproc = param.strategies[block_size].preprocessing_block_sizes;
+  for (auto it = preproc.begin(); it != preproc.end(); ++it)
+  {
+    int dummy_kappa_max = num_rows;
+    BKZParam prepar     = BKZParam(*it, param.strategies, LLL_DEF_DELTA, BKZ_GH_BND);
+    clean &= tour(0, dummy_kappa_max, prepar, kappa, kappa + block_size);
+  }
+
+  return clean;
+}
+
+template <class FT>
 bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vector<FT> &solution)
 {
   // Is it already in the basis ?
@@ -114,7 +140,7 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
     // Yes, it is another vector
     FPLLL_DEBUG_CHECK(i_vector != -1 && i_vector != 0);
     m.move_row(kappa + i_vector, kappa);
-    if (!lll_obj.size_reduction(kappa, kappa + 1))
+    if (!lll_obj.size_reduction(kappa, kappa + i_vector + 1))
       throw lll_obj.status;
   }
   else
@@ -136,24 +162,6 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
     m.remove_last_row();
   }
   return false;
-}
-
-template <class FT>
-bool BKZReduction<FT>::svp_preprocessing(int kappa, int block_size, const BKZParam &param)
-{
-  bool clean = true;
-
-  FPLLL_DEBUG_CHECK(param.strategies.size() > block_size);
-
-  auto &preproc = param.strategies[block_size].preprocessing_block_sizes;
-  for (auto it = preproc.begin(); it != preproc.end(); ++it)
-  {
-    int dummy_kappa_max = num_rows;
-    BKZParam prepar     = BKZParam(*it, param.strategies, LLL_DEF_DELTA, BKZ_GH_BND);
-    clean &= tour(0, dummy_kappa_max, prepar, kappa, kappa + block_size);
-  }
-
-  return clean;
 }
 
 template <class FT>
@@ -217,10 +225,10 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
   return false;
 }
 
+
 template <class FT>
 bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &par, bool dual)
 {
-  int lll_start = (par.flags & BKZ_BOUNDED_LLL) ? kappa : 0;
 
   int first = dual ? kappa + block_size - 1 : kappa;
 
@@ -247,11 +255,6 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     if (rerandomize)
     {
       rerandomize_block(kappa + 1, kappa + block_size, par.rerandomization_density);
-    }
-
-    if (!lll_obj.lll(lll_start, lll_start, kappa + block_size))
-    {
-      throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
     }
 
     svp_preprocessing(kappa, block_size, par);
