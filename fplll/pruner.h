@@ -115,9 +115,8 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
-              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT> *> &m,
+              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT> > &m,
               int start_row = 0, int end_row = 0);
-
 
 /**
    @brief svp_probability function, hiding the Pruner class
