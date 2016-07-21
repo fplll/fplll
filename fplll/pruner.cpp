@@ -21,7 +21,6 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
@@ -29,14 +28,10 @@ void prune(/*output*/ vector<double> &pr, double &probability,
            int start_row, int end_row)
 {
 
-  Pruner<FT> pru;
-
-  pru.enumeration_radius   = enumeration_radius;
-  pru.target_probability = target_probability;
-  pru.preproc_cost         = preproc_cost;
-  pru.load_basis_shape(m, start_row, end_row);
-  pru.optimize_coefficients(pr);
-  probability = pru.svp_probability(pr);
+  Pruner<FT> pruner(enumeration_radius, preproc_cost, target_probability);
+  pruner.load_basis_shape(m, start_row, end_row);
+  pruner.optimize_coefficients(pr);
+  probability = pruner.svp_probability(pr);
 }
 
 template <class FT, class GSO_ZT, class GSO_FT>
@@ -47,21 +42,19 @@ void prune(Pruning &pruning,
 {
   if (!end_row)
     end_row = m.d;
-  Pruner<FT> pru;
-  pru.enumeration_radius   = enumeration_radius;
-  pru.target_probability = target_probability;
-  pru.preproc_cost         = preproc_cost;
-  pru.load_basis_shape(m, start_row, end_row);
+  Pruner<FT> pruner(enumeration_radius, preproc_cost, target_probability);
+  pruner.load_basis_shape(m, start_row, end_row);
 
   long expo = 0;
   FT gh_radius = m.get_r_exp(start_row, start_row, expo);
   FT root_det = m.get_root_det(start_row, end_row);
   gaussian_heuristic(gh_radius, expo, end_row - start_row, root_det, 1.0);
 
-  pru.optimize_coefficients(pruning.coefficients);
-  pruning.probability = pru.svp_probability(pruning.coefficients);
+  pruner.optimize_coefficients(pruning.coefficients);
+  pruning.probability = pruner.svp_probability(pruning.coefficients);
   pruning.radius_factor = enumeration_radius/(gh_radius.get_d() * pow(2,expo) );
 }
+
 
 template <class FT>
 double svp_probability(const Pruning &pruning){
@@ -73,29 +66,6 @@ template <class FT>
 double svp_probability(const vector<double> &pr){
   Pruner<FT> pru;
   return pru.svp_probability(pr);
-}
-
-
-
-
-template <class FT> Pruner<FT>::Pruner()
-{
-  n = 0;
-  d = 0;
-  set_tabulated_consts();
-
-  epsilon     = std::pow(2., -13);  // Guesswork. Will become obsolete with Nelder-Mead
-  min_step    = std::pow(2., -12);  // Guesswork. Will become obsolete with Nelder-Mead
-  step_factor = std::pow(2, .5);    // Guesswork. Will become obsolete with Nelder-Mead
-  shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor
-                       // 1/.995. Sounds fair.
-  min_cf_decrease = .9999;  // We really want the gradient descent to reach the minima
-  symmetry_factor = 2;      // For now, we are just considering SVP
-
-  preproc_cost         = 0.0;  // Please set your own value before running.
-  enumeration_radius   = 0.0;  // Please set your own value before running.
-  target_probability = .90;  // Please set your own value before running.
-  preproc_cost         = 0.0;  // Please set your own value before running.
 }
 
 template <class FT> void Pruner<FT>::set_tabulated_consts()
@@ -514,7 +484,6 @@ template <class FT> void Pruner<FT>::init_coefficients(evec &b)
   }
   enforce_bounds(b);
 }
-
 
 /** instantiate functions **/
 
