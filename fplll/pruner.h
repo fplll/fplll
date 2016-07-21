@@ -110,7 +110,7 @@ public:
       projected sub-lattice [start_row,end_row-1]
   */
   template <class GSO_ZT, class GSO_FT>
-  void load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> *> &gsos, int start_row = 0, int end_row = 0);
+  void load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> > &gsos, int start_row = 0, int end_row = 0);
 
 
   /** @brief load the shape of a basis from vector<double>. Mostly for testing purposes */
@@ -119,7 +119,7 @@ public:
 
   /** @brief load the shapes of may bases from vector<vector<double>> . Cost are average over all bases. Mostly for testing purposes */
 
-  void load_basis_shapes(const vector<vector<double> *> &gso_sq_norms_vec);
+  void load_basis_shapes(const vector<vector<double> > &gso_sq_norms_vec);
 
   /** @brief optimize pruning coefficients
 
