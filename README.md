@@ -38,11 +38,11 @@ If GMP and/or MPFR include and lib files are not in the default directories `/us
 `/usr/lib`, you have to set the environment variables `CFLAGS` and `LDFLAGS` for instance through the
 configure command line
 
-```./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude" LDFLAGS="-L/mpfrlib -L/gmplib"```
+    ./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude" LDFLAGS="-L/mpfrlib -L/gmplib"
 
 or
 
-```./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude $CPPFLAGD" LDFLAGS="-L/mpfrlib -L/gmplib $LDFLAGS"```
+    ./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude $CPPFLAGD" LDFLAGS="-L/mpfrlib -L/gmplib $LDFLAGS"
 
 if these variables already exist in your environment. This should be modified soon for using
 standard `--with-gmp` and `--with-mpfr` package specifications. The same philosophy applies to the
@@ -109,10 +109,7 @@ The options are:
 
 The generated matrix is printed in stdout.
 
-Note that by default, the random bits always use the same seed,
-to ensure reproducibility. The seed may be changed with the option
-``` -randseed <integer>``` or by using the current time (in seconds)
-``` -randseed time```. If you use this option, it must be the first one on the command line.
+Note that by default, the random bits always use the same seed, to ensure reproducibility. The seed may be changed with the option `-randseed <integer>` or by using the current time (in seconds) `-randseed time`. If you use this option, it must be the first one on the command line.
 
 ### fplll ###
 
@@ -209,14 +206,14 @@ The options are:
 * `-v` : verbose toggle
 
 
-### How to use as a library ###
+### How to use as a library
 
-See [API documentation](library.md).
+See [API documentation](https://fplll.github.io/fplll/).
 
 ### Alternative interfaces ###
 
-- fplll is included in [Sage](http://sagemath.org), see documentation for [IntegerMatrix](http://doc.sagemath.org/html/en/reference/matrices/sage/matrix/matrix_integer_dense.html) and [IntegerLattice](http://doc.sagemath.org/html/en/reference/modules/sage/modules/free_module_integer.html).
 - [fpylll](https://github.com/malb/fpylll) is a stand-alone Python interface for fplll.
+- fplll is included in [Sage](http://sagemath.org), see documentation for [IntegerMatrix](http://doc.sagemath.org/html/en/reference/matrices/sage/matrix/matrix_integer_dense.html) and [IntegerLattice](http://doc.sagemath.org/html/en/reference/modules/sage/modules/free_module_integer.html).
 
 
 ## Examples ##
