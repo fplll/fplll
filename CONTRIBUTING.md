@@ -205,12 +205,12 @@ Please do not forget to add yourself as a contributor in [README.md](README.md) 
 
 fplll uses [doxygen](http://www.stack.nl/~dimitri/doxygen/) with a [bootstrap theme](https://github.com/Velron/doxygen-bootstrapped) to generate API documentation. To produce API documentation run
 
-    doxygen Doxyfile
+    $ doxygen Doxyfile
 
 Our documentation is served at [https://fplll.github.io/fplll/](https://fplll.github.io/fplll/) using [GitHub pages](https://pages.github.com). To update the documentation, check out the ``gh-pages`` branch and update the html files in there. Doxygen writes its outputs to ``doc/html``, you can arrange it that this directory holds the ``gh-pages`` branch of the fplll repository:
 
-    cd doc
-    git clone -b gh-pages git@github.com::<my-github-name>/fplll.git html
-    cd ..
+    $ cd doc
+    $ git clone -b gh-pages git@github.com::<my-github-name>/fplll.git html
+    $ cd ..
     
 Now, whenever you run ``doxygen`` it will write its outputs to a directory which holds the right branch. If you push it to your remote, you can then check it at [http://my-github-name.github.io/fplll](http://my-github-name.github.io/fplll).
