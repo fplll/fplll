@@ -71,10 +71,11 @@ vector<Strategy> load_strategies_json(const std::string &filename)
     }
 
     Strategy strategy;
+    strategy.block_size = block_size;
 
-    if (j_strat.find("preprocessing") != j_strat.end())
+    if (j_strat.find("preprocessing_block_sizes") != j_strat.end())
     {
-      for (auto p_it = j_strat["preprocessing"].begin(); p_it != j_strat["preprocessing"].end();
+      for (auto p_it = j_strat["preprocessing_block_sizes"].begin(); p_it != j_strat["preprocessing_block_sizes"].end();
            ++p_it)
       {
         if ((*p_it).is_number())
@@ -88,10 +89,10 @@ vector<Strategy> load_strategies_json(const std::string &filename)
       }
     }
 
-    if (j_strat.find("pruning_coefficients") != j_strat.end())
+    if (j_strat.find("pruning_parameters") != j_strat.end())
     {
-      for (auto p_it = j_strat["pruning_coefficients"].begin();
-           p_it != j_strat["pruning_coefficients"].end(); ++p_it)
+      for (auto p_it = j_strat["pruning_parameters"].begin();
+           p_it != j_strat["pruning_parameters"].end(); ++p_it)
       {
         const json &j_prun = *p_it;
         Pruning pruning;

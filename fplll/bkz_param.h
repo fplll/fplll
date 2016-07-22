@@ -88,13 +88,9 @@ class Strategy
 {
 public:
 
-  /** Pruning parameters */
-
-  vector<Pruning> pruning_parameters;
-
-  /** For each block size we run one tour */
-
-  vector<int> preprocessing_block_sizes;
+  size_t block_size; //< block size
+  vector<Pruning> pruning_parameters; //< Pruning parameters
+  vector<size_t> preprocessing_block_sizes; //< For each block size we run one tour
 
   /** Construct an empty strategy
 
@@ -103,9 +99,10 @@ public:
 
    */
 
-  static Strategy EmptyStrategy()
+  static Strategy EmptyStrategy(size_t block_size)
   {
     Strategy strat;
+    strat.block_size = block_size;
     strat.pruning_parameters.emplace_back(Pruning());
     return strat;
   };
@@ -160,7 +157,7 @@ public:
       strategies = vector<Strategy>();
       for (long b = 0; b <= block_size; ++b)
       {
-        strategies.emplace_back(Strategy::EmptyStrategy());
+        strategies.emplace_back(Strategy::EmptyStrategy(b));
       }
     }
   };
