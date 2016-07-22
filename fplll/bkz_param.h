@@ -141,9 +141,14 @@ public:
   */
 
   BKZParam(int block_size, vector<Strategy> &strategies, double delta = LLL_DEF_DELTA,
-           int flags = BKZ_DEFAULT, int max_loops = 0, double max_time = 0,
-           double auto_abort_scale = 1.0, int auto_abort_max_no_dec = 5, double gh_factor = 1.1,
-           double min_success_probability = 0.5, int rerandomization_density = 3)
+           int flags = BKZ_DEFAULT,
+           int max_loops = 0,
+           double max_time = 0,
+           double auto_abort_scale = BKZ_DEF_AUTO_ABORT_SCALE,
+           int auto_abort_max_no_dec = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
+           double gh_factor = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
+           double min_success_probability = BKZ_DEF_MIN_SUCCESS_PROBABILITY,
+           int rerandomization_density = BKZ_DEF_RERANDOMIZATION_DENSITY)
       : block_size(block_size), strategies(strategies), delta(delta), flags(flags),
         max_loops(max_loops), max_time(max_time), auto_abort_scale(auto_abort_scale),
         auto_abort_max_no_dec(auto_abort_max_no_dec), gh_factor(gh_factor),
