@@ -323,10 +323,10 @@ The following people have contributed to fplll:
 - Shi Bai
 - Guillaume Bonnoron
 - David Cade
-- Leo Ducas
+- Léo Ducas
 - Joop van de Pol
 - Xavier Pujol
-- Damien Stehle
+- Damien Stehlé
 - Marc Stevens
 - Gilles Villard
 - Michael Walter
