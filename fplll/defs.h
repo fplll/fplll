@@ -205,6 +205,12 @@ enum CVPFlags {
   CVP_VERBOSE = SVP_VERBOSE
 };
 
+const double BKZ_DEF_AUTO_ABORT_SCALE        = 1.0;
+const int BKZ_DEF_AUTO_ABORT_MAX_NO_DEC      = 5;
+const double BKZ_DEF_GH_FACTOR               = 1.1;
+const double BKZ_DEF_MIN_SUCCESS_PROBABILITY = 0.5;
+const int BKZ_DEF_RERANDOMIZATION_DENSITY    = 3;
+
 enum BKZFlags {
   BKZ_DEFAULT = 0,
   BKZ_VERBOSE = 1,
