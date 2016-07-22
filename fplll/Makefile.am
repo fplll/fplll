@@ -31,9 +31,9 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	enum/enumerate.h enum/enumerate_base.h \
 	pruner.h
 
-bin_PROGRAMS=fplll latticegen
+bin_PROGRAMS=fplll latticegen latsieve
 check_PROGRAMS=llldiff
-EXTRA_PROGRAMS=fplll_dbg latticegen_dbg latsieve
+EXTRA_PROGRAMS=fplll_dbg latticegen_dbg
 lib_LTLIBRARIES=libfplll.la
 EXTRA_LTLIBRARIES=libfplllv.la libfpllld.la
 
@@ -71,7 +71,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	bkz.cpp bkz.h \
 	bkz_param.cpp bkz_param.h \
 	gso.cpp gso.h \
-	pruner.cpp  pruner.h
+	pruner.cpp pruner.h
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
 libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD)
