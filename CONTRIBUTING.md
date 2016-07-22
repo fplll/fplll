@@ -27,7 +27,7 @@ Then run
 
 as usual.
 
-## Reporting Bugs ## 
+## Reporting Bugs ##
 
 Bug should be filed at [https://github.com/fplll/fplll/issues](https://github.com/fplll/fplll/issues). Alternatively, feel free to contact  [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel). The former method is definitely preferred though.
 
