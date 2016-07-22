@@ -101,19 +101,25 @@ Pull requests should be as small/atomic as possible.
 
 ### Coding Conventions
 
+fplll is written in [C++11](https://en.wikipedia.org/wiki/C%2B%2B11) and we try to make use of its modern features to make the library readable.
+
 Please keep your code as clean and straightforward as possible. Code is written for the consumption by compilers and for the consumption by human beings. By making code clear and easy to understand, others can build on it and fix issues should they arise.
 
 Our naming convention is close to Python's [naming convention](https://www.python.org/dev/peps/pep-0008/). Classes are in ``CamelCase``. Functions, methods, parameters and local variables in ``lower_case`` . Curly braces go on the next line and we [prefer explicit curly braces](https://nakedsecurity.sophos.com/2014/02/24/anatomy-of-a-goto-fail-apples-ssl-bug-explained-plus-an-unofficial-patch/), e.g.
 
-    if (foo)
-    {
-      do_something_good();
-    }
+```c++
+if (foo)
+{
+  do_something_good();
+}
+```
     
 instead of:
 
-    if (foo)
-      do_something_bad();
+```c++
+if (foo)
+  do_something_bad();
+```
 
 The following [clang-format](http://clang.llvm.org/docs/ClangFormat.html) config might help to format your code.
 
