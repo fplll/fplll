@@ -77,8 +77,8 @@ template <class ZT>
 int test_sieve(ZZ_mat<ZT> &A, IntVect &b) {
   int r = 0;
   r |= test_sieve_alg<ZT>(A, b, 2);
-  //r |= test_sieve_alg<ZT>(A, b, 3);
-  //r |= test_sieve_alg<ZT>(A, b, 4);
+  r |= test_sieve_alg<ZT>(A, b, 3);
+  r |= test_sieve_alg<ZT>(A, b, 4);
   return r;
 }
 
@@ -98,12 +98,14 @@ int test_filename (const char *input_filename, const char *output_filename) {
   return test_sieve<ZT>(A, b);
 }
 
-
+/* 
+   Note make check uses the following relative path for the filename.
+*/
 int main(int /*argc*/, char ** /*argv*/) {
 
   int status = 0;
-  status |= test_filename<mpz_t>("tests/lattices/example_svp_in",
-                                 "tests/lattices/example_svp_out");
+  status |= test_filename<mpz_t>("lattices/example_svp_in",
+                                 "lattices/example_svp_out");
   if (status == 0)
   {
     cerr << "All tests passed." << endl;
