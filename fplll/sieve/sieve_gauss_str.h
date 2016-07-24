@@ -3,9 +3,11 @@
 
 #include "sieve_common.h"
 
+#if 0
 extern long dot_time;
 extern long dot_num;
 extern long count_bad;
+#endif
 
 /**
  * list point struct
@@ -102,7 +104,7 @@ inline bool half_2reduce ( ListPoint<ZT>* p1,
   /* if 2*<p1,p2> <= |p2|^2, do nothing */
   Z_NR<ZT> dot, t, s;
 
-#if 1
+#if 0
   struct timeval time;
   gettimeofday(&time, 0);
   long startt = 1000000 * time.tv_sec + time.tv_usec;
@@ -110,7 +112,7 @@ inline bool half_2reduce ( ListPoint<ZT>* p1,
 
   dot_product(dot, p1->v, p2->v);
 
-#if 1
+#if 0
   gettimeofday(&time, 0);
   long endt = 1000000 * time.tv_sec + time.tv_usec;
   dot_time += endt-startt;
@@ -344,9 +346,10 @@ inline bool check_3reduce_order_list (const list<ListPoint<ZT>* > List)
           cout << v1->v << endl;
           cout << v2->v << endl;
           cout << v3->v << endl;
+#if 0
           count_bad ++;
           cout << " # bad pairs " << count_bad << endl;
-          
+#endif
           //del_listpoint(vnew);
           //return 0;
         }

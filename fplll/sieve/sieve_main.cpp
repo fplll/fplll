@@ -5,10 +5,6 @@
 */
 #include "sieve_main.h"
 
-long dot_time;
-long dot_num;
-long count_bad;
-
 /**
  * help function
  */
@@ -63,9 +59,12 @@ int main (int argc, char** argv)
   bool flag_verbose = false, flag_file = false;
   int option, alg, dim = 10, seed=0, bs=0;
 
+#if 0
   dot_time = 0;
   dot_num = 0;
   count_bad = 0;
+#endif
+
   alg = 2;
 
   /* parse */
@@ -116,7 +115,7 @@ int main (int argc, char** argv)
   }
 
   /* set lattice */
-  ZZ_mat<mpz_t> B(dim,dim);
+  ZZ_mat<mpz_t> B;
   if (flag_file) {
     ifstream input_file(input_file_name);
     if (input_file.is_open()) {
@@ -140,12 +139,11 @@ int main (int argc, char** argv)
     B.resize(dim, dim);
     B.gen_trg(1.1);
   }
-
+  
   /* set targeted norm */
   Z_NR<mpz_t> goal_norm, max;
   if (goal_norm_s != NULL) {
     goal_norm.set_str(goal_norm_s);
-    //goal_norm.mul(goal_norm, goal_norm);
   }
   if (goal_norm < 0)
     goal_norm = 0;
@@ -167,7 +165,6 @@ int main (int argc, char** argv)
     else
       cout << "# [info] LLL took time " << secs << " s" << endl;
   }
-  
   //cout << B << endl;
 
   /* decide integer type */
@@ -194,11 +191,11 @@ int main (int argc, char** argv)
   if(flag_verbose) {
     cout << "# [info] sieve took time " << secs << " s" << endl;
     /* dot product time */
+#if 0
     cout << "# [info] dot_time " << dot_time << endl;
     cout << "# [info] dot_num " << dot_num << endl;
     cout << "# [info] dot_time/dot_number " << (double) dot_time/dot_num << endl;
+#endif
   }
-  
-
   return 1;
 }

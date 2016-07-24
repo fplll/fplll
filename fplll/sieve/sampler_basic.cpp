@@ -20,7 +20,7 @@ KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B, bool ver, int seed)
   //t = log(nr);
   t = 2;
   logn2 = log(nr)*log(nr);
-
+  
   /* gso, flag 1 to have g matrix valid */
   pGSO = new MatGSO<Z_NR<ZT>, F> (b, u, u_inv, 1);
 
@@ -28,18 +28,20 @@ KleinSampler<ZT, F>::KleinSampler (ZZ_mat<ZT> &B, bool ver, int seed)
   mu = pGSO->get_mu_matrix();
   r = pGSO->get_r_matrix();
   g = pGSO->get_g_matrix();
-  
+
   /* compute variances for sampling */
   maxbistar2 = pGSO->get_max_bstar();
+
   s2.mul_d (maxbistar2, logn2, GMP_RNDN);
   s_prime = new NumVect<F> (nr);
+
   F tmp;
   for (int i = 0; i < nr; i++) {
     tmp.set_z(g(i,i));
     ((*s_prime)[i]).div(maxbistar2, tmp);
     ((*s_prime)[i]).sqrt((*s_prime)[i], GMP_RNDN);
   }
-
+  
   /* verbose */
   srand (seed);
   set_verbose(ver);
@@ -131,35 +133,34 @@ Z_NR<ZT> KleinSampler<ZT, F>::sample_z (F c, F s)
 template<class ZT, class F>
 NumVect<Z_NR<ZT> > KleinSampler<ZT, F>::sample ()
 {
-  NumVect<Z_NR<ZT> > vec(nr);
-  NumVect<F> ci(nr);
+  NumVect<Z_NR<ZT> > vec(nc);
+  NumVect<F> ci(nc);
   F tmp;
   Z_NR<ZT> tmpz;
 
-  // while(1) {
-    for (int i = 0; i < nr; i++) {
-      ci[i] = 0.0;
-      vec[i] = 0.0;
+  for (int i = 0; i < nc; i++)
+    vec[i] = 0.0;
+  for (int i = 0; i < nr; i++)
+    ci[i] = 0.0;
+    
+  for (int i = nr - 1; i >= 0; i--) {
+    tmpz = sample_z (ci[i], (*s_prime)[i]);
+    (ci[i]).set_z(tmpz);
+    for (int j = 0; j < i; j++) {
+      tmp.mul(ci[i], mu(i,j), GMP_RNDN);
+      (ci[j]).sub(ci[j], tmp, GMP_RNDN);
     }
+  }
 
-    for (int i = nr - 1; i >= 0; i--) {
-      tmpz = sample_z (ci[i], (*s_prime)[i]);
-      (ci[i]).set_z(tmpz);
-      for (int j = 0; j < i; j++) {
-        tmp.mul(ci[i], mu(i,j), GMP_RNDN);
-        (ci[j]).sub(ci[j], tmp, GMP_RNDN);
-      }
+  //lp->norm = 0;
+  for (int i = 0; i < nc; i++) {
+    for (int j = 0; j < nr; j++) {
+      tmpz.set_f(ci[j]);
+      tmpz.mul(tmpz, b(j,i));
+      (vec[i]).add(vec[i], tmpz);
     }
-
-    //lp->norm = 0;
-    for (int i = 0; i < nc; i++) {
-      for (int j = 0; j < nr; j++) {
-        tmpz.set_f(ci[j]);
-        tmpz.mul(tmpz, b(j,i));
-        (vec[i]).add(vec[i], tmpz);
-      }
-      //lp->norm += lp->v[i] * lp->v[i];
-    }
+    //lp->norm += lp->v[i] * lp->v[i];
+  }
   return vec;
 }
 

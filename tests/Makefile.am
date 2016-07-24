@@ -13,7 +13,7 @@ AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPBUILDDIR)
 STAGEDIR := $(realpath -s $(TOPBUILDDIR)/.libs)
 AM_LDFLAGS = -L$(STAGEDIR) -Wl,-rpath,$(STAGEDIR) -lfplll -no-install $(LIBQD_LIBADD)
 
-TESTS = test_nr test_lll test_svp test_bkz test_pruner test_sieve
+TESTS = test_sieve test_nr test_lll test_svp test_bkz test_pruner 
 
 test_pruner_LDADD=-lgmp -lmpfr $(LIBQD_LIBADD)
 

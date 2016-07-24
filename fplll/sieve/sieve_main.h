@@ -4,3 +4,9 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+
+#if 0
+long dot_time;
+long dot_num;
+long count_bad;
+#endif

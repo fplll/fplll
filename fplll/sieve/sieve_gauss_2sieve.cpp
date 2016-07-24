@@ -8,7 +8,8 @@
  * don't have colission and puts to the queue all the points
  * with bigger norm that can be reduced with it.
  */
-template <class ZT, class F> Z_NR<ZT> GaussSieve<ZT, F>::update_p_2reduce(ListPoint<ZT> *p)
+template <class ZT, class F> Z_NR<ZT>
+GaussSieve<ZT, F>::update_p_2reduce (ListPoint<ZT> *p)
 {
 
 #if 0
@@ -106,10 +107,7 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::run_2sieve()
 
   /*
     Loop till you find a short enough vector,
-    or enough collisions.
-    The 0.1 * max_list_size_ + 200 is much more
-    than needed in general so we are almost sure
-    we have found the shortest vector. */
+    or enough collisions. */
   while ((best_sqr_norm > goal_sqr_norm) && (collisions < mult * max_list_size + add))
   {
     /* update stats */
@@ -138,6 +136,8 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::run_2sieve()
     /* sieve current_point */
     current_norm = update_p_2reduce(current_point);
 
+    //print_list(List);
+    
 #ifdef REDUCE_TIMING
     gettimeofday(&time2, 0);
     long endt2 = 1000000 * time2.tv_sec + time2.tv_usec;
@@ -156,7 +156,7 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::run_2sieve()
     print_curr_info();
 /*if (samples+nr-List.size()-Queue.size() != collisions)
   exit(1);
-  */
+*/
 #endif
 
     /* tuples of (iters, max_list_size) */

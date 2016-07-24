@@ -1,9 +1,9 @@
 #include <cstring>
 #include <fplll.h>
+#include <../fplll/sieve/sieve_main.h> /* standalone bin */
 
 using namespace std;
 using namespace fplll;
-
 
 /**
    @brief Read matrix from `input_filename`.
@@ -45,38 +45,41 @@ void read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
    @return
 */
 template <class ZT>
-int test_svp(ZZ_mat<ZT> &A, IntVect &b) {
-  
-  IntVect solution;
-  IntMatrix u;
-
-  int status = shortest_vector(A, sol_coord, SVPM_PROVED, SVP_DEFAULT);
-
-  if (status != RED_SUCCESS)
-  {
-    cerr << "Failure: " << get_red_status_str(status) << endl;
-    return status;
-  }
-
-  vector_matrix_product(sol_coord2, sol_coord, u);
-  vector_matrix_product(solution, sol_coord, A);
-
+int test_sieve_alg (ZZ_mat<ZT> &A, IntVect &b, int alg) {
+  GaussSieve<ZT, FP_NR<double> > gsieve(A, alg, 0, 0);
+  Z_NR<ZT> goal_norm;
+  goal_norm = 0;
+  gsieve.set_goal_norm2 (goal_norm);
+  if (gsieve.alg == 3)
+    gsieve.run_3sieve();
+  else if (gsieve.alg == 4)
+    gsieve.run_4sieve();
+  else
+    gsieve.run_2sieve();
+  NumVect<Z_NR<ZT> > v = gsieve.return_first();
   Z_NR<ZT> tmp;
   Z_NR<ZT> norm_s;
   Z_NR<ZT> norm_b;
-
   for (int i = 0; i < A.get_cols(); i++)
   {
-    tmp.mul(solution[i], solution[i]);
+    tmp.mul(v[i], v[i]);
     norm_s.add(norm_s, tmp);
-
     tmp.mul(b[i], b[i]);
     norm_b.add(norm_b, tmp);
   }
   if (norm_s != norm_b)
     return 1;
-
   return 0;
+}
+
+
+template <class ZT>
+int test_sieve(ZZ_mat<ZT> &A, IntVect &b) {
+  int r = 0;
+  r |= test_sieve_alg<ZT>(A, b, 2);
+  //r |= test_sieve_alg<ZT>(A, b, 3);
+  //r |= test_sieve_alg<ZT>(A, b, 4);
+  return r;
 }
 
 
@@ -99,9 +102,8 @@ int test_filename (const char *input_filename, const char *output_filename) {
 int main(int /*argc*/, char ** /*argv*/) {
 
   int status = 0;
-  status |= test_filename<mpz_t>("lattices/dim55_in");
-  status |= test_filename<mpz_t>("lattices/example_svp_in",
-                                 "lattices/example_svp_out");
+  status |= test_filename<mpz_t>("tests/lattices/example_svp_in",
+                                 "tests/lattices/example_svp_out");
   if (status == 0)
   {
     cerr << "All tests passed." << endl;

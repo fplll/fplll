@@ -37,6 +37,7 @@ EXTRA_PROGRAMS=fplll_dbg latticegen_dbg
 lib_LTLIBRARIES=libfplll.la
 EXTRA_LTLIBRARIES=libfplllv.la libfpllld.la
 
+# fplll bin
 fplll_SOURCES=main.cpp main.h
 fplll_LDADD=libfplll.la
 fplll_dbg_SOURCES=$(fplll_SOURCES)
@@ -44,6 +45,7 @@ fplll_dbg_CPPFLAGS=-DDEBUG $(AM_CPPFLAGS)
 fplll_dbg_CXXFLAGS=-g $(AM_CXXFLAGS)
 fplll_dbg_LDADD=libfpllld.la
 
+# latticegen bin
 latticegen_SOURCES=latticegen.cpp
 latticegen_LDADD=libfplll.la
 latticegen_dbg_SOURCES=$(latticegen_SOURCES)
@@ -51,15 +53,15 @@ latticegen_dbg_CPPFLAGS=-DDEBUG $(AM_CPPFLAGS)
 latticegen_dbg_CXXFLAGS=-g $(AM_CXXFLAGS)
 latticegen_dbg_LDADD=libfpllld.la
 
+# llldiff bin
 llldiff_SOURCES=llldiff.cpp
 llldiff_LDADD=libfplll.la
 
-# sieve
-latsieve_SOURCES=sieve/sieve_main.cpp sieve/sieve_gauss.cpp \
-	sieve/sieve_gauss_2sieve.cpp sieve/sieve_gauss_3sieve.cpp \
-	sieve/sieve_gauss_4sieve.cpp sieve/sampler_basic.cpp
-latsieve_LDADD=libfplll.la -lgmp -lmpfr $(LIBQD_LIBADD)
+# latsieve bin
+latsieve_SOURCES=sieve/sieve_main.cpp sieve/sieve_main.h
+latsieve_LDADD=libfplll.la $(LIBQD_LIBADD)
 
+# libfplll
 libfplll_la_SOURCES=fplll.cpp fplll.h \
 	util.cpp util.h \
 	enum/topenum.cpp enum/topenum.h \
@@ -71,7 +73,13 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	bkz.cpp bkz.h \
 	bkz_param.cpp bkz_param.h \
 	gso.cpp gso.h \
-	pruner.cpp pruner.h
+	pruner.cpp pruner.h \
+  sieve/sieve_gauss.cpp \
+  sieve/sieve_gauss_str.h \
+	sieve/sieve_gauss_2sieve.cpp \
+	sieve/sieve_gauss_3sieve.cpp \
+	sieve/sieve_gauss_4sieve.cpp \
+	sieve/sampler_basic.cpp
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
 libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD)

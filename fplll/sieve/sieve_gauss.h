@@ -37,6 +37,7 @@ public:
   vector<Z_NR<ZT> > iters_norm;
   vector<long> iters_ls;
 
+  NumVect<Z_NR<ZT> > return_first ();
 
 private:
 
