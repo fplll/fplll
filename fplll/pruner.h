@@ -61,6 +61,11 @@ FPLLL_BEGIN_NAMESPACE
 #define PRUNER_MAX_D 1023
 #define PRUNER_MAX_N 2047
 
+#define PRUNER_METHOD_GRADIENT 0
+#define PRUNER_METHOD_NM 1
+#define PRUNER_METHOD_HYBRID 2
+
+
 
 /**
    @brief prune function, hiding the Pruner class
@@ -245,6 +250,8 @@ private:
   void repeated_enum_cost_gradient(/*i*/ const evec &b, /*o*/ evec &res);
   // Improve the pruning bounds a bit,  using one gradient step
   int improve(/*io*/ evec &b);
+  // Improve the pruning bounds substantially, using Nelder-Mead method
+  int nelder_mead(/*io*/ evec &b);
   // Run the whole escent to optimize pruning bounds
   void descent(/*io*/ evec &b);
 

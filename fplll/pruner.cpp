@@ -380,11 +380,14 @@ template <class FT> inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b)
   FT normalized_radius;
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
 
+  FT normalized_radius_pow = normalized_radius;
   for (size_t i = 0; i < 2 * d; ++i)
   {
     FT tmp;
-    tmp = pow_si(normalized_radius, 1 + i) * rv[i] * tabulated_ball_vol[i + 1] *
+
+    tmp = normalized_radius_pow * rv[i] * tabulated_ball_vol[i + 1] *
           sqrt(pow_si(b[i / 2], 1 + i)) * ipv[i];
+    normalized_radius_pow *= normalized_radius;
     total += tmp;
   }
   total /= symmetry_factor;
@@ -514,6 +517,12 @@ template <class FT> void Pruner<FT>::init_coefficients(evec &b)
   }
   enforce_bounds(b);
 }
+
+template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
+  return 0;
+}
+
+
 
 
 /** instantiate functions **/
