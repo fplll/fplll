@@ -465,7 +465,7 @@ void prune(/*output*/ vector<double> &pr, double &probability,
            int start_row, int end_row)
 {
 
-  Pruner<FP_NR<double>> pru;
+  Pruner<FT> pru;
 
   pru.enumeration_radius   = enumeration_radius;
   pru.target_probability = target_probability;
@@ -483,7 +483,7 @@ void prune(Pruning &pruning,
 {
   if (!end_row)
     end_row = m.d;
-  Pruner<FP_NR<double> > pru;
+  Pruner<FT> pru;
   pru.enumeration_radius   = enumeration_radius;
   pru.target_probability = target_probability;
   pru.preproc_cost         = preproc_cost;
@@ -498,6 +498,7 @@ void prune(Pruning &pruning,
   pruning.probability = pru.svp_probability(pruning.coefficients);
   pruning.radius_factor = enumeration_radius/(gh_radius.get_d() * pow(2,expo) );
 }
+
 
 /** instantiate functions **/
 
