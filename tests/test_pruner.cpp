@@ -279,10 +279,9 @@ template <class FT> int test_auto_prune(size_t n) {
   MatGSO<Z_NR<mpz_t>, FT> M(A, U, U, GSO_DEFAULT);
   LLLReduction<Z_NR<mpz_t>, FT> lll_obj = LLLReduction<Z_NR<mpz_t>, FT>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
   lll_obj.lll();
-  Pruning pruning;
   FT radius;
   M.get_r(radius, 0, 0);
-  prune<FT, Z_NR<mpz_t>, FT >(pruning, radius.get_d(), 10000.0, 0.67, M);
+  Pruning pruning = prune<FT, Z_NR<mpz_t>, FT >(radius.get_d(), 10000.0, 0.67, M);
 
   status |= !(pruning.probability <= 1.0);
   status |= !(pruning.probability > 0.0);

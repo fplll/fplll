@@ -67,6 +67,9 @@ public:
   class TestPruner;
   friend class TestPruner;
 
+  /** @brief enumeration radius (squared) */
+  FT enumeration_radius;
+
   /** @brief cost of pre-processing a basis for a retrial
 
       This cost should be expressed in terms of ``nodes'' in an enumeration.
@@ -84,10 +87,18 @@ public:
 
   FT target_probability;
 
-  /** @brief enumeration radius (squared) */
-  FT enumeration_radius;
+  Pruner(FT enumeration_radius=0.0, FT preproc_cost=0.0, FT target_probability=0.9, size_t n=0, size_t d=0):
+    enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target_probability(target_probability), n(n), d(d)
+  {
+    set_tabulated_consts();
 
-  Pruner();
+    epsilon     = std::pow(2., -13);  // Guesswork. Will become obsolete with Nelder-Mead
+    min_step    = std::pow(2., -12);  // Guesswork. Will become obsolete with Nelder-Mead
+    step_factor = std::pow(2, .5);    // Guesswork. Will become obsolete with Nelder-Mead
+    shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor 1/.995. Sounds fair.
+    min_cf_decrease = .9999;  // We really want the gradient descent to reach the minima
+    symmetry_factor = 2;      // For now, we are just considering SVP
+  }
 
   /** @brief load the shape of a basis from a MatGSO object. Can select a
       projected sub-lattice [start_row,end_row-1]
@@ -205,40 +216,59 @@ private:
 /**
    @brief prune function, hiding the Pruner class
 
-   @param pr
-   @param probability
-   @param enumeration_radius
-   @param preproc_cost
-   @param target_probability
-   @param m
-   @param start_row
-   @param end_row
+   @param pr store pruning coefficients here
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrix
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m,
+           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
            int start_row = 0, int end_row = 0);
 
 /**
    @brief prune function, hiding the Pruner class
 
-   @param pruning
-   @param enumeration_radius
-   @param preproc_cost
-   @param target_probability
-   @param m
-   @param start_row
-   @param end_row
-   @return
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrix
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
+
+   @return Pruning object.
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
-void prune(Pruning &pruning,
-           /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
-           int start_row = 0, int end_row = 0);
+Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
+              const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
+              int start_row = 0, int end_row = 0);
+
+/**
+   @brief prune function averaging over several bases
+
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrices
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
+
+   @return Pruning object.
+*/
+
+template <class FT, class GSO_ZT, class GSO_FT>
+Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
+              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT> > &m,
+              int start_row = 0, int end_row = 0);
 
 FPLLL_END_NAMESPACE
 
