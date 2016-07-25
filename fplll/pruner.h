@@ -110,7 +110,7 @@ void prune(Pruning &pruning,
 
 
 template <class FT>
-double svp_probability(const Pruning pruning);
+double svp_probability(const Pruning &pruning);
 
 template <class FT>
 double svp_probability(const vector<double> &pr);
