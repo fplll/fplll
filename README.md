@@ -323,10 +323,10 @@ The following people have contributed to fplll:
 - Shi Bai
 - Guillaume Bonnoron
 - David Cade
-- Leo Ducas
+- Léo Ducas
 - Joop van de Pol
 - Xavier Pujol
-- Damien Stehle
+- Damien Stehlé
 - Marc Stevens
 - Gilles Villard
 - Michael Walter
@@ -348,7 +348,15 @@ Christoph Lauter, Andrew Novocin, Willem Jan Palenstijn, Patrick Pelissier, Mich
 Thiemo Seufer, Allan Steel, Gilles Villard and Paul Zimmermann for their support and for many
 suggestions that helped debugging and improving this code.
 
+- [CONTRIBUTING.md](CONTRIBUTING.md) is taken, almost verbatim, from https://github.com/pydanny/djangopackages/blob/master/docs/contributing.rst
+
+- [json.hpp](fplll/io/json.hpp) is taken from https://github.com/nlohmann/json
+
 - This project has been supported by ERC Starting Grant ERC-2013-StG-335086-LATTAC.
+
+## Contributing ##
+
+fplll welcomes contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## New releases and bug reports ##
 
