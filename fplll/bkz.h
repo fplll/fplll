@@ -211,6 +211,13 @@ private:
   FT sld_potential;
 };
 
+
+int bkz_reduction(IntMatrix* B, IntMatrix* U, const BKZParam& param, FloatType float_type=FT_DEFAULT, int precision=0);
+int bkz_reduction(IntMatrix& b, int block_size, int flags = BKZ_DEFAULT, FloatType float_type=FT_DEFAULT, int precision=0);
+int bkz_reduction(IntMatrix& b, IntMatrix& u, int block_size, int flags = BKZ_DEFAULT, FloatType float_type=FT_DEFAULT, int precision=0);
+
+int hkz_reduction(IntMatrix& b, int flags = HKZ_DEFAULT, FloatType float_type=FT_DEFAULT, int precision=0);
+
 FPLLL_END_NAMESPACE
 
 #endif

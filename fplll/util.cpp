@@ -149,4 +149,57 @@ void cost_estimate(Float &cost, const Float &bound, const Matrix<Float> &r, int 
   }
 }
 
+const char *get_red_status_str(int status)
+{
+  if (status >= 0 && status < RED_STATUS_MAX)
+    return RED_STATUS_STR[status];
+  else
+    return "unknown error";
+}
+
+template <class ZT> void zeros_first(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv_t)
+{
+  int i, d = b.get_rows();
+  for (i = d; i > 0 && b[i - 1].is_zero(); i--)
+  {
+  }
+  if (i > 0 && i < d)
+  {
+    b.rotate(0, i, d - 1);
+    if (!u.empty())
+      u.rotate(0, i, d - 1);
+    if (!u_inv_t.empty())
+      u_inv_t.rotate(0, i, d - 1);
+  }
+}
+
+template <class ZT> void zeros_last(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv_t)
+{
+  int i, d = b.get_rows();
+  for (i = 0; i < d && b[i].is_zero(); i++)
+  {
+  }
+  if (i > 0 && i < d)
+  {
+    b.rotate(0, i, d - 1);
+    if (!u.empty())
+      u.rotate(0, i, d - 1);
+    if (!u_inv_t.empty())
+      u_inv_t.rotate(0, i, d - 1);
+  }
+}
+
+template void zeros_first<mpz_t>(ZZ_mat<mpz_t> &, ZZ_mat<mpz_t> &, ZZ_mat<mpz_t> &);
+template void zeros_last<mpz_t>(ZZ_mat<mpz_t> &, ZZ_mat<mpz_t> &, ZZ_mat<mpz_t> &);
+
+#ifdef FPLLL_WITH_ZLONG
+template void zeros_first<long>(ZZ_mat<long> &, ZZ_mat<long> &, ZZ_mat<long> &);
+template void zeros_last<long>(ZZ_mat<long> &, ZZ_mat<long> &, ZZ_mat<long> &);
+#endif
+
+#ifdef FPLLL_WITH_ZDOUBLE
+template void zeros_first<double>(ZZ_mat<double> &, ZZ_mat<double> &, ZZ_mat<double> &);
+template void zeros_last<double>(ZZ_mat<double> &, ZZ_mat<double> &, ZZ_mat<double> &);
+#endif
+
 FPLLL_END_NAMESPACE

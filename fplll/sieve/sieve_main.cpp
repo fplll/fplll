@@ -3,6 +3,7 @@
   tuples of vectors in fplll framework. The Gauss Sieve code is
   based on Panagiotis Voulgaris's implementation of the Gauss sieve.
 */
+#include "fplll.h"
 #include "sieve_main.h"
 
 /**
