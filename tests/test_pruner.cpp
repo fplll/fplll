@@ -131,18 +131,11 @@ public:
 
   int test_relative_volume()
   {
-    vector<double> rs;
     vector<double> pr;
     pr.resize(Nbis);
     cerr << "Testing relative volume" << endl;
     int status = 0;
 
-
-    for (int i = 0; i < Nbis; ++i)
-    {
-      rs.emplace_back(1.);
-    }
-    pru.load_basis_shape(rs);
     double proba, error;
 
     for (int i = 0; i < Nbis / 2; ++i)
@@ -151,10 +144,12 @@ public:
       pr[i + (Nbis / 2)] = .3;
     }
 
-    proba = pru.svp_probability(pr);
+    proba = fplll::svp_probability<FP_NR<double>>(pr);
     error = std::abs(1 - proba / 0.07822479096);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
+
+
 
     for (int i = 0; i < Nbis / 2; ++i)
     {
@@ -162,7 +157,7 @@ public:
       pr[i + (Nbis / 2)] = .5;
     }
 
-    proba = pru.svp_probability(pr);
+    proba = fplll::svp_probability<FP_NR<double>>(pr);
     error = std::abs(1 - proba / 0.5);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -173,7 +168,7 @@ public:
       pr[i + (Nbis / 2)] = .7;
     }
 
-    proba = pru.svp_probability(pr);
+    proba = fplll::svp_probability<FP_NR<double>>(pr);
     error = std::abs(1 - proba / 0.92177520904);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;

@@ -21,6 +21,63 @@
 
 FPLLL_BEGIN_NAMESPACE
 
+
+template <class FT, class GSO_ZT, class GSO_FT>
+void prune(/*output*/ vector<double> &pr, double &probability,
+           /*inputs*/ const double enumeration_radius, const double preproc_cost,
+           const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m,
+           int start_row, int end_row)
+{
+
+  Pruner<FT> pru;
+
+  pru.enumeration_radius   = enumeration_radius;
+  pru.target_probability = target_probability;
+  pru.preproc_cost         = preproc_cost;
+  pru.load_basis_shape(m, start_row, end_row);
+  pru.optimize_coefficients(pr);
+  probability = pru.svp_probability(pr);
+}
+
+template <class FT, class GSO_ZT, class GSO_FT>
+void prune(Pruning &pruning,
+           /*inputs*/ const double enumeration_radius, const double preproc_cost,
+           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
+           int start_row, int end_row)
+{
+  if (!end_row)
+    end_row = m.d;
+  Pruner<FT> pru;
+  pru.enumeration_radius   = enumeration_radius;
+  pru.target_probability = target_probability;
+  pru.preproc_cost         = preproc_cost;
+  pru.load_basis_shape(m, start_row, end_row);
+
+  long expo = 0;
+  FT gh_radius = m.get_r_exp(start_row, start_row, expo);
+  FT root_det = m.get_root_det(start_row, end_row);
+  gaussian_heuristic(gh_radius, expo, end_row - start_row, root_det, 1.0);
+
+  pru.optimize_coefficients(pruning.coefficients);
+  pruning.probability = pru.svp_probability(pruning.coefficients);
+  pruning.radius_factor = enumeration_radius/(gh_radius.get_d() * pow(2,expo) );
+}
+
+template <class FT>
+double svp_probability(const Pruning &pruning){
+  Pruner<FT> pru;
+  return pru.svp_probability(pruning.coefficients);
+}
+
+template <class FT>
+double svp_probability(const vector<double> &pr){
+  Pruner<FT> pru;
+  return pru.svp_probability(pr);
+}
+
+
+
+
 template <class FT> Pruner<FT>::Pruner()
 {
   n = 0;
@@ -458,71 +515,48 @@ template <class FT> void Pruner<FT>::init_coefficients(evec &b)
   enforce_bounds(b);
 }
 
-template <class FT, class GSO_ZT, class GSO_FT>
-void prune(/*output*/ vector<double> &pr, double &probability,
-           /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m,
-           int start_row, int end_row)
-{
-
-  Pruner<FP_NR<double>> pru;
-
-  pru.enumeration_radius   = enumeration_radius;
-  pru.target_probability = target_probability;
-  pru.preproc_cost         = preproc_cost;
-  pru.load_basis_shape(m, start_row, end_row);
-  pru.optimize_coefficients(pr);
-  probability = pru.svp_probability(pr);
-}
-
-template <class FT, class GSO_ZT, class GSO_FT>
-void prune(Pruning &pruning,
-           /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
-           int start_row, int end_row)
-{
-  if (!end_row)
-    end_row = m.d;
-  Pruner<FP_NR<double> > pru;
-  pru.enumeration_radius   = enumeration_radius;
-  pru.target_probability = target_probability;
-  pru.preproc_cost         = preproc_cost;
-  pru.load_basis_shape(m, start_row, end_row);
-
-  long expo = 0;
-  FT gh_radius = m.get_r_exp(start_row, start_row, expo);
-  FT root_det = m.get_root_det(start_row, end_row);
-  gaussian_heuristic(gh_radius, expo, end_row - start_row, root_det, 1.0);
-
-  pru.optimize_coefficients(pruning.coefficients);
-  pruning.probability = pru.svp_probability(pruning.coefficients);
-  pruning.radius_factor = enumeration_radius/(gh_radius.get_d() * pow(2,expo) );
-}
 
 /** instantiate functions **/
 
 template class Pruner<FP_NR<double> >;
 template void prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<double> >&, int, int);
+template double svp_probability<FP_NR<double> >(const Pruning&);
+template double svp_probability<FP_NR<double> >(const vector<double> &);
+
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class Pruner<FP_NR<long double> >;
 template void prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<long double> >&, int, int);
+template double svp_probability<FP_NR<long double> >(const Pruning&);
+template double svp_probability<FP_NR<long double> >(const vector<double> &);
+
 #endif
 
 #ifdef FPLLL_WITH_QD
 template class Pruner<FP_NR<dd_real> >;
 template void prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dd_real> >&, int, int);;
+template double svp_probability<FP_NR<dd_real> >(const Pruning&);
+template double svp_probability<FP_NR<dd_real> >(const vector<double> &);
+
 
 template class Pruner<FP_NR<qd_real> >;
 template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<qd_real> >&, int, int);
+template double svp_probability<FP_NR<qd_real> >(const Pruning&);
+template double svp_probability<FP_NR<qd_real> >(const vector<double> &);
+
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template class Pruner<FP_NR<dpe_t> >;
 template void prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t> >&, int, int);
+template double svp_probability<FP_NR<dpe_t> >(const Pruning&);
+template double svp_probability<FP_NR<dpe_t> >(const vector<double> &);
+
 #endif
 
 template class Pruner<FP_NR<mpfr_t> >;
 template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t> >&, int, int);
+template double svp_probability<FP_NR<mpfr_t> >(const Pruning&);
+template double svp_probability<FP_NR<mpfr_t> >(const vector<double> &);
 
 FPLLL_END_NAMESPACE

@@ -61,6 +61,61 @@ FPLLL_BEGIN_NAMESPACE
 #define PRUNER_MAX_D 1023
 #define PRUNER_MAX_N 2047
 
+
+/**
+   @brief prune function, hiding the Pruner class
+
+   @param pr
+   @param probability
+   @param enumeration_radius
+   @param preproc_cost
+   @param target_probability
+   @param m
+   @param start_row
+   @param end_row
+*/
+
+template <class FT, class GSO_ZT, class GSO_FT>
+void prune(/*output*/ vector<double> &pr, double &probability,
+           /*inputs*/ const double enumeration_radius, const double preproc_cost,
+           const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m,
+           int start_row = 0, int end_row = 0);
+
+/**
+   @brief prune function, hiding the Pruner class
+
+   @param pruning
+   @param enumeration_radius
+   @param preproc_cost
+   @param target_probability
+   @param m
+   @param start_row
+   @param end_row
+   @return
+*/
+
+template <class FT, class GSO_ZT, class GSO_FT>
+void prune(Pruning &pruning,
+           /*inputs*/ const double enumeration_radius, const double preproc_cost,
+           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
+           int start_row = 0, int end_row = 0);
+
+
+/**
+   @brief svp_probability function, hiding the Pruner class
+
+   @param pruning
+   @return pruning probability
+*/
+
+
+template <class FT>
+double svp_probability(const Pruning &pruning);
+
+template <class FT>
+double svp_probability(const vector<double> &pr);
+
+
 template <class FT> class Pruner
 {
 public:
@@ -138,6 +193,10 @@ public:
      @brief Compute the success proba of a single enumeration
   */
   double svp_probability(/*i*/ const vector<double> &pr) {
+    if (!n){ // Can be called even if no basis has been loaded. In that case, set the dims
+        n = pr.size();
+        d = n / 2;  
+      }
     evec b;
     load_coefficients(b, pr);
     return svp_probability(b).get_d();
@@ -201,44 +260,6 @@ private:
   FT symmetry_factor;  //< Set at 2 for SVP enumeration assuming the implem only explore half the
                        //< space
 };
-
-/**
-   @brief prune function, hiding the Pruner class
-
-   @param pr
-   @param probability
-   @param enumeration_radius
-   @param preproc_cost
-   @param target_probability
-   @param m
-   @param start_row
-   @param end_row
-*/
-
-template <class FT, class GSO_ZT, class GSO_FT>
-void prune(/*output*/ vector<double> &pr, double &probability,
-           /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m,
-           int start_row = 0, int end_row = 0);
-
-/**
-   @brief prune function, hiding the Pruner class
-
-   @param pruning
-   @param enumeration_radius
-   @param preproc_cost
-   @param target_probability
-   @param m
-   @param start_row
-   @param end_row
-   @return
-*/
-
-template <class FT, class GSO_ZT, class GSO_FT>
-void prune(Pruning &pruning,
-           /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
-           int start_row = 0, int end_row = 0);
 
 FPLLL_END_NAMESPACE
 
