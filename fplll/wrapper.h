@@ -81,6 +81,32 @@ private:
   int last_early_red;
 };
 
+#define FPLLL_DECLARE_LLL(T)                                                \
+int lll_reduction(ZZ_mat<T>& b,                                              \
+        double delta = LLL_DEF_DELTA, double eta = LLL_DEF_ETA,             \
+        LLLMethod method = LM_WRAPPER, FloatType floatType = FT_DEFAULT,    \
+        int precision = 0, int flags = LLL_DEFAULT);                        \
+                                                                            \
+int lll_reduction(ZZ_mat<T>& b, ZZ_mat<T>& u,                                \
+        double delta = LLL_DEF_DELTA, double eta = LLL_DEF_ETA,             \
+        LLLMethod method = LM_WRAPPER, FloatType floatType = FT_DEFAULT,    \
+        int precision = 0, int flags = LLL_DEFAULT);                        \
+                                                                            \
+int lll_reduction(ZZ_mat<T>& b, ZZ_mat<T>& u, ZZ_mat<T>& u_inv,               \
+        double delta = LLL_DEF_DELTA, double eta = LLL_DEF_ETA,             \
+        LLLMethod method = LM_WRAPPER, FloatType floatType = FT_DEFAULT,    \
+        int precision = 0, int flags = LLL_DEFAULT);
+
+FPLLL_DECLARE_LLL(mpz_t)
+
+#ifdef FPLLL_WITH_ZLONG
+FPLLL_DECLARE_LLL(long)
+#endif
+
+#ifdef FPLLL_WITH_ZDOUBLE
+FPLLL_DECLARE_LLL(double)
+#endif
+
 FPLLL_END_NAMESPACE
 
 #endif
