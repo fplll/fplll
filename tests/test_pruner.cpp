@@ -131,7 +131,6 @@ public:
 
   int test_relative_volume()
   {
-    vector<double> rs;
     vector<double> pr;
     pr.resize(Nbis);
     cerr << "Testing relative volume" << endl;
