@@ -179,7 +179,7 @@ int test_int_rel(int d, int b, const int block_size, FloatType float_type = FT_D
   return status;
 }
 
-int main(int argc, char *argv[])
+int main(int /*argc*/, char** /*argv*/)
 {
 
   int status = 0;
