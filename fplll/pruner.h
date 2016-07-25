@@ -147,6 +147,10 @@ public:
   /** @brief enumeration radius (squared) */
   FT enumeration_radius;
 
+  /** @brief Verbosity parameter (0 = silent) */
+  int verbosity;
+
+
   Pruner();
 
   /** @brief load the shape of a basis from a MatGSO object. Can select a

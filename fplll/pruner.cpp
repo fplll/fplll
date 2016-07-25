@@ -518,8 +518,227 @@ template <class FT> void Pruner<FT>::init_coefficients(evec &b)
   enforce_bounds(b);
 }
 
+
+// Nelder-Mead method. Following the notation of 
+// https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
+
+#define ND_ALPHA 1
+#define ND_GAMMA 2
+#define ND_RHO 0.5
+#define ND_SIGMA 0.5
+
+
 template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
-  return 0;
+  size_t l = d+1;
+  evec * bs = new evec[l]; // The simplexe (d+1) vector of dim d
+  FT * fs = new FT[l];     // Values of f at the simplex vertices
+
+  for (size_t i = 0; i < l; ++i) // Intialize the simplex
+  {
+    bs[i] = b;            // One of the is b    
+    if (i<d){         
+      if (bs[i][i] <.5) 
+      {
+        bs[i][i] += .1;  // the other are perturbations on b of +/- const
+      }
+      else
+      {
+        bs[i][i] -= .1;  // sign is chosen to avoid getting close to the border of the domain
+      }
+    }
+    enforce_bounds(bs[i]);
+    fs[i] = repeated_enum_cost(bs[i]);  // initialize the value
+  }
+
+  FT init_cf = fs[0];
+
+
+  evec bo; // centeroid
+  FT fo; // value at the centroid
+
+  FT fs_maxi_last; // value of the last centroid
+  
+  if (verbosity)
+  {
+    cerr << "  Starting nelder_mead cf = " << fs_maxi_last  << " proba = " << svp_probability(b)  << endl;
+  }
+  unsigned int counter = 0;
+  size_t mini = 0, maxi = 0, maxi2 = 0;
+  while(1)  // Main loop
+  {
+    mini = maxi = maxi2 = 0;
+    for (size_t i = 1; i < d; ++i) bo[i] = bs[0][i];
+    ////////////////
+    // step 1. and 2. : Order and centroid
+    ////////////////
+    for (size_t i = 1; i < l; ++i) // determine min and max, and centroid
+    {
+      if (fs[i]<fs[mini]) mini = i;
+      if (fs[i]>fs[maxi]) maxi = i;
+      for (size_t j = 0; j < d; ++j) bo[j] += bs[i][j];
+    }
+    FT tmp;
+    tmp = l;
+    for (size_t i = 0; i < d; ++i) bo[i] /= tmp; // Centroid calculated
+
+    if (!counter)
+      fs_maxi_last = fs[maxi];
+
+    if (!maxi) maxi2++;
+    for (size_t i = 1; i < l; ++i) // determine min and max, and centroid
+    {
+      if ((fs[i]>fs[maxi2]) && (i != maxi)) maxi2 = i;
+    }
+
+
+    if (enforce_bounds(bo))
+    {
+      throw std::runtime_error("Concavity says that should not happen.");
+    }    
+
+    if (verbosity){
+      cerr << "  melder_mead step " << counter << "cf = " 
+           << fs[mini]  << " proba = " << svp_probability(bo)  << endl;
+    }
+
+    ////////////////
+    // Stopping condition (Not documented on wikipedia, improvising)
+    ////////////////
+
+    counter++;
+    if (! (counter % l)) // Every l steps, we check progress and stop if none is done
+    {
+      if (fs[maxi] > fs_maxi_last * min_cf_decrease)  {
+        break;
+      }
+      fs_maxi_last = fs[maxi];
+    }
+    
+    for (size_t i = 0; i < l; ++i) // determine second best
+    {
+      if ((fs[i]>fs[maxi2]) && (i != maxi)) maxi2 = i;
+    }
+
+    if (verbosity){
+      cerr << mini << " " << maxi2 << " " <<  maxi << endl;
+      cerr << fs[mini] << " < " << fs[maxi2] << " < " << fs[maxi] << " | " << endl;
+    }
+
+
+    ////////////////
+    // step 3. Reflection
+    ////////////////
+
+    evec br; // reflected point
+    FT fr; // Value at the reflexion point
+    for (size_t i = 0; i < d; ++i) 
+      br[i] = bo[i] + ND_ALPHA * (bo[i] - bs[maxi][i]);
+    enforce_bounds(br);
+    fr = repeated_enum_cost(br);
+    if (verbosity){
+      cerr << "fr " << fr << endl;
+    }
+
+    if ((fs[mini] <= fr) && (fr < fs[maxi2]))
+    {
+      bs[maxi] = br;
+      fs[maxi] = fr;
+      if (verbosity){
+        cerr << "    Reflection " << endl;
+      }
+      continue; // Go to step 1.
+    }
+
+    ////////////////
+    // step 4. Expansion
+    ////////////////
+
+    if (fr < fs[mini]){
+      evec be;
+      FT fe;
+      for (size_t i = 0; i < d; ++i) 
+        be[i] = bo[i] + ND_GAMMA * (br[i] - bo[i]);
+      enforce_bounds(be);
+      fe = repeated_enum_cost(be);
+      
+      if (fe < fr)
+      {
+        bs[maxi] = be;
+        fs[maxi] = fe;
+        if (verbosity){
+          cerr << "    Expansion A " << endl;
+        }
+        continue; // Go to step 1.
+      }
+      else
+      {
+        bs[maxi] = br;
+        fs[maxi] = fr;
+        if (verbosity){
+          cerr << "    Expansion B " << endl;
+        }
+        continue; // Go to step 1.
+      }
+    }
+
+    ////////////////
+    // step 5. Contraction 
+    ////////////////
+
+    if ( ! (fr >= fs[maxi2])) // Here, it is certain that fr >= fs[maxi2]
+    {
+      throw std::runtime_error("Something certain is false in Nelder-Mead.");
+    }
+
+    evec bc;
+    FT fc;
+    for (size_t i = 0; i < d; ++i) 
+      bc[i] = bo[i] + ND_RHO * (bs[maxi][i] - bo[i]);
+    enforce_bounds(bc);
+    fc = repeated_enum_cost(bc);
+    if (fc < fs[maxi])
+    {
+        bs[maxi] = bc;
+        fs[maxi] = fc;
+        if (verbosity){
+          cerr << "    Contraction " << endl;
+        }
+        continue; // Go to step 1.
+    }
+
+    ////////////////
+    // step 6. Shrink
+    ////////////////
+    if (verbosity){
+      cerr << "    Shrink " << endl;
+    }
+    for (size_t j = 0; j < l; ++j)
+    {
+      for (size_t i = 0; i < d; ++i)
+      {
+        bs[j][i] = bs[mini][i] + ND_SIGMA * (bs[j][i] - bs[mini][i]);
+      }
+    enforce_bounds(bs[j]);
+    fs[j] = repeated_enum_cost(bs[j]);  // initialize the value
+    }
+  }
+
+  b = bs[mini];
+  int improved  = (init_cf * min_cf_decrease ) > fs[mini];
+
+  if (verbosity){
+    cerr << "Done nelder_mead, after " << counter << " steps" << endl;
+    cerr << "Final cf = " << fs[mini]  << " proba = " << svp_probability(b)  << endl << endl;
+    if (improved)
+    cerr << "Progess has been made: init cf = " << init_cf << endl;
+  }
+
+
+  delete[] fs;
+  delete[] bs;
+  
+  return improved; // Has MN made any progress
+
 }
 
 
