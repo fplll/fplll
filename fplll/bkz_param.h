@@ -51,33 +51,7 @@ public:
       @param level number of levels in linear descent
   */
 
-  static Pruning LinearPruning(int block_size, int level)
-  {
-
-    Pruning pruning   = Pruning();
-    int start_descent = block_size - level;
-
-    if (start_descent > block_size)
-      start_descent = block_size;
-
-    if (start_descent < 1)
-      start_descent = 1;
-
-    pruning.coefficients.resize(block_size);
-    for (int k = 0; k < start_descent; k++)
-    {
-      pruning.coefficients[k] = 1.0;
-    }
-    for (int k = 0; k < block_size - start_descent; k++)
-    {
-      pruning.coefficients[start_descent + k] = ((double)(block_size - k - 1)) / block_size;
-    }
-    // TODO: need to adapt probability
-    pruning.radius_factor = 1.0;
-    pruning.probability   = 1.0;
-
-    return pruning;
-  }
+  static Pruning LinearPruning(int block_size, int level);
 };
 
 /**
