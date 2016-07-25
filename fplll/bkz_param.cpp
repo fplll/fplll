@@ -64,9 +64,9 @@ const Pruning &Strategy::get_pruning(double radius, double gh) const
 
   for (auto it = pruning_parameters.begin(); it != pruning_parameters.end(); ++it)
   {
-    if (abs(it->radius_factor - gh_factor) < closest_dist)
+    if (fabs(it->radius_factor - gh_factor) < closest_dist)
     {
-      closest_dist = abs(it->radius_factor - gh_factor);
+      closest_dist = fabs(it->radius_factor - gh_factor);
       best         = it;
     }
   }
