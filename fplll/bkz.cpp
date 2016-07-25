@@ -691,9 +691,6 @@ template <class FT> bool BKZAutoAbort<FT>::test_abort(double scale, int maxNoDec
   return no_dec >= maxNoDec;
 }
 
-/**
-   Force instantiation of templates
-*/
 
 /**
  * call LLLReduction() and then BKZReduction.
