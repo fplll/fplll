@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['pruner_5fmax_5fd',['PRUNER_MAX_D',['../pruner_8h.html#add1afa52103772f2bda00841754e76ad',1,'pruner.h']]],
-  ['pruner_5fmax_5fn',['PRUNER_MAX_N',['../pruner_8h.html#a9c217e9d64736eb9785881809870b507',1,'pruner.h']]],
-  ['pruner_5fmax_5fprec',['PRUNER_MAX_PREC',['../pruner_8h.html#af96b9207cafb722eae7a10db6f10dbd7',1,'pruner.h']]]
+  ['maxtemplateddimension',['MAXTEMPLATEDDIMENSION',['../enumerate__base_8h.html#a29efc15d2ef0916a7ed492626ecae6ca',1,'enumerate_base.h']]]
 ];

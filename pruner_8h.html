@@ -52,6 +52,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -114,7 +115,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="pruner_8h__dep__incl.svg" width="1230" height="619"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="pruner_8h__dep__incl.svg" width="1142" height="262"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 </div>
@@ -144,6 +145,13 @@ Functions</h2></td></tr>
 <tr class="memitem:a8358c895acdb5d23277797cf7cc61085"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8h.html#a8358c895acdb5d23277797cf7cc61085">prune</a> (<a class="el" href="classPruning.html">Pruning</a> &amp;pruning, const double enumeration_radius, const double preproc_cost, const double target_probability, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &amp;m, int start_row=0, int end_row=0)</td></tr>
 <tr class="memdesc:a8358c895acdb5d23277797cf7cc61085"><td class="mdescLeft">&#160;</td><td class="mdescRight">prune function, hiding the <a class="el" href="classPruner.html">Pruner</a> class  <a href="#a8358c895acdb5d23277797cf7cc61085">More...</a><br /></td></tr>
 <tr class="separator:a8358c895acdb5d23277797cf7cc61085"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae831d228555a77df78c551b67319c1a5"><td class="memTemplParams" colspan="2">template&lt;class FT &gt; </td></tr>
+<tr class="memitem:ae831d228555a77df78c551b67319c1a5"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8h.html#ae831d228555a77df78c551b67319c1a5">svp_probability</a> (const <a class="el" href="classPruning.html">Pruning</a> &amp;pruning)</td></tr>
+<tr class="memdesc:ae831d228555a77df78c551b67319c1a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">svp_probability function, hiding the <a class="el" href="classPruner.html">Pruner</a> class  <a href="#ae831d228555a77df78c551b67319c1a5">More...</a><br /></td></tr>
+<tr class="separator:ae831d228555a77df78c551b67319c1a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0472a4e583fd0cd3ec669480c0896d63"><td class="memTemplParams" colspan="2">template&lt;class FT &gt; </td></tr>
+<tr class="memitem:a0472a4e583fd0cd3ec669480c0896d63"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8h.html#a0472a4e583fd0cd3ec669480c0896d63">svp_probability</a> (const vector&lt; double &gt; &amp;pr)</td></tr>
+<tr class="separator:a0472a4e583fd0cd3ec669480c0896d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a class="anchor" id="add1afa52103772f2bda00841754e76ad"></a>
@@ -351,6 +359,51 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="ae831d228555a77df78c551b67319c1a5"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double svp_probability </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classPruning.html">Pruning</a> &amp;&#160;</td>
+          <td class="paramname"><em>pruning</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>svp_probability function, hiding the <a class="el" href="classPruner.html">Pruner</a> class </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pruning</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>pruning probability </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a0472a4e583fd0cd3ec669480c0896d63"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double svp_probability </td>
+          <td>(</td>
+          <td class="paramtype">const vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.8-->
 <!-- start footer part -->
@@ -360,7 +413,7 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 </div>
 </div>
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 20 2016 12:15:56 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 25 2016 16:07:06 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

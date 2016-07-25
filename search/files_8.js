@@ -1,5 +1,19 @@
 var searchData=
 [
-  ['pruner_2ecpp',['pruner.cpp',['../pruner_8cpp.html',1,'']]],
-  ['pruner_2eh',['pruner.h',['../pruner_8h.html',1,'']]]
+  ['nr_2eh',['nr.h',['../nr_8h.html',1,'']]],
+  ['nr_5ffp_2einl',['nr_FP.inl',['../nr__FP_8inl.html',1,'']]],
+  ['nr_5ffp_5fd_2einl',['nr_FP_d.inl',['../nr__FP__d_8inl.html',1,'']]],
+  ['nr_5ffp_5fdd_2einl',['nr_FP_dd.inl',['../nr__FP__dd_8inl.html',1,'']]],
+  ['nr_5ffp_5fdpe_2einl',['nr_FP_dpe.inl',['../nr__FP__dpe_8inl.html',1,'']]],
+  ['nr_5ffp_5fld_2einl',['nr_FP_ld.inl',['../nr__FP__ld_8inl.html',1,'']]],
+  ['nr_5ffp_5fmisc_2einl',['nr_FP_misc.inl',['../nr__FP__misc_8inl.html',1,'']]],
+  ['nr_5ffp_5fmpfr_2einl',['nr_FP_mpfr.inl',['../nr__FP__mpfr_8inl.html',1,'']]],
+  ['nr_5ffp_5fqd_2einl',['nr_FP_qd.inl',['../nr__FP__qd_8inl.html',1,'']]],
+  ['nr_5frand_2einl',['nr_rand.inl',['../nr__rand_8inl.html',1,'']]],
+  ['nr_5fz_2einl',['nr_Z.inl',['../nr__Z_8inl.html',1,'']]],
+  ['nr_5fz_5fd_2einl',['nr_Z_d.inl',['../nr__Z__d_8inl.html',1,'']]],
+  ['nr_5fz_5fl_2einl',['nr_Z_l.inl',['../nr__Z__l_8inl.html',1,'']]],
+  ['nr_5fz_5fmisc_2einl',['nr_Z_misc.inl',['../nr__Z__misc_8inl.html',1,'']]],
+  ['nr_5fz_5fmpz_2einl',['nr_Z_mpz.inl',['../nr__Z__mpz_8inl.html',1,'']]],
+  ['numvect_2eh',['numvect.h',['../numvect_8h.html',1,'']]]
 ];
