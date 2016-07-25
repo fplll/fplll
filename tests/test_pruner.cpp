@@ -145,7 +145,7 @@ public:
       pr[i + (Nbis / 2)] = .3;
     }
 
-    proba = svp_probability2<FP_NR<double>>(pr);
+    proba = fplll::svp_probability<FP_NR<double>>(pr);
     error = std::abs(1 - proba / 0.07822479096);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -158,7 +158,7 @@ public:
       pr[i + (Nbis / 2)] = .5;
     }
 
-    proba = svp_probability2<FP_NR<double>>(pr);
+    proba = fplll::svp_probability<FP_NR<double>>(pr);
     error = std::abs(1 - proba / 0.5);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -169,7 +169,7 @@ public:
       pr[i + (Nbis / 2)] = .7;
     }
 
-    proba = svp_probability2<FP_NR<double>>(pr);
+    proba = fplll::svp_probability<FP_NR<double>>(pr);
     error = std::abs(1 - proba / 0.92177520904);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
