@@ -6,9 +6,9 @@ strategydir = $(pkgdatadir)/strategies
 AM_CPPFLAGS = -DFPLLL_DEFAULT_STRATEGY_PATH=\"$(strategydir)\" -DFPLLL_DEFAULT_STRATEGY=\"$(strategydir)/default.json\"
 
 nobase_include_fplll_HEADERS=defs.h fplll.h \
-  nr/dpe.h \
-  nr/matrix.h \
-  nr/matrix.cpp \
+	nr/dpe.h \
+	nr/matrix.h \
+	nr/matrix.cpp \
 	nr/nr_FP_dd.inl \
 	nr/nr_FP_d.inl \
 	nr/nr_FP_dpe.inl \
@@ -39,7 +39,7 @@ EXTRA_PROGRAMS=fplll_dbg
 
 # fplll bin
 fplll_SOURCES=main.cpp main.h \
-  fplll.cpp fplll.h \
+	fplll.cpp fplll.h \
 	util.cpp util.h \
 	enum/topenum.cpp enum/topenum.h \
 	enum/enumerate.cpp enum/enumerate.h \
