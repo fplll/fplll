@@ -64,13 +64,13 @@ void prune(Pruning &pruning,
 }
 
 template <class FT>
-double svp_probability2(const Pruning pruning){
+double svp_probability(const Pruning &pruning){
   Pruner<FT> pru;
   return pru.svp_probability(pruning.coefficients);
 }
 
 template <class FT>
-double svp_probability2(const vector<double> &pr){
+double svp_probability(const vector<double> &pr){
   Pruner<FT> pru;
   return pru.svp_probability(pr);
 }
@@ -520,43 +520,43 @@ template <class FT> void Pruner<FT>::init_coefficients(evec &b)
 
 template class Pruner<FP_NR<double> >;
 template void prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<double> >&, int, int);
-template double svp_probability2<FP_NR<double> >(const Pruning);
-template double svp_probability2<FP_NR<double> >(const vector<double> &);
+template double svp_probability<FP_NR<double> >(const Pruning&);
+template double svp_probability<FP_NR<double> >(const vector<double> &);
 
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class Pruner<FP_NR<long double> >;
 template void prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<long double> >&, int, int);
-template double svp_probability2<FP_NR<long double> >(const Pruning);
-template double svp_probability2<FP_NR<long double> >(const vector<double> &);
+template double svp_probability<FP_NR<long double> >(const Pruning&);
+template double svp_probability<FP_NR<long double> >(const vector<double> &);
 
 #endif
 
 #ifdef FPLLL_WITH_QD
 template class Pruner<FP_NR<dd_real> >;
 template void prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dd_real> >&, int, int);;
-template double svp_probability2<FP_NR<dd_real> >(const Pruning);
-template double svp_probability2<FP_NR<dd_real> >(const vector<double> &);
+template double svp_probability<FP_NR<dd_real> >(const Pruning&);
+template double svp_probability<FP_NR<dd_real> >(const vector<double> &);
 
 
 template class Pruner<FP_NR<qd_real> >;
 template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<qd_real> >&, int, int);
-template double svp_probability2<FP_NR<qd_real> >(const Pruning);
-template double svp_probability2<FP_NR<qd_real> >(const vector<double> &);
+template double svp_probability<FP_NR<qd_real> >(const Pruning&);
+template double svp_probability<FP_NR<qd_real> >(const vector<double> &);
 
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template class Pruner<FP_NR<dpe_t> >;
 template void prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t> >&, int, int);
-template double svp_probability2<FP_NR<dpe_t> >(const Pruning);
-template double svp_probability2<FP_NR<dpe_t> >(const vector<double> &);
+template double svp_probability<FP_NR<dpe_t> >(const Pruning&);
+template double svp_probability<FP_NR<dpe_t> >(const vector<double> &);
 
 #endif
 
 template class Pruner<FP_NR<mpfr_t> >;
 template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t> > (Pruning&, const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t> >&, int, int);
-template double svp_probability2<FP_NR<mpfr_t> >(const Pruning);
-template double svp_probability2<FP_NR<mpfr_t> >(const vector<double> &);
+template double svp_probability<FP_NR<mpfr_t> >(const Pruning&);
+template double svp_probability<FP_NR<mpfr_t> >(const vector<double> &);
 
 FPLLL_END_NAMESPACE
