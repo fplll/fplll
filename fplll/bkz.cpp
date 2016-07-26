@@ -20,6 +20,8 @@
 #include "bkz.h"
 #include "bkz_param.h"
 #include "enum/enumerate.h"
+#include "util.h"
+#include "wrapper.h"
 #include <iomanip>
 
 FPLLL_BEGIN_NAMESPACE
@@ -689,9 +691,134 @@ template <class FT> bool BKZAutoAbort<FT>::test_abort(double scale, int maxNoDec
   return no_dec >= maxNoDec;
 }
 
+
 /**
-   Force instantiation of templates
-*/
+ * call LLLReduction() and then BKZReduction.
+ */
+
+template <class FT>
+int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_delta, IntMatrix &u,
+                    IntMatrix &u_inv)
+{
+  int gso_flags = 0;
+  if (b.get_rows() == 0 || b.get_cols() == 0)
+    return RED_SUCCESS;
+  if (sel_ft == FT_DOUBLE || sel_ft == FT_LONG_DOUBLE)
+    gso_flags |= GSO_ROW_EXPO;
+  MatGSO<Integer, FT> m_gso(b, u, u_inv, gso_flags);
+  LLLReduction<Integer, FT> lll_obj(m_gso, lll_delta, LLL_DEF_ETA, LLL_DEFAULT);
+  BKZReduction<FT> bkz_obj(m_gso, lll_obj, param);
+  bkz_obj.bkz();
+  return bkz_obj.status;
+}
+
+/**
+ * interface called from call_bkz() from main.cpp.
+ */
+int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType float_type,
+                 int precision)
+{
+  IntMatrix empty_mat;
+  IntMatrix &u    = U ? *U : empty_mat;
+  IntMatrix &u_inv = empty_mat;
+  FPLLL_CHECK(B, "B == NULL in bkzReduction");
+
+  if (U && (!u.empty()))
+  {
+    u.gen_identity(B->get_rows());
+  }
+
+  double lll_delta = param.delta < 1 ? param.delta : LLL_DEF_DELTA;
+
+  FloatType sel_ft = (float_type != FT_DEFAULT) ? float_type : FT_DOUBLE;
+  FPLLL_CHECK(!(sel_ft == FT_MPFR && precision == 0),
+              "Missing precision for BKZ with floating point type mpfr");
+
+  /* lllwrapper (no FloatType needed, -m ignored) */
+  if (param.flags & BKZ_NO_LLL)
+    zeros_last(*B, u, u_inv);
+  else
+  {
+    Wrapper wrapper(*B, u, u_inv, lll_delta, LLL_DEF_ETA, LLL_DEFAULT);
+    if (!wrapper.lll())
+      return wrapper.status;
+  }
+
+  /* bkz (with float_type) */
+  int status;
+  if (sel_ft == FT_DOUBLE)
+  {
+    status = bkz_reduction_f<FP_NR<double>>(*B, param, sel_ft, lll_delta, u, u_inv);
+  }
+#ifdef FPLLL_WITH_LONG_DOUBLE
+  else if (sel_ft == FT_LONG_DOUBLE)
+  {
+    status = bkz_reduction_f<FP_NR<long double>>(*B, param, sel_ft, lll_delta, u, u_inv);
+  }
+#endif
+#ifdef FPLLL_WITH_DPE
+  else if (sel_ft == FT_DPE)
+  {
+    status = bkz_reduction_f<FP_NR<dpe_t>>(*B, param, sel_ft, lll_delta, u, u_inv);
+  }
+#endif
+#ifdef FPLLL_WITH_QD
+  else if (sel_ft == FT_DD)
+  {
+    status = bkz_reduction_f<FP_NR<dd_real>>(*B, param, sel_ft, lll_delta, u, u_inv);
+  }
+  else if (sel_ft == FT_QD)
+  {
+    status = bkz_reduction_f<FP_NR<qd_real>>(*B, param, sel_ft, lll_delta, u, u_inv);
+  }
+#endif
+  else if (sel_ft == FT_MPFR)
+  {
+    int old_prec = FP_NR<mpfr_t>::set_prec(precision);
+    status = bkz_reduction_f<FP_NR<mpfr_t>>(*B, param, sel_ft, lll_delta, u, u_inv);
+    FP_NR<mpfr_t>::set_prec(old_prec);
+  }
+  else
+  {
+    FPLLL_ABORT("Compiled without support for BKZ reduction with " << FLOAT_TYPE_STR[sel_ft]);
+  }
+  zeros_first(*B, u, u_inv);
+  return status;
+}
+
+/**
+ * We define BKZ/HKZ for each input type instead of using a template,
+ * in order to force the compiler to instantiate the functions.
+ */
+int bkz_reduction(IntMatrix &b, int block_size, int flags, FloatType float_type, int precision)
+{
+  vector<Strategy> strategies;
+  BKZParam param(block_size, strategies);
+  param.flags = flags;
+  return bkz_reduction(&b, NULL, param, float_type, precision);
+}
+
+int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags, FloatType float_type,
+                  int precision)
+{
+  vector<Strategy> strategies;
+  BKZParam param(block_size, strategies);
+  param.flags = flags;
+  return bkz_reduction(&b, &u, param, float_type, precision);
+}
+
+int hkz_reduction(IntMatrix &b, int flags, FloatType float_type, int precision)
+{
+  vector<Strategy> strategies;
+  BKZParam param(b.get_rows(), strategies);
+  param.block_size = b.get_rows();
+  param.delta      = 1;
+  if (flags & HKZ_VERBOSE)
+    param.flags |= BKZ_VERBOSE;
+  return bkz_reduction(&b, NULL, param, float_type, precision);
+}
+
+/** enforce instantiation of complete templates **/
 
 template class BKZReduction<FP_NR<double>>;
 template class BKZAutoAbort<FP_NR<double>>;
@@ -701,17 +828,17 @@ template class BKZReduction<FP_NR<long double>>;
 template class BKZAutoAbort<FP_NR<long double>>;
 #endif
 
+#ifdef FPLLL_WITH_DPE
+template class BKZReduction<FP_NR<dpe_t>>;
+template class BKZAutoAbort<FP_NR<dpe_t>>;
+#endif
+
 #ifdef FPLLL_WITH_QD
 template class BKZReduction<FP_NR<dd_real>>;
 template class BKZAutoAbort<FP_NR<dd_real>>;
 
 template class BKZReduction<FP_NR<qd_real>>;
 template class BKZAutoAbort<FP_NR<qd_real>>;
-#endif
-
-#ifdef FPLLL_WITH_DPE
-template class BKZReduction<FP_NR<dpe_t>>;
-template class BKZAutoAbort<FP_NR<dpe_t>>;
 #endif
 
 template class BKZReduction<FP_NR<mpfr_t>>;

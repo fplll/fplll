@@ -60,3 +60,5 @@ stamp-h1
 /compile_commands.json
 /.clang-tidy
 doc/html/
+/fplll/latsieve
+/tests/test_sieve

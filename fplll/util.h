@@ -105,6 +105,15 @@ void sphere_volume(Float &volume, int d);
  */
 void cost_estimate(Float &cost, const Float &bound, const Matrix<Float> &r, int dimMax);
 
+template <class ZT> void zeros_first(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv_t);
+
+template <class ZT> void zeros_last(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv_t);
+
+/**
+ * Returns the string corresponding to an error code of LLL/BKZ.
+ */
+const char* get_red_status_str(int status);
+
 FPLLL_END_NAMESPACE
 
 #endif
