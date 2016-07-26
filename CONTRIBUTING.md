@@ -197,9 +197,9 @@ Furthermore, the pixel shortage is over. We want to see:
 - `grid` instead of `g`
 - `my_function_that_does_things` instead of `mftdt`
 
-### Tips for compilation
+### Faster compilation
 
-By default, libtool builds everything twice (make V=1 shows it), one for the static and oen for the dynamic library, cf. https://stackoverflow.com/questions/572760/libtool-slowness-double-building. If you want to avoid this double compiling time you can run ./configure --disable-static which disables building the static library.
+By default, libtool builds everything twice, one for the static and one for the dynamic library, cf. https://stackoverflow.com/questions/572760/libtool-slowness-double-building. If you want to avoid this double compiling time you can run ./configure --disable-static which disables building the static library.
 
 ### Attribution
 
