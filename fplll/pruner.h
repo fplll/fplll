@@ -61,9 +61,9 @@ FPLLL_BEGIN_NAMESPACE
 #define PRUNER_MAX_D 1023
 #define PRUNER_MAX_N 2047
 
-#define PRUNER_METHOD_GRADIENT 0
-#define PRUNER_METHOD_NM 1
-#define PRUNER_METHOD_HYBRID 2
+#define PRUNER_METHOD_GRADIENT 0    // Gradient Only
+#define PRUNER_METHOD_NM 1          // NealderMead Only
+#define PRUNER_METHOD_HYBRID 2      // Gradient followed by NelderMead
 
 
 
@@ -149,7 +149,7 @@ public:
 
   /** @brief Verbosity parameter (0 = silent) */
   int verbosity;
-
+  int descent_method;
 
   Pruner();
 

@@ -31,7 +31,7 @@ void prune(/*output*/ vector<double> &pr, double &probability,
 
   Pruner<FT> pru;
 
-  pru.enumeration_radius   = enumeration_radius;
+  pru.enumeration_radius   = (enumeration_radius);
   pru.target_probability = target_probability;
   pru.preproc_cost         = preproc_cost;
   pru.load_basis_shape(m, start_row, end_row);
@@ -48,7 +48,7 @@ void prune(Pruning &pruning,
   if (!end_row)
     end_row = m.d;
   Pruner<FT> pru;
-  pru.enumeration_radius   = enumeration_radius;
+  pru.enumeration_radius   = (enumeration_radius);
   pru.target_probability = target_probability;
   pru.preproc_cost         = preproc_cost;
   pru.load_basis_shape(m, start_row, end_row);
@@ -84,18 +84,22 @@ template <class FT> Pruner<FT>::Pruner()
   d = 0;
   set_tabulated_consts();
 
-  epsilon     = std::pow(2., -13);  // Guesswork. Will become obsolete with Nelder-Mead
-  min_step    = std::pow(2., -12);  // Guesswork. Will become obsolete with Nelder-Mead
-  step_factor = std::pow(2, .5);    // Guesswork. Will become obsolete with Nelder-Mead
+  epsilon     = std::pow(2., -13);  // Guesswork. 
+  min_step    = std::pow(2., -12);  // Guesswork. 
+  step_factor = std::pow(2, .5);    // Guesswork. 
   shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor
                        // 1/.995. Sounds fair.
   min_cf_decrease = .9999;  // We really want the gradient descent to reach the minima
   symmetry_factor = 2;      // For now, we are just considering SVP
 
+  descent_method = PRUNER_METHOD_NM; // Set the descent method to hybrid (gradient followed by Nelder-Mead)
+  verbosity = 1;
+
   preproc_cost         = 0.0;  // Please set your own value before running.
   enumeration_radius   = 0.0;  // Please set your own value before running.
   target_probability = .90;  // Please set your own value before running.
   preproc_cost         = 0.0;  // Please set your own value before running.
+
 }
 
 template <class FT> void Pruner<FT>::set_tabulated_consts()
@@ -281,17 +285,20 @@ template <class FT> void Pruner<FT>::save_coefficients(/*o*/ vector<double> &pr,
 template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j)
 {
   int status = 0;
-  if (b[d - 1] < 1)
+  if (b[d - 1] < .999)
   {
     status = 1;
   }
   b[d - 1] = 1;
   for (size_t i = 0; i < d; ++i)
   {
+    if (b[i] > 1.0001)
+    {
+      status =1;
+    }
     if (b[i] > 1)
     {
       b[i]   = 1.0;
-      status = 1;
     }
     if (b[i] <= .1)
       b[i] = .1;
@@ -300,16 +307,22 @@ template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt 
   {
     if (b[i + 1] < b[i])
     {
+      if (b[i + 1] + .001 < b[i] )
+      {
+        status = 1;
+      }
       b[i + 1] = b[i];
-      status   = 1;
     }
   }
   for (int i = j - 1; i >= 0; --i)
   {
     if (b[i + 1] < b[i])
     {
+      if (b[i + 1] + .001 < b[i] )
+      {
+        status = 1;
+      }
       b[i]   = b[i + 1];
-      status = 1;
     }
   }
   return status;
@@ -502,10 +515,21 @@ template <class FT> int Pruner<FT>::improve(/*io*/ evec &b)
   return i;
 }
 
+
 template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
 {
-  while (improve(b))
+
+  if ((descent_method == PRUNER_METHOD_GRADIENT) || (descent_method == PRUNER_METHOD_HYBRID))
   {
+    while (improve(b))
+    {
+    };
+  };
+  if ((descent_method == PRUNER_METHOD_NM) || (descent_method == PRUNER_METHOD_HYBRID))
+  {
+    while (nelder_mead(b))
+    {
+    };
   };
 }
 
@@ -526,7 +550,7 @@ template <class FT> void Pruner<FT>::init_coefficients(evec &b)
 #define ND_GAMMA 2
 #define ND_RHO 0.5
 #define ND_SIGMA 0.5
-
+#define ND_INIT_WIDTH 0.05
 
 template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
   size_t l = d+1;
@@ -539,18 +563,18 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
     if (i<d){         
       if (bs[i][i] <.5) 
       {
-        bs[i][i] += .1;  // the other are perturbations on b of +/- const
+        bs[i][i] += ND_INIT_WIDTH;  // the other are perturbations on b of +/- const
       }
       else
       {
-        bs[i][i] -= .1;  // sign is chosen to avoid getting close to the border of the domain
+        bs[i][i] -= ND_INIT_WIDTH;  // sign is chosen to avoid getting close to the border of the domain
       }
     }
     enforce_bounds(bs[i]);
     fs[i] = repeated_enum_cost(bs[i]);  // initialize the value
   }
 
-  FT init_cf = fs[0];
+  FT init_cf = fs[l-1];
 
 
   evec bo; // centeroid
@@ -560,14 +584,14 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
   
   if (verbosity)
   {
-    cerr << "  Starting nelder_mead cf = " << fs_maxi_last  << " proba = " << svp_probability(b)  << endl;
+    cerr << "  Starting nelder_mead cf = " << init_cf  << " proba = " << svp_probability(b)  << endl;
   }
   unsigned int counter = 0;
   size_t mini = 0, maxi = 0, maxi2 = 0;
   while(1)  // Main loop
   {
     mini = maxi = maxi2 = 0;
-    for (size_t i = 1; i < d; ++i) bo[i] = bs[0][i];
+    for (size_t i = 0; i < d; ++i) bo[i] = bs[0][i];
     ////////////////
     // step 1. and 2. : Order and centroid
     ////////////////
@@ -598,7 +622,12 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
 
     if (verbosity){
       cerr << "  melder_mead step " << counter << "cf = " 
-           << fs[mini]  << " proba = " << svp_probability(bo)  << endl;
+           << fs[mini]  << " proba = " << svp_probability(bs[mini]) << " cost = " << single_enum_cost(bs[mini])  << endl;
+      for (int i = 0; i < d; ++i)
+      {
+        cerr << ceil(bs[mini][i].get_d()*1000) << " ";
+      }
+      cerr << endl;
     }
 
     ////////////////
@@ -660,7 +689,7 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
         be[i] = bo[i] + ND_GAMMA * (br[i] - bo[i]);
       enforce_bounds(be);
       fe = repeated_enum_cost(be);
-      
+      cerr << "fe " << fe << endl;
       if (fe < fr)
       {
         bs[maxi] = be;
@@ -696,6 +725,7 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
       bc[i] = bo[i] + ND_RHO * (bs[maxi][i] - bo[i]);
     enforce_bounds(bc);
     fc = repeated_enum_cost(bc);
+    cerr << "fc " << fc << endl;
     if (fc < fs[maxi])
     {
         bs[maxi] = bc;
@@ -726,11 +756,13 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
   b = bs[mini];
   int improved  = (init_cf * min_cf_decrease ) > fs[mini];
 
-  if (verbosity){
+  if (1){
     cerr << "Done nelder_mead, after " << counter << " steps" << endl;
-    cerr << "Final cf = " << fs[mini]  << " proba = " << svp_probability(b)  << endl << endl;
+    cerr << "Final cf = " << fs[mini]  << " proba = " << svp_probability(b)  << endl;
     if (improved)
-    cerr << "Progess has been made: init cf = " << init_cf << endl;
+    {cerr << "Progess has been made: init cf = " << init_cf << endl;}
+    cerr << endl;
+  
   }
 
 
