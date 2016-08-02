@@ -2,6 +2,10 @@
 #include <fplll.h>
 #include <../fplll/sieve/sieve_main.h> /* standalone bin */
 
+#ifndef TESTDATADIR
+#define TESTDATADIR ".."
+#endif
+
 using namespace std;
 using namespace fplll;
 
@@ -104,8 +108,8 @@ int test_filename (const char *input_filename, const char *output_filename) {
 int main(int /*argc*/, char ** /*argv*/) {
 
   int status = 0;
-  status |= test_filename<mpz_t>("lattices/example_svp_in",
-                                 "lattices/example_svp_out");
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_svp_in",
+                                 TESTDATADIR "/tests/lattices/example_svp_out");
   if (status == 0)
   {
     cerr << "All tests passed." << endl;

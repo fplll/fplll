@@ -17,6 +17,11 @@
 #include <cstring>
 #include <fplll.h>
 
+#ifndef TESTDATADIR
+#define TESTDATADIR ".."
+#endif
+
+
 using namespace std;
 using namespace fplll;
 
@@ -327,11 +332,14 @@ int main(int argc, char *argv[])
 {
 
   int status = 0;
-  status |= test_filename<mpz_t>("lattices/example_svp_in", "lattices/example_svp_out");
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_svp_in",
+                                 TESTDATADIR "/tests/lattices/example_svp_out");
   status |=
-      test_filename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", DSVP_ENUM);
+      test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
+                           TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_ENUM);
   status |=
-      test_filename<mpz_t>("lattices/example_dsvp_in", "lattices/example_dsvp_out", DSVP_REDUCE);
+      test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
+                           TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_REDUCE);
 
   if (status == 0)
   {

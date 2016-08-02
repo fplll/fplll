@@ -63,3 +63,4 @@ doc/html/
 /fplll/sieve/*.o
 /fplll/latsieve
 /tests/test_sieve
+/fplll-?.?.?/

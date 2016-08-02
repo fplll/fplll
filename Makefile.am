@@ -1,6 +1,6 @@
 SUBDIRS=fplll tests
 include_fpllldir=$(includedir)/fplll
-EXTRA_DIST=README.md tools/reformat.pl tools/reformat_magma.pl tools/plot_gso_dump.py
+EXTRA_DIST=README.md tools/reformat.pl tools/reformat_magma.pl tools/plot_gso_dump.py strategies/default.json
 ACLOCAL_AMFLAGS=-I m4
 
 pkgconfigdir = $(libdir)/pkgconfig

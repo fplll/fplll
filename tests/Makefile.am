@@ -1,14 +1,19 @@
 AUTOMAKE_OPTIONS = foreign
-TOPSRCDIR = $(srcdir)/../fplll
-TOPBUILDDIR = $(builddir)/../fplll/
+TOPSRCDIR = $(srcdir)/..
+TOPBUILDDIR = $(builddir)/../fplll
 DEFINES =
 
 include_fpllldir=$(includedir)/fplll
 
-EXTRA_DIST=lattices/dim55_in lattices/example_in lattices/example_svp_in lattices/example_svp_out
+EXTRA_DIST=lattices/dim55_in \
+	lattices/example_in \
+	lattices/example_svp_in \
+	lattices/example_svp_out \
+	lattices/example_dsvp_in \
+	lattices/example_dsvp_out
 
 # include TOPBUILDIR for fplll_config.h
-AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPBUILDDIR)
+AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPSRCDIR)/fplll -I$(TOPBUILDDIR) -DTESTDATADIR=\"$(TOPSRCDIR)/\"
 
 STAGEDIR := $(realpath -s $(TOPBUILDDIR)/.libs)
 AM_LDFLAGS = -L$(STAGEDIR) -Wl,-rpath,$(STAGEDIR) -lfplll -no-install $(LIBQD_LIBADD)
