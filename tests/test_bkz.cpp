@@ -116,7 +116,7 @@ int test_bkz_param_linear_pruning(ZZ_mat<ZT> &A, const int block_size, int flags
   vector<Strategy> strategies;
   for (long b = 0; b < block_size; b++)
   {
-    Strategy strategy = Strategy::EmptyStrategy();
+    Strategy strategy = Strategy::EmptyStrategy(b);
     if (b == 10)
     {
       strategy.preprocessing_block_sizes.emplace_back(5);
