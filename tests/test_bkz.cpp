@@ -16,6 +16,10 @@
 #include <cstring>
 #include <fplll.h>
 
+#ifndef TESTDATADIR
+#define TESTDATADIR ".."
+#endif
+
 using namespace std;
 using namespace fplll;
 
@@ -153,7 +157,7 @@ int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_
 
   int status = 0;
 
-  vector<Strategy> strategies = load_strategies_json("../strategies/default.json");
+  vector<Strategy> strategies = load_strategies_json(TESTDATADIR "/strategies/default.json");
   BKZParam params(block_size, strategies);
   params.flags = flags;
   // zero on success

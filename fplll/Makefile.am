@@ -1,7 +1,9 @@
 include_fpllldir=$(includedir)/fplll
+TOPSRCDIR = $(srcdir)/..
 strategydir = $(pkgdatadir)/strategies
 # see https://stackoverflow.com/questions/5867136/autoconf-how-to-get-installation-paths-into-config-h
-AM_CPPFLAGS = -DFPLLL_DEFAULT_STRATEGY_PATH=\"$(strategydir)\" -DFPLLL_DEFAULT_STRATEGY=\"$(strategydir)/default.json\"
+AM_CPPFLAGS = -DFPLLL_DEFAULT_STRATEGY_PATH=\"$(strategydir)\" -DFPLLL_DEFAULT_STRATEGY=\"$(strategydir)/default.json\" -I$(TOPSRCDIR)
+EXTRA_DIST = io/json.hpp ballvol.const factorial.const
 
 nobase_include_fplll_HEADERS=defs.h fplll.h \
   nr/dpe.h \
@@ -74,11 +76,14 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	bkz_param.cpp bkz_param.h \
 	gso.cpp gso.h \
 	pruner.cpp pruner.h \
-  sieve/sieve_gauss.cpp \
-  sieve/sieve_gauss_str.h \
+	sieve/sieve_gauss.cpp \
+	sieve/sieve_gauss.h  \
+	sieve/sieve_common.h\
+	sieve/sieve_gauss_str.h \
 	sieve/sieve_gauss_2sieve.cpp \
 	sieve/sieve_gauss_3sieve.cpp \
 	sieve/sieve_gauss_4sieve.cpp \
+	sieve/sampler_basic.h \
 	sieve/sampler_basic.cpp
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
@@ -97,10 +102,10 @@ libfpllld_la_CXXFLAGS=-g $(AM_CXXFLAGS)
 libfpllld_la_LIBADD=$(libfplll_la_LIBADD)
 
 install-data-hook:
-	echo "#include <fplll/fplll.h>" > "$(srcdir)/fplll.h.root"
-	echo "using namespace fplll;" >> "$(srcdir)/fplll.h.root"
-	$(INSTALL) -m 644 "$(srcdir)/fplll.h.root" "${DESTDIR}$(includedir)/fplll.h"
-	rm -f "$(srcdir)/fplll.h.root"
+	echo "#include <fplll/fplll.h>" > "$(builddir)/fplll.h.root"
+	echo "using namespace fplll;" >> "$(builddir)/fplll.h.root"
+	$(INSTALL) -m 644 "$(builddir)/fplll.h.root" "${DESTDIR}$(includedir)/fplll.h"
+	rm -f "$(builddir)/fplll.h.root"
 
 uninstall-hook:
 	if test -d "${DESTDIR}$(includedir)/fplll/enum"; then rmdir "${DESTDIR}$(includedir)/fplll/enum"; fi
