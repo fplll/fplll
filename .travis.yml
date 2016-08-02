@@ -46,7 +46,7 @@ script:
 - "./configure"
 - make
 - make check
-- make dist
+- make distcheck
 
 notifications:
   on_success: change
