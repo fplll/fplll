@@ -27,6 +27,8 @@ Then run
 
 as usual.
 
+Note that the verbosity of ``make`` is set to low by default. To enable verbose output by default, use ``./configure --disable-silent-rules``. The verbosity can also be overridden at run time: ``make V=1`` will produce verbose output.
+
 ## Reporting Bugs ##
 
 Bug should be filed at [https://github.com/fplll/fplll/issues](https://github.com/fplll/fplll/issues). Alternatively, feel free to contact  [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel). The former method is definitely preferred though.
