@@ -162,7 +162,7 @@ and η'=2×η-1/2. For instance, with the default options, it is guaranteed that
 
 Options for BKZ-reduction:
 
-* `-b block_size` :             Block size, mandatory, between 2 and the number of vectors.
+* `-b block_size` :            Block size, mandatory, between 2 and the number of vectors.
 
 * `-f float_type` :            Same as LLL (`-p` is required if `float_type=mpfr`).
 * `-p precision` :             Precision of the floating-point arithmetic with `-f mpfr`.
@@ -173,9 +173,7 @@ Options for BKZ-reduction:
 
 Without any of the last three options, BKZ runs until no block has been updated for a full loop iteration.
 
-* `-bpre block_size` :         Pre-processing block size. Between 2 and the block size.
-* `-bkzlinearpruning level` :  Enables linear pruning in enumeration, such that the last level steps drop with slope -1/block_size.
-* `-s filename.json` :        Use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.
+* `-s filename.json` :         Use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.
 
 * `-bkzghbound factor` :       Multiplies the Gaussian heuristic by factor (of float type) to set the enumeration radius of the SVP calls.
 * `-bkzboundedlll` :	       Restricts the LLL call before considering a block to vector indices within that block.
