@@ -212,11 +212,14 @@ The options are:
 
 See [API documentation](https://fplll.github.io/fplll/).
 
+### Multicore support ###
+
+This library does not currently use multiple cores and running multiple threads working on the same object `IntegerMatrix`, `LLLReduction`, `MatGSO` etc. is not supported. Running multiple threads working on *different* objects, however, is supported. That is, there are no global variables and it is safe to e.g. reduce several lattices in parallel in the same process.
+
 ### Alternative interfaces ###
 
 - [fpylll](https://github.com/malb/fpylll) is a stand-alone Python interface for fplll.
 - fplll is included in [Sage](http://sagemath.org), see documentation for [IntegerMatrix](http://doc.sagemath.org/html/en/reference/matrices/sage/matrix/matrix_integer_dense.html) and [IntegerLattice](http://doc.sagemath.org/html/en/reference/modules/sage/modules/free_module_integer.html).
-
 
 ## Examples ##
 
