@@ -50,7 +50,7 @@ standard `--with-gmp` and `--with-mpfr` package specifications. The same philoso
 
 ### Optional ###
 - QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install
-  the shared library (e.g., `./configure --enable-shared=yes`).
+  the shared library (e.g. `./configure --enable-shared=yes`).
   [http://crd-legacy.lbl.gov/~dhbailey/mpdist/](http://crd-legacy.lbl.gov/~dhbailey/mpdist/)
 
 ## Installation ##
