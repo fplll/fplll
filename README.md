@@ -2,14 +2,13 @@
 
 [![Build Status](https://travis-ci.org/fplll/fplll.svg?branch=master)](https://travis-ci.org/fplll/fplll)
 
-fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL [LLL82] is central to the code, hence the name.  
+fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL [[LLL82](#LLL82)] is central to the code, hence the name.
 
+It includes implementations of floating-point LLL reduction algorithms [[NS09](#NS09),[MSV09](#MSV09)], offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible [[S10](#S10)]. In the case of the wrapper, the succession of variants is oblivious to the user. 
 
-It includes implementations of floating-point LLL reduction algorithms [NS09,MSV09], offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible [S10]. In the case of the wrapper, the succession of variants is oblivious to the user. 
+It includes an implementation of the BKZ reduction algorithm [[SE94](#SE94)], including the BKZ-2.0 [[CN11](#CN11)] improvements (extreme enumeration pruning, pre-processing of blocks, early termination). Additionally, Slide reduction [[GN08](#GN08)] and self dual BKZ [[MW16](#MW16)] are supported. 
 
-It includes an implementation of the BKZ reduction algorithm [SE94], including the BKZ-2.0 [CN11] improvements (extreme enumeration pruning, pre-processing of blocks, early termination). Additionally, Slide reduction [GN08] and self dual BKZ [MW16] are supported. 
-
-It also includes a floating-point implementation of the Kannan-Fincke-Pohst algorithm [K83,FP85] that finds a shortest non-zero lattice vector. For the same task, the GaussSieve algorithm [MV10] is also available in fplll. Finally, it contains a variant of the enumeration algorithm that computes a lattice vector closest to a given vector belonging to the real span of the lattice.
+It also includes a floating-point implementation of the Kannan-Fincke-Pohst algorithm [[K83](#K83),[FP85](#FP85)] that finds a shortest non-zero lattice vector. For the same task, the GaussSieve algorithm [[MV10](#MV10)] is also available in fplll. Finally, it contains a variant of the enumeration algorithm that computes a lattice vector closest to a given vector belonging to the real span of the lattice.
 
 fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of the License, or, at your option, any later version) as published by the Free Software Foundation.
 
@@ -50,7 +49,7 @@ standard `--with-gmp` and `--with-mpfr` package specifications. The same philoso
 
 ### Optional ###
 - QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install
-  the shared library (e.g., `./configure --enable-shared=yes`).
+  the shared library (e.g. `./configure --enable-shared=yes`).
   [http://crd-legacy.lbl.gov/~dhbailey/mpdist/](http://crd-legacy.lbl.gov/~dhbailey/mpdist/)
 
 ## Installation ##
@@ -98,12 +97,12 @@ lattice basis vectors).
 
 The options are:
 
-* `r` `d` `b` : generates a knapsack like matrix of dimension d x (d+1) and b bits (see, e.g., [S09]): the i-th vector starts with a random integer of bit-length <=b and the rest is the i-th canonical unit vector.
-* `s` `d` `b` `b2` : generates a d x d matrix of a form similar to that is involved when trying to find rational approximations to reals with the same small denominator (see, e.g., [LLL82]): the first vector starts with a random integer of bit-length <=b2 and continues with d-1 independent integers of bit-lengths <=b; the i-th vector for i>1 is the i-th canonical unit vector scaled by a factor 2^b.
+* `r` `d` `b` : generates a knapsack like matrix of dimension d x (d+1) and b bits (see, e.g., [[S09](#S09)]): the i-th vector starts with a random integer of bit-length <=b and the rest is the i-th canonical unit vector.
+* `s` `d` `b` `b2` : generates a d x d matrix of a form similar to that is involved when trying to find rational approximations to reals with the same small denominator (see, e.g., [[LLL82](#LLL82)]): the first vector starts with a random integer of bit-length <=b2 and continues with d-1 independent integers of bit-lengths <=b; the i-th vector for i>1 is the i-th canonical unit vector scaled by a factor 2^b.
 * `u` `d` `b` : generates a d x d matrix whose entries are independent integers of bit-lengths <=b.
-* `n` `d` `b` `c` : generates an ntru-like matrix. If char is 'b', then it first samples an integer q of bit-length <=b, whereas if char is 'q', then it sets q to the provided value. Then it samples a uniform h in the ring Z_q[x]/(x^n-1). It finally returns the 2 x 2 block matrix [[I, Rot(h)], [0, q*I]], where each block is d x d, the first row of Rot(h) is the coefficient vector of h, and the i-th row of Rot(h) is the shift of the (i-1)-th (with last entry put back in first position), for all i>1. Warning: this does not produce a genuine ntru lattice with h a genuine public key (see [HPS98]).   
+* `n` `d` `b` `c` : generates an ntru-like matrix. If char is 'b', then it first samples an integer q of bit-length <=b, whereas if char is 'q', then it sets q to the provided value. Then it samples a uniform h in the ring Z_q[x]/(x^n-1). It finally returns the 2 x 2 block matrix [[I, Rot(h)], [0, q*I]], where each block is d x d, the first row of Rot(h) is the coefficient vector of h, and the i-th row of Rot(h) is the shift of the (i-1)-th (with last entry put back in first position), for all i>1. Warning: this does not produce a genuine ntru lattice with h a genuine public key (see [[HPS98](#HPS98)]).
 * `N` `d` `b` `c` : as the previous option, except that the contructed matrix is [[q*I, 0], [Rot(h), I]]. 
-* `q` `d` `k` `b` `c` : generates a q-ary matrix. If char is 'b', then it first samples an integer q of bit-length <=b; if char is 'p', it does the same and updates q to the smallest (probabilistic) prime that is greater; if char is 'q', then it sets q to the provided value. It returns a 2 x 2 block matrix [[I, H], [0, q*I]], where H is (d-k) x k and uniformly random modulo q. These bases correspond to the SIS/LWE q-ary lattices (see [MR09]). Goldstein-Mayer lattices correspond to k=1 and q prime (see [GM03]).
+* `q` `d` `k` `b` `c` : generates a q-ary matrix. If char is 'b', then it first samples an integer q of bit-length <=b; if char is 'p', it does the same and updates q to the smallest (probabilistic) prime that is greater; if char is 'q', then it sets q to the provided value. It returns a 2 x 2 block matrix [[I, H], [0, q*I]], where H is (d-k) x k and uniformly random modulo q. These bases correspond to the SIS/LWE q-ary lattices (see [[MR09](#MR09)]). Goldstein-Mayer lattices correspond to k=1 and q prime (see [[GM03](#GM03)]).
 * `t` `d` `f` : generates a d x d lower-triangular matrix B with B_ii = 2^(d-i+1)^f for all i, and B_ij is uniform between -B_jj/2 and B_jj/2 for all j<i.
 * `T` `d` : also takes as input a d-dimensional vector vec read from a file. It generates a d x d lower-triangular matrix B with B_ii = vec[i] for all i and B_ij is uniform between -B_jj/2 and B_jj/2 for all j<i.
 
@@ -134,8 +133,8 @@ Options for LLL-reduction:
 
 
 * `-d delta` :     δ (default=0.99)
-* `-e eta` :       η (default=0.51). See [NS09] for the definition of (δ,η)-LLL-reduced bases. 
-* `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz). See [A02] for the definition of Siegel condition.
+* `-e eta` :       η (default=0.51). See [[NS09](#NS09)] for the definition of (δ,η)-LLL-reduced bases. 
+* `-l lovasz` :    if !=0 Lovasz's condition. Otherwise, Siegel's condition (default: Lovasz). See [[A02](#A02)] for the definition of Siegel condition.
 
 * `-f mpfr` : sets the floating-point type to MPFR (default if `m=proved`).
 * `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
@@ -163,7 +162,7 @@ and η'=2×η-1/2. For instance, with the default options, it is guaranteed that
 
 Options for BKZ-reduction:
 
-* `-b block_size` :             Block size, mandatory, between 2 and the number of vectors.
+* `-b block_size` :            Block size, mandatory, between 2 and the number of vectors.
 
 * `-f float_type` :            Same as LLL (`-p` is required if `float_type=mpfr`).
 * `-p precision` :             Precision of the floating-point arithmetic with `-f mpfr`.
@@ -174,9 +173,7 @@ Options for BKZ-reduction:
 
 Without any of the last three options, BKZ runs until no block has been updated for a full loop iteration.
 
-* `-bpre block_size` :         Pre-processing block size. Between 2 and the block size.
-* `-bkzlinearpruning level` :  Enables linear pruning in enumeration, such that the last level steps drop with slope -1/block_size.
-* `-s filename.json` :        Use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.
+* `-s filename.json` :         Use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.
 
 * `-bkzghbound factor` :       Multiplies the Gaussian heuristic by factor (of float type) to set the enumeration radius of the SVP calls.
 * `-bkzboundedlll` :	       Restricts the LLL call before considering a block to vector indices within that block.
@@ -212,11 +209,14 @@ The options are:
 
 See [API documentation](https://fplll.github.io/fplll/).
 
+### Multicore support ###
+
+This library does not currently use multiple cores and running multiple threads working on the same object `IntegerMatrix`, `LLLReduction`, `MatGSO` etc. is not supported. Running multiple threads working on *different* objects, however, is supported. That is, there are no global variables and it is safe to e.g. reduce several lattices in parallel in the same process.
+
 ### Alternative interfaces ###
 
 - [fpylll](https://github.com/malb/fpylll) is a stand-alone Python interface for fplll.
 - fplll is included in [Sage](http://sagemath.org), see documentation for [IntegerMatrix](http://doc.sagemath.org/html/en/reference/matrices/sage/matrix/matrix_integer_dense.html) and [IntegerLattice](http://doc.sagemath.org/html/en/reference/modules/sage/modules/free_module_integer.html).
-
 
 ## Examples ##
 
@@ -254,59 +254,11 @@ See [API documentation](https://fplll.github.io/fplll/).
    ./latticegen -randseed time u 10 16 | ./fplll
    ``` 
 	
-[//]: # (4. BKZ reduction)
-
-[//]: # (5. Solving SVP)
-
 4. Solving SVP
 
    ```
    ./latticegen r 30 3000 | ./fplll -a svp
    ```
-
-## Bibliography ##
-
-[A02] A. Akhavi. Random lattices, threshold phenomena and efficient reduction algorithms. Theor. Comput. Sci. 287(2): 359-385 (2002)
-
-[Chen13] Y. Chen, Lattice reduction and concrete security of fully homomorphic encryption.
-
-[CN11] Y. Chen and P. Q. Nguyen. BKZ 2.0: Better Lattice Security Estimates. ASIACRYPT 2011: 1-20
-
-[GM03] D. Goldstein and A. Mayer. On the equidistribution of Hecke points.
-Forum Mathematicum, 15:165–189 (2003)
-
-[GN08] N. Gama and P. Q. Nguyen. Finding Short Lattice Vectors within Mordell's Inequality. STOC 2008: 207-216
-
-[GNR13] N. Gama, P. Q. Nguyen and Oded Regev. Lattice Enumeration Using Extreme Pruning.
-
-
-[HPS98] J. Hoffstein, J. Pipher, J. H. Silverman. NTRU: A Ring-Based Public Key Cryptosystem. ANTS 1998: 267-288
-
-[K83] R. Kannan.  Improved algorithms for integer programming and related lattice problems. STOC 1983, 99-108
-
-[FP85] U. Fincke and M. Pohst. Improved methods for calculating vectors of short length in a lattice, including a complexity analysis.
-Math. Comp., 44(170):463–471 (1985)
-
-[LLL82] A. K. Lenstra, H. W. Lenstra, Jr. and L. Lovasz. Factoring polynomials with rational coefficients. Math. Ann., 261: 515–534 (1982)
-
-[MSV09] I. Morel, D. Stehle and G. Villard.
-H-LLL: using Householder inside LLL. ISSAC 2009: 271-278
-
-[MV10] D. Micciancio and P. Voulgaris.
-Faster Exponential Time Algorithms for the Shortest Vector Problem. SODA 2010: 1468-1480
-
-[MW16] D. Micciancio and M. Walter. Practical, Predictable Lattice Basis Reduction. EUROCRYPT 2016: 820-849
-
-[MR09] D. Micciancio and O. Regev. Post-Quantum Cryptography. Chapter of Lattice-based Cryptography, 147-191 (2009)
-
-[NS09] P. Q. Nguyen and D. Stehle. An LLL Algorithm with Quadratic Complexity. SIAM J. Comput. 39(3): 874-903 (2009)
-
-[S10] D. Stehle. Floating-Point LLL: Theoretical and Practical Aspects.  The LLL Algorithm 2010: 179-213
-
-[SE94] C.-P. Schnorr and M. Euchner. Lattice basis reduction: Improved practical algorithms and solving subset sum problems. 
-Math. Program. 66: 181-199 (1994)
-
-
 
 ## Credit ##
 
@@ -346,7 +298,7 @@ packaging.
 
 - Timothy Abbott, Michael Abshoff, Bill Allombert, John Cannon, Sylvain Chevillard, Julien Clement,
 Andreas Enge, Jean-Pierre Flori, Laurent Fousse, Guillaume Hanrot, Jens Hermans, Jerry James,
-Christoph Lauter, Andrew Novocin, Willem Jan Palenstijn, Patrick Pelissier, Michael Schneider,
+Christoph Lauter, Tancrède Lepoint, Andrew Novocin, Willem Jan Palenstijn, Patrick Pelissier, Michael Schneider,
 Thiemo Seufer, Allan Steel, Gilles Villard and Paul Zimmermann for their support and for many
 suggestions that helped debugging and improving this code.
 
@@ -366,3 +318,41 @@ New releases will be announced on [https://groups.google.com/forum/#!forum/fplll
 
 Bug reports may be sent to [https://groups.google.com/forum/#!forum/fplll-devel](https://groups.google.com/forum/#!forum/fplll-devel) or via
 [https://github.com/fplll/fplll/issues](https://github.com/fplll/fplll/issues). 
+
+## Bibliography ##
+
+<a name="A02">[A02]<a/> A. Akhavi. Random lattices, threshold phenomena and efficient reduction algorithms. Theor. Comput. Sci. 287(2): 359-385 (2002)
+
+<a name="Chen13">[Chen13]</a> Y. Chen, Lattice reduction and concrete security of fully homomorphic encryption.
+
+<a name="CN11">[CN11]</a> Y. Chen and P. Q. Nguyen. BKZ 2.0: Better Lattice Security Estimates. ASIACRYPT 2011: 1-20
+
+<a name="GM03">[GM03]</a> D. Goldstein and A. Mayer. On the equidistribution of Hecke points. Forum Mathematicum, 15:165–189 (2003)
+
+<a name="GN08">[GN08]</a> N. Gama and P. Q. Nguyen. Finding Short Lattice Vectors within Mordell's Inequality. STOC 2008: 207-216
+
+<a name="GNR13">[GNR13]</a> N. Gama, P. Q. Nguyen and Oded Regev. Lattice Enumeration Using Extreme Pruning.
+
+
+<a name="HPS98">[HPS98]</a> J. Hoffstein, J. Pipher, J. H. Silverman. NTRU: A Ring-Based Public Key Cryptosystem. ANTS 1998: 267-288
+
+<a name="K83">[K83]</a> R. Kannan. Improved algorithms for integer programming and related lattice problems. STOC 1983, 99-108
+
+<a name="FP85">[FP85]</a> U. Fincke and M. Pohst. Improved methods for calculating vectors of short length in a lattice, including a complexity analysis. Math. Comp., 44(170):463–471 (1985)
+
+<a name="LLL82">[LLL82]</a> A. K. Lenstra, H. W. Lenstra, Jr. and L. Lovasz. Factoring polynomials with rational coefficients. Math. Ann., 261: 515–534 (1982)
+
+<a name="MSV09">[MSV09]</a> I. Morel, D. Stehle and G. Villard. H-LLL: using Householder inside LLL. ISSAC 2009: 271-278
+
+<a name="MV10">[MV10]</a> D. Micciancio and P. Voulgaris. Faster Exponential Time Algorithms for the Shortest Vector Problem. SODA 2010: 1468-1480
+
+<a name="MW16">[MW16]</a> D. Micciancio and M. Walter. Practical, Predictable Lattice Basis Reduction. EUROCRYPT 2016: 820-849
+
+<a name="MR09">[MR09]</a> D. Micciancio and O. Regev. Post-Quantum Cryptography. Chapter of Lattice-based Cryptography, 147-191 (2009)
+
+<a name="NS09">[NS09]</a> P. Q. Nguyen and D. Stehle. An LLL Algorithm with Quadratic Complexity. SIAM J. Comput. 39(3): 874-903 (2009)
+
+<a name="S10">[S10]</a> D. Stehle. Floating-Point LLL: Theoretical and Practical Aspects. The LLL Algorithm 2010: 179-213
+
+<a name="SE94">[SE94]</a>: C.-P. Schnorr and M. Euchner. Lattice basis reduction: Improved practical algorithms and solving subset sum problems. Math. Program. 66: 181-199 (1994)
+

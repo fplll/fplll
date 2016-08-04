@@ -1,9 +1,31 @@
 Changes in fplll-5.0:
+
+- switched to C++11
+- switched to more open development model on GitHub, cf. CONTRIBUTING.md
+- support for computing optimal pruning parameters for a given lattice
+  dimension/shape/radius
+- BKZ 2.0: recursive BKZ preprocessing, extreme pruning, gaussian
+  heuristic bound
+- precomputed BKZ (2.0) reduction strategies up to block size 90, cf.
+  https://github.com/fplll/strategizer
+- Self-Dual BKZ and Slide reduction
+- faster, recursive enumeration implementation
+- Gaussian lattice sieving
+- Python interface at https://github.com/fplll/fpylll
+- optional dumping Gram-Schmidt vectors during execution of algorithm
+- q-ary lattice generator
+- instructions on how to cite
+- optional support for doubledouble and quaddouble
+- pkg-config support
+- API documentation at https://fplll.github.io/fplll/
+- revised build system supporting parallel build
 - copyright headers
-- how to cite
-- pre-processing in BKZ
-- dumping Gram-Schmidt vectors
-- linear pruning
+- dropped fplllv3 compatibility layer
+- greatly increased test coverage, tests are run on every commit or
+  pull request
+- coding/naming convention
+- FP API improved to allow for more readable/natural code
+
 
 Changes in fplll-4.0.4:
 - compatibility for packages that still expect to build against 
