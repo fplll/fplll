@@ -117,8 +117,8 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aadaf82cd487c3a5e12d31a36b7734425"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#aadaf82cd487c3a5e12d31a36b7734425">Pruner</a> ()</td></tr>
-<tr class="separator:aadaf82cd487c3a5e12d31a36b7734425"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e005c72a6314b8bb180a8d728b4cf19"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a2e005c72a6314b8bb180a8d728b4cf19">Pruner</a> (FT <a class="el" href="classPruner.html#a9bfd449c7d972b176e853c077e42655d">enumeration_radius</a>=0.0, FT <a class="el" href="classPruner.html#a9ebddada6ef44c50ea653be1682df7f2">preproc_cost</a>=0.0, FT <a class="el" href="classPruner.html#a32c23ef4f0374067264a281992ee9828">target_probability</a>=0.9, size_t n=0, size_t d=0)</td></tr>
+<tr class="separator:a2e005c72a6314b8bb180a8d728b4cf19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4a175275a63920ad654042fa1161416"><td class="memTemplParams" colspan="2">template&lt;class GSO_ZT , class GSO_FT &gt; </td></tr>
 <tr class="memitem:af4a175275a63920ad654042fa1161416"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classPruner.html#af4a175275a63920ad654042fa1161416">load_basis_shape</a> (<a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &amp;gso, int start_row=0, int end_row=0, int reset_renorm=1)</td></tr>
 <tr class="memdesc:af4a175275a63920ad654042fa1161416"><td class="mdescLeft">&#160;</td><td class="mdescRight">load the shape of a basis from a <a class="el" href="classMatGSO.html">MatGSO</a> object. Can select a projected sub-lattice [start_row,end_row-1]  <a href="#af4a175275a63920ad654042fa1161416">More...</a><br /></td></tr>
@@ -145,18 +145,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1162888d7f7599cc2e802b99bf625ba9"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a1162888d7f7599cc2e802b99bf625ba9">svp_probability</a> (const vector&lt; double &gt; &amp;pr)</td></tr>
 <tr class="memdesc:a1162888d7f7599cc2e802b99bf625ba9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the success proba of a single enumeration.  <a href="#a1162888d7f7599cc2e802b99bf625ba9">More...</a><br /></td></tr>
 <tr class="separator:a1162888d7f7599cc2e802b99bf625ba9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa694f292d1fd06f82e70ed34dc8810b6"><td class="memTemplParams" colspan="2">template&lt;class FT &gt; </td></tr>
+<tr class="memitem:aa694f292d1fd06f82e70ed34dc8810b6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classPruner.html#aa694f292d1fd06f82e70ed34dc8810b6">load_basis_shapes</a> (const vector&lt; vector&lt; double &gt;&gt; &amp;gso_sq_norms_vec)</td></tr>
+<tr class="separator:aa694f292d1fd06f82e70ed34dc8810b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
+<tr class="memitem:a9bfd449c7d972b176e853c077e42655d"><td class="memItemLeft" align="right" valign="top">FT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a9bfd449c7d972b176e853c077e42655d">enumeration_radius</a></td></tr>
+<tr class="memdesc:a9bfd449c7d972b176e853c077e42655d"><td class="mdescLeft">&#160;</td><td class="mdescRight">enumeration radius (squared)  <a href="#a9bfd449c7d972b176e853c077e42655d">More...</a><br /></td></tr>
+<tr class="separator:a9bfd449c7d972b176e853c077e42655d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ebddada6ef44c50ea653be1682df7f2"><td class="memItemLeft" align="right" valign="top">FT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a9ebddada6ef44c50ea653be1682df7f2">preproc_cost</a></td></tr>
 <tr class="memdesc:a9ebddada6ef44c50ea653be1682df7f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">cost of pre-processing a basis for a retrial  <a href="#a9ebddada6ef44c50ea653be1682df7f2">More...</a><br /></td></tr>
 <tr class="separator:a9ebddada6ef44c50ea653be1682df7f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32c23ef4f0374067264a281992ee9828"><td class="memItemLeft" align="right" valign="top">FT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a32c23ef4f0374067264a281992ee9828">target_probability</a></td></tr>
 <tr class="memdesc:a32c23ef4f0374067264a281992ee9828"><td class="mdescLeft">&#160;</td><td class="mdescRight">desired success probability after several retrial  <a href="#a32c23ef4f0374067264a281992ee9828">More...</a><br /></td></tr>
 <tr class="separator:a32c23ef4f0374067264a281992ee9828"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9bfd449c7d972b176e853c077e42655d"><td class="memItemLeft" align="right" valign="top">FT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a9bfd449c7d972b176e853c077e42655d">enumeration_radius</a></td></tr>
-<tr class="memdesc:a9bfd449c7d972b176e853c077e42655d"><td class="mdescLeft">&#160;</td><td class="mdescRight">enumeration radius (squared)  <a href="#a9bfd449c7d972b176e853c077e42655d">More...</a><br /></td></tr>
-<tr class="separator:a9bfd449c7d972b176e853c077e42655d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -164,19 +167,56 @@ Friends</h2></td></tr>
 <tr class="separator:a6af9f405bf16c4faeeb47ae5f39bbd7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="aadaf82cd487c3a5e12d31a36b7734425"></a>
+<a class="anchor" id="a2e005c72a6314b8bb180a8d728b4cf19"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class FT &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::<a class="el" href="classPruner.html">Pruner</a> </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">FT&#160;</td>
+          <td class="paramname"><em>enumeration_radius</em> = <code>0.0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">FT&#160;</td>
+          <td class="paramname"><em>preproc_cost</em> = <code>0.0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FT&#160;</td>
+          <td class="paramname"><em>target_probability</em> = <code>0.9</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>d</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
@@ -254,6 +294,26 @@ template&lt;class FT &gt; </div>
 </div><div class="memdoc">
 
 <p>load the shape of a basis from vector&lt;double&gt;. Mostly for testing purposes </p>
+
+</div>
+</div>
+<a class="anchor" id="aa694f292d1fd06f82e70ed34dc8810b6"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::load_basis_shapes </td>
+          <td>(</td>
+          <td class="paramtype">const vector&lt; vector&lt; double &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>gso_sq_norms_vec</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -517,7 +577,7 @@ template&lt;class FT &gt; </div>
 </div>
 </div>
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 25 2016 16:07:06 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Aug 4 2016 10:01:56 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

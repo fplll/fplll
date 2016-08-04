@@ -5,6 +5,7 @@ var searchData=
   ['test_5fauto_5fprune',['test_auto_prune',['../test__pruner_8cpp.html#acd4d16a5bde4b709470e9e11b2b0a53b',1,'test_pruner.cpp']]],
   ['test_5fbkz',['test_bkz',['../test__bkz_8cpp.html#aba867ad7343eb17a2a5bf6736fb3cbf7',1,'test_bkz.cpp']]],
   ['test_5fbkz_5fparam',['test_bkz_param',['../test__bkz_8cpp.html#a853c8e2ce5b33fee45ac2334f7779efe',1,'test_bkz.cpp']]],
+  ['test_5fbkz_5fparam_5flinear_5fpruning',['test_bkz_param_linear_pruning',['../test__bkz_8cpp.html#a2815e6516305221ae37d001b6a0c66d0',1,'test_bkz.cpp']]],
   ['test_5fbkz_5fparam_5fpruning',['test_bkz_param_pruning',['../test__bkz_8cpp.html#a29df4ffd66619d6c39205a8bfd3939db',1,'test_bkz.cpp']]],
   ['test_5fdsvp_5freduce',['test_dsvp_reduce',['../test__svp_8cpp.html#a376443e842302a2aadd0e0f024980cd9',1,'test_svp.cpp']]],
   ['test_5fdual_5fsvp',['test_dual_svp',['../test__svp_8cpp.html#a1c6ecb9e1642346205bf19bc85e4ece9',1,'test_svp.cpp']]],

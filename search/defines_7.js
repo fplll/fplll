@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['lt_5fobjdir',['LT_OBJDIR',['../config_8h.html#ac2d5925d76379847dd9fc4747b061659',1,'config.h']]]
+  ['n',['N',['../test__pruner_8cpp.html#a0240ac851181b84ac374872dc5434ee4',1,'test_pruner.cpp']]],
+  ['nbis',['Nbis',['../test__pruner_8cpp.html#a5c71415a93218611727ed9d24ac7fd7f',1,'test_pruner.cpp']]]
 ];

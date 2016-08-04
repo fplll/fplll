@@ -5,7 +5,7 @@ var searchData=
   ['ddx',['ddx',['../classEnumerationBase.html#ae794cd95b9f5ce30387d4ac8d7130a47',1,'EnumerationBase']]],
   ['def_5fgso_5fprec_5fepsilon',['DEF_GSO_PREC_EPSILON',['../util_8h.html#ab647256b23eaab2f8cd59c6faadaf34b',1,'util.h']]],
   ['default_5fstrategy',['default_strategy',['../bkz__param_8cpp.html#aa7e0ca22cfd49c61ea8695c014b7c357',1,'default_strategy():&#160;bkz_param.cpp'],['../bkz__param_8h.html#aa7e0ca22cfd49c61ea8695c014b7c357',1,'default_strategy():&#160;bkz_param.cpp']]],
-  ['default_5fstrategy_5fpath',['default_strategy_path',['../bkz__param_8cpp.html#a9f3d496fbe009d4b6951fdee7d5daadc',1,'default_strategy_path():&#160;bkz_param.cpp'],['../bkz__param_8h.html#a31276887eb612351b38587c6fcd88d67',1,'default_strategy_path():&#160;bkz_param.cpp']]],
+  ['default_5fstrategy_5fpath',['default_strategy_path',['../bkz__param_8cpp.html#a31276887eb612351b38587c6fcd88d67',1,'default_strategy_path():&#160;bkz_param.cpp'],['../bkz__param_8h.html#a31276887eb612351b38587c6fcd88d67',1,'default_strategy_path():&#160;bkz_param.cpp']]],
   ['defs_2eh',['defs.h',['../defs_8h.html',1,'']]],
   ['del_5flistpoint',['del_listpoint',['../sieve__gauss__str_8h.html#ab2e5ad139bcb789ec593f71321984d6d',1,'sieve_gauss_str.h']]],
   ['delta',['delta',['../classBKZParam.html#aa1c43acefe88539a7f3fa4ebb3992dd1',1,'BKZParam::delta()'],['../structOptions.html#acd471c4f31e75e6bdf0e306447ee4c65',1,'Options::delta()']]],

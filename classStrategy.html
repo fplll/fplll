@@ -116,20 +116,22 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ac019582406cbf8002b0188ff3fb14d90"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classStrategy.html">Strategy</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classStrategy.html#ac019582406cbf8002b0188ff3fb14d90">EmptyStrategy</a> ()</td></tr>
-<tr class="separator:ac019582406cbf8002b0188ff3fb14d90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83a45cf2ed2b454bc30689f3135088c5"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classStrategy.html">Strategy</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classStrategy.html#a83a45cf2ed2b454bc30689f3135088c5">EmptyStrategy</a> (size_t <a class="el" href="classStrategy.html#a613b4da5786dd83e69576935600603f4">block_size</a>)</td></tr>
+<tr class="separator:a83a45cf2ed2b454bc30689f3135088c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
+<tr class="memitem:a613b4da5786dd83e69576935600603f4"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classStrategy.html#a613b4da5786dd83e69576935600603f4">block_size</a></td></tr>
+<tr class="separator:a613b4da5786dd83e69576935600603f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea79558043eaaeda166020c3ec0dd1ba"><td class="memItemLeft" align="right" valign="top">vector&lt; <a class="el" href="classPruning.html">Pruning</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classStrategy.html#aea79558043eaaeda166020c3ec0dd1ba">pruning_parameters</a></td></tr>
 <tr class="separator:aea79558043eaaeda166020c3ec0dd1ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc9b1f048133272542f4057e5fe11ada"><td class="memItemLeft" align="right" valign="top">vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classStrategy.html#afc9b1f048133272542f4057e5fe11ada">preprocessing_block_sizes</a></td></tr>
-<tr class="separator:afc9b1f048133272542f4057e5fe11ada"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23888fd72fc470e9f61e488713da3e0a"><td class="memItemLeft" align="right" valign="top">vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classStrategy.html#a23888fd72fc470e9f61e488713da3e0a">preprocessing_block_sizes</a></td></tr>
+<tr class="separator:a23888fd72fc470e9f61e488713da3e0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A strategy covers pruning parameters and preprocessing block_sizes </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ac019582406cbf8002b0188ff3fb14d90"></a>
+<a class="anchor" id="a83a45cf2ed2b454bc30689f3135088c5"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -139,7 +141,8 @@ Data Fields</h2></td></tr>
         <tr>
           <td class="memname">static <a class="el" href="classStrategy.html">Strategy</a> Strategy::EmptyStrategy </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>block_size</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -189,16 +192,27 @@ Data Fields</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Field Documentation</h2>
-<a class="anchor" id="afc9b1f048133272542f4057e5fe11ada"></a>
+<a class="anchor" id="a613b4da5786dd83e69576935600603f4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">vector&lt;int&gt; Strategy::preprocessing_block_sizes</td>
+          <td class="memname">size_t Strategy::block_size</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>For each block size we run one tour </p>
+
+</div>
+</div>
+<a class="anchor" id="a23888fd72fc470e9f61e488713da3e0a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">vector&lt;size_t&gt; Strategy::preprocessing_block_sizes</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -211,7 +225,6 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p><a class="el" href="classPruning.html">Pruning</a> parameters </p>
 
 </div>
 </div>
@@ -228,7 +241,7 @@ Data Fields</h2></td></tr>
 </div>
 </div>
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 25 2016 16:07:06 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Aug 4 2016 10:01:56 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

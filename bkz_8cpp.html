@@ -100,6 +100,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">bkz.cpp File Reference</div>  </div>
 </div><!--header-->
@@ -108,7 +110,256 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;<a class="el" href="bkz_8h_source.html">bkz.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="bkz__param_8h_source.html">bkz_param.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="enumerate_8h_source.html">enum/enumerate.h</a>&quot;</code><br />
-</div></div><!-- contents -->
+<code>#include &quot;<a class="el" href="util_8h_source.html">util.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="wrapper_8h_source.html">wrapper.h</a>&quot;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:abb2276b0efe2b117322159203dfbd4a2"><td class="memTemplParams" colspan="2">template&lt;class FT &gt; </td></tr>
+<tr class="memitem:abb2276b0efe2b117322159203dfbd4a2"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="bkz_8cpp.html#abb2276b0efe2b117322159203dfbd4a2">bkz_reduction_f</a> (<a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;b, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int sel_ft, double lll_delta, <a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;u, <a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;u_inv)</td></tr>
+<tr class="separator:abb2276b0efe2b117322159203dfbd4a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5596709a04f344e82fab8bb13c26003"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bkz_8cpp.html#ad5596709a04f344e82fab8bb13c26003">bkz_reduction</a> (<a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> *B, <a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> *U, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> float_type, int precision)</td></tr>
+<tr class="separator:ad5596709a04f344e82fab8bb13c26003"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc04d6c70e72046e92ab5289ac63eea6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bkz_8cpp.html#adc04d6c70e72046e92ab5289ac63eea6">bkz_reduction</a> (<a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;b, int block_size, int flags, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> float_type, int precision)</td></tr>
+<tr class="separator:adc04d6c70e72046e92ab5289ac63eea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7eee11c22417bf30d7547a534b004924"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bkz_8cpp.html#a7eee11c22417bf30d7547a534b004924">bkz_reduction</a> (<a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;b, <a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;u, int block_size, int flags, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> float_type, int precision)</td></tr>
+<tr class="separator:a7eee11c22417bf30d7547a534b004924"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19893c177ea70a895c3574eb0c6199f8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bkz_8cpp.html#a19893c177ea70a895c3574eb0c6199f8">hkz_reduction</a> (<a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;b, int flags, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> float_type, int precision)</td></tr>
+<tr class="separator:a19893c177ea70a895c3574eb0c6199f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="ad5596709a04f344e82fab8bb13c26003"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int bkz_reduction </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> *&#160;</td>
+          <td class="paramname"><em>B</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> *&#160;</td>
+          <td class="paramname"><em>U</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;&#160;</td>
+          <td class="paramname"><em>param</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a>&#160;</td>
+          <td class="paramname"><em>float_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>precision</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>interface called from call_bkz() from <a class="el" href="main_8cpp.html">main.cpp</a>. </p>
+
+</div>
+</div>
+<a class="anchor" id="adc04d6c70e72046e92ab5289ac63eea6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int bkz_reduction </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>block_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a>&#160;</td>
+          <td class="paramname"><em>float_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>precision</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>We define BKZ/HKZ for each input type instead of using a template, in order to force the compiler to instantiate the functions. </p>
+
+</div>
+</div>
+<a class="anchor" id="a7eee11c22417bf30d7547a534b004924"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int bkz_reduction </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;&#160;</td>
+          <td class="paramname"><em>u</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>block_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a>&#160;</td>
+          <td class="paramname"><em>float_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>precision</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="abb2276b0efe2b117322159203dfbd4a2"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int bkz_reduction_f </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;&#160;</td>
+          <td class="paramname"><em>param</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sel_ft</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>lll_delta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;&#160;</td>
+          <td class="paramname"><em>u</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;&#160;</td>
+          <td class="paramname"><em>u_inv</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>call <a class="el" href="classLLLReduction.html">LLLReduction()</a> and then <a class="el" href="classBKZReduction.html">BKZReduction</a>. </p>
+
+</div>
+</div>
+<a class="anchor" id="a19893c177ea70a895c3574eb0c6199f8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int hkz_reduction </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a> &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a>&#160;</td>
+          <td class="paramname"><em>float_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>precision</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.8-->
 <!-- start footer part -->
 </div>
@@ -117,7 +368,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 </div>
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 25 2016 16:07:06 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Aug 4 2016 10:01:56 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

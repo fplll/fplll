@@ -111,7 +111,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="util_8h__dep__incl.svg" width="1704" height="486"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="util_8h__dep__incl.svg" width="1728" height="486"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 </div>
@@ -141,6 +141,14 @@ Functions</h2></td></tr>
 <tr class="separator:a6fb7df2c412433e7adc7e1c38c4857a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c4c6a06273d318c7c82d12380a8fc1f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="util_8h.html#a2c4c6a06273d318c7c82d12380a8fc1f">cost_estimate</a> (<a class="el" href="nr_8h.html#a9e4946144ee906e0bdf5bb2a52dd88db">Float</a> &amp;cost, const <a class="el" href="nr_8h.html#a9e4946144ee906e0bdf5bb2a52dd88db">Float</a> &amp;bound, const <a class="el" href="classMatrix.html">Matrix</a>&lt; <a class="el" href="nr_8h.html#a9e4946144ee906e0bdf5bb2a52dd88db">Float</a> &gt; &amp;r, int dimMax)</td></tr>
 <tr class="separator:a2c4c6a06273d318c7c82d12380a8fc1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17af3f37921336f44e6129a069e4762b"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
+<tr class="memitem:a17af3f37921336f44e6129a069e4762b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="util_8h.html#a17af3f37921336f44e6129a069e4762b">zeros_first</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;b, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u_inv_t)</td></tr>
+<tr class="separator:a17af3f37921336f44e6129a069e4762b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8b31d0e5ffebed97c9004a7843ba72c"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
+<tr class="memitem:ac8b31d0e5ffebed97c9004a7843ba72c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="util_8h.html#ac8b31d0e5ffebed97c9004a7843ba72c">zeros_last</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;b, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u_inv_t)</td></tr>
+<tr class="separator:ac8b31d0e5ffebed97c9004a7843ba72c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a271a58dfa91c5da54d5a2f75034dd626"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="util_8h.html#a271a58dfa91c5da54d5a2f75034dd626">get_red_status_str</a> (int status)</td></tr>
+<tr class="separator:a271a58dfa91c5da54d5a2f75034dd626"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -209,6 +217,23 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a271a58dfa91c5da54d5a2f75034dd626"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* get_red_status_str </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>status</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the string corresponding to an error code of LLL/BKZ. </p>
 
 </div>
 </div>
@@ -475,6 +500,74 @@ template&lt;class ZT &gt; </div>
 
 </div>
 </div>
+<a class="anchor" id="a17af3f37921336f44e6129a069e4762b"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void zeros_first </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u_inv_t</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ac8b31d0e5ffebed97c9004a7843ba72c"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void zeros_last </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u_inv_t</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
 <a class="anchor" id="ab647256b23eaab2f8cd59c6faadaf34b"></a>
 <div class="memitem">
@@ -497,7 +590,7 @@ template&lt;class ZT &gt; </div>
 </div>
 </div>
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 25 2016 16:07:06 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Aug 4 2016 10:01:56 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

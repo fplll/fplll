@@ -1,7 +1,7 @@
 var searchData=
 [
   ['empty',['empty',['../classMatrix.html#a3280ceacea858ac0a4009ef34eba927d',1,'Matrix::empty()'],['../classNumVect.html#ad0373c58eb9d740936f9f5c9987db43e',1,'NumVect::empty()']]],
-  ['emptystrategy',['EmptyStrategy',['../classStrategy.html#ac019582406cbf8002b0188ff3fb14d90',1,'Strategy']]],
+  ['emptystrategy',['EmptyStrategy',['../classStrategy.html#a83a45cf2ed2b454bc30689f3135088c5',1,'Strategy']]],
   ['end',['end',['../classNumVect.html#a6cd137d05aaaf6dc74f29878619687ea',1,'NumVect']]],
   ['enum_5fnext',['enum_next',['../classEnumerator.html#a408bb665785148b7eb97fe63e0f3c4a5',1,'Enumerator']]],
   ['enumerate',['enumerate',['../classEnumeration.html#a8825418aeb983b13648d61a6cd8ad466',1,'Enumeration']]],

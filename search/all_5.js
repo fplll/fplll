@@ -2,7 +2,7 @@ var searchData=
 [
   ['early_5fred',['early_red',['../structOptions.html#aeb6bce704039321517775b395160f3a3',1,'Options']]],
   ['empty',['empty',['../classMatrix.html#a3280ceacea858ac0a4009ef34eba927d',1,'Matrix::empty()'],['../classNumVect.html#ad0373c58eb9d740936f9f5c9987db43e',1,'NumVect::empty()']]],
-  ['emptystrategy',['EmptyStrategy',['../classStrategy.html#ac019582406cbf8002b0188ff3fb14d90',1,'Strategy']]],
+  ['emptystrategy',['EmptyStrategy',['../classStrategy.html#a83a45cf2ed2b454bc30689f3135088c5',1,'Strategy']]],
   ['enable_5fint_5fgram',['enable_int_gram',['../classMatGSO.html#a55d86e1cd010501e06d62d5da441039f',1,'MatGSO']]],
   ['enable_5finverse_5ftransform',['enable_inverse_transform',['../classMatGSO.html#a60cc40a5063fe865bd7c69004153ee0d',1,'MatGSO']]],
   ['enable_5frow_5fexpo',['enable_row_expo',['../classMatGSO.html#a44875b132bdf9147007dacccb2f6ae52',1,'MatGSO']]],
