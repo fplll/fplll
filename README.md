@@ -349,7 +349,7 @@ packaging.
 
 - Timothy Abbott, Michael Abshoff, Bill Allombert, John Cannon, Sylvain Chevillard, Julien Clement,
 Andreas Enge, Jean-Pierre Flori, Laurent Fousse, Guillaume Hanrot, Jens Hermans, Jerry James,
-Christoph Lauter, Andrew Novocin, Willem Jan Palenstijn, Patrick Pelissier, Michael Schneider,
+Christoph Lauter, Tancrède Lepoint, Andrew Novocin, Willem Jan Palenstijn, Patrick Pelissier, Michael Schneider,
 Thiemo Seufer, Allan Steel, Gilles Villard and Paul Zimmermann for their support and for many
 suggestions that helped debugging and improving this code.
 
