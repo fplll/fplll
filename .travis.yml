@@ -1,53 +1,65 @@
 sudo: required
+
 dist: trusty
+
 language: cpp
-      
+
 matrix:
   include:
-    - compiler: gcc
-      env: COMPILER=g++-4.9
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
-            - libgmp-dev
-            - libmpfr-dev
-            - libqd-dev
+  - compiler: gcc
+    env: COMPILER=g++-4.9
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - g++-4.9
+        - libgmp-dev
+        - libmpfr-dev
+        - libqd-dev
+  - compiler: gcc
+    env: COMPILER=g++-5
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - g++-5
+        - libgmp-dev
+        - libmpfr-dev
+        - libqd-dev
+  - compiler: clang
+    env: COMPILER=clang++
+    addons:
+      apt:
+        packages:
+        - libgmp-dev
+        - libmpfr-dev
+        - libqd-dev
 
-    - compiler: gcc
-      env: COMPILER=g++-5
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-            - libgmp-dev
-            - libmpfr-dev
-            - libqd-dev
-    - compiler: clang
-      env: COMPILER=clang++
-      addons:
-        apt:
-          packages:
-            - libgmp-dev
-            - libmpfr-dev
-            - libqd-dev
-
-install:
-  export CXX="$COMPILER"
+install: export CXX="$COMPILER"
 
 before_script:
-  - ./autogen.sh
+- "./autogen.sh"
 
 script:
-  - ./configure
-  - make
-  - make check
-  - make dist
+- "./configure"
+- make
+- make check
+- make distcheck
 
 notifications:
   on_success: change
   on_failure: always
+
+deploy:
+  provider: releases
+  file_glob: true
+  skip_cleanup: true
+  api_key:
+    secure: WsT8rFbwkPlsti2VTEsItUgkWyrhL68ybouz5/U0vGhI/KC3xh2CXhzlJes/vKaTli6GI+xLtwLz3gw7hruEGBnQ/bUCpKoljuF087fXjCGs93Vk7V5kPxfWEZ8p4YhuOVi2HVdp9zeiPOW+Nk2UMIjz19Bne2aypOIxcCfyI5c=
+  file: fplll-*.tar.gz
+  on:
+    repo: fplll/fplll
+    tags: true
+    all_branches: true

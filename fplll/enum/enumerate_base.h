@@ -99,7 +99,11 @@ protected:
     template<int kk, bool dualenum, bool findsubsols>
     void enumerate_recursive_wrapper()
     {
-        enumerate_recursive( opts<(kk<maxdim ? kk : -1),0,dualenum,findsubsols>() );
+        // kk < maxdim-1:
+        // kk < kk_end                         (see enumerate_loop(), enumerate_base.cpp)
+        // kk_end = d - subtree.size() <= d    (see prepare_enumeration(), enumerate.cpp)
+        // d < maxdim                          (see enumerate(), enumerate.cpp)
+        enumerate_recursive( opts<(kk<(maxdim-1) ? kk : -1),0,dualenum,findsubsols>() );
     }
         
     template<bool dualenum, bool findsubsols>

@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(fplll,4.0.5)
+AC_INIT(fplll, 5.0.0)
 AC_CONFIG_SRCDIR([fplll/fplll.cpp])
 
 # cf http://comments.gmane.org/gmane.comp.sysutils.autoconf.general/15737
@@ -19,6 +19,7 @@ FPLLL_VERSION_INFO=$CURRENT:$REVISION:$AGE
 
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
+AM_SILENT_RULES([yes])
 
 AC_CONFIG_HEADER(config.h)
 

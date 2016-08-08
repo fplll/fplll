@@ -14,6 +14,7 @@
 #include "sieve_gauss_2sieve.cpp"
 #include "sieve_gauss_3sieve.cpp"
 #include "sieve_gauss_4sieve.cpp"
+#include "wrapper.h"
 
 #define REDUCE_TIMING
 

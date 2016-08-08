@@ -16,6 +16,10 @@
 #include <cstring>
 #include <fplll.h>
 
+#ifndef TESTDATADIR
+#define TESTDATADIR ".."
+#endif
+
 using namespace std;
 using namespace fplll;
 
@@ -72,7 +76,7 @@ template <class ZT> int test_bkz_param(ZZ_mat<ZT> &A, const int block_size, int 
   vector<Strategy> strategies;
   for (long b = 0; b <= block_size; b++)
   {
-    Strategy strategy = Strategy::EmptyStrategy();
+    Strategy strategy = Strategy::EmptyStrategy(b);
     if (b == 10)
     {
       strategy.preprocessing_block_sizes.emplace_back(5);
@@ -109,12 +113,33 @@ template <class ZT> int test_bkz_param(ZZ_mat<ZT> &A, const int block_size, int 
 */
 
 template <class ZT>
-int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_DEFAULT)
+int test_bkz_param_linear_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_DEFAULT)
 {
 
   int status = 0;
+  vector<Strategy> strategies;
+  for (long b = 0; b < block_size; b++)
+  {
+    Strategy strategy = Strategy::EmptyStrategy(b);
+    if (b == 10)
+    {
+      strategy.preprocessing_block_sizes.emplace_back(5);
+    }
+    else if (b == 20)
+    {
+      strategy.preprocessing_block_sizes.emplace_back(10);
+    }
+    else if (b == 30)
+    {
+      strategy.preprocessing_block_sizes.emplace_back(15);
+    }
+    strategies.emplace_back(std::move(strategy));
+  }
 
-  vector<Strategy> strategies = load_strategies_json("../strategies/default.json");
+  Strategy strategy;
+  strategy.pruning_parameters.emplace_back(Pruning::LinearPruning(block_size, block_size/2));
+  strategies.emplace_back(std::move(strategy));
+
   BKZParam params(block_size, strategies);
   params.flags = flags;
   // zero on success
@@ -125,6 +150,25 @@ int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_
   }
   return status;
 }
+
+template <class ZT>
+int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_DEFAULT)
+{
+
+  int status = 0;
+
+  vector<Strategy> strategies = load_strategies_json(TESTDATADIR "/strategies/default.json");
+  BKZParam params(block_size, strategies);
+  params.flags = flags;
+  // zero on success
+  status = bkz_reduction(&A, NULL, params, FT_DEFAULT, 53);
+  if (status != RED_SUCCESS)
+  {
+    cerr << "BKZ parameter test failed with error '" << get_red_status_str(status) << "'" << endl;
+  }
+  return status;
+}
+
 
 /**
    @brief Test BKZ for matrix stored in file pointed to by `input_filename`.
@@ -175,11 +219,12 @@ int test_int_rel(int d, int b, const int block_size, FloatType float_type = FT_D
   int status = 0;
   status |= test_bkz<ZT>(A, block_size, float_type, flags | BKZ_VERBOSE, prec);
   status |= test_bkz_param<ZT>(B, block_size);
+  status |= test_bkz_param_linear_pruning<ZT>(B, block_size);
   status |= test_bkz_param_pruning<ZT>(B, block_size);
   return status;
 }
 
-int main(int argc, char *argv[])
+int main(int /*argc*/, char** /*argv*/)
 {
 
   int status = 0;

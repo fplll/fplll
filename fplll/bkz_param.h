@@ -51,33 +51,7 @@ public:
       @param level number of levels in linear descent
   */
 
-  static Pruning LinearPruning(int block_size, int level)
-  {
-
-    Pruning pruning   = Pruning();
-    int start_descent = block_size - level;
-
-    if (start_descent > block_size)
-      start_descent = block_size;
-
-    if (start_descent < 1)
-      start_descent = 1;
-
-    pruning.coefficients.resize(block_size);
-    for (int k = 0; k < start_descent; k++)
-    {
-      pruning.coefficients[k] = 1.0;
-    }
-    for (int k = 0; k < block_size - start_descent; k++)
-    {
-      pruning.coefficients[start_descent + k] = ((double)(block_size - k - 1)) / block_size;
-    }
-    // TODO: need to adapt probability
-    pruning.radius_factor = 1.0;
-    pruning.probability   = 1.0;
-
-    return pruning;
-  }
+  static Pruning LinearPruning(int block_size, int level);
 };
 
 /**
@@ -88,13 +62,9 @@ class Strategy
 {
 public:
 
-  /** Pruning parameters */
-
-  vector<Pruning> pruning_parameters;
-
-  /** For each block size we run one tour */
-
-  vector<int> preprocessing_block_sizes;
+  size_t block_size; //< block size
+  vector<Pruning> pruning_parameters; //< Pruning parameters
+  vector<size_t> preprocessing_block_sizes; //< For each block size we run one tour
 
   /** Construct an empty strategy
 
@@ -103,9 +73,10 @@ public:
 
    */
 
-  static Strategy EmptyStrategy()
+  static Strategy EmptyStrategy(size_t block_size)
   {
     Strategy strat;
+    strat.block_size = block_size;
     strat.pruning_parameters.emplace_back(Pruning());
     return strat;
   };
@@ -144,9 +115,14 @@ public:
   */
 
   BKZParam(int block_size, vector<Strategy> &strategies, double delta = LLL_DEF_DELTA,
-           int flags = BKZ_DEFAULT, int max_loops = 0, double max_time = 0,
-           double auto_abort_scale = 1.0, int auto_abort_max_no_dec = 5, double gh_factor = 1.1,
-           double min_success_probability = 0.5, int rerandomization_density = 3)
+           int flags = BKZ_DEFAULT,
+           int max_loops = 0,
+           double max_time = 0,
+           double auto_abort_scale = BKZ_DEF_AUTO_ABORT_SCALE,
+           int auto_abort_max_no_dec = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
+           double gh_factor = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
+           double min_success_probability = BKZ_DEF_MIN_SUCCESS_PROBABILITY,
+           int rerandomization_density = BKZ_DEF_RERANDOMIZATION_DENSITY)
       : block_size(block_size), strategies(strategies), delta(delta), flags(flags),
         max_loops(max_loops), max_time(max_time), auto_abort_scale(auto_abort_scale),
         auto_abort_max_no_dec(auto_abort_max_no_dec), gh_factor(gh_factor),
@@ -160,7 +136,7 @@ public:
       strategies = vector<Strategy>();
       for (long b = 0; b <= block_size; ++b)
       {
-        strategies.emplace_back(Strategy::EmptyStrategy());
+        strategies.emplace_back(Strategy::EmptyStrategy(b));
       }
     }
   };

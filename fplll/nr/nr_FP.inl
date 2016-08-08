@@ -526,7 +526,7 @@ template <class F> inline FP_NR<F> pow_si(const FP_NR<F> &a, long b) {
 
 template <class F> inline FP_NR<F> &&pow_si(FP_NR<F> &&a, long b) {
   a.pow_si(a, b);
-  return a;
+  return std::move(a);
 }
 
 template <class F> inline FP_NR<F> root(const FP_NR<F> &a, unsigned int b) {
@@ -537,7 +537,7 @@ template <class F> inline FP_NR<F> root(const FP_NR<F> &a, unsigned int b) {
 
 template <class F> inline FP_NR<F> &&root(FP_NR<F> &&a, unsigned int b) {
   a.root(a, b);
-  return a;
+  return std::move(a);
 }
 
 

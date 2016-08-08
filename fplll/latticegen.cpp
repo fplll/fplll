@@ -27,8 +27,8 @@ void print_help()
        << " r <d> <b> : gen_intrel" << endl
        << " s <d> <b> <b2> : gen_simdioph" << endl
        << " u <d> <b> : gen_uniform" << endl
-       << " n <d> <c> : gen_ntrulike" << endl
-       << " N <d> <c> : gen_ntrulike2" << endl
+       << " n <d> <b> <c> : gen_ntrulike" << endl
+       << " N <d> <b> <c> : gen_ntrulike2" << endl
        << " q <d> <k> <b> <c>: gen_qary" << endl
        << " t <d> <f> : gen_trg" << endl
        << " T <d> : gen_trg2" << endl;

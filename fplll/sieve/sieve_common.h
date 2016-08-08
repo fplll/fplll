@@ -10,7 +10,7 @@
 #include <list>
 #include <queue>
 
-#include "../fplll.h"
+#include "../defs.h"
 #include "sampler_basic.h"
 #include "sieve_gauss_str.h"
 

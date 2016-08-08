@@ -70,43 +70,62 @@ FPLLL_BEGIN_NAMESPACE
 /**
    @brief prune function, hiding the Pruner class
 
-   @param pr
-   @param probability
-   @param enumeration_radius
-   @param preproc_cost
-   @param target_probability
-   @param m
-   @param method
-   @param start_row
-   @param end_row
+   @param pr store pruning coefficients here
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrix
+   @param method for the descent (gradient, NM, both)
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
            const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m, 
-           const int method = PRUNER_METHOD_GRADIENT, int start_row = 0, int end_row = 0);
+           const int descent_method = PRUNER_METHOD_GRADIENT, int start_row = 0, int end_row = 0);
+
 
 /**
    @brief prune function, hiding the Pruner class
 
-   @param pruning
-   @param enumeration_radius
-   @param preproc_cost
-   @param target_probability
-   @param m
-   @param method
-   @param start_row
-   @param end_row
-   @return
+   @param pruning store pruning structure
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrix
+   @param method for the descent (gradient, NM, both)
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
+
+   @return Pruning object.
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
-void prune(Pruning &pruning,
-           /*inputs*/ const double enumeration_radius, const double preproc_cost,
+Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
            const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, 
-           const int method = PRUNER_METHOD_GRADIENT, int start_row = 0, int end_row = 0);
+           const int descent_method = PRUNER_METHOD_GRADIENT, int start_row = 0, int end_row = 0);
 
+/**
+   @brief prune function averaging over several bases
+
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrices
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
+   @return Pruning object.
+*/
+
+template <class FT, class GSO_ZT, class GSO_FT>
+Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
+              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT> > &m,
+              const int descent_method = PRUNER_METHOD_GRADIENT, int start_row = 0, int end_row = 0);
 
 /**
    @brief svp_probability function, hiding the Pruner class
@@ -129,6 +148,9 @@ public:
   class TestPruner;
   friend class TestPruner;
 
+  /** @brief enumeration radius (squared) */
+  FT enumeration_radius;
+
   /** @brief cost of pre-processing a basis for a retrial
 
       This cost should be expressed in terms of ``nodes'' in an enumeration.
@@ -138,22 +160,36 @@ public:
 
   /** @brief desired success probability after several retrial
 
-      @note one can try to force probability = target_probability by setting
+      @note one can try to force probability >= target_probability by setting
       a prohibitive preproc_cost. But beware: this may induces numerical
-      stability issue, especially with the gradient method. Melder-Mead should
-      be more robust.
+      stability issue, especially with the gradient method. 
   */
 
   FT target_probability;
 
-  /** @brief enumeration radius (squared) */
-  FT enumeration_radius;
+  int verbosity = 0;
 
-  /** @brief Verbosity parameter (0 = silent) */
-  int verbosity;
   int descent_method;
 
-  Pruner();
+
+  Pruner(FT enumeration_radius=0.0, FT preproc_cost=0.0, FT target_probability=0.9, int descent_method = PRUNER_METHOD_HYBRID, size_t n=0, size_t d=0):
+    enumeration_radius(enumeration_radius), 
+    preproc_cost(preproc_cost), 
+    target_probability(target_probability), 
+    descent_method(descent_method),
+    n(n), 
+    d(d)
+  {
+    set_tabulated_consts();
+    cerr << "LOADED METHOD" << descent_method << endl;
+    epsilon     = std::pow(2., -13);  // Guesswork. Will become obsolete with Nelder-Mead
+    min_step    = std::pow(2., -12);  // Guesswork. Will become obsolete with Nelder-Mead
+    step_factor = std::pow(2, .5);    // Guesswork. Will become obsolete with Nelder-Mead
+    shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor 1/.995. Sounds fair.
+    min_cf_decrease = .9999;  // We really want the gradient descent to reach the minima
+    symmetry_factor = 2;      // For now, we are just considering SVP
+
+  }
 
   /** @brief load the shape of a basis from a MatGSO object. Can select a
       projected sub-lattice [start_row,end_row-1]

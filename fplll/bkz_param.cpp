@@ -1,11 +1,39 @@
 #include <cstdio>
 #include "bkz_param.h"
+#include "pruner.h"
 #include "io/json.hpp"
 using json = nlohmann::json;
 
 FPLLL_BEGIN_NAMESPACE
 
-const std::string& default_strategy_path()
+Pruning Pruning::LinearPruning(int block_size, int level)
+{
+
+  Pruning pruning   = Pruning();
+  int start_descent = block_size - level;
+
+  if (start_descent > block_size)
+    start_descent = block_size;
+
+  if (start_descent < 1)
+    start_descent = 1;
+
+  pruning.coefficients.resize(block_size);
+  for (int k = 0; k < start_descent; k++)
+  {
+    pruning.coefficients[k] = 1.0;
+  }
+  for (int k = 0; k < block_size - start_descent; k++)
+  {
+    pruning.coefficients[start_descent + k] = ((double)(block_size - k - 1)) / block_size;
+  }
+  pruning.radius_factor = 1.0;
+  pruning.probability   = fplll::svp_probability<FP_NR<double>>(pruning);
+
+  return pruning;
+}
+
+const std::string &default_strategy_path()
 {
   static const std::string ret(FPLLL_DEFAULT_STRATEGY_PATH);
   return ret;
@@ -36,9 +64,9 @@ const Pruning &Strategy::get_pruning(double radius, double gh) const
 
   for (auto it = pruning_parameters.begin(); it != pruning_parameters.end(); ++it)
   {
-    if (abs(it->radius_factor - gh_factor) < closest_dist)
+    if (fabs(it->radius_factor - gh_factor) < closest_dist)
     {
-      closest_dist = abs(it->radius_factor - gh_factor);
+      closest_dist = fabs(it->radius_factor - gh_factor);
       best         = it;
     }
   }
@@ -71,10 +99,11 @@ vector<Strategy> load_strategies_json(const std::string &filename)
     }
 
     Strategy strategy;
+    strategy.block_size = block_size;
 
-    if (j_strat.find("preprocessing") != j_strat.end())
+    if (j_strat.find("preprocessing_block_sizes") != j_strat.end())
     {
-      for (auto p_it = j_strat["preprocessing"].begin(); p_it != j_strat["preprocessing"].end();
+      for (auto p_it = j_strat["preprocessing_block_sizes"].begin(); p_it != j_strat["preprocessing_block_sizes"].end();
            ++p_it)
       {
         if ((*p_it).is_number())
@@ -88,10 +117,10 @@ vector<Strategy> load_strategies_json(const std::string &filename)
       }
     }
 
-    if (j_strat.find("pruning_coefficients") != j_strat.end())
+    if (j_strat.find("pruning_parameters") != j_strat.end())
     {
-      for (auto p_it = j_strat["pruning_coefficients"].begin();
-           p_it != j_strat["pruning_coefficients"].end(); ++p_it)
+      for (auto p_it = j_strat["pruning_parameters"].begin();
+           p_it != j_strat["pruning_parameters"].end(); ++p_it)
       {
         const json &j_prun = *p_it;
         Pruning pruning;
