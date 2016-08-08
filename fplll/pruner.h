@@ -76,6 +76,7 @@ FPLLL_BEGIN_NAMESPACE
    @param preproc_cost
    @param target_probability
    @param m
+   @param method
    @param start_row
    @param end_row
 */
@@ -83,8 +84,8 @@ FPLLL_BEGIN_NAMESPACE
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m,
-           int start_row = 0, int end_row = 0);
+           const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m, 
+           const int method = PRUNER_METHOD_GRADIENT, int start_row = 0, int end_row = 0);
 
 /**
    @brief prune function, hiding the Pruner class
@@ -94,6 +95,7 @@ void prune(/*output*/ vector<double> &pr, double &probability,
    @param preproc_cost
    @param target_probability
    @param m
+   @param method
    @param start_row
    @param end_row
    @return
@@ -102,8 +104,8 @@ void prune(/*output*/ vector<double> &pr, double &probability,
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(Pruning &pruning,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
-           int start_row = 0, int end_row = 0);
+           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, 
+           const int method = PRUNER_METHOD_GRADIENT, int start_row = 0, int end_row = 0);
 
 
 /**

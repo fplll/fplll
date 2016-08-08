@@ -269,21 +269,42 @@ template <class FT> int test_unpruned()
 template <class FT> int test_auto_prune(size_t n) {
   int status = 0;
   IntMatrix A(2*n, 2*n);
-  A.gen_ntrulike(200);
+  A.gen_ntrulike(30);
   IntMatrix U;
   MatGSO<Z_NR<mpz_t>, FT> M(A, U, U, GSO_DEFAULT);
   LLLReduction<Z_NR<mpz_t>, FT> lll_obj = LLLReduction<Z_NR<mpz_t>, FT>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
   lll_obj.lll();
   Pruning pruning;
   FT radius;
-  M.get_r(radius, 0, 0);
-  cerr << "RAD " << radius.get_d();
-  prune<FT, Z_NR<mpz_t>, FT >(pruning, radius.get_d(), 10000.0, 0.67, M);
+  M.get_r(radius, 1, 1);
+  cerr << "Testing auto_prune " << endl;
+  cerr << "RAD " << radius.get_d() << endl;
 
+
+  cerr << endl << "Gradient " << endl;
+  prune<FT, Z_NR<mpz_t>, FT >(pruning, radius.get_d(), 10000.0, 0.67, M, PRUNER_METHOD_GRADIENT, 1, 2*n);
   status |= !(pruning.probability <= 1.0);
   status |= !(pruning.probability > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
+
+
+  cerr << endl << "NelderMead " << endl;
+  prune<FT, Z_NR<mpz_t>, FT >(pruning, radius.get_d(), 10000.0, 0.67, M, PRUNER_METHOD_NM, 1, 2*n);
+  status |= !(pruning.probability <= 1.0);
+  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.radius_factor >= 1.0);
+  status |= !(pruning.coefficients[0] == 1.0);
+
+
+  cerr << endl << "Hybrid " << endl;
+  prune<FT, Z_NR<mpz_t>, FT >(pruning, radius.get_d(), 10000.0, 0.67, M, PRUNER_METHOD_HYBRID, 1, 2*n);
+  status |= !(pruning.probability <= 1.0);
+  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.radius_factor >= 1.0);
+  status |= !(pruning.coefficients[0] == 1.0);
+
+
 
   return status;
 }
