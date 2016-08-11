@@ -18,6 +18,7 @@
 #ifndef FPLLL_ENUMERATE_BASE_H
 #define FPLLL_ENUMERATE_BASE_H
 
+#include <vector>
 #include <array>
 #include <cfenv>
 #include <cmath>
@@ -78,6 +79,10 @@ protected:
     array<enumxt,maxdim> x, dx, ddx;
     array<enumf, maxdim> subsoldists;
     
+    /* CVP reset informations */
+    vector<int> _max_indices;
+    vector<enumf> _max_dists;
+
     int k, k_max;
    
     /* nodes count */

@@ -217,16 +217,20 @@ void EnumerationBase::enumerate_loop()
             else
             {
                 for (int j = center_partsum_begin[k+1]; j > k; --j)
-                    center_partsums[k][j] = center_partsums[k][j+1] - x[j] * mut[k][j];
+                    center_partsums[k][j] = center_partsums[k][j+1] - (x[j] - center_partsum[j]) * mut[k][j];
             }
             center_partsum_begin[k] = max(center_partsum_begin[k], center_partsum_begin[k+1]);
             center_partsum_begin[k+1] = k+1;
             
-            enumf newcenter = center_partsums[k][k+1];
+            enumf newcenter = center_partsum[k] + center_partsums[k][k+1];
             center[k] = newcenter;
-            partdist[k] = newdist;
             roundto(x[k], newcenter);
             dx[k] = ddx[k] = (((int)(newcenter >= x[k]) & 1) << 1) - 1;
+
+            if (!_max_indices.empty() &&_max_indices[k+1] == k+1)   //in CVP, at max GS vector, we reset the partial distance
+                partdist[k] = 0;
+            else
+                partdist[k] = newdist;
         }
         else
         {
