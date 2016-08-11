@@ -65,10 +65,10 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
         //find the indices of the maxs
         _max_indices = vector<int>(d);
         int cur, max_index=d, previous_max_index=d;
-        auto max_val = _gso.getRExp(d - 1, d - 1);
+        auto max_val = _gso.get_r_exp(d - 1, d - 1);
 
         for (cur = 0 ; cur < d ; ++cur)
-            FPLLL_TRACE("gso[" << cur << "] = "<< _gso.getRExp(cur, cur));
+            FPLLL_TRACE("gso[" << cur << "] = "<< _gso.get_r_exp(cur, cur));
 
         while (max_index > 0)
         {
@@ -76,9 +76,9 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
             --max_index;
             for (cur = max_index ; cur >= 0  ; --cur)
             {
-                if (max_val <= _gso.getRExp(cur, cur))
+                if (max_val <= _gso.get_r_exp(cur, cur))
                 {
-                    max_val = _gso.getRExp(cur, cur);
+                    max_val = _gso.get_r_exp(cur, cur);
                     max_index = cur;
                 }
             }
@@ -90,14 +90,14 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
         //set the correct subbounds
         //pruning_bounds = vector<enumf>(d);  //TODO FIX change between ok or nok to test3
         int i = 0;
-        FT cumul_dist = 0;
+        FT cumul_dist = 0.0;
         enumf cur_dist = 0;
         while (i < d)
         {
             int max = i;
             while (_max_indices[i] == _max_indices[max])
             {
-                cumul_dist += _gso.getRExp(i, i);
+                cumul_dist += _gso.get_r_exp(i, i);
                 ++i;
             }
             for (int j = max ; j < i ; ++j)

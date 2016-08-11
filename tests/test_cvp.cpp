@@ -64,20 +64,20 @@ int test_cvp(ZZ_mat<ZT> &A, IntVect &target, IntVect &b) {
   IntMatrix u;
 
   //cerr << "A " << endl << A << endl;
-  int status = lllReduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
+  int status = lll_reduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
   if (status != RED_SUCCESS) {
-    cerr << "LLL reduction failed: " << getRedStatusStr(status) << endl;
+    cerr << "LLL reduction failed: " << get_red_status_str(status) << endl;
     return status;
   }
 
-  status = closestVector(A, target, sol_coord);
+  status = closest_vector(A, target, sol_coord);
 
   if (status != RED_SUCCESS) {
-    cerr << "Failure: " << getRedStatusStr(status) << endl;
+    cerr << "Failure: " << get_red_status_str(status) << endl;
     return status;
   }
 
-  vectMatrixProduct(solution, sol_coord, A);
+  vector_matrix_product(solution, sol_coord, A);
   
   //cerr << "A red" << endl << A << endl;
   //cerr << "sol_coord : " << sol_coord << endl;
@@ -86,7 +86,7 @@ int test_cvp(ZZ_mat<ZT> &A, IntVect &target, IntVect &b) {
   cerr << "target : " << target << endl;
 
   bool correct = true;
-  for(int i=0; i<A.getCols(); i++) {
+  for(int i=0; i<A.get_cols(); i++) {
     correct = correct && (solution[i] == b[i]);
   }
   if (!correct)
