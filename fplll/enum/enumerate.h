@@ -29,8 +29,8 @@ template<typename FT>
 class Enumeration : public EnumerationBase
 {
 public:
-    Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator)
-        : _gso(gso), _evaluator(evaluator)
+    Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator, vector<int> max_indices=vector<int>(), vector<enumf> max_dists = vector<enumf>())
+        : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), _max_dists(max_dists)
     {
     }
     
@@ -46,6 +46,8 @@ public:
 private:
     MatGSO<Integer, FT>& _gso; 
     Evaluator<FT>& _evaluator;
+    vector<int> _max_indices;
+    vector<enumf> _max_dists;
     
     vector<enumf> pruning_bounds;
     enumf maxdist;

@@ -26,6 +26,7 @@ test_sieve_LDADD=-lgmp -lmpfr $(LIBQD_LIBADD)
 test_nr_SOURCES = test_nr.cpp
 test_lll_SOURCES = test_lll.cpp
 test_svp_SOURCES = test_svp.cpp
+test_cvp_SOURCES = test_cvp.cpp
 test_bkz_SOURCES = test_bkz.cpp
 test_pruner_SOURCES = test_pruner.cpp
 test_sieve_SOURCES = test_sieve.cpp

@@ -58,6 +58,57 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
     fmaxdistnorm.mul_2si(fmaxdist, dual ? normexp-fmaxdistexpo : fmaxdistexpo-normexp);
     maxdist = fmaxdistnorm.get_d(GMP_RNDU);
 
+    if (!solvingsvp)
+    {
+        // For a proper CVP, we need to reset enum below depth with maximal r_i
+        
+        //find the indices of the maxs
+        _max_indices = vector<int>(d);
+        int cur, max_index=d, previous_max_index=d;
+        auto max_val = _gso.getRExp(d - 1, d - 1);
+
+        for (cur = 0 ; cur < d ; ++cur)
+            FPLLL_TRACE("gso[" << cur << "] = "<< _gso.getRExp(cur, cur));
+
+        while (max_index > 0)
+        {
+            previous_max_index = max_index;
+            --max_index;
+            for (cur = max_index ; cur >= 0  ; --cur)
+            {
+                if (max_val <= _gso.getRExp(cur, cur))
+                {
+                    max_val = _gso.getRExp(cur, cur);
+                    max_index = cur;
+                }
+            }
+            for (cur = max_index ; cur < previous_max_index ; ++cur)
+                _max_indices[cur] = max_index;
+        }
+        FPLLL_TRACE("max_indices " << _max_indices);
+
+        //set the correct subbounds
+        //pruning_bounds = vector<enumf>(d);  //TODO FIX change between ok or nok to test3
+        int i = 0;
+        FT cumul_dist = 0;
+        enumf cur_dist = 0;
+        while (i < d)
+        {
+            int max = i;
+            while (_max_indices[i] == _max_indices[max])
+            {
+                cumul_dist += _gso.getRExp(i, i);
+                ++i;
+            }
+            for (int j = max ; j < i ; ++j)
+            {
+                cur_dist = (cumul_dist/fmaxdist).get_d(GMP_RNDU);
+            //    pruning_bounds[j] = cur_dist;
+            }
+        }
+        //FPLLL_TRACE("pruning_bounds " << pruning_bounds);
+    }
+
     _evaluator.set_normexp(normexp);
 
     if (dual)
@@ -138,7 +189,7 @@ void Enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool so
             else
             {
                 for (int j = k + 1; j < k_end; ++j)
-                    newcenter -= x[j] * mut[k][j];
+                    newcenter -= x[j] * mut[k][j];  //not (x[j] - center_partsum[j] ???)
             }
             roundto(x[k], newcenter); // newX = rint(newCenter) / lrint(newCenter)
             center[k] = newcenter;
