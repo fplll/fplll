@@ -167,7 +167,7 @@ public:
 
   FT target_probability;
 
-  int verbosity = 0;
+  int verbosity = 0; 
 
   int descent_method;
 
@@ -181,7 +181,6 @@ public:
     d(d)
   {
     set_tabulated_consts();
-    cerr << "LOADED METHOD" << descent_method << endl;
     epsilon     = std::pow(2., -13);  // Guesswork. Will become obsolete with Nelder-Mead
     min_step    = std::pow(2., -12);  // Guesswork. Will become obsolete with Nelder-Mead
     step_factor = std::pow(2, .5);    // Guesswork. Will become obsolete with Nelder-Mead

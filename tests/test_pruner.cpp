@@ -275,6 +275,8 @@ template <class FT> int test_auto_prune(size_t n) {
   LLLReduction<Z_NR<mpz_t>, FT> lll_obj = LLLReduction<Z_NR<mpz_t>, FT>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
   lll_obj.lll();
   FT radius;
+  // NOTE: because NTRUlike lattice has a verri short vector 1111..
+  // which is sometimes found by LLL, the pruner is only ran on dimension 1...2n-1.
   M.get_r(radius, 1, 1);
   Pruning pruning;
   cerr << "Testing auto_prune " << endl;

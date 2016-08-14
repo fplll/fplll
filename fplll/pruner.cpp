@@ -12,7 +12,7 @@
 
   You should have received a copy of the GNU Lesser General Public License
   along with fplll. If not, see <http://www.gnu.org/licenses/>. */
-
+ 
 
 #include "ballvol.const"
 #include "factorial.const"
@@ -479,20 +479,17 @@ template <class FT> int Pruner<FT>::improve(/*io*/ evec &b)
 template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
 {
 
-  cerr << "METHODE " << descent_method << endl;
 
   if ((descent_method == PRUNER_METHOD_GRADIENT) || (descent_method == PRUNER_METHOD_HYBRID))
   {
     while (improve(b))
     {
-      cerr << "Gradient step, new cost :" << repeated_enum_cost(b).get_d() << endl;
     };
   };
   if ((descent_method == PRUNER_METHOD_NM) || (descent_method == PRUNER_METHOD_HYBRID))
   {
     while (nelder_mead(b))
     {
-      cerr << "NM step, new cost :" << repeated_enum_cost(b).get_d() << endl;
     };
   };
 }
@@ -725,7 +722,7 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
   b = bs[mini];
   int improved  = (init_cf * min_cf_decrease ) > fs[mini];
 
-  if (1){
+  if (verbosity){
     cerr << "Done nelder_mead, after " << counter << " steps" << endl;
     cerr << "Final cf = " << fs[mini]  << " proba = " << svp_probability(b)  << endl;
     if (improved)
@@ -788,7 +785,6 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
               const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT> > &m,
               const int descent_method, int start_row, int end_row)
 {
-  cerr << "LOADING METHOD" << descent_method << endl;
   Pruning pruning;
   if (!end_row)
     end_row = m[0].d;
