@@ -19,16 +19,53 @@
 
 FPLLL_BEGIN_NAMESPACE
 
+template<>
+void Enumeration<Float>::reset(enumf cur_dist)
+{
+    //FPLLL_TRACE("Reset level " << k);
+    int new_dim = k+1;
+
+    vector<enumxt> partial_sol(d-k-1);
+    for (int i=k+1 ; i < d ; ++i)
+        partial_sol[i-k-1] = x[i];
+
+    Float new_dist = 0.0;
+    for (int i = 0; i < new_dim; i++)
+        new_dist.add(new_dist, _gso.get_r_exp(i, i));
+
+    FastEvaluator<Float> new_evaluator(new_dim, _gso.get_mu_matrix(), _gso.get_r_matrix(), EVALMODE_CV);
+    Enumeration<Float> enumobj(_gso, new_evaluator);
+    enumobj.enumerate(0, d, new_dist, 0, target, partial_sol, vector<enumf>(), false, true);
+
+    if (!new_evaluator.sol_coord.empty())
+    {
+        Float fsoldistnorm;
+        fsoldistnorm.mul_2si(new_evaluator.sol_dist, new_evaluator.normExp - _evaluator.normExp);
+        enumf sol_dist = fsoldistnorm.get_d(GMP_RNDU);
+        //FPLLL_TRACE("Recovering sub-solution at level: " << k <<" soldist: " << sol_dist);
+
+        if (sol_dist+cur_dist < partdistbounds[0])
+        {
+            //FPLLL_TRACE("Saving it.");
+            for (int i = 0 ; i < new_dim ; ++i)
+                x[i] = new_evaluator.sol_coord[i].get_d();
+            process_solution(sol_dist + cur_dist);
+        }
+    }
+}
+
 template<typename FT>
 void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdistexpo,
                                 const vector<FT>& target_coord,
                                 const vector<enumxt>& subtree,
                                 const vector<enumf>& pruning,
-                                bool _dual)
+                                bool _dual,
+                                bool subtree_reset)
 {
     bool solvingsvp = target_coord.empty();
     dual = _dual;
     pruning_bounds = pruning;
+    target = target_coord;
     if (last == -1)
         last = _gso.d;
     d = last - first;
@@ -57,57 +94,6 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
     }
     fmaxdistnorm.mul_2si(fmaxdist, dual ? normexp-fmaxdistexpo : fmaxdistexpo-normexp);
     maxdist = fmaxdistnorm.get_d(GMP_RNDU);
-
-    if (!solvingsvp)
-    {
-        // For a proper CVP, we need to reset enum below depth with maximal r_i
-        
-        //find the indices of the maxs
-        _max_indices = vector<int>(d);
-        int cur, max_index=d, previous_max_index=d;
-        auto max_val = _gso.get_r_exp(d - 1, d - 1);
-
-        for (cur = 0 ; cur < d ; ++cur)
-            FPLLL_TRACE("gso[" << cur << "] = "<< _gso.get_r_exp(cur, cur));
-
-        while (max_index > 0)
-        {
-            previous_max_index = max_index;
-            --max_index;
-            for (cur = max_index ; cur >= 0  ; --cur)
-            {
-                if (max_val <= _gso.get_r_exp(cur, cur))
-                {
-                    max_val = _gso.get_r_exp(cur, cur);
-                    max_index = cur;
-                }
-            }
-            for (cur = max_index ; cur < previous_max_index ; ++cur)
-                _max_indices[cur] = max_index;
-        }
-        FPLLL_TRACE("max_indices " << _max_indices);
-
-        //set the correct subbounds
-        //pruning_bounds = vector<enumf>(d);  //TODO FIX change between ok or nok to test3
-        int i = 0;
-        FT cumul_dist = 0.0;
-        enumf cur_dist = 0;
-        while (i < d)
-        {
-            int max = i;
-            while (_max_indices[i] == _max_indices[max])
-            {
-                cumul_dist += _gso.get_r_exp(i, i);
-                ++i;
-            }
-            for (int j = max ; j < i ; ++j)
-            {
-                cur_dist = (cumul_dist/fmaxdist).get_d(GMP_RNDU);
-            //    pruning_bounds[j] = cur_dist;
-            }
-        }
-        //FPLLL_TRACE("pruning_bounds " << pruning_bounds);
-    }
 
     _evaluator.set_normexp(normexp);
 
@@ -147,7 +133,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
     }
     subsoldists = rdiag;
     
-    prepare_enumeration(subtree, solvingsvp);
+    prepare_enumeration(subtree, solvingsvp, subtree_reset);
     do_enumerate();
   
     fmaxdistnorm = maxdist; // Exact
@@ -159,9 +145,9 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
 }
 
 template<typename FT>
-void Enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp)
+void Enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp, bool subtree_reset)
 {
-    bool svpbeginning = solvingsvp;
+    is_svp = solvingsvp;
     
     enumf newdist = 0.0;
     k_end = d - subtree.size();
@@ -174,7 +160,7 @@ void Enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool so
             x[k] = subtree[k - k_end];
 
             if (x[k] != 0)
-                svpbeginning = false;
+                is_svp = false;
 
             for (int j = 0; j < k; ++j)
                 center_partsum[j] -= x[k] * mut[j][k];
@@ -189,17 +175,20 @@ void Enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool so
             else
             {
                 for (int j = k + 1; j < k_end; ++j)
-                    newcenter -= x[j] * mut[k][j];  //not (x[j] - center_partsum[j] ???)
+                    newcenter -= x[j] * mut[k][j];
             }
             roundto(x[k], newcenter); // newX = rint(newCenter) / lrint(newCenter)
             center[k] = newcenter;
             partdist[k] = newdist;
             dx[k] = ddx[k] = (((int)(newcenter >= x[k]) & 1) << 1) - 1;
         }
-        alpha[k] = x[k] - newcenter;
-        newdist += alpha[k] * alpha[k] * rdiag[k];
+        if (!subtree_reset || k < k_end)
+        {
+            alpha[k] = x[k] - newcenter;
+            newdist += alpha[k] * alpha[k] * rdiag[k];
+        }
     }
-    if (!svpbeginning) 
+    if (!is_svp)
     {
         k_max = k_end; // The last non-zero coordinate of x will not stay positive
     }
@@ -228,7 +217,7 @@ void Enumeration<FT>::set_bounds()
 template<typename FT>
 void Enumeration<FT>::process_solution(enumf newmaxdist)
 {
-//    std::cout << "Sol dist: " << newmaxdist << " (nodes:" << nodes << ")" << endl;
+    //FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << nodes << ")");
     for (int j = 0; j < d; ++j)
         fx[j] = x[j];
     _evaluator.eval_sol(fx, newmaxdist, maxdist);

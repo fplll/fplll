@@ -29,31 +29,34 @@ template<typename FT>
 class Enumeration : public EnumerationBase
 {
 public:
-    //Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator, vector<int> max_indices=vector<int>(), vector<enumf> max_dists = vector<enumf>())
-    //    : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), _max_dists(max_dists)
-    Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator)
-        : _gso(gso), _evaluator(evaluator) 
+    Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator, vector<int> max_indices=vector<int>())
+        : _gso(gso), _evaluator(evaluator)
     {
+        _max_indices = max_indices;
     }
-    
+
+    void reset(enumf cur_dist) {};
+
     void enumerate(int first, int last,
                 FT& fmaxdist, long fmaxdistexpo, 
                 const vector<FT>& target_coord = vector<FT>(),
                 const vector<enumxt>& subtree = vector<enumxt>(),
                 const vector<enumf>& pruning = vector<enumf>(),
-                bool dual = false);
+                bool dual = false,
+                bool subtree_reset = false);
 
     inline uint64_t get_nodes() const { return nodes; }
     
 private:
     MatGSO<Integer, FT>& _gso; 
     Evaluator<FT>& _evaluator;
-    
+    vector<FT> target;
+
     vector<enumf> pruning_bounds;
     enumf maxdist;
     vector<FT> fx;
     
-    void prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp);
+    void prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp, bool subtree_reset);
   
     void do_enumerate();
 

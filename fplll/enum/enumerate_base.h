@@ -59,10 +59,12 @@ public:
     
     inline uint64_t get_nodes() const { return nodes; }
     virtual ~EnumerationBase() {}
+    virtual void reset(enumf) = 0;
 
 protected:
     /* configuration */
     bool dual;
+    bool is_svp;
 
     /* enumeration input */
     enumf mut[maxdim][maxdim];
@@ -78,20 +80,20 @@ protected:
     array<enumf, maxdim> partdist, center, alpha;
     array<enumxt,maxdim> x, dx, ddx;
     array<enumf, maxdim> subsoldists;
-    
+
     /* CVP reset informations */
     vector<int> _max_indices;
-    vector<enumf> _max_dists;
 
     int k, k_max;
-   
+    bool finished;
+
     /* nodes count */
     uint64_t nodes;
 
     template<int kk, int kk_start, bool dualenum, bool findsubsols>
     struct opts
     {};
-    
+
     /* need templated function argument for support of integer specialization for kk==-1 */
     template<int kk, int kk_start, bool dualenum, bool findsubsols>
     inline void enumerate_recursive( opts<kk, kk_start, dualenum, findsubsols> ) ENUM_ALWAYS_INLINE;

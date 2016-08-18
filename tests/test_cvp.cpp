@@ -16,6 +16,9 @@
 #include <cstring>
 #include <fplll.h>
 
+#ifndef TESTDATADIR
+#define TESTDATADIR ".."
+#endif
 using namespace std;
 using namespace fplll;
 
@@ -81,9 +84,9 @@ int test_cvp(ZZ_mat<ZT> &A, IntVect &target, IntVect &b) {
   
   //cerr << "A red" << endl << A << endl;
   //cerr << "sol_coord : " << sol_coord << endl;
-  cerr << "solution : " << solution << endl;
-  cerr << "expected : " << b << endl;
-  cerr << "target : " << target << endl;
+  //cerr << "solution : " << solution << endl;
+  //cerr << "expected : " << b << endl;
+  //cerr << "target : " << target << endl;
 
   bool correct = true;
   for(int i=0; i<A.get_cols(); i++) {
@@ -129,9 +132,18 @@ int test_filename(const char *input_filename_lattice, const char *input_filename
 int main(int argc, char *argv[]) {
 
   int status = 0;
-  //status |= test_filename<mpz_t>("lattices/example_cvp_in_lattice", "lattices/example_cvp_in_target", "lattices/example_cvp_out");
-  //status |= test_filename<mpz_t>("lattices/example_cvp_in_lattice2", "lattices/example_cvp_in_target2", "lattices/example_cvp_out2");
-  status |= test_filename<mpz_t>("lattices/example_cvp_in_lattice3", "lattices/example_cvp_in_target3", "lattices/example_cvp_out3");
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice",
+                                 TESTDATADIR "/tests/lattices/example_cvp_in_target",
+                                 TESTDATADIR "/tests/lattices/example_cvp_out");
+  //status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2",
+  //                               TESTDATADIR "/tests/lattices/example_cvp_in_target2",
+  //                               TESTDATADIR "/tests/lattices/example_cvp_out2");
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3",
+                                 TESTDATADIR "/tests/lattices/example_cvp_in_target3",
+                                 TESTDATADIR "/tests/lattices/example_cvp_out3");
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
+                                 TESTDATADIR "/tests/lattices/example_cvp_in_target4",
+                                 TESTDATADIR "/tests/lattices/example_cvp_out4");
   
   if (status == 0) {
     cerr << "All tests passed." << endl;
