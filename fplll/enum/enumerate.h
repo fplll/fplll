@@ -35,8 +35,6 @@ public:
         _max_indices = max_indices;
     }
 
-    void reset(enumf cur_dist) {};
-
     void enumerate(int first, int last,
                 FT& fmaxdist, long fmaxdistexpo, 
                 const vector<FT>& target_coord = vector<FT>(),
@@ -61,6 +59,7 @@ private:
     void do_enumerate();
 
     void set_bounds();    
+    void reset(enumf cur_dist) {};
     virtual void process_solution(enumf newmaxdist);
     virtual void process_subsolution(int offset, enumf newdist);
     

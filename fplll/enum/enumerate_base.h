@@ -63,7 +63,6 @@ public:
     
     inline uint64_t get_nodes() const { return nodes; }
     virtual ~EnumerationBase() {}
-    virtual void reset(enumf) = 0;
 #ifdef FPLLL_BIG_ENUM
     EnumerationBase()
     {
@@ -161,6 +160,7 @@ protected:
     template<bool dualenum, bool findsubsols>
     void enumerate_loop();
 
+    virtual void reset(enumf) = 0;
     virtual void process_solution(enumf newmaxdist) = 0; 
     virtual void process_subsolution(int offset, enumf newdist) = 0;
     
