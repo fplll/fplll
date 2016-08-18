@@ -31,10 +31,13 @@ inline void roundto(int& dest, const double& src) { dest = std::lrint(src); }
 inline void roundto(double& dest, const double& src) { dest = std::rint(src); }
 
 /* config */
-#define FPLLL_BIG_ENUM  //move big structures from stack to heap
 #define FPLLL_WITH_RECURSIVE_ENUM 1
 #define MAXTEMPLATEDDIMENSION  80 // unused
 //#define FORCE_ENUM_INLINE // not recommended
+
+#ifndef FPLLL_WITH_RECURSIVE_ENUM
+#define FPLLL_BIG_ENUM  //move big structures from stack to heap
+#endif
 /* end config */
 
 
