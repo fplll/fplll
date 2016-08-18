@@ -135,9 +135,6 @@ int main(int argc, char *argv[]) {
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice",
                                  TESTDATADIR "/tests/lattices/example_cvp_in_target",
                                  TESTDATADIR "/tests/lattices/example_cvp_out");
-  //status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2",
-  //                               TESTDATADIR "/tests/lattices/example_cvp_in_target2",
-  //                               TESTDATADIR "/tests/lattices/example_cvp_out2");
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3",
                                  TESTDATADIR "/tests/lattices/example_cvp_in_target3",
                                  TESTDATADIR "/tests/lattices/example_cvp_out3");
