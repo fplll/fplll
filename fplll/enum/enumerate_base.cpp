@@ -181,6 +181,7 @@ void EnumerationBase::enumerate_loop()
 
     nodes -= k_end - k;
     k = k_end - 1;
+
 #ifdef FPLLL_WITH_RECURSIVE_ENUM
     enumerate_recursive_dispatch<dualenum, findsubsols>(k);
     return;
@@ -228,7 +229,7 @@ void EnumerationBase::enumerate_loop()
             center_partsum_begin[k] = max(center_partsum_begin[k], center_partsum_begin[k+1]);
             center_partsum_begin[k+1] = k+1;
             
-            enumf newcenter =  center_partsums[k][k+1];
+            enumf newcenter = center_partsums[k][k+1];
             center[k] = newcenter;
             partdist[k] = newdist;
             roundto(x[k], newcenter);
