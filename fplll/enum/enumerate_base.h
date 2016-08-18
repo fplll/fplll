@@ -31,6 +31,7 @@ inline void roundto(int& dest, const double& src) { dest = std::lrint(src); }
 inline void roundto(double& dest, const double& src) { dest = std::rint(src); }
 
 /* config */
+#define FPLLL_BIG_ENUM  //move big structures from stack to heap
 #define FPLLL_WITH_RECURSIVE_ENUM 1
 #define MAXTEMPLATEDDIMENSION  80 // unused
 //#define FORCE_ENUM_INLINE // not recommended
@@ -60,12 +61,49 @@ public:
     inline uint64_t get_nodes() const { return nodes; }
     virtual ~EnumerationBase() {}
     virtual void reset(enumf) = 0;
+#ifdef FPLLL_BIG_ENUM
+    EnumerationBase()
+    {
+        mut.resize(maxdim);
+        for (int i=0 ; i<maxdim ; ++i) mut[i].resize(maxdim);
+        rdiag.resize(maxdim);
+        partdistbounds.resize(maxdim);
+
+        center_partsums.resize(maxdim);
+        for (int i=0 ; i<maxdim ; ++i) center_partsums[i].resize(maxdim);
+        center_partsum.resize(maxdim);
+        center_partsum_begin.resize(maxdim);
+
+        partdist.resize(maxdim);
+        center.resize(maxdim);
+        alpha.resize(maxdim);
+        x.resize(maxdim);
+        dx.resize(maxdim);
+        ddx.resize(maxdim);
+        subsoldists.resize(maxdim);
+    }
+#endif
 
 protected:
     /* configuration */
     bool dual;
     bool is_svp;
+#ifdef FPLLL_BIG_ENUM
+    /* enumeration input */
+    vector< vector<enumf> > mut;
+    vector<enumf> rdiag, partdistbounds;
+    int d, k_end; // dimension, subtreelevel
 
+    /* partial sum cache */
+    vector< vector<enumf> > center_partsums;
+    vector<enumf> center_partsum;
+    vector<int> center_partsum_begin;
+
+    /* enumeration data for each level */
+    vector<enumf> partdist, center, alpha;
+    vector<enumxt> x, dx, ddx;
+    vector<enumf> subsoldists;
+#else
     /* enumeration input */
     enumf mut[maxdim][maxdim];
     array<enumf, maxdim> rdiag, partdistbounds;
@@ -80,6 +118,7 @@ protected:
     array<enumf, maxdim> partdist, center, alpha;
     array<enumxt,maxdim> x, dx, ddx;
     array<enumf, maxdim> subsoldists;
+#endif
 
     /* CVP reset informations */
     vector<int> _max_indices;
