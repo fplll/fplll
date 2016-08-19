@@ -275,13 +275,38 @@ template <class FT> int test_auto_prune(size_t n) {
   LLLReduction<Z_NR<mpz_t>, FT> lll_obj = LLLReduction<Z_NR<mpz_t>, FT>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
   lll_obj.lll();
   FT radius;
-  M.get_r(radius, 0, 0);
-  Pruning pruning = prune<FT, Z_NR<mpz_t>, FT >(radius.get_d(), 10000.0, 0.67, M);
+  // NOTE: because NTRUlike lattice has a verri short vector 1111..
+  // which is sometimes found by LLL, the pruner is only ran on dimension 1...2n-1.
+  M.get_r(radius, 1, 1);
+  Pruning pruning;
+  cerr << "Testing auto_prune " << endl;
+  cerr << "RAD " << radius.get_d() << endl;
 
+
+  cerr << endl << "Gradient " << endl;
+  pruning = prune<FT, Z_NR<mpz_t>, FT >(radius.get_d(), 1.0e8, 0.67, M, PRUNER_METHOD_GRADIENT, 1, 2*n);
   status |= !(pruning.probability <= 1.0);
   status |= !(pruning.probability > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
+
+
+  cerr << endl << "NelderMead " << endl;
+  pruning = prune<FT, Z_NR<mpz_t>, FT >(radius.get_d(), 1.0e8, 0.67, M, PRUNER_METHOD_NM, 1, 2*n);
+  status |= !(pruning.probability <= 1.0);
+  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.radius_factor >= 1.0);
+  status |= !(pruning.coefficients[0] == 1.0);
+
+
+  cerr << endl << "Hybrid " << endl;
+  pruning = prune<FT, Z_NR<mpz_t>, FT >(radius.get_d(), 1.0e8, 0.67, M, PRUNER_METHOD_HYBRID, 1, 2*n);
+  status |= !(pruning.probability <= 1.0);
+  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.radius_factor >= 1.0);
+  status |= !(pruning.coefficients[0] == 1.0);
+
+
 
   return status;
 }
@@ -315,8 +340,8 @@ int main(int argc, char *argv[])
   status |= tp2.test_relative_volume();
 #endif
 
-  status |= test_auto_prune<FP_NR<double> >(30);
-  status |= test_auto_prune<FP_NR<double> >(35);
+  status |= test_auto_prune<FP_NR<double> >(20);
+  status |= test_auto_prune<FP_NR<double> >(25);
 
   if (status == 0)
   {
