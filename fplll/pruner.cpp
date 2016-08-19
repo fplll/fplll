@@ -12,328 +12,299 @@
 
   You should have received a copy of the GNU Lesser General Public License
   along with fplll. If not, see <http://www.gnu.org/licenses/>. */
- 
+
 
 #include "ballvol.const"
 #include "factorial.const"
 #include "pruner.h"
 #include "gso.h"
 
-FPLLL_BEGIN_NAMESPACE
+  FPLLL_BEGIN_NAMESPACE
 
 template <class FT>
-double svp_probability(const Pruning &pruning){
-  Pruner<FT> pru;
-  return pru.svp_probability(pruning.coefficients);
-}
+  double svp_probability(const Pruning &pruning){
+    Pruner<FT> pru;
+    return pru.svp_probability(pruning.coefficients);
+  }
 
 template <class FT>
-double svp_probability(const vector<double> &pr){
-  Pruner<FT> pru;
-  return pru.svp_probability(pr);
-}
-
-
-
-// template <class FT> Pruner<FT>::Pruner()
-// {
-//   n = 0;
-//   d = 0;
-//   set_tabulated_consts();
-
-//   epsilon     = std::pow(2., -13);  // Guesswork. 
-//   min_step    = std::pow(2., -12);  // Guesswork. 
-//   step_factor = std::pow(2, .5);    // Guesswork. 
-//   shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor
-//                        // 1/.995. Sounds fair.
-//   min_cf_decrease = .9999;  // We really want the gradient descent to reach the minima
-//   symmetry_factor = 2;      // For now, we are just considering SVP
-
-//   descent_method = PRUNER_METHOD_HYBRID; // Set the descent method to hybrid (gradient followed by Nelder-Mead)
-//   verbosity = 0;
-
-//   preproc_cost         = 0.0;  // Please set your own value before running.
-//   enumeration_radius   = 0.0;  // Please set your own value before running.
-//   target_probability = .90;  // Please set your own value before running.
-//   preproc_cost         = 0.0;  // Please set your own value before running.
-
-// }
+  double svp_probability(const vector<double> &pr){
+    Pruner<FT> pru;
+    return pru.svp_probability(pr);
+  }
 
 template <class FT> void Pruner<FT>::set_tabulated_consts()
-{
-  for (int i = 0; i < PRUNER_MAX_N; ++i)
   {
-    tabulated_factorial[i] = pre_factorial[i];
-    tabulated_ball_vol[i]  = pre_ball_vol[i];
+    for (int i = 0; i < PRUNER_MAX_N; ++i)
+    {
+      tabulated_factorial[i] = pre_factorial[i];
+      tabulated_ball_vol[i]  = pre_ball_vol[i];
+    }
+    return;
   }
-  return;
-}
 
 /// PUBLIC METHODS
 
 template <class FT>
 template <class GSO_ZT, class GSO_FT>
 void Pruner<FT>::load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &m, int start_row, int end_row, int /*reset_renorm*/)
-{
-  if (!end_row)
   {
-    end_row = m.d;
-  }
-  n = end_row - start_row;
-  d = n / 2;
-  if (!d)
-  {
-    throw std::runtime_error("Inside Pruner : Needs a dimension n>1");
-  }
-  vector<double> gso_sq_norms;
-  GSO_FT f;
-  for (size_t i = 0; i < n; ++i)
-  {
-    m.get_r(f, start_row+i, start_row+i);
-    //cerr << "loadR " << f << endl;
-    gso_sq_norms.emplace_back(f.get_d());
-  }
-  load_basis_shape(gso_sq_norms);
-}
-
-template <class FT> void Pruner<FT>::load_basis_shape(const vector<double> &gso_sq_norms, int reset_renorm)
-{
-  n = gso_sq_norms.size();
-  d = n / 2;
-  if (!d)
-  {
-    throw std::runtime_error("Inside Pruner : Needs a dimension n>1");
-  }
-  FT logvol, tmp;
-  logvol = 0.0;
-  for (size_t i = 0; i < n; ++i)
-  {
-    r[i] = gso_sq_norms[n - 1 - i];
-    //cerr << "R " << r[i] << endl;
-    logvol += log(r[i]);
-  }
-  if (reset_renorm){
-    renormalization_factor = exp(logvol / (-1.0 * n));
-  }
-
-  for (size_t i = 0; i < n; ++i)
-  {
-    r[i] *= renormalization_factor;
-  }
-  tmp = 1.;
-  for (size_t i = 0; i < 2 * d; ++i)
-  {
-    tmp *= sqrt(r[i]);
-    ipv[i] = 1.0 / tmp;
-    //cerr << "IPV " << ipv[i] << endl;
-  }
-}
-
-template <class FT> 
-void Pruner<FT>::load_basis_shapes(const vector<vector<double>> &gso_sq_norms_vec)
-{
-  vec sum_ipv;
-  n = gso_sq_norms_vec[0].size();
-  for (size_t i = 0; i < n; ++i)
-  {
-    sum_ipv[i] = 0.;
-  }
-  int count = gso_sq_norms_vec.size();
-  for (int k = 0; k < count; ++k)
-  {
-    if (gso_sq_norms_vec[k].size() != n)
+    if (!end_row)
     {
-      throw std::runtime_error("Inside Pruner : loading several bases with different dimensions");  
+      end_row = m.d;
     }
-    int reset_renorm = (k==0);
-    load_basis_shape(gso_sq_norms_vec[k], reset_renorm);
+    n = end_row - start_row;
+    d = n / 2;
+    if (!d)
+    {
+      throw std::runtime_error("Inside Pruner : Needs a dimension n>1");
+    }
+    vector<double> gso_sq_norms;
+    GSO_FT f;
     for (size_t i = 0; i < n; ++i)
     {
-      sum_ipv[i] += ipv[i];
+      m.get_r(f, start_row+i, start_row+i);
+      gso_sq_norms.emplace_back(f.get_d());
+    }
+    load_basis_shape(gso_sq_norms);
+  }
+
+template <class FT> void Pruner<FT>::load_basis_shape(const vector<double> &gso_sq_norms, int reset_renorm)
+  {
+    n = gso_sq_norms.size();
+    d = n / 2;
+    if (!d)
+    {
+      throw std::runtime_error("Inside Pruner : Needs a dimension n>1");
+    }
+    FT logvol, tmp;
+    logvol = 0.0;
+    for (size_t i = 0; i < n; ++i)
+    {
+      r[i] = gso_sq_norms[n - 1 - i];
+      logvol += log(r[i]);
+    }
+    if (reset_renorm){
+      renormalization_factor = exp(logvol / (-1.0 * n));
+    }
+
+    for (size_t i = 0; i < n; ++i)
+    {
+      r[i] *= renormalization_factor;
+    }
+    tmp = 1.;
+    for (size_t i = 0; i < 2 * d; ++i)
+    {
+      tmp *= sqrt(r[i]);
+      ipv[i] = 1.0 / tmp;
     }
   }
-  for (size_t i = 0; i < n; ++i){
-    ipv[i] = sum_ipv[i] / (1.0 * count);
+
+template <class FT> 
+  void Pruner<FT>::load_basis_shapes(const vector<vector<double>> &gso_sq_norms_vec)
+  {
+    vec sum_ipv;
+    n = gso_sq_norms_vec[0].size();
+    for (size_t i = 0; i < n; ++i)
+    {
+      sum_ipv[i] = 0.;
+    }
+    int count = gso_sq_norms_vec.size();
+    for (int k = 0; k < count; ++k)
+    {
+      if (gso_sq_norms_vec[k].size() != n)
+      {
+        throw std::runtime_error("Inside Pruner : loading several bases with different dimensions");  
+      }
+      int reset_renorm = (k==0);
+      load_basis_shape(gso_sq_norms_vec[k], reset_renorm);
+      for (size_t i = 0; i < n; ++i)
+      {
+        sum_ipv[i] += ipv[i];
+      }
+    }
+    for (size_t i = 0; i < n; ++i){
+      ipv[i] = sum_ipv[i] / (1.0 * count);
+    }
   }
-}
 
 template <class FT> 
 template <class GSO_ZT, class GSO_FT>
-void Pruner<FT>::load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> >&m_vec, int start_row, int end_row)
-{
-  vec sum_ipv;
-  if (!end_row)
+  void Pruner<FT>::load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> >&m_vec, int start_row, int end_row)
   {
-    end_row = m_vec[0].d;
-  }
-  n = end_row - start_row;
-  d = n / 2;
+    vec sum_ipv;
+    if (!end_row)
+    {
+      end_row = m_vec[0].d;
+    }
+    n = end_row - start_row;
+    d = n / 2;
 
-  for (size_t i = 0; i < n; ++i)
-  {
-    sum_ipv[i] = 0.;
-  }
-  int count = m_vec.size();
-  for (int k = 0; k < count; ++k)
-  {
-    int reset_renorm = (k==0);    
-    load_basis_shape(m_vec[k], start_row, end_row, reset_renorm);
     for (size_t i = 0; i < n; ++i)
     {
-      sum_ipv[i] += ipv[i];
+      sum_ipv[i] = 0.;
+    }
+    int count = m_vec.size();
+    for (int k = 0; k < count; ++k)
+    {
+      int reset_renorm = (k==0);    
+      load_basis_shape(m_vec[k], start_row, end_row, reset_renorm);
+      for (size_t i = 0; i < n; ++i)
+      {
+        sum_ipv[i] += ipv[i];
+      }
+    }
+    for (size_t i = 0; i < n; ++i){
+      ipv[i] = sum_ipv[i] / (1.0 * count);
     }
   }
-  for (size_t i = 0; i < n; ++i){
-    ipv[i] = sum_ipv[i] / (1.0 * count);
-  }
-}
 
 
 template <class FT>
 void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const int reset)
-{
-  evec b;
-  if (reset)
   {
-    init_coefficients(b);
-    enforce_bounds(b);
+    evec b;
+    if (reset)
+    {
+      init_coefficients(b);
+      enforce_bounds(b);
+    }
+    else
+    {
+      load_coefficients(b, pr);
+    }
+    descent(b);
+    save_coefficients(pr, b);
   }
-  else
-  {
-    load_coefficients(b, pr);
-  }
-  descent(b);
-  save_coefficients(pr, b);
-}
 
 // PRIVATE METHODS
 
 template <class FT> void Pruner<FT>::load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr)
-{
-  for (size_t i = 0; i < d; ++i)
   {
-    b[i] = pr[n - 1 - 2 * i];
+    for (size_t i = 0; i < d; ++i)
+    {
+      b[i] = pr[n - 1 - 2 * i];
+    }
+    if (enforce_bounds(b))
+    {
+      throw std::runtime_error("Inside Pruner : Ill formed pruning coefficients (must be decreasing, "
+       "starting with two 1.0)");
+    }
   }
-  if (enforce_bounds(b))
-  {
-    throw std::runtime_error("Inside Pruner : Ill formed pruning coefficients (must be decreasing, "
-                             "starting with two 1.0)");
-  }
-}
 
 template <class FT> int Pruner<FT>::check_basis_loaded()
-{
-  if (d)
   {
-    return 0;
+    if (d)
+    {
+      return 0;
+    }
+    throw std::runtime_error("Inside Pruner : No basis loaded");
+    return 1;
   }
-  throw std::runtime_error("Inside Pruner : No basis loaded");
-  return 1;
-}
 
 template <class FT> void Pruner<FT>::save_coefficients(/*o*/ vector<double> &pr, /*i*/ const evec &b)
-{
-  pr.resize(n);
-  for (size_t i = 0; i < d; ++i)
   {
-    pr[n - 1 - 2 * i] = b[i].get_d();
-    pr[n - 2 - 2 * i] = b[i].get_d();
+    pr.resize(n);
+    for (size_t i = 0; i < d; ++i)
+    {
+      pr[n - 1 - 2 * i] = b[i].get_d();
+      pr[n - 2 - 2 * i] = b[i].get_d();
+    }
+    pr[0] = 1.;
   }
-  pr[0] = 1.;
-}
 
 template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j)
-{
-  int status = 0;
-  if (b[d - 1] < .999)
   {
-    status = 1;
-  }
-  b[d - 1] = 1;
-  for (size_t i = 0; i < d; ++i)
-  {
-    if (b[i] > 1.0001)
+    int status = 0;
+    if (b[d - 1] < .999)
     {
-      status =1;
+      status = 1;
     }
-    if (b[i] > 1)
+    b[d - 1] = 1;
+    for (size_t i = 0; i < d; ++i)
     {
-      b[i]   = 1.0;
-    }
-    if (b[i] <= .1)
-      b[i] = .1;
-  }
-  for (size_t i = j; i < d - 1; ++i)
-  {
-    if (b[i + 1] < b[i])
-    {
-      if (b[i + 1] + .001 < b[i] )
+      if (b[i] > 1.0001)
       {
-        status = 1;
+        status =1;
       }
-      b[i + 1] = b[i];
-    }
-  }
-  for (int i = j - 1; i >= 0; --i)
-  {
-    if (b[i + 1] < b[i])
-    {
-      if (b[i + 1] + .001 < b[i] )
+      if (b[i] > 1)
       {
-        status = 1;
+        b[i]   = 1.0;
       }
-      b[i]   = b[i + 1];
+      if (b[i] <= .1)
+        b[i] = .1;
     }
+    for (size_t i = j; i < d - 1; ++i)
+    {
+      if (b[i + 1] < b[i])
+      {
+        if (b[i + 1] + .001 < b[i] )
+        {
+          status = 1;
+        }
+        b[i + 1] = b[i];
+      }
+    }
+    for (int i = j - 1; i >= 0; --i)
+    {
+      if (b[i + 1] < b[i])
+      {
+        if (b[i + 1] + .001 < b[i] )
+        {
+          status = 1;
+        }
+        b[i]   = b[i + 1];
+      }
+    }
+    return status;
   }
-  return status;
-}
 
 template <class FT> inline FT Pruner<FT>::eval_poly(const int ld, /*i*/ const poly &p, const FT x)
-{
-  FT acc;
-  acc = 0.0;
-  for (int i = ld; i >= 0; --i)
   {
-    acc = acc * x;
-    acc = acc + p[i];
+    FT acc;
+    acc = 0.0;
+    for (int i = ld; i >= 0; --i)
+    {
+      acc = acc * x;
+      acc = acc + p[i];
+    }
+    return acc;
   }
-  return acc;
-}
 
 template <class FT> inline void Pruner<FT>::integrate_poly(const int ld, /*io*/ poly &p)
-{
-  for (int i = ld; i >= 0; --i)
   {
-    FT tmp;
-    tmp         = i + 1.;
-    p[i + 1] = p[i] / tmp;
+    for (int i = ld; i >= 0; --i)
+    {
+      FT tmp;
+      tmp         = i + 1.;
+      p[i + 1] = p[i] / tmp;
+    }
+    p[0] = 0.0;
   }
-  p[0] = 0.0;
-}
 
 template <class FT> inline FT Pruner<FT>::relative_volume(const int rd, /*i*/ const evec &b)
-{
-  poly P;
-  P[0]   = 1;
-  int ld = 0;
-  for (int i = rd - 1; i >= 0; --i)
   {
-    integrate_poly(ld, P);
-    ld++;
-    P[0] = -1.0 * eval_poly(ld, P, b[i] / b[rd - 1]);
+    poly P;
+    P[0]   = 1;
+    int ld = 0;
+    for (int i = rd - 1; i >= 0; --i)
+    {
+      integrate_poly(ld, P);
+      ld++;
+      P[0] = -1.0 * eval_poly(ld, P, b[i] / b[rd - 1]);
+    }
+    if (rd % 2)
+    {
+      return -1.0 * P[0] * tabulated_factorial[rd];
+    }
+    else
+    {
+      return P[0] * tabulated_factorial[rd];
+    }
   }
-  if (rd % 2)
-  {
-    return -1.0 * P[0] * tabulated_factorial[rd];
-  }
-  else
-  {
-    return P[0] * tabulated_factorial[rd];
-  }
-}
 
 template <class FT> inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b)
-{
+  {
   vec rv;  // Relative volumes at each level
 
   for (size_t i = 0; i < d; ++i)
@@ -359,12 +330,11 @@ template <class FT> inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b)
     FT tmp;
 
     tmp = normalized_radius_pow * rv[i] * tabulated_ball_vol[i + 1] *
-          sqrt(pow_si(b[i / 2], 1 + i)) * ipv[i];
+    sqrt(pow_si(b[i / 2], 1 + i)) * ipv[i];
     normalized_radius_pow *= normalized_radius;
     total += tmp;
   }
   total /= symmetry_factor;
-  // exit(1);
   return total;
 }
 
@@ -513,13 +483,12 @@ template <class FT> void Pruner<FT>::init_coefficients(evec &b)
 #define ND_INIT_WIDTH 0.05
 
 template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
-  size_t l = d+1;
+size_t l = d+1;
   evec * bs = new evec[l]; // The simplexe (d+1) vector of dim d
   FT * fs = new FT[l];     // Values of f at the simplex vertices
 
-  //cerr << "NM init costs" << endl;
-  for (size_t i = 0; i < l; ++i) // Intialize the simplex
-  {
+    for (size_t i = 0; i < l; ++i) // Intialize the simplex
+    {
     bs[i] = b;            // One of the is b    
     if (i<d){         
       if (bs[i][i] <.5) 
@@ -533,7 +502,6 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
     }
     enforce_bounds(bs[i]);    
     fs[i] = repeated_enum_cost(bs[i]);  // initialize the value
-    //cerr << i << " " << bs[i][0] << " " << bs[i][i] << " " << bs[i][d-1] <<" " << fs[i] << endl;
   }
 
   FT init_cf = fs[l-1];
@@ -563,14 +531,14 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
       if (fs[i]>fs[maxi]) maxi = i;
       for (size_t j = 0; j < d; ++j) bo[j] += bs[i][j];
     }
-    FT tmp;
-    tmp = l;
+  FT tmp;
+  tmp = l;
     for (size_t i = 0; i < d; ++i) bo[i] /= tmp; // Centroid calculated
 
-    if (!counter)
-      fs_maxi_last = fs[maxi];
+      if (!counter)
+        fs_maxi_last = fs[maxi];
 
-    if (!maxi) maxi2++;
+      if (!maxi) maxi2++;
     for (size_t i = 1; i < l; ++i) // determine min and max, and centroid
     {
       if ((fs[i]>fs[maxi2]) && (i != maxi)) maxi2 = i;
@@ -584,7 +552,7 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
 
     if (verbosity){
       cerr << "  melder_mead step " << counter << "cf = " 
-           << fs[mini]  << " proba = " << svp_probability(bs[mini]) << " cost = " << single_enum_cost(bs[mini])  << endl;
+      << fs[mini]  << " proba = " << svp_probability(bs[mini]) << " cost = " << single_enum_cost(bs[mini])  << endl;
       for (size_t i = 0; i < d; ++i)
       {
         cerr << ceil(bs[mini][i].get_d()*1000) << " ";
@@ -694,47 +662,47 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
     }
     if (fc < fs[maxi])
     {
-        bs[maxi] = bc;
-        fs[maxi] = fc;
-        if (verbosity){
-          cerr << "    Contraction " << endl;
-        }
+      bs[maxi] = bc;
+      fs[maxi] = fc;
+      if (verbosity){
+        cerr << "    Contraction " << endl;
+      }
         continue; // Go to step 1.
-    }
+      }
 
     ////////////////
     // step 6. Shrink
     ////////////////
-    if (verbosity){
-      cerr << "    Shrink " << endl;
-    }
-    for (size_t j = 0; j < l; ++j)
-    {
-      for (size_t i = 0; i < d; ++i)
-      {
-        bs[j][i] = bs[mini][i] + ND_SIGMA * (bs[j][i] - bs[mini][i]);
+      if (verbosity){
+        cerr << "    Shrink " << endl;
       }
-    enforce_bounds(bs[j]);
+      for (size_t j = 0; j < l; ++j)
+      {
+        for (size_t i = 0; i < d; ++i)
+        {
+          bs[j][i] = bs[mini][i] + ND_SIGMA * (bs[j][i] - bs[mini][i]);
+        }
+        enforce_bounds(bs[j]);
     fs[j] = repeated_enum_cost(bs[j]);  // initialize the value
-    }
   }
+}
 
-  b = bs[mini];
-  int improved  = (init_cf * min_cf_decrease ) > fs[mini];
+b = bs[mini];
+int improved  = (init_cf * min_cf_decrease ) > fs[mini];
 
-  if (verbosity){
-    cerr << "Done nelder_mead, after " << counter << " steps" << endl;
-    cerr << "Final cf = " << fs[mini]  << " proba = " << svp_probability(b)  << endl;
-    if (improved)
+if (verbosity){
+  cerr << "Done nelder_mead, after " << counter << " steps" << endl;
+  cerr << "Final cf = " << fs[mini]  << " proba = " << svp_probability(b)  << endl;
+  if (improved)
     {cerr << "Progess has been made: init cf = " << init_cf << endl;}
-    cerr << endl;
+  cerr << endl;
   
-  }
+}
 
 
-  delete[] fs;
-  delete[] bs;
-  
+delete[] fs;
+delete[] bs;
+
   return improved; // Has MN made any progress
 
 }
@@ -746,8 +714,8 @@ template<class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b){
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
-           const int descent_method, int start_row, int end_row)
+const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
+const int descent_method, int start_row, int end_row)
 {
   cerr << "LOADING METHOD" << descent_method << endl;
   Pruner<FP_NR<double> > pruner(enumeration_radius, preproc_cost, target_probability, descent_method);
@@ -758,8 +726,8 @@ void prune(/*output*/ vector<double> &pr, double &probability,
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
-              const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
-              const int descent_method, int start_row, int end_row)
+const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
+const int descent_method, int start_row, int end_row)
 {
   cerr << "LOADING METHOD" << descent_method << endl;
   Pruning pruning;
@@ -782,8 +750,8 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
-              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT> > &m,
-              const int descent_method, int start_row, int end_row)
+const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT> > &m,
+const int descent_method, int start_row, int end_row)
 {
   Pruning pruning;
   if (!end_row)
