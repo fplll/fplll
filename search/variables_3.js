@@ -4,6 +4,7 @@ var searchData=
   ['ddx',['ddx',['../classEnumerationBase.html#ae794cd95b9f5ce30387d4ac8d7130a47',1,'EnumerationBase']]],
   ['def_5fgso_5fprec_5fepsilon',['DEF_GSO_PREC_EPSILON',['../util_8h.html#ab647256b23eaab2f8cd59c6faadaf34b',1,'util.h']]],
   ['delta',['delta',['../classBKZParam.html#aa1c43acefe88539a7f3fa4ebb3992dd1',1,'BKZParam::delta()'],['../structOptions.html#acd471c4f31e75e6bdf0e306447ee4c65',1,'Options::delta()']]],
+  ['descent_5fmethod',['descent_method',['../classPruner.html#a1974ec18c3bdc5a55d4aefaaae9c552f',1,'Pruner']]],
   ['dim_5fdouble_5fmax',['dim_double_max',['../wrapper_8cpp.html#a120d834be245b0206c37bf5cdb71b293',1,'wrapper.cpp']]],
   ['dual',['dual',['../classEnumerationBase.html#a0fedb629de1480137e455a073a911f5b',1,'EnumerationBase']]],
   ['dump_5fgso_5ffilename',['dump_gso_filename',['../classBKZParam.html#a1b335c4f3d0b254bb07148061776eadf',1,'BKZParam']]],

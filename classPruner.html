@@ -117,8 +117,8 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2e005c72a6314b8bb180a8d728b4cf19"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a2e005c72a6314b8bb180a8d728b4cf19">Pruner</a> (FT <a class="el" href="classPruner.html#a9bfd449c7d972b176e853c077e42655d">enumeration_radius</a>=0.0, FT <a class="el" href="classPruner.html#a9ebddada6ef44c50ea653be1682df7f2">preproc_cost</a>=0.0, FT <a class="el" href="classPruner.html#a32c23ef4f0374067264a281992ee9828">target_probability</a>=0.9, size_t n=0, size_t d=0)</td></tr>
-<tr class="separator:a2e005c72a6314b8bb180a8d728b4cf19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b91ee3401e27c3e433b4047b51d8206"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a1b91ee3401e27c3e433b4047b51d8206">Pruner</a> (FT <a class="el" href="classPruner.html#a9bfd449c7d972b176e853c077e42655d">enumeration_radius</a>=0.0, FT <a class="el" href="classPruner.html#a9ebddada6ef44c50ea653be1682df7f2">preproc_cost</a>=0.0, FT <a class="el" href="classPruner.html#a32c23ef4f0374067264a281992ee9828">target_probability</a>=0.9, int <a class="el" href="classPruner.html#a1974ec18c3bdc5a55d4aefaaae9c552f">descent_method</a>=<a class="el" href="pruner_8h.html#a2efe36ae73f3db4e3f48eb1ba9d264bd">PRUNER_METHOD_HYBRID</a>, size_t n=0, size_t d=0)</td></tr>
+<tr class="separator:a1b91ee3401e27c3e433b4047b51d8206"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4a175275a63920ad654042fa1161416"><td class="memTemplParams" colspan="2">template&lt;class GSO_ZT , class GSO_FT &gt; </td></tr>
 <tr class="memitem:af4a175275a63920ad654042fa1161416"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classPruner.html#af4a175275a63920ad654042fa1161416">load_basis_shape</a> (<a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &amp;gso, int start_row=0, int end_row=0, int reset_renorm=1)</td></tr>
 <tr class="memdesc:af4a175275a63920ad654042fa1161416"><td class="mdescLeft">&#160;</td><td class="mdescRight">load the shape of a basis from a <a class="el" href="classMatGSO.html">MatGSO</a> object. Can select a projected sub-lattice [start_row,end_row-1]  <a href="#af4a175275a63920ad654042fa1161416">More...</a><br /></td></tr>
@@ -160,6 +160,10 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a32c23ef4f0374067264a281992ee9828"><td class="memItemLeft" align="right" valign="top">FT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a32c23ef4f0374067264a281992ee9828">target_probability</a></td></tr>
 <tr class="memdesc:a32c23ef4f0374067264a281992ee9828"><td class="mdescLeft">&#160;</td><td class="mdescRight">desired success probability after several retrial  <a href="#a32c23ef4f0374067264a281992ee9828">More...</a><br /></td></tr>
 <tr class="separator:a32c23ef4f0374067264a281992ee9828"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af61ef0f88abb3810ed53bba270eff437"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#af61ef0f88abb3810ed53bba270eff437">verbosity</a> = 0</td></tr>
+<tr class="separator:af61ef0f88abb3810ed53bba270eff437"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1974ec18c3bdc5a55d4aefaaae9c552f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a1974ec18c3bdc5a55d4aefaaae9c552f">descent_method</a></td></tr>
+<tr class="separator:a1974ec18c3bdc5a55d4aefaaae9c552f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -167,7 +171,7 @@ Friends</h2></td></tr>
 <tr class="separator:a6af9f405bf16c4faeeb47ae5f39bbd7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a2e005c72a6314b8bb180a8d728b4cf19"></a>
+<a class="anchor" id="a1b91ee3401e27c3e433b4047b51d8206"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -193,6 +197,12 @@ template&lt;class FT &gt; </div>
           <td></td>
           <td class="paramtype">FT&#160;</td>
           <td class="paramname"><em>target_probability</em> = <code>0.9</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>descent_method</em> = <code><a class="el" href="pruner_8h.html#a2efe36ae73f3db4e3f48eb1ba9d264bd">PRUNER_METHOD_HYBRID</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -514,6 +524,20 @@ template&lt;class FT &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Field Documentation</h2>
+<a class="anchor" id="a1974ec18c3bdc5a55d4aefaaae9c552f"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::descent_method</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a class="anchor" id="a9bfd449c7d972b176e853c077e42655d"></a>
 <div class="memitem">
 <div class="memproto">
@@ -560,7 +584,21 @@ template&lt;class FT &gt; </div>
 </div><div class="memdoc">
 
 <p>desired success probability after several retrial </p>
-<dl class="section note"><dt>Note</dt><dd>one can try to force probability = target_probability by setting a prohibitive preproc_cost. But beware: this may induces numerical stability issue, especially with the gradient method. Melder-Mead should be more robust. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>one can try to force probability &gt;= target_probability by setting a prohibitive preproc_cost. But beware: this may induces numerical stability issue, especially with the gradient method. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af61ef0f88abb3810ed53bba270eff437"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::verbosity = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -577,7 +615,7 @@ template&lt;class FT &gt; </div>
 </div>
 </div>
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 4 2016 14:17:02 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
+Generated by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>

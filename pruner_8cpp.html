@@ -101,6 +101,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">pruner.cpp File Reference</div>  </div>
@@ -111,198 +112,143 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;<a class="el" href="pruner_8h_source.html">pruner.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="gso_8h_source.html">gso.h</a>&quot;</code><br />
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a164287f4384ee1500a7130ce3213a7d0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a164287f4384ee1500a7130ce3213a7d0">ND_ALPHA</a>&#160;&#160;&#160;1</td></tr>
+<tr class="separator:a164287f4384ee1500a7130ce3213a7d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a384d67470f91372fb51bfc4197de38dd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a384d67470f91372fb51bfc4197de38dd">ND_GAMMA</a>&#160;&#160;&#160;2</td></tr>
+<tr class="separator:a384d67470f91372fb51bfc4197de38dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae55f6de49324c27f6f09be4d99a2e412"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#ae55f6de49324c27f6f09be4d99a2e412">ND_RHO</a>&#160;&#160;&#160;0.5</td></tr>
+<tr class="separator:ae55f6de49324c27f6f09be4d99a2e412"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1421612614bf0c3165dc2bb238cfbac2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a1421612614bf0c3165dc2bb238cfbac2">ND_SIGMA</a>&#160;&#160;&#160;0.5</td></tr>
+<tr class="separator:a1421612614bf0c3165dc2bb238cfbac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1d13a441ed1b74a8bf64bf2e4140131"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#ae1d13a441ed1b74a8bf64bf2e4140131">ND_INIT_WIDTH</a>&#160;&#160;&#160;0.05</td></tr>
+<tr class="separator:ae1d13a441ed1b74a8bf64bf2e4140131"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a669be52879e9ce987555c5d1d6a963ef"><td class="memTemplParams" colspan="2">template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </td></tr>
-<tr class="memitem:a669be52879e9ce987555c5d1d6a963ef"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="defs_8h.html#ae244ad7ce1da4fe7f22265a1de800a2e">FPLLL_BEGIN_NAMESPACE</a> void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a669be52879e9ce987555c5d1d6a963ef">prune</a> (vector&lt; double &gt; &amp;pr, double &amp;probability, const double enumeration_radius, const double preproc_cost, const double target_probability, const <a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &amp;m, int start_row, int end_row)</td></tr>
-<tr class="separator:a669be52879e9ce987555c5d1d6a963ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45d26d9953f3c436dbc12ca2d6d084bc"><td class="memTemplParams" colspan="2">template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </td></tr>
-<tr class="memitem:a45d26d9953f3c436dbc12ca2d6d084bc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a45d26d9953f3c436dbc12ca2d6d084bc">prune</a> (<a class="el" href="classPruning.html">Pruning</a> &amp;pruning, const double enumeration_radius, const double preproc_cost, const double target_probability, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &amp;m, int start_row, int end_row)</td></tr>
-<tr class="separator:a45d26d9953f3c436dbc12ca2d6d084bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae831d228555a77df78c551b67319c1a5"><td class="memTemplParams" colspan="2">template&lt;class FT &gt; </td></tr>
-<tr class="memitem:ae831d228555a77df78c551b67319c1a5"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#ae831d228555a77df78c551b67319c1a5">svp_probability</a> (const <a class="el" href="classPruning.html">Pruning</a> &amp;pruning)</td></tr>
-<tr class="memdesc:ae831d228555a77df78c551b67319c1a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">svp_probability function, hiding the <a class="el" href="classPruner.html">Pruner</a> class  <a href="#ae831d228555a77df78c551b67319c1a5">More...</a><br /></td></tr>
-<tr class="separator:ae831d228555a77df78c551b67319c1a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cba35bd5f5b3754228a2bb253e12925"><td class="memTemplParams" colspan="2">template&lt;class FT &gt; </td></tr>
+<tr class="memitem:a0cba35bd5f5b3754228a2bb253e12925"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="defs_8h.html#ae244ad7ce1da4fe7f22265a1de800a2e">FPLLL_BEGIN_NAMESPACE</a> double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a0cba35bd5f5b3754228a2bb253e12925">svp_probability</a> (const <a class="el" href="classPruning.html">Pruning</a> &amp;pruning)</td></tr>
+<tr class="memdesc:a0cba35bd5f5b3754228a2bb253e12925"><td class="mdescLeft">&#160;</td><td class="mdescRight">svp_probability function, hiding the <a class="el" href="classPruner.html">Pruner</a> class  <a href="#a0cba35bd5f5b3754228a2bb253e12925">More...</a><br /></td></tr>
+<tr class="separator:a0cba35bd5f5b3754228a2bb253e12925"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0472a4e583fd0cd3ec669480c0896d63"><td class="memTemplParams" colspan="2">template&lt;class FT &gt; </td></tr>
 <tr class="memitem:a0472a4e583fd0cd3ec669480c0896d63"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a0472a4e583fd0cd3ec669480c0896d63">svp_probability</a> (const vector&lt; double &gt; &amp;pr)</td></tr>
 <tr class="separator:a0472a4e583fd0cd3ec669480c0896d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7403763ab2c14513514208d057020a28"><td class="memTemplParams" colspan="2">template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </td></tr>
-<tr class="memitem:a7403763ab2c14513514208d057020a28"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a7403763ab2c14513514208d057020a28">prune</a> (vector&lt; double &gt; &amp;pr, double &amp;probability, const double enumeration_radius, const double preproc_cost, const double target_probability, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &amp;m, int start_row, int end_row)</td></tr>
-<tr class="memdesc:a7403763ab2c14513514208d057020a28"><td class="mdescLeft">&#160;</td><td class="mdescRight">prune function, hiding the <a class="el" href="classPruner.html">Pruner</a> class  <a href="#a7403763ab2c14513514208d057020a28">More...</a><br /></td></tr>
-<tr class="separator:a7403763ab2c14513514208d057020a28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa6d10e40ceb3cef81e6d7a0430336c77"><td class="memTemplParams" colspan="2">template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </td></tr>
-<tr class="memitem:aa6d10e40ceb3cef81e6d7a0430336c77"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#aa6d10e40ceb3cef81e6d7a0430336c77">prune</a> (const double enumeration_radius, const double preproc_cost, const double target_probability, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &amp;m, int start_row, int end_row)</td></tr>
-<tr class="memdesc:aa6d10e40ceb3cef81e6d7a0430336c77"><td class="mdescLeft">&#160;</td><td class="mdescRight">prune function, hiding the <a class="el" href="classPruner.html">Pruner</a> class  <a href="#aa6d10e40ceb3cef81e6d7a0430336c77">More...</a><br /></td></tr>
-<tr class="separator:aa6d10e40ceb3cef81e6d7a0430336c77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33482d7dae177288719eb1b1a1655d72"><td class="memTemplParams" colspan="2">template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </td></tr>
-<tr class="memitem:a33482d7dae177288719eb1b1a1655d72"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a33482d7dae177288719eb1b1a1655d72">prune</a> (const double enumeration_radius, const double preproc_cost, const double target_probability, vector&lt; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &gt; &amp;m, int start_row, int end_row)</td></tr>
-<tr class="memdesc:a33482d7dae177288719eb1b1a1655d72"><td class="mdescLeft">&#160;</td><td class="mdescRight">prune function averaging over several bases  <a href="#a33482d7dae177288719eb1b1a1655d72">More...</a><br /></td></tr>
-<tr class="separator:a33482d7dae177288719eb1b1a1655d72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86a88856f2dd62f3d27c5654a15bfcfa"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a86a88856f2dd62f3d27c5654a15bfcfa">prune&lt; FP_NR&lt; double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; double &gt; &gt;</a> (vector&lt; double &gt; &amp;, double &amp;, const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:a86a88856f2dd62f3d27c5654a15bfcfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa95d0298f4c3d1d5197da574956e76ef"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#aa95d0298f4c3d1d5197da574956e76ef">prune&lt; FP_NR&lt; double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; double &gt; &gt;</a> (const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:aa95d0298f4c3d1d5197da574956e76ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36da8ffc93f819ca8459e4289b801fc6"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a36da8ffc93f819ca8459e4289b801fc6">prune&lt; FP_NR&lt; double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; double &gt; &gt;</a> (const double, const double, const double, vector&lt; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:a36da8ffc93f819ca8459e4289b801fc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7e6dfd57c1cd5cc300342d0eb0b6292"><td class="memTemplParams" colspan="2">template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </td></tr>
+<tr class="memitem:ae7e6dfd57c1cd5cc300342d0eb0b6292"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#ae7e6dfd57c1cd5cc300342d0eb0b6292">prune</a> (vector&lt; double &gt; &amp;pr, double &amp;probability, const double enumeration_radius, const double preproc_cost, const double target_probability, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &amp;m, const int descent_method, int start_row, int end_row)</td></tr>
+<tr class="separator:ae7e6dfd57c1cd5cc300342d0eb0b6292"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af3804eb15bc59ff3b3ab931343b2cd9b"><td class="memTemplParams" colspan="2">template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </td></tr>
+<tr class="memitem:af3804eb15bc59ff3b3ab931343b2cd9b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#af3804eb15bc59ff3b3ab931343b2cd9b">prune</a> (const double enumeration_radius, const double preproc_cost, const double target_probability, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &amp;m, const int descent_method, int start_row, int end_row)</td></tr>
+<tr class="memdesc:af3804eb15bc59ff3b3ab931343b2cd9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">prune function, hiding the <a class="el" href="classPruner.html">Pruner</a> class  <a href="#af3804eb15bc59ff3b3ab931343b2cd9b">More...</a><br /></td></tr>
+<tr class="separator:af3804eb15bc59ff3b3ab931343b2cd9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a130071dd8ce49308ac2e418a76348994"><td class="memTemplParams" colspan="2">template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </td></tr>
+<tr class="memitem:a130071dd8ce49308ac2e418a76348994"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a130071dd8ce49308ac2e418a76348994">prune</a> (const double enumeration_radius, const double preproc_cost, const double target_probability, vector&lt; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &gt; &amp;m, const int descent_method, int start_row, int end_row)</td></tr>
+<tr class="memdesc:a130071dd8ce49308ac2e418a76348994"><td class="mdescLeft">&#160;</td><td class="mdescRight">prune function averaging over several bases  <a href="#a130071dd8ce49308ac2e418a76348994">More...</a><br /></td></tr>
+<tr class="separator:a130071dd8ce49308ac2e418a76348994"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4735cdc1af99ba9ed6a95ed85acf4b0e"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a4735cdc1af99ba9ed6a95ed85acf4b0e">prune&lt; FP_NR&lt; double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; double &gt; &gt;</a> (vector&lt; double &gt; &amp;, double &amp;, const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:a4735cdc1af99ba9ed6a95ed85acf4b0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe5a48807570e24185df5b4e2df322f2"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#abe5a48807570e24185df5b4e2df322f2">prune&lt; FP_NR&lt; double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; double &gt; &gt;</a> (const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:abe5a48807570e24185df5b4e2df322f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a767be95b702f496e0b49b8fa983986df"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a767be95b702f496e0b49b8fa983986df">prune&lt; FP_NR&lt; double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; double &gt; &gt;</a> (const double, const double, const double, vector&lt; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:a767be95b702f496e0b49b8fa983986df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeba8956d78b3273b17c676da9e06f76c"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#aeba8956d78b3273b17c676da9e06f76c">svp_probability&lt; FP_NR&lt; double &gt; &gt;</a> (const <a class="el" href="classPruning.html">Pruning</a> &amp;)</td></tr>
 <tr class="separator:aeba8956d78b3273b17c676da9e06f76c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a630fb1ced5642bebab24670be00325fa"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a630fb1ced5642bebab24670be00325fa">svp_probability&lt; FP_NR&lt; double &gt; &gt;</a> (const vector&lt; double &gt; &amp;)</td></tr>
 <tr class="separator:a630fb1ced5642bebab24670be00325fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a470f464d69136ebd74e19a42ff3c69e6"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a470f464d69136ebd74e19a42ff3c69e6">prune&lt; FP_NR&lt; long double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; long double &gt; &gt;</a> (vector&lt; double &gt; &amp;, double &amp;, const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:a470f464d69136ebd74e19a42ff3c69e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a916ce2e3cb5b9b03e1f5d516c406395a"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a916ce2e3cb5b9b03e1f5d516c406395a">prune&lt; FP_NR&lt; long double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; long double &gt; &gt;</a> (const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:a916ce2e3cb5b9b03e1f5d516c406395a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af1e8a4238ce3f3cc77de6e05481988d9"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#af1e8a4238ce3f3cc77de6e05481988d9">prune&lt; FP_NR&lt; long double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; long double &gt; &gt;</a> (const double, const double, const double, vector&lt; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:af1e8a4238ce3f3cc77de6e05481988d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40617bb19f72859c0f652247531394dc"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a40617bb19f72859c0f652247531394dc">prune&lt; FP_NR&lt; long double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; long double &gt; &gt;</a> (vector&lt; double &gt; &amp;, double &amp;, const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:a40617bb19f72859c0f652247531394dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae6028d5156d92578441a47c7ee2a493"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#aae6028d5156d92578441a47c7ee2a493">prune&lt; FP_NR&lt; long double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; long double &gt; &gt;</a> (const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:aae6028d5156d92578441a47c7ee2a493"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2510c0925c677c948c213bb879a6ed0b"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a2510c0925c677c948c213bb879a6ed0b">prune&lt; FP_NR&lt; long double &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; long double &gt; &gt;</a> (const double, const double, const double, vector&lt; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:a2510c0925c677c948c213bb879a6ed0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae17c55e87899cfb84dbdafc3cc5cadcb"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#ae17c55e87899cfb84dbdafc3cc5cadcb">svp_probability&lt; FP_NR&lt; long double &gt; &gt;</a> (const <a class="el" href="classPruning.html">Pruning</a> &amp;)</td></tr>
 <tr class="separator:ae17c55e87899cfb84dbdafc3cc5cadcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4abf69b6c412e5e834a022fbbfb82b92"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a4abf69b6c412e5e834a022fbbfb82b92">svp_probability&lt; FP_NR&lt; long double &gt; &gt;</a> (const vector&lt; double &gt; &amp;)</td></tr>
 <tr class="separator:a4abf69b6c412e5e834a022fbbfb82b92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68e89a68eef6cab575bf743ab45ed324"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a68e89a68eef6cab575bf743ab45ed324">prune&lt; FP_NR&lt; dpe_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; dpe_t &gt; &gt;</a> (vector&lt; double &gt; &amp;, double &amp;, const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:a68e89a68eef6cab575bf743ab45ed324"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47f2111c7bc8b0bbd3b753d62b907fd4"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a47f2111c7bc8b0bbd3b753d62b907fd4">prune&lt; FP_NR&lt; dpe_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; dpe_t &gt; &gt;</a> (const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:a47f2111c7bc8b0bbd3b753d62b907fd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9600535fe1eb889bdf0c6d200c9bb482"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a9600535fe1eb889bdf0c6d200c9bb482">prune&lt; FP_NR&lt; dpe_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; dpe_t &gt; &gt;</a> (const double, const double, const double, vector&lt; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:a9600535fe1eb889bdf0c6d200c9bb482"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3242faded86c2e109198392ef0f5c77"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#ad3242faded86c2e109198392ef0f5c77">prune&lt; FP_NR&lt; dpe_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; dpe_t &gt; &gt;</a> (vector&lt; double &gt; &amp;, double &amp;, const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:ad3242faded86c2e109198392ef0f5c77"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e7b918908761dca798f000221596f4b"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a1e7b918908761dca798f000221596f4b">prune&lt; FP_NR&lt; dpe_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; dpe_t &gt; &gt;</a> (const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:a1e7b918908761dca798f000221596f4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa740f43817a946b7aefad0f229273cf2"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#aa740f43817a946b7aefad0f229273cf2">prune&lt; FP_NR&lt; dpe_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; dpe_t &gt; &gt;</a> (const double, const double, const double, vector&lt; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:aa740f43817a946b7aefad0f229273cf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a085b1be2437608f4a4b76cdfc6170a92"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a085b1be2437608f4a4b76cdfc6170a92">svp_probability&lt; FP_NR&lt; dpe_t &gt; &gt;</a> (const <a class="el" href="classPruning.html">Pruning</a> &amp;)</td></tr>
 <tr class="separator:a085b1be2437608f4a4b76cdfc6170a92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2b080640cd9d1f8bcc26965adf30129"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#af2b080640cd9d1f8bcc26965adf30129">svp_probability&lt; FP_NR&lt; dpe_t &gt; &gt;</a> (const vector&lt; double &gt; &amp;)</td></tr>
 <tr class="separator:af2b080640cd9d1f8bcc26965adf30129"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f3ad110a0793ac5d4038947344df3b4"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a7f3ad110a0793ac5d4038947344df3b4">prune&lt; FP_NR&lt; mpfr_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; mpfr_t &gt; &gt;</a> (vector&lt; double &gt; &amp;, double &amp;, const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:a7f3ad110a0793ac5d4038947344df3b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9bca5aad4e2d0cbeb1277429fc7c630"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#ae9bca5aad4e2d0cbeb1277429fc7c630">prune&lt; FP_NR&lt; mpfr_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; mpfr_t &gt; &gt;</a> (const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:ae9bca5aad4e2d0cbeb1277429fc7c630"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a873ca2fcd429d015a5fac2ee7cf55ac4"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a873ca2fcd429d015a5fac2ee7cf55ac4">prune&lt; FP_NR&lt; mpfr_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; mpfr_t &gt; &gt;</a> (const double, const double, const double, vector&lt; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; &gt; &amp;, int, int)</td></tr>
-<tr class="separator:a873ca2fcd429d015a5fac2ee7cf55ac4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a260be111bacb4ddc2b719cc9f9450c22"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a260be111bacb4ddc2b719cc9f9450c22">prune&lt; FP_NR&lt; mpfr_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; mpfr_t &gt; &gt;</a> (vector&lt; double &gt; &amp;, double &amp;, const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:a260be111bacb4ddc2b719cc9f9450c22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dc01c0a393bea6e2a2a217dc270097f"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a6dc01c0a393bea6e2a2a217dc270097f">prune&lt; FP_NR&lt; mpfr_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; mpfr_t &gt; &gt;</a> (const double, const double, const double, <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:a6dc01c0a393bea6e2a2a217dc270097f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac038bef0a7ad3191182396f97e204154"><td class="memItemLeft" align="right" valign="top">template <a class="el" href="classPruning.html">Pruning</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#ac038bef0a7ad3191182396f97e204154">prune&lt; FP_NR&lt; mpfr_t &gt;, Z_NR&lt; mpz_t &gt;, FP_NR&lt; mpfr_t &gt; &gt;</a> (const double, const double, const double, vector&lt; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; &gt; &amp;, int, int, int)</td></tr>
+<tr class="separator:ac038bef0a7ad3191182396f97e204154"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33af83186247a064174aff23fbc4492e"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a33af83186247a064174aff23fbc4492e">svp_probability&lt; FP_NR&lt; mpfr_t &gt; &gt;</a> (const <a class="el" href="classPruning.html">Pruning</a> &amp;)</td></tr>
 <tr class="separator:a33af83186247a064174aff23fbc4492e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9cd0079c3afd00c5ec802771c78e61c9"><td class="memItemLeft" align="right" valign="top">template double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="pruner_8cpp.html#a9cd0079c3afd00c5ec802771c78e61c9">svp_probability&lt; FP_NR&lt; mpfr_t &gt; &gt;</a> (const vector&lt; double &gt; &amp;)</td></tr>
 <tr class="separator:a9cd0079c3afd00c5ec802771c78e61c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a class="anchor" id="a164287f4384ee1500a7130ce3213a7d0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ND_ALPHA&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a384d67470f91372fb51bfc4197de38dd"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ND_GAMMA&#160;&#160;&#160;2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ae1d13a441ed1b74a8bf64bf2e4140131"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ND_INIT_WIDTH&#160;&#160;&#160;0.05</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="ae55f6de49324c27f6f09be4d99a2e412"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ND_RHO&#160;&#160;&#160;0.5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a1421612614bf0c3165dc2bb238cfbac2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ND_SIGMA&#160;&#160;&#160;0.5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a669be52879e9ce987555c5d1d6a963ef"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="defs_8h.html#ae244ad7ce1da4fe7f22265a1de800a2e">FPLLL_BEGIN_NAMESPACE</a> void prune </td>
-          <td>(</td>
-          <td class="paramtype">vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>pr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double &amp;&#160;</td>
-          <td class="paramname"><em>probability</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>enumeration_radius</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>preproc_cost</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>target_probability</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &amp;&#160;</td>
-          <td class="paramname"><em>m</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>start_row</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>end_row</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a45d26d9953f3c436dbc12ca2d6d084bc"></a>
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void prune </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classPruning.html">Pruning</a> &amp;&#160;</td>
-          <td class="paramname"><em>pruning</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>enumeration_radius</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>preproc_cost</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>target_probability</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="classMatGSO.html">MatGSO</a>&lt; GSO_ZT, GSO_FT &gt; &amp;&#160;</td>
-          <td class="paramname"><em>m</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>start_row</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>end_row</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a7403763ab2c14513514208d057020a28"></a>
+<a class="anchor" id="ae7e6dfd57c1cd5cc300342d0eb0b6292"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -347,14 +293,20 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>start_row</em> = <code>0</code>, </td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>descent_method</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>end_row</em> = <code>0</code>&#160;</td>
+          <td class="paramname"><em>start_row</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>end_row</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -364,24 +316,9 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>prune function, hiding the <a class="el" href="classPruner.html">Pruner</a> class </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">pr</td><td>store pruning coefficients here </td></tr>
-    <tr><td class="paramname">probability</td><td>store success probability here </td></tr>
-    <tr><td class="paramname">enumeration_radius</td><td>target enumeration radius </td></tr>
-    <tr><td class="paramname">preproc_cost</td><td>cost of preprocessing </td></tr>
-    <tr><td class="paramname">target_probability</td><td>overall target success probability </td></tr>
-    <tr><td class="paramname">m</td><td>GSO matrix </td></tr>
-    <tr><td class="paramname">start_row</td><td>start enumeration here </td></tr>
-    <tr><td class="paramname">end_row</td><td>stop enumeration here </td></tr>
-  </table>
-  </dd>
-</dl>
-
 </div>
 </div>
-<a class="anchor" id="aa6d10e40ceb3cef81e6d7a0430336c77"></a>
+<a class="anchor" id="af3804eb15bc59ff3b3ab931343b2cd9b"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -414,6 +351,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>descent_method</em> = <code><a class="el" href="pruner_8h.html#a4fa05c8301620433c86774c6d9020747">PRUNER_METHOD_GRADIENT</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>start_row</em> = <code>0</code>, </td>
         </tr>
@@ -434,11 +377,13 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 <p>prune function, hiding the <a class="el" href="classPruner.html">Pruner</a> class </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">pruning</td><td>store pruning structure </td></tr>
     <tr><td class="paramname">probability</td><td>store success probability here </td></tr>
     <tr><td class="paramname">enumeration_radius</td><td>target enumeration radius </td></tr>
     <tr><td class="paramname">preproc_cost</td><td>cost of preprocessing </td></tr>
     <tr><td class="paramname">target_probability</td><td>overall target success probability </td></tr>
     <tr><td class="paramname">m</td><td>GSO matrix </td></tr>
+    <tr><td class="paramname">method</td><td>for the descent (gradient, NM, both) </td></tr>
     <tr><td class="paramname">start_row</td><td>start enumeration here </td></tr>
     <tr><td class="paramname">end_row</td><td>stop enumeration here</td></tr>
   </table>
@@ -448,7 +393,7 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a33482d7dae177288719eb1b1a1655d72"></a>
+<a class="anchor" id="a130071dd8ce49308ac2e418a76348994"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -481,6 +426,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>descent_method</em> = <code><a class="el" href="pruner_8h.html#a4fa05c8301620433c86774c6d9020747">PRUNER_METHOD_GRADIENT</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>start_row</em> = <code>0</code>, </td>
         </tr>
@@ -507,7 +458,7 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
     <tr><td class="paramname">target_probability</td><td>overall target success probability </td></tr>
     <tr><td class="paramname">m</td><td>GSO matrices </td></tr>
     <tr><td class="paramname">start_row</td><td>start enumeration here </td></tr>
-    <tr><td class="paramname">end_row</td><td>stop enumeration here</td></tr>
+    <tr><td class="paramname">end_row</td><td>stop enumeration here </td></tr>
   </table>
   </dd>
 </dl>
@@ -515,12 +466,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a86a88856f2dd62f3d27c5654a15bfcfa"></a>
+<a class="anchor" id="a4735cdc1af99ba9ed6a95ed85acf4b0e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; </td>
+          <td class="memname">template void <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">vector&lt; double &gt; &amp;&#160;</td>
           <td class="paramname">, </td>
@@ -565,6 +516,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -577,12 +534,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="aa95d0298f4c3d1d5197da574956e76ef"></a>
+<a class="anchor" id="abe5a48807570e24185df5b4e2df322f2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; </td>
+          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname">, </td>
@@ -615,6 +572,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -627,12 +590,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a36da8ffc93f819ca8459e4289b801fc6"></a>
+<a class="anchor" id="a767be95b702f496e0b49b8fa983986df"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; </td>
+          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; double &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname">, </td>
@@ -665,6 +628,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -677,12 +646,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a68e89a68eef6cab575bf743ab45ed324"></a>
+<a class="anchor" id="ad3242faded86c2e109198392ef0f5c77"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; </td>
+          <td class="memname">template void <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">vector&lt; double &gt; &amp;&#160;</td>
           <td class="paramname">, </td>
@@ -727,6 +696,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -739,12 +714,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a47f2111c7bc8b0bbd3b753d62b907fd4"></a>
+<a class="anchor" id="a1e7b918908761dca798f000221596f4b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; </td>
+          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname">, </td>
@@ -777,6 +752,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -789,12 +770,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a9600535fe1eb889bdf0c6d200c9bb482"></a>
+<a class="anchor" id="aa740f43817a946b7aefad0f229273cf2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; </td>
+          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; dpe_t &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname">, </td>
@@ -827,6 +808,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -839,12 +826,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a470f464d69136ebd74e19a42ff3c69e6"></a>
+<a class="anchor" id="a40617bb19f72859c0f652247531394dc"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; </td>
+          <td class="memname">template void <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">vector&lt; double &gt; &amp;&#160;</td>
           <td class="paramname">, </td>
@@ -889,6 +876,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -901,12 +894,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a916ce2e3cb5b9b03e1f5d516c406395a"></a>
+<a class="anchor" id="aae6028d5156d92578441a47c7ee2a493"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; </td>
+          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname">, </td>
@@ -939,6 +932,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -951,12 +950,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="af1e8a4238ce3f3cc77de6e05481988d9"></a>
+<a class="anchor" id="a2510c0925c677c948c213bb879a6ed0b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; </td>
+          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; long double &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname">, </td>
@@ -989,6 +988,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -1001,12 +1006,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a7f3ad110a0793ac5d4038947344df3b4"></a>
+<a class="anchor" id="a260be111bacb4ddc2b719cc9f9450c22"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; </td>
+          <td class="memname">template void <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">vector&lt; double &gt; &amp;&#160;</td>
           <td class="paramname">, </td>
@@ -1051,6 +1056,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -1063,12 +1074,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ae9bca5aad4e2d0cbeb1277429fc7c630"></a>
+<a class="anchor" id="a6dc01c0a393bea6e2a2a217dc270097f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; </td>
+          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname">, </td>
@@ -1101,6 +1112,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -1113,12 +1130,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a873ca2fcd429d015a5fac2ee7cf55ac4"></a>
+<a class="anchor" id="ac038bef0a7ad3191182396f97e204154"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#adb9187b14e59d8de39624c2de9a999f4">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; </td>
+          <td class="memname">template <a class="el" href="classPruning.html">Pruning</a> <a class="el" href="pruner_8h.html#a247d8e28868500365fa515be53e15fc2">prune</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt;, <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;, <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &gt; </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname">, </td>
@@ -1151,6 +1168,12 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -1163,14 +1186,14 @@ template&lt;class FT , class GSO_ZT , class GSO_FT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ae831d228555a77df78c551b67319c1a5"></a>
+<a class="anchor" id="a0cba35bd5f5b3754228a2bb253e12925"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">double svp_probability </td>
+          <td class="memname"><a class="el" href="defs_8h.html#ae244ad7ce1da4fe7f22265a1de800a2e">FPLLL_BEGIN_NAMESPACE</a> double svp_probability </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classPruning.html">Pruning</a> &amp;&#160;</td>
           <td class="paramname"><em>pruning</em></td><td>)</td>
@@ -1345,7 +1368,7 @@ template&lt;class FT &gt; </div>
 </div>
 </div>
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Aug 4 2016 14:17:02 for fplll by &#160;<a href="http://www.doxygen.org/index.html">
+Generated by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>
