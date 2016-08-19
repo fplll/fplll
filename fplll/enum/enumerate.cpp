@@ -35,7 +35,7 @@ void Enumeration<Float>::reset(enumf cur_dist)
 
     FastEvaluator<Float> new_evaluator(new_dim, _gso.get_mu_matrix(), _gso.get_r_matrix(), EVALMODE_CV);
     Enumeration<Float> enumobj(_gso, new_evaluator);
-    enumobj.enumerate(0, d, new_dist, 0, target, partial_sol, vector<enumf>(), false, true);
+    enumobj.enumerate(0, d, new_dist, 0, target, partial_sol, pruning_bounds, false, true);
 
     if (!new_evaluator.sol_coord.empty())
     {
@@ -131,7 +131,12 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
             }
         }
     }
+
+#ifdef FPLLL_BIG_ENUM
+    memcpy(subsoldists, rdiag, (_gso.d+1)*sizeof(enumf));
+#else
     subsoldists = rdiag;
+#endif
     
     prepare_enumeration(subtree, solvingsvp, subtree_reset);
     do_enumerate();

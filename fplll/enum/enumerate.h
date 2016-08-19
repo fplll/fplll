@@ -29,10 +29,60 @@ template<typename FT>
 class Enumeration : public EnumerationBase
 {
 public:
+#ifdef FPLLL_BIG_ENUM
+    ~Enumeration()
+    {
+        for (int i=0 ; i < _gso.d+1 ; ++i)
+        {
+            delete[] mut[i];
+            delete[] center_partsums[i];
+        }
+        delete[] mut;
+        delete[] rdiag;
+        delete[] partdistbounds;
+        delete[] center_partsums;
+        delete[] center_partsum;
+        delete[] center_partsum_begin;
+        delete[] partdist;
+        delete[] center;
+        delete[] alpha;
+        delete[] x;
+        delete[] dx;
+        delete[] ddx;
+        delete[] subsoldists;
+    }
+#endif
     Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator, vector<int> max_indices=vector<int>())
         : _gso(gso), _evaluator(evaluator)
     {
         _max_indices = max_indices;
+
+#ifdef FPLLL_BIG_ENUM
+        int dim = gso.d+1;
+        mut = new enumf*[dim];
+        for (int i=0 ; i<dim ; ++i)
+            mut[i] = new enumf[dim];
+
+        rdiag = new enumf[dim];
+        partdistbounds = new enumf[dim];
+
+        center_partsums = new enumf*[dim];
+        for (int i=0 ; i<dim ; ++i)
+            center_partsums[i] = new enumf[dim];
+
+        center_partsum = new enumf[dim];
+        center_partsum_begin = new int[dim];
+
+        partdist = new enumf[dim];
+        center= new enumf[dim];
+        alpha = new enumf[dim];
+
+        x = new enumxt[dim];
+        dx = new enumxt[dim];
+        ddx = new enumxt[dim];
+
+        subsoldists = new enumf[dim];
+#endif
     }
 
     void enumerate(int first, int last,
