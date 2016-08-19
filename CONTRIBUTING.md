@@ -220,3 +220,5 @@ Our documentation is served at [https://fplll.github.io/fplll/](https://fplll.gi
     $ cd ..
     
 Now, whenever you run ``doxygen`` it will write its outputs to a directory which holds the right branch. If you push it to your remote, you can then check it at [http://my-github-name.github.io/fplll](http://my-github-name.github.io/fplll).
+
+Before generating documentation with Doxygen to push to [https://fplll.github.io/fplll/](https://fplll.github.io/fplll/) please run ``make maintainer-clean`` in the fplll root directory. This removes ``config.h`` and ``fplll_config.h``, i.e. it prevents your local, machine-specific configuration to be pushed as part of the official API documentation. In any case, it is recommended to review the changes in the `gh-pages` branch before committing and pushing.
