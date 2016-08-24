@@ -88,18 +88,20 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
 libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD)
-libfplll_la_LDFLAGS=-no-undefined -version-info 1:0:1
+libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REVISION@:@FPLLL_LT_AGE@
 
 libfplllv_la_SOURCES=$(libfplll_la_SOURCES)
 EXTRA_libfplllv_la_SOURCES=$(EXTRA_libfplll_la_SOURCES)
 libfplllv_la_CPPFLAGS=$(AM_CPPFLAGS)
 libfplllv_la_LIBADD=$(libfplll_la_LIBADD)
+libfplllv_la_LDFLAGS=$(libfplll_la_LDFLAGS)
 
 libfpllld_la_SOURCES=$(libfplll_la_SOURCES)
 EXTRA_libfpllld_la_SOURCES=$(EXTRA_libfplll_la_SOURCES)
 libfpllld_la_CPPFLAGS=-DDEBUG $(AM_CPPFLAGS)
 libfpllld_la_CXXFLAGS=-g $(AM_CXXFLAGS)
 libfpllld_la_LIBADD=$(libfplll_la_LIBADD)
+libfpllld_la_LDFLAGS=$(libfplll_la_LDFLAGS)
 
 install-data-hook:
 	echo "#include <fplll/fplll.h>" > "$(builddir)/fplll.h.root"

@@ -13,9 +13,6 @@ FPLLL_MINOR_VERSION=`echo AC_PACKAGE_VERSION | awk -F. '{print $2}'`
 FPLLL_MICRO_VERSION=`echo AC_PACKAGE_VERSION | awk -F. '{print $3}'`
 FPLLL_VERSION=$FPLLL_MAJOR_VERSION.$FPLLL_MINOR_VERSION.$FPLLL_MICRO_VERSION$FPLLL_MICRO_VERSION_SUFFIX
 FPLLL_VERSION_NUMBER=`expr $FPLLL_MAJOR_VERSION \* 1000000 + $FPLLL_MINOR_VERSION \* 1000 + $FPLLL_MICRO_VERSION`
-AGE=`expr $FPLLL_MAJOR_VERSION '*' 1000 + $FPLLL_MINOR_VERSION`
-REVISION=$FPLLL_MICRO_VERSION
-FPLLL_VERSION_INFO=$CURRENT:$REVISION:$AGE
 
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
@@ -27,8 +24,27 @@ DEFAULT_CXXFLAGS="-O3 -Wall"
 
 CXXFLAGS=${CXXFLAGS:-$DEFAULT_CXXFLAGS}
 
-#AC_DISABLE_SHARED
-AC_PROG_LIBTOOL
+LT_INIT
+
+# The version of the libtool library is of the form current:revision:age
+#
+# See http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
+#
+# When doing a release, they should be updated like this:
+# 1. If no interfaces changed, only implementations: just increment
+#    revision.
+# 2. If interfaces were added, none removed: increment current, set
+#    revision to zero and increment age.
+# 3. If interfaces were removed (breaks backward compatibility): increment
+#    current, and set both revision and age to zero.
+
+FPLLL_LT_CURRENT=2
+FPLLL_LT_REVISION=0
+FPLLL_LT_AGE=0
+
+AC_SUBST(FPLLL_LT_CURRENT)
+AC_SUBST(FPLLL_LT_REVISION)
+AC_SUBST(FPLLL_LT_AGE)
 
 AC_PROG_INSTALL
 
@@ -114,7 +130,6 @@ AC_DEFINE_UNQUOTED([FPLLL_MAX_ENUM_DIMENSION], $max_enumeration_dimension, [maxi
 AC_DEFINE_UNQUOTED([FPLLL_MAJOR_VERSION],[$FPLLL_MAJOR_VERSION],[major version])
 AC_DEFINE_UNQUOTED([FPLLL_MINOR_VERSION],[$FPLLL_MINOR_VERSION],[minor version])
 AC_DEFINE_UNQUOTED([FPLLL_MICRO_VERSION],[$FPLLL_MICRO_VERSION],[micro version])
-AC_DEFINE_UNQUOTED([FPLLL_SONUM],[$FPLLL_SONUM],[sonum])
 AC_DEFINE_UNQUOTED([FPLLL_VERSION],[$FPLLL_VERSION],[full version])
 AC_DEFINE_UNQUOTED([FPLLL_VERSION_INFO],[$FPLLL_VERSION_INFO],[long version string])
 
