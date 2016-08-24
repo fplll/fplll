@@ -2,8 +2,6 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-# don't forget to update library version in Makefile.am before a release
-# https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html#Updating-version-info
 AC_INIT(fplll, 5.0.0)
 AC_CONFIG_SRCDIR([fplll/fplll.cpp])
 
@@ -26,8 +24,27 @@ DEFAULT_CXXFLAGS="-O3 -Wall"
 
 CXXFLAGS=${CXXFLAGS:-$DEFAULT_CXXFLAGS}
 
-#AC_DISABLE_SHARED
-AC_PROG_LIBTOOL
+LT_INIT
+
+# The version of the libtool library is of the form current:revision:age
+#
+# See http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
+#
+# When doing a release, they should be updated like this:
+# 1. If no interfaces changed, only implementations: just increment
+#    revision.
+# 2. If interfaces were added, none removed: increment current, set
+#    revision to zero and increment age.
+# 3. If interfaces were removed (breaks backward compatibility): increment
+#    current, and set both revision and age to zero.
+
+FPLLL_LT_CURRENT=2
+FPLLL_LT_REVISION=0
+FPLLL_LT_AGE=0
+
+AC_SUBST(FPLLL_LT_CURRENT)
+AC_SUBST(FPLLL_LT_REVISION)
+AC_SUBST(FPLLL_LT_AGE)
 
 AC_PROG_INSTALL
 

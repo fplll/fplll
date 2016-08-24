@@ -88,9 +88,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
 libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD)
-# update library version before release here
-# https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html#Updating-version-info
-libfplll_la_LDFLAGS=-no-undefined -version-info 2:0:0
+libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REVISION@:@FPLLL_LT_AGE@
 
 libfplllv_la_SOURCES=$(libfplll_la_SOURCES)
 EXTRA_libfplllv_la_SOURCES=$(EXTRA_libfplll_la_SOURCES)
