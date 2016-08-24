@@ -2,6 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
+# don't forget to update library version in Makefile.am before a release
+# https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html#Updating-version-info
 AC_INIT(fplll, 5.0.0)
 AC_CONFIG_SRCDIR([fplll/fplll.cpp])
 
@@ -13,9 +15,6 @@ FPLLL_MINOR_VERSION=`echo AC_PACKAGE_VERSION | awk -F. '{print $2}'`
 FPLLL_MICRO_VERSION=`echo AC_PACKAGE_VERSION | awk -F. '{print $3}'`
 FPLLL_VERSION=$FPLLL_MAJOR_VERSION.$FPLLL_MINOR_VERSION.$FPLLL_MICRO_VERSION$FPLLL_MICRO_VERSION_SUFFIX
 FPLLL_VERSION_NUMBER=`expr $FPLLL_MAJOR_VERSION \* 1000000 + $FPLLL_MINOR_VERSION \* 1000 + $FPLLL_MICRO_VERSION`
-AGE=`expr $FPLLL_MAJOR_VERSION '*' 1000 + $FPLLL_MINOR_VERSION`
-REVISION=$FPLLL_MICRO_VERSION
-FPLLL_VERSION_INFO=$CURRENT:$REVISION:$AGE
 
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
@@ -114,7 +113,6 @@ AC_DEFINE_UNQUOTED([FPLLL_MAX_ENUM_DIMENSION], $max_enumeration_dimension, [maxi
 AC_DEFINE_UNQUOTED([FPLLL_MAJOR_VERSION],[$FPLLL_MAJOR_VERSION],[major version])
 AC_DEFINE_UNQUOTED([FPLLL_MINOR_VERSION],[$FPLLL_MINOR_VERSION],[minor version])
 AC_DEFINE_UNQUOTED([FPLLL_MICRO_VERSION],[$FPLLL_MICRO_VERSION],[micro version])
-AC_DEFINE_UNQUOTED([FPLLL_SONUM],[$FPLLL_SONUM],[sonum])
 AC_DEFINE_UNQUOTED([FPLLL_VERSION],[$FPLLL_VERSION],[full version])
 AC_DEFINE_UNQUOTED([FPLLL_VERSION_INFO],[$FPLLL_VERSION_INFO],[long version string])
 
