@@ -694,7 +694,7 @@ if (verbosity){
   cerr << "Done nelder_mead, after " << counter << " steps" << endl;
   cerr << "Final cf = " << fs[mini]  << " proba = " << svp_probability(b)  << endl;
   if (improved)
-    {cerr << "Progess has been made: init cf = " << init_cf << endl;}
+    {cerr << "Progress has been made: init cf = " << init_cf << endl;}
   cerr << endl;
   
 }
