@@ -293,14 +293,9 @@ Please add yourself here if you make a contribution.
 
 - David H. Bailey for `QD`.
 
-- Sylvain Chevillard, Christoph Lauter and Gilles Villard for the `configure/make/make install`
-packaging.
+- Sylvain Chevillard, Christoph Lauter and Gilles Villard for the `configure/make/make install` packaging.
 
-- Timothy Abbott, Michael Abshoff, Bill Allombert, John Cannon, Sylvain Chevillard, Julien Clement,
-Andreas Enge, Jean-Pierre Flori, Laurent Fousse, Guillaume Hanrot, Jens Hermans, Jerry James,
-Christoph Lauter, Tancrède Lepoint, Andrew Novocin, Willem Jan Palenstijn, Patrick Pelissier, Michael Schneider,
-Thiemo Seufer, Allan Steel, Gilles Villard and Paul Zimmermann for their support and for many
-suggestions that helped debugging and improving this code.
+- Timothy Abbott, Michael Abshoff, Bill Allombert, John Cannon, Sylvain Chevillard, Julien Clement, Andreas Enge, Jean-Pierre Flori, Laurent Fousse, Guillaume Hanrot, Jens Hermans, Jerry James, Christoph Lauter, Tancrède Lepoint, Andrew Novocin, Willem Jan Palenstijn, Patrick Pelissier, Julien Puydt, Michael Schneider, Thiemo Seufer, Allan Steel, Gilles Villard and Paul Zimmermann for their support and for many suggestions that helped debugging and improving this code.
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) is taken, almost verbatim, from https://github.com/pydanny/djangopackages/blob/master/docs/contributing.rst
 
