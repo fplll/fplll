@@ -4,7 +4,6 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: @PACKAGE_NAME@
-Description: lattice algorithms with floating-poin computations
+Description: lattice algorithms with floating-point computations
 Version: @PACKAGE_VERSION@
-Libs: -L${libdir} @LDFLAGS@ @LIBQD_LIBADD@ -lgmp -lmpfr -lfplll
-Cflags: @CXXFLAGS@
+Libs: -L${libdir} @LIBQD_LIBADD@ -lgmp -lmpfr -lfplll
