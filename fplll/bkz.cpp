@@ -317,7 +317,7 @@ bool BKZReduction<FT>::tour(const int loop, int &kappa_max, const BKZParam &par,
 {
   bool clean = true;
   clean &= trunc_tour(kappa_max, par, min_row, max_row);
-  clean &= hkz(kappa_max, par, max_row - par.block_size, max_row);
+  clean &= hkz(kappa_max, par, max(max_row - par.block_size, 0), max_row);
 
   if (par.flags & BKZ_VERBOSE)
   {

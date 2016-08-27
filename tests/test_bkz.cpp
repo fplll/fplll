@@ -224,10 +224,18 @@ int test_int_rel(int d, int b, const int block_size, FloatType float_type = FT_D
   return status;
 }
 
+int test_linear_dep()
+{
+  ZZ_mat<mpz_t> A;
+  std::stringstream("[[1 2 3]\n [4 5 6]\n [7 8 9]]\n") >> A;
+  return test_bkz_param<mpz_t>(A, 3);
+}
+
 int main(int /*argc*/, char** /*argv*/)
 {
 
   int status = 0;
+  status |= test_linear_dep();
   status |= test_filename<mpz_t>("lattices/dim55_in", 10, FT_DEFAULT, BKZ_DEFAULT | BKZ_AUTO_ABORT);
   status |=
       test_filename<mpz_t>("lattices/dim55_in", 10, FT_DEFAULT, BKZ_SD_VARIANT | BKZ_AUTO_ABORT);
