@@ -1,6 +1,7 @@
 /* Copyright (C) 2008-2011 Xavier Pujol
    (C) 2015 Michael Walter.
    (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions, subsolutions)
+   (C) 2016 Guillaume Bonnoron. (CVP improvements)
    
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -42,6 +43,10 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
         if (newdist > 0.0 /* || !is_svp */)
             process_solution(newdist);
     }
+    else if (!_max_indices.empty() && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
+    {
+        reset_rec(newdist, kk);
+    }
     else
     {
         partdist[kk-1] = newdist;
@@ -66,6 +71,7 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
     
     while (true)
     {
+        FPLLL_TRACE("Level k=" << kk << " dist_k=" << partdist[kk] << " x_k=" << x[kk] << " newdist=" << newdist << " partdistbounds_k=" << partdistbounds[kk]);
         enumerate_recursive( opts<kk-1,kk_start,dualenum,findsubsols>() );
 
         if (partdist[kk] != 0.0)
@@ -84,6 +90,10 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
             {
                 if (newdist2 > 0.0 /* || !is_svp */)
                     process_solution(newdist2);
+            }
+            else if (!_max_indices.empty() && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
+            {
+                reset_rec(newdist, kk);
             }
             else
             {
@@ -113,6 +123,10 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
             {
                 if (newdist2 > 0.0 /* || !is_svp */)
                     process_solution(newdist2);
+            }
+            else if (!_max_indices.empty() && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
+            {
+                reset_rec(newdist, kk);
             }
             else
             {

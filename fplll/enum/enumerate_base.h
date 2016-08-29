@@ -1,6 +1,7 @@
 /* Copyright (C) 2008-2011 Xavier Pujol
    (C) 2015 Michael Walter.
    (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions, subsolutions)
+   (C) 2016 Guillaume Bonnoron. (CVP improvements)
    
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -136,6 +137,7 @@ protected:
     void enumerate_loop();
 
     virtual void reset(enumf) = 0;
+    virtual void reset_rec(enumf, int) = 0;
     virtual void process_solution(enumf newmaxdist) = 0; 
     virtual void process_subsolution(int offset, enumf newdist) = 0;
     

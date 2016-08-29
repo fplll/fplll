@@ -1,6 +1,7 @@
 /* Copyright (C) 2008-2011 Xavier Pujol
    (C) 2015 Michael Walter.
    (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions, subsolutions)
+   (C) 2016 Guillaume Bonnoron. (CVP improvements)
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -56,7 +57,6 @@ public:
         : _gso(gso), _evaluator(evaluator)
     {
         _max_indices = max_indices;
-
 #ifdef FPLLL_BIG_ENUM
         int dim = gso.d+1;
         mut = new enumf*[dim];
@@ -110,6 +110,7 @@ private:
 
     void set_bounds();    
     void reset(enumf cur_dist) {};
+    void reset_rec(enumf cur_dist, int kk) {};
     virtual void process_solution(enumf newmaxdist);
     virtual void process_subsolution(int offset, enumf newdist);
     
