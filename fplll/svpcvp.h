@@ -38,7 +38,6 @@ int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &s
                             vector<double> &subsol_dist, const vector<double> &pruning,
                             int flags = SVP_DEFAULT);
 
-// Experimental. Do not use.
 int closest_vector(IntMatrix &b, const IntVect &int_target, vector<Integer> &sol_coord,
                    int flags = CVP_DEFAULT);
 
