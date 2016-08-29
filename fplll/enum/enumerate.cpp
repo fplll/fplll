@@ -257,7 +257,7 @@ void Enumeration<FT>::set_bounds()
 template<typename FT>
 void Enumeration<FT>::process_solution(enumf newmaxdist)
 {
-    //FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << nodes << ")");
+    FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << nodes << ")");
     for (int j = 0; j < d; ++j)
         fx[j] = x[j];
     _evaluator.eval_sol(fx, newmaxdist, maxdist);

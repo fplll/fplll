@@ -40,7 +40,7 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
     
     if (kk == 0)
     {
-        if (newdist > 0.0 /* || !is_svp */)
+        if (newdist > 0.0 || !is_svp)
             process_solution(newdist);
     }
     else if (!_max_indices.empty() && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
@@ -88,7 +88,7 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
             alpha[kk] = alphak2;
             if (kk == 0)
             {
-                if (newdist2 > 0.0 /* || !is_svp */)
+                if (newdist2 > 0.0 || !is_svp)
                     process_solution(newdist2);
             }
             else if (!_max_indices.empty() && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
@@ -121,7 +121,7 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
             alpha[kk] = alphak2;
             if (kk == 0)
             {
-                if (newdist2 > 0.0 /* || !is_svp */)
+                if (newdist2 > 0.0 || !is_svp)
                     process_solution(newdist2);
             }
             else if (!_max_indices.empty() && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
@@ -219,7 +219,7 @@ void EnumerationBase::enumerate_loop()
             --k;
             if (k < 0)
             {
-                if (newdist > 0.0 /* || !is_svp */)
+                if (newdist > 0.0 || !is_svp)
                     process_solution(newdist);
                 finished = !next_pos_up();
                 continue;
