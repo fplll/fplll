@@ -20,7 +20,7 @@
 FPLLL_BEGIN_NAMESPACE
 
 template<typename FT>
-void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdistexpo,
+void EnumerationDyn<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdistexpo,
                                 const vector<FT>& target_coord,
                                 const vector<enumxt>& subtree,
                                 const vector<enumf>& pruning,
@@ -108,7 +108,7 @@ void Enumeration<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdist
 }
 
 template<typename FT>
-void Enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp)
+void EnumerationDyn<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp)
 {
     bool svpbeginning = solvingsvp;
     
@@ -161,7 +161,7 @@ void Enumeration<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool so
 }
 
 template<typename FT>
-void Enumeration<FT>::set_bounds()
+void EnumerationDyn<FT>::set_bounds()
 {
     if (pruning_bounds.empty())
     {
@@ -175,9 +175,8 @@ void Enumeration<FT>::set_bounds()
 }
 
 template<typename FT>
-void Enumeration<FT>::process_solution(enumf newmaxdist)
+void EnumerationDyn<FT>::process_solution(enumf newmaxdist)
 {
-//    std::cout << "Sol dist: " << newmaxdist << " (nodes:" << nodes << ")" << endl;
     for (int j = 0; j < d; ++j)
         fx[j] = x[j];
     _evaluator.eval_sol(fx, newmaxdist, maxdist);
@@ -186,7 +185,7 @@ void Enumeration<FT>::process_solution(enumf newmaxdist)
 }
 
 template<typename FT>
-void Enumeration<FT>::process_subsolution(int offset, enumf newdist)
+void EnumerationDyn<FT>::process_subsolution(int offset, enumf newdist)
 {
     for (int j = 0; j < offset; ++j)
         fx[j] = 0.0;
@@ -196,7 +195,7 @@ void Enumeration<FT>::process_subsolution(int offset, enumf newdist)
 }
 
 template<typename FT>
-void Enumeration<FT>::do_enumerate()
+void EnumerationDyn<FT>::do_enumerate()
 {
     nodes = 0;
 
