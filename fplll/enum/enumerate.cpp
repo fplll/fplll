@@ -193,7 +193,7 @@ void EnumerationDyn<FT>::process_subsolution(int offset, enumf newdist)
         fx[j] = 0.0;
     for (int j = offset; j < d; ++j)
         fx[j] = x[j];
-    _evaluator.eval_sub_sol(k, fx, newdist);
+    _evaluator.eval_sub_sol(offset, fx, newdist);
 }
 
 template<typename FT>
