@@ -20,6 +20,7 @@
 #define FPLLL_ENUMERATE_H
 
 #include <array>
+#include <memory>
 #include <fplll/gso.h>
 #include <fplll/enum/evaluator.h>
 #include <fplll/enum/enumerate_base.h>
@@ -27,11 +28,11 @@
 FPLLL_BEGIN_NAMESPACE
 
 template<typename FT>
-class Enumeration : public EnumerationBase
+class EnumerationDyn : public EnumerationBase
 {
 public:
 #ifdef FPLLL_BIG_ENUM
-    ~Enumeration()
+    ~EnumerationDyn()
     {
         for (int i=0 ; i < _gso.d+1 ; ++i)
         {
@@ -53,7 +54,7 @@ public:
         delete[] subsoldists;
     }
 #endif
-    Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator, vector<int> max_indices=vector<int>())
+    EnumerationDyn(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator, vector<int> max_indices=vector<int>())
         : _gso(gso), _evaluator(evaluator)
     {
         _max_indices = max_indices;
@@ -114,6 +115,32 @@ private:
     virtual void process_solution(enumf newmaxdist);
     virtual void process_subsolution(int offset, enumf newdist);
     
+};
+
+template<typename FT>
+class Enumeration
+{
+    public:
+    Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator, vector<int> max_indices=vector<int>())
+        : enumdyn(new EnumerationDyn<FT>(gso, evaluator, max_indices))
+    {
+    }
+
+    void enumerate(int first, int last,
+            FT& fmaxdist, long fmaxdistexpo, 
+            const vector<FT>& target_coord = vector<FT>(),
+            const vector<enumxt>& subtree = vector<enumxt>(),
+            const vector<enumf>& pruning = vector<enumf>(),
+            bool dual = false,
+            bool subtree_reset = false)
+    {
+        enumdyn->enumerate(first,last,fmaxdist,fmaxdistexpo,target_coord,subtree,pruning,dual,subtree_reset);
+    }
+
+    inline uint64_t get_nodes() const { return enumdyn->get_nodes(); }
+
+    private:
+    std::unique_ptr< EnumerationDyn<FT> > enumdyn;
 };
 
 
