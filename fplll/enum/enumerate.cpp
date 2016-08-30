@@ -95,9 +95,11 @@ void EnumerationDyn<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxd
         }
     }
     subsoldists = rdiag;
-    
+
+    save_rounding();
     prepare_enumeration(subtree, solvingsvp);
     do_enumerate();
+    restore_rounding();        
   
     fmaxdistnorm = maxdist; // Exact
   
@@ -198,8 +200,6 @@ template<typename FT>
 void EnumerationDyn<FT>::do_enumerate()
 {
     nodes = 0;
-
-    save_rounding();
     
     set_bounds();
     
@@ -211,8 +211,6 @@ void EnumerationDyn<FT>::do_enumerate()
         enumerate_loop<true,false>();
     else if (!dual && !_evaluator.findsubsols)
         enumerate_loop<false,false>();
-    
-    restore_rounding();        
 }
 
 template class Enumeration<FP_NR<double> >;
