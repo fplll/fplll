@@ -167,11 +167,7 @@ void EnumerationDyn<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxd
         }
     }
 
-#ifdef FPLLL_BIG_ENUM
-    memcpy(subsoldists, rdiag, (_gso.d+1)*sizeof(enumf));
-#else
     subsoldists = rdiag;
-#endif
     
     save_rounding();
     prepare_enumeration(subtree, solvingsvp, subtree_reset);

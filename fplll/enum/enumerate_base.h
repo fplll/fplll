@@ -32,7 +32,6 @@ inline void roundto(int& dest, const double& src) { dest = std::lrint(src); }
 inline void roundto(double& dest, const double& src) { dest = std::rint(src); }
 
 /* config */
-#define FPLLL_BIG_ENUM  //move big structures from stack to heap
 #define FPLLL_WITH_RECURSIVE_ENUM 1
 #define MAXTEMPLATEDDIMENSION  80 // unused
 //#define FORCE_ENUM_INLINE // not recommended
@@ -66,22 +65,7 @@ protected:
     /* configuration */
     bool dual;
     bool is_svp;
-#ifdef FPLLL_BIG_ENUM
-    /* enumeration input */
-    enumf **mut;
-    enumf *rdiag, *partdistbounds;
-    int d, k_end; // dimension, subtreelevel
 
-    /* partial sum cache */
-    enumf **center_partsums;
-    enumf *center_partsum;
-    int *center_partsum_begin;
-
-    /* enumeration data for each level */
-    enumf *partdist, *center, *alpha;
-    enumxt *x, *dx, *ddx;
-    enumf *subsoldists;
-#else
     /* enumeration input */
     enumf mut[maxdim][maxdim];
     array<enumf, maxdim> rdiag, partdistbounds;
@@ -96,7 +80,6 @@ protected:
     array<enumf, maxdim> partdist, center, alpha;
     array<enumxt,maxdim> x, dx, ddx;
     array<enumf, maxdim> subsoldists;
-#endif
 
     /* CVP reset informations */
     vector<int> _max_indices;
