@@ -45,7 +45,7 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
     }
     else if (!_max_indices.empty() && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
     {
-        reset_rec(newdist, kk);
+        reset(newdist, kk);
     }
     else
     {
@@ -93,7 +93,7 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
             }
             else if (!_max_indices.empty() && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
             {
-                reset_rec(newdist, kk);
+                reset(newdist, kk);
             }
             else
             {
@@ -126,7 +126,7 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
             }
             else if (!_max_indices.empty() && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
             {
-                reset_rec(newdist, kk);
+                reset(newdist, kk);
             }
             else
             {
@@ -226,7 +226,7 @@ void EnumerationBase::enumerate_loop()
             }
             if (!_max_indices.empty() && _max_indices[k+1] == k+1)   //in CVP, at max GS vector, we reset the partial distance
             {
-                reset(newdist);
+                reset(newdist, k);
                 finished = !next_pos_up();
                 continue;
             }

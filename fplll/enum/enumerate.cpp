@@ -21,14 +21,14 @@
 FPLLL_BEGIN_NAMESPACE
 
 template<>
-void EnumerationDyn<Float>::reset_rec(enumf cur_dist, int kk)
+void EnumerationDyn<Float>::reset(enumf cur_dist, int cur_depth)
 {
-    //FPLLL_TRACE("Reset level " << kk);
-    int new_dim = kk+1;
+    //FPLLL_TRACE("Reset level " << cur_depth);
+    int new_dim = cur_depth+1;
 
-    vector<enumxt> partial_sol(d-kk-1);
-    for (int i=kk+1 ; i < d ; ++i)
-        partial_sol[i-kk-1] = x[i];
+    vector<enumxt> partial_sol(d-cur_depth-1);
+    for (int i=cur_depth+1 ; i < d ; ++i)
+        partial_sol[i-cur_depth-1] = x[i];
 
     Float new_dist = 0.0;
     for (int i = 0; i < new_dim; i++)
@@ -43,41 +43,7 @@ void EnumerationDyn<Float>::reset_rec(enumf cur_dist, int kk)
         Float fsoldistnorm;
         fsoldistnorm.mul_2si(new_evaluator.sol_dist, new_evaluator.normExp - _evaluator.normExp);
         enumf sol_dist = fsoldistnorm.get_d(GMP_RNDU);
-        //FPLLL_TRACE("Recovering sub-solution at level: " << kk <<" soldist: " << sol_dist);
-
-        if (sol_dist+cur_dist < partdistbounds[0])
-        {
-            //FPLLL_TRACE("Saving it.");
-            for (int i = 0 ; i < new_dim ; ++i)
-                x[i] = new_evaluator.sol_coord[i].get_d();
-            process_solution(sol_dist + cur_dist);
-        }
-    }
-}
-template<>
-void EnumerationDyn<Float>::reset(enumf cur_dist)
-{
-    //FPLLL_TRACE("Reset level " << k);
-    int new_dim = k+1;
-
-    vector<enumxt> partial_sol(d-k-1);
-    for (int i=k+1 ; i < d ; ++i)
-        partial_sol[i-k-1] = x[i];
-
-    Float new_dist = 0.0;
-    for (int i = 0; i < new_dim; i++)
-        new_dist.add(new_dist, _gso.get_r_exp(i, i));
-
-    FastEvaluator<Float> new_evaluator(new_dim, _gso.get_mu_matrix(), _gso.get_r_matrix(), EVALMODE_CV);
-    Enumeration<Float> enumobj(_gso, new_evaluator);
-    enumobj.enumerate(0, d, new_dist, 0, target, partial_sol, pruning_bounds, false, true);
-
-    if (!new_evaluator.sol_coord.empty())
-    {
-        Float fsoldistnorm;
-        fsoldistnorm.mul_2si(new_evaluator.sol_dist, new_evaluator.normExp - _evaluator.normExp);
-        enumf sol_dist = fsoldistnorm.get_d(GMP_RNDU);
-        //FPLLL_TRACE("Recovering sub-solution at level: " << k <<" soldist: " << sol_dist);
+        //FPLLL_TRACE("Recovering sub-solution at level: " << cur_depth <<" soldist: " << sol_dist);
 
         if (sol_dist+cur_dist < partdistbounds[0])
         {

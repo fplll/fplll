@@ -119,8 +119,7 @@ protected:
     template<bool dualenum, bool findsubsols>
     void enumerate_loop();
 
-    virtual void reset(enumf) = 0;
-    virtual void reset_rec(enumf, int) = 0;
+    virtual void reset(enumf, int) = 0;
     virtual void process_solution(enumf newmaxdist) = 0; 
     virtual void process_subsolution(int offset, enumf newdist) = 0;
     
