@@ -61,10 +61,11 @@ private:
     void do_enumerate();
 
     void set_bounds();    
-    void reset(enumf cur_dist, int cur_depth) {};
+    void reset(enumf cur_dist, int cur_depth);
     virtual void process_solution(enumf newmaxdist);
     virtual void process_subsolution(int offset, enumf newdist);
     
+    inline enumf get_new_dist(FastEvaluator<FT> new_evaluator);
 };
 
 template<typename FT>
