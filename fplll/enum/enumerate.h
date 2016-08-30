@@ -19,6 +19,7 @@
 #define FPLLL_ENUMERATE_H
 
 #include <array>
+#include <memory>
 #include <fplll/gso.h>
 #include <fplll/enum/evaluator.h>
 #include <fplll/enum/enumerate_base.h>
@@ -26,10 +27,10 @@
 FPLLL_BEGIN_NAMESPACE
 
 template<typename FT>
-class Enumeration : public EnumerationBase
+class EnumerationDyn : public EnumerationBase
 {
 public:
-    Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator)
+    EnumerationDyn(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator)
         : _gso(gso), _evaluator(evaluator)
     {
     }
@@ -61,6 +62,30 @@ private:
     
 };
 
+template<typename FT>
+class Enumeration
+{
+public:
+    Enumeration(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator)
+        : enumdyn(new EnumerationDyn<FT>(gso, evaluator))
+    {
+    }
+    
+    void enumerate(int first, int last,
+                FT& fmaxdist, long fmaxdistexpo, 
+                const vector<FT>& target_coord = vector<FT>(),
+                const vector<enumxt>& subtree = vector<enumxt>(),
+                const vector<enumf>& pruning = vector<enumf>(),
+                bool dual = false)
+    {
+        enumdyn->enumerate(first,last,fmaxdist,fmaxdistexpo,target_coord,subtree,pruning,dual);
+    }
+
+    inline uint64_t get_nodes() const { return enumdyn->get_nodes(); }
+
+private:
+    std::unique_ptr< EnumerationDyn<FT> > enumdyn;
+};
 
 FPLLL_END_NAMESPACE
 
