@@ -40,6 +40,7 @@ GaussSieve<ZT, F>::update_p_2reduce (ListPoint<ZT> *p)
       /* if there is one reduction the vector should re-pass the list */
       if (half_2reduce(p, v))
       {
+        reductions ++;
         loop = true;
       }
     }
@@ -73,6 +74,7 @@ GaussSieve<ZT, F>::update_p_2reduce (ListPoint<ZT> *p)
     ++lp_it;
     if (half_2reduce(v, p))
     {
+      reductions ++;
       List.erase(tmp_lp_it);
       Queue.push(v);
     }

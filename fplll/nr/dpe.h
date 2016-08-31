@@ -799,7 +799,7 @@ DPE_INLINE void
 dpe_exponential (dpe_t x, const dpe_t y)
 {
   /* floor(log(DBL_MAX)) = 709 */
-  if (dpe_cmp_ui(y, 709) <= 0 && dpe_cmp_ui(y, -709) >= 0)
+  if (dpe_cmp_ui(y, 709) <= 0 && dpe_cmp_si(y, -709) >= 0)
     dpe_ugly_exp (x, y);
   else {
     mpfr_t t, s;
