@@ -37,16 +37,18 @@ matrix:
         - libmpfr-dev
         - libqd-dev
 
-install: export CXX="$COMPILER"
+install:
+  - export CXX="$COMPILER"
+  - $CXX --version
 
 before_script:
-- "./autogen.sh"
+  - "./autogen.sh"
 
 script:
-- "./configure"
-- make
-- make check
-- make distcheck
+  - "./configure"
+  - make
+  - make check
+  - make distcheck
 
 notifications:
   on_success: change
