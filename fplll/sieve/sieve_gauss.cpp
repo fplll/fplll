@@ -32,6 +32,7 @@ GaussSieve<ZT, F>::GaussSieve (ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
   max_list_size = 0;
   iterations = 0;
   collisions = 0;
+  reductions = 0;
   samples = 0;
   goal_sqr_norm = 0;
   mem_lower = pow(2.0, 0.18*nc);
@@ -273,6 +274,7 @@ void GaussSieve<ZT, F>::print_curr_info ()
     if (iterations % iterations_step == 0) {
       cout << "# [info] [" << iterations << "] cols=" << collisions;
       cout << " (" << mult * max_list_size + add << ")";
+      cout << " reds=" << reductions;
       cout << " |L|=" << List.size();
       cout << " |Q|=" << Queue.size();
       cout << " |samples|=" << samples;
@@ -303,6 +305,7 @@ void GaussSieve<ZT, F>::print_final_info ()
     cout << "# [****] done!" << endl;
     cout << "# [info] [" << iterations << "] cols=" << collisions;
     cout << " (" << mult * max_list_size + add << ")";
+    cout << " reds=" << reductions;
     cout << " |L|=" << List.size();
     cout << " |Q|=" << Queue.size();
     cout << " |samples|=" << samples << endl;
