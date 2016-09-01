@@ -46,7 +46,7 @@ var searchData=
   ['get_5fmu',['get_mu',['../classMatGSO.html#a0da66de05973c16b3072a019b7f6eea3',1,'MatGSO']]],
   ['get_5fmu_5fexp',['get_mu_exp',['../classMatGSO.html#a65037631f9a1820f4ee6f579ecef0df3',1,'MatGSO::get_mu_exp(int i, int j, long &amp;expo)'],['../classMatGSO.html#a99d7f438beb8efa84edefa3bed710e67',1,'MatGSO::get_mu_exp(int i, int j)']]],
   ['get_5fmu_5fmatrix',['get_mu_matrix',['../classMatGSO.html#a6a356f84fbf8b4faf106cb0aa926137f',1,'MatGSO']]],
-  ['get_5fnodes',['get_nodes',['../classEnumeration.html#a9cfdf06c969cae9478d6698f990a107d',1,'Enumeration::get_nodes()'],['../classEnumerationBase.html#a9bb30685c2e0410387ffd4b6ae550ea5',1,'EnumerationBase::get_nodes()']]],
+  ['get_5fnodes',['get_nodes',['../classEnumerationDyn.html#a6afe3015f36bd2d42eab34e389bce6d4',1,'EnumerationDyn::get_nodes()'],['../classEnumeration.html#a9cfdf06c969cae9478d6698f990a107d',1,'Enumeration::get_nodes()'],['../classEnumerationBase.html#a9bb30685c2e0410387ffd4b6ae550ea5',1,'EnumerationBase::get_nodes()']]],
   ['get_5fprec',['get_prec',['../classFP__NR.html#a339ebb9f4af0a746a49560f2a1b22347',1,'FP_NR::get_prec()'],['../classFP__NR.html#af1a727c6a2313c4ab4835428d3e5c4b7',1,'FP_NR::get_prec()'],['../classFP__NR.html#addb95d10389d5ab4dc76757ca1a8a21b',1,'FP_NR::get_prec()'],['../classFP__NR.html#a45da8a5adf089dd059a3feb30e122266',1,'FP_NR::get_prec()'],['../classFP__NR.html#ae7ca7cb3a23104974f00be837e6ea3cf',1,'FP_NR::get_prec()'],['../classFP__NR.html#aa4a5ac73c28941f9932d6a2970deae9f',1,'FP_NR::get_prec()']]],
   ['get_5fpruning',['get_pruning',['../classStrategy.html#a345045e4b1b184b5bbee32b833d9458f',1,'Strategy']]],
   ['get_5fr',['get_r',['../classMatGSO.html#aa14dabc76b82a1d68b1d46006c6c6c28',1,'MatGSO']]],

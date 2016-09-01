@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classFP__NR.html" title="FP_NR\&lt; F \&gt;" alt="" coords="5,5,104,32"/>
+<area shape="rect" id="node1" href="$classEvaluator.html" title="Evaluator\&lt; FT \&gt;" alt="" coords="5,5,123,32"/>
+<area shape="rect" id="node2" href="$classFastEvaluator.html" title="FastEvaluator\&lt; FT \&gt;" alt="" coords="171,5,313,32"/>
 </map>
