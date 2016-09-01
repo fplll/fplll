@@ -61,11 +61,7 @@ FPLLL_BEGIN_NAMESPACE
 #define PRUNER_MAX_D 1023
 #define PRUNER_MAX_N 2047
 
-#define PRUNER_METHOD_GRADIENT 0    // Gradient Only
-#define PRUNER_METHOD_NM 1          // NealderMead Only
-#define PRUNER_METHOD_HYBRID 2      // Gradient followed by NelderMead
-
-
+enum PRUNER_METHOD { PRUNER_METHOD_GRADIENT, PRUNER_METHOD_NM, PRUNER_METHOD_HYBRID };
 
 /**
    @brief prune function, hiding the Pruner class
@@ -85,7 +81,7 @@ template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
            const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m, 
-           const int descent_method = PRUNER_METHOD_GRADIENT, int start_row = 0, int end_row = 0);
+           const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0);
 
 
 /**
@@ -107,7 +103,7 @@ void prune(/*output*/ vector<double> &pr, double &probability,
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
            const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, 
-           const int descent_method = PRUNER_METHOD_GRADIENT, int start_row = 0, int end_row = 0);
+           const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0);
 
 /**
    @brief prune function averaging over several bases
@@ -125,7 +121,7 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
               const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT> > &m,
-              const int descent_method = PRUNER_METHOD_GRADIENT, int start_row = 0, int end_row = 0);
+              const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0);
 
 /**
    @brief svp_probability function, hiding the Pruner class
