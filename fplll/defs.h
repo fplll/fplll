@@ -245,6 +245,13 @@ enum HKZFlags
 #define FPLLL_DEFAULT_STRATEGY ""
 #endif
 
+enum PrunerMethod
+{
+  PRUNER_METHOD_GRADIENT = 0,
+  PRUNER_METHOD_NM = 1,
+  PRUNER_METHOD_HYBRID = 2
+};
+
 FPLLL_END_NAMESPACE
 
 #endif
