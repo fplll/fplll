@@ -61,7 +61,7 @@ FPLLL_BEGIN_NAMESPACE
 #define PRUNER_MAX_D 1023
 #define PRUNER_MAX_N 2047
 
-enum PRUNER_METHOD { PRUNER_METHOD_GRADIENT = 0, PRUNER_METHOD_NM = 1, PRUNER_METHOD_HYBRID = 2};
+
 
 /**
    @brief prune function, hiding the Pruner class
