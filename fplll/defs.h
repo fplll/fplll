@@ -125,7 +125,8 @@ const double LLL_DEF_EPSILON = 0.01;
 const int SIZE_RED_FAILURE_THRESH = 5;
 
 
-enum RedStatus {
+enum RedStatus
+{
   RED_SUCCESS = 0,
   // Skips value 1
   RED_GSO_FAILURE = 2,
@@ -149,7 +150,8 @@ const char* const RED_STATUS_STR[RED_STATUS_MAX] =
    "time limit exceeded in BKZ",
    "loops limit exceeded in BKZ"};
 
-enum LLLMethod {
+enum LLLMethod
+{
   LM_WRAPPER,
   LM_PROVED,
   LM_HEURISTIC,
@@ -181,19 +183,22 @@ enum FloatType {
 const char* const FLOAT_TYPE_STR[7] =
   {"", "double", "long double", "dpe", "dd", "qd", "mpfr"};
 
-enum LLLFlags {
+enum LLLFlags
+{
   LLL_VERBOSE = 1,
   LLL_EARLY_RED = 2,
   LLL_SIEGEL = 4,
   LLL_DEFAULT = 0
 };
 
-enum SVPMethod {
+enum SVPMethod
+{
   SVPM_FAST = 0,
   SVPM_PROVED = 2
 };
 
-enum SVPFlags {
+enum SVPFlags
+{
   SVP_DEFAULT = 0,
   SVP_VERBOSE = 1,
   SVP_OVERRIDE_BND = 2,
@@ -211,7 +216,8 @@ const double BKZ_DEF_GH_FACTOR               = 1.1;
 const double BKZ_DEF_MIN_SUCCESS_PROBABILITY = 0.5;
 const int BKZ_DEF_RERANDOMIZATION_DENSITY    = 3;
 
-enum BKZFlags {
+enum BKZFlags
+{
   BKZ_DEFAULT = 0,
   BKZ_VERBOSE = 1,
   BKZ_NO_LLL = 2,
@@ -225,7 +231,8 @@ enum BKZFlags {
   BKZ_SLD_RED = 0x200
 };
 
-enum HKZFlags {
+enum HKZFlags
+{
   HKZ_DEFAULT = 0,
   HKZ_VERBOSE = 1
 };
