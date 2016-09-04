@@ -30,18 +30,18 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
   * [Table of contents](#table-of-contents)
   * [Compilation](#compilation)
     * [Dependencies](#dependencies)
-      * [required](#required), [optional](#optional)
+      * [required](#required), [optional](#optional).
     * [Installation](#installation)
     * [Optimization](#optimization)
     * [Check](#check)
   * [How to use](#how-to-use)
-    * [latticegen](#latticegen), [fplll](#fplll-1), [llldiff](#llldiff), [latsieve](#latsieve).
+    * Programs [latticegen](#latticegen), [fplll](#fplll-1), [llldiff](#llldiff), [latsieve](#latsieve).
     * [How to use as a library](#how-to-use-as-a-library)
     * [Multicore support](#multicore-support)
   * [Examples](#examples)
   * [Alternative interfaces](#alternative-interfaces)
   * [Credit](#credit)
-    * [Maintainers](#maintainers), [contributors](#contributors) and [acknowledgments](#acknowledgments).
+    * [Maintainers](#maintainers), [Contributors](#contributors), [Acknowledgments](#acknowledgments).
   * [Contributing](#contributing)
   * [New releases and bug reports](#new-releases-and-bug-reports)
   * [Bibliography](#bibliography)
