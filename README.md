@@ -33,20 +33,18 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
       * [required](#required)
       * [optional](#optional)
     * [Installation](#installation)
+    * [Optimization](#optimization)
     * [Check](#check)
   * [How to use](#how-to-use)
-    * [latticegen](#latticegen)
-    * [fplll](#fplll-1)
-    * [llldiff](#llldiff)
-    * [latsieve](#latsieve)
+    * [latticegen](#latticegen), [fplll](#fplll-1), [llldiff](#llldiff), [latsieve](#latsieve).
     * [How to use as a library](#how-to-use-as-a-library)
     * [Multicore support](#multicore-support)
   * [Examples](#examples)
   * [Alternative interfaces](#alternative-interfaces)
   * [Credit](#credit)
-    * [maintainers](#maintainers)
-    * [contributors](#contributors)
-    * [acknowledgments](#acknowledgments)
+    * [Maintainers](#maintainers)
+    * [Contributors](#contributors)
+    * [Acknowledgments](#acknowledgments)
   * [Contributing](#contributing)
   * [New releases and bug reports](#new-releases-and-bug-reports)
   * [Bibliography](#bibliography)
@@ -56,7 +54,7 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 
 ## Dependencies ##
 
-## required ##
+### required ###
 
 - GNU MP 4.2.0 or higher [http://gmplib.org/](http://gmplib.org/)
 - MPFR 2.3.0 or higher, COMPLETE INSTALLATION [http://www.mpfr.org/](http://www.mpfr.org/)
@@ -77,12 +75,12 @@ if these variables already exist in your environment. This should be modified so
 standard `--with-gmp` and `--with-mpfr` package specifications. The same philosophy applies to the
 (optional) QD library.
 
-## Optional ##
+### Optional ###
 - QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install
   the shared library (e.g. `./configure --enable-shared=yes`).
   [http://crd-legacy.lbl.gov/~dhbailey/mpdist/](http://crd-legacy.lbl.gov/~dhbailey/mpdist/)
 
-# Installation #
+## Installation ##
 
 You should downloaded the source code from github and then run
 
@@ -104,11 +102,16 @@ commands under `/usr/local/bin`, include files under `/usr/local/include`, etc. 
 installation directory name other than `/usr/local` by giving `./configure` the option
 `--prefix=dirname`.  Run `./configure --help` for further details.
 
-# Check #
+## Check ##
 
 Type
 
 	make check
+
+
+## Optimization ##
+You may optimize the.
+
 
 
 # How to use #
@@ -243,7 +246,7 @@ See [API documentation](https://fplll.github.io/fplll/).
 
 This library does not currently use multiple cores and running multiple threads working on the same object `IntegerMatrix`, `LLLReduction`, `MatGSO` etc. is not supported. Running multiple threads working on *different* objects, however, is supported. That is, there are no global variables and it is safe to e.g. reduce several lattices in parallel in the same process.
 
-## Examples ##
+# Examples #
 
 1. LLL reduction
 
