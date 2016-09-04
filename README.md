@@ -108,7 +108,7 @@ Type
 
 ## Optimization ##
 
-The default compilation flag is `-O3`. One may use the "-march=native -O3" flag to optimize the binaries. See "[this issue](https://github.com/fplll/fplll/issues/169)" for its impact on the enumeration speed.
+The default compilation flag is `-O3`. One may use the `-march=native -O3` flag to optimize the binaries. See "[this issue](https://github.com/fplll/fplll/issues/169)" for its impact on the enumeration speed.
 
 
 # How to use #
