@@ -30,7 +30,7 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
   * [Table of contents](#table-of-contents)
   * [Compilation](#compilation)
     * [Dependencies](#dependencies)
-      * [required](#required), [optional](#optional).
+      * [Required](#required), [Optional](#optional).
     * [Installation](#installation)
     * [Optimization](#optimization)
     * [Check](#check)
@@ -51,7 +51,7 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 
 ## Dependencies ##
 
-### required ###
+### Required ###
 
 - GNU MP 4.2.0 or higher [http://gmplib.org/](http://gmplib.org/)
 - MPFR 2.3.0 or higher, COMPLETE INSTALLATION [http://www.mpfr.org/](http://www.mpfr.org/)
@@ -107,8 +107,8 @@ Type
 
 
 ## Optimization ##
-You may optimize the.
 
+The default compilation flag is "-O3". One may use the "-march=native -O3" flag to optimize the binaries. See https://github.com/fplll/fplll/issues/169 for its impact on the enumeration speed.
 
 
 # How to use #
