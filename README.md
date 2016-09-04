@@ -12,7 +12,7 @@ It also includes a floating-point implementation of the Kannan-Fincke-Pohst algo
 
 fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of the License, or, at your option, any later version) as published by the Free Software Foundation.
 
-## how to cite ##
+## How to cite ##
 
 	@unpublished{fplll,
 	    Note = {Available at \url{https://github.com/fplll/fplll}},
@@ -23,10 +23,10 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 	}
 
 
-# Table of contents # 
+# Table of contents #
 
   * [fplll](#fplll)
-    * [how to cite](#how-to-cite)
+    * [How to cite](#How-to-cite)
   * [Table of contents](#table-of-contents)
   * [Compilation](#compilation)
     * [Dependencies](#dependencies)
@@ -39,10 +39,10 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
     * [fplll](#fplll-1)
     * [llldiff](#llldiff)
     * [latsieve](#latsieve)
-    * [how to use as a library](#how-to-use-as-a-library)
-    * [multicore support](#multicore-support)
-    * [alternative interfaces](#alternative-interfaces)
+    * [How to use as a library](#how-to-use-as-a-library)
+    * [Multicore support](#multicore-support)
   * [Examples](#examples)
+  * [Alternative interfaces](#alternative-interfaces)
   * [Credit](#credit)
     * [maintainers](#maintainers)
     * [contributors](#contributors)
@@ -235,11 +235,11 @@ The options are:
 * `-v` : verbose toggle
 
 
-## how to use as a library ##
+## How to use as a library ##
 
 See [API documentation](https://fplll.github.io/fplll/).
 
-## multicore support ##
+## Multicore support ##
 
 This library does not currently use multiple cores and running multiple threads working on the same object `IntegerMatrix`, `LLLReduction`, `MatGSO` etc. is not supported. Running multiple threads working on *different* objects, however, is supported. That is, there are no global variables and it is safe to e.g. reduce several lattices in parallel in the same process.
 
