@@ -12,7 +12,7 @@ It also includes a floating-point implementation of the Kannan-Fincke-Pohst algo
 
 fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of the License, or, at your option, any later version) as published by the Free Software Foundation.
 
-### How to cite ###
+## How to cite ##
 
 	@unpublished{fplll,
 	    Note = {Available at \url{https://github.com/fplll/fplll}},
@@ -23,30 +23,33 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 	}
 
 
+
+Table of contents
+=================
   * [fplll](#fplll)
-      * [How to cite](#how-to-cite)
+    * [How to cite](#how-to-cite)
+  * [Table of contents](#table-of-contents)
     * [Dependencies](#dependencies)
       * [Required](#required)
       * [Optional](#optional)
-    * [Installation](#installation)
-    * [Check](#check)
-    * [How to use](#how-to-use)
-      * [latticegen](#latticegen)
-      * [fplll](#fplll-1)
-      * [llldiff](#llldiff)
-      * [latsieve](#latsieve)
-      * [How to use as a library](#how-to-use-as-a-library)
-      * [Multicore support](#multicore-support)
-      * [Alternative interfaces](#alternative-interfaces)
-    * [Examples](#examples)
-    * [Credit](#credit)
-      * [Maintainers](#maintainers)
-      * [Contributors](#contributors)
-      * [Acknowledgments](#acknowledgments)
-    * [Contributing](#contributing)
-    * [New releases and bug reports](#new-releases-and-bug-reports)
-    * [Bibliography](#bibliography)
-
+  * [Installation](#installation)
+  * [Check](#check)
+  * [How to use](#how-to-use)
+    * [latticegen](#latticegen)
+    * [fplll](#fplll-1)
+    * [llldiff](#llldiff)
+    * [latsieve](#latsieve)
+    * [how to use as a library](#how-to-use-as-a-library)
+    * [multicore support](#multicore-support)
+    * [alternative interfaces](#alternative-interfaces)
+  * [Examples](#examples)
+  * [Credit](#credit)
+    * [Maintainers](#maintainers)
+    * [Contributors](#contributors)
+    * [Acknowledgments](#acknowledgments)
+  * [Contributing](#contributing)
+  * [New releases and bug reports](#new-releases-and-bug-reports)
+  * [Bibliography](#bibliography)
 
 
 ## Dependencies ##
