@@ -6,9 +6,9 @@ AM_CPPFLAGS = -DFPLLL_DEFAULT_STRATEGY_PATH=\"$(strategydir)\" -DFPLLL_DEFAULT_S
 EXTRA_DIST = io/json.hpp ballvol.const factorial.const
 
 nobase_include_fplll_HEADERS=defs.h fplll.h \
-  nr/dpe.h \
-  nr/matrix.h \
-  nr/matrix.cpp \
+	nr/dpe.h \
+	nr/matrix.h \
+	nr/matrix.cpp \
 	nr/nr_FP_dd.inl \
 	nr/nr_FP_d.inl \
 	nr/nr_FP_dpe.inl \
