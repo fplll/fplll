@@ -290,7 +290,7 @@ static void babai(const FloatMatrix &matrix, const Matrix<Float> &mu, const Matr
   }
 }
 
-int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, int flags)
+int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, int method, int flags)
 {
   // d = lattice dimension (note that it might decrease during preprocessing)
   int d = b.get_rows();
@@ -365,30 +365,34 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
     max_dist.add(max_dist, gso.get_r_exp(i, i));
   }
 
-  // For a proper CVP, we need to reset enum below depth with maximal r_i
-  vector<int> max_indices = vector<int>(d);
-  int cur, max_index, previous_max_index;
-  previous_max_index = max_index = d-1;
-  Float max_val;
-
-  while (max_index > 0)
+  vector<int> max_indices;
+  if (method & CVPM_PROVED)
   {
-    max_val = gso.get_r_exp(max_index, max_index);
-    for (cur = previous_max_index - 1 ; cur >= 0  ; --cur)
+    // For Exact CVP, we need to reset enum below depth with maximal r_i
+    max_indices = vector<int>(d);
+    int cur, max_index, previous_max_index;
+    previous_max_index = max_index = d-1;
+    Float max_val;
+
+    while (max_index > 0)
     {
-      if (max_val <= gso.get_r_exp(cur, cur))
+      max_val = gso.get_r_exp(max_index, max_index);
+      for (cur = previous_max_index - 1 ; cur >= 0  ; --cur)
       {
-        max_val = gso.get_r_exp(cur, cur);
-        max_index = cur;
+        if (max_val <= gso.get_r_exp(cur, cur))
+        {
+          max_val = gso.get_r_exp(cur, cur);
+          max_index = cur;
+        }
       }
+      for (cur = max_index ; cur < previous_max_index ; ++cur)
+        max_indices[cur] = max_index;
+      max_indices[previous_max_index] = previous_max_index;
+      previous_max_index = max_index;
+      --max_index;
     }
-    for (cur = max_index ; cur < previous_max_index ; ++cur)
-      max_indices[cur] = max_index;
-    max_indices[previous_max_index] = previous_max_index;
-    previous_max_index = max_index;
-    --max_index;
   }
-  //FPLLL_TRACE("max_indices " << max_indices);
+  FPLLL_TRACE("max_indices " << max_indices);
 
   FastEvaluator<Float> evaluator(n, gso.get_mu_matrix(), gso.get_r_matrix(), EVALMODE_CV);
 

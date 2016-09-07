@@ -72,17 +72,10 @@ void EnumerationDyn<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxd
     FPLLL_CHECK(d < maxdim, "enumerate: dimension is too high");
     FPLLL_CHECK((solvingsvp || !dual), "CVP for dual not implemented! What does that even mean? ");
     FPLLL_CHECK((subtree.empty() || !dual), "Subtree enumeration for dual not implemented!");
-    if (_max_indices.empty())
-    {
-        resetflag = false;
-        if (!solvingsvp)
-            FPLLL_INFO("warning: CVP without correct reset bounds is not proved");
-    }
-    else
-    {
-        resetflag = true;
+
+    resetflag = !_max_indices.empty();
+    if (resetflag)
         reset_depth = _max_indices[last-subtree.size()-1];
-    }
 
     if (solvingsvp)
     {

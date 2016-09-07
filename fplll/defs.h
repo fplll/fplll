@@ -193,6 +193,11 @@ enum SVPMethod {
   SVPM_PROVED = 2
 };
 
+enum CVPMethod {
+  CVPM_FAST = 0,
+  CVPM_PROVED = 2
+};
+
 enum SVPFlags {
   SVP_DEFAULT = 0,
   SVP_VERBOSE = 1,
