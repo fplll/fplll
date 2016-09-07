@@ -43,7 +43,7 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
         if (newdist > 0.0 || !is_svp)
             process_solution(newdist);
     }
-    else if (enable_reset && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
+    else if (enable_reset && kk < reset_depth)   //in CVP, below the max GS vector, we reset the partial distance
     {
         reset(newdist, kk);
     }
@@ -91,7 +91,7 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
                 if (newdist2 > 0.0 || !is_svp)
                     process_solution(newdist2);
             }
-            else if (enable_reset && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
+            else if (enable_reset && kk < reset_depth)   //in CVP, below the max GS vector, we reset the partial distance
             {
                 reset(newdist, kk);
             }
@@ -124,7 +124,7 @@ inline void EnumerationBase::enumerate_recursive( EnumerationBase::opts<kk, kk_s
                 if (newdist2 > 0.0 || !is_svp)
                     process_solution(newdist2);
             }
-            else if (enable_reset && _max_indices[kk+1] == kk+1)   //in CVP, at max GS vector, we reset the partial distance
+            else if (enable_reset && kk < reset_depth)   //in CVP, below the max GS vector, we reset the partial distance
             {
                 reset(newdist, kk);
             }
@@ -224,7 +224,7 @@ void EnumerationBase::enumerate_loop()
                 finished = !next_pos_up();
                 continue;
             }
-            if (enable_reset && _max_indices[k+1] == k+1)   //in CVP, at max GS vector, we reset the partial distance
+            if (enable_reset && k < reset_depth)   //in CVP, below the max GS vector, we reset the partial distance
             {
                 reset(newdist, k);
                 finished = !next_pos_up();
@@ -262,7 +262,5 @@ template void EnumerationBase::enumerate_loop<false,false,false>();
 template void EnumerationBase::enumerate_loop<false,true,false>();
 template void EnumerationBase::enumerate_loop<true,false,false>();
 template void EnumerationBase::enumerate_loop<true,true,false>();
-//template void EnumerationBase::enumerate_loop<true,false,true>();
-//template void EnumerationBase::enumerate_loop<true,true,true>();
 
 FPLLL_END_NAMESPACE

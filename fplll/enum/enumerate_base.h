@@ -84,6 +84,7 @@ protected:
 
     /* CVP reset informations */
     vector<int> _max_indices;
+    int reset_depth;
 
     int k, k_max;
     bool finished;

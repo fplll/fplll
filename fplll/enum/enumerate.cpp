@@ -47,7 +47,7 @@ void EnumerationDyn<FT>::reset(enumf cur_dist, int cur_depth)
         new_dist.add(new_dist, _gso.get_r_exp(i, i));
 
     FastEvaluator<FT> new_evaluator;
-    Enumeration<FT> enumobj(_gso, new_evaluator);
+    Enumeration<FT> enumobj(_gso, new_evaluator, _max_indices);
     enumobj.enumerate(0, d, new_dist, 0, target, partial_sol, pruning_bounds, false, true);
 
     if (!new_evaluator.sol_coord.empty())
@@ -93,6 +93,7 @@ void EnumerationDyn<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxd
     else
     {
         resetflag = true;
+        reset_depth = _max_indices[last-subtree.size()-1];
     }
 
     if (solvingsvp)
