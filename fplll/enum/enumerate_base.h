@@ -65,6 +65,7 @@ protected:
     /* configuration */
     bool dual;
     bool is_svp;
+    bool resetflag;
 
     /* enumeration input */
     enumf mut[maxdim][maxdim];
@@ -90,33 +91,33 @@ protected:
     /* nodes count */
     uint64_t nodes;
 
-    template<int kk, int kk_start, bool dualenum, bool findsubsols>
+    template<int kk, int kk_start, bool dualenum, bool findsubsols, bool enable_reset>
     struct opts
     {};
 
     /* need templated function argument for support of integer specialization for kk==-1 */
-    template<int kk, int kk_start, bool dualenum, bool findsubsols>
-    inline void enumerate_recursive( opts<kk, kk_start, dualenum, findsubsols> ) ENUM_ALWAYS_INLINE;
-    template<int kk_start, bool dualenum, bool findsubsols>
-    inline void enumerate_recursive( opts<-1, kk_start, dualenum, findsubsols> ) 
+    template<int kk, int kk_start, bool dualenum, bool findsubsols, bool enable_reset>
+    inline void enumerate_recursive( opts<kk, kk_start, dualenum, findsubsols, enable_reset> ) ENUM_ALWAYS_INLINE;
+    template<int kk_start, bool dualenum, bool findsubsols, bool enable_reset>
+    inline void enumerate_recursive( opts<-1, kk_start, dualenum, findsubsols, enable_reset> ) 
     {
     }
 
     /* simple wrapper with no function argument as helper for dispatcher */
-    template<int kk, bool dualenum, bool findsubsols>
+    template<int kk, bool dualenum, bool findsubsols, bool enable_reset>
     void enumerate_recursive_wrapper()
     {
         // kk < maxdim-1:
         // kk < kk_end                         (see enumerate_loop(), enumerate_base.cpp)
         // kk_end = d - subtree.size() <= d    (see prepare_enumeration(), enumerate.cpp)
         // d < maxdim                          (see enumerate(), enumerate.cpp)
-        enumerate_recursive( opts<(kk<(maxdim-1) ? kk : -1),0,dualenum,findsubsols>() );
+        enumerate_recursive( opts<(kk<(maxdim-1) ? kk : -1),0,dualenum,findsubsols,enable_reset>() );
     }
         
-    template<bool dualenum, bool findsubsols>
+    template<bool dualenum, bool findsubsols, bool enable_reset>
     inline void enumerate_recursive_dispatch(int kk);
         
-    template<bool dualenum, bool findsubsols>
+    template<bool dualenum, bool findsubsols, bool enable_reset>
     void enumerate_loop();
 
     virtual void reset(enumf, int) = 0;

@@ -84,6 +84,16 @@ void EnumerationDyn<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxd
     FPLLL_CHECK(d < maxdim, "enumerate: dimension is too high");
     FPLLL_CHECK((solvingsvp || !dual), "CVP for dual not implemented! What does that even mean? ");
     FPLLL_CHECK((subtree.empty() || !dual), "Subtree enumeration for dual not implemented!");
+    if (_max_indices.empty())
+    {
+        resetflag = false;
+        if (!solvingsvp)
+            FPLLL_INFO("warning: CVP without correct reset bounds is not proved");
+    }
+    else
+    {
+        resetflag = true;
+    }
 
     if (solvingsvp)
     {
@@ -256,14 +266,18 @@ void EnumerationDyn<FT>::do_enumerate()
 
     set_bounds();
     
-    if      ( dual &&  _evaluator.findsubsols) 
-        enumerate_loop<true,true>();
-    else if (!dual &&  _evaluator.findsubsols)
-        enumerate_loop<false,true>();
-    else if ( dual && !_evaluator.findsubsols)
-        enumerate_loop<true,false>();
-    else if (!dual && !_evaluator.findsubsols)
-        enumerate_loop<false,false>();
+    if      ( dual &&  _evaluator.findsubsols && !resetflag)
+        enumerate_loop<true,true,false>();
+    else if (!dual &&  _evaluator.findsubsols && !resetflag)
+        enumerate_loop<false,true,false>();
+    else if ( dual && !_evaluator.findsubsols && !resetflag)
+        enumerate_loop<true,false,false>();
+    else if (!dual && !_evaluator.findsubsols && !resetflag)
+        enumerate_loop<false,false,false>();
+    else if (!dual &&  _evaluator.findsubsols && resetflag)
+        enumerate_loop<false,true,true>();
+    else if (!dual && !_evaluator.findsubsols && resetflag)
+        enumerate_loop<false,false,true>();
 }
 
 template class Enumeration<FP_NR<double> >;

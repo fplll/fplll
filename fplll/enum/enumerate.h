@@ -31,7 +31,7 @@ template<typename FT>
 class EnumerationDyn : public EnumerationBase
 {
 public:
-    EnumerationDyn(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator, vector<int> max_indices=vector<int>())
+    EnumerationDyn(MatGSO<Integer, FT>& gso, Evaluator<FT>& evaluator, const vector<int> &max_indices=vector<int>())
         : _gso(gso), _evaluator(evaluator)
     {
         _max_indices = max_indices;
