@@ -21,18 +21,6 @@
 FPLLL_BEGIN_NAMESPACE
 
 template<typename FT>
-inline enumf EnumerationDyn<FT>::get_new_dist(FastEvaluator<FT> new_evaluator)
-{
-    return new_evaluator.sol_dist;
-}
-template<>
-inline enumf EnumerationDyn<Float>::get_new_dist(FastEvaluator<Float> new_evaluator)
-{
-    Float fsoldistnorm;
-    fsoldistnorm.mul_2si(new_evaluator.sol_dist, new_evaluator.normExp - _evaluator.normExp);
-    return fsoldistnorm.get_d(GMP_RNDU);
-}
-template<typename FT>
 void EnumerationDyn<FT>::reset(enumf cur_dist, int cur_depth)
 {
     //FPLLL_TRACE("Reset level " << cur_depth);
@@ -52,7 +40,7 @@ void EnumerationDyn<FT>::reset(enumf cur_dist, int cur_depth)
 
     if (!new_evaluator.sol_coord.empty())
     {
-        enumf sol_dist = get_new_dist(new_evaluator);
+        enumf sol_dist = new_evaluator.sol_dist;
         //FPLLL_TRACE("Recovering sub-solution at level: " << cur_depth <<" soldist: " << sol_dist);
 
         if (sol_dist+cur_dist < partdistbounds[0])
