@@ -132,6 +132,7 @@ int test_filename(const char *input_filename_lattice, const char *input_filename
 int main(int argc, char *argv[]) {
 
   int status = 0;
+  /*
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice",
                                  TESTDATADIR "/tests/lattices/example_cvp_in_target",
                                  TESTDATADIR "/tests/lattices/example_cvp_out");
@@ -141,6 +142,13 @@ int main(int argc, char *argv[]) {
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3",
                                  TESTDATADIR "/tests/lattices/example_cvp_in_target3",
                                  TESTDATADIR "/tests/lattices/example_cvp_out3");
+  */
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
+                                 TESTDATADIR "/tests/lattices/example_cvp_in_target4",
+                                 TESTDATADIR "/tests/lattices/example_cvp_out4");
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5",
+                                 TESTDATADIR "/tests/lattices/example_cvp_in_target5",
+                                 TESTDATADIR "/tests/lattices/example_cvp_out5");
   
   if (status == 0) {
     cerr << "All tests passed." << endl;
