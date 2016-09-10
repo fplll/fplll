@@ -136,12 +136,12 @@ void EnumerationDyn<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxd
     }
 
     subsoldists = rdiag;
-    
+
     save_rounding();
     prepare_enumeration(subtree, solvingsvp, subtree_reset);
     do_enumerate();
     restore_rounding();
-  
+
     fmaxdistnorm = maxdist; // Exact
   
     fmaxdist.mul_2si(fmaxdistnorm, dual ? fmaxdistexpo-normexp : normexp-fmaxdistexpo);

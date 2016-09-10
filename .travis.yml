@@ -18,6 +18,15 @@ matrix:
         - libmpfr-dev
         - libqd-dev
   - compiler: gcc
+    env: COMPILER=g++-4.8
+    addons:
+      apt:
+        packages:
+        - g++-4.8
+        - libgmp-dev
+        - libmpfr-dev
+        - libqd-dev
+  - compiler: gcc
     env: COMPILER=g++-5
     addons:
       apt:
@@ -37,16 +46,18 @@ matrix:
         - libmpfr-dev
         - libqd-dev
 
-install: export CXX="$COMPILER"
+install:
+  - export CXX="$COMPILER"
+  - $CXX --version
 
 before_script:
-- "./autogen.sh"
+  - "./autogen.sh"
 
 script:
-- "./configure"
-- make
-- make check
-- make distcheck
+  - "./configure"
+  - make
+  - make check
+  - make distcheck
 
 notifications:
   on_success: change

@@ -56,6 +56,7 @@ private:
   long iterations;
   long iterations_step;
   long collisions;
+  long reductions;
 
   /* statistics for 2-, 3- and 4-red, set manually in init() */
   double mult;

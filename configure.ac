@@ -1,8 +1,8 @@
-#                                               -*- Autoconf -*-
+# -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.61)
-AC_INIT(fplll, 5.0.1)
+AC_INIT(fplll, 5.0.3rc0)
 AC_CONFIG_SRCDIR([fplll/fplll.cpp])
 
 # cf http://comments.gmane.org/gmane.comp.sysutils.autoconf.general/15737
@@ -39,7 +39,7 @@ LT_INIT
 #    current, and set both revision and age to zero.
 
 FPLLL_LT_CURRENT=2
-FPLLL_LT_REVISION=0
+FPLLL_LT_REVISION=2
 FPLLL_LT_AGE=0
 
 AC_SUBST(FPLLL_LT_CURRENT)

@@ -92,7 +92,6 @@ class Enumeration
     std::unique_ptr< EnumerationDyn<FT> > enumdyn;
 };
 
-
 FPLLL_END_NAMESPACE
 
 #endif
