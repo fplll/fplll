@@ -127,7 +127,7 @@ vector<Strategy> load_strategies_json(const std::string &filename)
         pruning.radius_factor = j_prun[0];
 
         // fplll enforces that the first pruning coefficient is 1.0
-        FPLLL_DEBUG_CHECK(j_prun[1][0] == 1.0);
+        FPLLL_DEBUG_CHECK((double) j_prun[1][0] == 1.0);
 
         for (auto c_it = j_prun[1].begin(); c_it != j_prun[1].end(); ++c_it)
         {

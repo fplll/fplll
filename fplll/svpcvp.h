@@ -38,9 +38,14 @@ int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &s
                             vector<double> &subsol_dist, const vector<double> &pruning,
                             int flags = SVP_DEFAULT);
 
-// Experimental. Do not use.
+/**
+ * Computes a closest vector of a lattice to a target.
+ * The vectors must be linearly independant and the basis must be LLL-reduced
+ * with delta=LLL_DEF_DELTA and eta=LLL_DEF_ETA.
+ * The result is guaranteed if method = CVPM_PROVED.
+ */
 int closest_vector(IntMatrix &b, const IntVect &int_target, vector<Integer> &sol_coord,
-                   int flags = CVP_DEFAULT);
+                   int method = CVPM_FAST, int flags = CVP_DEFAULT);
 
 FPLLL_END_NAMESPACE
 
