@@ -10,7 +10,22 @@ EXTRA_DIST=lattices/dim55_in \
 	lattices/example_svp_in \
 	lattices/example_svp_out \
 	lattices/example_dsvp_in \
-	lattices/example_dsvp_out
+	lattices/example_dsvp_out \
+	lattices/example_cvp_in_lattice \
+	lattices/example_cvp_in_lattice2 \
+	lattices/example_cvp_in_lattice3 \
+	lattices/example_cvp_in_lattice4 \
+	lattices/example_cvp_in_lattice5 \
+	lattices/example_cvp_in_target \
+	lattices/example_cvp_in_target2 \
+	lattices/example_cvp_in_target3 \
+	lattices/example_cvp_in_target4 \
+	lattices/example_cvp_in_target5 \
+	lattices/example_cvp_out \
+	lattices/example_cvp_out2 \
+	lattices/example_cvp_out3 \
+	lattices/example_cvp_out4 \
+	lattices/example_cvp_out5
 
 # include TOPBUILDIR for fplll_config.h
 AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPSRCDIR)/fplll -I$(TOPBUILDDIR) -DTESTDATADIR=\"$(TOPSRCDIR)/\"
