@@ -1,6 +1,7 @@
 /* Copyright (C) 2008-2011 Xavier Pujol
    (C) 2015 Michael Walter.
    (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions, subsolutions)
+   (C) 2016 Guillaume Bonnoron. (CVP improvements)
    
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -20,15 +21,50 @@
 FPLLL_BEGIN_NAMESPACE
 
 template<typename FT>
+void EnumerationDyn<FT>::reset(enumf cur_dist, int cur_depth)
+{
+    //FPLLL_TRACE("Reset level " << cur_depth);
+    int new_dim = cur_depth+1;
+
+    vector<enumxt> partial_sol(d-cur_depth-1);
+    for (int i=cur_depth+1 ; i < d ; ++i)
+        partial_sol[i-cur_depth-1] = x[i];
+
+    FT new_dist = 0.0;
+    for (int i = 0; i < new_dim; i++)
+        new_dist.add(new_dist, _gso.get_r_exp(i, i));
+
+    FastEvaluator<FT> new_evaluator;
+    Enumeration<FT> enumobj(_gso, new_evaluator, _max_indices);
+    enumobj.enumerate(0, d, new_dist, 0, target, partial_sol, pruning_bounds, false, true);
+
+    if (!new_evaluator.sol_coord.empty())
+    {
+        enumf sol_dist = new_evaluator.sol_dist;
+        //FPLLL_TRACE("Recovering sub-solution at level: " << cur_depth <<" soldist: " << sol_dist);
+
+        if (sol_dist+cur_dist < partdistbounds[0])
+        {
+            //FPLLL_TRACE("Saving it.");
+            for (int i = 0 ; i < new_dim ; ++i)
+                x[i] = new_evaluator.sol_coord[i].get_d();
+            process_solution(sol_dist + cur_dist);
+        }
+    }
+}
+
+template<typename FT>
 void EnumerationDyn<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxdistexpo,
                                 const vector<FT>& target_coord,
                                 const vector<enumxt>& subtree,
                                 const vector<enumf>& pruning,
-                                bool _dual)
+                                bool _dual,
+                                bool subtree_reset)
 {
     bool solvingsvp = target_coord.empty();
     dual = _dual;
     pruning_bounds = pruning;
+    target = target_coord;
     if (last == -1)
         last = _gso.d;
     d = last - first;
@@ -36,6 +72,10 @@ void EnumerationDyn<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxd
     FPLLL_CHECK(d < maxdim, "enumerate: dimension is too high");
     FPLLL_CHECK((solvingsvp || !dual), "CVP for dual not implemented! What does that even mean? ");
     FPLLL_CHECK((subtree.empty() || !dual), "Subtree enumeration for dual not implemented!");
+
+    resetflag = !_max_indices.empty();
+    if (resetflag)
+        reset_depth = _max_indices[last-subtree.size()-1];
 
     if (solvingsvp)
     {
@@ -94,13 +134,14 @@ void EnumerationDyn<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxd
             }
         }
     }
+
     subsoldists = rdiag;
 
     save_rounding();
-    prepare_enumeration(subtree, solvingsvp);
+    prepare_enumeration(subtree, solvingsvp, subtree_reset);
     do_enumerate();
-    restore_rounding();        
-  
+    restore_rounding();
+
     fmaxdistnorm = maxdist; // Exact
   
     fmaxdist.mul_2si(fmaxdistnorm, dual ? fmaxdistexpo-normexp : normexp-fmaxdistexpo);
@@ -110,9 +151,9 @@ void EnumerationDyn<FT>::enumerate(int first, int last, FT& fmaxdist, long fmaxd
 }
 
 template<typename FT>
-void EnumerationDyn<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp)
+void EnumerationDyn<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool solvingsvp, bool subtree_reset)
 {
-    bool svpbeginning = solvingsvp;
+    is_svp = solvingsvp;
     
     enumf newdist = 0.0;
     k_end = d - subtree.size();
@@ -125,7 +166,7 @@ void EnumerationDyn<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool
             x[k] = subtree[k - k_end];
 
             if (x[k] != 0)
-                svpbeginning = false;
+                is_svp = false;
 
             for (int j = 0; j < k; ++j)
                 center_partsum[j] -= x[k] * mut[j][k];
@@ -147,10 +188,13 @@ void EnumerationDyn<FT>::prepare_enumeration(const vector<enumxt>& subtree, bool
             partdist[k] = newdist;
             dx[k] = ddx[k] = (((int)(newcenter >= x[k]) & 1) << 1) - 1;
         }
-        alpha[k] = x[k] - newcenter;
-        newdist += alpha[k] * alpha[k] * rdiag[k];
+        if (!subtree_reset || k < k_end)
+        {
+            alpha[k] = x[k] - newcenter;
+            newdist += alpha[k] * alpha[k] * rdiag[k];
+        }
     }
-    if (!svpbeginning) 
+    if (!is_svp)
     {
         k_max = k_end; // The last non-zero coordinate of x will not stay positive
     }
@@ -179,6 +223,7 @@ void EnumerationDyn<FT>::set_bounds()
 template<typename FT>
 void EnumerationDyn<FT>::process_solution(enumf newmaxdist)
 {
+    FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << nodes << ")");
     for (int j = 0; j < d; ++j)
         fx[j] = x[j];
     _evaluator.eval_sol(fx, newmaxdist, maxdist);
@@ -200,17 +245,21 @@ template<typename FT>
 void EnumerationDyn<FT>::do_enumerate()
 {
     nodes = 0;
-    
+
     set_bounds();
     
-    if      ( dual &&  _evaluator.findsubsols) 
-        enumerate_loop<true,true>();
-    else if (!dual &&  _evaluator.findsubsols)
-        enumerate_loop<false,true>();
-    else if ( dual && !_evaluator.findsubsols)
-        enumerate_loop<true,false>();
-    else if (!dual && !_evaluator.findsubsols)
-        enumerate_loop<false,false>();
+    if      ( dual &&  _evaluator.findsubsols && !resetflag)
+        enumerate_loop<true,true,false>();
+    else if (!dual &&  _evaluator.findsubsols && !resetflag)
+        enumerate_loop<false,true,false>();
+    else if ( dual && !_evaluator.findsubsols && !resetflag)
+        enumerate_loop<true,false,false>();
+    else if (!dual && !_evaluator.findsubsols && !resetflag)
+        enumerate_loop<false,false,false>();
+    else if (!dual &&  _evaluator.findsubsols && resetflag)
+        enumerate_loop<false,true,true>();
+    else if (!dual && !_evaluator.findsubsols && resetflag)
+        enumerate_loop<false,false,true>();
 }
 
 template class Enumeration<FP_NR<double> >;

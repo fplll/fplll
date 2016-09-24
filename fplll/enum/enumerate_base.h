@@ -1,6 +1,7 @@
 /* Copyright (C) 2008-2011 Xavier Pujol
    (C) 2015 Michael Walter.
    (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions, subsolutions)
+   (C) 2016 Guillaume Bonnoron. (CVP improvements)
    
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -18,6 +19,7 @@
 #ifndef FPLLL_ENUMERATE_BASE_H
 #define FPLLL_ENUMERATE_BASE_H
 
+#include <vector>
 #include <array>
 #include <cfenv>
 #include <cmath>
@@ -62,6 +64,8 @@ public:
 protected:
     /* configuration */
     bool dual;
+    bool is_svp;
+    bool resetflag;
 
     /* enumeration input */
     enumf mut[maxdim][maxdim];
@@ -77,41 +81,47 @@ protected:
     array<enumf, maxdim> partdist, center, alpha;
     array<enumxt,maxdim> x, dx, ddx;
     array<enumf, maxdim> subsoldists;
-    
+
+    /* CVP reset informations */
+    vector<int> _max_indices;
+    int reset_depth;
+
     int k, k_max;
-   
+    bool finished;
+
     /* nodes count */
     uint64_t nodes;
 
-    template<int kk, int kk_start, bool dualenum, bool findsubsols>
+    template<int kk, int kk_start, bool dualenum, bool findsubsols, bool enable_reset>
     struct opts
     {};
-    
+
     /* need templated function argument for support of integer specialization for kk==-1 */
-    template<int kk, int kk_start, bool dualenum, bool findsubsols>
-    inline void enumerate_recursive( opts<kk, kk_start, dualenum, findsubsols> ) ENUM_ALWAYS_INLINE;
-    template<int kk_start, bool dualenum, bool findsubsols>
-    inline void enumerate_recursive( opts<-1, kk_start, dualenum, findsubsols> ) 
+    template<int kk, int kk_start, bool dualenum, bool findsubsols, bool enable_reset>
+    inline void enumerate_recursive( opts<kk, kk_start, dualenum, findsubsols, enable_reset> ) ENUM_ALWAYS_INLINE;
+    template<int kk_start, bool dualenum, bool findsubsols, bool enable_reset>
+    inline void enumerate_recursive( opts<-1, kk_start, dualenum, findsubsols, enable_reset> ) 
     {
     }
 
     /* simple wrapper with no function argument as helper for dispatcher */
-    template<int kk, bool dualenum, bool findsubsols>
+    template<int kk, bool dualenum, bool findsubsols, bool enable_reset>
     void enumerate_recursive_wrapper()
     {
         // kk < maxdim-1:
         // kk < kk_end                         (see enumerate_loop(), enumerate_base.cpp)
         // kk_end = d - subtree.size() <= d    (see prepare_enumeration(), enumerate.cpp)
         // d < maxdim                          (see enumerate(), enumerate.cpp)
-        enumerate_recursive( opts<(kk<(maxdim-1) ? kk : -1),0,dualenum,findsubsols>() );
+        enumerate_recursive( opts<(kk<(maxdim-1) ? kk : -1),0,dualenum,findsubsols,enable_reset>() );
     }
         
-    template<bool dualenum, bool findsubsols>
+    template<bool dualenum, bool findsubsols, bool enable_reset>
     inline void enumerate_recursive_dispatch(int kk);
         
-    template<bool dualenum, bool findsubsols>
+    template<bool dualenum, bool findsubsols, bool enable_reset>
     void enumerate_loop();
 
+    virtual void reset(enumf, int) = 0;
     virtual void process_solution(enumf newmaxdist) = 0; 
     virtual void process_subsolution(int offset, enumf newdist) = 0;
     
