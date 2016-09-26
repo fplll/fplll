@@ -36,9 +36,10 @@ enum EvaluatorMode
 template <class FT> class Evaluator
 {
 public:
-  Evaluator(size_t max_aux_solutions = 0, bool find_subsolutions = false)
+  Evaluator(size_t max_aux_solutions = 0, bool find_subsolutions = false, bool always_update_radius = true)
       : max_aux_sols(max_aux_solutions), findsubsols(find_subsolutions), new_sol_flag(false)
   {
+    always_update_rad = always_update_radius||max_aux_solutions==0;
   }
   virtual ~Evaluator() {}
 
@@ -62,6 +63,7 @@ public:
 
   /** Other solutions found in the lattice */
   size_t max_aux_sols;
+  bool always_update_rad;
   std::deque<vector<FT>> aux_sol_coord;
   std::deque<enumf> aux_sol_dist;
 
@@ -90,9 +92,10 @@ public:
   using Evaluator<FT>::sub_sol_coord;
   using Evaluator<FT>::sub_sol_dist;
   using Evaluator<FT>::max_aux_sols;
+  using Evaluator<FT>::always_update_rad;
 
-  FastEvaluator(size_t max_aux_solutions = 0, bool find_subsolutions = false)
-      : Evaluator<FT>(max_aux_solutions, find_subsolutions)
+  FastEvaluator(size_t max_aux_solutions = 0, bool find_subsolutions = false, bool always_update_radius = true)
+      : Evaluator<FT>(max_aux_solutions, find_subsolutions, always_update_radius)
   {
   }
 
@@ -118,13 +121,18 @@ public:
       aux_sol_dist.emplace_front(sol_dist);
       if (aux_sol_coord.size() > max_aux_sols)
       {
+        max_dist = aux_sol_dist.back();
         aux_sol_coord.pop_back();
         aux_sol_dist.pop_back();
       }
     }
     sol_coord = new_sol_coord;
-    max_dist = sol_dist = new_partial_dist;
+    sol_dist = new_partial_dist;
     new_sol_flag        = true;
+    if (always_update_rad)
+    {
+        max_dist = sol_dist;
+    }
   }
 
   virtual void eval_sub_sol(int offset, const vector<FT> &new_sub_sol_coord, const enumf &sub_dist)
@@ -149,10 +157,11 @@ template <> class Evaluator<Float>
 {
 public:
   Evaluator<Float>(int d, const Matrix<Float> &mu, const Matrix<Float> &r, int eval_mode,
-                   size_t max_aux_solutions = 0, bool find_subsolutions = false)
+                   size_t max_aux_solutions = 0, bool find_subsolutions = false, bool always_update_radius = true)
       : max_aux_sols(max_aux_solutions), findsubsols(find_subsolutions), new_sol_flag(false),
         eval_mode(eval_mode), input_error_defined(false), d(d), mu(mu), r(r)
   {
+    always_update_rad = always_update_radius||max_aux_solutions==0;
     max_dr_diag.resize(d);
     max_dm_u.resize(d);
   }
@@ -196,6 +205,7 @@ public:
 
   /** Other solutions found in the lattice */
   size_t max_aux_sols;
+  bool always_update_rad;
   std::deque<FloatVect> aux_sol_coord;
   std::deque<enumf> aux_sol_dist;
 
@@ -274,7 +284,7 @@ public:
   vector<Integer> sub_sol_int_dist;      // Exact norm of sub vectors
 
 private:
-  void update_max_dist(enumf &max_dist);
+  enumf int_dist2enumf(Integer int_dist);
 
   const IntMatrix &matrix;  // matrix of the lattice
 };

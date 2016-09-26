@@ -221,14 +221,19 @@ void FastEvaluator<Float>::eval_sol(const FloatVect &new_sol_coord, const enumf 
       aux_sol_dist.emplace_front(sol_dist);
       if (aux_sol_coord.size() > max_aux_sols)
       {
+        max_dist = aux_sol_dist.back();
         aux_sol_coord.pop_back();
         aux_sol_dist.pop_back();
       }
     }
     sol_coord = new_sol_coord;
-    max_dist = sol_dist = new_partial_dist;
+    sol_dist = new_partial_dist;
     last_partial_dist   = new_partial_dist;  // Exact conversion
     last_partial_dist.mul_2si(last_partial_dist, normExp);
+    if (always_update_rad)
+    {
+      max_dist = sol_dist;
+    }
   }
   else if (eval_mode == EVALMODE_PRINT)
   {
@@ -315,6 +320,7 @@ void ExactEvaluator::eval_sol(const FloatVect &new_sol_coord, const enumf &new_p
         aux_sol_int_dist.emplace_front(int_max_dist);
         if (aux_sol_coord.size() > max_aux_sols)
         {
+          max_dist = int_dist2enumf(aux_sol_int_dist.back());
           aux_sol_coord.pop_back();
           aux_sol_dist.pop_back();
           aux_sol_int_dist.pop_back();
@@ -325,8 +331,11 @@ void ExactEvaluator::eval_sol(const FloatVect &new_sol_coord, const enumf &new_p
       last_partial_dist.mul_2si(last_partial_dist, normExp);
       sol_coord    = new_sol_coord;
       int_max_dist = new_sol_dist;
-      update_max_dist(max_dist);
-      sol_dist = max_dist;
+      sol_dist = int_dist2enumf(int_max_dist);
+      if (always_update_rad)
+      {
+        max_dist = sol_dist;
+      }
     }
     else if (eval_mode == EVALMODE_PRINT)
     {
@@ -377,16 +386,16 @@ void ExactEvaluator::eval_sub_sol(int offset, const FloatVect &new_sub_sol_coord
 }
 
 // Decreases the bound of the algorithm when a solution is found
-void ExactEvaluator::update_max_dist(enumf &max_dist)
+enumf ExactEvaluator::int_dist2enumf(Integer int_dist)
 {
   Float fMaxDist, maxDE;
-  fMaxDist.set_z(int_max_dist, GMP_RNDU);
+  fMaxDist.set_z(int_dist, GMP_RNDU);
   bool result = get_max_error_aux(fMaxDist, true, maxDE);
   FPLLL_CHECK(result, "ExactEvaluator: error cannot be bounded");
   FPLLL_CHECK(maxDE <= r(0, 0), "ExactEvaluator: max error is too large");
   fMaxDist.add(fMaxDist, maxDE);
   fMaxDist.mul_2si(fMaxDist, -normExp);
-  max_dist = fMaxDist.get_d();
+  return fMaxDist.get_d();
 }
 
 FPLLL_END_NAMESPACE
