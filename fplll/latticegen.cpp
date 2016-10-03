@@ -31,7 +31,9 @@ void print_help()
        << " N <d> <b> <c> : gen_ntrulike2" << endl
        << " q <d> <k> <b> <c>: gen_qary" << endl
        << " t <d> <f> : gen_trg" << endl
-       << " T <d> : gen_trg2" << endl;
+       << " T <d> : gen_trg2" << endl
+       << "See README.md for option descriptions:" << endl
+       << "https://github.com/fplll/fplll/blob/master/README.md#latticegen" << endl;
 }
 
 void print_version()
@@ -139,6 +141,10 @@ int main(int argc, char *argv[])
       m.gen_ntrulike_withq(b);
       break;
     }
+    default:
+    {
+      fatal_error("parameter c must be 'b' or 'q'");
+    }
     }
     break;
   }
@@ -167,6 +173,10 @@ int main(int argc, char *argv[])
       m.gen_qary_prime(k, b);
       break;
     }
+    default:
+    {
+      fatal_error("parameter c must be 'b' or 'q' or 'p'");
+    }
     }
     break;
   }
@@ -188,6 +198,10 @@ int main(int argc, char *argv[])
     {
       m.gen_ntrulike2_withq(b);
       break;
+    }
+    default:
+    {
+      fatal_error("parameter c must be 'b' or 'q'");
     }
     }
     break;
