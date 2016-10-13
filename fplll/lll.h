@@ -36,7 +36,9 @@ public:
    */
   LLLReduction(MatGSO<ZT, FT> &m, double delta, double eta, int flags);
 
+#ifdef FPLLL_WITH_LONG_DOUBLE
   ~LLLReduction() { LDConvHelper::free(); }
+#endif
 
   bool lll(int kappa_min = 0, int kappa_start = 0, int kappa_end = -1);
   inline bool size_reduction(int kappa_min = 0, int kappa_end = -1);
