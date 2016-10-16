@@ -19,8 +19,8 @@
 #define FPLLL_BKZ_H
 
 #include "bkz_param.h"
-#include "enum/evaluator.h"
 #include "enum/enumerate.h"
+#include "enum/evaluator.h"
 #include "lll.h"
 
 FPLLL_BEGIN_NAMESPACE
@@ -28,15 +28,15 @@ FPLLL_BEGIN_NAMESPACE
 template <class FT> class BKZAutoAbort
 {
 public:
-/**
-   @brief
+  /**
+     @brief
 
-   @param m
-   @param num_rows
-   @param start_row
-   @return
-*/
-  
+     @param m
+     @param num_rows
+     @param start_row
+     @return
+  */
+
   BKZAutoAbort(MatGSO<Integer, FT> &m, int num_rows, int start_row = 0)
       : m(m), old_slope(numeric_limits<double>::max()), no_dec(-1), num_rows(num_rows),
         start_row(start_row)
@@ -52,20 +52,17 @@ private:
   int start_row;
 };
 
-
 /* The matrix must be LLL-reduced */
 template <class FT> class BKZReduction
 {
 public:
-
-
   BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lll_obj, const BKZParam &param);
   ~BKZReduction();
 
   bool svp_preprocessing(int kappa, int block_size, const BKZParam &param);
 
   bool svp_postprocessing(int kappa, int block_size, const vector<FT> &solution);
-  
+
   bool dsvp_postprocessing(int kappa, int block_size, const vector<FT> &solution);
 
   /**
@@ -80,7 +77,8 @@ public:
 
   bool svp_reduction(int kappa, int block_size, const BKZParam &param, bool dual = false);
 
-  bool svp_reduction_ex(int kappa, int block_size, const BKZParam &param, bool &clean, bool dual = false)
+  bool svp_reduction_ex(int kappa, int block_size, const BKZParam &param, bool &clean,
+                        bool dual = false)
   {
     try
     {
@@ -108,11 +106,10 @@ public:
       return set_status(e);
     }
   }
-  
+
   bool sd_tour(const int loop, const BKZParam &param, int min_row, int max_row);
 
-  bool sd_tour_ex(const int loop, const BKZParam &param, int min_row, int max_row,
-               bool &clean)
+  bool sd_tour_ex(const int loop, const BKZParam &param, int min_row, int max_row, bool &clean)
   {
     try
     {
@@ -124,31 +121,31 @@ public:
       return set_status(e);
     }
   }
-  
+
   bool hkz(int &kappa_max, const BKZParam &param, int min_row, int max_row);
-  
+
   bool hkz_ex(int &kappa_max, const BKZParam &param, int min_row, int max_row, bool &clean)
   {
     try
     {
       clean = hkz(kappa_max, param, min_row, max_row);
       return true;
-    } 
+    }
     catch (RedStatus &e)
     {
       return set_status(e);
     }
   }
-  
+
   bool slide_tour(const int loop, const BKZParam &param, int min_row, int max_row);
-  
+
   bool slide_tour_ex(const int loop, const BKZParam &param, int min_row, int max_row, bool &clean)
   {
     try
     {
       clean = slide_tour(loop, param, min_row, max_row);
       return true;
-    } 
+    }
     catch (RedStatus &e)
     {
       return set_status(e);
@@ -157,25 +154,25 @@ public:
 
   bool bkz();
 
-/** Randomize basis between from ``min_row`` and ``max_row`` (exclusive)
+  /** Randomize basis between from ``min_row`` and ``max_row`` (exclusive)
 
-    1. permute rows
-    2. apply lower triangular matrix with coefficients in -1,0,1
-    3. LLL reduce result
+      1. permute rows
+      2. apply lower triangular matrix with coefficients in -1,0,1
+      3. LLL reduce result
 
-    @param min_row start in this row
+      @param min_row start in this row
 
-    @param max_row stop at this row (exclusive)
+      @param max_row stop at this row (exclusive)
 
-    @param density number of non-zero coefficients in lower triangular
-    transformation matrix
-**/
+      @param density number of non-zero coefficients in lower triangular
+      transformation matrix
+  **/
 
   void rerandomize_block(int min_row, int max_row, int density);
 
   /** I/O **/
 
-  void dump_gso(const std::string& filename, const std::string& prefix, bool append = true);
+  void dump_gso(const std::string &filename, const std::string &prefix, bool append = true);
 
   int status;
 
@@ -202,8 +199,8 @@ private:
   LLLReduction<Integer, FT> &lll_obj;
   FastEvaluator<FT> evaluator;
   FT delta;
-  
-  const char* algorithm; 
+
+  const char *algorithm;
   // Temporary data
   const vector<FT> empty_target, empty_sub_tree;
   FT max_dist, delta_max_dist;
@@ -211,12 +208,15 @@ private:
   FT sld_potential;
 };
 
+int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param,
+                  FloatType float_type = FT_DEFAULT, int precision = 0);
+int bkz_reduction(IntMatrix &b, int block_size, int flags = BKZ_DEFAULT,
+                  FloatType float_type = FT_DEFAULT, int precision = 0);
+int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags = BKZ_DEFAULT,
+                  FloatType float_type = FT_DEFAULT, int precision = 0);
 
-int bkz_reduction(IntMatrix* B, IntMatrix* U, const BKZParam& param, FloatType float_type=FT_DEFAULT, int precision=0);
-int bkz_reduction(IntMatrix& b, int block_size, int flags = BKZ_DEFAULT, FloatType float_type=FT_DEFAULT, int precision=0);
-int bkz_reduction(IntMatrix& b, IntMatrix& u, int block_size, int flags = BKZ_DEFAULT, FloatType float_type=FT_DEFAULT, int precision=0);
-
-int hkz_reduction(IntMatrix& b, int flags = HKZ_DEFAULT, FloatType float_type=FT_DEFAULT, int precision=0);
+int hkz_reduction(IntMatrix &b, int flags = HKZ_DEFAULT, FloatType float_type = FT_DEFAULT,
+                  int precision = 0);
 
 FPLLL_END_NAMESPACE
 

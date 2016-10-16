@@ -16,8 +16,8 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "fplll.h"
-#include "wrapper.h"
 #include "svpcvp.cpp"
+#include "wrapper.h"
 
 FPLLL_BEGIN_NAMESPACE
 

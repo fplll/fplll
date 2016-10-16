@@ -144,7 +144,7 @@ template <class ZT, class FT> long MatGSO<ZT, FT>::get_max_mu_exp(int i, int n_c
   for (int j = 0; j < n_columns; j++)
   {
     long expo2 = get_mu_exp(i, j, expo).exponent();
-    max_expo    = max(max_expo, expo + expo2);
+    max_expo   = max(max_expo, expo + expo2);
   }
   return max_expo;
 }

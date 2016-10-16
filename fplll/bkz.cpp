@@ -29,7 +29,8 @@ FPLLL_BEGIN_NAMESPACE
 template <class FT>
 BKZReduction<FT>::BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lll_obj,
                                const BKZParam &param)
-  : status(RED_SUCCESS), nodes(0), param(param), m(m), lll_obj(lll_obj), algorithm(NULL), cputime_start(0)
+    : status(RED_SUCCESS), nodes(0), param(param), m(m), lll_obj(lll_obj), algorithm(NULL),
+      cputime_start(0)
 {
   for (num_rows = m.d; num_rows > 0 && m.b[num_rows - 1].is_zero(); num_rows--)
   {
@@ -226,7 +227,6 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
   }
   return false;
 }
-
 
 template <class FT>
 bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &par, bool dual)
@@ -691,7 +691,6 @@ template <class FT> bool BKZAutoAbort<FT>::test_abort(double scale, int maxNoDec
   return no_dec >= maxNoDec;
 }
 
-
 /**
  * call LLLReduction() and then BKZReduction.
  */
@@ -716,10 +715,10 @@ int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_
  * interface called from call_bkz() from main.cpp.
  */
 int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType float_type,
-                 int precision)
+                  int precision)
 {
   IntMatrix empty_mat;
-  IntMatrix &u    = U ? *U : empty_mat;
+  IntMatrix &u     = U ? *U : empty_mat;
   IntMatrix &u_inv = empty_mat;
   FPLLL_CHECK(B, "B == NULL in bkzReduction");
 
@@ -775,7 +774,7 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType f
   else if (sel_ft == FT_MPFR)
   {
     int old_prec = FP_NR<mpfr_t>::set_prec(precision);
-    status = bkz_reduction_f<FP_NR<mpfr_t>>(*B, param, sel_ft, lll_delta, u, u_inv);
+    status       = bkz_reduction_f<FP_NR<mpfr_t>>(*B, param, sel_ft, lll_delta, u, u_inv);
     FP_NR<mpfr_t>::set_prec(old_prec);
   }
   else

@@ -30,8 +30,8 @@ using namespace fplll;
    @return
 */
 
-template<class ZT>
-void read_matrix(ZZ_mat<ZT> &A, const char *input_filename) {
+template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
+{
   istream *is = new ifstream(input_filename);
   *is >> A;
   delete is;
@@ -45,8 +45,8 @@ void read_matrix(ZZ_mat<ZT> &A, const char *input_filename) {
    @return
 */
 
-template<class ZT>
-void read_vector(vector<Z_NR<ZT> > &b, const char *input_filename) {
+template <class ZT> void read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
+{
   istream *is = new ifstream(input_filename);
   *is >> b;
   delete is;
@@ -60,36 +60,40 @@ void read_vector(vector<Z_NR<ZT> > &b, const char *input_filename) {
    @return
 */
 
-template<class ZT>
-int test_cvp(ZZ_mat<ZT> &A, IntVect &target, IntVect &b, const int method) {
+template <class ZT> int test_cvp(ZZ_mat<ZT> &A, IntVect &target, IntVect &b, const int method)
+{
   IntVect sol_coord;  // In the LLL-reduced basis
   IntVect solution;
   IntMatrix u;
 
-  //cerr << "A " << endl << A << endl;
-  int status = lll_reduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
-  if (status != RED_SUCCESS) {
+  // cerr << "A " << endl << A << endl;
+  int status =
+      lll_reduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
+  if (status != RED_SUCCESS)
+  {
     cerr << "LLL reduction failed: " << get_red_status_str(status) << endl;
     return status;
   }
 
   status = closest_vector(A, target, sol_coord, method);
 
-  if (status != RED_SUCCESS) {
+  if (status != RED_SUCCESS)
+  {
     cerr << "Failure: " << get_red_status_str(status) << endl;
     return status;
   }
 
   vector_matrix_product(solution, sol_coord, A);
-  
-  //cerr << "A red" << endl << A << endl;
-  //cerr << "sol_coord : " << sol_coord << endl;
-  //cerr << "solution : " << solution << endl;
-  //cerr << "expected : " << b << endl;
-  //cerr << "target : " << target << endl;
+
+  // cerr << "A red" << endl << A << endl;
+  // cerr << "sol_coord : " << sol_coord << endl;
+  // cerr << "solution : " << solution << endl;
+  // cerr << "expected : " << b << endl;
+  // cerr << "target : " << target << endl;
 
   bool correct = true;
-  for(int i=0; i<A.get_cols(); i++) {
+  for (int i = 0; i < A.get_cols(); i++)
+  {
     correct = correct && (solution[i] == b[i]);
   }
   if (!correct)
@@ -107,8 +111,10 @@ int test_cvp(ZZ_mat<ZT> &A, IntVect &target, IntVect &b, const int method) {
    @return
 */
 
-template<class ZT>
-int test_filename(const char *input_filename_lattice, const char *input_filename_target, const char *output_filename, const int method=CVPM_FAST) {
+template <class ZT>
+int test_filename(const char *input_filename_lattice, const char *input_filename_target,
+                  const char *output_filename, const int method = CVPM_FAST)
+{
   ZZ_mat<ZT> A;
   read_matrix(A, input_filename_lattice);
 
@@ -117,7 +123,7 @@ int test_filename(const char *input_filename_lattice, const char *input_filename
 
   IntVect b;
   read_vector(b, output_filename);
-  
+
   return test_cvp<ZT>(A, t, b, method);
 }
 
@@ -129,7 +135,8 @@ int test_filename(const char *input_filename_lattice, const char *input_filename
    @return
 */
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 
   int status = 0;
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice",
@@ -143,17 +150,18 @@ int main(int argc, char *argv[]) {
                                  TESTDATADIR "/tests/lattices/example_cvp_out3");
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
                                  TESTDATADIR "/tests/lattices/example_cvp_in_target4",
-                                 TESTDATADIR "/tests/lattices/example_cvp_out4",
-                                 CVPM_PROVED);
+                                 TESTDATADIR "/tests/lattices/example_cvp_out4", CVPM_PROVED);
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5",
                                  TESTDATADIR "/tests/lattices/example_cvp_in_target5",
-                                 TESTDATADIR "/tests/lattices/example_cvp_out5",
-                                 CVPM_PROVED);
-  
-  if (status == 0) {
+                                 TESTDATADIR "/tests/lattices/example_cvp_out5", CVPM_PROVED);
+
+  if (status == 0)
+  {
     cerr << "All tests passed." << endl;
     return 0;
-  } else {
+  }
+  else
+  {
     return -1;
   }
 

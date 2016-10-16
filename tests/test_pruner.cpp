@@ -149,8 +149,6 @@ public:
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
 
-
-
     for (int i = 0; i < Nbis / 2; ++i)
     {
       pr[i]              = 1;
@@ -195,13 +193,14 @@ template <class FT> int test_prepruned()
   set_up_gso_norms(gso_sq_norms);
   pru.load_basis_shape(gso_sq_norms);
 
-  vector<double> pr = {1,        1,        1,        1,        1,        1,        1,        1,
-                       1,        1,        1,        1,        1,        1,        0.937197, 0.937197,
-                       0.871731, 0.871731, 0.814304, 0.814304, 0.762232, 0.762232, 0.713898, 0.713898,
-                       0.668279, 0.668279, 0.624701, 0.624701, 0.58271,  0.58271,  0.541994, 0.541994,
-                       0.502342, 0.502342, 0.463617, 0.463617, 0.425747, 0.425747, 0.388723, 0.388723,
-                       0.35262,  0.35262,  0.317642, 0.317642, 0.284261, 0.284261, 0.254584, 0.254584,
-                       0.254584, 0.254584, 0.254584, 0.254584, 0.111895, 0.111895, 0.111895, 0.111895};
+  vector<double> pr = {1,        1,        1,        1,        1,        1,        1,
+                       1,        1,        1,        1,        1,        1,        1,
+                       0.937197, 0.937197, 0.871731, 0.871731, 0.814304, 0.814304, 0.762232,
+                       0.762232, 0.713898, 0.713898, 0.668279, 0.668279, 0.624701, 0.624701,
+                       0.58271,  0.58271,  0.541994, 0.541994, 0.502342, 0.502342, 0.463617,
+                       0.463617, 0.425747, 0.425747, 0.388723, 0.388723, 0.35262,  0.35262,
+                       0.317642, 0.317642, 0.284261, 0.284261, 0.254584, 0.254584, 0.254584,
+                       0.254584, 0.254584, 0.254584, 0.111895, 0.111895, 0.111895, 0.111895};
 
   pru.enumeration_radius = .85;
   double cost            = pru.single_enum_cost(pr);
@@ -231,14 +230,13 @@ template <class FT> int test_unpruned()
   double cost            = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
 
-  status = (abs(1 - cost / 3.20e+10) > .02);
+  status       = (abs(1 - cost / 3.20e+10) > .02);
   double proba = pru.svp_probability(pr);
   cerr << "success proba " << proba << endl;
   status |= (abs(1 - proba) > .02);
 
-
-  vector<vector<double> > gso_sq_norms_vec;
-  vector<double> v1,v2,v3;
+  vector<vector<double>> gso_sq_norms_vec;
+  vector<double> v1, v2, v3;
   v1 = gso_sq_norms;
   v2 = gso_sq_norms;
   v3 = gso_sq_norms;
@@ -256,23 +254,25 @@ template <class FT> int test_unpruned()
   cerr << "Repeating same checks with 3 bases" << endl;
 
   pru.enumeration_radius = .85;
-  cost            = pru.single_enum_cost(pr);
+  cost                   = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
 
-  status = (abs(1 - 3./2. * cost / 3.20e+10) > .02);
-  proba = pru.svp_probability(pr);
+  status = (abs(1 - 3. / 2. * cost / 3.20e+10) > .02);
+  proba  = pru.svp_probability(pr);
   cerr << "success proba " << proba << endl;
   status |= (abs(1 - proba) > .02);
   return status;
 }
 
-template <class FT> int test_auto_prune(size_t n) {
+template <class FT> int test_auto_prune(size_t n)
+{
   int status = 0;
-  IntMatrix A(2*n, 2*n);
+  IntMatrix A(2 * n, 2 * n);
   A.gen_ntrulike(30);
   IntMatrix U;
   MatGSO<Z_NR<mpz_t>, FT> M(A, U, U, GSO_DEFAULT);
-  LLLReduction<Z_NR<mpz_t>, FT> lll_obj = LLLReduction<Z_NR<mpz_t>, FT>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
+  LLLReduction<Z_NR<mpz_t>, FT> lll_obj =
+      LLLReduction<Z_NR<mpz_t>, FT>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
   lll_obj.lll();
   FT radius;
   // NOTE: because NTRUlike lattice has a verri short vector 1111..
@@ -282,31 +282,28 @@ template <class FT> int test_auto_prune(size_t n) {
   cerr << "Testing auto_prune " << endl;
   cerr << "RAD " << radius.get_d() << endl;
 
-
   cerr << endl << "Gradient " << endl;
-  pruning = prune<FT, Z_NR<mpz_t>, FT >(radius.get_d(), 1.0e8, 0.67, M, PRUNER_METHOD_GRADIENT, 1, 2*n);
+  pruning =
+      prune<FT, Z_NR<mpz_t>, FT>(radius.get_d(), 1.0e8, 0.67, M, PRUNER_METHOD_GRADIENT, 1, 2 * n);
   status |= !(pruning.probability <= 1.0);
   status |= !(pruning.probability > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
-
 
   cerr << endl << "NelderMead " << endl;
-  pruning = prune<FT, Z_NR<mpz_t>, FT >(radius.get_d(), 1.0e8, 0.67, M, PRUNER_METHOD_NM, 1, 2*n);
+  pruning = prune<FT, Z_NR<mpz_t>, FT>(radius.get_d(), 1.0e8, 0.67, M, PRUNER_METHOD_NM, 1, 2 * n);
   status |= !(pruning.probability <= 1.0);
   status |= !(pruning.probability > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
-
 
   cerr << endl << "Hybrid " << endl;
-  pruning = prune<FT, Z_NR<mpz_t>, FT >(radius.get_d(), 1.0e8, 0.67, M, PRUNER_METHOD_HYBRID, 1, 2*n);
+  pruning =
+      prune<FT, Z_NR<mpz_t>, FT>(radius.get_d(), 1.0e8, 0.67, M, PRUNER_METHOD_HYBRID, 1, 2 * n);
   status |= !(pruning.probability <= 1.0);
   status |= !(pruning.probability > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
-
-
 
   return status;
 }
@@ -340,8 +337,8 @@ int main(int argc, char *argv[])
   status |= tp2.test_relative_volume();
 #endif
 
-  status |= test_auto_prune<FP_NR<double> >(20);
-  status |= test_auto_prune<FP_NR<double> >(25);
+  status |= test_auto_prune<FP_NR<double>>(20);
+  status |= test_auto_prune<FP_NR<double>>(25);
 
   if (status == 0)
   {

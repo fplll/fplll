@@ -1,14 +1,13 @@
 #ifndef FPLLL_SIEVE_COMMON_H
 #define FPLLL_SIEVE_COMMON_H
 
-
+#include <iostream>
+#include <list>
 #include <math.h>
+#include <queue>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <iostream>
-#include <list>
-#include <queue>
 
 #include "../defs.h"
 #include "sampler_basic.h"

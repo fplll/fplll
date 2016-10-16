@@ -26,7 +26,7 @@ static inline bool is_power_of_2(int i) { return (i & (i - 1)) == 0; }
 
 template <class ZT, class FT>
 LLLReduction<ZT, FT>::LLLReduction(MatGSO<ZT, FT> &m, double delta, double eta, int flags)
-  : status(RED_SUCCESS), final_kappa(0), last_early_red(0), n_swaps(0), m(m)
+    : status(RED_SUCCESS), final_kappa(0), last_early_red(0), n_swaps(0), m(m)
 {
   /* No early reduction in proved mode (i.e. enable_int_gram=true).
      NOTE: To make this possible, the hypothesis "g(i, j) is valid if
@@ -223,7 +223,7 @@ template <class ZT, class FT> bool is_lll_reduced(MatGSO<ZT, FT> &m, double delt
 {
   FT ftmp1;
   FT ftmp2;
-  FT delta_ =delta;
+  FT delta_ = delta;
   m.update_gso();
   for (int i = 0; i < m.d; i++)
   {
@@ -265,8 +265,9 @@ template class LLLReduction<Z_NR<long>, FP_NR<long double>>;
 template class LLLReduction<Z_NR<double>, FP_NR<long double>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<long double>>;
 
-template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<long double>>(MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &m,
-                                                              double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<mpz_t>, FP_NR<long double>>(MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &m,
+                                                double delta, double eta);
 #endif
 
 #ifdef FPLLL_WITH_QD

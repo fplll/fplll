@@ -1,7 +1,7 @@
-#include <cstdio>
 #include "bkz_param.h"
-#include "pruner.h"
 #include "io/json.hpp"
+#include "pruner.h"
+#include <cstdio>
 using json = nlohmann::json;
 
 FPLLL_BEGIN_NAMESPACE
@@ -39,18 +39,18 @@ const std::string &default_strategy_path()
   return ret;
 }
 
-const std::string strategy_full_path(const std::string& strategy_path)
+const std::string strategy_full_path(const std::string &strategy_path)
 {
-  if ( std::ifstream(strategy_path).good() )
+  if (std::ifstream(strategy_path).good())
     return strategy_path;
   std::string path = default_strategy_path() + "/" + strategy_path;
-  if ( std::ifstream(path).good() )
+  if (std::ifstream(path).good())
     return path;
   path.clear();
   return path;
 }
 
-const std::string& default_strategy()
+const std::string &default_strategy()
 {
   static const std::string ret(FPLLL_DEFAULT_STRATEGY);
   return ret;
@@ -86,14 +86,14 @@ vector<Strategy> load_strategies_json(const std::string &filename)
 
   vector<Strategy> strategies;
 
-  for(auto it = js.begin(); it != js.end(); ++it)
+  for (auto it = js.begin(); it != js.end(); ++it)
   {
-    const json &j_strat = *it;
+    const json &j_strat     = *it;
     const size_t block_size = j_strat["block_size"];
-    FPLLL_DEBUG_CHECK(block_size < 4096); // some arbitrary upper limit
+    FPLLL_DEBUG_CHECK(block_size < 4096);  // some arbitrary upper limit
 
     // ensure to add this strategy in the right place
-    while(strategies.size() <= block_size)
+    while (strategies.size() <= block_size)
     {
       strategies.emplace_back();
     }
@@ -103,8 +103,8 @@ vector<Strategy> load_strategies_json(const std::string &filename)
 
     if (j_strat.find("preprocessing_block_sizes") != j_strat.end())
     {
-      for (auto p_it = j_strat["preprocessing_block_sizes"].begin(); p_it != j_strat["preprocessing_block_sizes"].end();
-           ++p_it)
+      for (auto p_it = j_strat["preprocessing_block_sizes"].begin();
+           p_it != j_strat["preprocessing_block_sizes"].end(); ++p_it)
       {
         if ((*p_it).is_number())
         {
@@ -127,7 +127,7 @@ vector<Strategy> load_strategies_json(const std::string &filename)
         pruning.radius_factor = j_prun[0];
 
         // fplll enforces that the first pruning coefficient is 1.0
-        FPLLL_DEBUG_CHECK((double) j_prun[1][0] == 1.0);
+        FPLLL_DEBUG_CHECK((double)j_prun[1][0] == 1.0);
 
         for (auto c_it = j_prun[1].begin(); c_it != j_prun[1].end(); ++c_it)
         {
@@ -145,8 +145,9 @@ vector<Strategy> load_strategies_json(const std::string &filename)
   }
 
   // finally, we make sure all strategies are sound
-  for(auto it = strategies.begin(); it != strategies.end(); ++it) {
-    if(it->pruning_parameters.size() == 0)
+  for (auto it = strategies.begin(); it != strategies.end(); ++it)
+  {
+    if (it->pruning_parameters.size() == 0)
       it->pruning_parameters.emplace_back(Pruning());
   }
 
@@ -154,4 +155,3 @@ vector<Strategy> load_strategies_json(const std::string &filename)
 }
 
 FPLLL_END_NAMESPACE
-
