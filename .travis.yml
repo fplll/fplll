@@ -46,6 +46,9 @@ matrix:
         - libmpfr-dev
         - libqd-dev
 
+before_install: 
+  - bash .travis-check-style.sh # check that clang-format was used
+
 install:
   - export CXX="$COMPILER"
   - $CXX --version

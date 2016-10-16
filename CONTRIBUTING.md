@@ -144,7 +144,7 @@ AllowShortFunctionsOnASingleLine: All
 AlwaysBreakAfterDefinitionReturnType: false
 AlwaysBreakTemplateDeclarations: false
 AlwaysBreakBeforeMultilineStrings: false
-BreakBeforeBinaryOperators: None
+BreakBeforeBinaryOperators: false
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: false
 BinPackParameters: true
