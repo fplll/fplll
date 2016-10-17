@@ -38,6 +38,9 @@ int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &s
                             vector<double> &subsol_dist, const vector<double> &pruning,
                             int flags = SVP_DEFAULT);
 
+int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &auxsol_coord,
+                            vector<double> &auxsol_dist, const int max_aux_sols,
+                            const vector<double> &pruning, int flags = SVP_DEFAULT);
 /**
  * Computes a closest vector of a lattice to a target.
  * The vectors must be linearly independant and the basis must be LLL-reduced
