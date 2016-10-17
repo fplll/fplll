@@ -98,9 +98,11 @@ static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
 static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method,
                               const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
                               long long &sol_count, vector<IntVect> *subsol_coord = nullptr,
-                              vector<enumf> *subsol_dist = nullptr)
+                              vector<enumf> *subsol_dist = nullptr, vector<IntVect> *auxsol_coord = nullptr,
+                              vector<enumf> *auxsol_dist = nullptr, int max_aux_sols = 0)
 {
   bool findsubsols = (subsol_coord != nullptr) && (subsol_dist != nullptr);
+  bool findauxsols = (auxsol_coord != nullptr) && (auxsol_dist != nullptr) && (max_aux_sols != 0);
 
   // d = lattice dimension (note that it might decrease during preprocessing)
   int d = b.get_rows();
@@ -157,13 +159,13 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   Evaluator<Float> *evaluator;
   if (method == SVPM_FAST)
   {
-    evaluator = new FastEvaluator<Float>(d, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode, 0,
+    evaluator = new FastEvaluator<Float>(d, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode, max_aux_sols,
                                          findsubsols);
   }
   else if (method == SVPM_PROVED)
   {
     ExactEvaluator *p = new ExactEvaluator(d, b, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode,
-                                           0, findsubsols);
+                                           max_aux_sols, findsubsols);
     p->int_max_dist = int_max_dist;
     evaluator       = p;
   }
@@ -221,6 +223,24 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
       subsol_coord->emplace_back(std::move(ss_c));
     }
   }
+  if (findauxsols)
+  {
+    auxsol_coord->clear();
+    auxsol_dist->clear();
+    auxsol_dist->resize(evaluator->aux_sol_coord.size());
+    for (size_t i = 0; i < evaluator->aux_sol_coord.size(); ++i)
+    {
+      (*auxsol_dist)[i] = evaluator->aux_sol_dist[i];
+
+      IntVect as_c;
+      for (size_t j = 0; j < evaluator->aux_sol_coord[i].size(); ++j)
+      {
+        itmp1.set_f(evaluator->aux_sol_coord[i][j]);
+        as_c.emplace_back(itmp1);
+      }
+      auxsol_coord->emplace_back(std::move(as_c));
+    }
+  }
 
   delete evaluator;
   Float::set_prec(old_prec);
@@ -248,6 +268,14 @@ int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &s
                             &subsol_coord, &subsol_dist);
 }
 
+int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &auxsol_coord,
+                            vector<enumf> &auxsol_dist, const int max_aux_sols,
+                            const vector<double> &pruning, int flags)
+{
+  long long tmp;
+  return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp,
+                            nullptr, nullptr, &auxsol_coord, &auxsol_dist, max_aux_sols);
+}
 /* Closest vector problem
    ====================== */
 
