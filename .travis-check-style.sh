@@ -9,7 +9,9 @@ sudo apt-get update -qq
 sudo apt-get install -qq -y clang-format-3.9
 
 # If clang-format modifies files, the code does not adhere to the project standards
-if [[ $(make codingstyle && git status -s) ]]; 
+export CLANGFORMAT=clang-format-3.9
+make codingstyle
+if [[ $(git status -s) ]]; 
 then 
 	tput setaf 1;
 	echo "Code does not adhere to the project standards. Run \"make codingstyle\".";
