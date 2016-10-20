@@ -9,10 +9,10 @@ sudo apt-get update -qq
 sudo apt-get install -qq -y clang-format-3.9
 
 # If clang-format modifies files, the code does not adhere to the project standards
-if [[ $(clang-format-3.9 -i --style=file fplll/*.{cpp,h} fplll/*/*.{cpp,h} tests/*.cpp && git status -s) ]]; 
+if [[ $(make codingstyle && git status -s) ]]; 
 then 
 	tput setaf 1;
-	echo "Code does not adhere to the project standards. Run \"make clang-format -i --style=file fplll/*.{cpp,h} fplll/*/*.{cpp,h} tests/*.cpp\".";
+	echo "Code does not adhere to the project standards. Run \"make codingstyle\".";
 	exit 1;
 else 
 	tput setaf 2;
