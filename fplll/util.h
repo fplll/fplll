@@ -112,7 +112,7 @@ template <class ZT> void zeros_last(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_
 /**
  * Returns the string corresponding to an error code of LLL/BKZ.
  */
-const char* get_red_status_str(int status);
+const char *get_red_status_str(int status);
 
 FPLLL_END_NAMESPACE
 

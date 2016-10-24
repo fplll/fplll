@@ -22,11 +22,11 @@
 #error fplll needs at least a C++11 compliant compiler
 #endif
 
-#include "util.h"
-#include "svpcvp.h"
-#include "bkz_param.h"
 #include "bkz.h"
-#include "wrapper.h"
+#include "bkz_param.h"
 #include "pruner.h"
+#include "svpcvp.h"
+#include "util.h"
+#include "wrapper.h"
 
 #endif

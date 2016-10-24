@@ -664,9 +664,10 @@ template <class ZT, class FT> inline void MatGSO<ZT, FT>::row_op_begin(int first
   row_op_last  = last;
 }
 #else
-template <class ZT, class FT> inline void MatGSO<ZT, FT>::row_op_begin(int /*first*/, int /*last*/) { }
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::row_op_begin(int /*first*/, int /*last*/)
+{
+}
 #endif
-
 
 template <class ZT, class FT>
 inline void MatGSO<ZT, FT>::dump_mu_d(double *mu, int offset, int block_size)

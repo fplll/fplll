@@ -18,17 +18,23 @@
 #ifndef FPLLL_MAIN_H
 #define FPLLL_MAIN_H
 
-#include <cstring>
 #include "fplll.h"
+#include <cstring>
 
-#define ABORT_MSG(y) {cerr << "fplll: " << y << endl; exit(1);}
-#define CHECK(x, y) if (!(x)) ABORT_MSG(y)
+#define ABORT_MSG(y)                                                                               \
+  {                                                                                                \
+    cerr << "fplll: " << y << endl;                                                                \
+    exit(1);                                                                                       \
+  }
+#define CHECK(x, y)                                                                                \
+  if (!(x))                                                                                        \
+  ABORT_MSG(y)
 
 using namespace std;
 using namespace fplll;
 
-
-enum Action {
+enum Action
+{
   ACTION_LLL,
   ACTION_HKZ,
   ACTION_BKZ,
@@ -36,15 +42,17 @@ enum Action {
   ACTION_CVP
 };
 
-struct Options {
-  Options() : action(ACTION_LLL), method(LM_WRAPPER), int_type(ZT_MPZ),
-              float_type(FT_DEFAULT), delta(LLL_DEF_DELTA), eta(LLL_DEF_ETA),
-              precision(0), early_red(false), siegel(false), no_lll(false),
-              block_size(0), bkz_gh_factor(1.1), verbose(false), input_file(NULL),
-              output_format(NULL) {
-    bkz_flags = 0;
+struct Options
+{
+  Options()
+      : action(ACTION_LLL), method(LM_WRAPPER), int_type(ZT_MPZ), float_type(FT_DEFAULT),
+        delta(LLL_DEF_DELTA), eta(LLL_DEF_ETA), precision(0), early_red(false), siegel(false),
+        no_lll(false), block_size(0), bkz_gh_factor(1.1), verbose(false), input_file(NULL),
+        output_format(NULL)
+  {
+    bkz_flags     = 0;
     bkz_max_loops = 0;
-    bkz_max_time = 0;
+    bkz_max_time  = 0;
   }
   Action action;
   LLLMethod method;
@@ -66,8 +74,8 @@ struct Options {
   string bkz_strategy_file;
 
   bool verbose;
-  const char* input_file;
-  const char* output_format;
+  const char *input_file;
+  const char *output_format;
 };
 
 #endif

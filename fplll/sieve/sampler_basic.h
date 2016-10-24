@@ -5,30 +5,29 @@
 #define FPLLL_SIEVE_SAMPLER_BASIC_H
 
 #include "fplll/defs.h"
-#include "fplll/nr/nr_Z.inl"
-#include "fplll/nr/matrix.h"
 #include "fplll/gso.h"
+#include "fplll/nr/matrix.h"
+#include "fplll/nr/nr_Z.inl"
 
 using namespace std;
 using namespace fplll;
 
-template<class ZT, class F>
-class KleinSampler {
+template <class ZT, class F> class KleinSampler
+{
 
-  public:
+public:
   bool verbose;
 
-  KleinSampler (ZZ_mat<ZT>& B, bool verbose, int seed);
+  KleinSampler(ZZ_mat<ZT> &B, bool verbose, int seed);
   ~KleinSampler();
-  void print_param ();
+  void print_param();
   Z_NR<ZT> sample_z(F c, F s);
   Z_NR<ZT> sample_z_basic(F c, F s);
-  void set_verbose (bool verbose);
+  void set_verbose(bool verbose);
 
-  NumVect<Z_NR<ZT> > sample();
-  
-  private:
+  NumVect<Z_NR<ZT>> sample();
 
+private:
   /**
    * GSO object of B
    */
@@ -36,7 +35,7 @@ class KleinSampler {
   double logn2;
   ZZ_mat<ZT> b, u, u_inv;
   MatGSO<Z_NR<ZT>, F> *pGSO;
-  Matrix<Z_NR<ZT> > g;
+  Matrix<Z_NR<ZT>> g;
   Matrix<F> mu, r;
 
   /* input parameter s */
@@ -53,15 +52,12 @@ class KleinSampler {
 
   /* variances */
   NumVect<F> *s_prime;
-
 };
-
 
 /**
  * sampling Z by rejection sampling (not a class member)
  */
-template<class ZT, class F>
-Z_NR<ZT> sample_z_basic_alt (F c, F s)
+template <class ZT, class F> Z_NR<ZT> sample_z_basic_alt(F c, F s)
 {
   F min, max, st, range, tmp, tmp1;
   double r, e;
@@ -77,7 +73,8 @@ Z_NR<ZT> sample_z_basic_alt (F c, F s)
   max.rnd(max);
   range.sub(max, min, GMP_RNDN);
   Z_NR<ZT> x;
-  while(1) {
+  while (1)
+  {
     r = double(rand()) / RAND_MAX;
     tmp.mul_d(range, r, GMP_RNDN);
     tmp.rnd(tmp);
@@ -94,6 +91,5 @@ Z_NR<ZT> sample_z_basic_alt (F c, F s)
       return x;
   }
 }
-
 
 #endif

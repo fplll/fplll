@@ -16,9 +16,9 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
+#include "bkz_param.h"
 #include "defs.h"
 #include "gso.h"
-#include "bkz_param.h"
 #include <array>
 
 FPLLL_BEGIN_NAMESPACE
@@ -61,8 +61,6 @@ FPLLL_BEGIN_NAMESPACE
 #define PRUNER_MAX_D 1023
 #define PRUNER_MAX_N 2047
 
-
-
 /**
    @brief prune function, hiding the Pruner class
 
@@ -80,9 +78,8 @@ FPLLL_BEGIN_NAMESPACE
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m, 
+           const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m,
            const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0);
-
 
 /**
    @brief prune function, hiding the Pruner class
@@ -102,8 +99,8 @@ void prune(/*output*/ vector<double> &pr, double &probability,
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, 
-           const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0);
+              const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
+              const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0);
 
 /**
    @brief prune function averaging over several bases
@@ -120,7 +117,7 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
-              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT> > &m,
+              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
               const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0);
 
 /**
@@ -130,13 +127,9 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
    @return pruning probability
 */
 
+template <class FT> double svp_probability(const Pruning &pruning);
 
-template <class FT>
-double svp_probability(const Pruning &pruning);
-
-template <class FT>
-double svp_probability(const vector<double> &pr);
-
+template <class FT> double svp_probability(const vector<double> &pr);
 
 template <class FT> class Pruner
 {
@@ -158,54 +151,51 @@ public:
 
       @note one can try to force probability >= target_probability by setting
       a prohibitive preproc_cost. But beware: this may induces numerical
-      stability issue, especially with the gradient method. 
+      stability issue, especially with the gradient method.
   */
 
   FT target_probability;
 
-  int verbosity = 0; 
+  int verbosity = 0;
 
   int descent_method;
 
-
-  Pruner(FT enumeration_radius=0.0, FT preproc_cost=0.0, FT target_probability=0.9, int descent_method = PRUNER_METHOD_HYBRID, size_t n=0, size_t d=0):
-    enumeration_radius(enumeration_radius), 
-    preproc_cost(preproc_cost), 
-    target_probability(target_probability), 
-    descent_method(descent_method),
-    n(n), 
-    d(d)
+  Pruner(FT enumeration_radius = 0.0, FT preproc_cost = 0.0, FT target_probability = 0.9,
+         int descent_method = PRUNER_METHOD_HYBRID, size_t n = 0, size_t d = 0)
+      : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost),
+        target_probability(target_probability), descent_method(descent_method), n(n), d(d)
   {
     set_tabulated_consts();
     epsilon     = std::pow(2., -13);  // Guesswork. Will become obsolete with Nelder-Mead
     min_step    = std::pow(2., -12);  // Guesswork. Will become obsolete with Nelder-Mead
     step_factor = std::pow(2, .5);    // Guesswork. Will become obsolete with Nelder-Mead
-    shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor 1/.995. Sounds fair.
+    shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor
+                         // 1/.995. Sounds fair.
     min_cf_decrease = .9999;  // We really want the gradient descent to reach the minima
     symmetry_factor = 2;      // For now, we are just considering SVP
-
   }
 
   /** @brief load the shape of a basis from a MatGSO object. Can select a
       projected sub-lattice [start_row,end_row-1]
   */
   template <class GSO_ZT, class GSO_FT>
-  void load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &gso, int start_row = 0, int end_row = 0, int reset_renorm = 1);
+  void load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &gso, int start_row = 0, int end_row = 0,
+                        int reset_renorm = 1);
 
   /** @brief load the shapes of several bases from a MatGSO object. Can select a
       projected sub-lattice [start_row,end_row-1]
   */
   template <class GSO_ZT, class GSO_FT>
-  void load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT> > &gsos, int start_row = 0, int end_row = 0);
-
+  void load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT>> &gsos, int start_row = 0, int end_row = 0);
 
   /** @brief load the shape of a basis from vector<double>. Mostly for testing purposes */
 
   void load_basis_shape(const vector<double> &gso_sq_norms, int reset_renorm = 1);
 
-  /** @brief load the shapes of may bases from vector<vector<double>> . Cost are average over all bases. Mostly for testing purposes */
+  /** @brief load the shapes of may bases from vector<vector<double>> . Cost are average over all
+   * bases. Mostly for testing purposes */
 
-  void load_basis_shapes(const vector<vector<double> > &gso_sq_norms_vec);
+  void load_basis_shapes(const vector<vector<double>> &gso_sq_norms_vec);
 
   /** @brief optimize pruning coefficients
 
@@ -216,7 +206,8 @@ public:
 
   /** @brief Compute the cost of a single enumeration */
 
-  double single_enum_cost(/*i*/ const vector<double> &pr) {
+  double single_enum_cost(/*i*/ const vector<double> &pr)
+  {
     evec b;
     load_coefficients(b, pr);
     return single_enum_cost(b).get_d();
@@ -225,7 +216,8 @@ public:
   /** @brief Compute the cost of r enumeration and (r-1) preprocessing, where r
       is the required number of retrials to reach target_probability
   */
-  double repeated_enum_cost(/*i*/ const vector<double> &pr) {
+  double repeated_enum_cost(/*i*/ const vector<double> &pr)
+  {
     evec b;
     load_coefficients(b, pr);
     return repeated_enum_cost(b).get_d();
@@ -234,11 +226,13 @@ public:
   /**
      @brief Compute the success proba of a single enumeration
   */
-  double svp_probability(/*i*/ const vector<double> &pr) {
-    if (!n){ // Can be called even if no basis has been loaded. In that case, set the dims
-        n = pr.size();
-        d = n / 2;  
-      }
+  double svp_probability(/*i*/ const vector<double> &pr)
+  {
+    if (!n)
+    {  // Can be called even if no basis has been loaded. In that case, set the dims
+      n = pr.size();
+      d = n / 2;
+    }
     evec b;
     load_coefficients(b, pr);
     return svp_probability(b).get_d();
@@ -256,7 +250,7 @@ private:
   size_t d;  // Degree d = floor(n/2)
 
   vec r;                      // Gram-Schmidt length (squared, inverted ordering)
-  vec ipv;                     // Partial volumes (inverted ordering)
+  vec ipv;                    // Partial volumes (inverted ordering)
   FT renormalization_factor;  // internal renormalization factor to avoid over/underflows
 
   // Sanity check: has a basis indeed been loaded ?

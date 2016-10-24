@@ -7,24 +7,22 @@
 using namespace std;
 using namespace fplll;
 
-
 /**
  * Gauss sieve
  */
-template<class ZT, class F>
-  class GaussSieve {
+template <class ZT, class F> class GaussSieve
+{
 
 public:
-  
-  GaussSieve (ZZ_mat<ZT>& B, int alg, bool ver, int seed);
-  ~GaussSieve ();
+  GaussSieve(ZZ_mat<ZT> &B, int alg, bool ver, int seed);
+  ~GaussSieve();
 
-  bool run_2sieve ();
-  bool run_3sieve ();
-  bool run_4sieve ();
+  bool run_2sieve();
+  bool run_3sieve();
+  bool run_4sieve();
 
-  void set_verbose (bool verbose);
-  void set_goal_norm2 (Z_NR<ZT> norm);
+  void set_verbose(bool verbose);
+  void set_goal_norm2(Z_NR<ZT> norm);
   bool verbose;
 
   /*
@@ -34,13 +32,12 @@ public:
   int alg;
 
   /* norms/listsize for all iterations */
-  vector<Z_NR<ZT> > iters_norm;
+  vector<Z_NR<ZT>> iters_norm;
   vector<long> iters_ls;
 
-  NumVect<Z_NR<ZT> > return_first ();
+  NumVect<Z_NR<ZT>> return_first();
 
 private:
-
   int nr, nc;
 
   /* estimated list size */
@@ -62,42 +59,38 @@ private:
   double mult;
   double add;
   F final_norm;
-    
+
   /* List */
-  list<ListPoint<ZT>* > List;
+  list<ListPoint<ZT> *> List;
 
   /* Queue (recording vectors to be reduced) */
-  queue<ListPoint<ZT>* > Queue;
+  queue<ListPoint<ZT> *> Queue;
 
   /* Queue (recording samples) */
-  priority_queue<ListPoint<ZT>* > Queue_Samples;
+  priority_queue<ListPoint<ZT> *> Queue_Samples;
 
   /* sampler */
-  KleinSampler<ZT, F>* Sampler;
+  KleinSampler<ZT, F> *Sampler;
 
   /* list functions */
-  void add_mat_list (ZZ_mat<ZT>& B);
-  void init_list ();
-  void init_list_rand ();
-  void free_list_queue ();
-  void free_sampler ();
+  void add_mat_list(ZZ_mat<ZT> &B);
+  void init_list();
+  void init_list_rand();
+  void free_list_queue();
+  void free_sampler();
 
   /* reduction functions */
-  Z_NR<ZT> update_p_2reduce (ListPoint<ZT>* p);
-  Z_NR<ZT> update_p_3reduce_2reduce (ListPoint<ZT>* p,
-    typename list<ListPoint<ZT> *>::iterator &lp_it);
-  Z_NR<ZT> update_p_3reduce (ListPoint<ZT>* p);
-  Z_NR<ZT> update_p_4reduce_3reduce (ListPoint<ZT>* p);
-  void update_p_4reduce_aux (ListPoint<ZT>* p,
-    typename list<ListPoint<ZT> *>::iterator &lp_it);
-  Z_NR<ZT> update_p_4reduce (ListPoint<ZT>* p);
+  Z_NR<ZT> update_p_2reduce(ListPoint<ZT> *p);
+  Z_NR<ZT> update_p_3reduce_2reduce(ListPoint<ZT> *p,
+                                    typename list<ListPoint<ZT> *>::iterator &lp_it);
+  Z_NR<ZT> update_p_3reduce(ListPoint<ZT> *p);
+  Z_NR<ZT> update_p_4reduce_3reduce(ListPoint<ZT> *p);
+  void update_p_4reduce_aux(ListPoint<ZT> *p, typename list<ListPoint<ZT> *>::iterator &lp_it);
+  Z_NR<ZT> update_p_4reduce(ListPoint<ZT> *p);
 
   /* info functions */
-  void print_curr_info ();
-  void print_final_info ();
-  
+  void print_curr_info();
+  void print_final_info();
 };
-
-
 
 #endif

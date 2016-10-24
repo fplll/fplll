@@ -43,7 +43,7 @@ bool Enumerator::enum_next(const Float &max_sqr_length)
       if (volume <= max_volume)
         break;
     }
-    kmax          = k;
+    kmax            = k;
     svp_init_needed = false;
   }
   if (k >= d)
@@ -79,7 +79,7 @@ bool Enumerator::enum_next(const Float &max_sqr_length)
       }
       sub_tree.resize(d - k);
       for (size_t j = 0; j < sub_tree.size(); j++)
-        sub_tree[j]  = enumxt(x[j + k].get_d());
+        sub_tree[j] = enumxt(x[j + k].get_d());
       // FPLLL_TRACE("  SubTree approx_size=" << volume << " coord=" << sub_tree);
       notFound = false;
     }

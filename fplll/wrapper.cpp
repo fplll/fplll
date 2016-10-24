@@ -151,8 +151,8 @@ int Wrapper::heuristic_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_invZ, int 
 }
 
 template <class Z, class F>
-int Wrapper::proved_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_invZ, int precision, double delta,
-                        double eta)
+int Wrapper::proved_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_invZ, int precision,
+                        double delta, double eta)
 {
   return call_lll<Z, F>(bz, uz, u_invZ, LM_PROVED, precision, delta, eta);
 }
@@ -197,7 +197,7 @@ int Wrapper::proved_loop(int precision)
 #ifdef FPLLL_WITH_DPE
     kappa = proved_lll<mpz_t, dpe_t>(b, u, u_inv, 0, delta, eta);
 #else
-    kappa                = proved_lll<mpz_t, mpfr_t>(b, u, u_inv, precision, delta, eta);
+    kappa                  = proved_lll<mpz_t, mpfr_t>(b, u, u_inv, precision, delta, eta);
 #endif
   }
 #ifdef FPLLL_WITH_QD
@@ -286,7 +286,7 @@ bool Wrapper::lll()
   {
 
     /* try fast_lll<mpz_t, double> */
-    kappa           = fast_lll<double>(delta, eta);
+    kappa            = fast_lll<double>(delta, eta);
     bool lll_failure = (kappa != 0);
     int last_prec;
 
@@ -294,7 +294,7 @@ bool Wrapper::lll()
 #ifdef FPLLL_WITH_LONG_DOUBLE
     if (lll_failure)
     {
-      kappa      = fast_lll<long double>(delta, eta);
+      kappa       = fast_lll<long double>(delta, eta);
       lll_failure = kappa != 0;
     }
     last_prec = numeric_limits<long double>::digits;
@@ -306,7 +306,7 @@ bool Wrapper::lll()
 #ifdef FPLLL_WITH_QD
     if (lll_failure)
     {
-      kappa      = fast_lll<dd_real>(delta, eta);
+      kappa       = fast_lll<dd_real>(delta, eta);
       lll_failure = kappa != 0;
     }
     last_prec = PREC_DD;
@@ -414,7 +414,8 @@ int lll_reduction_wrapper(IntMatrix &b, IntMatrix &u, IntMatrix &u_inv, double d
  */
 template <class ZT>
 int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta,
-                  LLLMethod method, IntType int_type, FloatType float_type, int precision, int flags)
+                    LLLMethod method, IntType int_type, FloatType float_type, int precision,
+                    int flags)
 {
 
   /* switch to wrapper */
@@ -447,7 +448,8 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
     {
       sel_ft = FT_MPFR;
     }
-    FPLLL_CHECK(sel_ft == FT_MPFR, "The floating type must be mpfr when the precision is specified");
+    FPLLL_CHECK(sel_ft == FT_MPFR,
+                "The floating type must be mpfr when the precision is specified");
   }
 
   if (sel_ft == FT_DEFAULT)
@@ -548,7 +550,7 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
   else if (sel_ft == FT_MPFR)
   {
     int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
-    status = lll_reduction_zf<ZT, mpfr_t>(b, u, u_inv, delta, eta, method, flags);
+    status       = lll_reduction_zf<ZT, mpfr_t>(b, u, u_inv, delta, eta, method, flags);
     FP_NR<mpfr_t>::set_prec(old_prec);
   }
   else
@@ -563,35 +565,36 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
  * We define LLL for each input type instead of using a template,
  * in order to force the compiler to instantiate the functions.
  */
-#define FPLLL_DEFINE_LLL(T, id_t)                                                                   \
-  int lll_reduction(ZZ_mat<T> &b, double delta, double eta, LLLMethod method, FloatType float_type,  \
-                   int precision, int flags)                                                       \
+#define FPLLL_DEFINE_LLL(T, id_t)                                                                  \
+  int lll_reduction(ZZ_mat<T> &b, double delta, double eta, LLLMethod method,                      \
+                    FloatType float_type, int precision, int flags)                                \
   {                                                                                                \
-    ZZ_mat<T> empty_mat; /* Empty u -> transform disabled */                                        \
-    return lll_reduction_z<T>(b, empty_mat, empty_mat, delta, eta, method, id_t, float_type, precision,  \
-                              flags);                                   \
+    ZZ_mat<T> empty_mat; /* Empty u -> transform disabled */                                       \
+    return lll_reduction_z<T>(b, empty_mat, empty_mat, delta, eta, method, id_t, float_type,       \
+                              precision, flags);                                                   \
   }                                                                                                \
                                                                                                    \
-  int lll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, double delta, double eta, LLLMethod method,         \
-                   FloatType float_type, int precision, int flags)                                  \
+  int lll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, double delta, double eta, LLLMethod method,        \
+                    FloatType float_type, int precision, int flags)                                \
   {                                                                                                \
-    ZZ_mat<T> empty_mat;                                                                            \
+    ZZ_mat<T> empty_mat;                                                                           \
     if (!u.empty())                                                                                \
-      u.gen_identity(b.get_rows());                                                                 \
-    return lll_reduction_z<T>(b, u, empty_mat, delta, eta, method, id_t, float_type, precision, flags); \
+      u.gen_identity(b.get_rows());                                                                \
+    return lll_reduction_z<T>(b, u, empty_mat, delta, eta, method, id_t, float_type, precision,    \
+                              flags);                                                              \
   }                                                                                                \
                                                                                                    \
-  int lll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, ZZ_mat<T> &u_inv, double delta, double eta,          \
-                   LLLMethod method, FloatType float_type, int precision, int flags)                \
+  int lll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, ZZ_mat<T> &u_inv, double delta, double eta,        \
+                    LLLMethod method, FloatType float_type, int precision, int flags)              \
   {                                                                                                \
     if (!u.empty())                                                                                \
-      u.gen_identity(b.get_rows());                                                                 \
-    if (!u_inv.empty())                                                                             \
-      u_inv.gen_identity(b.get_rows());                                                              \
-    u_inv.transpose();                                                                              \
+      u.gen_identity(b.get_rows());                                                                \
+    if (!u_inv.empty())                                                                            \
+      u_inv.gen_identity(b.get_rows());                                                            \
+    u_inv.transpose();                                                                             \
     int status =                                                                                   \
-        lll_reduction_z<T>(b, u, u_inv, delta, eta, method, id_t, float_type, precision, flags);        \
-    u_inv.transpose();                                                                              \
+        lll_reduction_z<T>(b, u, u_inv, delta, eta, method, id_t, float_type, precision, flags);   \
+    u_inv.transpose();                                                                             \
     return status;                                                                                 \
   }
 

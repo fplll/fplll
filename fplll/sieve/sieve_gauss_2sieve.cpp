@@ -8,8 +8,7 @@
  * don't have colission and puts to the queue all the points
  * with bigger norm that can be reduced with it.
  */
-template <class ZT, class F> Z_NR<ZT>
-GaussSieve<ZT, F>::update_p_2reduce (ListPoint<ZT> *p)
+template <class ZT, class F> Z_NR<ZT> GaussSieve<ZT, F>::update_p_2reduce(ListPoint<ZT> *p)
 {
 
 #if 0
@@ -40,7 +39,7 @@ GaussSieve<ZT, F>::update_p_2reduce (ListPoint<ZT> *p)
       /* if there is one reduction the vector should re-pass the list */
       if (half_2reduce(p, v))
       {
-        reductions ++;
+        reductions++;
         loop = true;
       }
     }
@@ -74,7 +73,7 @@ GaussSieve<ZT, F>::update_p_2reduce (ListPoint<ZT> *p)
     ++lp_it;
     if (half_2reduce(v, p))
     {
-      reductions ++;
+      reductions++;
       List.erase(tmp_lp_it);
       Queue.push(v);
     }
@@ -138,8 +137,8 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::run_2sieve()
     /* sieve current_point */
     current_norm = update_p_2reduce(current_point);
 
-    //print_list(List);
-    
+// print_list(List);
+
 #ifdef REDUCE_TIMING
     gettimeofday(&time2, 0);
     long endt2 = 1000000 * time2.tv_sec + time2.tv_usec;

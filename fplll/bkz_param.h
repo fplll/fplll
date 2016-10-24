@@ -61,10 +61,9 @@ public:
 class Strategy
 {
 public:
-
-  size_t block_size; //< block size
-  vector<Pruning> pruning_parameters; //< Pruning parameters
-  vector<size_t> preprocessing_block_sizes; //< For each block size we run one tour
+  size_t block_size;                         //< block size
+  vector<Pruning> pruning_parameters;        //< Pruning parameters
+  vector<size_t> preprocessing_block_sizes;  //< For each block size we run one tour
 
   /** Construct an empty strategy
 
@@ -81,7 +80,6 @@ public:
     return strat;
   };
 
-
   /** Select the best pruning parameters for the input `radius`. The
       parameter `gh` is used to establish the ratio between `radius`
       and the Gaussian heuristic, which is used for sizes.
@@ -97,7 +95,6 @@ public:
 class BKZParam
 {
 public:
-
   /**
      @brief Create BKZ parameters
 
@@ -107,22 +104,23 @@ public:
      @param flags                    flags
      @param max_loops                maximum number of loops (or zero to disable this)
      @param max_time                 maximum number of time  (or zero to disable this)
-     @param auto_abort_scale         auto abort when next tour does not improve slope over `scale` * previous tour
+     @param auto_abort_scale         auto abort when next tour does not improve slope over `scale` *
+     previous tour
      @param auto_abort_max_no_dec    auto abort when next tour does not improve slope `no_dec` times
      @param gh_factor                set enumeration bound to Gaussian heuristic times `gh_factor`
-     @param min_success_probability  minimum success probability in an SVP reduction (when using pruning)
-     @param rerandomization_density  the heavier rerandomization, the better our guarantees and costs
+     @param min_success_probability  minimum success probability in an SVP reduction (when using
+     pruning)
+     @param rerandomization_density  the heavier rerandomization, the better our guarantees and
+     costs
   */
 
   BKZParam(int block_size, vector<Strategy> &strategies, double delta = LLL_DEF_DELTA,
-           int flags = BKZ_DEFAULT,
-           int max_loops = 0,
-           double max_time = 0,
-           double auto_abort_scale = BKZ_DEF_AUTO_ABORT_SCALE,
-           int auto_abort_max_no_dec = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
-           double gh_factor = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
+           int flags = BKZ_DEFAULT, int max_loops = 0, double max_time = 0,
+           double auto_abort_scale        = BKZ_DEF_AUTO_ABORT_SCALE,
+           int auto_abort_max_no_dec      = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
+           double gh_factor               = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
            double min_success_probability = BKZ_DEF_MIN_SUCCESS_PROBABILITY,
-           int rerandomization_density = BKZ_DEF_RERANDOMIZATION_DENSITY)
+           int rerandomization_density    = BKZ_DEF_RERANDOMIZATION_DENSITY)
       : block_size(block_size), strategies(strategies), delta(delta), flags(flags),
         max_loops(max_loops), max_time(max_time), auto_abort_scale(auto_abort_scale),
         auto_abort_max_no_dec(auto_abort_max_no_dec), gh_factor(gh_factor),

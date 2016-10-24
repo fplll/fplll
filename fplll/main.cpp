@@ -195,7 +195,7 @@ template <class ZT> int svpcvp(Options &o, ZZ_mat<ZT> &b, const vector<Z_NR<ZT>>
 template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &target)
 {
   const char *format = o.output_format ? o.output_format : "s";
-  IntVect sol_coord;     // In the LLL-reduced basis
+  IntVect sol_coord;    // In the LLL-reduced basis
   IntVect sol_coord_2;  // In the initial basis
   IntVect solution;
   IntMatrix u;

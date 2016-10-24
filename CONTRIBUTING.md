@@ -123,7 +123,13 @@ if (foo)
   do_something_bad();
 ```
 
-The following [clang-format](http://clang.llvm.org/docs/ClangFormat.html) config might help to format your code.
+Furthermore, the pixel shortage is over. We want to see:
+
+- `package` instead of `pkg`
+- `grid` instead of `g`
+- `my_function_that_does_things` instead of `mftdt`
+
+The following [clang-format](http://clang.llvm.org/docs/ClangFormat.html) configuration file describes our coding convention. Clang-format is both a library and a stand-alone tool aiming at automatically reformatting C++ sources files. 
 
 ```yaml
 ---
@@ -192,12 +198,25 @@ DisableFormat:   false
 ...
 ```
 
+### Enforcement of the coding convention
 
-Furthermore, the pixel shortage is over. We want to see:
+Starting from fplll 5.1.0, the coding convention is [enforced](https://github.com/fplll/fplll/pull/215) throughout the whole project. In particular, the code of every pull request has to strictly adhere to the coding convention, and the Travis build will error when it is not the case. Automatic formatting can (and should) be performed by the command
 
-- `package` instead of `pkg`
-- `grid` instead of `g`
-- `my_function_that_does_things` instead of `mftdt`
+```
+make check-style
+```
+
+and require clang-format to be installed.
+
+In order to improve readability, some situations might require manual formatting. Clang-format [includes a comment trigger](http://llvm.org/releases/3.9.0/tools/clang/docs/ClangFormatStyleOptions.html#disabling-formatting-on-a-piece-of-code) to _locally_ disable the formatting. The code between a comment `// clang-format off` or `/* clang-format off */` up to a comment `// clang-format on` or `/* clang-format on */` will not be formatted. 
+
+```
+int formatted_code;
+// clang-format off
+    void    unformatted_code  ;
+// clang-format on
+void formatted_code_again;
+```
 
 ### Faster compilation
 
