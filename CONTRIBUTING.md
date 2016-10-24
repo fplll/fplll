@@ -203,7 +203,7 @@ DisableFormat:   false
 Starting from fplll 5.1.0, the coding convention is [enforced](https://github.com/fplll/fplll/pull/215) throughout the whole project. In particular, the code of every pull request has to strictly adhere to the coding convention, and the Travis build will error when it is not the case. Automatic formatting can (and should) be performed by the command
 
 ```
-make codingstyle
+make check-style
 ```
 
 and require clang-format to be installed.

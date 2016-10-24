@@ -10,6 +10,6 @@ strategydir        = $(pkgdatadir)/strategies
 dist_strategy_DATA = strategies/default.json
 
 CLANGFORMAT       ?= clang-format
-.PHONY: codingstyle
-codingstyle:
+.PHONY: check-style
+check-style:
 	$(CLANGFORMAT) -i --style=file fplll/*.{cpp,h} fplll/*/*.{cpp,h} tests/*.cpp
