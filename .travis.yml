@@ -8,6 +8,40 @@ matrix:
   include:
   - os: linux
     compiler: gcc
+    env: COMPILER=g++-4.8
+    addons:
+      apt:
+        packages:
+        - g++-4.8
+        - libgmp-dev
+        - libmpfr-dev
+        - libqd-dev
+  - os: linux
+    compiler: gcc
+    env: COMPILER=g++-4.9
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - g++-4.9
+        - libgmp-dev
+        - libmpfr-dev
+        - libqd-dev
+  - os: linux
+    compiler: gcc
+    env: COMPILER=g++-5
+    addons:
+      apt:
+        sources:
+        - ubuntu-toolchain-r-test
+        packages:
+        - g++-5
+        - libgmp-dev
+        - libmpfr-dev
+        - libqd-dev
+  - os: linux
+    compiler: gcc
     env: COMPILER=g++-6
     addons:
       apt:
@@ -15,6 +49,15 @@ matrix:
         - ubuntu-toolchain-r-test
         packages:
         - g++-6
+        - libgmp-dev
+        - libmpfr-dev
+        - libqd-dev
+  - os: linux
+    compiler: clang
+    env: COMPILER=clang++
+    addons:
+      apt:
+        packages:
         - libgmp-dev
         - libmpfr-dev
         - libqd-dev
