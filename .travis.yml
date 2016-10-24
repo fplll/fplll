@@ -6,45 +6,23 @@ language: cpp
 
 matrix:
   include:
-  - compiler: gcc
-    env: COMPILER=g++-4.9
+  - os: linux
+    compiler: gcc
+    env: COMPILER=g++-6
     addons:
       apt:
         sources:
         - ubuntu-toolchain-r-test
         packages:
-        - g++-4.9
+        - g++-6
         - libgmp-dev
         - libmpfr-dev
         - libqd-dev
-  - compiler: gcc
-    env: COMPILER=g++-4.8
-    addons:
-      apt:
-        packages:
-        - g++-4.8
-        - libgmp-dev
-        - libmpfr-dev
-        - libqd-dev
-  - compiler: gcc
-    env: COMPILER=g++-5
-    addons:
-      apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        packages:
-        - g++-5
-        - libgmp-dev
-        - libmpfr-dev
-        - libqd-dev
-  - compiler: clang
+  - os: osx
+    compiler: clang
     env: COMPILER=clang++
-    addons:
-      apt:
-        packages:
-        - libgmp-dev
-        - libmpfr-dev
-        - libqd-dev
+    before_install:
+      - brew install gmp mpfr qd autoconf automake libtool 
 
 install:
   - export CXX="$COMPILER"
