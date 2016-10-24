@@ -8,7 +8,7 @@ matrix:
   include:
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-4.8
+    env: COMPILER=g++-4.8 CLANGFORMAT=clang-format-3.9
     addons:
       apt:
         packages:
@@ -16,9 +16,14 @@ matrix:
         - libgmp-dev
         - libmpfr-dev
         - libqd-dev
+    before_install:
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.9 main'
+      - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+      - sudo apt-get update -qq 
+      - sudo apt-get install -qq -y clang-format-3.9
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-4.9
+    env: COMPILER=g++-4.9 CLANGFORMAT=clang-format-3.9
     addons:
       apt:
         sources:
@@ -28,9 +33,14 @@ matrix:
         - libgmp-dev
         - libmpfr-dev
         - libqd-dev
+    before_install:
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.9 main'
+      - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+      - sudo apt-get update -qq 
+      - sudo apt-get install -qq -y clang-format-3.9
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-5
+    env: COMPILER=g++-5 CLANGFORMAT=clang-format-3.9
     addons:
       apt:
         sources:
@@ -40,9 +50,14 @@ matrix:
         - libgmp-dev
         - libmpfr-dev
         - libqd-dev
+    before_install:
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.9 main'
+      - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+      - sudo apt-get update -qq 
+      - sudo apt-get install -qq -y clang-format-3.9
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-6
+    env: COMPILER=g++-6 CLANGFORMAT=clang-format-3.9
     addons:
       apt:
         sources:
@@ -52,20 +67,30 @@ matrix:
         - libgmp-dev
         - libmpfr-dev
         - libqd-dev
+    before_install:
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.9 main'
+      - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+      - sudo apt-get update -qq 
+      - sudo apt-get install -qq -y clang-format-3.9
   - os: linux
     compiler: clang
-    env: COMPILER=clang++
+    env: COMPILER=clang++ CLANGFORMAT=clang-format-3.9
     addons:
       apt:
         packages:
         - libgmp-dev
         - libmpfr-dev
         - libqd-dev
+    before_install:
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.9 main'
+      - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
+      - sudo apt-get update -qq 
+      - sudo apt-get install -qq -y clang-format-3.9
   - os: osx
     compiler: clang
-    env: COMPILER=clang++
+    env: COMPILER=clang++ CLANGFORMAT=clang-format
     before_install:
-      - brew install gmp mpfr qd autoconf automake libtool 
+      - brew install gmp mpfr qd autoconf automake libtool clang-format
 
 install:
   - export CXX="$COMPILER"
