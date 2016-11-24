@@ -66,6 +66,19 @@ public:
   size_t max_aux_sols;
   bool always_update_rad;
   std::multimap<enumf, vector<FT>, std::greater<enumf> > aux_sols;
+  virtual std::vector<std::pair<enumf, vector<FT> > > multimap2pairs()
+  {
+      std::vector<std::pair<enumf, vector<FT> > > result;
+      for (auto it = aux_sols.rbegin(), itend = aux_sols.rend(); it != itend; ++it)
+          result.emplace_back(it->first, it->second);
+      return result;
+  }
+  virtual void set_max_aux_sols(size_t new_max)
+  {
+      FPLLL_CHECK(aux_sols.size() == 0, "invalid call");
+      max_aux_sols = new_max;
+      always_update_rad = always_update_rad||max_aux_sols==0;
+  }
 
   /** Subsolutions found in the lattice */
   bool findsubsols;
@@ -191,6 +204,21 @@ public:
                         enumf &max_dist) = 0;
   virtual void eval_sub_sol(int offset, const FloatVect &new_sub_sol_coord,
                             const enumf &sub_dist) = 0;
+
+  virtual std::vector<std::pair<enumf, vector<Float> > > multimap2pairs()
+  {
+      std::vector<std::pair<enumf, vector<Float> > > result;
+      for (auto it = aux_sols.rbegin(), itend = aux_sols.rend(); it != itend; ++it)
+          result.emplace_back(it->first, it->second);
+      return result;
+  }
+  virtual void set_max_aux_sols(size_t new_max)
+  {
+      FPLLL_CHECK(aux_sols.size() == 0, "invalid call");
+      max_aux_sols = new_max;
+      always_update_rad = always_update_rad||max_aux_sols==0;
+  }
+
 
   // Internal use
   bool get_max_error_aux(const Float &max_dist, bool boundOnExactVal, Float &maxDE);
