@@ -202,7 +202,7 @@ public:
   /** Other solutions found in the lattice */
   size_t max_aux_sols;
   bool always_update_rad;
-  std::multimap<enumf, vector<FT>, std::greater<enumf> > aux_sols;
+  std::multimap<enumf, FloatVect, std::greater<enumf> > aux_sols;
 
   /** Subsolutions found in the lattice */
   bool findsubsols;
