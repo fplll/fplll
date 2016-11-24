@@ -217,13 +217,10 @@ void FastEvaluator<Float>::eval_sol(const FloatVect &new_sol_coord, const enumf 
   {
     if (max_aux_sols != 0 && !sol_coord.empty())
     {
-      aux_sol_coord.emplace_front(std::move(sol_coord));
-      aux_sol_dist.emplace_front(sol_dist);
-      if (aux_sol_coord.size() > max_aux_sols)
+      aux_sols.emplace(sol_dist, sol_coord);
+      if (aux_sols.size() > max_aux_sols)
       {
-        max_dist = aux_sol_dist.back();
-        aux_sol_coord.pop_back();
-        aux_sol_dist.pop_back();
+        max_dist = aux_sols.erase(aux_sols.begin())->first;
       }
     }
     sol_coord = new_sol_coord;
@@ -315,15 +312,13 @@ void ExactEvaluator::eval_sol(const FloatVect &new_sol_coord, const enumf &new_p
     {
       if (max_aux_sols != 0 && !sol_coord.empty())
       {
-        aux_sol_coord.emplace_front(std::move(sol_coord));
-        aux_sol_dist.emplace_front(sol_dist);
-        aux_sol_int_dist.emplace_front(int_max_dist);
-        if (aux_sol_coord.size() > max_aux_sols)
+        aux_sols.emplace(sol_dist, sol_coord);
+        aux_sol_int_dist.emplace(int_max_dist);
+        if (aux_sols.size() > max_aux_sols)
         {
-          max_dist = int_dist2enumf(aux_sol_int_dist.back());
-          aux_sol_coord.pop_back();
-          aux_sol_dist.pop_back();
-          aux_sol_int_dist.pop_back();
+          max_dist = int_dist2enumf(aux_sol_int_dist.top());
+          aux_sols.erase(aux_sols.begin());
+          aux_sol_int_dist.pop();
         }
       }
       // Updates the stored solution

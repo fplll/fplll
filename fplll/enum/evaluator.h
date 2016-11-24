@@ -17,7 +17,8 @@
 #define FPLLL_EVALUATOR_H
 
 #include "../util.h"
-#include <deque>
+#include <map>
+#include <queue>
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -64,8 +65,7 @@ public:
   /** Other solutions found in the lattice */
   size_t max_aux_sols;
   bool always_update_rad;
-  std::deque<vector<FT>> aux_sol_coord;
-  std::deque<enumf> aux_sol_dist;
+  std::multimap<enumf, vector<FT>, std::greater<enumf> > aux_sols;
 
   /** Subsolutions found in the lattice */
   bool findsubsols;
@@ -87,8 +87,7 @@ public:
   using Evaluator<FT>::sol_coord;
   using Evaluator<FT>::sol_dist;
   using Evaluator<FT>::new_sol_flag;
-  using Evaluator<FT>::aux_sol_coord;
-  using Evaluator<FT>::aux_sol_dist;
+  using Evaluator<FT>::aux_sols;
   using Evaluator<FT>::sub_sol_coord;
   using Evaluator<FT>::sub_sol_dist;
   using Evaluator<FT>::max_aux_sols;
@@ -117,13 +116,10 @@ public:
   {
     if (max_aux_sols != 0 && !sol_coord.empty())
     {
-      aux_sol_coord.emplace_front(std::move(sol_coord));
-      aux_sol_dist.emplace_front(sol_dist);
-      if (aux_sol_coord.size() > max_aux_sols)
+      aux_sols.emplace(sol_dist, sol_coord);
+      if (aux_sols.size() > max_aux_sols)
       {
-        max_dist = aux_sol_dist.back();
-        aux_sol_coord.pop_back();
-        aux_sol_dist.pop_back();
+        max_dist = aux_sols.erase(aux_sols.begin())->first;
       }
     }
     sol_coord = new_sol_coord;
@@ -206,8 +202,7 @@ public:
   /** Other solutions found in the lattice */
   size_t max_aux_sols;
   bool always_update_rad;
-  std::deque<FloatVect> aux_sol_coord;
-  std::deque<enumf> aux_sol_dist;
+  std::multimap<enumf, vector<FT>, std::greater<enumf> > aux_sols;
 
   /** Subsolutions found in the lattice */
   bool findsubsols;
@@ -280,7 +275,7 @@ public:
 
   Integer int_max_dist;  // Exact norm of the last vector
 
-  std::deque<Integer> aux_sol_int_dist;  // Exact norm of aux vectors
+  std::priority_queue<Integer> aux_sol_int_dist;  // Exact norm of aux vectors
   vector<Integer> sub_sol_int_dist;      // Exact norm of sub vectors
 
 private:

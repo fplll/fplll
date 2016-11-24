@@ -227,15 +227,15 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   {
     auxsol_coord->clear();
     auxsol_dist->clear();
-    auxsol_dist->resize(evaluator->aux_sol_coord.size());
-    for (size_t i = 0; i < evaluator->aux_sol_coord.size(); ++i)
+
+    for (auto it = evaluator->aux_sols.rbegin(), itend = evaluator->aux_sols.rend(); it != itend; ++it)
     {
-      (*auxsol_dist)[i] = evaluator->aux_sol_dist[i];
+      auxsol_dist->push_back(it->first);
 
       IntVect as_c;
-      for (size_t j = 0; j < evaluator->aux_sol_coord[i].size(); ++j)
+      for (size_t j = 0; j < it->second.size(); ++j)
       {
-        itmp1.set_f(evaluator->aux_sol_coord[i][j]);
+        itmp1.set_f(it->second[j]);
         as_c.emplace_back(itmp1);
       }
       auxsol_coord->emplace_back(std::move(as_c));
