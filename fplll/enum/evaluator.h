@@ -73,12 +73,6 @@ public:
           result.emplace_back(it->first, it->second);
       return result;
   }
-  virtual void set_max_aux_sols(size_t new_max)
-  {
-      FPLLL_CHECK(aux_sols.size() == 0, "invalid call");
-      max_aux_sols = new_max;
-      always_update_rad = always_update_rad||max_aux_sols==0;
-  }
 
   /** Subsolutions found in the lattice */
   bool findsubsols;
@@ -212,13 +206,6 @@ public:
           result.emplace_back(it->first, it->second);
       return result;
   }
-  virtual void set_max_aux_sols(size_t new_max)
-  {
-      FPLLL_CHECK(aux_sols.size() == 0, "invalid call");
-      max_aux_sols = new_max;
-      always_update_rad = always_update_rad||max_aux_sols==0;
-  }
-
 
   // Internal use
   bool get_max_error_aux(const Float &max_dist, bool boundOnExactVal, Float &maxDE);
