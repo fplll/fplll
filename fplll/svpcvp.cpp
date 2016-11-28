@@ -98,7 +98,8 @@ static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
 static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method,
                               const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
                               long long &sol_count, vector<IntVect> *subsol_coord = nullptr,
-                              vector<enumf> *subsol_dist = nullptr, vector<IntVect> *auxsol_coord = nullptr,
+                              vector<enumf> *subsol_dist    = nullptr,
+                              vector<IntVect> *auxsol_coord = nullptr,
                               vector<enumf> *auxsol_dist = nullptr, int max_aux_sols = 0)
 {
   bool findsubsols = (subsol_coord != nullptr) && (subsol_dist != nullptr);
@@ -159,8 +160,8 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   Evaluator<Float> *evaluator;
   if (method == SVPM_FAST)
   {
-    evaluator = new FastEvaluator<Float>(d, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode, max_aux_sols,
-                                         findsubsols);
+    evaluator = new FastEvaluator<Float>(d, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode,
+                                         max_aux_sols, findsubsols);
   }
   else if (method == SVPM_PROVED)
   {
@@ -228,7 +229,8 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
     auxsol_coord->clear();
     auxsol_dist->clear();
 
-    for (auto it = evaluator->aux_sols.rbegin(), itend = evaluator->aux_sols.rend(); it != itend; ++it)
+    for (auto it = evaluator->aux_sols.rbegin(), itend = evaluator->aux_sols.rend(); it != itend;
+         ++it)
     {
       auxsol_dist->push_back(it->first);
 
@@ -273,8 +275,8 @@ int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &a
                             const vector<double> &pruning, int flags)
 {
   long long tmp;
-  return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp,
-                            nullptr, nullptr, &auxsol_coord, &auxsol_dist, max_aux_sols);
+  return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp, nullptr,
+                            nullptr, &auxsol_coord, &auxsol_dist, max_aux_sols);
 }
 /* Closest vector problem
    ====================== */

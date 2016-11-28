@@ -37,10 +37,11 @@ enum EvaluatorMode
 template <class FT> class Evaluator
 {
 public:
-  Evaluator(size_t max_aux_solutions = 0, bool find_subsolutions = false, bool always_update_radius = true)
+  Evaluator(size_t max_aux_solutions = 0, bool find_subsolutions = false,
+            bool always_update_radius = true)
       : max_aux_sols(max_aux_solutions), findsubsols(find_subsolutions), new_sol_flag(false)
   {
-    always_update_rad = always_update_radius||max_aux_solutions==0;
+    always_update_rad = always_update_radius || max_aux_solutions == 0;
   }
   virtual ~Evaluator() {}
 
@@ -65,13 +66,13 @@ public:
   /** Other solutions found in the lattice */
   size_t max_aux_sols;
   bool always_update_rad;
-  std::multimap<enumf, vector<FT>, std::greater<enumf> > aux_sols;
-  virtual std::vector<std::pair<enumf, vector<FT> > > multimap2pairs()
+  std::multimap<enumf, vector<FT>, std::greater<enumf>> aux_sols;
+  virtual std::vector<std::pair<enumf, vector<FT>>> multimap2pairs()
   {
-      std::vector<std::pair<enumf, vector<FT> > > result;
-      for (auto it = aux_sols.rbegin(), itend = aux_sols.rend(); it != itend; ++it)
-          result.emplace_back(it->first, it->second);
-      return result;
+    std::vector<std::pair<enumf, vector<FT>>> result;
+    for (auto it = aux_sols.rbegin(), itend = aux_sols.rend(); it != itend; ++it)
+      result.emplace_back(it->first, it->second);
+    return result;
   }
 
   /** Subsolutions found in the lattice */
@@ -100,7 +101,8 @@ public:
   using Evaluator<FT>::max_aux_sols;
   using Evaluator<FT>::always_update_rad;
 
-  FastEvaluator(size_t max_aux_solutions = 0, bool find_subsolutions = false, bool always_update_radius = true)
+  FastEvaluator(size_t max_aux_solutions = 0, bool find_subsolutions = false,
+                bool always_update_radius = true)
       : Evaluator<FT>(max_aux_solutions, find_subsolutions, always_update_radius)
   {
   }
@@ -129,12 +131,12 @@ public:
         max_dist = aux_sols.erase(aux_sols.begin())->first;
       }
     }
-    sol_coord = new_sol_coord;
-    sol_dist = new_partial_dist;
-    new_sol_flag        = true;
+    sol_coord    = new_sol_coord;
+    sol_dist     = new_partial_dist;
+    new_sol_flag = true;
     if (always_update_rad)
     {
-        max_dist = sol_dist;
+      max_dist = sol_dist;
     }
   }
 
@@ -160,11 +162,12 @@ template <> class Evaluator<Float>
 {
 public:
   Evaluator<Float>(int d, const Matrix<Float> &mu, const Matrix<Float> &r, int eval_mode,
-                   size_t max_aux_solutions = 0, bool find_subsolutions = false, bool always_update_radius = true)
+                   size_t max_aux_solutions = 0, bool find_subsolutions = false,
+                   bool always_update_radius = true)
       : max_aux_sols(max_aux_solutions), findsubsols(find_subsolutions), new_sol_flag(false),
         eval_mode(eval_mode), input_error_defined(false), d(d), mu(mu), r(r)
   {
-    always_update_rad = always_update_radius||max_aux_solutions==0;
+    always_update_rad = always_update_radius || max_aux_solutions == 0;
     max_dr_diag.resize(d);
     max_dm_u.resize(d);
   }
@@ -199,12 +202,12 @@ public:
   virtual void eval_sub_sol(int offset, const FloatVect &new_sub_sol_coord,
                             const enumf &sub_dist) = 0;
 
-  virtual std::vector<std::pair<enumf, vector<Float> > > multimap2pairs()
+  virtual std::vector<std::pair<enumf, vector<Float>>> multimap2pairs()
   {
-      std::vector<std::pair<enumf, vector<Float> > > result;
-      for (auto it = aux_sols.rbegin(), itend = aux_sols.rend(); it != itend; ++it)
-          result.emplace_back(it->first, it->second);
-      return result;
+    std::vector<std::pair<enumf, vector<Float>>> result;
+    for (auto it = aux_sols.rbegin(), itend = aux_sols.rend(); it != itend; ++it)
+      result.emplace_back(it->first, it->second);
+    return result;
   }
 
   // Internal use
@@ -217,7 +220,7 @@ public:
   /** Other solutions found in the lattice */
   size_t max_aux_sols;
   bool always_update_rad;
-  std::multimap<enumf, FloatVect, std::greater<enumf> > aux_sols;
+  std::multimap<enumf, FloatVect, std::greater<enumf>> aux_sols;
 
   /** Subsolutions found in the lattice */
   bool findsubsols;
@@ -291,7 +294,7 @@ public:
   Integer int_max_dist;  // Exact norm of the last vector
 
   std::priority_queue<Integer> aux_sol_int_dist;  // Exact norm of aux vectors
-  vector<Integer> sub_sol_int_dist;      // Exact norm of sub vectors
+  vector<Integer> sub_sol_int_dist;               // Exact norm of sub vectors
 
 private:
   enumf int_dist2enumf(Integer int_dist);

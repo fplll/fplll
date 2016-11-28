@@ -223,9 +223,9 @@ void FastEvaluator<Float>::eval_sol(const FloatVect &new_sol_coord, const enumf 
         max_dist = aux_sols.erase(aux_sols.begin())->first;
       }
     }
-    sol_coord = new_sol_coord;
-    sol_dist = new_partial_dist;
-    last_partial_dist   = new_partial_dist;  // Exact conversion
+    sol_coord         = new_sol_coord;
+    sol_dist          = new_partial_dist;
+    last_partial_dist = new_partial_dist;  // Exact conversion
     last_partial_dist.mul_2si(last_partial_dist, normExp);
     if (always_update_rad)
     {
@@ -326,7 +326,7 @@ void ExactEvaluator::eval_sol(const FloatVect &new_sol_coord, const enumf &new_p
       last_partial_dist.mul_2si(last_partial_dist, normExp);
       sol_coord    = new_sol_coord;
       int_max_dist = new_sol_dist;
-      sol_dist = int_dist2enumf(int_max_dist);
+      sol_dist     = int_dist2enumf(int_max_dist);
       if (always_update_rad)
       {
         max_dist = sol_dist;
