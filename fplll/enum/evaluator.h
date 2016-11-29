@@ -117,8 +117,6 @@ public:
    * @param new_sol_coord    Coordinates of the solution in the lattice
    * @param new_partial_dist Floating-point evaluation of the norm of the solution
    * @param max_dist        Bound of the enumeration (updated by the function)
-   * @param normExp        r(i, i) is divided by 2^normExp in enumerate before
-   *                       being converted to double
    */
   virtual void eval_sol(const vector<FT> &new_sol_coord, const enumf &new_partial_dist,
                         enumf &max_dist)
