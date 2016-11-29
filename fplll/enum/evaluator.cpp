@@ -380,7 +380,6 @@ void ExactEvaluator::eval_sub_sol(int offset, const FloatVect &new_sub_sol_coord
   }
 }
 
-// Decreases the bound of the algorithm when a solution is found
 enumf ExactEvaluator::int_dist2enumf(Integer int_dist)
 {
   Float fMaxDist, maxDE;
