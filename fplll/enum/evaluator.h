@@ -125,12 +125,11 @@ public:
                         enumf &max_dist)
   {
 
-    if (max_aux_sols != 0 && !sol_coord.empty())
+    if (max_aux_sols != 0)
     {
-      FT tmp = sol_dist;
+      FT tmp = new_partial_dist;
       tmp.mul_2si(tmp, normExp);
-      sol_dist = tmp.get_d();
-      aux_sols.emplace(sol_dist, sol_coord);
+      aux_sols.emplace(tmp.get_d(), new_sol_coord);
       if (aux_sols.size() > max_aux_sols)
       {
         FT tmp = aux_sols.erase(aux_sols.begin())->first;
@@ -138,9 +137,14 @@ public:
         max_dist = tmp.get_d();
       }
     }
-    sol_coord    = new_sol_coord;
-    sol_dist     = new_partial_dist;
-    new_sol_flag = true;
+
+    if (sol_coord.empty() || new_partial_dist < sol_dist )
+    { 
+      sol_coord    = new_sol_coord;
+      sol_dist     = new_partial_dist;
+      new_sol_flag = true;
+    }
+
     if (always_update_rad)
     {
       max_dist = sol_dist;
