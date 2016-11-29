@@ -57,7 +57,8 @@ public:
   virtual void eval_sub_sol(int offset, const vector<FT> &new_sub_sol_coord,
                             const enumf &sub_dist) = 0;
 
-  virtual void set_normexp(long /*norm_exp*/) {}
+  virtual void set_normexp(long norm_exp) { normExp = norm_exp; }
+  long normExp;
 
   /** Coordinates of the solution in the lattice */
   vector<FT> sol_coord;
@@ -100,6 +101,8 @@ public:
   using Evaluator<FT>::sub_sol_dist;
   using Evaluator<FT>::max_aux_sols;
   using Evaluator<FT>::always_update_rad;
+  using Evaluator<FT>::normExp;
+  using Evaluator<FT>::set_normexp;
 
   FastEvaluator(size_t max_aux_solutions = 0, bool find_subsolutions = false,
                 bool always_update_radius = true)
@@ -121,12 +124,18 @@ public:
   virtual void eval_sol(const vector<FT> &new_sol_coord, const enumf &new_partial_dist,
                         enumf &max_dist)
   {
+
     if (max_aux_sols != 0 && !sol_coord.empty())
     {
+      FT tmp = sol_dist;
+      tmp.mul_2si(tmp, normExp);
+      sol_dist = tmp.get_d();
       aux_sols.emplace(sol_dist, sol_coord);
       if (aux_sols.size() > max_aux_sols)
       {
-        max_dist = aux_sols.erase(aux_sols.begin())->first;
+        FT tmp = aux_sols.erase(aux_sols.begin())->first;
+        tmp.mul_2si(tmp, -normExp);
+        max_dist = tmp.get_d();
       }
     }
     sol_coord    = new_sol_coord;
