@@ -857,11 +857,9 @@ template double svp_probability<FP_NR<long double>>(const vector<double> &);
 template class Pruner<FP_NR<dd_real>>;
 template void prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(
     vector<double> &, double &, const double, const double, const double,
-    MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, int, int, int);
-template Pruning
-prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(const double, const double, const double,
-                                                   MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, int, int,
-                                                   int, bool);
+    MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, int, int, int, bool);
+template Pruning prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(
+    const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, int, int, int);
 template Pruning
 prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(const double, const double, const double,
                                                    vector<MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>>> &,
@@ -872,11 +870,9 @@ template double svp_probability<FP_NR<dd_real>>(const vector<double> &);
 template class Pruner<FP_NR<qd_real>>;
 template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(
     vector<double> &, double &, const double, const double, const double,
-    MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, int, int, int);
-template Pruning
-prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(const double, const double, const double,
-                                                   MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, int, int,
-                                                   int, bool);
+    MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, int, int, int, bool);
+template Pruning prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(
+    const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, int, int, int);
 template Pruning
 prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(const double, const double, const double,
                                                    vector<MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>>> &,

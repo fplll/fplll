@@ -292,7 +292,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune Gradient " << endl;
-  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius.get_d(), 1.0e8, 0.01, M, PRUNER_METHOD_GRADIENT, 1, 2 * n, false);
+  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius.get_d(), 1.0e8, 0.01, M, PRUNER_METHOD_GRADIENT, 1,
+                             2 * n, false);
   status |= !(pruning.probability <= 1.0);
   cerr << "Probability " << pruning.probability << endl;
   status |= !(pruning.probability > 0.0);
@@ -308,13 +309,13 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune NelderMead " << endl;
-  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius.get_d(), 1.0e8, 0.01, M, PRUNER_METHOD_GRADIENT, 1, 2 * n, false);
+  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius.get_d(), 1.0e8, 0.01, M, PRUNER_METHOD_GRADIENT, 1,
+                             2 * n, false);
   status |= !(pruning.probability <= 1.0);
   cerr << "Probability " << pruning.probability << endl;
   status |= !(pruning.probability > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
-
 
   cerr << endl << "Hybrid " << endl;
   pruning =
@@ -326,13 +327,13 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune Hybrid " << endl;
-  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius.get_d(), 1.0e8, 0.01, M, PRUNER_METHOD_GRADIENT, 1, 2 * n, false);
+  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius.get_d(), 1.0e8, 0.01, M, PRUNER_METHOD_GRADIENT, 1,
+                             2 * n, false);
   status |= !(pruning.probability <= 1.0);
   cerr << "Probability " << pruning.probability << endl;
   status |= !(pruning.probability > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
-
 
   return status;
 }
