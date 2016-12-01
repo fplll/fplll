@@ -47,7 +47,7 @@ template <class FT> void Pruner<FT>::set_tabulated_consts()
 template <class FT>
 template <class GSO_ZT, class GSO_FT>
 void Pruner<FT>::load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &m, int start_row, int end_row,
-                                  int /*reset_renorm*/)
+                                  bool reset_renorm)
 {
   if (!end_row)
   {
@@ -70,7 +70,7 @@ void Pruner<FT>::load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &m, int start_row, int 
 }
 
 template <class FT>
-void Pruner<FT>::load_basis_shape(const vector<double> &gso_sq_norms, int reset_renorm)
+void Pruner<FT>::load_basis_shape(const vector<double> &gso_sq_norms, bool reset_renorm)
 {
   n = gso_sq_norms.size();
   d = n / 2;
@@ -118,7 +118,7 @@ void Pruner<FT>::load_basis_shapes(const vector<vector<double>> &gso_sq_norms_ve
     {
       throw std::runtime_error("Inside Pruner : loading several bases with different dimensions");
     }
-    int reset_renorm = (k == 0);
+    bool reset_renorm = (k == 0);
     load_basis_shape(gso_sq_norms_vec[k], reset_renorm);
     for (size_t i = 0; i < n; ++i)
     {
@@ -151,7 +151,7 @@ void Pruner<FT>::load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT>> &m_vec, int st
   int count = m_vec.size();
   for (int k = 0; k < count; ++k)
   {
-    int reset_renorm = (k == 0);
+    bool reset_renorm = (k == 0);
     load_basis_shape(m_vec[k], start_row, end_row, reset_renorm);
     for (size_t i = 0; i < n; ++i)
     {
@@ -165,7 +165,7 @@ void Pruner<FT>::load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT>> &m_vec, int st
 }
 
 template <class FT>
-void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const int reset)
+void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const bool reset)
 {
   evec b;
   if (reset)
@@ -736,23 +736,21 @@ template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
            const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
-           int start_row, int end_row)
+           int start_row, int end_row, bool reset)
 {
-  cerr << "LOADING METHOD" << descent_method << endl;
   Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target_probability,
                                descent_method);
   pruner.load_basis_shape(m, start_row, end_row);
-  pruner.optimize_coefficients(pr);
+  pruner.optimize_coefficients(pr, reset);
   probability = pruner.svp_probability(pr);
 }
 
 template <class FT, class GSO_ZT, class GSO_FT>
-Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
-              const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
-              int start_row, int end_row)
+void prune(/*output*/ Pruning &pruning,
+           /*inputs*/ const double enumeration_radius, const double preproc_cost,
+           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
+           int start_row, int end_row, bool reset)
 {
-  cerr << "LOADING METHOD" << descent_method << endl;
-  Pruning pruning;
   if (!end_row)
     end_row = m.d;
   Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target_probability,
@@ -767,15 +765,25 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
   pruner.optimize_coefficients(pruning.coefficients);
   pruning.probability   = pruner.svp_probability(pruning.coefficients);
   pruning.radius_factor = enumeration_radius / (gh_radius.get_d() * pow(2, expo));
-  return pruning;
 }
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
-              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
-              const int descent_method, int start_row, int end_row)
+              const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
+              int start_row, int end_row)
 {
   Pruning pruning;
+  prune<FT>(pruning, enumeration_radius, preproc_cost, target_probability, m, descent_method,
+            start_row, end_row);
+  return pruning;
+}
+
+template <class FT, class GSO_ZT, class GSO_FT>
+void prune(/*output*/ Pruning &pruning,
+           /*inputs*/ const double enumeration_radius, const double preproc_cost,
+           const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
+           const int descent_method, int start_row, int end_row, bool reset)
+{
   if (!end_row)
     end_row = m[0].d;
   Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target_probability,
@@ -800,6 +808,16 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
   pruner.optimize_coefficients(pruning.coefficients);
   pruning.probability   = pruner.svp_probability(pruning.coefficients);
   pruning.radius_factor = enumeration_radius / (gh_radius.get_d() * pow(2, expo));
+}
+
+template <class FT, class GSO_ZT, class GSO_FT>
+Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
+              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
+              const int descent_method, int start_row, int end_row)
+{
+  Pruning pruning;
+  prune<FT>(pruning, enumeration_radius, preproc_cost, target_probability, m, descent_method,
+            start_row, end_row);
   return pruning;
 }
 
@@ -810,7 +828,7 @@ template void prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(vector<double> &,
                                                                const double, const double,
                                                                const double,
                                                                MatGSO<Z_NR<mpz_t>, FP_NR<double>> &,
-                                                               int, int, int);
+                                                               int, int, int, bool);
 template Pruning prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(
     const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<double>> &, int, int, int);
 template Pruning
@@ -824,7 +842,7 @@ template double svp_probability<FP_NR<double>>(const vector<double> &);
 template class Pruner<FP_NR<long double>>;
 template void prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(
     vector<double> &, double &, const double, const double, const double,
-    MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, int, int, int);
+    MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, int, int, int, bool);
 template Pruning prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(
     const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, int, int,
     int);
@@ -840,8 +858,10 @@ template class Pruner<FP_NR<dd_real>>;
 template void prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(
     vector<double> &, double &, const double, const double, const double,
     MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, int, int, int);
-template Pruning prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(
-    const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, int, int, int);
+template Pruning
+prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(const double, const double, const double,
+                                                   MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, int, int,
+                                                   int, bool);
 template Pruning
 prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(const double, const double, const double,
                                                    vector<MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>>> &,
@@ -853,8 +873,10 @@ template class Pruner<FP_NR<qd_real>>;
 template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(
     vector<double> &, double &, const double, const double, const double,
     MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, int, int, int);
-template Pruning prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(
-    const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, int, int, int);
+template Pruning
+prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(const double, const double, const double,
+                                                   MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, int, int,
+                                                   int, bool);
 template Pruning
 prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(const double, const double, const double,
                                                    vector<MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>>> &,
@@ -869,7 +891,7 @@ template void prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(vector<double> &, d
                                                              const double, const double,
                                                              const double,
                                                              MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &,
-                                                             int, int, int);
+                                                             int, int, int, bool);
 template Pruning prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(const double, const double,
                                                                 const double,
                                                                 MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &,
@@ -887,7 +909,7 @@ template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(vector<double> &,
                                                                const double, const double,
                                                                const double,
                                                                MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &,
-                                                               int, int, int);
+                                                               int, int, int, bool);
 template Pruning prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(
     const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &, int, int, int);
 template Pruning

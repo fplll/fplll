@@ -79,7 +79,8 @@ template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
            const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m,
-           const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0);
+           const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0,
+           bool reset = true);
 
 /**
    @brief prune function, hiding the Pruner class
@@ -98,6 +99,12 @@ void prune(/*output*/ vector<double> &pr, double &probability,
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
+void prune(/*output*/ Pruning &pruning,
+           /*inputs*/ const double enumeration_radius, const double preproc_cost,
+           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
+           int start_row, int end_row, bool reset = true);
+
+template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
               const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
               const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0);
@@ -114,6 +121,12 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
    @param end_row stop enumeration here
    @return Pruning object.
 */
+
+template <class FT, class GSO_ZT, class GSO_FT>
+void prune(/*output*/ Pruning &pruning,
+           /*inputs*/ const double enumeration_radius, const double preproc_cost,
+           const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
+           const int descent_method, int start_row, int end_row, bool reset = true);
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
@@ -165,7 +178,11 @@ public:
       : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost),
         target_probability(target_probability), descent_method(descent_method), n(n), d(d)
   {
-    set_tabulated_consts();
+    if (!tabulated_value_imported)
+    {
+      set_tabulated_consts();
+      tabulated_value_imported = true;
+    }
     epsilon     = std::pow(2., -13);  // Guesswork. Will become obsolete with Nelder-Mead
     min_step    = std::pow(2., -12);  // Guesswork. Will become obsolete with Nelder-Mead
     step_factor = std::pow(2, .5);    // Guesswork. Will become obsolete with Nelder-Mead
@@ -180,7 +197,7 @@ public:
   */
   template <class GSO_ZT, class GSO_FT>
   void load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &gso, int start_row = 0, int end_row = 0,
-                        int reset_renorm = 1);
+                        bool reset_renorm = true);
 
   /** @brief load the shapes of several bases from a MatGSO object. Can select a
       projected sub-lattice [start_row,end_row-1]
@@ -190,7 +207,7 @@ public:
 
   /** @brief load the shape of a basis from vector<double>. Mostly for testing purposes */
 
-  void load_basis_shape(const vector<double> &gso_sq_norms, int reset_renorm = 1);
+  void load_basis_shape(const vector<double> &gso_sq_norms, bool reset_renorm = true);
 
   /** @brief load the shapes of may bases from vector<vector<double>> . Cost are average over all
    * bases. Mostly for testing purposes */
@@ -202,7 +219,7 @@ public:
       @note Basis Shape and other parameters must have been set beforehand. See
       auto_prune for an example of proper usage.
   */
-  void optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const int reset = 1);
+  void optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const bool reset = true);
 
   /** @brief Compute the cost of a single enumeration */
 
@@ -286,8 +303,9 @@ private:
   // Run the whole escent to optimize pruning bounds
   void descent(/*io*/ evec &b);
 
-  FT tabulated_factorial[PRUNER_MAX_N];
-  FT tabulated_ball_vol[PRUNER_MAX_N];
+  static FT tabulated_factorial[PRUNER_MAX_N];
+  static FT tabulated_ball_vol[PRUNER_MAX_N];
+  static bool tabulated_value_imported;
 
   FT epsilon;          //< Epsilon to use for numerical differentiation
   FT min_step;         //< Minimal step in a given direction
@@ -298,6 +316,10 @@ private:
   FT symmetry_factor;  //< Set at 2 for SVP enumeration assuming the implem only explore half the
                        //< space
 };
+
+template <class FT> bool Pruner<FT>::tabulated_value_imported = false;
+template <class FT> FT Pruner<FT>::tabulated_factorial[PRUNER_MAX_N];
+template <class FT> FT Pruner<FT>::tabulated_ball_vol[PRUNER_MAX_N];
 
 FPLLL_END_NAMESPACE
 

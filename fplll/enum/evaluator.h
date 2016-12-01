@@ -138,8 +138,8 @@ public:
       }
     }
 
-    if (sol_coord.empty() || new_partial_dist < sol_dist )
-    { 
+    if (sol_coord.empty() || new_partial_dist < sol_dist)
+    {
       sol_coord    = new_sol_coord;
       sol_dist     = new_partial_dist;
       new_sol_flag = true;
