@@ -154,6 +154,12 @@ public:
   inline void operator=(double a);
   // inline void operator=(mpfr_t& a);
   inline void operator=(mpfr_t &a) { set_mpfr(a, MPFR_RNDN); };
+
+  inline bool operator==(const FP_NR<F> &a) const { return cmp(a) == 0; }
+  inline bool operator==(double a) const { return cmp(a) == 0; }
+  inline bool operator!=(const FP_NR<F> &a) const { return cmp(a) != 0; }
+  inline bool operator!=(double a) const { return cmp(a) != 0; }
+
   inline bool operator<(const FP_NR<F> &a) const;
   inline bool operator<(double a) const;
   inline bool operator>(const FP_NR<F> &a) const;

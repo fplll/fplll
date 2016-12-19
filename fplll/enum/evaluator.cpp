@@ -17,7 +17,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-void Evaluator<Float>::init_delta_def(int prec, double rho, bool withRoundingToEnumf)
+void ErrorBoundedEvaluator::init_delta_def(int prec, double rho, bool withRoundingToEnumf)
 {
   /* Computes error bounds on GSO
       For all 0 <= i < d and 0 <= j <= i we have:
@@ -72,7 +72,8 @@ void Evaluator<Float>::init_delta_def(int prec, double rho, bool withRoundingToE
    - a,b,c,... represent exact values
    - a~,b~,c~,... are approx. values used or computed by the fp algorithm */
 
-bool Evaluator<Float>::get_max_error_aux(const Float &max_dist, bool boundOnExactVal, Float &maxDE)
+bool ErrorBoundedEvaluator::get_max_error_aux(const Float &max_dist, bool boundOnExactVal,
+                                              Float &maxDE)
 {
 
   FPLLL_CHECK(input_error_defined,
@@ -209,56 +210,44 @@ bool Evaluator<Float>::get_max_error_aux(const Float &max_dist, bool boundOnExac
   return true;
 }
 
-void FastEvaluator<Float>::eval_sol(const FloatVect &new_sol_coord, const enumf &new_partial_dist,
-                                    enumf &max_dist)
+void FastErrorBoundedEvaluator::eval_sol(const FloatVect &new_sol_coord,
+                                         const enumf &new_partial_dist, enumf &max_dist)
 {
   // Assumes that the solution is valid
   if (eval_mode == EVALMODE_SV)
   {
-    if (max_aux_sols != 0 && !sol_coord.empty())
-    {
-      aux_sols.emplace(sol_dist, sol_coord);
-      if (aux_sols.size() > max_aux_sols)
-      {
-        max_dist = aux_sols.erase(aux_sols.begin())->first;
-      }
-    }
-    sol_coord         = new_sol_coord;
-    sol_dist          = new_partial_dist;
-    last_partial_dist = new_partial_dist;  // Exact conversion
-    last_partial_dist.mul_2si(last_partial_dist, normExp);
-    if (always_update_rad)
-    {
-      max_dist = sol_dist;
-    }
+    Float dist(new_partial_dist);
+    dist.mul_2si(dist, normExp);
+    this->process_sol(dist, new_sol_coord, max_dist);
   }
   else if (eval_mode == EVALMODE_PRINT)
   {
-    cout << new_sol_coord << "\n";
+    std::cout << new_sol_coord << "\n";
   }
-  new_sol_flag = true;
-  sol_count++;
 }
 
-void FastEvaluator<Float>::eval_sub_sol(int offset, const FloatVect &new_sub_sol_coord,
-                                        const enumf &sub_dist)
+void FastErrorBoundedEvaluator::eval_sub_sol(int offset, const FloatVect &new_sub_sol_coord,
+                                             const enumf &sub_dist)
 {
-  sub_sol_coord.resize(std::max(sub_sol_coord.size(), std::size_t(offset + 1)));
-  sub_sol_dist.resize(sub_sol_coord.size(), -1.0);
-  if (sub_sol_dist[offset] == -1.0 || sub_dist < sub_sol_dist[offset])
+  Float dist = sub_dist;
+  dist.mul_2si(dist, normExp);
+
+  sub_solutions.resize(std::max(sub_solutions.size(), std::size_t(offset + 1)));
+
+  if (sub_solutions[offset].second.empty() || dist < sub_solutions[offset].first)
   {
-    sub_sol_coord[offset] = new_sub_sol_coord;
-    for (int i                 = 0; i < offset; ++i)
-      sub_sol_coord[offset][i] = 0.0;
-    sub_sol_dist[offset]       = sub_dist;
+    sub_solutions[offset].first  = dist;
+    sub_solutions[offset].second = new_sub_sol_coord;
+    for (int i                        = 0; i < offset; ++i)
+      sub_solutions[offset].second[i] = 0.0;
   }
 }
 
-bool FastEvaluator<Float>::get_max_error(Float &max_error)
+bool FastErrorBoundedEvaluator::get_max_error(Float &max_error, const Float &last_partial_dist)
 {
   Float maxE, maxDE, maxOptDE, minOptE, one;
 
-  if (sol_coord.empty() || !input_error_defined)
+  if (solutions.empty() || !input_error_defined)
     return false;
   if (!get_max_error_aux(last_partial_dist, false, maxDE))
     return false;
@@ -277,14 +266,14 @@ bool FastEvaluator<Float>::get_max_error(Float &max_error)
   return true;
 }
 
-bool ExactEvaluator::get_max_error(Float &max_error)
+bool ExactErrorBoundedEvaluator::get_max_error(Float &max_error, const Float &last_partial_dist)
 {
   max_error = 0.0;
   return true;
 }
 
-void ExactEvaluator::eval_sol(const FloatVect &new_sol_coord, const enumf &new_partial_dist,
-                              enumf &max_dist)
+void ExactErrorBoundedEvaluator::eval_sol(const FloatVect &new_sol_coord,
+                                          const enumf &new_partial_dist, enumf &max_dist)
 {
   int n = matrix.get_cols();
   Integer new_sol_dist, coord;
@@ -310,45 +299,22 @@ void ExactEvaluator::eval_sol(const FloatVect &new_sol_coord, const enumf &new_p
   {
     if (eval_mode == EVALMODE_SV)
     {
-      if (max_aux_sols != 0 && !sol_coord.empty())
-      {
-        aux_sols.emplace(sol_dist, sol_coord);
-        aux_sol_int_dist.emplace(int_max_dist);
-        if (aux_sols.size() > max_aux_sols)
-        {
-          max_dist = int_dist2enumf(aux_sol_int_dist.top());
-          aux_sols.erase(aux_sols.begin());
-          aux_sol_int_dist.pop();
-        }
-      }
-      // Updates the stored solution
-      last_partial_dist = new_partial_dist;
-      last_partial_dist.mul_2si(last_partial_dist, normExp);
-      sol_coord    = new_sol_coord;
       int_max_dist = new_sol_dist;
-      sol_dist     = int_dist2enumf(int_max_dist);
-      if (always_update_rad)
-      {
-        max_dist = sol_dist;
-      }
+
+      this->process_sol(int_dist2Float(int_max_dist), new_sol_coord, max_dist);
     }
     else if (eval_mode == EVALMODE_PRINT)
     {
       cout << new_sol_coord << "\n";
     }
-    new_sol_flag = true;
-    sol_count++;
   }
 }
 
-void ExactEvaluator::eval_sub_sol(int offset, const FloatVect &new_sub_sol_coord,
-                                  const enumf &sub_dist)
+void ExactErrorBoundedEvaluator::eval_sub_sol(int offset, const FloatVect &new_sub_sol_coord,
+                                              const enumf &sub_dist)
 {
-  sub_sol_coord.resize(std::max(sub_sol_coord.size(), std::size_t(offset + 1)));
-  sub_sol_dist.resize(sub_sol_coord.size(), -1.0);
   Integer minusone;
   minusone = -1;
-  sub_sol_int_dist.resize(sub_sol_coord.size(), minusone);
 
   int n = matrix.get_cols();
   Integer new_sol_dist, coord;
@@ -369,18 +335,19 @@ void ExactEvaluator::eval_sub_sol(int offset, const FloatVect &new_sub_sol_coord
     coord = new_sol[i];
     new_sol_dist.addmul(coord, coord);
   }
+  Float subdist = int_dist2Float(new_sol_dist);
 
-  if (sub_sol_int_dist[offset] < 0 || new_sol_dist <= sub_sol_int_dist[offset])
+  sub_solutions.resize(std::max(sub_solutions.size(), std::size_t(offset + 1)));
+  if (sub_solutions[offset].second.empty() || subdist <= sub_solutions[offset].first)
   {
-    sub_sol_coord[offset] = new_sub_sol_coord;
-    for (int i                 = 0; i < offset; ++i)
-      sub_sol_coord[offset][i] = 0.0;
-    sub_sol_dist[offset]       = sub_dist;
-    sub_sol_int_dist[offset]   = new_sol_dist;
+    sub_solutions[offset].first  = subdist;
+    sub_solutions[offset].second = new_sub_sol_coord;
+    for (int i                        = 0; i < offset; ++i)
+      sub_solutions[offset].second[i] = 0.0;
   }
 }
 
-enumf ExactEvaluator::int_dist2enumf(Integer int_dist)
+Float ExactErrorBoundedEvaluator::int_dist2Float(Integer int_dist)
 {
   Float fMaxDist, maxDE;
   fMaxDist.set_z(int_dist, GMP_RNDU);
@@ -389,7 +356,7 @@ enumf ExactEvaluator::int_dist2enumf(Integer int_dist)
   FPLLL_CHECK(maxDE <= r(0, 0), "ExactEvaluator: max error is too large");
   fMaxDist.add(fMaxDist, maxDE);
   fMaxDist.mul_2si(fMaxDist, -normExp);
-  return fMaxDist.get_d();
+  return fMaxDist;
 }
 
 FPLLL_END_NAMESPACE
