@@ -363,16 +363,47 @@ template <class FT> inline FT Pruner<FT>::svp_probability(/*i*/ const evec &b)
   return dvol / (dxn - 1.);
 }
 
+template <class FT> inline FT Pruner<FT>::expected_solutions(/*i*/ const evec &b)
+{
+  FT normalized_radius;
+  normalized_radius = sqrt(enumeration_radius * renormalization_factor);
+
+  FT vol  = relative_volume(d, b);
+  vol *= tabulated_ball_vol[2 * d - 1];
+  vol *= pow_si(normalized_radius, 2*d);
+  vol *= ipv[2 * d - 1];
+
+  return vol;
+}
+
+
 template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const evec &b)
 {
 
-  FT probability = svp_probability(b);
+  if (metric==PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
+  {
+    FT probability = svp_probability(b);
+    if (probability >= target)
+      return single_enum_cost(b);
 
-  if (probability >= target_probability)
-    return single_enum_cost(b);
+    FT trials = log(1.0 - target) / log(1.0 - probability);
+    return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
+  }
 
-  FT trials = log(1.0 - target_probability) / log(1.0 - probability);
-  return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
+  else if (metric==PRUNER_METRIC_EXPECTED_SOLUTIONS)
+  {
+    FT expected = expected_solutions(b);
+    if (expected >= target)
+      return single_enum_cost(b);
+
+    FT trials = target / expected;
+    return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
+  }
+
+  else
+  {
+     throw std::invalid_argument("Pruner was set to an unknown metric");
+  }
 }
 
 template <class FT>
@@ -451,6 +482,18 @@ template <class FT> int Pruner<FT>::improve(/*io*/ evec &b)
   return i;
 }
 
+template <class FT> void Pruner<FT>::init_coefficients(evec &b)
+{
+  for (size_t i = 0; i < d; ++i)
+  {
+    b[i] = .1 + ((1. * i) / d);
+  }
+  enforce_bounds(b);
+}
+
+
+
+
 template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
 {
 
@@ -468,14 +511,32 @@ template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
   };
 }
 
-template <class FT> void Pruner<FT>::init_coefficients(evec &b)
-{
-  for (size_t i = 0; i < d; ++i)
-  {
-    b[i] = .1 + ((1. * i) / d);
-  }
-  enforce_bounds(b);
-}
+
+// template <class FT> void Pruner<FT>::greedy(evec &b)
+// {
+//   for (size_t i = 0; i < d; ++i)
+//   {
+//     b[i] = 1.;
+//   }
+//   enforce_bounds(b);
+
+//   FT normalized_radius;
+//   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
+
+//   for (size_t i = 1; i < 2 * d; i += 2)
+//   {
+//     while(true)
+//     {
+//       FT tmp;
+//       tmp  = relative_volume((i-1) / 2, b);
+//       tmp *= ipv[i];
+//       tmp *= pow_si( )
+
+//     }
+//   }
+// }
+
+
 
 // Nelder-Mead method. Following the notation of
 // https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
@@ -735,10 +796,10 @@ template <class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b)
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
+           const double target, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
            int start_row, int end_row, bool reset)
 {
-  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target_probability,
+  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target,
                                descent_method);
   pruner.load_basis_shape(m, start_row, end_row);
   pruner.optimize_coefficients(pr, reset);
@@ -748,12 +809,12 @@ void prune(/*output*/ vector<double> &pr, double &probability,
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ Pruning &pruning,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
+           const double target, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
            int start_row, int end_row, bool reset)
 {
   if (!end_row)
     end_row = m.d;
-  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target_probability,
+  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target,
                                descent_method);
   pruner.load_basis_shape(m, start_row, end_row);
 
@@ -769,11 +830,11 @@ void prune(/*output*/ Pruning &pruning,
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
-              const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
+              const double target, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
               int start_row, int end_row)
 {
   Pruning pruning;
-  prune<FT>(pruning, enumeration_radius, preproc_cost, target_probability, m, descent_method,
+  prune<FT>(pruning, enumeration_radius, preproc_cost, target, m, descent_method,
             start_row, end_row);
   return pruning;
 }
@@ -781,12 +842,12 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ Pruning &pruning,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
+           const double target, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
            const int descent_method, int start_row, int end_row, bool reset)
 {
   if (!end_row)
     end_row = m[0].d;
-  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target_probability,
+  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target,
                                descent_method);
   pruner.load_basis_shapes(m, start_row, end_row);
 
@@ -812,11 +873,11 @@ void prune(/*output*/ Pruning &pruning,
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
-              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
+              const double target, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
               const int descent_method, int start_row, int end_row)
 {
   Pruning pruning;
-  prune<FT>(pruning, enumeration_radius, preproc_cost, target_probability, m, descent_method,
+  prune<FT>(pruning, enumeration_radius, preproc_cost, target, m, descent_method,
             start_row, end_row);
   return pruning;
 }

@@ -68,7 +68,7 @@ FPLLL_BEGIN_NAMESPACE
    @param probability store success probability here
    @param enumeration_radius target enumeration radius
    @param preproc_cost cost of preprocessing
-   @param target_probability overall target success probability
+   @param target overall target success probability/expected solutionss
    @param m GSO matrix
    @param method for the descent (gradient, NM, both)
    @param start_row start enumeration here
@@ -78,7 +78,7 @@ FPLLL_BEGIN_NAMESPACE
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m,
+           const double target, const MatGSO<GSO_ZT, GSO_FT> &m,
            const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0,
            bool reset = true);
 
@@ -89,7 +89,7 @@ void prune(/*output*/ vector<double> &pr, double &probability,
    @param probability store success probability here
    @param enumeration_radius target enumeration radius
    @param preproc_cost cost of preprocessing
-   @param target_probability overall target success probability
+   @param target overall target success probability/expected solutionss
    @param m GSO matrix
    @param method for the descent (gradient, NM, both)
    @param start_row start enumeration here
@@ -101,12 +101,12 @@ void prune(/*output*/ vector<double> &pr, double &probability,
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ Pruning &pruning,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
+           const double target, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
            int start_row, int end_row, bool reset = true);
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
-              const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m,
+              const double target, MatGSO<GSO_ZT, GSO_FT> &m,
               const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0);
 
 /**
@@ -115,7 +115,7 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
    @param probability store success probability here
    @param enumeration_radius target enumeration radius
    @param preproc_cost cost of preprocessing
-   @param target_probability overall target success probability
+   @param target overall target success probability/expected solutionss
    @param m GSO matrices
    @param start_row start enumeration here
    @param end_row stop enumeration here
@@ -125,12 +125,12 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ Pruning &pruning,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
+           const double target, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
            const int descent_method, int start_row, int end_row, bool reset = true);
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
-              const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
+              const double target, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
               const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0);
 
 /**
@@ -162,21 +162,23 @@ public:
 
   /** @brief desired success probability after several retrial
 
-      @note one can try to force probability >= target_probability by setting
+      @note one can try to force probability >= target by setting
       a prohibitive preproc_cost. But beware: this may induces numerical
       stability issue, especially with the gradient method.
   */
 
-  FT target_probability;
+  FT target;
 
   int verbosity = 0;
 
   int descent_method;
+  int metric;
 
-  Pruner(FT enumeration_radius = 0.0, FT preproc_cost = 0.0, FT target_probability = 0.9,
-         int descent_method = PRUNER_METHOD_HYBRID, size_t n = 0, size_t d = 0)
+
+  Pruner(FT enumeration_radius = 0.0, FT preproc_cost = 0.0, FT target = 0.9,
+         int descent_method = PRUNER_METHOD_HYBRID, int metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, size_t n = 0, size_t d = 0)
       : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost),
-        target_probability(target_probability), descent_method(descent_method), n(n), d(d)
+        target(target), descent_method(descent_method), metric(metric), n(n), d(d)
   {
     if (!tabulated_value_imported)
     {
@@ -231,7 +233,7 @@ public:
   }
 
   /** @brief Compute the cost of r enumeration and (r-1) preprocessing, where r
-      is the required number of retrials to reach target_probability
+      is the required number of retrials to reach target
   */
   double repeated_enum_cost(/*i*/ const vector<double> &pr)
   {
@@ -289,10 +291,12 @@ private:
   FT relative_volume(/*i*/ const int rd, const evec &b);
   // Compute the cost of a single enumeration
   FT single_enum_cost(/*i*/ const evec &b);
-  // Compute the success probability of a single enumeration
+  // Compute the success probability for SVP/CVP of a single enumeration
   FT svp_probability(/*i*/ const evec &b);
+  // Compute the expected nmber of solution of a single of a single enumeration
+  FT expected_solutions(/*i*/ const evec &b);
   // Compute the cost of r enumeration and (r-1) preprocessing,
-  // where r is the required number of retrials to reach target_probability
+  // where r is the required number of retrials to reach target/target_solution
   FT repeated_enum_cost(/*i*/ const evec &b);
   // Compute the gradient of the above function
   void repeated_enum_cost_gradient(/*i*/ const evec &b, /*o*/ evec &res);
