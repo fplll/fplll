@@ -355,7 +355,7 @@ Float ExactErrorBoundedEvaluator::int_dist2Float(Integer int_dist)
   FPLLL_CHECK(result, "ExactEvaluator: error cannot be bounded");
   FPLLL_CHECK(maxDE <= r(0, 0), "ExactEvaluator: max error is too large");
   fMaxDist.add(fMaxDist, maxDE);
-  fMaxDist.mul_2si(fMaxDist, -normExp);
+  //  fMaxDist.mul_2si(fMaxDist, -normExp);
   return fMaxDist;
 }
 
