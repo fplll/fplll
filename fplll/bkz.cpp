@@ -278,19 +278,18 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
     const Pruning &pruning = get_pruning(kappa, block_size, par);
 
-    vector<FT> &sol_coord = evaluator.sol_coord;
-    sol_coord.clear();
+    evaluator.solutions.clear();
     Enumeration<FT> enum_obj(m, evaluator);
     enum_obj.enumerate(kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(),
                        vector<enumxt>(), pruning.coefficients, dual);
     nodes += enum_obj.get_nodes();
 
-    if (!sol_coord.empty())
+    if (!evaluator.empty())
     {
       if (dual)
-        dsvp_postprocessing(kappa, block_size, sol_coord);
+        dsvp_postprocessing(kappa, block_size, evaluator.begin()->second);
       else
-        svp_postprocessing(kappa, block_size, sol_coord);
+        svp_postprocessing(kappa, block_size, evaluator.begin()->second);
 
       rerandomize = false;
     }
