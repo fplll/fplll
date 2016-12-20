@@ -123,7 +123,7 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end)
       n_swaps++;
       // Failure, computes the insertion index
       int old_k = kappa;
-      for (kappa--; kappa > kappa_start; kappa--)
+      for (kappa--; kappa > kappa_min; kappa--)
       {
         ftmp1.mul(m.get_r_exp(kappa - 1, kappa - 1), swap_threshold);
         if (m.enable_row_expo)
