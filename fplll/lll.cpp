@@ -174,8 +174,7 @@ template <class ZT, class FT> bool LLLReduction<ZT, FT>::babai(int kappa, int nc
     {
       m.get_mu(ftmp1, kappa, j);
       ftmp1.abs(ftmp1);
-      if (ftmp1 > eta)
-        loop_needed = true;
+      loop_needed |= (ftmp1 > eta);
     }
     if (!loop_needed)
       break;
