@@ -73,6 +73,9 @@ FPLLL_BEGIN_NAMESPACE
    @param method for the descent (gradient, NM, both)
    @param start_row start enumeration here
    @param end_row stop enumeration here
+   @param reset reset pruning coefficients
+
+   @return pruning vector and probability
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
@@ -81,6 +84,28 @@ void prune(/*output*/ vector<double> &pr, double &probability,
            const double target_probability, const MatGSO<GSO_ZT, GSO_FT> &m,
            const int descent_method = PRUNER_METHOD_HYBRID, int start_row = 0, int end_row = 0,
            bool reset = true);
+
+/**
+   @brief prune function, hiding the Pruner class
+
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrix
+   @param method for the descent (gradient, NM, both)
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
+   @param reset reset pruning coefficients
+
+   @return Pruning object
+*/
+
+template <class FT, class GSO_ZT, class GSO_FT>
+void prune(/*output*/ Pruning &pruning,
+           /*inputs*/ const double enumeration_radius, const double preproc_cost,
+           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
+           int start_row, int end_row, bool reset = true);
 
 /**
    @brief prune function, hiding the Pruner class
@@ -94,15 +119,10 @@ void prune(/*output*/ vector<double> &pr, double &probability,
    @param method for the descent (gradient, NM, both)
    @param start_row start enumeration here
    @param end_row stop enumeration here
+   @param reset reset pruning coefficients
 
    @return Pruning object.
 */
-
-template <class FT, class GSO_ZT, class GSO_FT>
-void prune(/*output*/ Pruning &pruning,
-           /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           const double target_probability, MatGSO<GSO_ZT, GSO_FT> &m, const int descent_method,
-           int start_row, int end_row, bool reset = true);
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
@@ -119,7 +139,9 @@ Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_c
    @param m GSO matrices
    @param start_row start enumeration here
    @param end_row stop enumeration here
-   @return Pruning object.
+   @param reset reset pruning coefficients
+
+   @return Pruning object
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
@@ -127,6 +149,20 @@ void prune(/*output*/ Pruning &pruning,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
            const double target_probability, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
            const int descent_method, int start_row, int end_row, bool reset = true);
+
+/**
+   @brief prune function averaging over several bases
+
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrices
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
+
+   @return Pruning object
+*/
 
 template <class FT, class GSO_ZT, class GSO_FT>
 Pruning prune(/*inputs*/ const double enumeration_radius, const double preproc_cost,
