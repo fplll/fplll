@@ -96,18 +96,21 @@ inline int FP_NR<dd_real>::sgn() const {
 
 /* operators */
 template<>
-inline void FP_NR<dd_real>::operator=(const FP_NR<dd_real>& a) {
+inline FP_NR<dd_real>& FP_NR<dd_real>::operator=(const FP_NR<dd_real>& a) {
   data = a.data;
+  return *this;
 }
 
 template<>
-inline void FP_NR<dd_real>::operator=(double a) {
+inline FP_NR<dd_real>& FP_NR<dd_real>::operator=(double a) {
   data = a;
+  return *this;
 }
 
 template<>
-inline void FP_NR<dd_real>::operator=(const char* s) {
+inline FP_NR<dd_real>& FP_NR<dd_real>::operator=(const char* s) {
   data.read(s, data);
+  return *this;
 }
 
 template<>
