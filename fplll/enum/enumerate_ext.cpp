@@ -64,7 +64,7 @@ bool ExternalEnumeration<FT>::enumerate(int first, int last, FT &fmaxdist, long 
       std::bind(&ExternalEnumeration<FT>::callback_process_subsol, this, _1, _2, _3), _dual,
       _evaluator.findsubsols);
 
-  return _nodes != -1ULL;
+  return _nodes != ~uint64_t(0);
 }
 
 template <typename FT>

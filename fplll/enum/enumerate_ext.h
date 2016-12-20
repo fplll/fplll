@@ -43,7 +43,7 @@ typedef enumf(extenum_cb_process_sol)(enumf dist, enumf *sol);
 typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
 
 // prototype: extenum function
-//    return node count or -1ULL == ~uint64_t(0) when it fails
+//    return node count or ~uint64_t(0) when it fails
 typedef uint64_t(extenum_fc_enumerate)(enumf maxdist, std::function<extenum_cb_set_config> cbfunc,
                                        std::function<extenum_cb_process_sol> cbsol,
                                        std::function<extenum_cb_process_subsol> cbsubsol,
