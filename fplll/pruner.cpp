@@ -805,7 +805,7 @@ void prune(/*output*/ Pruning &pruning,
   int expo = 0;
   gaussian_heuristic(gh_radius, expo, end_row - start_row, root_det, 1.0);
 
-  pruner.optimize_coefficients(pruning.coefficients);
+  pruner.optimize_coefficients(pruning.coefficients, reset);
   pruning.probability   = pruner.svp_probability(pruning.coefficients);
   pruning.radius_factor = enumeration_radius / (gh_radius.get_d() * pow(2, expo));
 }
