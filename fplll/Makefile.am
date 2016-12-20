@@ -30,7 +30,7 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	enum/evaluator.h \
 	fplll_config.h wrapper.h \
 	bkz_param.h \
-	enum/enumerate.h enum/enumerate_base.h \
+	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h \
 	pruner.h
 
 bin_PROGRAMS=fplll latticegen latsieve
@@ -69,6 +69,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	enum/topenum.cpp enum/topenum.h \
 	enum/enumerate.cpp enum/enumerate.h \
 	enum/enumerate_base.cpp enum/enumerate_base.h \
+	enum/enumerate_ext.cpp enum/enumerate_ext.h \
 	enum/evaluator.cpp enum/evaluator.h \
 	lll.cpp lll.h \
 	wrapper.cpp wrapper.h \
