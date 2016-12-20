@@ -1,5 +1,5 @@
-/* 
-   (C) 2016 Marc Stevens. 
+/*
+   (C) 2016 Marc Stevens.
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -21,8 +21,8 @@
 #include <fplll/enum/enumerate_base.h>
 #include <fplll/enum/evaluator.h>
 #include <fplll/gso.h>
-#include <memory>
 #include <functional>
+#include <memory>
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -31,60 +31,48 @@ FPLLL_BEGIN_NAMESPACE
 // prototype: function to give to extenum who can call it to fill mu and rdiag
 //    assumes mu is defined as: enumf mu[mudim][mudim];
 //    if transpose==true then will transpose mu
-typedef void (extenum_cb_set_config)(
-    enumf* mu, size_t mudim, bool mutranspose, 
-    enumf* rdiag,
-    enumf* pruning
-    ); 
+typedef void(extenum_cb_set_config)(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag,
+                                    enumf *pruning);
 
 // prototype: function to give to extenum who can call it when it finds a solution
 //    returns new enumeration bound
-typedef enumf (extenum_cb_process_sol)(enumf dist, enumf* sol);
+typedef enumf(extenum_cb_process_sol)(enumf dist, enumf *sol);
 
 // prototype: function to give to extenum who can call it when it finds a subsolution
 //    returns new enumeration bound
-typedef void (extenum_cb_process_subsol)(enumf dist, enumf* subsol, int offset);
- 
+typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
+
 // prototype: extenum function
 //    return node count or -1ULL == ~uint64_t(0) when it fails
-typedef uint64_t (extenum_fc_enumerate)(
-    enumf maxdist,
-    std::function<extenum_cb_set_config> cbfunc, 
-    std::function<extenum_cb_process_sol> cbsol, 
-    std::function<extenum_cb_process_subsol> cbsubsol,
-    bool dual /*=false*/,
-    bool findsubsols /*=false*/
-    );
+typedef uint64_t(extenum_fc_enumerate)(enumf maxdist, std::function<extenum_cb_set_config> cbfunc,
+                                       std::function<extenum_cb_process_sol> cbsol,
+                                       std::function<extenum_cb_process_subsol> cbsubsol,
+                                       bool dual /*=false*/, bool findsubsols /*=false*/
+                                       );
 
 // set & get external enumerator (nullptr => disabled)
 void set_external_enumerator(std::function<extenum_fc_enumerate> extenum = nullptr);
 std::function<extenum_fc_enumerate> get_external_enumerator();
 
-
-
-template<typename FT> 
-class ExternalEnumeration
+template <typename FT> class ExternalEnumeration
 {
 public:
   ExternalEnumeration(MatGSO<Integer, FT> &gso, Evaluator<FT> &evaluator)
       : _gso(gso), _evaluator(evaluator)
-  {}
-  
+  {
+  }
+
   bool enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
-                 const vector<enumf> &pruning = vector<enumf>(),
-                 bool dual = false);
+                 const vector<enumf> &pruning = vector<enumf>(), bool dual = false);
 
   inline uint64_t get_nodes() const { return _nodes; }
-  
+
 private:
-  void callback_set_config(
-     enumf* mu, size_t mudim, bool mutranspose, 
-     enumf* rdiag,
-     enumf* pruning);
+  void callback_set_config(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag, enumf *pruning);
 
-  enumf callback_process_sol(enumf dist, enumf* sol);
+  enumf callback_process_sol(enumf dist, enumf *sol);
 
-  void callback_process_subsol(enumf dist, enumf* subsol, int offset);
+  void callback_process_subsol(enumf dist, enumf *subsol, int offset);
 
   MatGSO<Integer, FT> &_gso;
   Evaluator<FT> &_evaluator;

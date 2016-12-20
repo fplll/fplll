@@ -65,13 +65,11 @@ private:
   virtual void process_subsolution(int offset, enumf newdist);
 };
 
-
-
 template <typename FT> class Enumeration
 {
 public:
   Enumeration(MatGSO<Integer, FT> &gso, Evaluator<FT> &evaluator,
-              const vector<int>& max_indices = vector<int>())
+              const vector<int> &max_indices = vector<int>())
       : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr)
   {
   }
@@ -93,7 +91,8 @@ public:
         return;
       }
     }
-    // if external enumerator is not available, not possible or when it fails then fall through to fplll enumeration
+    // if external enumerator is not available, not possible or when it fails then fall through to
+    // fplll enumeration
     if (enumdyn.get() == nullptr)
       enumdyn.reset(new EnumerationDyn<FT>(_gso, _evaluator, _max_indices));
     enumdyn->enumerate(first, last, fmaxdist, fmaxdistexpo, target_coord, subtree, pruning, dual,
@@ -104,7 +103,7 @@ public:
   inline uint64_t get_nodes() const { return _nodes; }
 
 private:
-  MatGSO<Integer, FT> &_gso; 
+  MatGSO<Integer, FT> &_gso;
   Evaluator<FT> &_evaluator;
   vector<int> _max_indices;
   std::unique_ptr<EnumerationDyn<FT>> enumdyn;
