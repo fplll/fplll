@@ -73,20 +73,21 @@ FPLLL_BEGIN_NAMESPACE
    @param method for the descent (gradient, NM, both)
    @param start_row start enumeration here
    @param end_row stop enumeration here
+   @param reset reset pruning coefficients
+
+   @return pruning vector and probability
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
-           /*inputs*/ double &enumeration_radius, const double preproc_cost,
-           const double target, const MatGSO<GSO_ZT, GSO_FT> &m,
-           const PrunerMethod method = PRUNER_METHOD_HYBRID, 
-           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-           int start_row = 0, int end_row = 0, bool reset = true);
+           /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
+           const MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method = PRUNER_METHOD_HYBRID,
+           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int start_row = 0,
+           int end_row = 0, bool reset = true);
 
 /**
    @brief prune function, hiding the Pruner class
 
-   @param pruning store pruning structure
    @param probability store success probability here
    @param enumeration_radius target enumeration radius
    @param preproc_cost cost of preprocessing
@@ -95,24 +96,40 @@ void prune(/*output*/ vector<double> &pr, double &probability,
    @param method for the descent (gradient, NM, both)
    @param start_row start enumeration here
    @param end_row stop enumeration here
+   @param reset reset pruning coefficients
+
+   @return Pruning object
+*/
+
+template <class FT, class GSO_ZT, class GSO_FT>
+void prune(/*output*/ Pruning &pruning,
+           /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
+           MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method = PRUNER_METHOD_HYBRID,
+           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int start_row = 0,
+           int end_row = 0, bool reset = true);
+
+/**
+   @brief prune function, hiding the Pruner class
+
+   @param pruning store pruning structure
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrix
+   @param method for the descent (gradient, NM, both)
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
+   @param reset reset pruning coefficients
 
    @return Pruning object.
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
-void prune(/*output*/ Pruning &pruning,
-           /*inputs*/ double &enumeration_radius, const double preproc_cost,
-           const double target, MatGSO<GSO_ZT, GSO_FT> &m, 
-           const PrunerMethod method = PRUNER_METHOD_HYBRID, 
-           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-           int start_row = 0, int end_row = 0, bool reset = true);
-
-template <class FT, class GSO_ZT, class GSO_FT>
-Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost,
-              const double target, MatGSO<GSO_ZT, GSO_FT> &m,
-              const PrunerMethod method = PRUNER_METHOD_HYBRID, 
-              const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-              int start_row = 0, int end_row = 0);
+Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
+              MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method = PRUNER_METHOD_HYBRID,
+              const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int start_row = 0,
+              int end_row = 0);
 
 /**
    @brief prune function averaging over several bases
@@ -124,23 +141,37 @@ Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost,
    @param m GSO matrices
    @param start_row start enumeration here
    @param end_row stop enumeration here
-   @return Pruning object.
+   @param reset reset pruning coefficients
+
+   @return Pruning object
 */
 
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ Pruning &pruning,
-           /*inputs*/ double &enumeration_radius, const double preproc_cost,
-           const double target, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
-           const PrunerMethod method = PRUNER_METHOD_HYBRID, 
-           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-           int start_row = 0, int end_row = 0, bool reset = true);
+           /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
+           vector<MatGSO<GSO_ZT, GSO_FT>> &m, const PrunerMethod method = PRUNER_METHOD_HYBRID,
+           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int start_row = 0,
+           int end_row = 0, bool reset = true);
+
+/**
+   @brief prune function averaging over several bases
+
+   @param probability store success probability here
+   @param enumeration_radius target enumeration radius
+   @param preproc_cost cost of preprocessing
+   @param target_probability overall target success probability
+   @param m GSO matrices
+   @param start_row start enumeration here
+   @param end_row stop enumeration here
+
+   @return Pruning object
+*/
 
 template <class FT, class GSO_ZT, class GSO_FT>
-Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost,
-              const double target, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
-              const PrunerMethod method = PRUNER_METHOD_HYBRID, 
-              const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-              int start_row = 0, int end_row = 0);
+Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
+              vector<MatGSO<GSO_ZT, GSO_FT>> &m, const PrunerMethod method = PRUNER_METHOD_HYBRID,
+              const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int start_row = 0,
+              int end_row = 0);
 
 /**
    @brief svp_probability function, hiding the Pruner class
@@ -183,11 +214,11 @@ public:
   PrunerMethod method;
   PrunerMetric metric;
 
-
   Pruner(FT enumeration_radius = 0.0, FT preproc_cost = 0.0, FT target = 0.9,
-         PrunerMethod method = PRUNER_METHOD_HYBRID, PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, size_t n = 0, size_t d = 0)
-      : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost),
-        target(target), method(method), metric(metric), n(n), d(d)
+         PrunerMethod method = PRUNER_METHOD_HYBRID,
+         PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, size_t n = 0, size_t d = 0)
+      : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
+        method(method), metric(metric), n(n), d(d)
   {
     if (!tabulated_value_imported)
     {
@@ -266,7 +297,6 @@ public:
     return measure_metric(b).get_d();
   }
 
-
 private:
   using vec  = array<FT, PRUNER_MAX_N>;
   using evec = array<FT, PRUNER_MAX_D>;
@@ -300,7 +330,7 @@ private:
   // Compute the relative volume of a cylinder interesection of dim rd, and bounds b[0:rd]
   FT relative_volume(/*i*/ const int rd, const evec &b);
   // Compute the cost of a single enumeration
-  FT single_enum_cost(/*i*/ const evec &b, vec *detailed_cost=NULL);
+  FT single_enum_cost(/*i*/ const evec &b, vec *detailed_cost = NULL);
   // Compute the success probability for SVP/CVP of a single enumeration
   FT svp_probability(/*i*/ const evec &b);
   // Compute the expected nmber of solution of a single of a single enumeration

@@ -286,17 +286,17 @@ template <class FT> int test_auto_prune(size_t n)
   double overhead = 1.0e6 * n * n;
 
   cerr << endl << "Gradient " << endl;
-  pruning =
-      prune<FT, Z_NR<mpz_t>, FT>(radius_d, overhead, 0.3, M, PRUNER_METHOD_GRADIENT, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1, 2 * n);
+  pruning = prune<FT, Z_NR<mpz_t>, FT>(radius_d, overhead, 0.3, M, PRUNER_METHOD_GRADIENT,
+                                       PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1, 2 * n);
   status |= !(pruning.probability <= 1.0);
   cerr << "Probability " << pruning.probability << endl;
   status |= !(pruning.probability > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
-
   cerr << endl << "Reprune Gradient " << endl;
-  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius_d, overhead, 0.01, M, PRUNER_METHOD_GRADIENT, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1, 2 * n, false);
+  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius_d, overhead, 0.01, M, PRUNER_METHOD_GRADIENT,
+                             PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1, 2 * n, false);
   status |= !(pruning.probability <= 1.0);
   cerr << "Probability " << pruning.probability << endl;
   status |= !(pruning.probability > 0.0);
@@ -304,7 +304,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "NelderMead " << endl;
-  pruning = prune<FT, Z_NR<mpz_t>, FT>(radius_d, overhead, 0.3, M, PRUNER_METHOD_NM, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1, 2 * n);
+  pruning = prune<FT, Z_NR<mpz_t>, FT>(radius_d, overhead, 0.3, M, PRUNER_METHOD_NM,
+                                       PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1, 2 * n);
   status |= !(pruning.probability <= 1.0);
   cerr << "Probability " << pruning.probability << endl;
   status |= !(pruning.probability > 0.0);
@@ -312,8 +313,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune NelderMead " << endl;
-  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius_d, overhead, 0.01, M, PRUNER_METHOD_GRADIENT, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1,
-                             2 * n, false);
+  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius_d, overhead, 0.01, M, PRUNER_METHOD_GRADIENT,
+                             PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1, 2 * n, false);
   status |= !(pruning.probability <= 1.0);
   cerr << "Probability " << pruning.probability << endl;
   status |= !(pruning.probability > 0.0);
@@ -321,8 +322,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Hybrid " << endl;
-  pruning =
-      prune<FT, Z_NR<mpz_t>, FT>(radius_d, overhead, 0.3, M, PRUNER_METHOD_HYBRID, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1, 2 * n);
+  pruning = prune<FT, Z_NR<mpz_t>, FT>(radius_d, overhead, 0.3, M, PRUNER_METHOD_HYBRID,
+                                       PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1, 2 * n);
   status |= !(pruning.probability <= 1.0);
   cerr << "Probability " << pruning.probability << endl;
   status |= !(pruning.probability > 0.0);
@@ -330,8 +331,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune Hybrid " << endl;
-  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius_d, overhead, 0.01, M, PRUNER_METHOD_GRADIENT, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1,
-                             2 * n, false);
+  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius_d, overhead, 0.01, M, PRUNER_METHOD_GRADIENT,
+                             PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1, 2 * n, false);
   status |= !(pruning.probability <= 1.0);
   cerr << "Probability " << pruning.probability << endl;
   status |= !(pruning.probability > 0.0);
@@ -339,8 +340,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune Hybrid " << endl;
-  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius_d, overhead, 0.3, M, PRUNER_METHOD_GRADIENT, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1,
-                             2 * n, false);
+  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius_d, overhead, 0.3, M, PRUNER_METHOD_GRADIENT,
+                             PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 1, 2 * n, false);
   status |= !(pruning.probability <= 1.0);
   cerr << "Probability " << pruning.probability << endl;
   status |= !(pruning.probability > 0.0);
@@ -349,8 +350,8 @@ template <class FT> int test_auto_prune(size_t n)
 
   radius_d *= 2;
   cerr << endl << "Greedy " << endl;
-  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius_d, overhead, 20, M, PRUNER_METHOD_GREEDY, PRUNER_METRIC_EXPECTED_SOLUTIONS, 1,
-                             2 * n, false);
+  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius_d, overhead, 20, M, PRUNER_METHOD_GREEDY,
+                             PRUNER_METRIC_EXPECTED_SOLUTIONS, 1, 2 * n, false);
   status |= !(pruning.probability > 1.0);
   cerr << "Probability " << pruning.probability << endl;
   cerr << "Radius before/after " << 2 * radius.get_d() << "/" << radius_d << endl;
@@ -358,7 +359,6 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.probability < 40.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
-
 
   return status;
 }

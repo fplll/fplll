@@ -261,21 +261,27 @@ template <typename FT> void EnumerationDyn<FT>::do_enumerate()
 }
 
 template class Enumeration<FP_NR<double>>;
+template class EnumerationDyn<FP_NR<double>>;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class Enumeration<FP_NR<long double>>;
+template class EnumerationDyn<FP_NR<long double>>;
 #endif
 
 #ifdef FPLLL_WITH_QD
 template class Enumeration<FP_NR<dd_real>>;
+template class EnumerationDyn<FP_NR<dd_real>>;
 
 template class Enumeration<FP_NR<qd_real>>;
+template class EnumerationDyn<FP_NR<qd_real>>;
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template class Enumeration<FP_NR<dpe_t>>;
+template class EnumerationDyn<FP_NR<dpe_t>>;
 #endif
 
 template class Enumeration<FP_NR<mpfr_t>>;
+template class EnumerationDyn<FP_NR<mpfr_t>>;
 
 FPLLL_END_NAMESPACE

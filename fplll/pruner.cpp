@@ -224,7 +224,7 @@ template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt 
   int status = 0;
   if ((b[d - 1] < .999) & (d - j != 1))
   {
-    status = 1;
+    status   = 1;
     b[d - 1] = 1.;
   }
   for (size_t i = 0; i < d; ++i)
@@ -337,10 +337,10 @@ template <class FT> inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b, 
 
     tmp = normalized_radius_pow * rv[i] * tabulated_ball_vol[i + 1] *
           sqrt(pow_si(b[i / 2], 1 + i)) * ipv[i];
-    
+
     if (detailed_cost)
     {
-      (*detailed_cost)[i]= tmp;
+      (*detailed_cost)[i] = tmp;
     }
 
     total += tmp;
@@ -374,34 +374,34 @@ template <class FT> inline FT Pruner<FT>::expected_solutions(/*i*/ const evec &b
   FT normalized_radius;
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
 
-  FT vol  = relative_volume(d, b);
+  FT vol = relative_volume(d, b);
   vol *= tabulated_ball_vol[2 * d - 1];
-  vol *= pow_si(normalized_radius, 2*d);
+  vol *= pow_si(normalized_radius, 2 * d);
   vol *= ipv[2 * d - 1];
 
   return vol;
 }
 
-template <class FT> inline FT Pruner<FT>::measure_metric(/*i*/ const evec &b){
-  if (metric==PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
+template <class FT> inline FT Pruner<FT>::measure_metric(/*i*/ const evec &b)
+{
+  if (metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
   {
     return svp_probability(b);
   }
-  else if (metric==PRUNER_METRIC_EXPECTED_SOLUTIONS)
+  else if (metric == PRUNER_METRIC_EXPECTED_SOLUTIONS)
   {
     return expected_solutions(b);
   }
   else
   {
-     throw std::invalid_argument("Pruner was set to an unknown metric");
+    throw std::invalid_argument("Pruner was set to an unknown metric");
   }
 }
-
 
 template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const evec &b)
 {
 
-  if (metric==PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
+  if (metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
   {
     FT probability = svp_probability(b);
     if (probability >= target)
@@ -411,21 +411,21 @@ template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const evec &b
     return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
   }
 
-  else if (metric==PRUNER_METRIC_EXPECTED_SOLUTIONS)
+  else if (metric == PRUNER_METRIC_EXPECTED_SOLUTIONS)
   {
     FT expected = expected_solutions(b);
     if (expected >= target)
       return single_enum_cost(b);
 
     FT trials = target / expected;
-    if (trials <1.)
+    if (trials < 1.)
       trials = 1;
     return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
   }
 
   else
   {
-     throw std::invalid_argument("Pruner was set to an unknown metric");
+    throw std::invalid_argument("Pruner was set to an unknown metric");
   }
 }
 
@@ -514,16 +514,13 @@ template <class FT> void Pruner<FT>::init_coefficients(evec &b)
   enforce_bounds(b);
 }
 
-
-
-
 template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
 {
   if (method == PRUNER_METHOD_GREEDY)
-    {
-      greedy(b);
-      return;
-    }
+  {
+    greedy(b);
+    return;
+  }
 
   if ((method == PRUNER_METHOD_GRADIENT) || (method == PRUNER_METHOD_HYBRID))
   {
@@ -538,7 +535,6 @@ template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
     };
   };
 }
-
 
 template <class FT> void Pruner<FT>::greedy(evec &b)
 {
@@ -559,31 +555,32 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     val = 1.;
     max = 1.;
     min = 0.025;
-    if (i==d)
+    if (i == d)
     {
       goal = target;
     }
     else
     {
-      goal = preproc_cost/(2*d);
+      goal = preproc_cost / (2 * d);
     }
     int count = 0;
-    tmp = 0.;
-    while((count < 20) && (min < .99))
+    tmp       = 0.;
+    while ((count < 20) && (min < .99))
     {
-      if (val < .05){
+      if (val < .05)
+      {
         enumeration_radius /= 2.;
         greedy(b);
         return;
       }
       count++;
-      newb = b;
+      newb    = b;
       newb[i] = val;
       enforce_bounds(newb, i);
-      
-      tmp  = relative_volume(i, newb);
+
+      tmp = relative_volume(i, newb);
       tmp *= tabulated_ball_vol[2 * i - 1];
-      tmp *= pow_si(normalized_radius * sqrt(newb[i-1]), 2 * i);
+      tmp *= pow_si(normalized_radius * sqrt(newb[i - 1]), 2 * i);
       tmp *= ipv[2 * i - 1];
 
       if (tmp > goal)
@@ -596,7 +593,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
         // cerr << "   ++ " << i << " : " << val << " ~ " << tmp.get_d() << " G " << goal << endl;
         min = val;
       }
-      val = (min + max)/2.;
+      val = (min + max) / 2.;
       // cerr << min << " " << val << " " << max << endl;
     }
     cerr << i << " : " << val << " ~ " << tmp.get_d() << " G " << goal << endl;
@@ -604,7 +601,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     enforce_bounds(b, i);
   }
 
-  FT factor = b[d-1];
+  FT factor = b[d - 1];
   for (size_t i = 0; i < d; ++i)
   {
     b[i] /= factor;
@@ -614,15 +611,13 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   enumeration_radius *= factor;
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
 
-  tmp  = relative_volume(d, b);
+  tmp = relative_volume(d, b);
   tmp *= tabulated_ball_vol[2 * d - 1];
-  tmp *= pow_si(normalized_radius * sqrt(b[d-1]), 2 * d);
+  tmp *= pow_si(normalized_radius * sqrt(b[d - 1]), 2 * d);
   tmp *= ipv[2 * d - 1];
 
   cerr << " COMP 0 " << tmp << endl;
   cerr << " COMP 1 " << expected_solutions(b) << endl;
-
-
 }
 
 // Nelder-Mead method. Following the notation of
@@ -882,30 +877,26 @@ template <class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b)
 
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ vector<double> &pr, double &probability,
-           /*inputs*/ double &enumeration_radius, const double preproc_cost,
-           const double target, MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method,
-           const PrunerMetric metric, 
+           /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
+           MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method, const PrunerMetric metric,
            int start_row, int end_row, bool reset)
 {
-  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target,
-                               method, metric);
+  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target, method, metric);
   pruner.load_basis_shape(m, start_row, end_row);
   pruner.optimize_coefficients(pr, reset);
-  probability = pruner.measure_metric(pr);
+  probability        = pruner.measure_metric(pr);
   enumeration_radius = pruner.enumeration_radius.get_d();
 }
 
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ Pruning &pruning,
-           /*inputs*/ double &enumeration_radius, const double preproc_cost,
-           const double target, MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method,
-           const PrunerMetric metric, 
+           /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
+           MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method, const PrunerMetric metric,
            int start_row, int end_row, bool reset)
 {
   if (!end_row)
     end_row = m.d;
-  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target,
-                               method, metric);
+  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target, method, metric);
   pruner.load_basis_shape(m, start_row, end_row);
 
   long expo    = 0;
@@ -914,34 +905,31 @@ void prune(/*output*/ Pruning &pruning,
   gaussian_heuristic(gh_radius, expo, end_row - start_row, root_det, 1.0);
 
   pruner.optimize_coefficients(pruning.coefficients);
-  enumeration_radius = pruner.enumeration_radius.get_d();
+  enumeration_radius    = pruner.enumeration_radius.get_d();
   pruning.probability   = pruner.measure_metric(pruning.coefficients);
   pruning.radius_factor = enumeration_radius / (gh_radius.get_d() * pow(2, expo));
 }
 
 template <class FT, class GSO_ZT, class GSO_FT>
-Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost,
-              const double target, MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method,
-              const PrunerMetric metric, 
+Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
+              MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method, const PrunerMetric metric,
               int start_row, int end_row)
 {
   Pruning pruning;
-  prune<FT>(pruning, enumeration_radius, preproc_cost, target, m, method, metric,
-            start_row, end_row);
+  prune<FT>(pruning, enumeration_radius, preproc_cost, target, m, method, metric, start_row,
+            end_row);
   return pruning;
 }
 
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ Pruning &pruning,
-           /*inputs*/ double &enumeration_radius, const double preproc_cost,
-           const double target, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
-           const PrunerMethod method,
-           const PrunerMetric metric,  int start_row, int end_row, bool reset)
+           /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
+           vector<MatGSO<GSO_ZT, GSO_FT>> &m, const PrunerMethod method, const PrunerMetric metric,
+           int start_row, int end_row, bool reset)
 {
   if (!end_row)
     end_row = m[0].d;
-  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target,
-                               method, metric);
+  Pruner<FP_NR<double>> pruner(enumeration_radius, preproc_cost, target, method, metric);
   pruner.load_basis_shapes(m, start_row, end_row);
 
   FT gh_radius = 0.0;
@@ -960,36 +948,37 @@ void prune(/*output*/ Pruning &pruning,
   gaussian_heuristic(gh_radius, expo, end_row - start_row, root_det, 1.0);
 
   pruner.optimize_coefficients(pruning.coefficients);
-  enumeration_radius = pruner.enumeration_radius.get_d();
+  enumeration_radius    = pruner.enumeration_radius.get_d();
   pruning.probability   = pruner.measure_metric(pruning.coefficients);
   pruning.radius_factor = enumeration_radius / (gh_radius.get_d() * pow(2, expo));
 }
 
 template <class FT, class GSO_ZT, class GSO_FT>
-Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost,
-              const double target, vector<MatGSO<GSO_ZT, GSO_FT>> &m,
-              const PrunerMethod method,
-              const PrunerMetric metric,  int start_row, int end_row)
+Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
+              vector<MatGSO<GSO_ZT, GSO_FT>> &m, const PrunerMethod method,
+              const PrunerMetric metric, int start_row, int end_row)
 {
   Pruning pruning;
-  prune<FT>(pruning, enumeration_radius, preproc_cost, target, m, method, metric,
-            start_row, end_row);
+  prune<FT>(pruning, enumeration_radius, preproc_cost, target, m, method, metric, start_row,
+            end_row);
   return pruning;
 }
 
 /** instantiate functions **/
 
 template class Pruner<FP_NR<double>>;
-template void prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(vector<double> &, double &,
-                                                               double &, const double,
-                                                               const double,
+template void prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(vector<double> &, double &, double &,
+                                                               const double, const double,
                                                                MatGSO<Z_NR<mpz_t>, FP_NR<double>> &,
-                                                               PrunerMethod, PrunerMetric, int, int, bool);
-template Pruning prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(
-  double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<double>> &, PrunerMethod, PrunerMetric, int, int);
+                                                               PrunerMethod, PrunerMetric, int, int,
+                                                               bool);
 template Pruning
 prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(double &, const double, const double,
-                                                 vector<MatGSO<Z_NR<mpz_t>, FP_NR<double>>> &, 
+                                                 MatGSO<Z_NR<mpz_t>, FP_NR<double>> &, PrunerMethod,
+                                                 PrunerMetric, int, int);
+template Pruning
+prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(double &, const double, const double,
+                                                 vector<MatGSO<Z_NR<mpz_t>, FP_NR<double>>> &,
                                                  PrunerMethod, PrunerMetric, int, int);
 template double measure_metric<FP_NR<double>>(const Pruning &);
 template double measure_metric<FP_NR<double>>(const vector<double> &);
@@ -1000,8 +989,8 @@ template void prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(
     vector<double> &, double &, double &, const double, const double,
     MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, PrunerMethod, PrunerMetric, int, int, bool);
 template Pruning prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(
-    double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, 
-    PrunerMethod, PrunerMetric, int, int);
+    double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, PrunerMethod,
+    PrunerMetric, int, int);
 template Pruning prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(
     double &, const double, const double, vector<MatGSO<Z_NR<mpz_t>, FP_NR<long double>>> &,
     PrunerMethod, PrunerMetric, int, int);
@@ -1014,8 +1003,10 @@ template class Pruner<FP_NR<dd_real>>;
 template void prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(
     vector<double> &, double &, double &, const double, const double,
     MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, PrunerMethod, PrunerMetric, int, int, bool);
-template Pruning prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(
-    double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, PrunerMethod, PrunerMetric, int, int);
+template Pruning
+prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(double &, const double, const double,
+                                                   MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &,
+                                                   PrunerMethod, PrunerMetric, int, int);
 template Pruning
 prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(double &, const double, const double,
                                                    vector<MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>>> &,
@@ -1027,8 +1018,10 @@ template class Pruner<FP_NR<qd_real>>;
 template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(
     vector<double> &, double &, double &, const double, const double,
     MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, PrunerMethod, PrunerMetric, int, int, bool);
-template Pruning prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(
-    double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, PrunerMethod, PrunerMetric, int, int);
+template Pruning
+prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(double &, const double, const double,
+                                                   MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &,
+                                                   PrunerMethod, PrunerMetric, int, int);
 template Pruning
 prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(double &, const double, const double,
                                                    vector<MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>>> &,
@@ -1039,34 +1032,37 @@ template double measure_metric<FP_NR<qd_real>>(const vector<double> &);
 
 #ifdef FPLLL_WITH_DPE
 template class Pruner<FP_NR<dpe_t>>;
-template void prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(vector<double> &, double &,
-                                                             double &, const double,
-                                                             const double,
+template void prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(vector<double> &, double &, double &,
+                                                             const double, const double,
                                                              MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &,
-                                                             PrunerMethod, PrunerMetric, int, int, bool);
+                                                             PrunerMethod, PrunerMetric, int, int,
+                                                             bool);
 template Pruning prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(double &, const double,
                                                                 const double,
                                                                 MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &,
-                                                                PrunerMethod, PrunerMetric, int, int);
+                                                                PrunerMethod, PrunerMetric, int,
+                                                                int);
 template Pruning
 prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(double &, const double, const double,
-                                               vector<MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>>> &, 
+                                               vector<MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>>> &,
                                                PrunerMethod, PrunerMetric, int, int);
 template double measure_metric<FP_NR<dpe_t>>(const Pruning &);
 template double measure_metric<FP_NR<dpe_t>>(const vector<double> &);
 #endif
 
 template class Pruner<FP_NR<mpfr_t>>;
-template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(vector<double> &, double &,
-                                                               double &, const double,
-                                                               const double,
+template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(vector<double> &, double &, double &,
+                                                               const double, const double,
                                                                MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &,
-                                                               PrunerMethod, PrunerMetric, int, int, bool);
-template Pruning prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(
-    double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &, PrunerMethod, PrunerMetric, int, int);
+                                                               PrunerMethod, PrunerMetric, int, int,
+                                                               bool);
 template Pruning
 prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(double &, const double, const double,
-                                                 vector<MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>>> &, 
+                                                 MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &, PrunerMethod,
+                                                 PrunerMetric, int, int);
+template Pruning
+prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(double &, const double, const double,
+                                                 vector<MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>>> &,
                                                  PrunerMethod, PrunerMetric, int, int);
 
 template double measure_metric<FP_NR<mpfr_t>>(const Pruning &);

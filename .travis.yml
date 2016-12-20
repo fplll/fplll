@@ -90,7 +90,8 @@ matrix:
     compiler: clang
     env: COMPILER=clang++ CLANGFORMAT=clang-format
     before_install:
-      - brew install gmp mpfr qd autoconf automake libtool clang-format
+      - brew reinstall gmp
+      - brew install mpfr qd autoconf automake libtool clang-format
 
 install:
   - export CXX="$COMPILER"
@@ -109,6 +110,7 @@ script:
 notifications:
   on_success: change
   on_failure: always
+  slack: fplll:zONWVhgN7r5bRYiDaBoM8hdB
 
 deploy:
   provider: releases
