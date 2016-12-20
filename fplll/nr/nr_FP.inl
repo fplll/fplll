@@ -149,11 +149,11 @@ public:
   /**
    * Operator
    */
-  inline void operator=(const FP_NR<F> &a);
-  inline void operator=(const char *s);
-  inline void operator=(double a);
-  // inline void operator=(mpfr_t& a);
-  inline void operator=(mpfr_t &a) { set_mpfr(a, MPFR_RNDN); };
+  inline FP_NR<F>& operator=(const FP_NR<F> &a);
+  inline FP_NR<F>& operator=(const char *s);
+  inline FP_NR<F>& operator=(double a);
+  // inline FP_NR<F>& operator=(mpfr_t& a);
+  inline FP_NR<F>& operator=(mpfr_t &a) { set_mpfr(a, MPFR_RNDN); };
   inline bool operator<(const FP_NR<F> &a) const;
   inline bool operator<(double a) const;
   inline bool operator>(const FP_NR<F> &a) const;

@@ -98,18 +98,21 @@ inline int FP_NR<long double>::sgn() const {
 
 /* operators */
 template<>
-inline void FP_NR<long double>::operator=(const FP_NR<long double>& f) {
+inline FP_NR<long double>& FP_NR<long double>::operator=(const FP_NR<long double>& f) {
   data = f.data;
+  return *this;
 }
 
 template<>
-inline void FP_NR<long double>::operator=(double d) {
+inline FP_NR<long double>& FP_NR<long double>::operator=(double d) {
   data = d;
+  return *this;
 }
 
 template<>
-inline void FP_NR<long double>::operator=(const char *s) {
+inline FP_NR<long double>& FP_NR<long double>::operator=(const char *s) {
   data = strtold(s, NULL);
+  return *this;
 }
 
 
