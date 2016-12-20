@@ -58,12 +58,14 @@ bool ExternalEnumeration<FT>::enumerate(int first, int last, FT &fmaxdist, long 
   _maxdist = fmaxdistnorm.get_d(GMP_RNDU);
   _evaluator.set_normexp(_normexp);
 
-  _nodes = fplll_extenum(
-      _maxdist, std::bind(&ExternalEnumeration<FT>::callback_set_config, this, _1, _2, _3, _4, _5),
-      std::bind(&ExternalEnumeration<FT>::callback_process_sol, this, _1, _2),
-      std::bind(&ExternalEnumeration<FT>::callback_process_subsol, this, _1, _2, _3), _dual,
-      _evaluator.findsubsols);
-
+  // clang-format off
+  _nodes = fplll_extenum(_d, _maxdist,
+               std::bind(&ExternalEnumeration<FT>::callback_set_config, this, _1, _2, _3, _4, _5),
+               std::bind(&ExternalEnumeration<FT>::callback_process_sol, this, _1, _2),
+               std::bind(&ExternalEnumeration<FT>::callback_process_subsol, this, _1, _2, _3),
+               _dual, _evaluator.findsubsols
+               );
+  // clang-format on
   return _nodes != ~uint64_t(0);
 }
 
