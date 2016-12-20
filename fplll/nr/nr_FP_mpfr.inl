@@ -97,23 +97,27 @@ inline int FP_NR<mpfr_t>::sgn() const {
 
 /*operators */
 template<>
-inline void FP_NR<mpfr_t>::operator=(const FP_NR<mpfr_t>& a) {
+inline FP_NR<mpfr_t>& FP_NR<mpfr_t>::operator=(const FP_NR<mpfr_t>& a) {
   mpfr_set(data, a.data, GMP_RNDN);
+  return *this;
 }
 
 template<>
-inline void FP_NR<mpfr_t>::operator=(double a) {
+inline FP_NR<mpfr_t>& FP_NR<mpfr_t>::operator=(double a) {
   mpfr_set_d(data, a, GMP_RNDN);
+  return *this;
 }
 
 template<>
-inline void FP_NR<mpfr_t>::operator=(const char *s) {
+inline FP_NR<mpfr_t>& FP_NR<mpfr_t>::operator=(const char *s) {
   mpfr_set_str(data, s, 10, GMP_RNDN);
+  return *this;
 }
 
 template<>
-inline void FP_NR<mpfr_t>::operator=(mpfr_t& a) {
+inline FP_NR<mpfr_t>& FP_NR<mpfr_t>::operator=(mpfr_t& a) {
   mpfr_set(data, a, GMP_RNDN);
+  return *this;
 }
 
 template<>

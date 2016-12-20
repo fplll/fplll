@@ -98,17 +98,19 @@ inline int FP_NR<dpe_t>::sgn() const {
 
 /* operators */
 template<>
-inline void FP_NR<dpe_t>::operator=(const FP_NR<dpe_t>& f) {
+inline FP_NR<dpe_t>& FP_NR<dpe_t>::operator=(const FP_NR<dpe_t>& f) {
   dpe_set(data, f.data);
+  return *this;
 }
 
 template<>
-inline void FP_NR<dpe_t>::operator=(double d) {
+inline FP_NR<dpe_t>& FP_NR<dpe_t>::operator=(double d) {
   dpe_set_d(data, d);
+  return *this;
 }
 
 template<>
-inline void FP_NR<dpe_t>::operator=(const char* s) {
+inline FP_NR<dpe_t>& FP_NR<dpe_t>::operator=(const char* s) {
   DPE_DOUBLE d;
 #ifdef DPE_USE_DOUBLE
   d = strtod(s, NULL);
@@ -116,6 +118,7 @@ inline void FP_NR<dpe_t>::operator=(const char* s) {
   d = strtold(s, NULL);
 #endif
   dpe_set_d(data, d);
+  return *this;
 }
 
 template<>
