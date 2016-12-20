@@ -58,7 +58,7 @@ static void get_basis_min(Integer &basis_min, const IntMatrix &b, int first, int
 }
 
 static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
-                          Evaluator<Float> &evaluator, const vector<enumf> &pruning, int flags)
+                          ErrorBoundedEvaluator &evaluator, const vector<enumf> &pruning, int flags)
 {
   Enumeration<Float> enumobj(gso, evaluator);
   bool dual = (flags & SVP_DUAL);
@@ -69,14 +69,14 @@ static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
   else
   {
     Enumerator enumerator(d, gso.get_mu_matrix(), gso.get_r_matrix());
+    Float bestdist = -1;
     while (enumerator.enum_next(max_dist))
     {
       if (flags & SVP_VERBOSE)
       {
-        evaluator.new_sol_flag = false;
         cerr << enumerator.get_sub_tree();
         if (evaluator.eval_mode != EVALMODE_SV)
-          cerr << " (count=2*" << evaluator.sol_count << ")";
+          cerr << " (count=2*" << evaluator.size() << ")";
       }
 
       /* Enumerates short vectors only in enumerator.get_sub_tree()
@@ -86,13 +86,16 @@ static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
       if (flags & SVP_VERBOSE)
       {
         cerr << "\r" << (char)27 << "[K";
-        if (evaluator.eval_mode == EVALMODE_SV && evaluator.new_sol_flag)
-          cerr << "Solution norm^2=" << evaluator.last_partial_dist
-               << " value=" << evaluator.sol_coord << endl;
+        if (evaluator.eval_mode == EVALMODE_SV && !evaluator.empty() &&
+            evaluator.begin()->first != bestdist)
+        {
+          bestdist = evaluator.begin()->first;
+          cerr << "Solution norm^2=" << bestdist << " value=" << evaluator.begin()->second << endl;
+        }
       }
     }
   }
-  return !evaluator.sol_coord.empty();
+  return !evaluator.empty();
 }
 
 static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method,
@@ -157,16 +160,18 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   }
 
   // Initializes the evaluator of solutions
-  Evaluator<Float> *evaluator;
+  ErrorBoundedEvaluator *evaluator;
   if (method == SVPM_FAST)
   {
-    evaluator = new FastEvaluator<Float>(d, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode,
-                                         max_aux_sols, findsubsols);
+    evaluator =
+        new FastErrorBoundedEvaluator(d, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode,
+                                      max_aux_sols + 1, EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
   }
   else if (method == SVPM_PROVED)
   {
-    ExactEvaluator *p = new ExactEvaluator(d, b, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode,
-                                           max_aux_sols, findsubsols);
+    ExactErrorBoundedEvaluator *p = new ExactErrorBoundedEvaluator(
+        d, b, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode, max_aux_sols + 1,
+        EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
     p->int_max_dist = int_max_dist;
     evaluator       = p;
   }
@@ -193,14 +198,14 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
     result    = RED_SUCCESS;
     sol_count = evaluator->sol_count * 2;
   }
-  else if (!evaluator->sol_coord.empty())
+  else if (!evaluator->empty())
   {
     /*Float fMaxError;
     validMaxError = evaluator->get_max_error(fMaxError);
     max_error = fMaxError.get_d(GMP_RNDU);*/
     for (int i = 0; i < d; i++)
     {
-      itmp1.set_f(evaluator->sol_coord[i]);
+      itmp1.set_f(evaluator->begin()->second[i]);
       sol_coord[i].add(sol_coord[i], itmp1);
     }
     result = RED_SUCCESS;
@@ -210,15 +215,15 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   {
     subsol_coord->clear();
     subsol_dist->clear();
-    subsol_dist->resize(evaluator->sub_sol_coord.size());
-    for (size_t i = 0; i < evaluator->sub_sol_coord.size(); ++i)
+    subsol_dist->resize(evaluator->sub_solutions.size());
+    for (size_t i = 0; i < evaluator->sub_solutions.size(); ++i)
     {
-      (*subsol_dist)[i] = evaluator->sub_sol_dist[i];
+      (*subsol_dist)[i] = evaluator->sub_solutions[i].first.get_d();
 
       IntVect ss_c;
-      for (size_t j = 0; j < evaluator->sub_sol_coord[i].size(); ++j)
+      for (size_t j = 0; j < evaluator->sub_solutions[i].second.size(); ++j)
       {
-        itmp1.set_f(evaluator->sub_sol_coord[i][j]);
+        itmp1.set_f(evaluator->sub_solutions[i].second[j]);
         ss_c.emplace_back(itmp1);
       }
       subsol_coord->emplace_back(std::move(ss_c));
@@ -228,11 +233,13 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   {
     auxsol_coord->clear();
     auxsol_dist->clear();
-
-    for (auto it = evaluator->aux_sols.rbegin(), itend = evaluator->aux_sols.rend(); it != itend;
-         ++it)
+    // iterators over all solutions
+    auto it = evaluator->begin(), itend = evaluator->end();
+    // skip shortest solution
+    ++it;
+    for (; it != itend; ++it)
     {
-      auxsol_dist->push_back(it->first);
+      auxsol_dist->push_back(it->first.get_d());
 
       IntVect as_c;
       for (size_t j = 0; j < it->second.size(); ++j)
@@ -425,21 +432,21 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
   }
   FPLLL_TRACE("max_indices " << max_indices);
 
-  FastEvaluator<Float> evaluator(n, gso.get_mu_matrix(), gso.get_r_matrix(), EVALMODE_CV);
+  FastErrorBoundedEvaluator evaluator(n, gso.get_mu_matrix(), gso.get_r_matrix(), EVALMODE_CV);
 
   // Main loop of the enumeration
   Enumeration<Float> enumobj(gso, evaluator, max_indices);
   enumobj.enumerate(0, d, max_dist, 0, target_coord);
 
   int result = RED_ENUM_FAILURE;
-  if (!evaluator.sol_coord.empty())
+  if (!evaluator.empty())
   {
-    FPLLL_TRACE("evaluator.sol_coord=" << evaluator.sol_coord);
+    FPLLL_TRACE("evaluator.bestsol_coord=" << evaluator.begin()->second);
     if (flags & CVP_VERBOSE)
       FPLLL_INFO("max_dist=" << max_dist);
     for (int i = 0; i < d; i++)
     {
-      itmp1.set_f(evaluator.sol_coord[i]);
+      itmp1.set_f(evaluator.begin()->second[i]);
       sol_coord[i].add(sol_coord[i], itmp1);
     }
     result = RED_SUCCESS;

@@ -48,6 +48,7 @@ inline void EnumerationBase::enumerate_recursive(
            kk < reset_depth)  // in CVP, below the max GS vector, we reset the partial distance
   {
     reset(newdist, kk);
+    return;
   }
   else
   {
@@ -93,11 +94,6 @@ inline void EnumerationBase::enumerate_recursive(
         if (newdist2 > 0.0 || !is_svp)
           process_solution(newdist2);
       }
-      else if (enable_reset &&
-               kk < reset_depth)  // in CVP, below the max GS vector, we reset the partial distance
-      {
-        reset(newdist, kk);
-      }
       else
       {
         partdist[kk - 1] = newdist2;
@@ -128,11 +124,6 @@ inline void EnumerationBase::enumerate_recursive(
       {
         if (newdist2 > 0.0 || !is_svp)
           process_solution(newdist2);
-      }
-      else if (enable_reset &&
-               kk < reset_depth)  // in CVP, below the max GS vector, we reset the partial distance
-      {
-        reset(newdist, kk);
       }
       else
       {
