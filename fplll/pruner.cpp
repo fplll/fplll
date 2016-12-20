@@ -831,10 +831,13 @@ template void prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(vector<double> &,
                                                                int, int, int, bool);
 template Pruning prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(
     const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<double>> &, int, int, int);
+template void prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(Pruning&, const double, const double, const double,
+                                                               MatGSO<Z_NR<mpz_t>, FP_NR<double>> &, int, int, int, bool);
 template Pruning
 prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(const double, const double, const double,
                                                  vector<MatGSO<Z_NR<mpz_t>, FP_NR<double>>> &, int,
                                                  int, int);
+
 template double svp_probability<FP_NR<double>>(const Pruning &);
 template double svp_probability<FP_NR<double>>(const vector<double> &);
 
@@ -846,6 +849,8 @@ template void prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(
 template Pruning prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(
     const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, int, int,
     int);
+template void prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(Pruning&, const double, const double, const double,
+                                                                         MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, int, int, int, bool);
 template Pruning prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(
     const double, const double, const double, vector<MatGSO<Z_NR<mpz_t>, FP_NR<long double>>> &,
     int, int, int);
@@ -860,6 +865,8 @@ template void prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(
     MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, int, int, int, bool);
 template Pruning prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(
     const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, int, int, int);
+template void prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(Pruning&, const double, const double,
+                                                                 const double, MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, int, int, int, bool);
 template Pruning
 prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(const double, const double, const double,
                                                    vector<MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>>> &,
@@ -873,6 +880,8 @@ template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(
     MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, int, int, int, bool);
 template Pruning prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(
     const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, int, int, int);
+template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(Pruning&, const double, const double,
+                                                                 const double, MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, int, int, int, bool);
 template Pruning
 prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(const double, const double, const double,
                                                    vector<MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>>> &,
@@ -892,6 +901,10 @@ template Pruning prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(const double, co
                                                                 const double,
                                                                 MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &,
                                                                 int, int, int);
+template void prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(Pruning&, const double, const double,
+                                                             const double,
+                                                             MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &,
+                                                             int, int, int, bool);
 template Pruning
 prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(const double, const double, const double,
                                                vector<MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>>> &, int,
@@ -908,6 +921,8 @@ template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(vector<double> &,
                                                                int, int, int, bool);
 template Pruning prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(
     const double, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &, int, int, int);
+template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(Pruning &, const double, const double, const double,
+                                                               MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &, int, int, int, bool);
 template Pruning
 prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(const double, const double, const double,
                                                  vector<MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>>> &, int,
