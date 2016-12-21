@@ -275,7 +275,9 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits)
     FPLLL_ABORT("gen_ntrulike called on an ill-formed matrix");
     return;
   }
-  Z_NR<ZT> *h = new Z_NR<ZT>[ d ];
+  // clang-format off
+  Z_NR<ZT> *h = new Z_NR<ZT>[d];
+  // clang-format on
   Z_NR<ZT> q;
 
   q.randb(bits);
@@ -343,7 +345,9 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike_withq(int q)
     FPLLL_ABORT("gen_ntrulike called on an ill-formed matrix");
     return;
   }
-  Z_NR<ZT> *h = new Z_NR<ZT>[ d ];
+  // clang-format off
+  Z_NR<ZT> *h = new Z_NR<ZT>[d];
+  // clang-format on
   Z_NR<ZT> q2;
 
   q2   = q;
@@ -407,8 +411,10 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(int bits)
     FPLLL_ABORT("gen_ntrulike2 called on an ill-formed matrix");
     return;
   }
-  Z_NR<ZT> *h = new Z_NR<ZT>[ d ];
+  // clang-format off
+  Z_NR<ZT> *h = new Z_NR<ZT>[d];
   Z_NR<ZT> q;
+  // clang-format on
 
   q.randb(bits);
   h[0] = 0;
@@ -461,8 +467,10 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2_withq(int q)
     FPLLL_ABORT("gen_ntrulike2 called on an ill-formed matrix");
     return;
   }
-  Z_NR<ZT> *h = new Z_NR<ZT>[ d ];
+  // clang-format off
+  Z_NR<ZT> *h = new Z_NR<ZT>[d];
   Z_NR<ZT> q2;
+  // clang-format on
 
   q2   = q;
   h[0] = 0;
