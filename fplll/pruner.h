@@ -109,29 +109,6 @@ void prune(/*output*/ Pruning &pruning,
            int end_row = 0, bool reset = true);
 
 /**
-   @brief prune function, hiding the Pruner class
-
-   @param pruning store pruning structure
-   @param probability store success probability here
-   @param enumeration_radius target enumeration radius
-   @param preproc_cost cost of preprocessing
-   @param target_probability overall target success probability
-   @param m GSO matrix
-   @param method for the descent (gradient, NM, both)
-   @param start_row start enumeration here
-   @param end_row stop enumeration here
-   @param reset reset pruning coefficients
-
-   @return Pruning object.
-*/
-
-template <class FT, class GSO_ZT, class GSO_FT>
-Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
-              MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method = PRUNER_METHOD_HYBRID,
-              const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int start_row = 0,
-              int end_row = 0);
-
-/**
    @brief prune function averaging over several bases
 
    @param probability store success probability here
@@ -152,26 +129,6 @@ void prune(/*output*/ Pruning &pruning,
            vector<MatGSO<GSO_ZT, GSO_FT>> &m, const PrunerMethod method = PRUNER_METHOD_HYBRID,
            const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int start_row = 0,
            int end_row = 0, bool reset = true);
-
-/**
-   @brief prune function averaging over several bases
-
-   @param probability store success probability here
-   @param enumeration_radius target enumeration radius
-   @param preproc_cost cost of preprocessing
-   @param target_probability overall target success probability
-   @param m GSO matrices
-   @param start_row start enumeration here
-   @param end_row stop enumeration here
-
-   @return Pruning object
-*/
-
-template <class FT, class GSO_ZT, class GSO_FT>
-Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
-              vector<MatGSO<GSO_ZT, GSO_FT>> &m, const PrunerMethod method = PRUNER_METHOD_HYBRID,
-              const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int start_row = 0,
-              int end_row = 0);
 
 /**
    @brief svp_probability function, hiding the Pruner class

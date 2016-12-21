@@ -910,16 +910,6 @@ void prune(/*output*/ Pruning &pruning,
   pruning.radius_factor = enumeration_radius / (gh_radius.get_d() * pow(2, expo));
 }
 
-template <class FT, class GSO_ZT, class GSO_FT>
-Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
-              MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method, const PrunerMetric metric,
-              int start_row, int end_row)
-{
-  Pruning pruning;
-  prune<FT>(pruning, enumeration_radius, preproc_cost, target, m, method, metric, start_row,
-            end_row);
-  return pruning;
-}
 
 template <class FT, class GSO_ZT, class GSO_FT>
 void prune(/*output*/ Pruning &pruning,
@@ -953,119 +943,122 @@ void prune(/*output*/ Pruning &pruning,
   pruning.radius_factor = enumeration_radius / (gh_radius.get_d() * pow(2, expo));
 }
 
-template <class FT, class GSO_ZT, class GSO_FT>
-Pruning prune(/*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
-              vector<MatGSO<GSO_ZT, GSO_FT>> &m, const PrunerMethod method,
-              const PrunerMetric metric, int start_row, int end_row)
-{
-  Pruning pruning;
-  prune<FT>(pruning, enumeration_radius, preproc_cost, target, m, method, metric, start_row,
-            end_row);
-  return pruning;
-}
 
 /** instantiate functions **/
 
 template class Pruner<FP_NR<double>>;
-template void prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(vector<double> &, double &, double &,
-                                                               const double, const double,
-                                                               MatGSO<Z_NR<mpz_t>, FP_NR<double>> &,
-                                                               PrunerMethod, PrunerMetric, int, int,
-                                                               bool);
-template Pruning
-prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(double &, const double, const double,
-                                                 MatGSO<Z_NR<mpz_t>, FP_NR<double>> &, PrunerMethod,
-                                                 PrunerMetric, int, int);
-template Pruning
-prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>(double &, const double, const double,
-                                                 vector<MatGSO<Z_NR<mpz_t>, FP_NR<double>>> &,
-                                                 PrunerMethod, PrunerMetric, int, int);
+template void 
+prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>
+(vector<double> &, double &, double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<double>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
+template void
+prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>
+(Pruning &, double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<double>> &, 
+  PrunerMethod, PrunerMetric, int, int, bool);
+
+template void
+prune<FP_NR<double>, Z_NR<mpz_t>, FP_NR<double>>
+(Pruning &, double &, const double, const double, vector<MatGSO<Z_NR<mpz_t>, FP_NR<double>>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
 template double measure_metric<FP_NR<double>>(const Pruning &);
 template double measure_metric<FP_NR<double>>(const vector<double> &);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class Pruner<FP_NR<long double>>;
-template void prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(
-    vector<double> &, double &, double &, const double, const double,
-    MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, PrunerMethod, PrunerMetric, int, int, bool);
-template Pruning prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(
-    double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, PrunerMethod,
-    PrunerMetric, int, int);
-template Pruning prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>(
-    double &, const double, const double, vector<MatGSO<Z_NR<mpz_t>, FP_NR<long double>>> &,
-    PrunerMethod, PrunerMetric, int, int);
+
+template void 
+prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>
+(vector<double> &, double &, double &, const double, const double,
+  MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, PrunerMethod, PrunerMetric, int, int, bool);
+
+template void 
+prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>
+(Pruning &, double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &, 
+  PrunerMethod, PrunerMetric, int, int, bool);
+
+template void 
+prune<FP_NR<long double>, Z_NR<mpz_t>, FP_NR<long double>>
+(Pruning &, double &, const double, const double, vector<MatGSO<Z_NR<mpz_t>, FP_NR<long double>>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
 template double measure_metric<FP_NR<long double>>(const Pruning &);
 template double measure_metric<FP_NR<long double>>(const vector<double> &);
 #endif
 
 #ifdef FPLLL_WITH_QD
 template class Pruner<FP_NR<dd_real>>;
-template void prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(
-    vector<double> &, double &, double &, const double, const double,
-    MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, PrunerMethod, PrunerMetric, int, int, bool);
-template Pruning
-prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(double &, const double, const double,
-                                                   MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &,
-                                                   PrunerMethod, PrunerMetric, int, int);
-template Pruning
-prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>(double &, const double, const double,
-                                                   vector<MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>>> &,
-                                                   PrunerMethod, PrunerMetric, int, int);
+
+template void 
+prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>
+(vector<double> &, double &, double &, const double, const double,
+  MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &, PrunerMethod, PrunerMetric, int, int, bool);
+
+template void
+prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>
+(Pruning &, double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
+template void
+prune<FP_NR<dd_real>, Z_NR<mpz_t>, FP_NR<dd_real>>
+(Pruning &, double &, const double, const double, vector<MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
 template double measure_metric<FP_NR<dd_real>>(const Pruning &);
 template double measure_metric<FP_NR<dd_real>>(const vector<double> &);
 
 template class Pruner<FP_NR<qd_real>>;
-template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(
-    vector<double> &, double &, double &, const double, const double,
-    MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, PrunerMethod, PrunerMetric, int, int, bool);
-template Pruning
-prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(double &, const double, const double,
-                                                   MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &,
-                                                   PrunerMethod, PrunerMetric, int, int);
-template Pruning
-prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>(double &, const double, const double,
-                                                   vector<MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>>> &,
-                                                   PrunerMethod, PrunerMetric, int, int);
+template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>
+(vector<double> &, double &, double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &, 
+  PrunerMethod, PrunerMetric, int, int, bool);
+
+template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>
+(Pruning &, double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
+template void prune<FP_NR<qd_real>, Z_NR<mpz_t>, FP_NR<qd_real>>
+(Pruning &, double &, const double, const double, vector<MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
 template double measure_metric<FP_NR<qd_real>>(const Pruning &);
 template double measure_metric<FP_NR<qd_real>>(const vector<double> &);
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template class Pruner<FP_NR<dpe_t>>;
-template void prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(vector<double> &, double &, double &,
-                                                             const double, const double,
-                                                             MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &,
-                                                             PrunerMethod, PrunerMetric, int, int,
-                                                             bool);
-template Pruning prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(double &, const double,
-                                                                const double,
-                                                                MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &,
-                                                                PrunerMethod, PrunerMetric, int,
-                                                                int);
-template Pruning
-prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>(double &, const double, const double,
-                                               vector<MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>>> &,
-                                               PrunerMethod, PrunerMetric, int, int);
+
+template void prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>
+(vector<double> &, double &, double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
+template void prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>
+(Pruning &, double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
+template void prune<FP_NR<dpe_t>, Z_NR<mpz_t>, FP_NR<dpe_t>>
+(Pruning &, double &, const double, const double, vector<MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
 template double measure_metric<FP_NR<dpe_t>>(const Pruning &);
 template double measure_metric<FP_NR<dpe_t>>(const vector<double> &);
 #endif
 
 template class Pruner<FP_NR<mpfr_t>>;
-template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(vector<double> &, double &, double &,
-                                                               const double, const double,
-                                                               MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &,
-                                                               PrunerMethod, PrunerMetric, int, int,
-                                                               bool);
-template Pruning
-prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(double &, const double, const double,
-                                                 MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &, PrunerMethod,
-                                                 PrunerMetric, int, int);
-template Pruning
-prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>(double &, const double, const double,
-                                                 vector<MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>>> &,
-                                                 PrunerMethod, PrunerMetric, int, int);
 
-template double measure_metric<FP_NR<mpfr_t>>(const Pruning &);
-template double measure_metric<FP_NR<mpfr_t>>(const vector<double> &);
+template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>
+(vector<double> &, double &, double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
+template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>
+(Pruning &, double &, const double, const double, MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &, 
+  PrunerMethod, PrunerMetric, int, int, bool);
+
+template void prune<FP_NR<mpfr_t>, Z_NR<mpz_t>, FP_NR<mpfr_t>>
+(Pruning &, double &, const double, const double, vector<MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>>> &,
+  PrunerMethod, PrunerMetric, int, int, bool);
+
+template double measure_metric<FP_NR<mpfr_t>> (const Pruning &);
+template double measure_metric<FP_NR<mpfr_t>> (const vector<double> &);
 
 FPLLL_END_NAMESPACE
