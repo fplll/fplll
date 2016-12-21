@@ -126,7 +126,7 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
 {
   // Is it already in the basis ?
   int nz_vectors = 0, i_vector = -1;
-  for (int i = 0; i < block_size; i++)
+  for (int i = block_size-1; i >=0; i--)
   {
     if (!solution[i].is_zero())
     {
@@ -135,7 +135,9 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
         i_vector = i;
     }
   }
-
+  // nz_vectors is the number of nonzero coordinates
+  // i_vector is the largest index for a \pm 1 coordinate
+    
   FPLLL_DEBUG_CHECK(nz_vectors > 0);
 
   if (nz_vectors == 1)
