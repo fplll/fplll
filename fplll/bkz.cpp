@@ -103,7 +103,7 @@ bool BKZReduction<FT>::svp_preprocessing(int kappa, int block_size, const BKZPar
   FPLLL_DEBUG_CHECK(param.strategies.size() > block_size);
 
   int lll_start = (param.flags & BKZ_BOUNDED_LLL) ? kappa : 0;
-  if (!lll_obj.lll(lll_start, lll_start, kappa + block_size))
+  if (!lll_obj.lll(lll_start, lll_start, kappa + block_size, 0))
   {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
@@ -158,7 +158,7 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
     }
     m.row_op_end(d, d + 1);
     m.move_row(d, kappa);
-    if (!lll_obj.lll(kappa, kappa, kappa + block_size + 1))
+    if (!lll_obj.lll(kappa, kappa, kappa + block_size + 1, 0))
       throw lll_obj.status;
     FPLLL_DEBUG_CHECK(m.b[kappa + block_size].is_zero());
     m.move_row(kappa + block_size, d);
@@ -221,7 +221,7 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
   }
 
   m.row_op_end(kappa, kappa + d);
-  if (!lll_obj.lll(kappa, kappa, kappa + d))
+  if (!lll_obj.lll(kappa, kappa, kappa + d, 0))
   {
     return set_status(lll_obj.status);
   }
@@ -518,7 +518,7 @@ template <class FT> bool BKZReduction<FT>::bkz()
   // svp_reduction calls size_reduction, which needs to be preceeded by a
   // call to lll lower blocks to avoid seg faults
   if (sd)
-    lll_obj.lll(0, 0, num_rows);
+    lll_obj.lll(0, 0, num_rows, 0);
 
   int kappa_max = -1;
   bool clean    = true;

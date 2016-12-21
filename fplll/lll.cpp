@@ -69,7 +69,9 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end,
   }
 
   if (zeros < d &&
-      ((kappa_start > 0 && !babai(kappa_start, kappa_start)) || !m.update_gso_row(kappa_start)))
+      ((kappa_start > 0
+	&& !babai(kappa_start, kappa_start, size_reduction_start))
+       || !m.update_gso_row(kappa_start)))
   {
     final_kappa = kappa_start;
     return false;
@@ -91,7 +93,7 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end,
       kappa_max = kappa;
       if (enable_early_red && is_power_of_2(kappa) && kappa > last_early_red)
       {
-        if (!early_reduction(kappa))
+        if (!early_reduction(kappa, size_reduction_start))
         {
           final_kappa = kappa;
           return false;
