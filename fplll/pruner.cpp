@@ -828,8 +828,8 @@ void prune(/*output*/ Pruning &pruning,
   pruner.load_basis_shape(r);
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
-  enumeration_radius = pruner.enumeration_radius.get_d();
-  pruning.metric = metric;
+  enumeration_radius  = pruner.enumeration_radius.get_d();
+  pruning.metric      = metric;
   pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }
 
@@ -844,7 +844,7 @@ void prune(/*output*/ Pruning &pruning,
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
   enumeration_radius  = pruner.enumeration_radius.get_d();
-  pruning.metric = metric;
+  pruning.metric      = metric;
   pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }
 
