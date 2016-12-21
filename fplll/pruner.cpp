@@ -20,13 +20,13 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <class FT> FT measure_metric(const Pruning &pruning)
+template <class FT> FT svp_probability(const Pruning &pruning)
 {
   Pruner<FT> pru;
   return pru.measure_metric(pruning.coefficients);
 }
 
-template <class FT> FT measure_metric(const vector<double> &pr)
+template <class FT> FT svp_probability(const vector<double> &pr)
 {
   Pruner<FT> pru;
   return pru.measure_metric(pr);
@@ -829,7 +829,8 @@ void prune(/*output*/ Pruning &pruning,
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
   enumeration_radius = pruner.enumeration_radius.get_d();
-  pruning.probability = pruner.measure_metric(pruning.coefficients);
+  pruning.metric = metric;
+  pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }
 
 template <class FT>
@@ -843,7 +844,8 @@ void prune(/*output*/ Pruning &pruning,
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
   enumeration_radius  = pruner.enumeration_radius.get_d();
-  pruning.probability = pruner.measure_metric(pruning.coefficients);
+  pruning.metric = metric;
+  pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }
 
 /** instantiate functions **/
@@ -859,8 +861,8 @@ template void prune<FP_NR<double>>(Pruning &, double &, const double, const doub
 template void prune<FP_NR<double>>(Pruning &, double &, const double, const double,
                                    vector<vector<double>> &, const PrunerMethod, const PrunerMetric,
                                    bool);
-template FP_NR<double> measure_metric<FP_NR<double>>(const Pruning &pruning);
-template FP_NR<double> measure_metric<FP_NR<double>>(const vector<double> &pr);
+template FP_NR<double> svp_probability<FP_NR<double>>(const Pruning &pruning);
+template FP_NR<double> svp_probability<FP_NR<double>>(const vector<double> &pr);
 
 template class Pruner<FP_NR<mpfr_t>>;
 
@@ -869,8 +871,8 @@ template void prune<FP_NR<mpfr_t>>(Pruning &, double &, const double, const doub
 template void prune<FP_NR<mpfr_t>>(Pruning &, double &, const double, const double,
                                    vector<vector<double>> &, const PrunerMethod, const PrunerMetric,
                                    bool);
-template FP_NR<mpfr_t> measure_metric<FP_NR<mpfr_t>>(const Pruning &pruning);
-template FP_NR<mpfr_t> measure_metric<FP_NR<mpfr_t>>(const vector<double> &pr);
+template FP_NR<mpfr_t> svp_probability<FP_NR<mpfr_t>>(const Pruning &pruning);
+template FP_NR<mpfr_t> svp_probability<FP_NR<mpfr_t>>(const vector<double> &pr);
 
 // LD
 
@@ -883,8 +885,8 @@ template void prune<FP_NR<long double>>(Pruning &, double &, const double, const
 template void prune<FP_NR<long double>>(Pruning &, double &, const double, const double,
                                         vector<vector<double>> &, const PrunerMethod,
                                         const PrunerMetric, bool);
-template FP_NR<long double> measure_metric<FP_NR<long double>>(const Pruning &pruning);
-template FP_NR<long double> measure_metric<FP_NR<long double>>(const vector<double> &pr);
+template FP_NR<long double> svp_probability<FP_NR<long double>>(const Pruning &pruning);
+template FP_NR<long double> svp_probability<FP_NR<long double>>(const vector<double> &pr);
 
 #endif
 
@@ -896,8 +898,8 @@ template void prune<FP_NR<dd_real>>(Pruning &, double &, const double, const dou
 template void prune<FP_NR<dd_real>>(Pruning &, double &, const double, const double,
                                     vector<vector<double>> &, const PrunerMethod,
                                     const PrunerMetric, bool);
-template FP_NR<dd_real> measure_metric<FP_NR<dd_real>>(const Pruning &pruning);
-template FP_NR<dd_real> measure_metric<FP_NR<dd_real>>(const vector<double> &pr);
+template FP_NR<dd_real> svp_probability<FP_NR<dd_real>>(const Pruning &pruning);
+template FP_NR<dd_real> svp_probability<FP_NR<dd_real>>(const vector<double> &pr);
 
 template class Pruner<FP_NR<qd_real>>;
 template void prune<FP_NR<qd_real>>(Pruning &, double &, const double, const double,
@@ -905,8 +907,8 @@ template void prune<FP_NR<qd_real>>(Pruning &, double &, const double, const dou
 template void prune<FP_NR<qd_real>>(Pruning &, double &, const double, const double,
                                     vector<vector<double>> &, const PrunerMethod,
                                     const PrunerMetric, bool);
-template FP_NR<qd_real> measure_metric<FP_NR<qd_real>>(const Pruning &pruning);
-template FP_NR<qd_real> measure_metric<FP_NR<qd_real>>(const vector<double> &pr);
+template FP_NR<qd_real> svp_probability<FP_NR<qd_real>>(const Pruning &pruning);
+template FP_NR<qd_real> svp_probability<FP_NR<qd_real>>(const vector<double> &pr);
 
 #endif
 
@@ -918,8 +920,8 @@ template void prune<FP_NR<dpe_t>>(Pruning &, double &, const double, const doubl
 template void prune<FP_NR<dpe_t>>(Pruning &, double &, const double, const double,
                                   vector<vector<double>> &, const PrunerMethod, const PrunerMetric,
                                   bool);
-template FP_NR<dpe_t> measure_metric<FP_NR<dpe_t>>(const Pruning &pruning);
-template FP_NR<dpe_t> measure_metric<FP_NR<dpe_t>>(const vector<double> &pr);
+template FP_NR<dpe_t> svp_probability<FP_NR<dpe_t>>(const Pruning &pruning);
+template FP_NR<dpe_t> svp_probability<FP_NR<dpe_t>>(const vector<double> &pr);
 
 #endif
 

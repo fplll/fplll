@@ -144,7 +144,7 @@ public:
       pr[i + (Nbis / 2)] = .3;
     }
 
-    proba = fplll::measure_metric<FP_NR<double>>(pr).get_d();
+    proba = fplll::svp_probability<FP_NR<double>>(pr).get_d();
     error = std::abs(1 - proba / 0.07822479096);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -155,7 +155,7 @@ public:
       pr[i + (Nbis / 2)] = .5;
     }
 
-    proba = fplll::measure_metric<FP_NR<double>>(pr).get_d();
+    proba = fplll::svp_probability<FP_NR<double>>(pr).get_d();
     error = std::abs(1 - proba / 0.5);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -166,7 +166,7 @@ public:
       pr[i + (Nbis / 2)] = .7;
     }
 
-    proba = fplll::measure_metric<FP_NR<double>>(pr).get_d();
+    proba = fplll::svp_probability<FP_NR<double>>(pr).get_d();
     error = std::abs(1 - proba / 0.92177520904);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -296,63 +296,63 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Gradient " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_GRADIENT,
             PRUNER_METRIC_PROBABILITY_OF_SHORTEST, true);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune Gradient " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
             PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "NelderMead " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_NM,
             PRUNER_METRIC_PROBABILITY_OF_SHORTEST, true);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune NelderMead " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
             PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Hybrid " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_HYBRID,
             PRUNER_METRIC_PROBABILITY_OF_SHORTEST, true);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune Hybrid " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
             PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune Hybrid " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_GRADIENT,
             PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
@@ -360,11 +360,11 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Greedy " << endl;
   prune<FT>(pruning, radius_d, overhead, 20, r, PRUNER_METHOD_GREEDY,
             PRUNER_METRIC_EXPECTED_SOLUTIONS, true);
-  status |= !(pruning.probability > 1.0);
-  cerr << "Probability " << pruning.probability << endl;
+  status |= !(pruning.expectation > 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
   cerr << "Radius before/after " << 2 * radius.get_d() << "/" << radius_d << endl;
-  status |= !(pruning.probability > 0.0);
-  status |= !(pruning.probability < 40.0);
+  status |= !(pruning.expectation > 0.0);
+  status |= !(pruning.expectation < 100.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 

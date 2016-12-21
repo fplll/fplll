@@ -64,18 +64,14 @@ FPLLL_BEGIN_NAMESPACE
 /**
    @brief prune function, hiding the Pruner class
 
-   @param pr store pruning coefficients here
-   @param probability store success probability here
-   @param enumeration_radius target enumeration radius
+   @param pruning store output here
    @param preproc_cost cost of preprocessing
    @param target overall target success probability/expected solutionss
    @param m GSO matrix
    @param method for the descent (gradient, NM, both)
-   @param start_row start enumeration here
-   @param end_row stop enumeration here
+   @param metric either success probability or expected number of solutions
    @param reset reset pruning coefficients
 
-   @return pruning vector and probability
 */
 
 template <class FT>
@@ -87,16 +83,14 @@ void prune(/*output*/ Pruning &pruning,
 /**
    @brief prune function averaging over several bases
 
-   @param probability store success probability here
-   @param enumeration_radius target enumeration radius
+   @param pruning store output here
    @param preproc_cost cost of preprocessing
    @param target overall target success probability/expected solutionss
    @param m GSO matrices
-   @param start_row start enumeration here
-   @param end_row stop enumeration here
+   @param method for the descent (gradient, NM, both)
+   @param metric either success probability or expected number of solutions
    @param reset reset pruning coefficients
 
-   @return Pruning object
 */
 
 template <class FT>
@@ -112,8 +106,8 @@ void prune(/*output*/ Pruning &pruning,
    @return pruning probability
 */
 
-template <class FT> FT measure_metric(const Pruning &pruning);
-template <class FT> FT measure_metric(const vector<double> &pr);
+template <class FT> FT svp_probability(const Pruning &pruning);
+template <class FT> FT svp_probability(const vector<double> &pr);
 
 template <class FT> class Pruner
 {
