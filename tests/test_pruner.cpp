@@ -144,7 +144,7 @@ public:
       pr[i + (Nbis / 2)] = .3;
     }
 
-    proba = fplll::svp_probability<FP_NR<double>>(pr);
+    proba = fplll::svp_probability<FP_NR<double>>(pr).get_d();
     error = std::abs(1 - proba / 0.07822479096);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -155,7 +155,7 @@ public:
       pr[i + (Nbis / 2)] = .5;
     }
 
-    proba = fplll::svp_probability<FP_NR<double>>(pr);
+    proba = fplll::svp_probability<FP_NR<double>>(pr).get_d();
     error = std::abs(1 - proba / 0.5);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -166,7 +166,7 @@ public:
       pr[i + (Nbis / 2)] = .7;
     }
 
-    proba = fplll::svp_probability<FP_NR<double>>(pr);
+    proba = fplll::svp_probability<FP_NR<double>>(pr).get_d();
     error = std::abs(1 - proba / 0.92177520904);
     cerr << proba << " relative error " << error << endl;
     status |= error > .05;
@@ -206,7 +206,7 @@ template <class FT> int test_prepruned()
   double cost            = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
   status |= (abs(1 - cost / 1.7984e+07) > .01);
-  double proba = pru.svp_probability(pr);
+  double proba = pru.measure_metric(pr);
   cerr << "success proba " << proba << endl;
   status |= (abs(1 - proba / .506) > .01);
   return status;
@@ -231,7 +231,7 @@ template <class FT> int test_unpruned()
   cerr << "Cost per enum " << cost << endl;
 
   status       = (abs(1 - cost / 3.20e+10) > .02);
-  double proba = pru.svp_probability(pr);
+  double proba = pru.measure_metric(pr);
   cerr << "success proba " << proba << endl;
   status |= (abs(1 - proba) > .02);
 
@@ -258,7 +258,7 @@ template <class FT> int test_unpruned()
   cerr << "Cost per enum " << cost << endl;
 
   status = (abs(1 - 3. / 2. * cost / 3.20e+10) > .02);
-  proba  = pru.svp_probability(pr);
+  proba  = pru.measure_metric(pr);
   cerr << "success proba " << proba << endl;
   status |= (abs(1 - proba) > .02);
   return status;
@@ -270,70 +270,109 @@ template <class FT> int test_auto_prune(size_t n)
   IntMatrix A(2 * n, 2 * n);
   A.gen_ntrulike(30);
   IntMatrix U;
-  MatGSO<Z_NR<mpz_t>, FT> M(A, U, U, GSO_DEFAULT);
-  LLLReduction<Z_NR<mpz_t>, FT> lll_obj =
-      LLLReduction<Z_NR<mpz_t>, FT>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
+  MatGSO<Z_NR<mpz_t>, FP_NR<double>> M(A, U, U, GSO_DEFAULT);
+  LLLReduction<Z_NR<mpz_t>, FP_NR<double>> lll_obj =
+      LLLReduction<Z_NR<mpz_t>, FP_NR<double>>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
   lll_obj.lll();
-  FT radius;
+  FP_NR<double> radius;
   // NOTE: because NTRUlike lattice has a verri short vector 1111..
   // which is sometimes found by LLL, the pruner is only ran on dimension 1...2n-1.
-  M.get_r(radius, 1, 1);
+  M.get_r(radius, 2, 2);
+  vector<double> r;
+  for (size_t i = 2; i < 2 * n; ++i)
+  {
+    FP_NR<double> x;
+    M.get_r(x, i, i);
+    r.push_back(x.get_d());
+  }
+
   Pruning pruning;
   cerr << "Testing auto_prune " << endl;
-  cerr << "RAD " << radius.get_d() << endl;
+  cerr << "RAD " << radius << endl;
+  double radius_d = radius.get_d();
+
+  double overhead = 1.0e6 * n * n;
 
   cerr << endl << "Gradient " << endl;
-  pruning =
-      prune<FT, Z_NR<mpz_t>, FT>(radius.get_d(), 1.0e8, 0.12, M, PRUNER_METHOD_GRADIENT, 1, 2 * n);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_GRADIENT,
+            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, true);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune Gradient " << endl;
-  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius.get_d(), 1.0e8, 0.01, M, PRUNER_METHOD_GRADIENT, 1,
-                             2 * n, false);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
+            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "NelderMead " << endl;
-  pruning = prune<FT, Z_NR<mpz_t>, FT>(radius.get_d(), 1.0e8, 0.12, M, PRUNER_METHOD_NM, 1, 2 * n);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_NM,
+            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, true);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune NelderMead " << endl;
-  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius.get_d(), 1.0e8, 0.01, M, PRUNER_METHOD_GRADIENT, 1,
-                             2 * n, false);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
+            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Hybrid " << endl;
-  pruning =
-      prune<FT, Z_NR<mpz_t>, FT>(radius.get_d(), 1.0e8, 0.12, M, PRUNER_METHOD_HYBRID, 1, 2 * n);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_HYBRID,
+            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, true);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
   cerr << endl << "Reprune Hybrid " << endl;
-  prune<FT, Z_NR<mpz_t>, FT>(pruning, radius.get_d(), 1.0e8, 0.01, M, PRUNER_METHOD_GRADIENT, 1,
-                             2 * n, false);
-  status |= !(pruning.probability <= 1.0);
-  cerr << "Probability " << pruning.probability << endl;
-  status |= !(pruning.probability > 0.0);
+  prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
+            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
+
+  cerr << endl << "Reprune Hybrid " << endl;
+  prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_GRADIENT,
+            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
+  status |= !(pruning.expectation <= 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  status |= !(pruning.expectation > 0.0);
+  status |= !(pruning.radius_factor >= 1.0);
+  status |= !(pruning.coefficients[0] == 1.0);
+
+  radius_d *= 2;
+  cerr << endl << "Greedy " << endl;
+  prune<FT>(pruning, radius_d, overhead, 20, r, PRUNER_METHOD_GREEDY,
+            PRUNER_METRIC_EXPECTED_SOLUTIONS, true);
+  status |= !(pruning.expectation > 1.0);
+  cerr << "Probability " << pruning.expectation << endl;
+  cerr << "Radius before/after " << 2 * radius.get_d() << "/" << radius_d << endl;
+  status |= !(pruning.expectation > 0.0);
+  status |= !(pruning.expectation < 100.0);
+  status |= !(pruning.radius_factor >= 1.0);
+  status |= !(pruning.coefficients[0] == 1.0);
+
+  cerr << "NODES PER LEVEL" << endl;
+  for (size_t i = 0; i < 2 * n - 1; ++i)
+  {
+    cerr << pruning.detailed_cost[i] << endl;
+  }
 
   return status;
 }
@@ -368,7 +407,7 @@ int main(int argc, char *argv[])
 #endif
 
   status |= test_auto_prune<FP_NR<double>>(20);
-  status |= test_auto_prune<FP_NR<double>>(25);
+  status |= test_auto_prune<FP_NR<double>>(30);
 
   if (status == 0)
   {

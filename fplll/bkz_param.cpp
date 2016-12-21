@@ -28,7 +28,8 @@ Pruning Pruning::LinearPruning(int block_size, int level)
     pruning.coefficients[start_descent + k] = ((double)(block_size - k - 1)) / block_size;
   }
   pruning.radius_factor = 1.0;
-  pruning.probability   = fplll::svp_probability<FP_NR<double>>(pruning);
+  pruning.metric        = PRUNER_METRIC_PROBABILITY_OF_SHORTEST;
+  pruning.expectation   = fplll::svp_probability<FP_NR<double>>(pruning.coefficients).get_d();
 
   return pruning;
 }
@@ -134,8 +135,10 @@ vector<Strategy> load_strategies_json(const std::string &filename)
           double c = (*c_it);
           pruning.coefficients.emplace_back(c);
         }
-        pruning.probability = j_prun[2];
-        FPLLL_DEBUG_CHECK(pruning.probability > 0.0 && pruning.probability <= 1.0);
+        pruning.expectation = j_prun[2];
+        // TODO: don't hardcode success probability as metric
+        pruning.metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST;
+        FPLLL_DEBUG_CHECK(pruning.expectation > 0.0 && pruning.expectation <= 1.0);
 
         strategy.pruning_parameters.emplace_back(pruning);
       }

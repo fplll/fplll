@@ -278,6 +278,8 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
     const Pruning &pruning = get_pruning(kappa, block_size, par);
 
+    FPLLL_DEBUG_CHECK(pruning.metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
+
     evaluator.solutions.clear();
     Enumeration<FT> enum_obj(m, evaluator);
     enum_obj.enumerate(kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(),
@@ -297,7 +299,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     {
       rerandomize = true;
     }
-    remaining_probability *= (1 - pruning.probability);
+    remaining_probability *= (1 - pruning.expectation);
   }
 
   if (!lll_obj.size_reduction(0, first + 1))
