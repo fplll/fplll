@@ -494,6 +494,10 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
 
   FT min, max, val, tmp, goal;
+  if (verbosity)
+  {
+    cerr << "Starting Greedy pruning" << endl;
+  }
   for (size_t i = 1; i <= d; ++i)
   {
     val = 1.;
@@ -529,18 +533,18 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
 
       if (tmp > goal)
       {
-        // cerr << "   -- " << i << " : " << val << " ~ " << tmp.get_d() << " G " << goal << endl;
         max = val;
       }
       else
       {
-        // cerr << "   ++ " << i << " : " << val << " ~ " << tmp.get_d() << " G " << goal << endl;
         min = val;
       }
       val = (min + max) / 2.;
-      // cerr << min << " " << val << " " << max << endl;
     }
-    cerr << i << " : " << val << " ~ " << tmp.get_d() << " G " << goal << endl;
+    if (verbosity)
+    {
+      cerr << i << " : " << val << " ~ " << tmp.get_d() << " G " << goal << endl;
+    }
     b[i] = val;
     enforce_bounds(b, i);
   }
@@ -551,7 +555,6 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     b[i] /= factor;
   }
   enforce_bounds(b);
-  cerr << "GREEDY RE FACTOR " << sqrt(factor).get_d() << endl;
   enumeration_radius *= factor;
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
 
@@ -559,9 +562,6 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   tmp *= tabulated_ball_vol[2 * d - 1];
   tmp *= pow_si(normalized_radius * sqrt(b[d - 1]), 2 * d);
   tmp *= ipv[2 * d - 1];
-
-  cerr << " COMP 0 " << tmp << endl;
-  cerr << " COMP 1 " << expected_solutions(b) << endl;
 }
 
 // Nelder-Mead method. Following the notation of
@@ -824,17 +824,11 @@ void prune(/*output*/ Pruning &pruning,
            /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
            vector<double> &r, const PrunerMethod method, const PrunerMetric metric, bool reset)
 {
-  cerr << "A 0" << endl;
   Pruner<FT> pruner(enumeration_radius, preproc_cost, target, method, metric);
-  cerr << "A 1" << endl;
   pruner.load_basis_shape(r);
-  cerr << "A 2" << endl;
   pruner.optimize_coefficients(pruning.coefficients);
-  cerr << "A 3" << endl;
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
-  cerr << "A 4" << endl;
   enumeration_radius = pruner.enumeration_radius.get_d();
-  cerr << "A 5" << endl;
   pruning.probability = pruner.measure_metric(pruning.coefficients);
 }
 
