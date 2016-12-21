@@ -148,6 +148,24 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
     if (!lll_obj.size_reduction(kappa, kappa + i_vector + 1, 0))
       throw lll_obj.status;
   }
+  else if (i_vector != -1)
+  {
+    // No, but one coordinate is equal to \pm 1, making
+    // linear dependency easy to fix too.
+    int d = m.d;
+    m.create_row();
+    m.row_op_begin(d, d + 1);
+    for (int i = 0; i < block_size; i++)
+    {
+      m.row_addmul(d, kappa + i, solution[i]);
+    }
+    m.row_op_end(d, d + 1);
+    m.move_row(d, kappa);
+    m.move_row(kappa+i_vector+1, d);
+    m.remove_last_row();
+    if (!lll_obj.lll(0, kappa, kappa+1, 0))
+      throw lll_obj.status;
+  }
   else
   {
     // No, general case
