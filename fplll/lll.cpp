@@ -42,7 +42,7 @@ LLLReduction<ZT, FT>::LLLReduction(MatGSO<ZT, FT> &m, double delta, double eta, 
 }
 
 template <class ZT, class FT>
-bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end)
+bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end, int size_reduction_start)
 {
   if (kappa_end == -1)
     kappa_end = m.d;
@@ -99,7 +99,7 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end)
     }
 
     // Lazy size reduction
-    if (!babai(kappa, kappa))
+    if (!babai(kappa, kappa, size_reduction_start))
     {
       final_kappa = kappa;
       return false;
