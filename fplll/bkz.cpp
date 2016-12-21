@@ -520,8 +520,8 @@ template <class FT> bool BKZReduction<FT>::bkz()
   if (sd)
     lll_obj.lll(0, 0, num_rows);
 
-  int kappa_max;
-  bool clean = true;
+  int kappa_max = -1;
+  bool clean    = true;
   for (i = 0;; ++i)
   {
     if ((flags & BKZ_MAX_LOOPS) && i >= param.max_loops)

@@ -21,6 +21,7 @@
 
 #include <array>
 #include <fplll/enum/enumerate_base.h>
+#include <fplll/enum/enumerate_ext.h>
 #include <fplll/enum/evaluator.h>
 #include <fplll/gso.h>
 #include <memory>
@@ -68,8 +69,8 @@ template <typename FT> class Enumeration
 {
 public:
   Enumeration(MatGSO<Integer, FT> &gso, Evaluator<FT> &evaluator,
-              vector<int> max_indices = vector<int>())
-      : enumdyn(new EnumerationDyn<FT>(gso, evaluator, max_indices))
+              const vector<int> &max_indices = vector<int>())
+      : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr)
   {
   }
 
@@ -79,14 +80,35 @@ public:
                  const vector<enumf> &pruning = vector<enumf>(), bool dual = false,
                  bool subtree_reset = false)
   {
+    // check for external enumerator and use that
+    if (get_external_enumerator() != nullptr && subtree.empty() && target_coord.empty())
+    {
+      if (enumext.get() == nullptr)
+        enumext.reset(new ExternalEnumeration<FT>(_gso, _evaluator));
+      if (enumext->enumerate(first, last, fmaxdist, fmaxdistexpo, pruning, dual))
+      {
+        _nodes = enumext->get_nodes();
+        return;
+      }
+    }
+    // if external enumerator is not available, not possible or when it fails then fall through to
+    // fplll enumeration
+    if (enumdyn.get() == nullptr)
+      enumdyn.reset(new EnumerationDyn<FT>(_gso, _evaluator, _max_indices));
     enumdyn->enumerate(first, last, fmaxdist, fmaxdistexpo, target_coord, subtree, pruning, dual,
                        subtree_reset);
+    _nodes = enumdyn->get_nodes();
   }
 
-  inline uint64_t get_nodes() const { return enumdyn->get_nodes(); }
+  inline uint64_t get_nodes() const { return _nodes; }
 
 private:
+  MatGSO<Integer, FT> &_gso;
+  Evaluator<FT> &_evaluator;
+  vector<int> _max_indices;
   std::unique_ptr<EnumerationDyn<FT>> enumdyn;
+  std::unique_ptr<ExternalEnumeration<FT>> enumext;
+  uint64_t _nodes;
 };
 
 FPLLL_END_NAMESPACE

@@ -217,7 +217,9 @@ int main(int argc, char *argv[])
   }
   case 'T':
   {
+    // clang-format off
     FP_NR<mpfr_t> *w = new FP_NR<mpfr_t>[d];
+    // clang-format on
 
     for (int i = 0; i < d; i++)
       mpfr_inp_str(w[i].get_data(), stdin, 10, GMP_RNDN);
