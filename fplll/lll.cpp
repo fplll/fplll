@@ -159,18 +159,20 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end)
     return set_status(RED_SUCCESS);
 }
 
-template <class ZT, class FT> bool LLLReduction<ZT, FT>::babai(int kappa, int ncols)
+template <class ZT, class FT> bool LLLReduction<ZT, FT>::babai(int kappa,
+                                                               int size_reduction_end,
+                                                               int size_reduction_start)
 {
   // FPLLL_TRACE_IN("kappa=" << kappa);
   long max_expo = LONG_MAX;
 
   for (int iter = 0;; iter++)
   {
-    if (!m.update_gso_row(kappa, ncols - 1))
+    if (!m.update_gso_row(kappa, size_reduction_end - 1))
       return set_status(RED_GSO_FAILURE);
 
     bool loop_needed = false;
-    for (int j = ncols - 1; j >= 0 && !loop_needed; j--)
+    for (int j = size_reduction_end - 1; j >= size_reduction_start && !loop_needed; j--)
     {
       m.get_mu(ftmp1, kappa, j);
       ftmp1.abs(ftmp1);
@@ -181,7 +183,7 @@ template <class ZT, class FT> bool LLLReduction<ZT, FT>::babai(int kappa, int nc
 
     if (iter >= 2)
     {
-      long new_max_expo = m.get_max_mu_exp(kappa, ncols);
+      long new_max_expo = m.get_max_mu_exp(kappa, size_reduction_end);
       if (new_max_expo > max_expo - SIZE_RED_FAILURE_THRESH)
       {
         return set_status(RED_BABAI_FAILURE);
@@ -189,18 +191,18 @@ template <class ZT, class FT> bool LLLReduction<ZT, FT>::babai(int kappa, int nc
       max_expo = new_max_expo;
     }
 
-    for (int j = 0; j < ncols; j++)
+    for (int j = size_reduction_start; j < size_reduction_end; j++)
     {
       babai_mu[j] = m.get_mu_exp(kappa, j, babai_expo[j]);
     }
     m.row_op_begin(kappa, kappa + 1);
-    for (int j = ncols - 1; j >= 0; j--)
+    for (int j = size_reduction_end - 1; j >= size_reduction_start; j--)
     {
       mu_m_ant.rnd_we(babai_mu[j], babai_expo[j]);
       if (mu_m_ant.zero_p())
         continue;
-      // Approximative update of the mu_(kappa,k)'s
-      for (int k = 0; k < j; k++)
+      // Approximate update of the mu_(kappa,k)'s
+      for (int k = size_reduction_start; k < j; k++)
       {
         ftmp1.mul(mu_m_ant, m.get_mu_exp(j, k));
         /* When enable_row_expo=true, the following line relies on the fact that

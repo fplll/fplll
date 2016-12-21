@@ -50,7 +50,18 @@ public:
   int n_swaps;
 
 private:
-  bool babai(int kappa, int ncols);
+
+
+  /**
+     @brief Size reduction.
+
+     @param kappa index to size reduce
+     @param size_reduction_end only perform size reductions using vectors up to this index
+     @param size_reduction_start only perform size reductions using vectors starting at this index
+     @return
+  */
+
+  bool babai(int kappa, int size_reduction_end, int size_reduction_start = 0);
   inline bool early_reduction(int start);
   inline void print_params();
   inline bool set_status(int new_status);
