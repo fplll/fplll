@@ -110,7 +110,6 @@ script:
 notifications:
   on_success: change
   on_failure: always
-  slack: fplll:zONWVhgN7r5bRYiDaBoM8hdB
 
 deploy:
   provider: releases
