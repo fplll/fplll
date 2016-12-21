@@ -28,7 +28,7 @@ Pruning Pruning::LinearPruning(int block_size, int level)
     pruning.coefficients[start_descent + k] = ((double)(block_size - k - 1)) / block_size;
   }
   pruning.radius_factor = 1.0;
-  pruning.probability   = fplll::svp_probability<FP_NR<double>>(pruning);
+  pruning.probability   = fplll::measure_metric<FP_NR<double>>(pruning);
 
   return pruning;
 }
