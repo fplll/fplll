@@ -78,35 +78,11 @@ FPLLL_BEGIN_NAMESPACE
    @return pruning vector and probability
 */
 
-template <class FT, class GSO_ZT, class GSO_FT>
-void prune(/*output*/ vector<double> &pr, double &probability,
-           /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
-           const MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method = PRUNER_METHOD_HYBRID,
-           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int start_row = 0,
-           int end_row = 0, bool reset = true);
-
-/**
-   @brief prune function, hiding the Pruner class
-
-   @param probability store success probability here
-   @param enumeration_radius target enumeration radius
-   @param preproc_cost cost of preprocessing
-   @param target overall target success probability/expected solutionss
-   @param m GSO matrix
-   @param method for the descent (gradient, NM, both)
-   @param start_row start enumeration here
-   @param end_row stop enumeration here
-   @param reset reset pruning coefficients
-
-   @return Pruning object
-*/
-
-template <class FT, class GSO_ZT, class GSO_FT>
+template <class FT>
 void prune(/*output*/ Pruning &pruning,
            /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
-           MatGSO<GSO_ZT, GSO_FT> &m, const PrunerMethod method = PRUNER_METHOD_HYBRID,
-           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int start_row = 0,
-           int end_row = 0, bool reset = true);
+           vector<double> &r, const PrunerMethod method = PRUNER_METHOD_HYBRID,
+           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, bool reset = true);
 
 /**
    @brief prune function averaging over several bases
@@ -123,12 +99,11 @@ void prune(/*output*/ Pruning &pruning,
    @return Pruning object
 */
 
-template <class FT, class GSO_ZT, class GSO_FT>
+template <class FT>
 void prune(/*output*/ Pruning &pruning,
            /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
-           vector<MatGSO<GSO_ZT, GSO_FT>> &m, const PrunerMethod method = PRUNER_METHOD_HYBRID,
-           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int start_row = 0,
-           int end_row = 0, bool reset = true);
+           vector<vector<double>> &rs, const PrunerMethod method = PRUNER_METHOD_HYBRID,
+           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, bool reset = true);
 
 /**
    @brief svp_probability function, hiding the Pruner class
@@ -137,9 +112,8 @@ void prune(/*output*/ Pruning &pruning,
    @return pruning probability
 */
 
-template <class FT> double measure_metric(const Pruning &pruning);
-
-template <class FT> double measure_metric(const vector<double> &pr);
+template <class FT> FT measure_metric(const Pruning &pruning);
+template <class FT> FT measure_metric(const vector<double> &pr);
 
 template <class FT> class Pruner
 {
@@ -191,21 +165,7 @@ public:
     symmetry_factor = 2;      // For now, we are just considering SVP
   }
 
-  /** @brief load the shape of a basis from a MatGSO object. Can select a
-      projected sub-lattice [start_row,end_row-1]
-  */
-  template <class GSO_ZT, class GSO_FT>
-  void load_basis_shape(MatGSO<GSO_ZT, GSO_FT> &gso, int start_row = 0, int end_row = 0,
-                        bool reset_renorm = true);
-
-  /** @brief load the shapes of several bases from a MatGSO object. Can select a
-      projected sub-lattice [start_row,end_row-1]
-  */
-  template <class GSO_ZT, class GSO_FT>
-  void load_basis_shapes(vector<MatGSO<GSO_ZT, GSO_FT>> &gsos, int start_row = 0, int end_row = 0);
-
   /** @brief load the shape of a basis from vector<double>. Mostly for testing purposes */
-
   void load_basis_shape(const vector<double> &gso_sq_norms, bool reset_renorm = true);
 
   /** @brief load the shapes of may bases from vector<vector<double>> . Cost are average over all
@@ -222,11 +182,11 @@ public:
 
   /** @brief Compute the cost of a single enumeration */
 
-  double single_enum_cost(/*i*/ const vector<double> &pr)
+  double single_enum_cost(/*i*/ const vector<double> &pr, vector<double> *detailed_cost = nullptr)
   {
     evec b;
     load_coefficients(b, pr);
-    return single_enum_cost(b).get_d();
+    return single_enum_cost(b, detailed_cost).get_d();
   }
 
   /** @brief Compute the cost of r enumeration and (r-1) preprocessing, where r
@@ -287,7 +247,7 @@ private:
   // Compute the relative volume of a cylinder interesection of dim rd, and bounds b[0:rd]
   FT relative_volume(/*i*/ const int rd, const evec &b);
   // Compute the cost of a single enumeration
-  FT single_enum_cost(/*i*/ const evec &b, vec *detailed_cost = NULL);
+  FT single_enum_cost(/*i*/ const evec &b, vector<double> *detailed_cost = nullptr);
   // Compute the success probability for SVP/CVP of a single enumeration
   FT svp_probability(/*i*/ const evec &b);
   // Compute the expected nmber of solution of a single of a single enumeration

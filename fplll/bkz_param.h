@@ -34,9 +34,10 @@ class Pruning
 {
 
 public:
-  double radius_factor;              //< radius/Gaussian heuristic
-  std::vector<double> coefficients;  //< pruning coefficients
-  double probability;                //< success probability
+  double radius_factor;               //< radius/Gaussian heuristic
+  std::vector<double> coefficients;   //< pruning coefficients
+  double probability;                 //< success probability
+  std::vector<double> detailed_cost;  //< Expected nodes per level
 
   /**
      The default constructor means no pruning.
