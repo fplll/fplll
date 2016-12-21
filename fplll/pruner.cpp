@@ -498,12 +498,12 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   {
     cerr << "Starting Greedy pruning" << endl;
   }
-  for (size_t i = 1; i <= d; ++i)
+  for (size_t j = 1; j < 2 * d; j += 2)
   {
     val = 1.;
     max = 1.;
     min = 0.025;
-    if (i == d)
+    if (j == 2 * d - 1)
     {
       goal = target;
     }
@@ -513,7 +513,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     }
     int count = 0;
     tmp       = 0.;
-    while ((count < 20) && (min < .99))
+    while ((count < 12) && (min < .99))
     {
       if (val < .05)
       {
@@ -522,14 +522,14 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
         return;
       }
       count++;
-      newb    = b;
-      newb[i] = val;
-      enforce_bounds(newb, i);
+      newb        = b;
+      newb[j / 2] = val;
+      enforce_bounds(newb, j / 2);
 
-      tmp = relative_volume(i, newb);
-      tmp *= tabulated_ball_vol[2 * i - 1];
-      tmp *= pow_si(normalized_radius * sqrt(newb[i - 1]), 2 * i);
-      tmp *= ipv[2 * i - 1];
+      tmp = relative_volume((j + 1) / 2, newb);
+      tmp *= tabulated_ball_vol[j + 1];
+      tmp *= pow_si(normalized_radius * sqrt(newb[j / 2]), j + 1);
+      tmp *= ipv[j];
 
       if (tmp > goal)
       {
@@ -543,10 +543,10 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     }
     if (verbosity)
     {
-      cerr << i << " : " << val << " ~ " << tmp.get_d() << " G " << goal << endl;
+      cerr << j << " : " << val << " ~ " << tmp.get_d() << " G " << goal << endl;
     }
-    b[i] = val;
-    enforce_bounds(b, i);
+    b[j / 2] = val;
+    enforce_bounds(b, j / 2);
   }
 
   FT factor = b[d - 1];
@@ -828,7 +828,7 @@ void prune(/*output*/ Pruning &pruning,
   pruner.load_basis_shape(r);
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
-  enumeration_radius = pruner.enumeration_radius.get_d();
+  enumeration_radius  = pruner.enumeration_radius.get_d();
   pruning.probability = pruner.measure_metric(pruning.coefficients);
 }
 
