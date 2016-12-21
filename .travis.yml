@@ -104,8 +104,8 @@ before_script:
 script:
   - make
   - make check
-  - make distcheck
   - bash .travis-check-style.sh # check that clang-format was used
+  - make distcheck
 
 notifications:
   on_success: change
