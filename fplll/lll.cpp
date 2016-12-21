@@ -42,7 +42,8 @@ LLLReduction<ZT, FT>::LLLReduction(MatGSO<ZT, FT> &m, double delta, double eta, 
 }
 
 template <class ZT, class FT>
-bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end, int size_reduction_start)
+bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end,
+                               int size_reduction_start)
 {
   if (kappa_end == -1)
     kappa_end = m.d;
@@ -159,9 +160,8 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end, in
     return set_status(RED_SUCCESS);
 }
 
-template <class ZT, class FT> bool LLLReduction<ZT, FT>::babai(int kappa,
-                                                               int size_reduction_end,
-                                                               int size_reduction_start)
+template <class ZT, class FT>
+bool LLLReduction<ZT, FT>::babai(int kappa, int size_reduction_end, int size_reduction_start)
 {
   // FPLLL_TRACE_IN("kappa=" << kappa);
   long max_expo = LONG_MAX;

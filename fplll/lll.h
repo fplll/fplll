@@ -50,8 +50,8 @@ public:
      @return success or failure (due to numerical instability)
   */
 
-  bool lll(int kappa_min = 0, int kappa_start = 0, int kappa_end = -1, int size_reduction_start = 0);
-
+  bool lll(int kappa_min = 0, int kappa_start = 0, int kappa_end = -1,
+           int size_reduction_start = 0);
 
   /**
      @brief Size reduction.
@@ -73,8 +73,6 @@ public:
   int n_swaps;
 
 private:
-
-
   /**
      @brief Size reduction.
 
@@ -106,7 +104,8 @@ private:
 template <class ZT, class FT> bool is_lll_reduced(MatGSO<ZT, FT> &m, double delta, double eta);
 
 template <class ZT, class FT>
-inline bool LLLReduction<ZT, FT>::size_reduction(int kappa_min, int kappa_end, int size_reduction_start)
+inline bool LLLReduction<ZT, FT>::size_reduction(int kappa_min, int kappa_end,
+                                                 int size_reduction_start)
 {
   if (kappa_end == -1)
     kappa_end = m.d;
