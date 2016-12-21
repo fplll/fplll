@@ -100,11 +100,11 @@ install:
 before_script:
   - "./autogen.sh"
   - "./configure"
+  - bash .travis-check-style.sh # check that clang-format was used
 
 script:
   - make
   - make check
-  - bash .travis-check-style.sh # check that clang-format was used
   - make distcheck
 
 notifications:
