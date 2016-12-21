@@ -126,7 +126,7 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
 {
   // Is it already in the basis ?
   int nz_vectors = 0, i_vector = -1;
-  for (int i = block_size-1; i >=0; i--)
+  for (int i = block_size - 1; i >= 0; i--)
   {
     if (!solution[i].is_zero())
     {
@@ -137,7 +137,7 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
   }
   // nz_vectors is the number of nonzero coordinates
   // i_vector is the largest index for a \pm 1 coordinate
-    
+
   FPLLL_DEBUG_CHECK(nz_vectors > 0);
 
   if (nz_vectors == 1)
@@ -145,7 +145,7 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
     // Yes, it is another vector
     FPLLL_DEBUG_CHECK(i_vector != -1 && i_vector != 0);
     m.move_row(kappa + i_vector, kappa);
-    if (!lll_obj.size_reduction(kappa, kappa + i_vector + 1, 0))
+    if (!lll_obj.lll(0, kappa, kappa + 1, 0))
       throw lll_obj.status;
   }
   else if (i_vector != -1)
@@ -161,9 +161,9 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
     }
     m.row_op_end(d, d + 1);
     m.move_row(d, kappa);
-    m.move_row(kappa+i_vector+1, d);
+    m.move_row(kappa + i_vector + 1, d);
     m.remove_last_row();
-    if (!lll_obj.lll(0, kappa, kappa+1, 0))
+    if (!lll_obj.lll(0, kappa, kappa + 1, 0))
       throw lll_obj.status;
   }
   else
@@ -178,7 +178,7 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
     }
     m.row_op_end(d, d + 1);
     m.move_row(d, kappa);
-    if (!lll_obj.lll(kappa, kappa, kappa + block_size + 1, 0))
+    if (!lll_obj.lll(0, kappa, kappa + 1, 0))
       throw lll_obj.status;
     FPLLL_DEBUG_CHECK(m.b[kappa + block_size].is_zero());
     m.move_row(kappa + block_size, d);
