@@ -3,7 +3,7 @@
 make check-style
 if [[ $(git status -s) ]]; 
 then
-	git diff
+	git --no-pager diff
 	tput setaf 1;
 	echo "Code does not adhere to the project standards. Run \"make check-style\".";
 	exit 1;
