@@ -69,7 +69,6 @@ bool ExternalEnumeration<FT>::enumerate(int first, int last, FT &fmaxdist, long 
   return _nodes != ~uint64_t(0);
 }
 
-
 template <typename FT>
 void ExternalEnumeration<FT>::callback_set_config(enumf *mu, size_t mudim, bool mutranspose,
                                                   enumf *rdiag, enumf *pruning)
