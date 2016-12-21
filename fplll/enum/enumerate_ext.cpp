@@ -53,7 +53,7 @@ bool ExternalEnumeration<FT>::enumerate(int first, int last, FT &fmaxdist, long 
     fr       = _gso.get_r_exp(i + first, i + first, rexpo);
     _normexp = max(_normexp, rexpo + fr.exponent());
   }
-  fmaxdistnorm.mul_2si(fmaxdist, fmaxdistexpo - _normexp);
+  fmaxdistnorm.mul_2si(fmaxdist, dual ? _normexp - fmaxdistexpo : fmaxdistexpo - _normexp);
 
   _maxdist = fmaxdistnorm.get_d(GMP_RNDU);
   _evaluator.set_normexp(_normexp);
@@ -68,6 +68,7 @@ bool ExternalEnumeration<FT>::enumerate(int first, int last, FT &fmaxdist, long 
   // clang-format on
   return _nodes != ~uint64_t(0);
 }
+
 
 template <typename FT>
 void ExternalEnumeration<FT>::callback_set_config(enumf *mu, size_t mudim, bool mutranspose,
@@ -88,10 +89,11 @@ void ExternalEnumeration<FT>::callback_set_config(enumf *mu, size_t mudim, bool 
     size_t offs = 0;
     for (int i = 0; i < _d; ++i, offs += mudim)
     {
-      for (int j = i + 1; j < _d; ++j)
+      for (int j = 0; j < _d; ++j)
       {
         _gso.get_mu(fmu, j + _first, i + _first);
-        /* mu[i][j]= */ mu[offs + j] = fmu.get_d();
+        /* mu[i][j]= */
+        mu[offs + j] = fmu.get_d();
       }
     }
   }
@@ -100,10 +102,11 @@ void ExternalEnumeration<FT>::callback_set_config(enumf *mu, size_t mudim, bool 
     size_t offs = 0;
     for (int j = 0; j < _d; ++j, offs += mudim)
     {
-      for (int i = 0; i < j; ++i)
+      for (int i = 0; i < _d; ++i)
       {
         _gso.get_mu(fmu, j + _first, i + _first);
-        /* mu[j][i] = */ mu[offs + i] = fmu.get_d();
+        /* mu[j][i] = */
+        mu[offs + i] = fmu.get_d();
       }
     }
   }

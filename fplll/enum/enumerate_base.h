@@ -28,8 +28,8 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-inline void roundto(int &dest, const double &src) { dest = std::lrint(src); }
-inline void roundto(double &dest, const double &src) { dest = std::rint(src); }
+inline void roundto(int &dest, const double &src) { dest = (int)round(src); }
+inline void roundto(double &dest, const double &src) { dest = round(src); }
 
 /* config */
 #define FPLLL_WITH_RECURSIVE_ENUM 1

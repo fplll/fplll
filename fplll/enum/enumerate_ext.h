@@ -28,22 +28,47 @@ FPLLL_BEGIN_NAMESPACE
 
 /* function callback API for external enumeration library (extenum) */
 
-// prototype: function to give to extenum who can call it to fill mu and rdiag
-//    assumes mu is defined as: enumf mu[mudim][mudim];
-//    if transpose==true then will transpose mu
+/**
+ * Callback function given to external enumeration library.
+ *
+ * You have to pass a pointer to an array 'enumf mu[mudim][mudim]'.
+ * When flag mutranspose is true then mutransposed is actually stored there.
+ * You have to pass a pointer to an array 'enumf rdiag[mudim]'
+ * and an array 'enumf pruning[mudim]'.
+ * Note: for dual SVP you also get mu and rdiag as is,
+ * so the external library must make the respective changes to Mu and Rdiag itself.
+ */
 typedef void(extenum_cb_set_config)(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag,
                                     enumf *pruning);
 
-// prototype: function to give to extenum who can call it when it finds a solution
-//    returns new enumeration bound
+/**
+ * Callback function given to external enumeration library.
+ *
+ * Pass a new solution and its length to Evaluator, it returns the new enumeration bound.
+ */
 typedef enumf(extenum_cb_process_sol)(enumf dist, enumf *sol);
 
-// prototype: function to give to extenum who can call it when it finds a subsolution
-//    returns new enumeration bound
+/**
+ * Callback function given to external enumeration library.
+ *
+ * Pass a subsolution and its partial length to Evaluator.
+ */
 typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
 
-// prototype: extenum function
-//    return node count or ~uint64_t(0) when it fails
+/**
+ * External enumeration function prototype.
+ *
+ * @param dim         enumeration dimension
+ * @param cbfunc      given callback function to get mu, rdiag, pruning
+ * @param cbsol       given callback function to pass solution and its length to Evaluator,
+ *                    it returns new enumeration bound
+ * @param cbsubsol    given callback function to pass subsolution and its length to Evaluator
+ * @param dual        do dual SVP enumeration
+ * @param findsubsols find subsolutions and pass them to Evaluator
+ * @return number of nodes visited.
+ *         Or ~uint64_t(0) when instance is not supported
+ *         in which case fplll falls back to its own enumeration.
+ */
 typedef uint64_t(extenum_fc_enumerate)(int dim, enumf maxdist,
                                        std::function<extenum_cb_set_config> cbfunc,
                                        std::function<extenum_cb_process_sol> cbsol,
