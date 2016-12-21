@@ -277,9 +277,9 @@ template <class FT> int test_auto_prune(size_t n)
   FP_NR<double> radius;
   // NOTE: because NTRUlike lattice has a verri short vector 1111..
   // which is sometimes found by LLL, the pruner is only ran on dimension 1...2n-1.
-  M.get_r(radius, 1, 1);
+  M.get_r(radius, 2, 2);
   vector<double> r;
-  for (size_t i = 1; i < 2 * n - 1; ++i)
+  for (size_t i = 2; i < 2 * n; ++i)
   {
     FP_NR<double> x;
     M.get_r(x, i, i);
