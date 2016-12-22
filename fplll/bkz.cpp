@@ -90,7 +90,7 @@ const Pruning &BKZReduction<FT>::get_pruning(int kappa, int block_size, const BK
   FT max_dist    = m.get_r_exp(kappa, kappa, max_dist_expo);
   FT gh_max_dist = max_dist;
   FT root_det    = m.get_root_det(kappa, kappa + block_size);
-  gaussian_heuristic(gh_max_dist, max_dist_expo, block_size, root_det, 1.0);
+  adjust_radius_to_gh_bound(gh_max_dist, max_dist_expo, block_size, root_det, 1.0);
   return strat.get_pruning(max_dist.get_d() * pow(2, max_dist_expo),
                            gh_max_dist.get_d() * pow(2, max_dist_expo));
 }
@@ -293,7 +293,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     if ((par.flags & BKZ_GH_BND) && block_size > 30)
     {
       FT root_det = m.get_root_det(kappa, kappa + block_size);
-      gaussian_heuristic(max_dist, max_dist_expo, block_size, root_det, par.gh_factor);
+      adjust_radius_to_gh_bound(max_dist, max_dist_expo, block_size, root_det, par.gh_factor);
     }
 
     const Pruning &pruning = get_pruning(kappa, block_size, par);

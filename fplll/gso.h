@@ -45,8 +45,8 @@ enum MatGSOFlags
 */
 
 template <class FT>
-void gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det,
-                        double gh_factor);
+void adjust_radius_to_gh_bound(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det,
+                               double gh_factor);
 
 /**
  * MatGSO provides an interface for performing elementary operations on a basis
