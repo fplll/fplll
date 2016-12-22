@@ -42,8 +42,8 @@ bool ExternalEnumeration<FT>::enumerate(int first, int last, FT &fmaxdist, long 
   _d       = last - _first;
   _fx.resize(_d);
 
-  FPLLL_CHECK(_pruning.empty() || _pruning.size() >= _d,
-              "ExternalEnumeration: non-empty pruning vector too small");
+  FPLLL_CHECK(_pruning.empty() || int(_pruning.size()) == _d,
+              "ExternalEnumeration: non-empty pruning vector dimension does not match");
 
   FT fr, fmu, fmaxdistnorm;
   long rexpo;
