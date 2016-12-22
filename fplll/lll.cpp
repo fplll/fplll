@@ -68,10 +68,8 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end,
     m.move_row(kappa_min, kappa_end - 1 - zeros);
   }
 
-  if (zeros < d &&
-      ((kappa_start > 0
-	&& !babai(kappa_start, kappa_start, size_reduction_start))
-       || !m.update_gso_row(kappa_start)))
+  if (zeros < d && ((kappa_start > 0 && !babai(kappa_start, kappa_start, size_reduction_start)) ||
+                    !m.update_gso_row(kappa_start)))
   {
     final_kappa = kappa_start;
     return false;

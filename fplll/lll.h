@@ -118,8 +118,7 @@ inline bool LLLReduction<ZT, FT>::size_reduction(int kappa_min, int kappa_end,
 }
 
 template <class ZT, class FT>
-inline bool LLLReduction<ZT, FT>::early_reduction(int start,
-						  int size_reduction_start)
+inline bool LLLReduction<ZT, FT>::early_reduction(int start, int size_reduction_start)
 {
   m.lock_cols();
   if (verbose)
