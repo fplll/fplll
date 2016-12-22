@@ -597,8 +597,8 @@ void gaussian_heuristic(FT &max_dist, long max_dist_expo, int block_size, const 
                         double gh_factor)
 {
   double t = (double)block_size / 2.0 + 1;
-  t        = tgamma(t);
-  t        = pow(t, 2.0 / (double)block_size);
+  t        = lgamma(t);
+  t        = pow(M_E ,t * 2.0 / (double)block_size);
   t        = t / M_PI;
   FT f     = t;
   f        = f * root_det;
