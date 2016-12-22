@@ -283,16 +283,15 @@ inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b, vector<double> *deta
 
     tmp = normalized_radius_pow * rv[i] * tabulated_ball_vol[i + 1] *
           sqrt(pow_si(b[i / 2], 1 + i)) * ipv[i];
-
+    tmp /= symmetry_factor;
     if (detailed_cost)
     {
-      (*detailed_cost)[i] = tmp.get_d();
+      (*detailed_cost)[2 * d - (i + 1)] = tmp.get_d();
     }
 
     total += tmp;
     normalized_radius_pow *= normalized_radius;
   }
-  total /= symmetry_factor;
   return total;
 }
 
@@ -318,12 +317,14 @@ template <class FT> inline FT Pruner<FT>::expected_solutions(/*i*/ const evec &b
   FT normalized_radius;
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
 
-  FT vol = relative_volume(d, b);
-  vol *= tabulated_ball_vol[2 * d - 1];
-  vol *= pow_si(normalized_radius, 2 * d);
-  vol *= ipv[2 * d - 1];
+  int j = d*2 -1;
+  FT tmp = relative_volume((j + 1) / 2, b);
+  tmp *= tabulated_ball_vol[j + 1];
+  tmp *= pow_si(normalized_radius * sqrt(b[j / 2]), j + 1);
+  tmp *= ipv[j];
+  tmp /= symmetry_factor;
 
-  return vol;
+  return tmp;
 }
 
 template <class FT> inline FT Pruner<FT>::measure_metric(/*i*/ const evec &b)
@@ -482,6 +483,9 @@ template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
 
 template <class FT> void Pruner<FT>::greedy(evec &b)
 {
+  if (metric != PRUNER_METRIC_EXPECTED_SOLUTIONS){
+    throw std::invalid_argument("Pruner method greedy makes no sense with Metric != PRUNER_METRIC_EXPECTED_SOLUTIONS");
+  }
   for (size_t i = 0; i < d; ++i)
   {
     b[i] = 1.;
@@ -530,6 +534,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
       tmp *= tabulated_ball_vol[j + 1];
       tmp *= pow_si(normalized_radius * sqrt(newb[j / 2]), j + 1);
       tmp *= ipv[j];
+      tmp /= symmetry_factor;
 
       if (tmp > goal)
       {

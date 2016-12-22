@@ -99,6 +99,9 @@ void prune(/*output*/ Pruning &pruning,
            vector<vector<double>> &rs, const PrunerMethod method = PRUNER_METHOD_HYBRID,
            const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, bool reset = true);
 
+
+
+
 /**
    @brief svp_probability function, hiding the Pruner class
 
@@ -145,6 +148,7 @@ public:
       : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
         method(method), metric(metric), n(n), d(d)
   {
+
     if (!tabulated_value_imported)
     {
       set_tabulated_consts();
