@@ -515,7 +515,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     }
     int count = 0;
     tmp       = 0.;
-    while ((count < 12) && (min < .99))
+    while ((count < 8) && (min < .99))
     {
       if (val < .20)
       {

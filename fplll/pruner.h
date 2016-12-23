@@ -156,8 +156,8 @@ public:
     step_factor = std::pow(2, .5);   // Guesswork. Will become obsolete with Nelder-Mead
     shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor
                          // 1/.995. Sounds fair.
-    min_cf_decrease = .9999;  // We really want the gradient descent to reach the minima
-    symmetry_factor = 2;      // For now, we are just considering SVP
+    min_cf_decrease = .995;  // We really want the gradient descent to reach the minima
+    symmetry_factor = 2;     // For now, we are just considering SVP
   }
 
   /** @brief load the shape of a basis from vector<double>. Mostly for testing purposes */
