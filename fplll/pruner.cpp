@@ -110,9 +110,12 @@ void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const bo
   evec b;
   for (int i = 0; i < PRUNER_MAX_D; ++i)
   {
-    b[i] = 0.;
+    b[i] = .5;
   }
-  init_coefficients(b);
+  if (reset && (method != PRUNER_METHOD_GREEDY))
+  {
+    init_coefficients(b);
+  }
   if (!reset)
   {
     load_coefficients(b, pr);
@@ -137,14 +140,14 @@ void Pruner<FT>::load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr
   }
 }
 
-template <class FT> int Pruner<FT>::check_basis_loaded()
+template <class FT> bool Pruner<FT>::check_basis_loaded()
 {
   if (d)
   {
-    return 0;
+    return true;
   }
   throw std::runtime_error("Inside Pruner : No basis loaded");
-  return 1;
+  return false;
 }
 
 template <class FT>
@@ -159,9 +162,9 @@ void Pruner<FT>::save_coefficients(/*o*/ vector<double> &pr, /*i*/ const evec &b
   pr[0] = 1.;
 }
 
-template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j)
+template <class FT> inline bool Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j)
 {
-  int status = 0;
+  bool status = false;
   if ((b[d - 1] < .999) & (d - j != 1))
   {
     status   = 1;
@@ -169,25 +172,19 @@ template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt 
   }
   for (size_t i = 0; i < d; ++i)
   {
-    if (b[i] > 1.0001)
-    {
-      status = 1;
-    }
+    status |= (b[i] > 1.0001);
     if (b[i] > 1)
     {
       b[i] = 1.0;
     }
-    if (b[i] <= .05)
-      b[i] = .05;
+    if (b[i] <= .2)
+      b[i] = .2;
   }
   for (size_t i = j; i < d - 1; ++i)
   {
     if (b[i + 1] < b[i])
     {
-      if (b[i + 1] + .001 < b[i])
-      {
-        status = 1;
-      }
+      status |= (b[i + 1] + .001 < b[i]);
       b[i + 1] = b[i];
     }
   }
@@ -195,10 +192,7 @@ template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt 
   {
     if (b[i + 1] < b[i])
     {
-      if (b[i + 1] + .001 < b[i])
-      {
-        status = 1;
-      }
+      status |= (b[i + 1] + .001 < b[i]);
       b[i] = b[i + 1];
     }
   }
@@ -283,16 +277,15 @@ inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b, vector<double> *deta
 
     tmp = normalized_radius_pow * rv[i] * tabulated_ball_vol[i + 1] *
           sqrt(pow_si(b[i / 2], 1 + i)) * ipv[i];
-
+    tmp /= symmetry_factor;
     if (detailed_cost)
     {
-      (*detailed_cost)[i] = tmp.get_d();
+      (*detailed_cost)[2 * d - (i + 1)] = tmp.get_d();
     }
 
     total += tmp;
     normalized_radius_pow *= normalized_radius;
   }
-  total /= symmetry_factor;
   return total;
 }
 
@@ -318,12 +311,14 @@ template <class FT> inline FT Pruner<FT>::expected_solutions(/*i*/ const evec &b
   FT normalized_radius;
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
 
-  FT vol = relative_volume(d, b);
-  vol *= tabulated_ball_vol[2 * d - 1];
-  vol *= pow_si(normalized_radius, 2 * d);
-  vol *= ipv[2 * d - 1];
+  int j  = d * 2 - 1;
+  FT tmp = relative_volume((j + 1) / 2, b);
+  tmp *= tabulated_ball_vol[j + 1];
+  tmp *= pow_si(normalized_radius * sqrt(b[j / 2]), j + 1);
+  tmp *= ipv[j];
+  tmp /= symmetry_factor;
 
-  return vol;
+  return tmp;
 }
 
 template <class FT> inline FT Pruner<FT>::measure_metric(/*i*/ const evec &b)
@@ -451,10 +446,12 @@ template <class FT> int Pruner<FT>::improve(/*io*/ evec &b)
 
 template <class FT> void Pruner<FT>::init_coefficients(evec &b)
 {
-  for (size_t i = 0; i < d; ++i)
-  {
-    b[i] = .1 + ((1. * i) / d);
-  }
+  FT save_radius           = enumeration_radius;
+  PrunerMetric metric_save = metric;
+  metric                   = PRUNER_METRIC_EXPECTED_SOLUTIONS;
+  greedy(b);
+  metric             = metric_save;
+  enumeration_radius = save_radius;
   enforce_bounds(b);
 }
 
@@ -482,6 +479,11 @@ template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
 
 template <class FT> void Pruner<FT>::greedy(evec &b)
 {
+  if (metric != PRUNER_METRIC_EXPECTED_SOLUTIONS)
+  {
+    throw std::invalid_argument(
+        "Pruner method greedy makes no sense with Metric != PRUNER_METRIC_EXPECTED_SOLUTIONS");
+  }
   for (size_t i = 0; i < d; ++i)
   {
     b[i] = 1.;
@@ -502,7 +504,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   {
     val = 1.;
     max = 1.;
-    min = 0.025;
+    min = 0.15;
     if (j == 2 * d - 1)
     {
       goal = target;
@@ -513,11 +515,11 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     }
     int count = 0;
     tmp       = 0.;
-    while ((count < 12) && (min < .99))
+    while ((count < 8) && (min < .99))
     {
-      if (val < .05)
+      if (val < .20)
       {
-        enumeration_radius /= 2.;
+        enumeration_radius /= 1.3;
         greedy(b);
         return;
       }
@@ -530,6 +532,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
       tmp *= tabulated_ball_vol[j + 1];
       tmp *= pow_si(normalized_radius * sqrt(newb[j / 2]), j + 1);
       tmp *= ipv[j];
+      tmp /= symmetry_factor;
 
       if (tmp > goal)
       {
@@ -826,7 +829,7 @@ void prune(/*output*/ Pruning &pruning,
 {
   Pruner<FT> pruner(enumeration_radius, preproc_cost, target, method, metric);
   pruner.load_basis_shape(r);
-  pruner.optimize_coefficients(pruning.coefficients);
+  pruner.optimize_coefficients(pruning.coefficients, reset);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
   enumeration_radius  = pruner.enumeration_radius.get_d();
   pruning.metric      = metric;
@@ -841,7 +844,7 @@ void prune(/*output*/ Pruning &pruning,
 {
   Pruner<FT> pruner(enumeration_radius, preproc_cost, target, method, metric);
   pruner.load_basis_shapes(rs);
-  pruner.optimize_coefficients(pruning.coefficients);
+  pruner.optimize_coefficients(pruning.coefficients, reset);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
   enumeration_radius  = pruner.enumeration_radius.get_d();
   pruning.metric      = metric;

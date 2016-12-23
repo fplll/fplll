@@ -145,18 +145,19 @@ public:
       : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
         method(method), metric(metric), n(n), d(d)
   {
+
     if (!tabulated_value_imported)
     {
       set_tabulated_consts();
       tabulated_value_imported = true;
     }
-    epsilon     = std::pow(2., -13);  // Guesswork. Will become obsolete with Nelder-Mead
-    min_step    = std::pow(2., -12);  // Guesswork. Will become obsolete with Nelder-Mead
-    step_factor = std::pow(2, .5);    // Guesswork. Will become obsolete with Nelder-Mead
+    epsilon     = std::pow(2., -7);  // Guesswork. Will become obsolete with Nelder-Mead
+    min_step    = std::pow(2., -6);  // Guesswork. Will become obsolete with Nelder-Mead
+    step_factor = std::pow(2, .5);   // Guesswork. Will become obsolete with Nelder-Mead
     shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor
                          // 1/.995. Sounds fair.
-    min_cf_decrease = .9999;  // We really want the gradient descent to reach the minima
-    symmetry_factor = 2;      // For now, we are just considering SVP
+    min_cf_decrease = .995;  // We really want the gradient descent to reach the minima
+    symmetry_factor = 2;     // For now, we are just considering SVP
   }
 
   /** @brief load the shape of a basis from vector<double>. Mostly for testing purposes */
@@ -224,7 +225,7 @@ private:
   FT renormalization_factor;  // internal renormalization factor to avoid over/underflows
 
   // Sanity check: has a basis indeed been loaded ?
-  int check_basis_loaded();
+  bool check_basis_loaded();
   // Initialize pruning coefficients (linear pruning)
   void init_coefficients(evec &b);
   // Load pruning coefficient from double*
@@ -233,7 +234,7 @@ private:
   void save_coefficients(/*o*/ vector<double> &pr, /*i*/ const evec &b);
   // Enforce reasonable contraints on pruning bounds (inside [0,1], increasing).
   // Keeps index j unchanged when possible
-  int enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j = 0);
+  bool enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j = 0);
   // Evaluate a polynomial
   FT eval_poly(const int ld, /*i*/ const poly &p, const FT x);
   // Integrate a polynomial
