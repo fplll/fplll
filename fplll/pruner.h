@@ -228,7 +228,7 @@ private:
   FT renormalization_factor;  // internal renormalization factor to avoid over/underflows
 
   // Sanity check: has a basis indeed been loaded ?
-  int check_basis_loaded();
+  bool check_basis_loaded();
   // Initialize pruning coefficients (linear pruning)
   void init_coefficients(evec &b);
   // Load pruning coefficient from double*
@@ -237,7 +237,7 @@ private:
   void save_coefficients(/*o*/ vector<double> &pr, /*i*/ const evec &b);
   // Enforce reasonable contraints on pruning bounds (inside [0,1], increasing).
   // Keeps index j unchanged when possible
-  int enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j = 0);
+  bool enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j = 0);
   // Evaluate a polynomial
   FT eval_poly(const int ld, /*i*/ const poly &p, const FT x);
   // Integrate a polynomial

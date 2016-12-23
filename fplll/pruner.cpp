@@ -137,14 +137,14 @@ void Pruner<FT>::load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr
   }
 }
 
-template <class FT> int Pruner<FT>::check_basis_loaded()
+template <class FT> bool Pruner<FT>::check_basis_loaded()
 {
   if (d)
   {
-    return 0;
+    return true;
   }
   throw std::runtime_error("Inside Pruner : No basis loaded");
-  return 1;
+  return false;
 }
 
 template <class FT>
@@ -159,9 +159,9 @@ void Pruner<FT>::save_coefficients(/*o*/ vector<double> &pr, /*i*/ const evec &b
   pr[0] = 1.;
 }
 
-template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j)
+template <class FT> inline bool Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j)
 {
-  int status = 0;
+  bool status = false;
   if ((b[d - 1] < .999) & (d - j != 1))
   {
     status   = 1;
@@ -169,25 +169,19 @@ template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt 
   }
   for (size_t i = 0; i < d; ++i)
   {
-    if (b[i] > 1.0001)
-    {
-      status = 1;
-    }
+    status |= (b[i] > 1.0001);
     if (b[i] > 1)
     {
       b[i] = 1.0;
     }
-    if (b[i] <= .05)
-      b[i] = .05;
+    if (b[i] <= .2)
+      b[i] = .2;
   }
   for (size_t i = j; i < d - 1; ++i)
   {
     if (b[i + 1] < b[i])
     {
-      if (b[i + 1] + .001 < b[i])
-      {
-        status = 1;
-      }
+      status |= (b[i + 1] + .001 < b[i]);
       b[i + 1] = b[i];
     }
   }
@@ -195,10 +189,7 @@ template <class FT> inline int Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt 
   {
     if (b[i + 1] < b[i])
     {
-      if (b[i + 1] + .001 < b[i])
-      {
-        status = 1;
-      }
+      status |= (b[i + 1] + .001 < b[i]);
       b[i] = b[i + 1];
     }
   }
@@ -454,7 +445,7 @@ template <class FT> void Pruner<FT>::init_coefficients(evec &b)
 {
   for (size_t i = 0; i < d; ++i)
   {
-    b[i] = .1 + ((1. * i) / d);
+    b[i] = .2 + ((1. * i) / d);
   }
   enforce_bounds(b);
 }
@@ -506,7 +497,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   {
     val = 1.;
     max = 1.;
-    min = 0.025;
+    min = 0.15;
     if (j == 2 * d - 1)
     {
       goal = target;
@@ -519,9 +510,9 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     tmp       = 0.;
     while ((count < 12) && (min < .99))
     {
-      if (val < .05)
+      if (val < .20)
       {
-        enumeration_radius /= 2.;
+        enumeration_radius /= 1.1;
         greedy(b);
         return;
       }
