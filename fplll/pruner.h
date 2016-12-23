@@ -99,9 +99,6 @@ void prune(/*output*/ Pruning &pruning,
            vector<vector<double>> &rs, const PrunerMethod method = PRUNER_METHOD_HYBRID,
            const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, bool reset = true);
 
-
-
-
 /**
    @brief svp_probability function, hiding the Pruner class
 
@@ -156,7 +153,7 @@ public:
     }
     epsilon     = std::pow(2., -7);  // Guesswork. Will become obsolete with Nelder-Mead
     min_step    = std::pow(2., -6);  // Guesswork. Will become obsolete with Nelder-Mead
-    step_factor = std::pow(2, .5);    // Guesswork. Will become obsolete with Nelder-Mead
+    step_factor = std::pow(2, .5);   // Guesswork. Will become obsolete with Nelder-Mead
     shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor
                          // 1/.995. Sounds fair.
     min_cf_decrease = .9999;  // We really want the gradient descent to reach the minima

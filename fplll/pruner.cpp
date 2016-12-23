@@ -112,7 +112,7 @@ void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const bo
   {
     b[i] = .5;
   }
-  if (reset && (method!=PRUNER_METHOD_GREEDY))
+  if (reset && (method != PRUNER_METHOD_GREEDY))
   {
     init_coefficients(b);
   }
@@ -311,7 +311,7 @@ template <class FT> inline FT Pruner<FT>::expected_solutions(/*i*/ const evec &b
   FT normalized_radius;
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
 
-  int j = d*2 -1;
+  int j  = d * 2 - 1;
   FT tmp = relative_volume((j + 1) / 2, b);
   tmp *= tabulated_ball_vol[j + 1];
   tmp *= pow_si(normalized_radius * sqrt(b[j / 2]), j + 1);
@@ -446,11 +446,11 @@ template <class FT> int Pruner<FT>::improve(/*io*/ evec &b)
 
 template <class FT> void Pruner<FT>::init_coefficients(evec &b)
 {
-  FT save_radius = enumeration_radius;
+  FT save_radius           = enumeration_radius;
   PrunerMetric metric_save = metric;
-  metric = PRUNER_METRIC_EXPECTED_SOLUTIONS;
+  metric                   = PRUNER_METRIC_EXPECTED_SOLUTIONS;
   greedy(b);
-  metric = metric_save;
+  metric             = metric_save;
   enumeration_radius = save_radius;
   enforce_bounds(b);
 }
@@ -479,8 +479,10 @@ template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
 
 template <class FT> void Pruner<FT>::greedy(evec &b)
 {
-  if (metric != PRUNER_METRIC_EXPECTED_SOLUTIONS){
-    throw std::invalid_argument("Pruner method greedy makes no sense with Metric != PRUNER_METRIC_EXPECTED_SOLUTIONS");
+  if (metric != PRUNER_METRIC_EXPECTED_SOLUTIONS)
+  {
+    throw std::invalid_argument(
+        "Pruner method greedy makes no sense with Metric != PRUNER_METRIC_EXPECTED_SOLUTIONS");
   }
   for (size_t i = 0; i < d; ++i)
   {

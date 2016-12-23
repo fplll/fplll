@@ -200,7 +200,7 @@ template <class FT> int test_prepruned()
                        0.58271,  0.58271,  0.541994, 0.541994, 0.502342, 0.502342, 0.463617,
                        0.463617, 0.425747, 0.425747, 0.388723, 0.388723, 0.35262,  0.35262,
                        0.317642, 0.317642, 0.284261, 0.284261, 0.254584, 0.254584, 0.254584,
-                       0.254584, 0.254584, 0.254584, 0.2, 0.2, 0.2, 0.2};
+                       0.254584, 0.254584, 0.254584, 0.2,      0.2,      0.2,      0.2};
 
   pru.enumeration_radius = .85;
   double cost            = pru.single_enum_cost(pr);
@@ -262,7 +262,7 @@ template <class FT> int test_unpruned()
   cerr << "Cost per enum " << cost << endl;
 
   status |= (abs(1 - 3. / 2. * cost / 3.20e+10) > .02);
-  proba  = pru.measure_metric(pr);
+  proba = pru.measure_metric(pr);
   cerr << "success proba " << proba << endl;
   status |= (abs(1 - proba) > .02);
   return status;
@@ -315,7 +315,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
   cerr << endl << "Reprune Gradient " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
@@ -333,7 +334,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
   cerr << endl << "NelderMead " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_NM,
@@ -351,7 +353,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
   cerr << endl << "Reprune NelderMead " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
@@ -369,7 +372,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
   cerr << endl << "Hybrid " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_HYBRID,
@@ -387,7 +391,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
   cerr << endl << "Reprune Hybrid " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
@@ -405,7 +410,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
   cerr << endl << "Reprune Hybrid " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_GRADIENT,
@@ -423,7 +429,8 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
 
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
   cerr << endl << "Greedy " << endl;
   prune<FT>(pruning, radius_d, overhead, 20, r, PRUNER_METHOD_GREEDY,
@@ -434,7 +441,7 @@ template <class FT> int test_auto_prune(size_t n)
   status |= !(pruning.expectation < 100.0);
   status |= !(pruning.radius_factor >= 1.0);
   status |= !(pruning.coefficients[0] == 1.0);
-  //cerr << pruning << endl;
+  // cerr << pruning << endl;
   cerr << pruning.radius_factor << endl;
   cerr << pruning.coefficients[0] << endl;
   cost = 0.;
@@ -446,7 +453,8 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Total Cost " << cost << endl;
   cerr << "status " << status << endl;
 
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
   return status;
 }
@@ -457,56 +465,72 @@ int main(int argc, char *argv[])
 #ifdef FPLLL_WITH_QD
   cerr << endl << "DD" << endl;
   status |= test_unpruned<FP_NR<dd_real>>();
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
 #endif
 
   cerr << endl << "d" << endl;
   status |= test_unpruned<FP_NR<double>>();
-  if (status) exit(1);
+  if (status)
+    exit(1);
   cerr << endl << "ld" << endl;
   status |= test_unpruned<FP_NR<long double>>();
-  if (status) exit(1);
+  if (status)
+    exit(1);
   cerr << endl << "MPRF" << endl;
   status |= test_unpruned<FP_NR<mpfr_t>>();
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
   status |= test_prepruned<FP_NR<double>>();
-  if (status) exit(1);
+  if (status)
+    exit(1);
   status |= test_prepruned<FP_NR<long double>>();
-  if (status) exit(1);
+  if (status)
+    exit(1);
   status |= test_prepruned<FP_NR<mpfr_t>>();
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
   Pruner<FP_NR<long double>>::TestPruner tp;
   status |= tp.test_enforce();
-  if (status) exit(1);
+  if (status)
+    exit(1);
   status |= tp.test_eval_poly();
-  if (status) exit(1);
+  if (status)
+    exit(1);
   status |= tp.test_integrate_poly();
-  if (status) exit(1);
+  if (status)
+    exit(1);
   status |= tp.test_relative_volume();
-  if (status) exit(1);
+  if (status)
+    exit(1);
 
 #ifdef FPLLL_WITH_QD
   Pruner<FP_NR<dd_real>>::TestPruner tp2;
   status |= tp2.test_enforce();
-  if (status) exit(1);
+  if (status)
+    exit(1);
   status |= tp2.test_eval_poly();
-  if (status) exit(1);
+  if (status)
+    exit(1);
   status |= tp2.test_integrate_poly();
-  if (status) exit(1);
+  if (status)
+    exit(1);
   status |= tp2.test_relative_volume();
-  if (status) exit(1);
+  if (status)
+    exit(1);
 #endif
 
 #ifdef FPLLL_WITH_QD
-  //status |= test_auto_prune<FP_NR<dd_real>>(20);
+// status |= test_auto_prune<FP_NR<dd_real>>(20);
 #endif
 
   status |= test_auto_prune<FP_NR<double>>(20);
-  if (status) exit(1);
-  //status |= test_auto_prune<FP_NR<double>>(30);
+  if (status)
+    exit(1);
+  // status |= test_auto_prune<FP_NR<double>>(30);
 
   if (status == 0)
   {
