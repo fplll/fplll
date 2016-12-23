@@ -110,9 +110,12 @@ void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const bo
   evec b;
   for (int i = 0; i < PRUNER_MAX_D; ++i)
   {
-    b[i] = 0.;
+    b[i] = .5;
   }
-  init_coefficients(b);
+  if (reset && (method!=PRUNER_METHOD_GREEDY))
+  {
+    init_coefficients(b);
+  }
   if (!reset)
   {
     load_coefficients(b, pr);
@@ -443,10 +446,12 @@ template <class FT> int Pruner<FT>::improve(/*io*/ evec &b)
 
 template <class FT> void Pruner<FT>::init_coefficients(evec &b)
 {
-  for (size_t i = 0; i < d; ++i)
-  {
-    b[i] = .2 + ((1. * i) / d);
-  }
+  FT save_radius = enumeration_radius;
+  PrunerMetric metric_save = metric;
+  metric = PRUNER_METRIC_EXPECTED_SOLUTIONS;
+  greedy(b);
+  metric = metric_save;
+  enumeration_radius = save_radius;
   enforce_bounds(b);
 }
 
@@ -512,7 +517,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     {
       if (val < .20)
       {
-        enumeration_radius /= 1.1;
+        enumeration_radius /= 1.3;
         greedy(b);
         return;
       }
@@ -822,7 +827,7 @@ void prune(/*output*/ Pruning &pruning,
 {
   Pruner<FT> pruner(enumeration_radius, preproc_cost, target, method, metric);
   pruner.load_basis_shape(r);
-  pruner.optimize_coefficients(pruning.coefficients);
+  pruner.optimize_coefficients(pruning.coefficients, reset);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
   enumeration_radius  = pruner.enumeration_radius.get_d();
   pruning.metric      = metric;
@@ -837,7 +842,7 @@ void prune(/*output*/ Pruning &pruning,
 {
   Pruner<FT> pruner(enumeration_radius, preproc_cost, target, method, metric);
   pruner.load_basis_shapes(rs);
-  pruner.optimize_coefficients(pruning.coefficients);
+  pruner.optimize_coefficients(pruning.coefficients, reset);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
   enumeration_radius  = pruner.enumeration_radius.get_d();
   pruning.metric      = metric;

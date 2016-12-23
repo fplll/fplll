@@ -154,8 +154,8 @@ public:
       set_tabulated_consts();
       tabulated_value_imported = true;
     }
-    epsilon     = std::pow(2., -13);  // Guesswork. Will become obsolete with Nelder-Mead
-    min_step    = std::pow(2., -12);  // Guesswork. Will become obsolete with Nelder-Mead
+    epsilon     = std::pow(2., -7);  // Guesswork. Will become obsolete with Nelder-Mead
+    min_step    = std::pow(2., -6);  // Guesswork. Will become obsolete with Nelder-Mead
     step_factor = std::pow(2, .5);    // Guesswork. Will become obsolete with Nelder-Mead
     shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor
                          // 1/.995. Sounds fair.
