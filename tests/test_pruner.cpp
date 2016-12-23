@@ -37,12 +37,13 @@ using namespace fplll;
 #define Dbis 12
 
 int last_status = 0;
-void print_status(int status){
-  if (status > last_status) 
+void print_status(int status)
+{
+  if (status > last_status)
   {
-      last_status = status;
-      cerr << endl << "FAILURES: " << status << endl;
-  }  
+    last_status = status;
+    cerr << endl << "FAILURES: " << status << endl;
+  }
 }
 
 template <class FT> class Pruner<FT>::TestPruner
@@ -327,7 +328,6 @@ template <class FT> int test_auto_prune(size_t n)
 
   double radius_d = radius.get_d();
 
-
   cerr << endl << "Greedy " << endl;
   prune<FT>(pruning, radius_d, overhead, 20, r, PRUNER_METHOD_GREEDY,
             PRUNER_METRIC_EXPECTED_SOLUTIONS, true);
@@ -373,7 +373,6 @@ template <class FT> int test_auto_prune(size_t n)
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
 
-
   cerr << endl << "Reprune Gradient " << endl;
   cerr << "radius " << radius_d << endl;
   prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
@@ -395,7 +394,6 @@ template <class FT> int test_auto_prune(size_t n)
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
-
 
   cerr << endl << "NelderMead " << endl;
   cerr << "radius " << radius_d << endl;
@@ -419,8 +417,6 @@ template <class FT> int test_auto_prune(size_t n)
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
 
-
-
   cerr << endl << "Reprune NelderMead " << endl;
   cerr << "radius " << radius_d << endl;
   prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
@@ -442,7 +438,6 @@ template <class FT> int test_auto_prune(size_t n)
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
-
 
   cerr << endl << "Hybrid " << endl;
   cerr << "radius " << radius_d << endl;
@@ -466,7 +461,6 @@ template <class FT> int test_auto_prune(size_t n)
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
 
-
   cerr << endl << "Reprune Hybrid " << endl;
   cerr << "radius " << radius_d << endl;
   prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
@@ -488,7 +482,6 @@ template <class FT> int test_auto_prune(size_t n)
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
-
 
   cerr << endl << "Reprune Hybrid " << endl;
   prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_GRADIENT,
