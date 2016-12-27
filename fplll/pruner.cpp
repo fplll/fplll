@@ -534,11 +534,12 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
       tmp1 *= ipv[j];
 
       tmp = 0.;
-      if (j < 2*d - 1){
+      if (j < 2 * d - 1)
+      {
         tmp = relative_volume((j + 1) / 2, newb);
         tmp *= tabulated_ball_vol[j];
         tmp *= pow_si(normalized_radius * sqrt(newb[j / 2]), j);
-        tmp *= ipv[j-1];
+        tmp *= ipv[j - 1];
       }
 
       tmp += tmp1;
