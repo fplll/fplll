@@ -61,6 +61,8 @@ FPLLL_BEGIN_NAMESPACE
 #define PRUNER_MAX_D 1023
 #define PRUNER_MAX_N 2047
 
+#define PRUNER_MIN_BOUND .1
+
 /**
    @brief prune function, hiding the Pruner class
 

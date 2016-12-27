@@ -177,8 +177,8 @@ template <class FT> inline bool Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt
     {
       b[i] = 1.0;
     }
-    if (b[i] <= .2)
-      b[i] = .2;
+    if (b[i] <= PRUNER_MIN_BOUND)
+      b[i] = PRUNER_MIN_BOUND;
   }
   for (size_t i = j; i < d - 1; ++i)
   {
@@ -495,7 +495,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   FT normalized_radius;
   normalized_radius = sqrt(enumeration_radius * renormalization_factor);
 
-  FT min, max, val, tmp, goal;
+  FT min, max, val, tmp1, tmp, goal;
   if (verbosity)
   {
     cerr << "Starting Greedy pruning" << endl;
@@ -504,7 +504,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   {
     val = 1.;
     max = 1.;
-    min = 0.15;
+    min = PRUNER_MIN_BOUND / 2;
     if (j == 2 * d - 1)
     {
       goal = target;
@@ -517,9 +517,9 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     tmp       = 0.;
     while ((count < 8) && (min < .99))
     {
-      if (val < .20)
+      if (val < PRUNER_MIN_BOUND)
       {
-        enumeration_radius /= 1.3;
+        enumeration_radius /= 1.1;
         greedy(b);
         return;
       }
@@ -528,10 +528,20 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
       newb[j / 2] = val;
       enforce_bounds(newb, j / 2);
 
-      tmp = relative_volume((j + 1) / 2, newb);
-      tmp *= tabulated_ball_vol[j + 1];
-      tmp *= pow_si(normalized_radius * sqrt(newb[j / 2]), j + 1);
-      tmp *= ipv[j];
+      tmp1 = relative_volume((j + 1) / 2, newb);
+      tmp1 *= tabulated_ball_vol[j + 1];
+      tmp1 *= pow_si(normalized_radius * sqrt(newb[j / 2]), j + 1);
+      tmp1 *= ipv[j];
+
+      tmp = 0.;
+      if (j < 2*d - 1){
+        tmp = relative_volume((j + 1) / 2, newb);
+        tmp *= tabulated_ball_vol[j];
+        tmp *= pow_si(normalized_radius * sqrt(newb[j / 2]), j);
+        tmp *= ipv[j-1];
+      }
+
+      tmp += tmp1;
       tmp /= symmetry_factor;
 
       if (tmp > goal)
