@@ -25,7 +25,8 @@ EXTRA_DIST=lattices/dim55_in \
 	lattices/example_cvp_out2 \
 	lattices/example_cvp_out3 \
 	lattices/example_cvp_out4 \
-	lattices/example_cvp_out5
+	lattices/example_cvp_out5 \
+	lattices/example_in2
 
 # include TOPBUILDIR for fplll_config.h
 AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPSRCDIR)/fplll -I$(TOPBUILDDIR) -DTESTDATADIR=\"$(TOPSRCDIR)/\"
@@ -33,7 +34,7 @@ AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPSRCDIR)/fplll -I$(TOPBUILDDIR) -DTESTDATADIR
 STAGEDIR := $(realpath -s $(TOPBUILDDIR)/.libs)
 AM_LDFLAGS = -L$(STAGEDIR) -Wl,-rpath,$(STAGEDIR) -lfplll -no-install $(LIBQD_LIBADD)
 
-TESTS = test_nr test_lll test_cvp test_svp test_bkz test_pruner test_sieve
+TESTS = test_nr test_lll test_cvp test_svp test_bkz test_pruner test_sieve test_gso test_lll_gram
 
 test_pruner_LDADD=-lgmp -lmpfr $(LIBQD_LIBADD)
 test_sieve_LDADD=-lgmp -lmpfr $(LIBQD_LIBADD)
@@ -45,5 +46,7 @@ test_cvp_SOURCES = test_cvp.cpp
 test_bkz_SOURCES = test_bkz.cpp
 test_pruner_SOURCES = test_pruner.cpp
 test_sieve_SOURCES = test_sieve.cpp
+test_gso_SOURCES = test_gso.cpp
+test_lll_gram_SOURCES = test_lll_gram.cpp
 
 check_PROGRAMS = $(TESTS)
