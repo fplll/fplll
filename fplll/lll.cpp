@@ -25,13 +25,13 @@ FPLLL_BEGIN_NAMESPACE
 static inline bool is_power_of_2(int i) { return (i & (i - 1)) == 0; }
 
 template <class ZT, class FT>
-LLLReduction<ZT, FT>::LLLReduction(MatGSOb<ZT, FT> &m, double delta, double eta, int flags)
+LLLReduction<ZT, FT>::LLLReduction(MatGSOInterface<ZT, FT> &m, double delta, double eta, int flags)
     : status(RED_SUCCESS), final_kappa(0), last_early_red(0), n_swaps(0), m(m)
 {
   /* No early reduction in proved mode (i.e. enable_int_gram=true).
      NOTE: To make this possible, the hypothesis "g(i, j) is valid if
      0 <= i < n_known_rows and j <= i" in gso.h should be changed and
-     MatGSOb<ZT, FT>::discover_row() should be rewritten. */
+     MatGSOInterface<ZT, FT>::discover_row() should be rewritten. */
   enable_early_red = (flags & LLL_EARLY_RED) && !m.enable_int_gram;
   siegel           = flags & LLL_SIEGEL;
   verbose          = flags & LLL_VERBOSE;
@@ -220,7 +220,7 @@ bool LLLReduction<ZT, FT>::babai(int kappa, int size_reduction_end, int size_red
   return true;
 }
 
-template <class ZT, class FT> bool is_lll_reduced(MatGSOb<ZT, FT> &m, double delta, double eta)
+template <class ZT, class FT> bool is_lll_reduced(MatGSOInterface<ZT, FT> &m, double delta, double eta)
 {
   FT ftmp1;
   FT ftmp2;
@@ -258,7 +258,7 @@ template <class ZT, class FT> bool is_lll_reduced(MatGSOb<ZT, FT> &m, double del
 template class LLLReduction<Z_NR<long>, FP_NR<double>>;
 template class LLLReduction<Z_NR<double>, FP_NR<double>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<double>>;
-template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<double>>(MatGSOb<Z_NR<mpz_t>, FP_NR<double>> &m,
+template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<double>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<double>> &m,
                                                          double delta, double eta);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
@@ -267,7 +267,7 @@ template class LLLReduction<Z_NR<double>, FP_NR<long double>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<long double>>;
 
 template bool
-is_lll_reduced<Z_NR<mpz_t>, FP_NR<long double>>(MatGSOb<Z_NR<mpz_t>, FP_NR<long double>> &m,
+is_lll_reduced<Z_NR<mpz_t>, FP_NR<long double>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<long double>> &m,
                                                 double delta, double eta);
 #endif
 
@@ -276,14 +276,14 @@ template class LLLReduction<Z_NR<long>, FP_NR<dd_real>>;
 template class LLLReduction<Z_NR<double>, FP_NR<dd_real>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<dd_real>>;
 
-template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<dd_real>>(MatGSOb<Z_NR<mpz_t>, FP_NR<dd_real>> &m,
+template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<dd_real>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<dd_real>> &m,
                                                           double delta, double eta);
 
 template class LLLReduction<Z_NR<long>, FP_NR<qd_real>>;
 template class LLLReduction<Z_NR<double>, FP_NR<qd_real>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<qd_real>>;
 
-template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<qd_real>>(MatGSOb<Z_NR<mpz_t>, FP_NR<qd_real>> &m,
+template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<qd_real>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<qd_real>> &m,
                                                           double delta, double eta);
 #endif
 
@@ -291,14 +291,14 @@ template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<qd_real>>(MatGSOb<Z_NR<mpz_t>, F
 template class LLLReduction<Z_NR<long>, FP_NR<dpe_t>>;
 template class LLLReduction<Z_NR<double>, FP_NR<dpe_t>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<dpe_t>>;
-template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<dpe_t>>(MatGSOb<Z_NR<mpz_t>, FP_NR<dpe_t>> &m,
+template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<dpe_t>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<dpe_t>> &m,
                                                         double delta, double eta);
 #endif
 
 template class LLLReduction<Z_NR<long>, FP_NR<mpfr_t>>;
 template class LLLReduction<Z_NR<double>, FP_NR<mpfr_t>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
-template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<mpfr_t>>(MatGSOb<Z_NR<mpz_t>, FP_NR<mpfr_t>> &m,
+template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<mpfr_t>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &m,
                                                          double delta, double eta);
 
 FPLLL_END_NAMESPACE

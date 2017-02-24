@@ -19,7 +19,7 @@
 #define FPLLL_GSO_H
 
 #include "nr/matrix.h"
-#include "gsob.h"
+#include "gso_base.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -29,47 +29,47 @@ FPLLL_BEGIN_NAMESPACE
  * The Gram-Schmidt coefficients are computed on demand. The object keeps track
  * of which coefficients are valid after each row operation.
  */
-template <class ZT, class FT> class MatGSO : public MatGSOb<ZT,FT>
+template <class ZT, class FT> class MatGSO : public MatGSOInterface<ZT,FT>
 {
 public:
-  using MatGSOb<ZT,FT>::d;
-  using MatGSOb<ZT,FT>::n_known_rows;
-  using MatGSOb<ZT,FT>::n_source_rows;
-  using MatGSOb<ZT,FT>::u;
-  using MatGSOb<ZT,FT>::enable_transform;
-  using MatGSOb<ZT,FT>::cols_locked; // maybe scratch.
-  using MatGSOb<ZT,FT>::enable_int_gram;
-  using MatGSOb<ZT,FT>::gso_valid_cols;
-  using MatGSOb<ZT,FT>::enable_inverse_transform;
-  using MatGSOb<ZT,FT>::u_inv_t;
-  using MatGSOb<ZT,FT>::sym_g;
-  using MatGSOb<ZT,FT>::mu;
-  using MatGSOb<ZT,FT>::r;
-  using MatGSOb<ZT,FT>::ztmp1;
-  using MatGSOb<ZT,FT>::ztmp2;
-  using MatGSOb<ZT,FT>::row_op_force_long;
-  using MatGSOb<ZT,FT>::alloc_dim;
-  using MatGSOb<ZT,FT>::get_mu;
-  using MatGSOb<ZT,FT>::get_r;
-  using MatGSOb<ZT,FT>::gptr;  
-  using MatGSOb<ZT,FT>::invalidate_gso_row;
-  using MatGSOb<ZT,FT>::gf;
-  using MatGSOb<ZT,FT>::bf;
-  using MatGSOb<ZT,FT>::discover_all_rows;
-  using MatGSOb<ZT,FT>::init_row_size;  
-  using MatGSOb<ZT,FT>::enable_row_expo;
-  using MatGSOb<ZT,FT>::row_expo;
-  using MatGSOb<ZT,FT>::n_known_cols;
-  using MatGSOb<ZT,FT>::tmp_col_expo;
-//  using MatGSOb<ZT,FT>::create_row;
-  using MatGSOb<ZT,FT>::remove_last_row;
-  using MatGSOb<ZT,FT>::print_mu_r_g;
-  using MatGSOb<ZT,FT>::update_gso;
-  using MatGSOb<ZT,FT>::update_gso_row;
-  using MatGSOb<ZT,FT>::row_addmul;
-  using MatGSOb<ZT,FT>::symmetrize_g;
-  //using MatGSOb<ZT,FT>::update_gso_row;
-  //using MatGSOb<ZT,FT>::update_gso_row;
+  using MatGSOInterface<ZT,FT>::d;
+  using MatGSOInterface<ZT,FT>::n_known_rows;
+  using MatGSOInterface<ZT,FT>::n_source_rows;
+  using MatGSOInterface<ZT,FT>::u;
+  using MatGSOInterface<ZT,FT>::enable_transform;
+  using MatGSOInterface<ZT,FT>::cols_locked; // maybe scratch.
+  using MatGSOInterface<ZT,FT>::enable_int_gram;
+  using MatGSOInterface<ZT,FT>::gso_valid_cols;
+  using MatGSOInterface<ZT,FT>::enable_inverse_transform;
+  using MatGSOInterface<ZT,FT>::u_inv_t;
+  using MatGSOInterface<ZT,FT>::sym_g;
+  using MatGSOInterface<ZT,FT>::mu;
+  using MatGSOInterface<ZT,FT>::r;
+  using MatGSOInterface<ZT,FT>::ztmp1;
+  using MatGSOInterface<ZT,FT>::ztmp2;
+  using MatGSOInterface<ZT,FT>::row_op_force_long;
+  using MatGSOInterface<ZT,FT>::alloc_dim;
+  using MatGSOInterface<ZT,FT>::get_mu;
+  using MatGSOInterface<ZT,FT>::get_r;
+  using MatGSOInterface<ZT,FT>::gptr;  
+  using MatGSOInterface<ZT,FT>::invalidate_gso_row;
+  using MatGSOInterface<ZT,FT>::gf;
+  using MatGSOInterface<ZT,FT>::bf;
+  using MatGSOInterface<ZT,FT>::discover_all_rows;
+  using MatGSOInterface<ZT,FT>::init_row_size;  
+  using MatGSOInterface<ZT,FT>::enable_row_expo;
+  using MatGSOInterface<ZT,FT>::row_expo;
+  using MatGSOInterface<ZT,FT>::n_known_cols;
+  using MatGSOInterface<ZT,FT>::tmp_col_expo;
+//  using MatGSOInterface<ZT,FT>::create_row;
+  using MatGSOInterface<ZT,FT>::remove_last_row;
+  using MatGSOInterface<ZT,FT>::print_mu_r_g;
+  using MatGSOInterface<ZT,FT>::update_gso;
+  using MatGSOInterface<ZT,FT>::update_gso_row;
+  using MatGSOInterface<ZT,FT>::row_addmul;
+  using MatGSOInterface<ZT,FT>::symmetrize_g;
+  //using MatGSOInterface<ZT,FT>::update_gso_row;
+  //using MatGSOInterface<ZT,FT>::update_gso_row;
   /**
    * Constructor.
    * The precision of FT must be defined before creating an instance of the
@@ -104,7 +104,7 @@ public:
    */
   //~ MatGSO(Matrix<ZT>& b, Matrix<ZT>& u, Matrix<ZT>& u_inv_t, int flags);
   MatGSO(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
-      : MatGSOb<ZT,FT>(arg_u,arg_uinv_t,flags) , b(arg_b)
+      : MatGSOInterface<ZT,FT>(arg_u,arg_uinv_t,flags) , b(arg_b)
   {
     FPLLL_DEBUG_CHECK(!(enable_int_gram && enable_row_expo));
     d = b.get_rows();
