@@ -18,7 +18,7 @@
 #ifndef FPLLL_LLL_H
 #define FPLLL_LLL_H
 
-#include "gsob.h"
+#include "gso_base.h"
 #include "gso.h"
 
 FPLLL_BEGIN_NAMESPACE
@@ -35,7 +35,7 @@ public:
    * class and must remain the same until the object is destroyed (or no longer
    * needed).
    */
-  LLLReduction(MatGSOb<ZT, FT> &m, double delta, double eta, int flags);
+  LLLReduction(MatGSOInterface<ZT, FT> &m, double delta, double eta, int flags);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
   ~LLLReduction() { LDConvHelper::free(); }
@@ -88,7 +88,7 @@ private:
   inline void print_params();
   inline bool set_status(int new_status);
 
-  MatGSOb<ZT, FT> &m;
+  MatGSOInterface<ZT, FT> &m;
   FT delta, eta, swap_threshold;
 
   bool enable_early_red;
@@ -102,7 +102,7 @@ private:
   FT mu_m_ant, ftmp1;
 };
 
-template <class ZT, class FT> bool is_lll_reduced(MatGSOb<ZT, FT> &m, double delta, double eta);
+template <class ZT, class FT> bool is_lll_reduced(MatGSOInterface<ZT, FT> &m, double delta, double eta);
 
 template <class ZT, class FT>
 inline bool LLLReduction<ZT, FT>::size_reduction(int kappa_min, int kappa_end,

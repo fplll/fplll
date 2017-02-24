@@ -16,8 +16,8 @@
 #include <cstring>
 #include <random>
 #include <gso.h>
-#include <ggso.h>
-#include <gsob.h>
+#include <gso_gram.h>
+#include <gso_base.h>
 #include <nr/matrix.h>
 
 
@@ -26,7 +26,7 @@ using namespace fplll;
 
 
 template <class ZT, class FT> 
-bool rs_are_equal(MatGSO<ZT,FT> M1, MatGGSO<ZT,FT> M2, FT error)
+bool rs_are_equal(MatGSO<ZT,FT> M1, MatGSOGram<ZT,FT> M2, FT error)
 {
   int r = M1.r.get_rows();
   FT maxdiff = 0.0;
@@ -114,7 +114,7 @@ template <class ZT, class FT> int test_test(ZZ_mat<ZT> &A)
 
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 0);
   M.update_gso();
-  MatGGSO<Z_NR<ZT>, FP_NR<FT>> M2(G, U, UT, 1);
+  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(G, U, UT, 1);
   M2.update_gso();
 
   FP_NR<FT> err = .001;

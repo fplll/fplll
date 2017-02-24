@@ -15,16 +15,16 @@
 
 #include <cstring>
 #include <fplll.h>
-#include <gsob.h>
+#include <gso_base.h>
 #include <gso.h>
-#include <ggso.h>
+#include <gso_gram.h>
 #include <lll.h>
 
 using namespace std;
 using namespace fplll;
 
 
-template <class ZT, class FT> bool have_equal_grammatrix(MatGSO<Z_NR<ZT>, FP_NR<FT>> M1, MatGGSO<Z_NR<ZT>, FP_NR<FT>> M2)
+template <class ZT, class FT> bool have_equal_grammatrix(MatGSO<Z_NR<ZT>, FP_NR<FT>> M1, MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2)
 {
   FP_NR<FT> buffvalue = 0.0;
   FP_NR<FT> buffvalue2  = 0.0;
@@ -64,7 +64,7 @@ template <class ZT, class FT> int test_test(ZZ_mat<ZT> &A, Matrix<Z_NR<ZT>> &G)
   ZZ_mat<ZT> UT;
 
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 0);
-  MatGGSO<Z_NR<ZT>, FP_NR<FT>> M2(G, U, UT, 1);
+  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(G, U, UT, 1);
 
   int is_reduced = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
   int is_greduced = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(M2, LLL_DEF_DELTA, LLL_DEF_ETA);
@@ -106,10 +106,10 @@ int test_lll(ZZ_mat<ZT> &A)
 
   // ------------------------------------------------
   // Create a MatGSO-object (basis gso) for A
-  // and a MatGGSO-object (gram gso) for G.
+  // and a MatGSOGram-object (gram gso) for G.
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 0);
   M.update_gso();
-  MatGGSO<Z_NR<ZT>, FP_NR<FT>> Mgram(G, U, UT, 1);
+  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> Mgram(G, U, UT, 1);
   Mgram.update_gso();
   // -------------------------------------------------
 
@@ -123,7 +123,7 @@ int test_lll(ZZ_mat<ZT> &A)
 
   // -----------------------------------------------------
   // Make two LLLObjects. One of the basis MatGSO-object M
-  // one of the gram MatGGSO-object Mgram.
+  // one of the gram MatGSOGram-object Mgram.
   LLLReduction<Z_NR<ZT>, FP_NR<FT>> LLLObj(M,LLL_DEF_DELTA, LLL_DEF_ETA,0);
   LLLReduction<Z_NR<ZT>, FP_NR<FT>> LLLObjgram(Mgram,LLL_DEF_DELTA, LLL_DEF_ETA,0);
 
