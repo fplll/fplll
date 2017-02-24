@@ -18,8 +18,8 @@
 #ifndef FPLLL_GSO_H
 #define FPLLL_GSO_H
 
-#include "nr/matrix.h"
 #include "gso_base.h"
+#include "nr/matrix.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -29,47 +29,47 @@ FPLLL_BEGIN_NAMESPACE
  * The Gram-Schmidt coefficients are computed on demand. The object keeps track
  * of which coefficients are valid after each row operation.
  */
-template <class ZT, class FT> class MatGSO : public MatGSOInterface<ZT,FT>
+template <class ZT, class FT> class MatGSO : public MatGSOInterface<ZT, FT>
 {
 public:
-  using MatGSOInterface<ZT,FT>::d;
-  using MatGSOInterface<ZT,FT>::n_known_rows;
-  using MatGSOInterface<ZT,FT>::n_source_rows;
-  using MatGSOInterface<ZT,FT>::u;
-  using MatGSOInterface<ZT,FT>::enable_transform;
-  using MatGSOInterface<ZT,FT>::cols_locked; // maybe scratch.
-  using MatGSOInterface<ZT,FT>::enable_int_gram;
-  using MatGSOInterface<ZT,FT>::gso_valid_cols;
-  using MatGSOInterface<ZT,FT>::enable_inverse_transform;
-  using MatGSOInterface<ZT,FT>::u_inv_t;
-  using MatGSOInterface<ZT,FT>::sym_g;
-  using MatGSOInterface<ZT,FT>::mu;
-  using MatGSOInterface<ZT,FT>::r;
-  using MatGSOInterface<ZT,FT>::ztmp1;
-  using MatGSOInterface<ZT,FT>::ztmp2;
-  using MatGSOInterface<ZT,FT>::row_op_force_long;
-  using MatGSOInterface<ZT,FT>::alloc_dim;
-  using MatGSOInterface<ZT,FT>::get_mu;
-  using MatGSOInterface<ZT,FT>::get_r;
-  using MatGSOInterface<ZT,FT>::gptr;  
-  using MatGSOInterface<ZT,FT>::invalidate_gso_row;
-  using MatGSOInterface<ZT,FT>::gf;
-  using MatGSOInterface<ZT,FT>::bf;
-  using MatGSOInterface<ZT,FT>::discover_all_rows;
-  using MatGSOInterface<ZT,FT>::init_row_size;  
-  using MatGSOInterface<ZT,FT>::enable_row_expo;
-  using MatGSOInterface<ZT,FT>::row_expo;
-  using MatGSOInterface<ZT,FT>::n_known_cols;
-  using MatGSOInterface<ZT,FT>::tmp_col_expo;
-//  using MatGSOInterface<ZT,FT>::create_row;
-  using MatGSOInterface<ZT,FT>::remove_last_row;
-  using MatGSOInterface<ZT,FT>::print_mu_r_g;
-  using MatGSOInterface<ZT,FT>::update_gso;
-  using MatGSOInterface<ZT,FT>::update_gso_row;
-  using MatGSOInterface<ZT,FT>::row_addmul;
-  using MatGSOInterface<ZT,FT>::symmetrize_g;
-  //using MatGSOInterface<ZT,FT>::update_gso_row;
-  //using MatGSOInterface<ZT,FT>::update_gso_row;
+  using MatGSOInterface<ZT, FT>::d;
+  using MatGSOInterface<ZT, FT>::n_known_rows;
+  using MatGSOInterface<ZT, FT>::n_source_rows;
+  using MatGSOInterface<ZT, FT>::u;
+  using MatGSOInterface<ZT, FT>::enable_transform;
+  using MatGSOInterface<ZT, FT>::cols_locked;  // maybe scratch.
+  using MatGSOInterface<ZT, FT>::enable_int_gram;
+  using MatGSOInterface<ZT, FT>::gso_valid_cols;
+  using MatGSOInterface<ZT, FT>::enable_inverse_transform;
+  using MatGSOInterface<ZT, FT>::u_inv_t;
+  using MatGSOInterface<ZT, FT>::sym_g;
+  using MatGSOInterface<ZT, FT>::mu;
+  using MatGSOInterface<ZT, FT>::r;
+  using MatGSOInterface<ZT, FT>::ztmp1;
+  using MatGSOInterface<ZT, FT>::ztmp2;
+  using MatGSOInterface<ZT, FT>::row_op_force_long;
+  using MatGSOInterface<ZT, FT>::alloc_dim;
+  using MatGSOInterface<ZT, FT>::get_mu;
+  using MatGSOInterface<ZT, FT>::get_r;
+  using MatGSOInterface<ZT, FT>::gptr;
+  using MatGSOInterface<ZT, FT>::invalidate_gso_row;
+  using MatGSOInterface<ZT, FT>::gf;
+  using MatGSOInterface<ZT, FT>::bf;
+  using MatGSOInterface<ZT, FT>::discover_all_rows;
+  using MatGSOInterface<ZT, FT>::init_row_size;
+  using MatGSOInterface<ZT, FT>::enable_row_expo;
+  using MatGSOInterface<ZT, FT>::row_expo;
+  using MatGSOInterface<ZT, FT>::n_known_cols;
+  using MatGSOInterface<ZT, FT>::tmp_col_expo;
+  //  using MatGSOInterface<ZT,FT>::create_row;
+  using MatGSOInterface<ZT, FT>::remove_last_row;
+  using MatGSOInterface<ZT, FT>::print_mu_r_g;
+  using MatGSOInterface<ZT, FT>::update_gso;
+  using MatGSOInterface<ZT, FT>::update_gso_row;
+  using MatGSOInterface<ZT, FT>::row_addmul;
+  using MatGSOInterface<ZT, FT>::symmetrize_g;
+  // using MatGSOInterface<ZT,FT>::update_gso_row;
+  // using MatGSOInterface<ZT,FT>::update_gso_row;
   /**
    * Constructor.
    * The precision of FT must be defined before creating an instance of the
@@ -104,7 +104,7 @@ public:
    */
   //~ MatGSO(Matrix<ZT>& b, Matrix<ZT>& u, Matrix<ZT>& u_inv_t, int flags);
   MatGSO(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
-      : MatGSOInterface<ZT,FT>(arg_u,arg_uinv_t,flags) , b(arg_b)
+      : MatGSOInterface<ZT, FT>(arg_u, arg_uinv_t, flags), b(arg_b)
   {
     FPLLL_DEBUG_CHECK(!(enable_int_gram && enable_row_expo));
     d = b.get_rows();
@@ -112,9 +112,10 @@ public:
     {
       tmp_col_expo.resize(b.get_cols());
     }
-    if (enable_int_gram) {
+    if (enable_int_gram)
+    {
       gptr = &g;
-    } 
+    }
     size_increased();
 #ifdef DEBUG
     row_op_first = row_op_last = -1;
@@ -124,16 +125,16 @@ public:
   /**
    * Basis of the lattice
    */
-//private:
+  // private:
   Matrix<ZT> &b;
-//public:
+  // public:
   /**
    * Integer Gram matrix of the lattice
    */
   Matrix<ZT> g;
 
 public:
-  virtual inline long  get_max_exp_of_b();
+  virtual inline long get_max_exp_of_b();
   virtual inline bool b_row_is_zero(int i);
   virtual inline int get_cols_of_b();
   virtual inline int get_rows_of_b();
@@ -153,7 +154,7 @@ public:
    * of (2^expo * ZT), which is faster if ZT=mpz_t but might lead to a loss of
    * precision (in LLL, more Babai iterations are needed).
    */
-  //virtual inline void row_addmul(int i, int j, const FT &x);
+  // virtual inline void row_addmul(int i, int j, const FT &x);
 
   /**
    * b[i] := b[i] + x * 2^expo_add * b[j].
@@ -170,14 +171,12 @@ public:
   virtual void row_add(int i, int j);
   virtual void row_sub(int i, int j);
 
-//  virtual inline void printparam(ostream &os);
+  //  virtual inline void printparam(ostream &os);
   virtual inline FT &get_gram(FT &f, int i, int j);
 
 private:
-
-
-    /* Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
-     When enable_int_gram=false, initializes bf. */
+  /* Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
+   When enable_int_gram=false, initializes bf. */
   virtual void size_increased();
 
   virtual void discover_row();
@@ -197,50 +196,46 @@ private:
 public:
   // b[i] <-> b[j] (i < j)
   virtual void row_swap(int i, int j);
-  //virtual void apply_transform(const Matrix<FT> &transform, int src_base, int target_base);
+  // virtual void apply_transform(const Matrix<FT> &transform, int src_base, int target_base);
 private:
-//  virtual void symmetrize_g();
-
+  //  virtual void symmetrize_g();
 };
 
-template <class ZT, class FT> inline long MatGSO<ZT,FT>::get_max_exp_of_b()
+template <class ZT, class FT> inline long MatGSO<ZT, FT>::get_max_exp_of_b()
 {
   return b.get_max_exp();
 }
 
-template <class ZT, class FT> inline bool MatGSO<ZT,FT>::b_row_is_zero(int i)
+template <class ZT, class FT> inline bool MatGSO<ZT, FT>::b_row_is_zero(int i)
 {
   return b[i].is_zero();
 }
-template <class ZT, class FT> inline int MatGSO<ZT,FT>::get_cols_of_b()
-{
-  return b.get_cols();
-}
+template <class ZT, class FT> inline int MatGSO<ZT, FT>::get_cols_of_b() { return b.get_cols(); }
 
-template <class ZT, class FT> inline int MatGSO<ZT,FT>::get_rows_of_b()
-{
-  return b.get_rows();
-}
+template <class ZT, class FT> inline int MatGSO<ZT, FT>::get_rows_of_b() { return b.get_rows(); }
 
-template <class ZT, class FT> inline void MatGSO<ZT,FT>::negate_row_of_b(int i)
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::negate_row_of_b(int i)
 {
-     
-      for (int j = 0; j < get_cols_of_b(); j++)
+
+  for (int j = 0; j < get_cols_of_b(); j++)
+  {
+    b[i][j].neg(b[i][j]);
+  }
+  if (enable_int_gram)
+  {
+    for (int j = 0; j < get_rows_of_b(); j++)
+    {
+      if (j < i)
       {
-        b[i][j].neg(b[i][j]);
+        // sym_g(i,j).neg(sym_g(i,j));
+        g(i, j).neg(g(i, j));
       }
-      if (enable_int_gram) {
-        for (int j = 0; j < get_rows_of_b(); j++) {
-          if (j < i) {
-            //sym_g(i,j).neg(sym_g(i,j));
-            g(i,j).neg(g(i,j));
-          } else if (j > i) {
-            g(j,i).neg(g(j,i));
-
-          }
-        } 
+      else if (j > i)
+      {
+        g(j, i).neg(g(j, i));
       }
-
+    }
+  }
 }
 
 /*
@@ -339,11 +334,11 @@ template <class ZT, class FT> inline FT &MatGSO<ZT, FT>::get_gram(FT &f, int i, 
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j <= i && j < n_source_rows &&
                     !in_row_op_range(i));
-  if (enable_int_gram) 
+  if (enable_int_gram)
   {
     f.set_z(g(i, j));
   }
-  else 
+  else
   {
     if (gf(i, j).is_nan())
     {
@@ -389,7 +384,6 @@ template <class ZT, class FT> inline void MatGSO<ZT, FT>::remove_last_rows(int n
   if (enable_transform)
     u.set_rows(d);
 }
-
 
 FPLLL_END_NAMESPACE
 

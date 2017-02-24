@@ -18,8 +18,8 @@
 #ifndef FPLLL_LLL_H
 #define FPLLL_LLL_H
 
-#include "gso_base.h"
 #include "gso.h"
+#include "gso_base.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -102,7 +102,8 @@ private:
   FT mu_m_ant, ftmp1;
 };
 
-template <class ZT, class FT> bool is_lll_reduced(MatGSOInterface<ZT, FT> &m, double delta, double eta);
+template <class ZT, class FT>
+bool is_lll_reduced(MatGSOInterface<ZT, FT> &m, double delta, double eta);
 
 template <class ZT, class FT>
 inline bool LLLReduction<ZT, FT>::size_reduction(int kappa_min, int kappa_end,
