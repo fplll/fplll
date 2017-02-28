@@ -6,6 +6,7 @@ DEFINES =
 include_fpllldir=$(includedir)/fplll
 
 EXTRA_DIST=lattices/dim55_in \
+    lattices/example2_in \
 	lattices/example_in \
 	lattices/example_svp_in \
 	lattices/example_svp_out \
@@ -25,8 +26,7 @@ EXTRA_DIST=lattices/dim55_in \
 	lattices/example_cvp_out2 \
 	lattices/example_cvp_out3 \
 	lattices/example_cvp_out4 \
-	lattices/example_cvp_out5 \
-	lattices/example_in2
+	lattices/example_cvp_out5 
 
 # include TOPBUILDIR for fplll_config.h
 AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPSRCDIR)/fplll -I$(TOPBUILDDIR) -DTESTDATADIR=\"$(TOPSRCDIR)/\"
