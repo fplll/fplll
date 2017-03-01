@@ -73,7 +73,7 @@ int test_lll(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags = 
   // zero on success
   if (test_test(A))
   {
-    return 0;
+    return 1;
   }
 
   // zero on success
@@ -178,6 +178,4 @@ int main(int /*argc*/, char ** /*argv*/)
   {
     return -1;
   }
-
-  return 0;
 }
