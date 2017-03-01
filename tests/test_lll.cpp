@@ -19,6 +19,10 @@
 using namespace std;
 using namespace fplll;
 
+#ifndef TESTDATADIR
+#define TESTDATADIR ".."
+#endif
+
 template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 {
   istream *is = new ifstream(input_filename);
@@ -151,8 +155,8 @@ int main(int /*argc*/, char ** /*argv*/)
 {
 
   int status = 0;
-  status |= test_filename<mpz_t>("lattices/dim55_in", LM_WRAPPER, FT_DEFAULT, LLL_DEFAULT, 128);
-  status |= test_filename<mpz_t>("lattices/dim55_in", LM_PROVED, FT_MPFR);
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/dim55_in", LM_WRAPPER, FT_DEFAULT, LLL_DEFAULT, 128);
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/dim55_in", LM_PROVED, FT_MPFR);
 
   status |= test_int_rel<mpz_t>(50, 1000, LM_FAST, FT_DOUBLE);
   status |= test_int_rel<mpz_t>(50, 1000, LM_PROVED, FT_MPFR);
@@ -161,12 +165,12 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_int_rel<mpz_t>(30, 2000, LM_PROVED, FT_DPE);
   status |= test_int_rel<mpz_t>(30, 2000, LM_PROVED, FT_MPFR);
 
-  status |= test_filename<mpz_t>("lattices/example_in", LM_HEURISTIC);
-  status |= test_filename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE);
-  status |= test_filename<mpz_t>("lattices/example_in", LM_PROVED, FT_MPFR);
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", LM_HEURISTIC);
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", LM_FAST, FT_DOUBLE);
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", LM_PROVED, FT_MPFR);
   status |=
-      test_filename<mpz_t>("lattices/example_in", LM_FAST, FT_DOUBLE, LLL_DEFAULT | LLL_EARLY_RED);
-  status |= test_filename<mpz_t>("lattices/example_in", LM_HEURISTIC, FT_DEFAULT,
+      test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", LM_FAST, FT_DOUBLE, LLL_DEFAULT | LLL_EARLY_RED);
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", LM_HEURISTIC, FT_DEFAULT,
                                  LLL_DEFAULT | LLL_EARLY_RED);
 
   if (status == 0)
