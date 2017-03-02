@@ -23,24 +23,24 @@
 using namespace std;
 using namespace fplll;
 
-
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."
 #endif
 
-
-
 template <class ZT, class FT>
 bool have_equal_grammatrix(MatGSO<Z_NR<ZT>, FP_NR<FT>> M1, MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2)
 {
-  Matrix<Z_NR<ZT>> g1 =  M1.get_g_matrix();
-  Matrix<Z_NR<ZT>> g2 =  M2.get_g_matrix();
+  Matrix<Z_NR<ZT>> g1 = M1.get_g_matrix();
+  Matrix<Z_NR<ZT>> g2 = M2.get_g_matrix();
 
-  for(int i = 0; i < g1.get_rows(); i++) {
-    for( int j = 0; j < g1.get_cols(); j++) {
-        if (g1[i][j] != g2[i][j]) {
-          return false;
-        }
+  for (int i = 0; i < g1.get_rows(); i++)
+  {
+    for (int j = 0; j < g1.get_cols(); j++)
+    {
+      if (g1[i][j] != g2[i][j])
+      {
+        return false;
+      }
     }
   }
   return true;
@@ -49,10 +49,12 @@ bool have_equal_grammatrix(MatGSO<Z_NR<ZT>, FP_NR<FT>> M1, MatGSOGram<Z_NR<ZT>, 
 template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 {
   ifstream is(input_filename);
-  if (!is) { cerr << "Could not open file!" << endl; }//throw std::runtime_error("could not open input file");
+  if (!is)
+  {
+    cerr << "Could not open file!" << endl;
+  }  // throw std::runtime_error("could not open input file");
   is >> A;
 }
-
 
 template <class ZT, class FT> int is_already_reduced(ZZ_mat<ZT> &A, Matrix<Z_NR<ZT>> &G)
 {
@@ -203,10 +205,14 @@ int main(int /*argc*/, char ** /*argv*/)
 #ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example2_in");
   status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
-  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
-  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
-  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4");
-  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
+  status |=
+      test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
+  status |=
+      test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
+  status |=
+      test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4");
+  status |=
+      test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, long double>(50, 20);
   status |= test_int_rel<mpz_t, long double>(40, 10);
 #endif
