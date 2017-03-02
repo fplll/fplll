@@ -18,74 +18,60 @@
 #include <gso_base.h>
 #include <gso_gram.h>
 #include <nr/matrix.h>
-#include <random>
+//#include <random>
 
 using namespace std;
 using namespace fplll;
 
-template <class ZT, class FT> bool rs_are_equal(MatGSO<ZT, FT> M1, MatGSOGram<ZT, FT> M2, FT error)
+
+#ifndef TESTDATADIR
+#define TESTDATADIR ".."
+#endif
+
+template <class ZT, class FT> Matrix<FT> matrix_relative_difference(Matrix<FT> r1, Matrix<FT> r2)
 {
-  int r      = M1.r.get_rows();
-  FT maxdiff = 0.0;
-  FT diff;
-  FT relativation;
-  Matrix<FT> r1 = M1.get_r_matrix();
-  Matrix<FT> r2 = M2.get_r_matrix();
-  for (int i = 0; i < r; i++)
-  {
-    for (int j = 0; j <= i; j++)
-    {
-      diff         = abs(r1(i, j) - r2(i, j));
-      relativation = abs(r1(i, j) + r2(i, j));
-      if (!r1(i, j).is_nan() && !r2(i, j).is_nan())
-      {
-        if (relativation > error)
-        {
-          diff = diff / relativation;
-        }
-        if ((diff > error) || (diff.is_nan()))
-        {
-          cerr << i << " " << j << " " << r1(i, j) << " " << r2(i, j) << "\n";
-          r1.print(cerr);
-          cerr << endl;
-          r2.print(cerr);
-          cerr << endl;
-          return false;
-        }
-      }
-      else if (r1(i, j).is_nan() && r2(i, j).is_nan())
-      {
-      }
-      else
-      {
-        cerr << i << " " << j << " " << r1(i, j) << " " << r2(i, j) << "\n";
-        r1.print(cerr);
-        cerr << endl;
-        r2.print(cerr);
-        cerr << endl;
-        return false;
+  Matrix<FT> diff_matrix = Matrix<FT>(r1.get_rows(), r1.get_cols());
+  diff_matrix.fill(0.0);
+  FT relativation_factor = 0.0;
+  for(int i = 0; i < r1.get_rows(); i++) {
+    for( int j = 0; j < i; j++) { // j < i, because r is lower-triangular, and has only 1 on the diagonal.
+      relativation_factor = abs(r1[i][j]) + abs(r2[i][j]);
+      if (relativation_factor.is_zero()) {
+        diff_matrix[i][j] = abs(r1[i][j] - r2[i][j]);
+      } else {
+        diff_matrix[i][j] = abs(r1[i][j] - r2[i][j])/relativation_factor;
       }
     }
   }
-  cerr << "Maximum relative difference: " << maxdiff << endl;
+  return diff_matrix;
+}
+
+// Returns true when the r-matrices of M1 and M2 are entry-wise equal, up to an error 'error'.
+template <class ZT, class FT> bool rs_are_equal(MatGSO<ZT, FT> M1, MatGSOGram<ZT, FT> M2, FT error)
+{
+  Matrix<FT> r1 = M1.get_r_matrix();
+  Matrix<FT> r2 = M2.get_r_matrix();
+  Matrix<FT> diff = matrix_relative_difference<ZT,FT>(r1,r2);
+
+  FT max_entry = 0.0;
+  max_entry = diff.get_max();
+  if (max_entry > error)   { 
+          diff.print(cerr);
+          cerr << endl << endl;
+          return false;
+  }
   return true;
 }
 
 template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 {
-  istream *is = new ifstream(input_filename);
-  *is >> A;
-  delete is;
+  ifstream is(input_filename);
+  if (!is) { cerr << "Could not open file!" << endl; }//throw std::runtime_error("could not open input file");
+  is >> A;
 }
 
-/**
-   @brief Test the tester.
 
-   @param A
-   @return zero on success.
-*/
-
-template <class ZT, class FT> int test_test(ZZ_mat<ZT> &A)
+template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
 {
   // TEST A
   // Method:
@@ -123,6 +109,7 @@ template <class ZT, class FT> int test_test(ZZ_mat<ZT> &A)
   // TEST B
   // ------------------------
 
+
   for (int i = 0; i < rand() % 10 + 1; i++)
   {
     int k = rand() % r;
@@ -144,23 +131,8 @@ template <class ZT, class FT> int test_test(ZZ_mat<ZT> &A)
   M.update_gso();
   M2.update_gso();
   bool retvalue3 = rs_are_equal(M, M2, err);
-
+  
   return (!retvalue1) * 1 + (!retvalue2) * 2 + (!retvalue3) * 4;
-
-  // if (retvalue1) { return 1; }
-  // return 0;
-}
-
-template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
-{
-
-  ZZ_mat<ZT> U;
-  ZZ_mat<ZT> UT;
-
-  // int status = 0;
-
-  // zero on success
-  return test_test<ZT, FT>(A);
 }
 
 template <class ZT, class FT> int test_filename(const char *input_filename)
@@ -229,60 +201,60 @@ int main(int /*argc*/, char ** /*argv*/)
 
   int status = 0;
 
-  status |= test_filename<mpz_t, double>("lattices/example2_in");
-  status |= test_filename<mpz_t, double>("lattices/example_cvp_in_lattice");
-  status |= test_filename<mpz_t, double>("lattices/example_cvp_in_lattice2");
-  status |= test_filename<mpz_t, double>("lattices/example_cvp_in_lattice3");
-  status |= test_filename<mpz_t, double>("lattices/example_cvp_in_lattice4");
-  status |= test_filename<mpz_t, double>("lattices/example_cvp_in_lattice5");
+  status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
+  status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
+  status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
+  status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4");
+  status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, double>(50, 20);
   status |= test_int_rel<mpz_t, double>(40, 10);
 
-  status |= test_filename<mpz_t, mpfr_t>("lattices/example2_in");
-  status |= test_filename<mpz_t, mpfr_t>("lattices/example_cvp_in_lattice");
-  status |= test_filename<mpz_t, mpfr_t>("lattices/example_cvp_in_lattice2");
-  status |= test_filename<mpz_t, mpfr_t>("lattices/example_cvp_in_lattice3");
-  status |= test_filename<mpz_t, mpfr_t>("lattices/example_cvp_in_lattice4");
-  status |= test_filename<mpz_t, mpfr_t>("lattices/example_cvp_in_lattice5");
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4");
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, mpfr_t>(50, 20);
   status |= test_int_rel<mpz_t, mpfr_t>(40, 10);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-  status |= test_filename<mpz_t, long double>("lattices/example2_in");
-  status |= test_filename<mpz_t, long double>("lattices/example_cvp_in_lattice");
-  status |= test_filename<mpz_t, long double>("lattices/example_cvp_in_lattice2");
-  status |= test_filename<mpz_t, long double>("lattices/example_cvp_in_lattice3");
-  status |= test_filename<mpz_t, long double>("lattices/example_cvp_in_lattice4");
-  status |= test_filename<mpz_t, long double>("lattices/example_cvp_in_lattice5");
+  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
+  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
+  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
+  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4");
+  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, long double>(50, 20);
   status |= test_int_rel<mpz_t, long double>(40, 10);
 #endif
 #ifdef FPLLL_WITH_QD
-  status |= test_filename<mpz_t, dd_real>("lattices/example2_in");
-  status |= test_filename<mpz_t, dd_real>("lattices/example_cvp_in_lattice");
-  status |= test_filename<mpz_t, dd_real>("lattices/example_cvp_in_lattice2");
-  status |= test_filename<mpz_t, dd_real>("lattices/example_cvp_in_lattice3");
-  status |= test_filename<mpz_t, dd_real>("lattices/example_cvp_in_lattice4");
-  status |= test_filename<mpz_t, dd_real>("lattices/example_cvp_in_lattice5");
+  status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
+  status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
+  status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
+  status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4");
+  status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, dd_real>(50, 20);
   status |= test_int_rel<mpz_t, dd_real>(40, 10);
 
-  status |= test_filename<mpz_t, qd_real>("lattices/example2_in");
-  status |= test_filename<mpz_t, qd_real>("lattices/example_cvp_in_lattice");
-  status |= test_filename<mpz_t, qd_real>("lattices/example_cvp_in_lattice2");
-  status |= test_filename<mpz_t, qd_real>("lattices/example_cvp_in_lattice3");
-  status |= test_filename<mpz_t, qd_real>("lattices/example_cvp_in_lattice4");
-  status |= test_filename<mpz_t, qd_real>("lattices/example_cvp_in_lattice5");
+  status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
+  status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
+  status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
+  status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4");
+  status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, qd_real>(50, 20);
   status |= test_int_rel<mpz_t, qd_real>(40, 10);
 #endif
 #ifdef FPLLL_WITH_DPE
-  status |= test_filename<mpz_t, dpe_t>("lattices/example2_in");
-  status |= test_filename<mpz_t, dpe_t>("lattices/example_cvp_in_lattice");
-  status |= test_filename<mpz_t, dpe_t>("lattices/example_cvp_in_lattice2");
-  status |= test_filename<mpz_t, dpe_t>("lattices/example_cvp_in_lattice3");
-  status |= test_filename<mpz_t, dpe_t>("lattices/example_cvp_in_lattice4");
-  status |= test_filename<mpz_t, dpe_t>("lattices/example_cvp_in_lattice5");
+  status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
+  status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
+  status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
+  status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4");
+  status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, dpe_t>(50, 20);
   status |= test_int_rel<mpz_t, dpe_t>(40, 10);
 #endif
