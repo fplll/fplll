@@ -155,7 +155,8 @@ int main(int /*argc*/, char ** /*argv*/)
 {
 
   int status = 0;
-  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/dim55_in", LM_WRAPPER, FT_DEFAULT, LLL_DEFAULT, 128);
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/dim55_in", LM_WRAPPER, FT_DEFAULT,
+                                 LLL_DEFAULT, 128);
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/dim55_in", LM_PROVED, FT_MPFR);
 
   status |= test_int_rel<mpz_t>(50, 1000, LM_FAST, FT_DOUBLE);
@@ -168,8 +169,8 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", LM_HEURISTIC);
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", LM_FAST, FT_DOUBLE);
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", LM_PROVED, FT_MPFR);
-  status |=
-      test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", LM_FAST, FT_DOUBLE, LLL_DEFAULT | LLL_EARLY_RED);
+  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", LM_FAST, FT_DOUBLE,
+                                 LLL_DEFAULT | LLL_EARLY_RED);
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", LM_HEURISTIC, FT_DEFAULT,
                                  LLL_DEFAULT | LLL_EARLY_RED);
 
