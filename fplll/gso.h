@@ -18,7 +18,7 @@
 #ifndef FPLLL_GSO_H
 #define FPLLL_GSO_H
 
-#include "gso_base.h"
+#include "gso_interface.h"
 #include "nr/matrix.h"
 
 FPLLL_BEGIN_NAMESPACE

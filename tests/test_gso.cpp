@@ -15,8 +15,8 @@
 
 #include <cstring>
 #include <gso.h>
-#include <gso_base.h>
 #include <gso_gram.h>
+#include <gso_interface.h>
 #include <nr/matrix.h>
 //#include <random>
 

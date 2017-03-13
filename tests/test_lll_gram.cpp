@@ -16,8 +16,8 @@
 #include <cstring>
 #include <fplll.h>
 #include <gso.h>
-#include <gso_base.h>
 #include <gso_gram.h>
+#include <gso_interface.h>
 #include <lll.h>
 
 using namespace std;
