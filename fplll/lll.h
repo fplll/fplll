@@ -19,7 +19,7 @@
 #define FPLLL_LLL_H
 
 #include "gso.h"
-#include "gso_base.h"
+#include "gso_interface.h"
 
 FPLLL_BEGIN_NAMESPACE
 
