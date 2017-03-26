@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['test',['Test',['../test__svp_8cpp.html#ab085d1bf4cff8b1045750706b11f8662',1,'test_svp.cpp']]]
+  ['svpflags',['SVPFlags',['../defs_8h.html#ac35aee45a7be7585cbab5d7da246cd33',1,'defs.h']]],
+  ['svpmethod',['SVPMethod',['../defs_8h.html#a8a2c5c1bce4bf22a2759aea5aa519b19',1,'defs.h']]]
 ];

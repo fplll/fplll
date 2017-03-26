@@ -2,8 +2,8 @@ var searchData=
 [
   ['b',['b',['../classMatGSO.html#a546e1ce97835021c360de7f7cc572089',1,'MatGSO']]],
   ['babai',['babai',['../svpcvp_8cpp.html#a2c3f5b6b81859baad812e11fbe121cde',1,'svpcvp.cpp']]],
-  ['back',['back',['../classNumVect.html#ac8549b7178c301dca14382054b712073',1,'NumVect::back()'],['../classNumVect.html#ab426c7c37d1a07d9833bc1484a6aa208',1,'NumVect::back() const ']]],
-  ['begin',['begin',['../classNumVect.html#a8f71df5f7af8fba71b41993af174ec20',1,'NumVect']]],
+  ['back',['back',['../classNumVect.html#ac8549b7178c301dca14382054b712073',1,'NumVect::back()'],['../classNumVect.html#ae2026ebc882287031bd8eb15f6e0859d',1,'NumVect::back() const']]],
+  ['begin',['begin',['../classEvaluator.html#a9f6b08797a0d7dde27f8d36a15899e3f',1,'Evaluator::begin() const'],['../classEvaluator.html#a5c746fad6ac8b9e02a62d3d720e2b156',1,'Evaluator::begin()'],['../classNumVect.html#a8f71df5f7af8fba71b41993af174ec20',1,'NumVect::begin()']]],
   ['bkz',['bkz',['../classBKZReduction.html#aed79f448c3b80a5f553e2ab3ffb826f4',1,'BKZReduction::bkz()'],['../main_8cpp.html#acfd5788decde30161059f5b4a0498a72',1,'bkz(Options &amp;o, ZZ_mat&lt; ZT &gt; &amp;b):&#160;main.cpp'],['../main_8cpp.html#afe43866531cffbccda7a86db8ce0fa71',1,'bkz(Options &amp;o, IntMatrix &amp;b):&#160;main.cpp']]],
   ['bkz_2ecpp',['bkz.cpp',['../bkz_8cpp.html',1,'']]],
   ['bkz_2eh',['bkz.h',['../bkz_8h.html',1,'']]],

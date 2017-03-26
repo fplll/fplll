@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['integer',['Integer',['../nr_8h.html#ad45aebb66d5c62bba193ecec3b122213',1,'nr.h']]],
-  ['integert',['IntegerT',['../nr_8h.html#ae0aa09c2165e830df4c2bbf215743a48',1,'nr.h']]],
-  ['intmatrix',['IntMatrix',['../matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f',1,'matrix.h']]],
-  ['intvect',['IntVect',['../numvect_8h.html#aa6b675c8ad7943e2a72f02c4bfb58db5',1,'numvect.h']]],
-  ['iterator',['iterator',['../classNumVect.html#aed7f6f94c645e243a5e382cd46cb6a48',1,'NumVect']]]
+  ['float',['Float',['../nr_8h.html#a9e4946144ee906e0bdf5bb2a52dd88db',1,'nr.h']]],
+  ['floatmatrix',['FloatMatrix',['../matrix_8h.html#af5e1849c307151dc6e3f0a32e46a907e',1,'matrix.h']]],
+  ['floatvect',['FloatVect',['../numvect_8h.html#a56f725bdc770dab71ae0f9b820c189b1',1,'numvect.h']]]
 ];

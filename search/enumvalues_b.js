@@ -1,10 +1,12 @@
 var searchData=
 [
-  ['svp_5fdefault',['SVP_DEFAULT',['../defs_8h.html#ac35aee45a7be7585cbab5d7da246cd33aa0e5980dc62cd54b51333aa547e54ae6',1,'defs.h']]],
-  ['svp_5fdual',['SVP_DUAL',['../defs_8h.html#ac35aee45a7be7585cbab5d7da246cd33ab3fc8fa80c31197e8c2bd6307c6313f3',1,'defs.h']]],
-  ['svp_5fenum',['SVP_ENUM',['../test__svp_8cpp.html#ab085d1bf4cff8b1045750706b11f8662a028939389936b58e68d070b1e6003778',1,'test_svp.cpp']]],
-  ['svp_5foverride_5fbnd',['SVP_OVERRIDE_BND',['../defs_8h.html#ac35aee45a7be7585cbab5d7da246cd33ac0d03620ff20f088f23ba4caf8c505ca',1,'defs.h']]],
-  ['svp_5fverbose',['SVP_VERBOSE',['../defs_8h.html#ac35aee45a7be7585cbab5d7da246cd33a687ce8b6fb8b9892695b4dec1ccd5238',1,'defs.h']]],
-  ['svpm_5ffast',['SVPM_FAST',['../defs_8h.html#a8a2c5c1bce4bf22a2759aea5aa519b19a987d69c0eabf8aba4a26e1f503098cbe',1,'defs.h']]],
-  ['svpm_5fproved',['SVPM_PROVED',['../defs_8h.html#a8a2c5c1bce4bf22a2759aea5aa519b19acf47580913593b4e35bd243a24f6ecc2',1,'defs.h']]]
+  ['red_5fbabai_5ffailure',['RED_BABAI_FAILURE',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a1ce524f0579d294137f05e54fe5b2748',1,'defs.h']]],
+  ['red_5fbkz_5ffailure',['RED_BKZ_FAILURE',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a25098aff32746c06189980631ca6d325',1,'defs.h']]],
+  ['red_5fbkz_5floops_5flimit',['RED_BKZ_LOOPS_LIMIT',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a674cdd801040c34bff1404d3d51ac955',1,'defs.h']]],
+  ['red_5fbkz_5ftime_5flimit',['RED_BKZ_TIME_LIMIT',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a07a49310c3a8373db244eb3501b1659a',1,'defs.h']]],
+  ['red_5fenum_5ffailure',['RED_ENUM_FAILURE',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a3bb85f86c7c0125e9c352b68dda16167',1,'defs.h']]],
+  ['red_5fgso_5ffailure',['RED_GSO_FAILURE',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a11ce7c46bf6c4b2fac8ba7a76c7dde3c',1,'defs.h']]],
+  ['red_5flll_5ffailure',['RED_LLL_FAILURE',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a196f0a76df03789dc2edeb5361042ec6',1,'defs.h']]],
+  ['red_5fstatus_5fmax',['RED_STATUS_MAX',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5af52499b62bae7c4636a1308c81c83e17',1,'defs.h']]],
+  ['red_5fsuccess',['RED_SUCCESS',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a969c417014c076ba40f0e28d8d1c9725',1,'defs.h']]]
 ];

@@ -1,11 +1,14 @@
 var searchData=
 [
-  ['r',['r',['../classEvaluator_3_01Float_01_4.html#adf9a0269ba330292be9319b347288401',1,'Evaluator&lt; Float &gt;::r()'],['../classMatrix.html#a00f69f6f14324cb0ea61442b6ebd12e8',1,'Matrix::r()']]],
-  ['radius_5ffactor',['radius_factor',['../classPruning.html#a48fa65c8d6c6b29a80c216f04e0b9407',1,'Pruning']]],
-  ['rdiag',['rdiag',['../classEnumerationBase.html#a8530338edc2bf31b1a0d37f8844515ea',1,'EnumerationBase']]],
-  ['red_5fstatus_5fstr',['RED_STATUS_STR',['../defs_8h.html#a3114ab3a9bd3769670383e6888148391',1,'defs.h']]],
-  ['rerandomization_5fdensity',['rerandomization_density',['../classBKZParam.html#ab3af02549b4b62e4803e17d66119fcdd',1,'BKZParam']]],
-  ['rounding_5fbackup',['rounding_backup',['../classEnumerationBase.html#a14547ce36311af3358ab04540c44adc2',1,'EnumerationBase']]],
-  ['row_5fexpo',['row_expo',['../classMatGSO.html#a86cf6cf482810187d9dfb513bd2f47c5',1,'MatGSO']]],
-  ['row_5fop_5fforce_5flong',['row_op_force_long',['../classMatGSO.html#a6d079b5897a340822a7dd6481dbe10ce',1,'MatGSO']]]
+  ['partdist',['partdist',['../classEnumerationBase.html#a56f26facb12622a88c8333f66f63a072',1,'EnumerationBase']]],
+  ['partdistbounds',['partdistbounds',['../classEnumerationBase.html#ab5493c43092988853369c1dd12ddb36c',1,'EnumerationBase']]],
+  ['prec_5fdd',['PREC_DD',['../defs_8h.html#a9d443a0180951308ebb50c152cdfe361',1,'defs.h']]],
+  ['prec_5fdouble',['PREC_DOUBLE',['../defs_8h.html#a7da5b64b690ad347b27b5daa641df7c5',1,'defs.h']]],
+  ['prec_5fqd',['PREC_QD',['../defs_8h.html#a731677e5d836510ca5135bbb6301f959',1,'defs.h']]],
+  ['precision',['precision',['../structOptions.html#af3e21501b38e7136444cbc97f21007b0',1,'Options']]],
+  ['preproc_5fcost',['preproc_cost',['../classPruner.html#a9ebddada6ef44c50ea653be1682df7f2',1,'Pruner']]],
+  ['preprocessing_5fblock_5fsizes',['preprocessing_block_sizes',['../classStrategy.html#a23888fd72fc470e9f61e488713da3e0a',1,'Strategy']]],
+  ['print_5fmode',['print_mode',['../classMatrix.html#a58653ffd34876b10e518f5eac02a668c',1,'Matrix']]],
+  ['pru',['pru',['../classPruner_1_1TestPruner.html#a555c273bc9116e0b424b511a2d8282e5',1,'Pruner::TestPruner']]],
+  ['pruning_5fparameters',['pruning_parameters',['../classStrategy.html#aea79558043eaaeda166020c3ec0dd1ba',1,'Strategy']]]
 ];

@@ -11,6 +11,6 @@ var searchData=
   ['num_5ftype_5fstr_3c_20long_20double_20_3e',['num_type_str&lt; long double &gt;',['../nr_8h.html#ab416951191fcaa95aa16247d581a729a',1,'nr.h']]],
   ['num_5ftype_5fstr_3c_20mpfr_5ft_20_3e',['num_type_str&lt; mpfr_t &gt;',['../nr_8h.html#af96f70af387a3a48ec3fd04dc62e5115',1,'nr.h']]],
   ['num_5ftype_5fstr_3c_20mpz_5ft_20_3e',['num_type_str&lt; mpz_t &gt;',['../nr_8h.html#a4153c4dbb725b64f45fad8de5ed75821',1,'nr.h']]],
-  ['num_5fvec_5fto_5flist_5fpoint',['num_vec_to_list_point',['../sieve__gauss__str_8h.html#a6a3a9df44152d822777b2dbe919ff54d',1,'sieve_gauss_str.h']]],
+  ['num_5fvec_5fto_5flist_5fpoint',['num_vec_to_list_point',['../sieve__gauss__str_8h.html#a667b7bf0b2da134e97a17f1183089eb5',1,'sieve_gauss_str.h']]],
   ['numvect',['NumVect',['../classNumVect.html#a556d003a38c13a46e7cdf8268ee22d19',1,'NumVect::NumVect()'],['../classNumVect.html#ab20bf96d50ccb5488a4e5346065f38f5',1,'NumVect::NumVect(const NumVect &amp;v)'],['../classNumVect.html#a225b4093fbda836f2bc017e728c607c1',1,'NumVect::NumVect(int size)'],['../classNumVect.html#aca38d4030462de4984080070e21c7bab',1,'NumVect::NumVect(int size, const T &amp;t)']]]
 ];

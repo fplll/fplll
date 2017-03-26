@@ -1,15 +1,15 @@
 var searchData=
 [
-  ['d',['d',['../classEnumerationBase.html#a9b797ce2dc5d236d43ab43cc3ea9f13e',1,'EnumerationBase::d()'],['../classEvaluator_3_01Float_01_4.html#a0ac230ed2dbb29109d9dff4a3aff88ce',1,'Evaluator&lt; Float &gt;::d()'],['../classMatGSO.html#a69806b9ded80a7d6559eb963344bfce3',1,'MatGSO::d()'],['../test__pruner_8cpp.html#af316c33cc298530f245e8b55330e86b5',1,'D():&#160;test_pruner.cpp']]],
+  ['d',['d',['../classEnumerationBase.html#a9b797ce2dc5d236d43ab43cc3ea9f13e',1,'EnumerationBase::d()'],['../classErrorBoundedEvaluator.html#a1631b789ea95ebdf4a6a463b80099709',1,'ErrorBoundedEvaluator::d()'],['../classMatGSO.html#a69806b9ded80a7d6559eb963344bfce3',1,'MatGSO::d()'],['../test__pruner_8cpp.html#af316c33cc298530f245e8b55330e86b5',1,'D():&#160;test_pruner.cpp']]],
   ['dbis',['Dbis',['../test__pruner_8cpp.html#a99386745def8f06b366cca3b7901acdd',1,'test_pruner.cpp']]],
-  ['ddx',['ddx',['../classEnumerationBase.html#ae794cd95b9f5ce30387d4ac8d7130a47',1,'EnumerationBase']]],
+  ['ddx',['ddx',['../classEnumerationBase.html#add68c2d992aa2054550ab663224ccf4f',1,'EnumerationBase']]],
   ['def_5fgso_5fprec_5fepsilon',['DEF_GSO_PREC_EPSILON',['../util_8h.html#ab647256b23eaab2f8cd59c6faadaf34b',1,'util.h']]],
   ['default_5fstrategy',['default_strategy',['../bkz__param_8cpp.html#aa7e0ca22cfd49c61ea8695c014b7c357',1,'default_strategy():&#160;bkz_param.cpp'],['../bkz__param_8h.html#aa7e0ca22cfd49c61ea8695c014b7c357',1,'default_strategy():&#160;bkz_param.cpp']]],
   ['default_5fstrategy_5fpath',['default_strategy_path',['../bkz__param_8cpp.html#a31276887eb612351b38587c6fcd88d67',1,'default_strategy_path():&#160;bkz_param.cpp'],['../bkz__param_8h.html#a31276887eb612351b38587c6fcd88d67',1,'default_strategy_path():&#160;bkz_param.cpp']]],
   ['defs_2eh',['defs.h',['../defs_8h.html',1,'']]],
   ['del_5flistpoint',['del_listpoint',['../sieve__gauss__str_8h.html#ab2e5ad139bcb789ec593f71321984d6d',1,'sieve_gauss_str.h']]],
   ['delta',['delta',['../classBKZParam.html#aa1c43acefe88539a7f3fa4ebb3992dd1',1,'BKZParam::delta()'],['../structOptions.html#acd471c4f31e75e6bdf0e306447ee4c65',1,'Options::delta()']]],
-  ['descent_5fmethod',['descent_method',['../classPruner.html#a1974ec18c3bdc5a55d4aefaaae9c552f',1,'Pruner']]],
+  ['detailed_5fcost',['detailed_cost',['../classPruning.html#a99d52289910896bc3abcde3b3469d6aa',1,'Pruning']]],
   ['dim_5fdouble_5fmax',['dim_double_max',['../wrapper_8cpp.html#a120d834be245b0206c37bf5cdb71b293',1,'wrapper.cpp']]],
   ['discover_5fall_5frows',['discover_all_rows',['../classMatGSO.html#a414257cf6df8d625d8a61667c550d785',1,'MatGSO']]],
   ['div',['div',['../classFP__NR.html#aee8ad9d1ca5b55e47ce2afc9dc5ba541',1,'FP_NR::div(const FP_NR&lt; F &gt; &amp;a, const FP_NR&lt; F &gt; &amp;b, mp_rnd_t rnd=GMP_RNDN)'],['../classFP__NR.html#aa5a82f9c84486c81fcee2f2d8cb82356',1,'FP_NR::div(const FP_NR&lt; double &gt; &amp;b, const FP_NR&lt; double &gt; &amp;c, mp_rnd_t)'],['../classFP__NR.html#a45d61c5991c0598229b56cbe4de307f6',1,'FP_NR::div(const FP_NR&lt; dd_real &gt; &amp;a, const FP_NR&lt; dd_real &gt; &amp;b, mp_rnd_t rnd)'],['../classFP__NR.html#a792d01b746d48d6bf9b52efd5a8ae9bc',1,'FP_NR::div(const FP_NR&lt; long double &gt; &amp;b, const FP_NR&lt; long double &gt; &amp;c, mp_rnd_t)'],['../classFP__NR.html#a2d49776af30ecd55736afb7fbdd026a5',1,'FP_NR::div(const FP_NR&lt; mpfr_t &gt; &amp;a, const FP_NR&lt; mpfr_t &gt; &amp;b, mp_rnd_t rnd)'],['../classFP__NR.html#ac1af41ae8b26598baf28c786f0381498',1,'FP_NR::div(const FP_NR&lt; qd_real &gt; &amp;a, const FP_NR&lt; qd_real &gt; &amp;b, mp_rnd_t rnd)']]],
@@ -25,5 +25,5 @@ var searchData=
   ['dump_5fgso_5ffilename',['dump_gso_filename',['../classBKZParam.html#a1b335c4f3d0b254bb07148061776eadf',1,'BKZParam']]],
   ['dump_5fmu_5fd',['dump_mu_d',['../classMatGSO.html#a8944ac4873f74ed033425833f0820563',1,'MatGSO::dump_mu_d(double *mu, int offset=0, int block_size=-1)'],['../classMatGSO.html#a0c5e2ea78a5c05f81948a0028cf4ed2c',1,'MatGSO::dump_mu_d(vector&lt; double &gt; mu, int offset=0, int block_size=-1)']]],
   ['dump_5fr_5fd',['dump_r_d',['../classMatGSO.html#aa136d886e0ca19b063a3b5820a7573e9',1,'MatGSO::dump_r_d(double *r, int offset=0, int block_size=-1)'],['../classMatGSO.html#a1ca5834842d3a58a4ac4f37ef73c9fc3',1,'MatGSO::dump_r_d(vector&lt; double &gt; r, int offset=0, int block_size=-1)']]],
-  ['dx',['dx',['../classEnumerationBase.html#ae9b66d6b6714cd8331709e11a7e42aac',1,'EnumerationBase']]]
+  ['dx',['dx',['../classEnumerationBase.html#ae806352cfcbc25b3a0a7eed7757058fb',1,'EnumerationBase']]]
 ];

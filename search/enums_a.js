@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['svpflags',['SVPFlags',['../defs_8h.html#ac35aee45a7be7585cbab5d7da246cd33',1,'defs.h']]],
-  ['svpmethod',['SVPMethod',['../defs_8h.html#a8a2c5c1bce4bf22a2759aea5aa519b19',1,'defs.h']]]
+  ['redstatus',['RedStatus',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5',1,'defs.h']]]
 ];
