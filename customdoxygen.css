@@ -2,6 +2,102 @@ h1, .h1, h2, .h2, h3, .h3{
     font-weight: 200 !important;
 }
 
+.sm-dox a span.sub-arrow {
+    position: absolute;
+    top: 50%;
+    margin-top: -14px;
+    left: auto;
+    right: 3px;
+    width: 28px;
+    height: 28px;
+    overflow: hidden;
+    font: bold 12px / 28px monospace !important;
+    text-align: center;
+    text-shadow: none;
+    background: rgba(255, 255, 255, 0.5);
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px
+}
+
+/* Handing of arrow-carets in the smart menus */
+.sm-dox a.highlighted span.sub-arrow:before {
+    display: block;
+    content: '-'
+}
+
+.sm-dox a span.sub-arrow {
+    top: 50%;
+    margin-top: -2px;
+    right: 12px;
+    width: 0;
+    height: 0;
+    border-width: 4px;
+    border-style: solid dashed dashed dashed;
+    border-color: #283a5d transparent transparent transparent;
+    background: transparent;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0
+}
+
+.sm-dox a:hover span.sub-arrow {
+    border-color: red transparent transparent transparent
+}
+
+
+.sm-dox.sm-rtl a.has-submenu {
+    padding-right: 12px;
+    padding-left: 24px
+}
+
+.sm-dox.sm-rtl a span.sub-arrow {
+    right: auto;
+    left: 12px
+}
+
+.sm-dox.sm-rtl.sm-vertical a.has-submenu {
+    padding: 10px 20px
+}
+
+.sm-dox.sm-rtl.sm-vertical a span.sub-arrow {
+    right: auto;
+    left: 8px;
+    border-style: dashed solid dashed dashed;
+    border-color: transparent #555 transparent transparent
+}
+
+.sm-dox.sm-rtl ul a.has-submenu {
+    padding: 10px 20px !important
+}
+
+.sm-dox.sm-rtl ul a span.sub-arrow {
+    right: auto;
+    left: 8px;
+    border-style: dashed solid dashed dashed;
+    border-color: transparent #555 transparent transparent
+}
+
+.sm-dox.sm-vertical a.disabled {
+}
+
+.sm-dox.sm-vertical a span.sub-arrow {
+    right: 8px;
+    top: 50%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: dashed dashed dashed solid;
+    border-color: transparent transparent transparent #555
+}
+.sm-dox ul a span.sub-arrow {
+    right: 8px;
+    top: 50%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-color: transparent transparent transparent #555;
+    border-style: dashed dashed dashed solid
+}
+
 #navrow1, #navrow2, #navrow3, #navrow4, #navrow5{
     border-bottom: 1px solid #EEEEEE;
 }
@@ -367,4 +463,23 @@ span.SRScope {
 }
 .page-header .label {
   font-size: 50%;
+}
+
+@media print
+{
+  #top { display: none; }
+  #side-nav { display: none; }
+  #nav-path { display: none; }
+  body { overflow:visible; }
+  h1, h2, h3, h4, h5, h6 { page-break-after: avoid; }
+  .summary { display: none; }
+  .memitem { page-break-inside: avoid; }
+  #doc-content
+  {
+    margin-left:0 !important;
+    height:auto !important;
+    width:auto !important;
+    overflow:inherit;
+    display:inline;
+  }
 }
