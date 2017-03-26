@@ -15,10 +15,10 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 ## How to cite ##
 
 	@unpublished{fplll,
-	    Note = {Available at \url{https://github.com/fplll/fplll}},
-	    Title = {{fplll}, a lattice reduction library},
-	    Author = {The {FPLLL} development team},
-	    Year = 2016,
+	    author = {The {FPLLL} development team},
+	    title = {{fplll}, a lattice reduction library},
+	    year = 2016,
+	    note = {Available at \url{https://github.com/fplll/fplll}},
 	    url = {https://github.com/fplll/fplll}
 	}
 

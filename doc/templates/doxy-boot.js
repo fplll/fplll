@@ -1,5 +1,4 @@
 $( document ).ready(function() {
-
     $("div.headertitle").addClass("page-header");
     $("div.title").addClass("h1");
 
@@ -26,7 +25,7 @@ $( document ).ready(function() {
     $("#nav-path > ul").addClass("breadcrumb");
 
     $("table.params").addClass("table");
-    $("div.ingroups").wrapInner("<small></small>");
+    $("div.ingroups").wrapInner("<span class='text-nowrap'></span>");
     $("div.levels").css("margin", "0.5em");
     $("div.levels > span").addClass("btn btn-default btn-xs");
     $("div.levels > span").css("margin-right", "0.25em");
@@ -92,11 +91,19 @@ $( document ).ready(function() {
 		if(getOriginalWidthOfImg($(this)[0]) > $('#content>div.container').width())
 			$(this).css('width', '100%');
 	});
-	
-  
-  /* responsive search box */
-  $('#MSearchBox').parent().remove();
 
+    var nav_container = $('#main-nav').detach();
+    nav_container.addClass('nav navbar-nav navbar-right');
+    $('nav > .container').append(nav_container);
+    $('#main-nav > ul').addClass('nav navbar-nav navbar-right');
+    $('#main-nav * li > ul').addClass('dropdown-menu');
+
+
+
+  /* responsive search box */
+  //$('#MSearchBox').parent().remove();
+
+    /*
   var nav_container = $('<div class="row"></div>');
   $('#navrow1').parent().prepend(nav_container);
 
@@ -120,6 +127,7 @@ $( document ).ready(function() {
     </div>');
   $(nav_container).append(left_nav);
   $(nav_container).append(right_nav);
+
 
   $('#MSearchSelectWindow .SelectionMark').remove();
   var search_selectors = $('#MSearchSelectWindow .SelectItem');
@@ -154,9 +162,9 @@ $( document ).ready(function() {
   searchBox.DOMSearchClose = function(){
     return document.getElementById("search-close");
   }
-
-
+  */
   /* search results */
+
   var results_iframe = $('#MSearchResults').detach();
   $('#MSearchResultsWindow')
     .attr('id', 'search-results-window')
@@ -210,7 +218,6 @@ $( document ).ready(function() {
       observer.observe(targets[i], config);
     }
   });
-
 
   /* enumerations */
   $('table.fieldtable').removeClass('fieldtable').addClass('table table-striped table-bordered').each(function(){
@@ -267,4 +274,5 @@ $( document ).ready(function() {
 			$(this).siblings('.memTemplItemRight').remove();
 		}
 	});
+  //searchBox.CloseResultsWindow();
 });
