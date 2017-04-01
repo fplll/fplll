@@ -76,7 +76,7 @@ matrix:
       - make
       - make check
       - make distcheck
-      - cd fplll && gcov --object-directory .libs *.cpp
+      - cd fplll && gcov --object-directory .libs *.cpp && cd ..
     after_success:
       - bash <(curl -s https://codecov.io/bash)
   - os: linux
