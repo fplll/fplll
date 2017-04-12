@@ -520,20 +520,25 @@ int main(int argc, char *argv[])
   cerr << endl << "d" << endl;
   status += test_unpruned<FP_NR<double>>();
   print_status(status);
+#ifdef FPLLL_WITH_LONG_DOUBLE
   cerr << endl << "ld" << endl;
   status += test_unpruned<FP_NR<long double>>();
   print_status(status);
+#endif
   cerr << endl << "MPRF" << endl;
   status += test_unpruned<FP_NR<mpfr_t>>();
   print_status(status);
 
   status += test_prepruned<FP_NR<double>>();
   print_status(status);
+#ifdef FPLLL_WITH_LONG_DOUBLE
   status += test_prepruned<FP_NR<long double>>();
   print_status(status);
+#endif
   status += test_prepruned<FP_NR<mpfr_t>>();
   print_status(status);
 
+#ifdef FPLLL_WITH_LONG_DOUBLE
   Pruner<FP_NR<long double>>::TestPruner tp;
   status += tp.test_enforce();
   print_status(status);
@@ -543,6 +548,7 @@ int main(int argc, char *argv[])
   print_status(status);
   status += tp.test_relative_volume();
   print_status(status);
+#endif
 
 #ifdef FPLLL_WITH_QD
   Pruner<FP_NR<dd_real>>::TestPruner tp2;
