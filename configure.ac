@@ -124,6 +124,13 @@ AC_ARG_WITH(max-enumeration-dimension,
 
 AC_DEFINE_UNQUOTED([FPLLL_MAX_ENUM_DIMENSION], $max_enumeration_dimension, [maximum supported enumeration dimension])
 
+AC_ARG_ENABLE(recursive-enum,
+        AS_HELP_STRING([--disable-recursive-enum],
+         [Disable recursive enumeration]))
+
+AS_IF([test "x$enable_recursive_enum" != "xno"], [
+        AC_DEFINE([FPLLL_WITH_RECURSIVE_ENUM], [1], [recursive enumeration enabled])])
+
 # Store version numbers in header
 
 AC_DEFINE_UNQUOTED([FPLLL_MAJOR_VERSION],[$FPLLL_MAJOR_VERSION],[major version])
