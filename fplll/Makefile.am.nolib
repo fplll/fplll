@@ -1,0 +1,73 @@
+# This makefile.am will not build libfplll; please only use this for debug/development purpose.
+# It will only compile the fplll binary.
+include_fpllldir=$(includedir)/fplll
+strategydir = $(pkgdatadir)/strategies
+# see https://stackoverflow.com/questions/5867136/autoconf-how-to-get-installation-paths-into-config-h
+AM_CPPFLAGS = -DFPLLL_DEFAULT_STRATEGY_PATH=\"$(strategydir)\" -DFPLLL_DEFAULT_STRATEGY=\"$(strategydir)/default.json\"
+
+nobase_include_fplll_HEADERS=defs.h fplll.h \
+	nr/dpe.h \
+	nr/matrix.h \
+	nr/matrix.cpp \
+	nr/nr_FP_dd.inl \
+	nr/nr_FP_d.inl \
+	nr/nr_FP_dpe.inl \
+	nr/nr_FP.inl \
+	nr/nr_FP_ld.inl \
+	nr/nr_FP_misc.inl \
+	nr/nr_FP_mpfr.inl \
+	nr/nr_FP_qd.inl \
+	nr/nr.h \
+	nr/nr_rand.inl \
+	nr/nr_Z_d.inl \
+	nr/nr_Z.inl \
+	nr/nr_Z_l.inl \
+	nr/nr_Z_misc.inl \
+	nr/nr_Z_mpz.inl \
+	nr/numvect.h \
+	util.h \
+	svpcvp.h bkz.h lll.h gso.h  \
+	enum/evaluator.h \
+	fplll_config.h wrapper.h \
+	bkz_param.h \
+	enum/enumerate.h enum/enumerate_base.h \
+	pruner.h
+
+bin_PROGRAMS=fplll
+check_PROGRAMS=llldiff
+EXTRA_PROGRAMS=fplll_dbg
+
+# fplll bin
+fplll_SOURCES=main.cpp main.h \
+	fplll.cpp fplll.h \
+	util.cpp util.h \
+	enum/topenum.cpp enum/topenum.h \
+	enum/enumerate.cpp enum/enumerate.h \
+	enum/enumerate_base.cpp enum/enumerate_base.h \
+	enum/evaluator.cpp enum/evaluator.h \
+	lll.cpp lll.h \
+	wrapper.cpp wrapper.h \
+	bkz.cpp bkz.h \
+	bkz_param.cpp bkz_param.h \
+	gso.cpp gso.h \
+	pruner.cpp pruner.h
+
+fplll_LDADD=$(LIBQD_LIBADD)
+fplll_dbg_SOURCES=$(fplll_SOURCES)
+fplll_dbg_CPPFLAGS=-DDEBUG $(AM_CPPFLAGS)
+fplll_dbg_CXXFLAGS=-g $(AM_CXXFLAGS)
+fplll_dbg_LDADD=$(LIBQD_LIBADD)
+
+install-data-hook:
+	echo "#include <fplll/fplll.h>" > "$(srcdir)/fplll.h.root"
+	echo "using namespace fplll;" >> "$(srcdir)/fplll.h.root"
+	$(INSTALL) -m 644 "$(srcdir)/fplll.h.root" "${DESTDIR}$(includedir)/fplll.h"
+	rm -f "$(srcdir)/fplll.h.root"
+
+uninstall-hook:
+	if test -d "${DESTDIR}$(includedir)/fplll/enum"; then rmdir "${DESTDIR}$(includedir)/fplll/enum"; fi
+	if test -d "${DESTDIR}$(includedir)/fplll/nr"; then rmdir "${DESTDIR}$(includedir)/fplll/nr"; fi
+	(test -d "${DESTDIR}$(includedir)/fplll" && rmdir "${DESTDIR}$(includedir)/fplll") || true
+	rm -f "${DESTDIR}$(includedir)/fplll.h"
+
+dbg: fplll_dbg
