@@ -27,17 +27,17 @@ GaussSieve<ZT, F>::GaussSieve(ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
 {
 
   /* stats */
-  b             = B;
-  nr            = b.get_rows();
-  nc            = b.get_cols();
-  max_list_size = 0;
-  iterations    = 0;
-  collisions    = 0;
-  reductions    = 0;
-  samples       = 0;
+  b               = B;
+  nr              = b.get_rows();
+  nc              = b.get_cols();
+  max_list_size   = 0;
+  iterations      = 0;
+  collisions      = 0;
+  reductions      = 0;
+  samples         = 0;
   target_sqr_norm = 0;
-  mem_lower     = pow(2.0, 0.18 * nc);
-  alg           = alg_arg;
+  mem_lower       = pow(2.0, 0.18 * nc);
+  alg             = alg_arg;
   set_verbose(ver);
 
   /* sanity check */
@@ -314,7 +314,6 @@ template <class ZT, class F> NumVect<Z_NR<ZT>> GaussSieve<ZT, F>::return_first()
 {
   return List.front()->v;
 }
-
 
 template <class ZT, class F> bool GaussSieve<ZT, F>::sieve(Z_NR<ZT> target_norm)
 {

@@ -33,7 +33,8 @@ static void main_usage(char *myself)
 /**
  * run sieve
  */
-template <class ZT> int main_run_sieve(ZZ_mat<ZT> B, Z_NR<ZT> target_norm, int alg, int ver, int seed)
+template <class ZT>
+int main_run_sieve(ZZ_mat<ZT> B, Z_NR<ZT> target_norm, int alg, int ver, int seed)
 {
   GaussSieve<ZT, FP_NR<double>> gsieve(B, alg, ver, seed);
   gsieve.sieve(target_norm);
@@ -46,7 +47,7 @@ template <class ZT> int main_run_sieve(ZZ_mat<ZT> B, Z_NR<ZT> target_norm, int a
 int main(int argc, char **argv)
 {
   char *input_file_name = NULL;
-  char *target_norm_s     = NULL;
+  char *target_norm_s   = NULL;
   bool flag_verbose = false, flag_file = false;
   int option, alg, dim = 10, seed = 0, bs = 0;
 
