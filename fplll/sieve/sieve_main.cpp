@@ -33,17 +33,10 @@ static void main_usage(char *myself)
 /**
  * run sieve
  */
-template <class ZT> int main_run_sieve(ZZ_mat<ZT> B, Z_NR<ZT> goal_norm, int alg, int ver, int seed)
+template <class ZT> int main_run_sieve(ZZ_mat<ZT> B, Z_NR<ZT> target_norm, int alg, int ver, int seed)
 {
   GaussSieve<ZT, FP_NR<double>> gsieve(B, alg, ver, seed);
-  gsieve.set_goal_norm2(goal_norm);
-  if (gsieve.alg == 3)
-    gsieve.run_3sieve();
-  else if (gsieve.alg == 4)
-    gsieve.run_4sieve();
-  else
-    gsieve.run_2sieve();
-
+  gsieve.sieve(target_norm);
   return 0;
 }
 
@@ -53,7 +46,7 @@ template <class ZT> int main_run_sieve(ZZ_mat<ZT> B, Z_NR<ZT> goal_norm, int alg
 int main(int argc, char **argv)
 {
   char *input_file_name = NULL;
-  char *goal_norm_s     = NULL;
+  char *target_norm_s     = NULL;
   bool flag_verbose = false, flag_file = false;
   int option, alg, dim = 10, seed = 0, bs = 0;
 
@@ -100,9 +93,9 @@ int main(int argc, char **argv)
       flag_verbose = true;
       break;
     case 't':
-      // ngoal_norm = atol(optarg);
+      // ntarget_norm = atol(optarg);
       cout << optarg << endl;
-      goal_norm_s = optarg;
+      target_norm_s = optarg;
       break;
     case 'h':
       main_usage(argv[0]);
@@ -148,15 +141,15 @@ int main(int argc, char **argv)
   }
 
   /* set targeted norm */
-  Z_NR<mpz_t> goal_norm, max;
-  if (goal_norm_s != NULL)
+  Z_NR<mpz_t> target_norm, max;
+  if (target_norm_s != NULL)
   {
-    goal_norm.set_str(goal_norm_s);
+    target_norm.set_str(target_norm_s);
   }
-  if (goal_norm < 0)
-    goal_norm = 0;
+  if (target_norm < 0)
+    target_norm = 0;
   if (flag_verbose)
-    cout << "# [info] goal norm^2 is " << goal_norm << endl;
+    cout << "# [info] target norm^2 is " << target_norm << endl;
 
   /* preprocessing of basis */
   clock_t stime = clock();
@@ -183,18 +176,18 @@ int main(int argc, char **argv)
 #if 1
   if (max < std::numeric_limits<int>::max())
   {
-    long goal_norm_l = abs(goal_norm.get_si());
-    Z_NR<long> goal_norm_lt;
-    goal_norm_lt = goal_norm_l;
+    long target_norm_l = abs(target_norm.get_si());
+    Z_NR<long> target_norm_lt;
+    target_norm_lt = target_norm_l;
     ZZ_mat<long> B2(B.get_rows(), B.get_cols());
     for (int i = 0; i < B.get_rows(); i++)
       for (int j = 0; j < B.get_cols(); j++)
         B2(i, j) = B(i, j).get_si();
-    main_run_sieve<long>(B2, goal_norm_lt, alg, flag_verbose, seed);
+    main_run_sieve<long>(B2, target_norm_lt, alg, flag_verbose, seed);
   }
   else
 #endif
-    main_run_sieve<mpz_t>(B, goal_norm, alg, flag_verbose, seed);
+    main_run_sieve<mpz_t>(B, target_norm, alg, flag_verbose, seed);
 
   etime = clock();
   secs  = (etime - stime) / (double)CLOCKS_PER_SEC;
