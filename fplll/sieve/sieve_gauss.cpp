@@ -15,6 +15,8 @@
 #include "sieve_gauss_4sieve.cpp"
 #include "wrapper.h"
 
+FPLLL_BEGIN_NAMESPACE
+
 #define REDUCE_TIMING
 
 /**
@@ -315,3 +317,5 @@ template <class ZT, class F> NumVect<Z_NR<ZT>> GaussSieve<ZT, F>::return_first()
 
 template class GaussSieve<mpz_t, FP_NR<double>>;
 template class GaussSieve<long, FP_NR<double>>;
+
+FPLLL_END_NAMESPACE
