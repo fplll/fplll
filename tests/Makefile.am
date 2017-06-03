@@ -3,6 +3,8 @@ TOPSRCDIR = $(srcdir)/..
 TOPBUILDDIR = $(builddir)/../fplll
 DEFINES =
 
+CLEANFILES = *.gcov .libs/*.gcda .libs/*.gcno *.gcno *.gcda
+
 include_fpllldir=$(includedir)/fplll
 
 EXTRA_DIST=lattices/dim55_in \
