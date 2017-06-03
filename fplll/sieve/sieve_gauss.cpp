@@ -300,7 +300,6 @@ template <class ZT, class F> void GaussSieve<ZT, F>::print_final_info()
     cout << "# [info] true log2(max|L|)/n = " << log2(first_size) / nc << endl;
     cout << "# [info] sv is" << endl;
   }
-  cout << List.front()->v << endl;
   if (verbose)
   {
     final_norm.set_z(best_sqr_norm);
