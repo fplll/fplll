@@ -32,7 +32,6 @@ inline void roundto(int &dest, const double &src) { dest = (int)round(src); }
 inline void roundto(double &dest, const double &src) { dest = round(src); }
 
 /* config */
-#define FPLLL_WITH_RECURSIVE_ENUM 1
 #define MAXTEMPLATEDDIMENSION 80  // unused
 //#define FORCE_ENUM_INLINE // not recommended
 /* end config */
