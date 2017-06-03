@@ -33,6 +33,7 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	fplll_config.h wrapper.h \
 	bkz_param.h \
 	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h \
+	sieve/sieve_gauss.h sieve/sieve_common.h sieve/sieve_gauss_str.h sieve/sampler_basic.h \
 	pruner.h
 
 bin_PROGRAMS=fplll latticegen latsieve

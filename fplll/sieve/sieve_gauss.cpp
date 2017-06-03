@@ -15,6 +15,8 @@
 #include "sieve_gauss_4sieve.cpp"
 #include "wrapper.h"
 
+FPLLL_BEGIN_NAMESPACE
+
 #define REDUCE_TIMING
 
 /**
@@ -300,7 +302,6 @@ template <class ZT, class F> void GaussSieve<ZT, F>::print_final_info()
     cout << "# [info] true log2(max|L|)/n = " << log2(first_size) / nc << endl;
     cout << "# [info] sv is" << endl;
   }
-  cout << List.front()->v << endl;
   if (verbose)
   {
     final_norm.set_z(best_sqr_norm);
@@ -316,3 +317,5 @@ template <class ZT, class F> NumVect<Z_NR<ZT>> GaussSieve<ZT, F>::return_first()
 
 template class GaussSieve<mpz_t, FP_NR<double>>;
 template class GaussSieve<long, FP_NR<double>>;
+
+FPLLL_END_NAMESPACE

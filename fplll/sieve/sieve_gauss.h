@@ -7,6 +7,8 @@
 using namespace std;
 using namespace fplll;
 
+FPLLL_BEGIN_NAMESPACE
+
 /**
  * Gauss sieve
  */
@@ -92,5 +94,7 @@ private:
   void print_curr_info();
   void print_final_info();
 };
+
+FPLLL_END_NAMESPACE
 
 #endif
