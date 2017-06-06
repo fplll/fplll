@@ -342,7 +342,7 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::run_4sieve()
   Z_NR<ZT> current_norm;
 
   /* main iteration */
-  while ((best_sqr_norm > goal_sqr_norm) && (collisions < mult * max_list_size + 200))
+  while ((best_sqr_norm > target_sqr_norm) && (collisions < mult * max_list_size + 200))
   {
     iterations++;
     max_list_size = max(max_list_size, long(List.size()));
@@ -400,7 +400,7 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::run_4sieve()
 #endif
   // print_list(List);
 
-  if (best_sqr_norm > goal_sqr_norm)
+  if (best_sqr_norm > target_sqr_norm)
     return false;
   return true;
 }

@@ -19,13 +19,10 @@ public:
   GaussSieve(ZZ_mat<ZT> &B, int alg, bool ver, int seed);
   ~GaussSieve();
 
-  bool run_2sieve();
-  bool run_3sieve();
-  bool run_4sieve();
-
   void set_verbose(bool verbose);
-  void set_goal_norm2(Z_NR<ZT> norm);
+  void set_target_norm2(Z_NR<ZT> norm);
   bool verbose;
+  bool sieve(Z_NR<ZT> target_norm);
 
   /*
     void Init(const mat_ZZ& B, KleinSampler* sampler);
@@ -47,7 +44,7 @@ private:
   ZZ_mat<ZT> b;
 
   Z_NR<ZT> best_sqr_norm;
-  Z_NR<ZT> goal_sqr_norm;
+  Z_NR<ZT> target_sqr_norm;
 
   /* statistics */
   long max_list_size;
@@ -93,6 +90,10 @@ private:
   /* info functions */
   void print_curr_info();
   void print_final_info();
+
+  bool run_2sieve();
+  bool run_3sieve();
+  bool run_4sieve();
 };
 
 FPLLL_END_NAMESPACE

@@ -49,13 +49,7 @@ template <class ZT> int test_sieve_alg(ZZ_mat<ZT> &A, IntVect &b, int alg)
   GaussSieve<ZT, FP_NR<double>> gsieve(A, alg, 0, 0);
   Z_NR<ZT> goal_norm;
   goal_norm = 0;
-  gsieve.set_goal_norm2(goal_norm);
-  if (gsieve.alg == 3)
-    gsieve.run_3sieve();
-  else if (gsieve.alg == 4)
-    gsieve.run_4sieve();
-  else
-    gsieve.run_2sieve();
+  gsieve.sieve(goal_norm);
   NumVect<Z_NR<ZT>> v = gsieve.return_first();
   Z_NR<ZT> tmp;
   Z_NR<ZT> norm_s;
