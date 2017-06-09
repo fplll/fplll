@@ -114,7 +114,7 @@ template <class T> void Matrix<T>::transpose()
 template <class T> T Matrix<T>::get_max()
 {
   T m, a;
-  m = 0;
+  m = 0.0;
   for (int i = 0; i < r; i++)
     for (int j = 0; j < c; j++)
     {

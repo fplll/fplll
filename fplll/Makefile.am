@@ -28,7 +28,7 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	nr/nr_Z_mpz.inl \
 	nr/numvect.h \
 	util.h \
-	svpcvp.h bkz.h lll.h gso.h  \
+	svpcvp.h bkz.h lll.h gso_interface.h gso_gram.h gso.h  \
 	enum/evaluator.h \
 	fplll_config.h wrapper.h \
 	bkz_param.h \
@@ -78,7 +78,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	wrapper.cpp wrapper.h \
 	bkz.cpp bkz.h \
 	bkz_param.cpp bkz_param.h \
-	gso.cpp gso.h \
+	gso_interface.cpp gso_interface.h gso_gram.cpp gso_gram.h gso.cpp gso.h \
 	pruner.cpp pruner.h \
 	sieve/sieve_gauss.cpp \
 	sieve/sieve_gauss.h  \

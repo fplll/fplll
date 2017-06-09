@@ -21,12 +21,13 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <class ZT, class FT>
+/*template <class ZT, class FT>
 inline void MatGSO<ZT, FT>::invalidate_gso_row(int i, int new_valid_cols)
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && new_valid_cols >= 0 && new_valid_cols <= i + 1);
   gso_valid_cols[i] = min(gso_valid_cols[i], new_valid_cols);
 }
+*/
 
 template <class ZT, class FT> void MatGSO<ZT, FT>::update_bf(int i)
 {
@@ -60,29 +61,6 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::invalidate_gram_row(int i)
     gf(i, j).set_nan();
 }
 
-template <class ZT, class FT> void MatGSO<ZT, FT>::row_op_end(int first, int last)
-{
-#ifdef DEBUG
-  FPLLL_DEBUG_CHECK(row_op_first == first && row_op_last == last);
-  row_op_first = row_op_last = -1;
-#endif
-  for (int i = first; i < last; i++)
-  {
-    if (!enable_int_gram)
-    {
-      update_bf(i);
-      invalidate_gram_row(i);
-      for (int j = i + 1; j < n_known_rows; j++)
-        gf(j, i).set_nan();
-    }
-    invalidate_gso_row(i, 0);
-  }
-  for (int i = last; i < n_known_rows; i++)
-  {
-    invalidate_gso_row(i, first);
-  }
-}
-
 template <class ZT, class FT> void MatGSO<ZT, FT>::discover_row()
 {
   FPLLL_DEBUG_CHECK(n_known_rows < d);
@@ -90,7 +68,6 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::discover_row()
      since n_known_cols might be too small to compute all the g(i,j). */
   FPLLL_DEBUG_CHECK(!(cols_locked && enable_int_gram));
   int i = n_known_rows;
-
   n_known_rows++;
   if (!cols_locked)
   {
@@ -99,8 +76,22 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::discover_row()
   }
   if (enable_int_gram)
   {
+    // cerr << "Doing g updating.\n";
+    if (gptr == nullptr)
+    {
+      cerr << "Error: gptr is equal to the nullpointer.\n";
+      exit(1);
+    }
+    if (gptr->get_rows() <= i)
+    {
+      cerr << "Error: gptr has too few rows (<= " << i << ")\n";
+      exit(1);
+    }
     for (int j = 0; j <= i; j++)
+    {
+      // Matrix<ZT> &g = *gptr;
       dot_product(g(i, j), b[i], b[j], n_known_cols);
+    }
   }
   else
   {
@@ -109,34 +100,8 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::discover_row()
   gso_valid_cols[i] = 0;
 }
 
-template <class ZT, class FT> inline ZT MatGSO<ZT, FT>::get_max_gram()
-{
-  ZT tmp;
-  if (enable_int_gram)
-  {
-    tmp = g(0, 0);
-    for (int i = 0; i < n_known_rows; i++)
-      tmp = tmp.max_z(g(i, i));
-  }
-  else
-  {
-    FT tmp1 = gf(0, 0);
-    for (int i = 0; i < n_known_rows; i++)
-      tmp1 = tmp1.max_f(gf(i, i));
-    tmp.set_f(tmp1);
-  }
-  return tmp;
-}
-
-template <class ZT, class FT> inline FT MatGSO<ZT, FT>::get_max_bstar()
-{
-  FT tmp;
-  tmp = r(0, 0);
-  for (int i = 0; i < n_known_rows; i++)
-    tmp = tmp.max_f(r(i, i));
-  return tmp;
-}
-
+// TODO maybe only here!!
+/*
 template <class ZT, class FT> long MatGSO<ZT, FT>::get_max_mu_exp(int i, int n_columns)
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && gso_valid_cols[i] >= n_columns);
@@ -148,7 +113,8 @@ template <class ZT, class FT> long MatGSO<ZT, FT>::get_max_mu_exp(int i, int n_c
   }
   return max_expo;
 }
-
+*/
+/*
 template <class ZT, class FT> bool MatGSO<ZT, FT>::update_gso_row(int i, int last_j)
 {
   // FPLLL_TRACE_IN("Updating GSO up to (" << i << ", " << last_j << ")");
@@ -183,6 +149,7 @@ template <class ZT, class FT> bool MatGSO<ZT, FT>::update_gso_row(int i, int las
   // FPLLL_TRACE_OUT("End of GSO update");
   return true;
 }
+*/
 
 template <class ZT, class FT> void MatGSO<ZT, FT>::row_add(int i, int j)
 {
@@ -196,11 +163,18 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_add(int i, int j)
 
   if (enable_int_gram)
   {
-    // g(i, i) += 2 * g(i, j) + g(j, j)
-    ztmp1.mul_2si(g(i, j), 1);
-    ztmp1.add(ztmp1, g(j, j));
-    g(i, i).add(g(i, i), ztmp1);
+    if (gptr == nullptr)
+    {
+      cerr << "Error: gptr is equal to the nullpointer.\n";
+      exit(1);
+    }
 
+    // g(i, i) += 2 * g(i, j) + g(j, j)
+    ztmp1.mul_2si(sym_g(i, j), 1);
+    ztmp1.add(ztmp1, sym_g(j, j));
+    sym_g(i, i).add(sym_g(i, i), ztmp1);
+
+    // TODO really needed to use sym here?
     for (int k = 0; k < n_known_rows; k++)
       if (k != i)
         sym_g(i, k).add(sym_g(i, k), sym_g(j, k));
@@ -219,10 +193,20 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_sub(int i, int j)
 
   if (enable_int_gram)
   {
+    /*if (gptr == nullptr) {
+      cerr << "Error: gptr is equal to the nullpointer.\n"; exit(1);
+    }
+    Matrix<ZT> &g = *gptr;
+    */
+
     // g(i, i) += g(j, j) - 2 * g(i, j)
-    ztmp1.mul_2si(g(i, j), 1);
+    /*ztmp1.mul_2si(g(i, j), 1);
     ztmp1.sub(g(j, j), ztmp1);
-    g(i, i).add(g(i, i), ztmp1);
+    g(i, i).add(g(i, i), ztmp1);*/
+
+    ztmp1.mul_2si(sym_g(i, j), 1);
+    ztmp1.sub(sym_g(j, j), ztmp1);
+    sym_g(i, i).add(sym_g(i, i), ztmp1);
 
     for (int k = 0; k < n_known_rows; k++)
       if (k != i)
@@ -242,14 +226,24 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_addmul_si(int i, int j, l
 
   if (enable_int_gram)
   {
+    // if (gptr == nullptr) { cerr << "Error: gptr is equal to the nullpointer.\n"; exit(1); }
+    // Matrix<ZT> &g = *gptr;
+
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
       (must be done before updating g(i, j)) */
-    ztmp1.mul_si(g(i, j), x);
+    /*ztmp1.mul_si(g(i, j), x);
     ztmp1.mul_2si(ztmp1, 1);
     g(i, i).add(g(i, i), ztmp1);
     ztmp1.mul_si(g(j, j), x);
     ztmp1.mul_si(ztmp1, x);
-    g(i, i).add(g(i, i), ztmp1);
+    g(i, i).add(g(i, i), ztmp1);*/
+
+    ztmp1.mul_si(sym_g(i, j), x);
+    ztmp1.mul_2si(ztmp1, 1);
+    sym_g(i, i).add(sym_g(i, i), ztmp1);
+    ztmp1.mul_si(sym_g(j, j), x);
+    ztmp1.mul_si(ztmp1, x);
+    sym_g(i, i).add(sym_g(i, i), ztmp1);
 
     // g(i, k) += g(j, k) * (2^e * x) for k != i
     for (int k = 0; k < n_known_rows; k++)
@@ -275,6 +269,12 @@ void MatGSO<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
 
   if (enable_int_gram)
   {
+    if (gptr == nullptr)
+    {
+      cerr << "Error: gptr is equal to the nullpointer.\n";
+      exit(1);
+    }
+    Matrix<ZT> &g = *gptr;
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
       (must be done before updating g(i, j)) */
     ztmp1.mul_si(g(i, j), x);
@@ -314,6 +314,12 @@ void MatGSO<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
 
   if (enable_int_gram)
   {
+    if (gptr == nullptr)
+    {
+      cerr << "Error: gptr is equal to the nullpointer.\n";
+      exit(1);
+    }
+    Matrix<ZT> &g = *gptr;
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
       (must be done before updating g(i, j)) */
     ztmp1.mul(g(i, j), x);
@@ -362,7 +368,7 @@ void MatGSO<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_add)
     row_addmul_2exp(i, j, ztmp2, expo);
   }
 }
-
+// In row_swap, i < j
 template <class ZT, class FT> void MatGSO<ZT, FT>::row_swap(int i, int j)
 {
   FPLLL_DEBUG_CHECK(!enable_inverse_transform);
@@ -374,13 +380,32 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_swap(int i, int j)
 
   if (enable_int_gram)
   {
-    for (int k = 0; k < i; k++)
+    if (j < i)
+    {
+      cerr << "Error: in row_swap, i > j, causing errors in the grammatrix. \n";
+      exit(1);
+    }
+    if (gptr == nullptr)
+    {
+      cerr << "Error: gptr is equal to the nullpointer.\n";
+      exit(1);
+    }
+    // Matrix<ZT> &g = *gptr;
+    /*for (int k = 0; k < i; k++)
       g(i, k).swap(g(j, k));
     for (int k = i + 1; k < j; k++)
       g(k, i).swap(g(j, k));
     for (int k = j + 1; k < n_known_rows; k++)
       g(k, i).swap(g(k, j));
-    g(i, i).swap(g(j, j));
+    g(i, i).swap(g(j, j));*/
+
+    for (int k = 0; k < i; k++)
+      sym_g(i, k).swap(sym_g(j, k));
+    for (int k = i + 1; k < j; k++)
+      sym_g(k, i).swap(sym_g(j, k));
+    for (int k = j + 1; k < n_known_rows; k++)
+      sym_g(k, i).swap(sym_g(k, j));
+    sym_g(i, i).swap(sym_g(j, j));
   }
 }
 
@@ -406,7 +431,14 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::move_row(int old_r, int new_r
         u_inv_t.rotate_right(new_r, old_r);
     }
     if (enable_int_gram)
-      g.rotate_gram_right(new_r, old_r, n_known_rows);
+    {
+      if (gptr == nullptr)
+      {
+        cerr << "Error: gptr is equal to the nullpointer.\n";
+        exit(1);
+      }
+      gptr->rotate_gram_right(new_r, old_r, n_known_rows);
+    }
     else
     {
       gf.rotate_gram_right(new_r, old_r, n_known_rows);
@@ -435,7 +467,14 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::move_row(int old_r, int new_r
     if (enable_int_gram)
     {
       if (old_r < n_known_rows - 1)
-        g.rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
+      {
+        if (gptr == nullptr)
+        {
+          cerr << "Error: gptr is equal to the nullpointer.\n";
+          exit(1);
+        }
+        gptr->rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
+      }
     }
     else
     {
@@ -459,36 +498,6 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::move_row(int old_r, int new_r
   }
 }
 
-template <class ZT, class FT> void MatGSO<ZT, FT>::lock_cols() { cols_locked = true; }
-
-template <class ZT, class FT> void MatGSO<ZT, FT>::unlock_cols()
-{
-  n_known_rows = n_source_rows;
-  cols_locked  = false;
-}
-
-template <class ZT, class FT>
-void MatGSO<ZT, FT>::apply_transform(const Matrix<FT> &transform, int src_base, int target_base)
-{
-  int target_size = transform.get_rows(), src_size = transform.get_cols();
-  int old_d = d;
-  create_rows(target_size);
-  for (int i = 0; i < target_size; i++)
-  {
-    for (int j = 0; j < src_size; j++)
-    {
-      row_addmul(old_d + i, src_base + j, transform(i, j));
-    }
-  }
-  row_op_begin(target_base, target_base + target_size);
-  for (int i = 0; i < target_size; i++)
-  {
-    row_swap(target_base + i, old_d + i);
-  }
-  row_op_end(target_base, target_base + target_size);
-  remove_last_rows(target_size);
-}
-
 template <class ZT, class FT> void MatGSO<ZT, FT>::size_increased()
 {
   int old_d = mu.get_rows();
@@ -496,7 +505,15 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::size_increased()
   if (d > alloc_dim)
   {
     if (enable_int_gram)
-      g.resize(d, d);
+    {
+      if (gptr == nullptr)
+      {
+        cerr << "Error: gptr is equal to the nullpointer.\n";
+        exit(1);
+      }
+      gptr->resize(d, d);
+      // gptr = &gr;
+    }
     else
     {
       bf.resize(d, b.get_cols());
@@ -524,108 +541,14 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::size_increased()
   }
 }
 
-template <class ZT, class FT> double MatGSO<ZT, FT>::get_current_slope(int start_row, int stop_row)
-{
-  FT f, log_f;
-  long expo;
-  vector<double> x;
-  x.resize(stop_row);
-  for (int i = start_row; i < stop_row; i++)
-  {
-    update_gso_row(i);
-    f = get_r_exp(i, i, expo);
-    log_f.log(f, GMP_RNDU);
-    x[i] = log_f.get_d() + expo * std::log(2.0);
-  }
-  int n         = stop_row - start_row;
-  double i_mean = (n - 1) * 0.5 + start_row, x_mean = 0, v1 = 0, v2 = 0;
-  for (int i = start_row; i < stop_row; i++)
-  {
-    x_mean += x[i];
-  }
-  x_mean /= n;
-  for (int i = start_row; i < stop_row; i++)
-  {
-    v1 += (i - i_mean) * (x[i] - x_mean);
-    v2 += (i - i_mean) * (i - i_mean);
-  }
-  return v1 / v2;
-}
-
-template <class ZT, class FT> FT MatGSO<ZT, FT>::get_root_det(int start_row, int end_row)
-{
-  start_row   = max(0, start_row);
-  end_row     = min(d, end_row);
-  FT h        = (double)(end_row - start_row);
-  FT root_det = get_log_det(start_row, end_row) / h;
-  root_det.exponential(root_det);
-  return root_det;
-}
-
-template <class ZT, class FT> FT MatGSO<ZT, FT>::get_log_det(int start_row, int end_row)
-{
-  FT log_det = 0.0;
-  start_row  = max(0, start_row);
-  end_row    = min(d, end_row);
-  FT h;
-  for (int i = start_row; i < end_row; ++i)
-  {
-    get_r(h, i, i);
-    log_det += log(h);
-  }
-  return log_det;
-}
-
-template <class ZT, class FT>
-FT MatGSO<ZT, FT>::get_slide_potential(int start_row, int end_row, int block_size)
-{
-  FT potential = 0.0;
-  int p        = (end_row - start_row) / block_size;
-  if ((end_row - start_row) % block_size == 0)
-  {
-    --p;
-  }
-  for (int i = 0; i < p; ++i)
-  {
-    potential += (p - i) * get_log_det(i * block_size, (i + 1) * block_size);
-  }
-  return potential;
-}
-
-template <class FT>
-void adjust_radius_to_gh_bound(FT &max_dist, long max_dist_expo, int block_size, const FT &root_det,
-                               double gh_factor)
-{
-  double t = (double)block_size / 2.0 + 1;
-  t        = lgamma(t);
-  t        = pow(M_E, t * 2.0 / (double)block_size);
-  t        = t / M_PI;
-  FT f     = t;
-  f        = f * root_det;
-  f.mul_2si(f, -max_dist_expo);
-  f = f * gh_factor;
-  if (f < max_dist)
-  {
-    max_dist = f;
-  }
-}
-
 template class MatGSO<Z_NR<long>, FP_NR<double>>;
 template class MatGSO<Z_NR<double>, FP_NR<double>>;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<double>>;
-template void adjust_radius_to_gh_bound<FP_NR<double>>(FP_NR<double> &max_dist, long max_dist_expo,
-                                                       int block_size,
-                                                       const FP_NR<double> &root_det,
-                                                       double gh_factor);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class MatGSO<Z_NR<long>, FP_NR<long double>>;
 template class MatGSO<Z_NR<double>, FP_NR<long double>>;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<long double>>;
-template void adjust_radius_to_gh_bound<FP_NR<long double>>(FP_NR<long double> &max_dist,
-                                                            long max_dist_expo, int block_size,
-                                                            const FP_NR<long double> &root_det,
-                                                            double gh_factor);
 
 #endif
 
@@ -633,34 +556,20 @@ template void adjust_radius_to_gh_bound<FP_NR<long double>>(FP_NR<long double> &
 template class MatGSO<Z_NR<long>, FP_NR<dd_real>>;
 template class MatGSO<Z_NR<double>, FP_NR<dd_real>>;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>>;
-template void adjust_radius_to_gh_bound<FP_NR<dd_real>>(FP_NR<dd_real> &max_dist,
-                                                        long max_dist_expo, int block_size,
-                                                        const FP_NR<dd_real> &root_det,
-                                                        double gh_factor);
+
 template class MatGSO<Z_NR<long>, FP_NR<qd_real>>;
 template class MatGSO<Z_NR<double>, FP_NR<qd_real>>;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>>;
-template void adjust_radius_to_gh_bound<FP_NR<qd_real>>(FP_NR<qd_real> &max_dist,
-                                                        long max_dist_expo, int block_size,
-                                                        const FP_NR<qd_real> &root_det,
-                                                        double gh_factor);
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template class MatGSO<Z_NR<long>, FP_NR<dpe_t>>;
 template class MatGSO<Z_NR<double>, FP_NR<dpe_t>>;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>>;
-template void adjust_radius_to_gh_bound<FP_NR<dpe_t>>(FP_NR<dpe_t> &max_dist, long max_dist_expo,
-                                                      int block_size, const FP_NR<dpe_t> &root_det,
-                                                      double gh_factor);
 #endif
 
 template class MatGSO<Z_NR<long>, FP_NR<mpfr_t>>;
 template class MatGSO<Z_NR<double>, FP_NR<mpfr_t>>;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
-template void adjust_radius_to_gh_bound<FP_NR<mpfr_t>>(FP_NR<mpfr_t> &max_dist, long max_dist_expo,
-                                                       int block_size,
-                                                       const FP_NR<mpfr_t> &root_det,
-                                                       double gh_factor);
 
 FPLLL_END_NAMESPACE
