@@ -72,8 +72,6 @@ public:
   MatGSOGram(Matrix<ZT> &arg_g, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
       : MatGSOInterface<ZT, FT>(arg_u, arg_uinv_t, GSO_INT_GRAM)
   {
-    FPLLL_DEBUG_CHECK(!(enable_int_gram && enable_row_expo));
-
     gptr = &arg_g;
     if (gptr == nullptr)
     {
