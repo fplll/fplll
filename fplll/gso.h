@@ -68,6 +68,15 @@ public:
   using MatGSOInterface<ZT, FT>::update_gso_row;
   using MatGSOInterface<ZT, FT>::row_addmul;
   using MatGSOInterface<ZT, FT>::symmetrize_g;
+
+#ifdef DEBUG
+  /* Used only in debug mode. */
+  using MatGSOInterface<ZT, FT>::row_op_first;
+  using MatGSOInterface<ZT, FT>::row_op_last;
+  using MatGSOInterface<ZT, FT>::in_row_op_range;
+#endif
+
+
   // using MatGSOInterface<ZT,FT>::update_gso_row;
   // using MatGSOInterface<ZT,FT>::update_gso_row;
   /**

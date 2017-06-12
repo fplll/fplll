@@ -62,6 +62,13 @@ public:
   using MatGSOInterface<ZT, FT>::update_gso_row;
   using MatGSOInterface<ZT, FT>::symmetrize_g;
 
+#ifdef DEBUG
+  /* Used only in debug mode. */
+  using MatGSOInterface<ZT, FT>::row_op_first;
+  using MatGSOInterface<ZT, FT>::row_op_last;
+  using MatGSOInterface<ZT, FT>::in_row_op_range;
+#endif
+
   MatGSOGram(Matrix<ZT> &arg_g, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
       : MatGSOInterface<ZT, FT>(arg_u, arg_uinv_t, GSO_INT_GRAM)
   {
