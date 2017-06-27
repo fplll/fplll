@@ -488,7 +488,7 @@ static int dpe_out_str(FILE *s, int base, const dpe_t x)
   if (DPE_UNLIKELY(base != 10))
   {
     fprintf(stderr, "Error in dpe_out_str, only base 10 allowed\n");
-    abort();    
+    abort();
   }
   if (d == 0.0)
 #ifdef DPE_USE_DOUBLE
