@@ -75,8 +75,7 @@ public:
     gptr = &arg_g;
     if (gptr == nullptr)
     {
-      cerr << "Pointer of the Grammatrix equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Pointer of the Grammatrix equal to the nullpointer.");
     }
     d = gptr->get_rows();
     size_increased();
@@ -144,8 +143,7 @@ template <class ZT, class FT> inline long MatGSOGram<ZT, FT>::get_max_exp_of_b()
 {
   if (gptr == nullptr)
   {
-    cerr << "Error: gptr is equal to the nullpointer.\n";
-    exit(1);
+    throw std::runtime_error("Error: gptr is equal to the nullpointer.");
   }
   Matrix<ZT> &g = *gptr;
   // normally, this returns the maximum
@@ -159,8 +157,7 @@ template <class ZT, class FT> inline bool MatGSOGram<ZT, FT>::b_row_is_zero(int 
 {
   if (gptr == nullptr)
   {
-    cerr << "Error: gptr is equal to the nullpointer.\n";
-    exit(1);
+    throw std::runtime_error("Error: gptr is equal to the nullpointer.");    
   }
   Matrix<ZT> &g = *gptr;
   // normally this returns whether the
@@ -172,8 +169,7 @@ template <class ZT, class FT> inline int MatGSOGram<ZT, FT>::get_cols_of_b()
 {
   if (gptr == nullptr)
   {
-    cerr << "Error: gptr is equal to the nullpointer.\n";
-    exit(1);
+    throw std::runtime_error("Error: gptr is equal to the nullpointer.");
   }
   // in this gram-matrix version, the number
   // of columns of b is the same as the
@@ -185,8 +181,7 @@ template <class ZT, class FT> inline int MatGSOGram<ZT, FT>::get_rows_of_b()
 {
   if (gptr == nullptr)
   {
-    cerr << "Error: gptr is equal to the nullpointer.\n";
-    exit(1);
+    throw std::runtime_error("Error: gptr is equal to the nullpointer.");
   }
   // in this gram-matrix version, the number
   // of columns of b is the same as the
@@ -217,8 +212,7 @@ template <class ZT, class FT> inline FT &MatGSOGram<ZT, FT>::get_gram(FT &f, int
   {
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     f.set_z((*gptr)(i, j));
   }

@@ -29,7 +29,6 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::discover_row()
      since n_known_cols might be too small to compute all the g(i,j). */
   FPLLL_DEBUG_CHECK(!(cols_locked && enable_int_gram));
   int i = n_known_rows;
-
   n_known_rows++;
   if (!cols_locked)
   {
@@ -267,8 +266,7 @@ void MatGSOGram<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
   {
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> &g = *gptr;
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
@@ -311,8 +309,7 @@ void MatGSOGram<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
   {
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");      
     }
     Matrix<ZT> &g = *gptr;
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
@@ -376,13 +373,11 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_swap(int i, int j)
   {
     if (j < i)
     {
-      cerr << "Error: in row_swap, i > j, causing errors in the grammatrix. \n";
-      exit(1);
+      throw std::runtime_error("Error: in row_swap, i > j, causing errors in the grammatrix.");
     }
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> &g = *gptr;
     for (int k = 0; k < i; k++)
@@ -423,8 +418,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int n
     {
       if (gptr == nullptr)
       {
-        cerr << "Error (symmetrize_g): gptr is equal to the nullpointer.";
-        exit(1);
+      throw std::runtime_error("Error (symmetrize_g): gptr is equal to the nullpointer.");        
       }
       gptr->rotate_gram_right(new_r, old_r, d);
     }
@@ -457,8 +451,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int n
       {
         if (gptr == nullptr)
         {
-          cerr << "Error (symmetrize_g): gptr is equal to the nullpointer.";
-          exit(1);
+          throw std::runtime_error("Error (symmetrize_g): gptr is equal to the nullpointer.");        
         }
         gptr->rotate_gram_left(old_r, new_r, d);
       }
@@ -483,8 +476,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::size_increased()
   {
     if (gptr == nullptr)
     {
-      cerr << "Error (symmetrize_g): gptr is equal to the nullpointer.";
-      exit(1);
+      throw std::runtime_error("Error (symmetrize_g): gptr is equal to the nullpointer.");
     }
     gptr->resize(d, d);
 

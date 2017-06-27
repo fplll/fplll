@@ -41,6 +41,7 @@
 #include <limits>
 #include <sstream>
 #include <string>
+#include <stdexcept>
 
 #ifdef FPLLL_WITH_GETRUSAGE
 #include <sys/resource.h>

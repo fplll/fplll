@@ -66,10 +66,7 @@ GaussSieve<ZT, F>::GaussSieve(ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
     iterations_step = 5;
   }
   else
-  {
-    cout << " Error, only support 2-, 3- and 4-sieve" << endl;
-    exit(1);
-  }
+    throw std::invalid_argument( "only support 2-, 3- and 4-sieve");    
 
   /* clean up list */
   free_list_queue();
@@ -128,10 +125,7 @@ template <class ZT, class F> void GaussSieve<ZT, F>::add_mat_list(ZZ_mat<ZT> &B)
     else if (alg == 4)
       current_norm = update_p_4reduce(p);
     else
-    {
-      cout << " Error, only support 2-, 3- and 4-sieve" << endl;
-      exit(1);
-    }
+      throw std::invalid_argument( "only support 2-, 3- and 4-sieve");          
 
     if ((current_norm < best_sqr_norm) && (current_norm > 0))
       // if ((current_norm < best_sqr_norm) )
