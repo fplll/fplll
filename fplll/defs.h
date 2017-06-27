@@ -40,8 +40,8 @@
 #include <iostream>
 #include <limits>
 #include <sstream>
-#include <string>
 #include <stdexcept>
+#include <string>
 
 #ifdef FPLLL_WITH_GETRUSAGE
 #include <sys/resource.h>

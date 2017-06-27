@@ -157,7 +157,7 @@ template <class ZT, class FT> inline bool MatGSOGram<ZT, FT>::b_row_is_zero(int 
 {
   if (gptr == nullptr)
   {
-    throw std::runtime_error("Error: gptr is equal to the nullpointer.");    
+    throw std::runtime_error("Error: gptr is equal to the nullpointer.");
   }
   Matrix<ZT> &g = *gptr;
   // normally this returns whether the

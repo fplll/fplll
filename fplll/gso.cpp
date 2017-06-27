@@ -74,7 +74,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::discover_row()
     n_source_rows = n_known_rows;
     n_known_cols  = max(n_known_cols, init_row_size[i]);
   }
-  
+
   if (enable_int_gram)
   {
     // cerr << "Doing g updating.\n";

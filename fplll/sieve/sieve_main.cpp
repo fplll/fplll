@@ -71,7 +71,7 @@ int main(int argc, char **argv)
     case 'a':
       alg = atoi(optarg);
       if (alg != 2 && alg != 3 && alg != 4)
-        throw std::invalid_argument( "only support 2-, 3- and 4-sieve");
+        throw std::invalid_argument("only support 2-, 3- and 4-sieve");
     case 'f':
       input_file_name = optarg;
       flag_file       = true;

@@ -309,7 +309,7 @@ void MatGSOGram<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
   {
     if (gptr == nullptr)
     {
-      throw std::runtime_error("Error: gptr is equal to the nullpointer.");      
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> &g = *gptr;
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
@@ -418,7 +418,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int n
     {
       if (gptr == nullptr)
       {
-      throw std::runtime_error("Error (symmetrize_g): gptr is equal to the nullpointer.");        
+        throw std::runtime_error("Error (symmetrize_g): gptr is equal to the nullpointer.");
       }
       gptr->rotate_gram_right(new_r, old_r, d);
     }
@@ -451,7 +451,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int n
       {
         if (gptr == nullptr)
         {
-          throw std::runtime_error("Error (symmetrize_g): gptr is equal to the nullpointer.");        
+          throw std::runtime_error("Error (symmetrize_g): gptr is equal to the nullpointer.");
         }
         gptr->rotate_gram_left(old_r, new_r, d);
       }

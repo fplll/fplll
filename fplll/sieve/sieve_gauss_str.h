@@ -589,7 +589,7 @@ template <class ZT> inline void check_0_list(const list<ListPoint<ZT> *> List)
   {
     if ((*lp_it)->norm == 0)
     {
-    throw std::runtime_error("Error, list containing zero vector");
+      throw std::runtime_error("Error, list containing zero vector");
     }
   }
 }

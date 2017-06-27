@@ -58,7 +58,7 @@ template <class ZT, class FT> inline ZT MatGSOInterface<ZT, FT>::get_max_gram()
   {
     if (gptr == nullptr)
     {
-      throw std::runtime_error("Error: gptr is equal to the nullpointer.");      
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> gr = *gptr;
     tmp           = gr(0, 0);
