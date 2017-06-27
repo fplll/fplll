@@ -93,7 +93,7 @@ struct DebugTracer
   std::string f;
 };
 #define FPLLL_DEBUG_ABORT(x) FPLLL_ABORT(x)
-#define FPLLL_DEBUG_CHECK(x) assert(x)
+#define FPLLL_DEBUG_CHECK(x) assert(x);
 #define FPLLL_TRACE_IN(x)                                                                          \
   FPLLL_TRACE("<" << __func__ << " " << x << ">");                                                 \
   DebugTracer debugTracer(__func__);
