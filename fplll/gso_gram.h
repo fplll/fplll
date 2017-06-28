@@ -75,7 +75,7 @@ public:
     gptr = &arg_g;
     if (gptr == nullptr)
     {
-      cerr << "Pointer of the Grammatrix equal to the nullpointer.\n";
+      cerr << "Pointer of the Grammatrix equals the nullpointer.\n";
       exit(1);
     }
     d = gptr->get_rows();

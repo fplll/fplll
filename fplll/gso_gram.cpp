@@ -59,14 +59,19 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_add(int i, int j)
 
   if (enable_int_gram)
   {
+    FPLLL_DEBUG_CHECK(i > j);
+    if (gptr == nullptr)
+    {
+      cerr << "Error: gptr is equal to the nullpointer.\n";
+      exit(1);
+    }
+    Matrix<ZT> &g = *gptr;
     // g(i, i) += 2 * g(i, j) + g(j, j)
-    // TODO replaced g with sym_g
-    ztmp1.mul_2si(sym_g(i, j), 1);
-    ztmp1.add(ztmp1, sym_g(j, j));
-    sym_g(i, i).add(sym_g(i, i), ztmp1);
+    ztmp1.mul_2si(g(i, j), 1);
+    ztmp1.add(ztmp1, g(j, j));
+    g(i, i).add(g(i, i), ztmp1);
 
-    // rotation must apply through whole gram matrix.
-    for (int k = 0; k < d; k++)
+    for (int k = 0; k < n_known_rows; k++)
     {
       if (k != i)
         sym_g(i, k).add(sym_g(i, k), sym_g(j, k));
@@ -85,13 +90,19 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_sub(int i, int j)
 
   if (enable_int_gram)
   {
-    // TODO g_sym
+    FPLLL_DEBUG_CHECK(i > j);
+    if (gptr == nullptr)
+    {
+      cerr << "Error: gptr is equal to the nullpointer.\n";
+      exit(1);
+    }
+    Matrix<ZT> &g = *gptr;
     // g(i, i) += g(j, j) - 2 * g(i, j)
-    ztmp1.mul_2si(sym_g(i, j), 1);
-    ztmp1.sub(sym_g(j, j), ztmp1);
-    sym_g(i, i).add(sym_g(i, i), ztmp1);
+    ztmp1.mul_2si(g(i, j), 1);
+    ztmp1.sub(g(j, j), ztmp1);
+    g(i, i).add(g(i, i), ztmp1);
 
-    for (int k = 0; k < d; k++)
+    for (int k = 0; k < n_known_rows; k++)
       if (k != i)
         sym_g(i, k).sub(sym_g(i, k), sym_g(j, k));
   }
@@ -108,27 +119,25 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_addmul_si(int i, int 
 
   if (enable_int_gram)
   {
+    FPLLL_DEBUG_CHECK(i > j);
     // g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
     //  (must be done before updating g(i, j))
+    if (gptr == nullptr)
+    {
+      cerr << "Error: gptr is equal to the nullpointer.\n";
+      exit(1);
+    }
+    Matrix<ZT> &g = *gptr;
 
-    // TODO maybe back replace g by g_sym?
-    /*
     ztmp1.mul_si(g(i, j), x);
     ztmp1.mul_2si(ztmp1, 1);
     g(i, i).add(g(i, i), ztmp1);
     ztmp1.mul_si(g(j, j), x);
     ztmp1.mul_si(ztmp1, x);
     g(i, i).add(g(i, i), ztmp1);
-    */
-    ztmp1.mul_si(sym_g(i, j), x);
-    ztmp1.mul_2si(ztmp1, 1);
-    sym_g(i, i).add(sym_g(i, i), ztmp1);
-    ztmp1.mul_si(sym_g(j, j), x);
-    ztmp1.mul_si(ztmp1, x);
-    sym_g(i, i).add(sym_g(i, i), ztmp1);
 
     // g(i, k) += g(j, k) * (2^e * x) for k != i
-    for (int k = 0; k < d; k++)
+    for (int k = 0; k < n_known_rows; k++)
     {
       if (k == i)
         continue;
@@ -137,121 +146,6 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_addmul_si(int i, int 
     }
   }
 }
-
-/*
-template <class ZT, class FT>
-void MatGSOGram<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
-{
-
-  //b[i].addmul_si_2exp(b[j], x, expo, n_known_cols, ztmp1);
-  if (enable_transform)
-  {
-    u[i].addmul_si_2exp(u[j], x, expo, ztmp1);
-    if (enable_inverse_transform)
-      u_inv_t[j].addmul_si_2exp(u_inv_t[i], -x, expo, ztmp1);
-  }
-
-  if (enable_int_gram)
-  {
-    // g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
-    //  (must be done before updating g(i, j))
-
-    // TODO replace g by sym_g?
-    if (gptr == nullptr) { cerr << "Error: gptr is equal to the nullpointer.\n"; exit(1); }
-    Matrix<ZT> &g = *gptr;
-    ztmp1.mul_si(g(i, j), x);
-    ztmp1.mul_2si(ztmp1, expo + 1);
-    g(i, i).add(g(i, i), ztmp1);
-    ztmp1.mul_si(g(j, j), x);
-    ztmp1.mul_si(ztmp1, x);
-    ztmp1.mul_2si(ztmp1, 2 * expo);
-    g(i, i).add(g(i, i), ztmp1);
-
-    // g(i, k) += g(j, k) * (2^e * x) for k != i
-    for (int k = 0; k < d; k++)
-    //for (int k = 0; k < n_known_rows; k++)
-    {
-      if (k == i)
-        continue;
-      ztmp1.mul_si(sym_g(j, k), x);
-      ztmp1.mul_2si(ztmp1, expo);
-      sym_g(i, k).add(sym_g(i, k), ztmp1);
-    }
-  }
-}
-*/
-
-/*
-template <class ZT, class FT>
-void MatGSOGram<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
-{
-
-  //b[i].addmul_2exp(b[j], x, expo, n_known_cols, ztmp1);
-  if (enable_transform)
-  {
-    u[i].addmul_2exp(u[j], x, expo, ztmp1);
-    if (enable_inverse_transform)
-    {
-      ZT minus_x;
-      minus_x.neg(x);
-      u_inv_t[j].addmul_2exp(u_inv_t[i], minus_x, expo, ztmp1);
-    }
-  }
-
-  if (enable_int_gram)
-  {
-    // g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
-    //  (must be done before updating g(i, j))
-    if (gptr == nullptr) { cerr << "Error: gptr is equal to the nullpointer.\n"; exit(1); }
-    Matrix<ZT> &g = *gptr;
-
-    ztmp1.mul(g(i, j), x);
-    ztmp1.mul_2si(ztmp1, expo + 1);
-    g(i, i).add(g(i, i), ztmp1);
-    ztmp1.mul(g(j, j), x);
-    ztmp1.mul(ztmp1, x);
-    ztmp1.mul_2si(ztmp1, 2 * expo);
-    g(i, i).add(g(i, i), ztmp1);
-
-    // g(i, k) += g(j, k) * (2^e * x) for k != i
-    for (int k = 0; k < d; k++)
-    {
-      if (k == i)
-        continue;
-      ztmp1.mul(sym_g(j, k), x);
-      ztmp1.mul_2si(ztmp1, expo);
-      sym_g(i, k).add(sym_g(i, k), ztmp1);
-    }
-  }
-}
-*/
-
-/*
-
-template <class ZT, class FT>
-void MatGSOGram<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_add)
-{
-  //FPLLL_DEBUG_CHECK(gptr != nullptr);
-  //Matrix<ZT> &g = *gptr;
-  FPLLL_DEBUG_CHECK(j >= 0 &&  i < n_known_rows && j < n_source_rows);
-  long expo;
-  long lx = x.get_si_exp_we(expo, expo_add);
-
-  if (expo == 0)
-  {
-    if (lx == 1)
-      row_add(i, j);
-    else if (lx == -1)
-      row_sub(i, j);
-    else if (lx != 0)
-      row_addmul_si(i, j, lx);
-  } else
-  {
-    cerr << "Error in ggso.cpp, using exponents while enable_int_gram is on. expo is equal to " <<
-expo << ".\n"; exit(1);
-  }
-}
-*/
 
 template <class ZT, class FT>
 void MatGSOGram<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
@@ -282,7 +176,7 @@ void MatGSOGram<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
     g(i, i).add(g(i, i), ztmp1);
 
     // g(i, k) += g(j, k) * (2^e * x) for k != i
-    for (int k = 0; k < d; k++)
+    for (int k = 0; k < n_known_rows; k++)
     {
       if (k == i)
         continue;
@@ -326,7 +220,8 @@ void MatGSOGram<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
     g(i, i).add(g(i, i), ztmp1);
 
     // g(i, k) += g(j, k) * (2^e * x) for k != i
-    for (int k = 0; k < d; k++)
+
+    for (int k = 0; k < n_known_rows; k++)
     {
       if (k == i)
         continue;
@@ -390,7 +285,6 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_swap(int i, int j)
     for (int k = i + 1; k < j; k++)
       g(k, i).swap(g(j, k));
     for (int k = j + 1; k < n_known_rows; k++)
-      // for (int k = j + 1; k < d; k++)
       g(k, i).swap(g(k, j));
     g(i, i).swap(g(j, j));
   }
@@ -398,9 +292,6 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_swap(int i, int j)
 
 template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int new_r)
 {
-
-  // cerr << "Move row from " << old_r << " to " << new_r << endl;
-  // this->printparam(cerr);
   FPLLL_DEBUG_CHECK(!cols_locked);
   if (new_r < old_r)
   {
@@ -423,10 +314,10 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int n
     {
       if (gptr == nullptr)
       {
-        cerr << "Error (symmetrize_g): gptr is equal to the nullpointer.";
+        cerr << "Error: gptr is equal to the nullpointer.";
         exit(1);
       }
-      gptr->rotate_gram_right(new_r, old_r, d);
+      gptr->rotate_gram_right(new_r, old_r, n_known_rows);
     }
     else
     {
@@ -460,7 +351,8 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int n
           cerr << "Error (symmetrize_g): gptr is equal to the nullpointer.";
           exit(1);
         }
-        gptr->rotate_gram_left(old_r, new_r, d);
+        // gptr->rotate_gram_left(old_r, new_r, n_known_rows);
+        gptr->rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
       }
     }
     else
@@ -483,7 +375,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::size_increased()
   {
     if (gptr == nullptr)
     {
-      cerr << "Error (symmetrize_g): gptr is equal to the nullpointer.";
+      cerr << "Error: gptr is equal to the nullpointer.";
       exit(1);
     }
     gptr->resize(d, d);
