@@ -337,10 +337,10 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int n
     {
       if (old_r < n_known_rows - 1)
       {
-	    if (gptr == nullptr)
-	    {
-	      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
-	    }
+        if (gptr == nullptr)
+        {
+          throw std::runtime_error("Error: gptr is equal to the nullpointer.");
+        }
         // gptr->rotate_gram_left(old_r, new_r, n_known_rows);
         gptr->rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
       }
