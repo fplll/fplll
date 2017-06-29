@@ -205,8 +205,7 @@ public:
   {
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr == nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr == nullpointer.");
     }
     return *gptr;
   }
@@ -596,8 +595,7 @@ template <class ZT, class FT> inline void MatGSOInterface<ZT, FT>::symmetrize_g(
 {
   if (gptr == nullptr)
   {
-    cerr << "Error: gptr is equal to the nullpointer.\n";
-    exit(1);
+    throw std::runtime_error("Error: gptr is equal to the nullpointer.");
   }
   Matrix<ZT> &gr = *gptr;
   for (int i = 0; i < d; i++)
@@ -629,8 +627,7 @@ template <class ZT, class FT> inline ZT &MatGSOInterface<ZT, FT>::sym_g(int i, i
 {
   if (gptr == nullptr)
   {
-    cerr << "Error: gptr is equal to the nullpointer.";
-    exit(1);
+    throw std::runtime_error("Error: gptr is equal to the nullpointer.");
   }
   Matrix<ZT> &gr = *gptr;
   return (i >= j) ? gr(i, j) : gr(j, i);

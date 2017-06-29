@@ -350,8 +350,7 @@ inline int check_4reduce_order(const ListPoint<ZT> *p1, const ListPoint<ZT> *p2,
 
   if ((p1->norm >= p2->norm) || (p2->norm >= p3->norm) || (p3->norm >= p4->norm))
   {
-    cout << "error , please debug, this function can only used in order" << endl;
-    exit(1);
+    throw std::runtime_error("Error, please debug, this function can only used in order");
   }
 
   /* check 2-reduced condition */
@@ -590,8 +589,7 @@ template <class ZT> inline void check_0_list(const list<ListPoint<ZT> *> List)
   {
     if ((*lp_it)->norm == 0)
     {
-      cout << " error, list containing zero vector " << endl;
-      exit(1);
+      throw std::runtime_error("Error, list containing zero vector");
     }
   }
 }

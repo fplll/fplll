@@ -472,7 +472,7 @@ DPE_INLINE DPE_EXP_T dpe_get_si_exp(long *x, const dpe_t y)
   else
   {
     fprintf(stderr, "Error, neither 32-bit nor 64-bit word\n");
-    exit(1);
+    abort();
   }
 }
 
@@ -488,7 +488,7 @@ static int dpe_out_str(FILE *s, int base, const dpe_t x)
   if (DPE_UNLIKELY(base != 10))
   {
     fprintf(stderr, "Error in dpe_out_str, only base 10 allowed\n");
-    exit(1);
+    abort();
   }
   if (d == 0.0)
 #ifdef DPE_USE_DOUBLE
@@ -543,7 +543,7 @@ static size_t dpe_inp_str(dpe_t x, FILE *s, int base)
   if (DPE_UNLIKELY(base != 10))
   {
     fprintf(stderr, "Error in dpe_out_str, only base 10 allowed\n");
-    exit(1);
+    abort();
   }
 #ifdef DPE_USE_DOUBLE
   res = fscanf(s, "%lf", &d);

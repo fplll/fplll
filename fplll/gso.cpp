@@ -74,18 +74,17 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::discover_row()
     n_source_rows = n_known_rows;
     n_known_cols  = max(n_known_cols, init_row_size[i]);
   }
+
   if (enable_int_gram)
   {
     // cerr << "Doing g updating.\n";
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     if (gptr->get_rows() <= i)
     {
-      cerr << "Error: gptr has too few rows (<= " << i << ")\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr has too few rows (<=" + to_string(i) + ").");
     }
     for (int j = 0; j <= i; j++)
     {
@@ -165,8 +164,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_add(int i, int j)
   {
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
 
     // g(i, i) += 2 * g(i, j) + g(j, j)
@@ -271,8 +269,7 @@ void MatGSO<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
   {
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> &g = *gptr;
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
@@ -316,8 +313,7 @@ void MatGSO<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
   {
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer");
     }
     Matrix<ZT> &g = *gptr;
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
@@ -382,13 +378,11 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_swap(int i, int j)
   {
     if (j < i)
     {
-      cerr << "Error: in row_swap, i > j, causing errors in the grammatrix. \n";
-      exit(1);
+      throw std::runtime_error("Error: in row_swap, i > j, causing errors in the grammatrix.");
     }
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     // Matrix<ZT> &g = *gptr;
     /*for (int k = 0; k < i; k++)
@@ -434,8 +428,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::move_row(int old_r, int new_r
     {
       if (gptr == nullptr)
       {
-        cerr << "Error: gptr is equal to the nullpointer.\n";
-        exit(1);
+        throw std::runtime_error("Error: gptr is equal to the nullpointer.");
       }
       gptr->rotate_gram_right(new_r, old_r, n_known_rows);
     }
@@ -470,8 +463,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::move_row(int old_r, int new_r
       {
         if (gptr == nullptr)
         {
-          cerr << "Error: gptr is equal to the nullpointer.\n";
-          exit(1);
+          throw std::runtime_error("Error: gptr is equal to the nullpointer.");
         }
         gptr->rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
       }
@@ -508,8 +500,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::size_increased()
     {
       if (gptr == nullptr)
       {
-        cerr << "Error: gptr is equal to the nullpointer.\n";
-        exit(1);
+        throw std::runtime_error("Error: gptr is equal to the nullpointer.");
       }
       gptr->resize(d, d);
       // gptr = &gr;
