@@ -40,6 +40,7 @@
 #include <iostream>
 #include <limits>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 #ifdef FPLLL_WITH_GETRUSAGE

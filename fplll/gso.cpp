@@ -66,6 +66,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::discover_row()
     n_source_rows = n_known_rows;
     n_known_cols  = max(n_known_cols, init_row_size[i]);
   }
+
   if (enable_int_gram)
   {
     for (int j = 0; j <= i; j++)
@@ -171,7 +172,6 @@ void MatGSO<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
 
   if (enable_int_gram)
   {
-
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
       (must be done before updating g(i, j)) */
     ztmp1.mul_si(g(i, j), x);
@@ -275,8 +275,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_swap(int i, int j)
   {
     if (j < i)  // Leaving this check here?
     {
-      cerr << "Error: in row_swap, i > j, causing errors in the grammatrix. \n";
-      exit(1);
+      throw std::runtime_error("Error: in row_swap, i > j, causing errors in the grammatrix.");
     }
     for (int k = 0; k < i; k++)
       g(i, k).swap(g(j, k));

@@ -29,7 +29,6 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::discover_row()
      since n_known_cols might be too small to compute all the g(i,j). */
   FPLLL_DEBUG_CHECK(!(cols_locked && enable_int_gram));
   int i = n_known_rows;
-
   n_known_rows++;
   if (!cols_locked)
   {
@@ -266,8 +265,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_swap(int i, int j)
   {
     if (j < i)
     {
-      cerr << "Error: in row_swap, i > j, causing errors in the grammatrix. \n";
-      exit(1);
+      throw std::runtime_error("Error: in row_swap, i > j, causing errors in the grammatrix.");
     }
     if (gptr == nullptr)
     {
