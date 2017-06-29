@@ -312,7 +312,6 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::move_row(int old_r, int new_r
     if (enable_int_gram)
     {
       g.rotate_gram_right(new_r, old_r, n_known_rows);
-      // gptr->rotate_gram_right(new_r, old_r, n_known_rows);
     }
     else
     {
@@ -344,7 +343,6 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::move_row(int old_r, int new_r
       if (old_r < n_known_rows - 1)
       {
         g.rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
-        // gptr->rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
       }
     }
     else
@@ -377,7 +375,6 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::size_increased()
   {
     if (enable_int_gram)
     {
-      // gptr->resize(d, d);
       g.resize(d, d);
     }
     else

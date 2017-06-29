@@ -62,8 +62,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_add(int i, int j)
     FPLLL_DEBUG_CHECK(i > j);
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> &g = *gptr;
     // g(i, i) += 2 * g(i, j) + g(j, j)
@@ -93,8 +92,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_sub(int i, int j)
     FPLLL_DEBUG_CHECK(i > j);
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> &g = *gptr;
     // g(i, i) += g(j, j) - 2 * g(i, j)
@@ -124,8 +122,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_addmul_si(int i, int 
     //  (must be done before updating g(i, j))
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> &g = *gptr;
 
@@ -161,8 +158,7 @@ void MatGSOGram<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
   {
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> &g = *gptr;
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
@@ -205,8 +201,7 @@ void MatGSOGram<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
   {
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> &g = *gptr;
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
@@ -276,8 +271,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_swap(int i, int j)
     }
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.\n";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> &g = *gptr;
     for (int k = 0; k < i; k++)
@@ -314,8 +308,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int n
     {
       if (gptr == nullptr)
       {
-        cerr << "Error: gptr is equal to the nullpointer.";
-        exit(1);
+        throw std::runtime_error("Error: gptr is equal to the nullpointer.");
       }
       gptr->rotate_gram_right(new_r, old_r, n_known_rows);
     }
@@ -346,11 +339,10 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int n
     {
       if (old_r < n_known_rows - 1)
       {
-        if (gptr == nullptr)
-        {
-          cerr << "Error (symmetrize_g): gptr is equal to the nullpointer.";
-          exit(1);
-        }
+	    if (gptr == nullptr)
+	    {
+	      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
+	    }
         // gptr->rotate_gram_left(old_r, new_r, n_known_rows);
         gptr->rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
       }
@@ -375,8 +367,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::size_increased()
   {
     if (gptr == nullptr)
     {
-      cerr << "Error: gptr is equal to the nullpointer.";
-      exit(1);
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     gptr->resize(d, d);
 
