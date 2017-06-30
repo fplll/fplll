@@ -21,14 +21,6 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-/*template <class ZT, class FT>
-inline void MatGSO<ZT, FT>::invalidate_gso_row(int i, int new_valid_cols)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && new_valid_cols >= 0 && new_valid_cols <= i + 1);
-  gso_valid_cols[i] = min(gso_valid_cols[i], new_valid_cols);
-}
-*/
-
 template <class ZT, class FT> void MatGSO<ZT, FT>::update_bf(int i)
 {
   int n = max(n_known_cols, init_row_size[i]);
@@ -77,18 +69,8 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::discover_row()
 
   if (enable_int_gram)
   {
-    // cerr << "Doing g updating.\n";
-    if (gptr == nullptr)
-    {
-      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
-    }
-    if (gptr->get_rows() <= i)
-    {
-      throw std::runtime_error("Error: gptr has too few rows (<=" + to_string(i) + ").");
-    }
     for (int j = 0; j <= i; j++)
     {
-      // Matrix<ZT> &g = *gptr;
       dot_product(g(i, j), b[i], b[j], n_known_cols);
     }
   }
@@ -98,57 +80,6 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::discover_row()
   }
   gso_valid_cols[i] = 0;
 }
-
-// TODO maybe only here!!
-/*
-template <class ZT, class FT> long MatGSO<ZT, FT>::get_max_mu_exp(int i, int n_columns)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && gso_valid_cols[i] >= n_columns);
-  long max_expo = LONG_MIN, expo;
-  for (int j = 0; j < n_columns; j++)
-  {
-    long expo2 = get_mu_exp(i, j, expo).exponent();
-    max_expo   = max(max_expo, expo + expo2);
-  }
-  return max_expo;
-}
-*/
-/*
-template <class ZT, class FT> bool MatGSO<ZT, FT>::update_gso_row(int i, int last_j)
-{
-  // FPLLL_TRACE_IN("Updating GSO up to (" << i << ", " << last_j << ")");
-  // FPLLL_TRACE("n_known_rows=" << n_known_rows << " n_source_rows=" << n_source_rows);
-  if (i >= n_known_rows)
-  {
-    discover_row();
-  }
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && last_j >= 0 && last_j < n_source_rows);
-
-  int j = max(0, gso_valid_cols[i]);
-
-  for (; j <= last_j; j++)
-  {
-    get_gram(ftmp1, i, j);
-    FPLLL_DEBUG_CHECK(j == i || gso_valid_cols[j] >= j);
-    for (int k = 0; k < j; k++)
-    {
-      ftmp2.mul(mu(j, k), r(i, k));
-      ftmp1.sub(ftmp1, ftmp2);
-    }
-    r(i, j) = ftmp1;
-    if (i > j)
-    {
-      mu(i, j).div(ftmp1, r(j, j));
-      if (!mu(i, j).is_finite())
-        return false;
-    }
-  }
-
-  gso_valid_cols[i] = j;  // = max(0, gso_valid_cols[i], last_j + 1)
-  // FPLLL_TRACE_OUT("End of GSO update");
-  return true;
-}
-*/
 
 template <class ZT, class FT> void MatGSO<ZT, FT>::row_add(int i, int j)
 {
@@ -162,17 +93,11 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_add(int i, int j)
 
   if (enable_int_gram)
   {
-    if (gptr == nullptr)
-    {
-      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
-    }
-
     // g(i, i) += 2 * g(i, j) + g(j, j)
-    ztmp1.mul_2si(sym_g(i, j), 1);
-    ztmp1.add(ztmp1, sym_g(j, j));
-    sym_g(i, i).add(sym_g(i, i), ztmp1);
+    ztmp1.mul_2si(g(i, j), 1);
+    ztmp1.add(ztmp1, g(j, j));
+    g(i, i).add(g(i, i), ztmp1);
 
-    // TODO really needed to use sym here?
     for (int k = 0; k < n_known_rows; k++)
       if (k != i)
         sym_g(i, k).add(sym_g(i, k), sym_g(j, k));
@@ -191,20 +116,10 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_sub(int i, int j)
 
   if (enable_int_gram)
   {
-    /*if (gptr == nullptr) {
-      cerr << "Error: gptr is equal to the nullpointer.\n"; exit(1);
-    }
-    Matrix<ZT> &g = *gptr;
-    */
-
     // g(i, i) += g(j, j) - 2 * g(i, j)
-    /*ztmp1.mul_2si(g(i, j), 1);
+    ztmp1.mul_2si(g(i, j), 1);
     ztmp1.sub(g(j, j), ztmp1);
-    g(i, i).add(g(i, i), ztmp1);*/
-
-    ztmp1.mul_2si(sym_g(i, j), 1);
-    ztmp1.sub(sym_g(j, j), ztmp1);
-    sym_g(i, i).add(sym_g(i, i), ztmp1);
+    g(i, i).add(g(i, i), ztmp1);
 
     for (int k = 0; k < n_known_rows; k++)
       if (k != i)
@@ -224,26 +139,16 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_addmul_si(int i, int j, l
 
   if (enable_int_gram)
   {
-    // if (gptr == nullptr) { cerr << "Error: gptr is equal to the nullpointer.\n"; exit(1); }
-    // Matrix<ZT> &g = *gptr;
-
-    /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
+    /* g(i, i) += 2 * x * g(i, j) +  x^2 * g(j, j)
       (must be done before updating g(i, j)) */
-    /*ztmp1.mul_si(g(i, j), x);
+    ztmp1.mul_si(g(i, j), x);
     ztmp1.mul_2si(ztmp1, 1);
     g(i, i).add(g(i, i), ztmp1);
     ztmp1.mul_si(g(j, j), x);
     ztmp1.mul_si(ztmp1, x);
-    g(i, i).add(g(i, i), ztmp1);*/
+    g(i, i).add(g(i, i), ztmp1);
 
-    ztmp1.mul_si(sym_g(i, j), x);
-    ztmp1.mul_2si(ztmp1, 1);
-    sym_g(i, i).add(sym_g(i, i), ztmp1);
-    ztmp1.mul_si(sym_g(j, j), x);
-    ztmp1.mul_si(ztmp1, x);
-    sym_g(i, i).add(sym_g(i, i), ztmp1);
-
-    // g(i, k) += g(j, k) * (2^e * x) for k != i
+    // g(i, k) += g(j, k) * x  for k != i
     for (int k = 0; k < n_known_rows; k++)
     {
       if (k == i)
@@ -267,11 +172,6 @@ void MatGSO<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
 
   if (enable_int_gram)
   {
-    if (gptr == nullptr)
-    {
-      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
-    }
-    Matrix<ZT> &g = *gptr;
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
       (must be done before updating g(i, j)) */
     ztmp1.mul_si(g(i, j), x);
@@ -311,11 +211,6 @@ void MatGSO<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
 
   if (enable_int_gram)
   {
-    if (gptr == nullptr)
-    {
-      throw std::runtime_error("Error: gptr is equal to the nullpointer");
-    }
-    Matrix<ZT> &g = *gptr;
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
       (must be done before updating g(i, j)) */
     ztmp1.mul(g(i, j), x);
@@ -338,10 +233,12 @@ void MatGSO<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
   }
 }
 
+// in row_addmul_we we must have i > j
 template <class ZT, class FT>
 void MatGSO<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_add)
 {
-  FPLLL_DEBUG_CHECK(j >= 0 && /*i > j &&*/ i < n_known_rows && j < n_source_rows);
+  FPLLL_DEBUG_CHECK(j >= 0 && /* i > j &&*/ i < n_known_rows && j < n_source_rows);
+
   long expo;
   long lx = x.get_si_exp_we(expo, expo_add);
 
@@ -376,30 +273,17 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_swap(int i, int j)
 
   if (enable_int_gram)
   {
-    if (j < i)
+    if (j < i)  // Leaving this check here?
     {
       throw std::runtime_error("Error: in row_swap, i > j, causing errors in the grammatrix.");
     }
-    if (gptr == nullptr)
-    {
-      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
-    }
-    // Matrix<ZT> &g = *gptr;
-    /*for (int k = 0; k < i; k++)
+    for (int k = 0; k < i; k++)
       g(i, k).swap(g(j, k));
     for (int k = i + 1; k < j; k++)
       g(k, i).swap(g(j, k));
     for (int k = j + 1; k < n_known_rows; k++)
       g(k, i).swap(g(k, j));
-    g(i, i).swap(g(j, j));*/
-
-    for (int k = 0; k < i; k++)
-      sym_g(i, k).swap(sym_g(j, k));
-    for (int k = i + 1; k < j; k++)
-      sym_g(k, i).swap(sym_g(j, k));
-    for (int k = j + 1; k < n_known_rows; k++)
-      sym_g(k, i).swap(sym_g(k, j));
-    sym_g(i, i).swap(sym_g(j, j));
+    g(i, i).swap(g(j, j));
   }
 }
 
@@ -426,11 +310,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::move_row(int old_r, int new_r
     }
     if (enable_int_gram)
     {
-      if (gptr == nullptr)
-      {
-        throw std::runtime_error("Error: gptr is equal to the nullpointer.");
-      }
-      gptr->rotate_gram_right(new_r, old_r, n_known_rows);
+      g.rotate_gram_right(new_r, old_r, n_known_rows);
     }
     else
     {
@@ -461,11 +341,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::move_row(int old_r, int new_r
     {
       if (old_r < n_known_rows - 1)
       {
-        if (gptr == nullptr)
-        {
-          throw std::runtime_error("Error: gptr is equal to the nullpointer.");
-        }
-        gptr->rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
+        g.rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
       }
     }
     else
@@ -498,12 +374,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::size_increased()
   {
     if (enable_int_gram)
     {
-      if (gptr == nullptr)
-      {
-        throw std::runtime_error("Error: gptr is equal to the nullpointer.");
-      }
-      gptr->resize(d, d);
-      // gptr = &gr;
+      g.resize(d, d);
     }
     else
     {

@@ -15,8 +15,8 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef FPLLL_GSObase_H
-#define FPLLL_GSObase_H
+#ifndef FPLLL_GSOInterface_H
+#define FPLLL_GSOInterface_H
 
 #include "nr/matrix.h"
 
@@ -139,8 +139,7 @@ public:
    */
   virtual int get_cols_of_b() = 0;
 
-  // TODO new function
-  /** Reutns number of rows of b. In
+  /** Returns number of rows of b. In
    * the gram version it returns the number
    * of of rows of g. This function is made
    * to reduce code repetition (dump_mu/dump_r)
@@ -156,7 +155,6 @@ public:
    * When enable_row_expo=true, row_expo[i] is the smallest non-negative integer
    * such that b(i, j) &lt;= 2^row_expo[i] for all j. Otherwise this array is empty.
    */
-  // TODO to delete!!!
   vector<long> row_expo;
 
   /**
@@ -322,7 +320,7 @@ public:
    * of (2^expo * ZT), which is faster if ZT=mpz_t but might lead to a loss of
    * precision (in LLL, more Babai iterations are needed).
    */
-  // TODO maybe scratch!!
+
   virtual void row_addmul_we(int i, int j, const FT &x, long expo_add) = 0;
 
   // b[i] += b[j] / b[i] -= b[j] (i > j)
@@ -432,7 +430,6 @@ public:
 
   FT get_slide_potential(int start_row, int end_row, int block_size);
 
-  // TODO Deleted here virtual! Is that ok?
   /**
    * Prints mu,r and g matrix to ostream os.
    *
@@ -482,7 +479,6 @@ protected:
     */
   virtual void update_bf(int i) = 0;
   /* Marks g(i, j) for all j <= i (but NOT for j > i) */
-  // TODO double check above words.
   virtual void invalidate_gram_row(int i) = 0;
 
   // b[i] <- b[i] + x * b[j] (i > j)
@@ -504,15 +500,13 @@ protected:
   inline ZT &sym_g(int i, int j);
 
   /* Floating-point representation of the basis. It is used when
-     enable_int_gram=true. */
-  // TODO above explanation ok?
+     enable_int_gram=false. */
   Matrix<FT> bf;
 
   Matrix<ZT> &u;        // Transform
   Matrix<ZT> &u_inv_t;  // Transposed inverse transform
 
   // init_row_size[i] = (last non-zero column in the i-th row of b) + 1
-  // TODO scratch variable?
   vector<int> init_row_size;
 
   // bf[i], g[i], gf[i], mu[i] and r[i] are invalid for i >= n_known_rows
@@ -633,32 +627,6 @@ template <class ZT, class FT> inline ZT &MatGSOInterface<ZT, FT>::sym_g(int i, i
   return (i >= j) ? gr(i, j) : gr(j, i);
 }
 
-/*
-template <class ZT, class FT> inline FT &MatGSOInterface<ZT, FT>::get_gram(FT &f, int i, int j)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j <= i && j < n_source_rows &&
-                    !in_row_op_range(i));
-  if (enable_int_gram)
-  {
-    if (gptr == nullptr) {
-        cerr << "Error: gptr is equal to the nullpointer."; exit(1);
-    }
-    Matrix<ZT> gr = *gptr;
-    f.set_z(gr(i, j));
-  }
-  else
-  {
-    if (gf(i, j).is_nan())
-    {
-      dot_product(gf(i, j), bf[i], bf[j], n_known_cols);
-    }
-    f = gf(i, j);
-  }
-  return f;
-}
-*/
-
-// TODO not sure what to do with these functions. Move to gso?
 template <class ZT, class FT>
 inline const FT &MatGSOInterface<ZT, FT>::get_mu_exp(int i, int j, long &expo)
 {

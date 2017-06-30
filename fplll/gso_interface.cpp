@@ -83,7 +83,7 @@ template <class ZT, class FT> inline FT MatGSOInterface<ZT, FT>::get_max_bstar()
     tmp = tmp.max_f(r(i, i));
   return tmp;
 }
-// TODO does this function belong here?
+
 template <class ZT, class FT> long MatGSOInterface<ZT, FT>::get_max_mu_exp(int i, int n_columns)
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && gso_valid_cols[i] >= n_columns);
@@ -95,7 +95,9 @@ template <class ZT, class FT> long MatGSOInterface<ZT, FT>::get_max_mu_exp(int i
   }
   return max_expo;
 }
-
+// This function *can* be included in the interface; it has no base-class specific functions.
+// If this function is going to be included, it must be removed from gso.* and gsogram.*
+// and also added to gso_interface.h as non-virtual.
 /*
 template <class ZT, class FT>
 void MatGSOInterface<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_add)

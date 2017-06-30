@@ -75,7 +75,7 @@ public:
     gptr = &arg_g;
     if (gptr == nullptr)
     {
-      throw std::runtime_error("Pointer of the Grammatrix equal to the nullpointer.");
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     d = gptr->get_rows();
     size_increased();
