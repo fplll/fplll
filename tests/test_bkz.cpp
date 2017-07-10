@@ -195,30 +195,6 @@ int test_filename(const char *input_filename, const int block_size,
 }
 
 /**
-   @brief Test BKZ for matrix stored in file pointed to by `input_filename` (only once). 
-   This is to test fpylll issue 73 instances (stalling instances).
-
-   @param input_filename   a path
-   @param block_size       block size
-   @param float_type       floating point type to test
-   @param flags            flags to use
-   @param prec             precision if mpfr is used
-
-   @return zero on success
-*/
-
-template <class ZT>
-int test_filename_once(const char *input_filename, const int block_size, int flags = BKZ_DEFAULT)
-{
-  ZZ_mat<ZT> A, B;
-  read_matrix(A, input_filename);
-  B          = A;
-  int status = 0;
-  status |= test_bkz_param_pruning<ZT>(A, block_size, flags);
-  return status;
-}
-
-/**
    @brief Construct d × (d+1) integer relations matrix with bit size b and test BKZ.
 
    @param d                dimension
@@ -258,7 +234,7 @@ int main(int /*argc*/, char ** /*argv*/)
 {
 
   int status = 0;
-  
+
   status |= test_linear_dep();
   status |= test_filename<mpz_t>("lattices/dim55_in", 10, FT_DEFAULT, BKZ_DEFAULT | BKZ_AUTO_ABORT);
 #ifdef FPLLL_HAVE_QD
@@ -299,9 +275,6 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE);
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SD_VARIANT);
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SLD_RED);
-  
-  // check fpylll issue 73
-  status |= test_filename_once<mpz_t>("lattices/stalling_93_53.txt", 53, BKZ_VERBOSE | BKZ_AUTO_ABORT);
 
   if (status == 0)
   {

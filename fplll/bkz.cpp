@@ -109,7 +109,7 @@ bool BKZReduction<FT>::svp_preprocessing(int kappa, int block_size, const BKZPar
   }
   if (lll_obj.n_swaps > 0)
     clean = false;
-  
+
   auto &preproc = param.strategies[block_size].preprocessing_block_sizes;
   for (auto it = preproc.begin(); it != preproc.end(); ++it)
   {
@@ -279,7 +279,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     }
 
     svp_preprocessing(kappa, block_size, par);
-    
+
     long max_dist_expo;
     FT max_dist = m.get_r_exp(first, first, max_dist_expo);
     if (dual)
@@ -303,7 +303,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     enum_obj.enumerate(kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(),
                        vector<enumxt>(), pruning.coefficients, dual);
     nodes += enum_obj.get_nodes();
-    
+
     if (!evaluator.empty())
     {
       if (dual)
@@ -319,7 +319,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     }
     remaining_probability *= (1 - pruning.expectation);
   }
-  
+
   if (!lll_obj.size_reduction(0, first + 1, 0))
   {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
@@ -403,7 +403,10 @@ bool BKZReduction<FT>::hkz(int &kappa_max, const BKZParam &param, int min_row, i
       kappa_max = kappa;
     }
   }
-  
+
+  // this line fixes fpylll issue 73 with stalling BKZ instances
+  // test basis: tests/lattices/stalling_93_53.txt. Test with command
+  // fplll -a bkz -b 53 -s strategies/default.json -f double tests/lattices/stalling_93_53.txt
   lll_obj.size_reduction(max_row - 1, max_row, max_row - 2);
 
   return clean;
