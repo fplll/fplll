@@ -444,12 +444,21 @@ bool BKZReduction<FT>::slide_tour(const int loop, const BKZParam &par, int min_r
   do
   {
     clean = true;
-    // SVP reduction takes care of the LLL reduction as long as BKZ_BOUNDED_LLL is off
     for (int i = 0; i < p; ++i)
     {
       int kappa      = min_row + i * par.block_size;
       int block_size = min(max_row - kappa, par.block_size);
       clean &= svp_reduction(kappa, block_size, par);
+    }
+    // SVP reduction takes care of the LLL reduction as long as BKZ_BOUNDED_LLL is off
+    if (par.flags & BKZ_BOUNDED_LLL) {
+      if (!lll_obj.lll(min_row, min_row, max_row, 0))
+      {
+        throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
+      }
+      if (lll_obj.n_swaps > 0) {
+        clean = false;
+      }
     }
   } while (!clean);
 
