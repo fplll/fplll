@@ -387,7 +387,7 @@ public:
    */
 
   inline void dump_r_d(double *r, int offset = 0, int block_size = -1);
-  inline void dump_r_d(vector<double> r, int offset = 0, int block_size = -1);
+  inline void dump_r_d(vector<double> &r, int offset = 0, int block_size = -1);
 
   /**
      @brief Return slope of the curve fitted to the lengths of the vectors from
@@ -798,7 +798,7 @@ inline void MatGSOInterface<ZT, FT>::dump_r_d(double *r, int offset, int block_s
 }
 
 template <class ZT, class FT>
-inline void MatGSOInterface<ZT, FT>::dump_r_d(vector<double> r, int offset, int block_size)
+inline void MatGSOInterface<ZT, FT>::dump_r_d(vector<double> &r, int offset, int block_size)
 {
   FT e;
   if (block_size <= 0)
