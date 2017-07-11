@@ -274,7 +274,7 @@ enum PrunerMetric
 
 enum PrunerFlags
 {
-  PRUNER_SVP_SYMMETRY     = 0x1,  // Halve the count of nodes, according to enumeration optimization from symmetry
+  PRUNER_CVP              = 0x1,  // Do not Halve the count of nodes, according to enumeration optimization from symmetry
   // Descent methods. If several activated, pruner will execute them in the order below.
   PRUNER_START_FROM_INPUT = 0x2,  
   PRUNER_GRADIENT         = 0x4, // Activate the gradient descent  
@@ -288,8 +288,7 @@ enum PrunerFlags
 
 #define PRUNER_DEFAULT_TIMEOUT_CONST 1e-4 // Default timeout = DEFAULT_TIMEOUT_CONST * dim^2
 
-#define PRUNER_DEFAULT (PRUNER_SVP_SYMMETRY|PRUNER_GRADIENT)
-#define PRUNER_ZEALOUS (PRUNER_SVP_SYMMETRY|PRUNER_GRADIENT|PRUNER_NELDER_MEAD)
+#define PRUNER_ZEALOUS (PRUNER_GRADIENT|PRUNER_NELDER_MEAD)
 
 FPLLL_END_NAMESPACE
 

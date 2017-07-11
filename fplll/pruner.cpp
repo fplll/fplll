@@ -61,12 +61,6 @@ void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr)
 template <class FT>
 void Pruner<FT>::load_basis_shape(const vector<double> &gso_r, bool reset_renormalization)
 {
-  n = gso_r.size();
-  d = n / 2;
-  if (!d)
-  {
-    throw std::runtime_error("Inside Pruner : Needs a dimension n>1");
-  }
   FT logvol, tmp;
   logvol = 0.0;
   for (size_t i = 0; i < n; ++i)

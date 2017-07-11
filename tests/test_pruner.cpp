@@ -32,7 +32,7 @@ using namespace fplll;
 */
 
 #define N 56
-#define D N / 2
+#define D (N / 2)
 #define Nbis 24
 #define Dbis 12
 
@@ -50,21 +50,26 @@ template <class FT> class Pruner<FT>::TestPruner
 {
 public:
   Pruner<FT> pru;
+  int n;
+  int d;
+  TestPruner(int n):n(n),pru(n){d = n/2; }
+
+  
   int test_enforce()
   {
     vector<double> rs;
     int status = 0;
-    for (int i = 0; i < N; ++i)
+    for (int i = 0; i < n; ++i)
     {
       rs.emplace_back(1.);
     }
     pru.load_basis_shape(rs);
     Pruner<FT>::evec b;
-    for (int i = 0; i < D; ++i)
+    for (int i = 0; i < d; ++i)
     {
-      b[i] = .3 + (1. * ((i * i * i) % D)) / (2 * D);
+      b[i] = .3 + (1. * ((i * i * i) % d)) / (2 * d);
     }
-    int j = D / 2;
+    int j = d / 2;
     b[j]  = .5;
 
     FT old_bj = b[j];
@@ -72,16 +77,16 @@ public:
 
     status += !((b[j] >= old_bj) && (b[j] <= old_bj));
     print_status(status);
-    status += !((b[D - 1] >= 1.) && (b[D - 1] <= 1.));
+    status += !((b[d - 1] >= 1.) && (b[d - 1] <= 1.));
     print_status(status);
     cerr << "Checking enforced bounds: Increasing, 1-terminated, keeping b[13] = .5" << endl;
-    for (int i = 0; i < D - 1; ++i)
+    for (int i = 0; i < d - 1; ++i)
     {
       status += !(b[i + 1] >= b[i]);
       print_status(status);
       cerr << b[i] << " , ";
     }
-    cerr << b[D - 1] << endl;
+    cerr << b[d - 1] << endl;
     return status;
   }
 
@@ -149,17 +154,16 @@ public:
 
   int test_relative_volume()
   {
-    vector<double> pr;
-    pr.resize(Nbis);
+    vector<double> pr(n);
     cerr << "Testing relative volume" << endl;
     int status = 0;
 
     double proba, error;
 
-    for (int i = 0; i < Nbis / 2; ++i)
+    for (int i = 0; i < n / 2; ++i)
     {
-      pr[i]              = 1;
-      pr[i + (Nbis / 2)] = .3;
+      pr[i]           = 1;
+      pr[i + (n / 2)] = .3;
     }
 
     proba = fplll::svp_probability<FP_NR<double>>(pr).get_d();
@@ -168,10 +172,10 @@ public:
     status += error > .05;
     print_status(status);
 
-    for (int i = 0; i < Nbis / 2; ++i)
+    for (int i = 0; i < n / 2; ++i)
     {
-      pr[i]              = 1;
-      pr[i + (Nbis / 2)] = .5;
+      pr[i]           = 1;
+      pr[i + (n / 2)] = .5;
     }
 
     proba = fplll::svp_probability<FP_NR<double>>(pr).get_d();
@@ -180,10 +184,10 @@ public:
     status += error > .05;
     print_status(status);
 
-    for (int i = 0; i < Nbis / 2; ++i)
+    for (int i = 0; i < n / 2; ++i)
     {
-      pr[i]              = 1;
-      pr[i + (Nbis / 2)] = .7;
+      pr[i]           = 1;
+      pr[i + (n / 2)] = .7;
     }
 
     proba = fplll::svp_probability<FP_NR<double>>(pr).get_d();
@@ -329,15 +333,14 @@ template <class FT> int test_auto_prune(size_t n)
   double radius_d = radius.get_d();
 
   cerr << endl << "Greedy " << endl;
-  prune<FT>(pruning, radius_d, overhead, 20, r, PRUNER_METHOD_GREEDY,
-            PRUNER_METRIC_EXPECTED_SOLUTIONS, true);
+  prune<FT>(pruning, radius_d, overhead, r, 20, PRUNER_METRIC_EXPECTED_SOLUTIONS, 0);
   cerr << "Expected Solutions " << pruning.expectation << endl;
   cerr << "Radius before/after " << 2 * radius.get_d() << "/" << radius_d << endl;
   status += !(pruning.expectation > 0.0);
   print_status(status);
   status += !(pruning.expectation < 100.0);
   print_status(status);
-  status += !(pruning.radius_factor >= .999);
+  status += !(pruning.gh_factor >= .999);
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
@@ -352,8 +355,7 @@ template <class FT> int test_auto_prune(size_t n)
 
   cerr << endl << "Gradient " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_GRADIENT,
-            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, true);
+  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_GRADIENT);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
@@ -368,15 +370,14 @@ template <class FT> int test_auto_prune(size_t n)
 
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.radius_factor >= .999);
+  status += !(pruning.gh_factor >= .999);
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
 
   cerr << endl << "Reprune Gradient " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
-            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
+  prune<FT>(pruning, radius_d, overhead, r, 0.01, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_GRADIENT|PRUNER_START_FROM_INPUT);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
@@ -390,15 +391,14 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Predicted Total Cost " << cost << endl;
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.radius_factor >= .999);
+  status += !(pruning.gh_factor >= .999);
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
 
   cerr << endl << "NelderMead " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_NM,
-            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, true);
+  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_NELDER_MEAD);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
@@ -412,15 +412,14 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Predicted Total Cost " << cost << endl;
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.radius_factor >= .999);
+  status += !(pruning.gh_factor >= .999);
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
 
   cerr << endl << "Reprune NelderMead " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
-            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
+  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_NELDER_MEAD|PRUNER_START_FROM_INPUT);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
@@ -434,15 +433,14 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Predicted Total Cost " << cost << endl;
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.radius_factor >= .999);
+  status += !(pruning.gh_factor >= .999);
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
 
-  cerr << endl << "Hybrid " << endl;
+  cerr << endl << "Zealous (Gradient then NelderMead) " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_HYBRID,
-            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, true);
+  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_ZEALOUS);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
@@ -456,15 +454,14 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Predicted Total Cost " << cost << endl;
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.radius_factor >= .999);
+  status += !(pruning.gh_factor >= .999);
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
 
-  cerr << endl << "Reprune Hybrid " << endl;
+  cerr << endl << "Reprune Zealous " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, 0.01, r, PRUNER_METHOD_GRADIENT,
-            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
+  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_ZEALOUS|PRUNER_START_FROM_INPUT);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
@@ -478,28 +475,7 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Predicted Total Cost " << cost << endl;
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.radius_factor >= .999);
-  print_status(status);
-  status += !(pruning.coefficients[0] == 1.0);
-  print_status(status);
-
-  cerr << endl << "Reprune Hybrid " << endl;
-  prune<FT>(pruning, radius_d, overhead, 0.3, r, PRUNER_METHOD_GRADIENT,
-            PRUNER_METRIC_PROBABILITY_OF_SHORTEST, false);
-  status += !(pruning.expectation <= 1.001);
-  print_status(status);
-  cerr << "Probability " << pruning.expectation << endl;
-  cost = 0.;
-  cerr << "Predicted cost per Level" << endl;
-  for (size_t i = 0; i < 2 * n; ++i)
-  {
-    cerr << pruning.detailed_cost[i] << "\t";
-    cost += pruning.detailed_cost[i];
-  }
-  cerr << endl << "Predicted Total Cost " << cost << endl;
-  status += !(pruning.expectation > 0.0);
-  print_status(status);
-  status += !(pruning.radius_factor >= .999);
+  status += !(pruning.gh_factor >= .999);
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
@@ -539,7 +515,7 @@ int main(int argc, char *argv[])
   print_status(status);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-  Pruner<FP_NR<long double>>::TestPruner tp;
+  Pruner<FP_NR<long double>>::TestPruner tp(Nbis);
   status += tp.test_enforce();
   print_status(status);
   status += tp.test_eval_poly();
@@ -551,7 +527,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef FPLLL_WITH_QD
-  Pruner<FP_NR<dd_real>>::TestPruner tp2;
+  Pruner<FP_NR<dd_real>>::TestPruner tp2(Nbis);
   status += tp2.test_enforce();
   print_status(status);
   status += tp2.test_eval_poly();

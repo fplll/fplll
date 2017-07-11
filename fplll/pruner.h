@@ -78,7 +78,7 @@ void prune(/*output*/ Pruning &pruning,
 const double enumeration_radius, const double preproc_cost, 
 vector<double> &gso_r, const double target = .9,
 const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-const int flags=PRUNER_DEFAULT, const double timeout = -1.);
+const int flags=PRUNER_GRADIENT, const double timeout = -1.);
 
 /**
    @brief prune function averaging over several bases
@@ -98,7 +98,7 @@ void prune(/*output*/ Pruning &pruning,
            /*inputs*/ double enumeration_radius, const double preproc_cost,
 vector<vector<double>> &gso_rs, const double target = .9, 
 const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-const int flags=PRUNER_DEFAULT, const double timeout = -1.);
+const int flags=PRUNER_GRADIENT, const double timeout = -1.);
 
 /**
    @brief svp_probability function, hiding the Pruner class
@@ -150,11 +150,14 @@ public:
   Pruner(const FT enumeration_radius, const FT preproc_cost,
    const vector<double> &gso_r, const FT target = 0.9,
    const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-   int flags = PRUNER_DEFAULT, double timeout = -1): 
+   int flags=PRUNER_GRADIENT, double timeout = -1): 
   enumeration_radius(enumeration_radius), 
   preproc_cost(preproc_cost), target(target),
   metric(metric),flags(flags), timeout(timeout)
   {
+    n = gso_r.size();
+    d = n / 2;
+
     import_tabulated_values();
     load_basis_shape(gso_r);
     set_min_pruning_bound();
@@ -175,11 +178,14 @@ public:
   Pruner(const FT enumeration_radius, const FT preproc_cost,
    const vector<vector<double>> &gso_rs, const FT target = 0.9,
    const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-   int flags = PRUNER_DEFAULT, double timeout = -1): 
+   int flags=PRUNER_GRADIENT, double timeout = -1): 
   enumeration_radius(enumeration_radius), 
   preproc_cost(preproc_cost), target(target),
   metric(metric),flags(flags), timeout(timeout)
   {
+    n = gso_rs[0].size();
+    d = n / 2;
+
     import_tabulated_values();
     load_basis_shapes(gso_rs);
     set_min_pruning_bound();
@@ -207,7 +213,7 @@ public:
 
   double single_enum_cost(/*i*/ const vector<double> &pr, vector<double> *detailed_cost = nullptr)
   {
-    evec b;
+    evec b(n);
     load_coefficients(b, pr);
     return single_enum_cost(b, detailed_cost).get_d();
   }
@@ -217,7 +223,7 @@ public:
   */
   double repeated_enum_cost(/*i*/ const vector<double> &pr)
   {
-    evec b;
+    evec b(n);
     load_coefficients(b, pr);
     return repeated_enum_cost(b).get_d();
   }
@@ -227,12 +233,7 @@ public:
   */
   double measure_metric(/*i*/ const vector<double> &pr)
   {
-    if (!n)
-    {  // Can be called even if no basis has been loaded. In that case, set the dims
-      n = pr.size();
-      d = n / 2;
-    }
-    evec b;
+    evec b(n);
     load_coefficients(b, pr);
     return measure_metric(b).get_d();
   }
