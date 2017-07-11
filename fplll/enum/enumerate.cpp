@@ -20,7 +20,8 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <typename ZT, typename FT> void EnumerationDyn<ZT, FT>::reset(enumf cur_dist, int cur_depth)
+template <typename ZT, typename FT>
+void EnumerationDyn<ZT, FT>::reset(enumf cur_dist, int cur_depth)
 {
   // FPLLL_TRACE("Reset level " << cur_depth);
   int new_dim = cur_depth + 1;
@@ -56,8 +57,9 @@ template <typename ZT, typename FT> void EnumerationDyn<ZT, FT>::reset(enumf cur
 
 template <typename ZT, typename FT>
 void EnumerationDyn<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
-                                   const vector<FT> &target_coord, const vector<enumxt> &subtree,
-                                   const vector<enumf> &pruning, bool _dual, bool subtree_reset)
+                                       const vector<FT> &target_coord,
+                                       const vector<enumxt> &subtree, const vector<enumf> &pruning,
+                                       bool _dual, bool subtree_reset)
 {
   bool solvingsvp = target_coord.empty();
   dual            = _dual;
@@ -231,7 +233,8 @@ template <typename ZT, typename FT> void EnumerationDyn<ZT, FT>::process_solutio
   set_bounds();
 }
 
-template <typename ZT, typename FT> void EnumerationDyn<ZT, FT>::process_subsolution(int offset, enumf newdist)
+template <typename ZT, typename FT>
+void EnumerationDyn<ZT, FT>::process_subsolution(int offset, enumf newdist)
 {
   for (int j = 0; j < offset; ++j)
     fx[j]    = 0.0;
@@ -283,7 +286,6 @@ template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<dpe_t>>;
 
 template class Enumeration<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
 template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
-
 
 template class Enumeration<Z_NR<long>, FP_NR<double>>;
 template class EnumerationDyn<Z_NR<long>, FP_NR<double>>;

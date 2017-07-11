@@ -70,7 +70,7 @@ template <typename ZT, typename FT> class Enumeration
 public:
   Enumeration(MatGSO<ZT, FT> &gso, Evaluator<FT> &evaluator,
               const vector<int> &max_indices = vector<int>())
-    : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr), _nodes(0)
+      : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr), _nodes(0)
   {
   }
 

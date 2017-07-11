@@ -69,9 +69,9 @@ bool ExternalEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, l
   return _nodes != ~uint64_t(0);
 }
 
-template <typename ZT,typename FT>
-void ExternalEnumeration<ZT,FT>::callback_set_config(enumf *mu, size_t mudim, bool mutranspose,
-                                                     enumf *rdiag, enumf *pruning)
+template <typename ZT, typename FT>
+void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, bool mutranspose,
+                                                      enumf *rdiag, enumf *pruning)
 {
   FT fr, fmu;
   long rexpo;
@@ -122,7 +122,8 @@ void ExternalEnumeration<ZT,FT>::callback_set_config(enumf *mu, size_t mudim, bo
   }
 }
 
-template <typename ZT, typename FT> enumf ExternalEnumeration<ZT, FT>::callback_process_sol(enumf dist, enumf *sol)
+template <typename ZT, typename FT>
+enumf ExternalEnumeration<ZT, FT>::callback_process_sol(enumf dist, enumf *sol)
 {
   for (int i = 0; i < _d; ++i)
     _fx[i]   = sol[i];
@@ -175,6 +176,5 @@ template class ExternalEnumeration<Z_NR<long>, FP_NR<dpe_t>>;
 #endif
 
 template class ExternalEnumeration<Z_NR<long>, FP_NR<mpfr_t>>;
-
 
 FPLLL_END_NAMESPACE
