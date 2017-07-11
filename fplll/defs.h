@@ -265,19 +265,31 @@ enum HKZFlags
 #define FPLLL_DEFAULT_STRATEGY ""
 #endif
 
-enum PrunerMethod
-{
-  PRUNER_METHOD_GREEDY   = 0,
-  PRUNER_METHOD_GRADIENT = 1,
-  PRUNER_METHOD_NM       = 2,
-  PRUNER_METHOD_HYBRID   = 3
-};
-
 enum PrunerMetric
 {
   PRUNER_METRIC_PROBABILITY_OF_SHORTEST = 0,
   PRUNER_METRIC_EXPECTED_SOLUTIONS      = 1
 };
+
+
+enum PrunerFlags
+{
+  PRUNER_SVP_SYMMETRY     = 0x1,  // Halve the count of nodes, according to enumeration optimization from symmetry
+  // Descent methods. If several activated, pruner will execute them in the order below.
+  PRUNER_START_FROM_INPUT = 0x2,  
+  PRUNER_GRADIENT         = 0x4, // Activate the gradient descent  
+  PRUNER_NELDER_MEAD      = 0x8,
+  // Verbosity
+  PRUNER_TIMOUT_WARNING   = 0x10,  // Print on stderr if timeout occured. This flag is forced on default timeout value.
+  PRUNER_TIMOUT_ERROR     = 0x20,  // Raise an error if timeout
+  PRUNER_VERBOSE          = 0x40,
+  PRUNER_VERY_VERBOSE     = 0x80
+};
+
+#define PRUNER_DEFAULT_TIMEOUT_CONST 1e-4 // Default timeout = DEFAULT_TIMEOUT_CONST * dim^2
+
+#define PRUNER_DEFAULT (PRUNER_SVP_SYMMETRY|PRUNER_GRADIENT)
+#define PRUNER_ZEALOUS (PRUNER_SVP_SYMMETRY|PRUNER_GRADIENT|PRUNER_NELDER_MEAD)
 
 FPLLL_END_NAMESPACE
 

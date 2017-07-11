@@ -57,11 +57,7 @@ FPLLL_BEGIN_NAMESPACE
    - d is floor(n/2 at most). Odd n are dealt with by ignoring the first component
 */
 
-#define PRUNER_MAX_PREC 1000
-#define PRUNER_MAX_D 1023
 #define PRUNER_MAX_N 2047
-
-#define PRUNER_MIN_BOUND .1
 
 /**
    @brief prune function, hiding the Pruner class
@@ -78,9 +74,11 @@ FPLLL_BEGIN_NAMESPACE
 
 template <class FT>
 void prune(/*output*/ Pruning &pruning,
-           /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
-           vector<double> &r, const PrunerMethod method = PRUNER_METHOD_HYBRID,
-           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, bool reset = true);
+           /*inputs*/ 
+           const double enumeration_radius, const double preproc_cost, 
+           vector<double> &gso_r, const double target = .9,
+           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
+           const int flags=PRUNER_DEFAULT, const double timeout = -1.);
 
 /**
    @brief prune function averaging over several bases
@@ -97,9 +95,10 @@ void prune(/*output*/ Pruning &pruning,
 
 template <class FT>
 void prune(/*output*/ Pruning &pruning,
-           /*inputs*/ double &enumeration_radius, const double preproc_cost, const double target,
-           vector<vector<double>> &rs, const PrunerMethod method = PRUNER_METHOD_HYBRID,
-           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, bool reset = true);
+           /*inputs*/ double enumeration_radius, const double preproc_cost,
+           vector<vector<double>> &gso_rs, const double target = .9, 
+           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
+           const int flags=PRUNER_DEFAULT, const double timeout = -1.);
 
 /**
    @brief svp_probability function, hiding the Pruner class
@@ -117,65 +116,57 @@ public:
   class TestPruner;
   friend class TestPruner;
 
-  /** @brief enumeration radius (squared) */
+  // TODO : shall those be public ?
   FT enumeration_radius;
-
-  /** @brief cost of pre-processing a basis for a retrial
-
-      This cost should be expressed in terms of ``nodes'' in an enumeration.
-      Roughly, a node is equivalent to 100 CPU cycles.
-  */
   FT preproc_cost;
-
-  /** @brief desired success probability after several retrial
-
-      @note one can try to force probability >= target by setting
-      a prohibitive preproc_cost. But beware: this may induces numerical
-      stability issue, especially with the gradient method.
-  */
-
   FT target;
-
-  int verbosity = 0;
-
-  PrunerMethod method;
   PrunerMetric metric;
+  int flags;
+  size_t n;  // Dimension of the (sub)-basis
+  size_t d;  // Degree d = floor(n/2)
+  double timeout;
+  double min_pruning_bound;
+  
+  // TODO use channels to avoid explicit vebosity conditions
+  // See https://stackoverflow.com/questions/11826554/standard-no-op-output-stream
+  // ostream &channel1; // Channel for important messages
+  // ostream &channel2; // Channel for less important message
 
-  Pruner(FT enumeration_radius = 0.0, FT preproc_cost = 0.0, FT target = 0.9,
-         PrunerMethod method = PRUNER_METHOD_HYBRID,
-         PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, size_t n = 0, size_t d = 0)
-      : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
-        method(method), metric(metric), n(n), d(d)
+  Pruner(const FT enumeration_radius, const FT preproc_cost,
+         const vector<double> &gso_r, const FT target = 0.9,
+         const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
+         int flags = PRUNER_DEFAULT, double timeout = -1): 
+        enumeration_radius(enumeration_radius), 
+        preproc_cost(preproc_cost), target(target),
+        metric(metric),flags(flags), timeout(timeout)
   {
-
     if (!tabulated_value_imported)
     {
       set_tabulated_consts();
       tabulated_value_imported = true;
     }
-    epsilon     = std::pow(2., -7);  // Guesswork. Will become obsolete with Nelder-Mead
-    min_step    = std::pow(2., -6);  // Guesswork. Will become obsolete with Nelder-Mead
-    step_factor = std::pow(2, .5);   // Guesswork. Will become obsolete with Nelder-Mead
-    shell_ratio = .995;  // This approximation means that SVP will in fact be approx-SVP with factor
-                         // 1/.995. Sounds fair.
-    min_cf_decrease = .995;  // We really want the gradient descent to reach the minima
-    symmetry_factor = 2;     // For now, we are just considering SVP
+  load_basis_shape(gso_r);
+  normalized_radius = sqrt(enumeration_radius * normalization_factor);
+  set_min_pruning_bound();
+  if (timeout<0) 
+    {
+      timeout = PRUNER_DEFAULT_TIMEOUT_CONST * n * n;
+      flags |= PRUNER_TIMOUT_WARNING;
+    }
+  if (timeout==0)
+    {
+      // TODO : actually implement timeout
+      timeout = 4.2e17; // The age of the universe in seconds
+    }
+  // TODO connect channels to cerr or   
   }
 
-  /** @brief load the shape of a basis from vector<double>. Mostly for testing purposes */
-  void load_basis_shape(const vector<double> &gso_sq_norms, bool reset_renorm = true);
-
-  /** @brief load the shapes of may bases from vector<vector<double>> . Cost are average over all
-   * bases. Mostly for testing purposes */
-
-  void load_basis_shapes(const vector<vector<double>> &gso_sq_norms_vec);
 
   /** @brief optimize pruning coefficients
-
       @note Basis Shape and other parameters must have been set beforehand. See
       auto_prune for an example of proper usage.
   */
-  void optimize_coefficients(/*io*/ vector<double> &pr, /*i*/ const bool reset = true);
+  void optimize_coefficients(/*io*/ vector<double> &pr);
 
   /** @brief Compute the cost of a single enumeration */
 
@@ -212,24 +203,46 @@ public:
   }
 
 private:
-  using vec  = array<FT, PRUNER_MAX_N>;
-  using evec = array<FT, PRUNER_MAX_D>;
-  // Even vectors, i.e. only one every two entry is stored: V[2i] = V[2i+1] =E[i]
-  using poly = array<FT, PRUNER_MAX_D + 1>;
+  double descent_starting_clock;
+  static FT tabulated_factorial[PRUNER_MAX_N];
+  static FT tabulated_ball_vol[PRUNER_MAX_N];
+  static bool tabulated_value_imported;
 
-  // Load the constants for factorial and ball-volumes
-  void set_tabulated_consts();
-  size_t n;  // Dimension of the (sub)-basis
-  size_t d;  // Degree d = floor(n/2)
+  FT epsilon = std::pow(2., -7);    //< Epsilon to use for numerical differentiation
+  FT min_step = std::pow(2., -6);   //< Minimal step in a given direction
+  FT min_cf_decrease  = .995;       //< Maximal ratio of two consectuive cost_factor in the descent before stopping
+  FT step_factor = std::pow(2, .5); //< Increment factor for steps in a given direction
+  FT shell_ratio  = .995;           //< Shell thickness Ratio when evaluating svp proba
+  FT symmetry_factor = 2;           //< 2 for SVP, 1 for CVP.
+
+  // Following typedefs are given for readability
+  using vec  = vector<FT>; // Those have dimension n
+  using evec = vector<FT>; // Those have dimension d
+  using poly = vector<FT>; // Those have dimension d+1 (or less)
+
 
   vec r;                      // Gram-Schmidt length (squared, inverted ordering)
   vec ipv;                    // Partial volumes (inverted ordering)
-  FT renormalization_factor;  // internal renormalization factor to avoid over/underflows
+  FT normalization_factor;  // internal renormalization factor to avoid over/underflows
+  FT normalized_radius;  // internal renormalization factor to avoid over/underflows
+  int verbosity = 0;
 
-  // Sanity check: has a basis indeed been loaded ?
-  bool check_basis_loaded();
+
+  // Load the constants for factorial and ball-volumes
+  void set_tabulated_consts();
+  // Has the descent exceeeded the timeout
+  bool timeouted();
+  /** @brief load the shape of a basis from vector<double>.  */
+  void load_basis_shape(const vector<double> &gso_r, bool reset_normalization = true);
+  /** @brief load the shapes of many bases from vector<vector<double>>. 
+      Costs are average over all bases.  */
+  void load_basis_shapes(const vector<vector<double>> &gso_rs);
+  // Set the min_puning_bound
+  void set_min_pruning_bound();
+  // Removed : now just use greedy as the starting point
   // Initialize pruning coefficients (linear pruning)
-  void init_coefficients(evec &b);
+  // void init_coefficients(evec &b);
+
   // Load pruning coefficient from double*
   void load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr);
   // Save pruning coefficients to double*
@@ -255,28 +268,15 @@ private:
   // where r is the required number of retrials to reach target/target_solution
   FT repeated_enum_cost(/*i*/ const evec &b);
   // Compute the gradient of the above function
-  void repeated_enum_cost_gradient(/*i*/ const evec &b, /*o*/ evec &res);
+  void repeated_enum_cost_gradient(/*i*/ const evec &b, /*o*/ evec &gso_res);
   // Choose pruning parameter to have a near-constant width enum tree
   void greedy(evec &b);
   // Improve the pruning bounds a bit,  using one gradient step
-  int improve(/*io*/ evec &b);
+  int gradient_step(/*io*/ evec &b);
   // Improve the pruning bounds substantially, using Nelder-Mead method
-  int nelder_mead(/*io*/ evec &b);
+  int nelder_mead_step(/*io*/ evec &b);
   // Run the whole escent to optimize pruning bounds
   void descent(/*io*/ evec &b);
-
-  static FT tabulated_factorial[PRUNER_MAX_N];
-  static FT tabulated_ball_vol[PRUNER_MAX_N];
-  static bool tabulated_value_imported;
-
-  FT epsilon;          //< Epsilon to use for numerical differentiation
-  FT min_step;         //< Minimal step in a given direction
-  FT min_cf_decrease;  //< Maximal ratio of two consectuive cf in the descent before stopping
-
-  FT step_factor;      //< Increment factor for steps in a given direction
-  FT shell_ratio;      //< Shell thickness Ratio when evaluating svp proba
-  FT symmetry_factor;  //< Set at 2 for SVP enumeration assuming the implem only explore half the
-                       //< space
 };
 
 template <class FT> bool Pruner<FT>::tabulated_value_imported = false;
