@@ -251,7 +251,6 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
 template <class FT>
 bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &par, bool dual)
 {
-
   int first = dual ? kappa + block_size - 1 : kappa;
 
   // ensure we are computing something sensible.
@@ -299,7 +298,6 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     const Pruning &pruning = get_pruning(kappa, block_size, par);
 
     FPLLL_DEBUG_CHECK(pruning.metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
-
     evaluator.solutions.clear();
     Enumeration<Integer, FT> enum_obj(m, evaluator);
     enum_obj.enumerate(kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(),
@@ -405,6 +403,11 @@ bool BKZReduction<FT>::hkz(int &kappa_max, const BKZParam &param, int min_row, i
       kappa_max = kappa;
     }
   }
+
+  // this line fixes fpylll issue 73 with stalling BKZ instances
+  // test basis: tests/lattices/stalling_93_53.txt. Test with command
+  // fplll -a bkz -b 53 -s strategies/default.json -f double tests/lattices/stalling_93_53.txt
+  lll_obj.size_reduction(max_row - 1, max_row, max_row - 2);
 
   return clean;
 }

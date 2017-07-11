@@ -27,7 +27,6 @@ static void main_usage(char *myself)
        << "     BKZ preprocessing of blocksize=nnn\n"
        << "  -v\n"
        << "     Verbose mode\n";
-  exit(0);
 }
 
 /**
@@ -72,10 +71,7 @@ int main(int argc, char **argv)
     case 'a':
       alg = atoi(optarg);
       if (alg != 2 && alg != 3 && alg != 4)
-      {
-        cout << " Error, only support 2-, 3- and 4-sieve" << endl;
-        exit(1);
-      }
+        throw std::invalid_argument("only support 2-, 3- and 4-sieve");
     case 'f':
       input_file_name = optarg;
       flag_file       = true;
