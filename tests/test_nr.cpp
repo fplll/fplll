@@ -38,6 +38,20 @@ template <class FT> int test_arithmetic()
   return status;
 }
 
+template <class FT> bool test_hypot()
+{
+  FT a,b,c;
+  a         = 3.0;
+  b         = 4.0;
+  c.hypot(a,b);
+
+  int status = !(abs(c- 5.0) < 0.001);
+  if (status == 1)  {
+    cerr << c;
+  }
+  return status;
+}
+
 /**
    @brief
 
@@ -119,6 +133,21 @@ int main(int argc, char *argv[])
   status |= test_str<FP_NR<qd_real>>();
 #endif
   status |= test_str<FP_NR<mpfr_t>>();
+
+  status |= test_hypot<FP_NR<double>>();
+#ifdef FPLLL_WITH_LONG_DOUBLE
+  status |= test_hypot<FP_NR<long double>>();
+#endif
+  
+#ifdef FPLLL_WITH_DPE
+  status |= test_hypot<FP_NR<dpe_t>>();
+#endif
+
+#ifdef FPLLL_WITH_QD
+  status |= test_hypot<FP_NR<dd_real>>();
+  status |= test_hypot<FP_NR<qd_real>>();
+#endif
+  status |= test_hypot<FP_NR<mpfr_t>>();
 
   if (status == 0)
   {

@@ -275,6 +275,24 @@ inline void FP_NR<dd_real>::swap(FP_NR<dd_real>& a) {
   data = t;
 }
 
+/*  implemented hypot, since it 
+    it is not implemented for
+    double-double
+*/
+template<>
+inline void FP_NR<dd_real>::hypot(const FP_NR<dd_real>& a, const FP_NR<dd_real>& b, mp_rnd_t rnd) {
+    dd_real abs_a = abs(a);
+    dd_real abs_b = abs(b);
+    
+    if (abs_a > abs_b) {
+        data = abs_a.data*sqrt(1 + (abs_b.data/abs_a.data)^2);
+    } else {
+        data =  abs_b.data*sqrt(1 + (abs_a.data/abs_b.data)^2);   
+    }
+    
+}
+
+
 FPLLL_END_NAMESPACE
 
 #endif

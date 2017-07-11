@@ -277,7 +277,12 @@ inline void FP_NR<dpe_t>::swap(FP_NR<dpe_t>& a) {
   dpe_swap(data, a.data);
 }
 
-
+template<>
+inline void FP_NR<dpe_t>::hypot(const FP_NR<dpe_t>& a, const FP_NR<dpe_t>& b, mp_rnd_t /*rnd*/) {
+    dpe_mul(data,a.data,a.data);
+    dpe_addmul(data,b.data,b.data);
+    dpe_sqrt(data,data);
+}
 
 /* operators FP_NR<dpe_t> */
 template<>

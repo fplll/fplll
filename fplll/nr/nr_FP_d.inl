@@ -274,6 +274,12 @@ inline void FP_NR<double>::swap(FP_NR<double>& a) {
   std::swap(data, a.data);
 }
 
+/* hypot function for Givens */
+template<>
+inline void FP_NR<double>::hypot(const FP_NR<double>& a, const FP_NR<double>& b, mp_rnd_t /*rnd*/) {
+  data = ::hypot(a.data,b.data);
+}
+
 
 FPLLL_END_NAMESPACE
 
