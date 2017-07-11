@@ -75,10 +75,10 @@ FPLLL_BEGIN_NAMESPACE
 template <class FT>
 void prune(/*output*/ Pruning &pruning,
            /*inputs*/ 
-           const double enumeration_radius, const double preproc_cost, 
-           vector<double> &gso_r, const double target = .9,
-           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-           const int flags=PRUNER_DEFAULT, const double timeout = -1.);
+const double enumeration_radius, const double preproc_cost, 
+vector<double> &gso_r, const double target = .9,
+const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
+const int flags=PRUNER_DEFAULT, const double timeout = -1.);
 
 /**
    @brief prune function averaging over several bases
@@ -96,9 +96,9 @@ void prune(/*output*/ Pruning &pruning,
 template <class FT>
 void prune(/*output*/ Pruning &pruning,
            /*inputs*/ double enumeration_radius, const double preproc_cost,
-           vector<vector<double>> &gso_rs, const double target = .9, 
-           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-           const int flags=PRUNER_DEFAULT, const double timeout = -1.);
+vector<vector<double>> &gso_rs, const double target = .9, 
+const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
+const int flags=PRUNER_DEFAULT, const double timeout = -1.);
 
 /**
    @brief svp_probability function, hiding the Pruner class
@@ -121,39 +121,74 @@ public:
   FT preproc_cost;
   FT target;
   PrunerMetric metric;
+  int shapes_loaded = 0;
   int flags;
   size_t n;  // Dimension of the (sub)-basis
   size_t d;  // Degree d = floor(n/2)
   double timeout;
   double min_pruning_bound;
+
+  void import_tabulated_values()
+  {
+    if (!tabulated_values_imported)
+    {
+      set_tabulated_consts();
+      tabulated_values_imported = true;
+    }
+  }
   
   // TODO use channels to avoid explicit vebosity conditions
   // See https://stackoverflow.com/questions/11826554/standard-no-op-output-stream
   // ostream &channel1; // Channel for important messages
   // ostream &channel2; // Channel for less important message
 
-  Pruner(const FT enumeration_radius, const FT preproc_cost,
-         const vector<double> &gso_r, const FT target = 0.9,
-         const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-         int flags = PRUNER_DEFAULT, double timeout = -1): 
-        enumeration_radius(enumeration_radius), 
-        preproc_cost(preproc_cost), target(target),
-        metric(metric),flags(flags), timeout(timeout)
+  Pruner(const int n): n(n)
   {
-    if (!tabulated_value_imported)
-    {
-      set_tabulated_consts();
-      tabulated_value_imported = true;
-    }
-  load_basis_shape(gso_r);
-  normalized_radius = sqrt(enumeration_radius * normalization_factor);
-  set_min_pruning_bound();
-  if (timeout<0) 
+    import_tabulated_values();
+  }
+
+  Pruner(const FT enumeration_radius, const FT preproc_cost,
+   const vector<double> &gso_r, const FT target = 0.9,
+   const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
+   int flags = PRUNER_DEFAULT, double timeout = -1): 
+  enumeration_radius(enumeration_radius), 
+  preproc_cost(preproc_cost), target(target),
+  metric(metric),flags(flags), timeout(timeout)
+  {
+    import_tabulated_values();
+    load_basis_shape(gso_r);
+    set_min_pruning_bound();
+    if (timeout<0) 
     {
       timeout = PRUNER_DEFAULT_TIMEOUT_CONST * n * n;
       flags |= PRUNER_TIMOUT_WARNING;
     }
-  if (timeout==0)
+    if (timeout==0)
+    {
+      // TODO : actually implement timeout
+      timeout = 4.2e17; // The age of the universe in seconds
+    }
+  // TODO connect channels to cerr or   
+  }
+
+
+  Pruner(const FT enumeration_radius, const FT preproc_cost,
+   const vector<vector<double>> &gso_rs, const FT target = 0.9,
+   const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
+   int flags = PRUNER_DEFAULT, double timeout = -1): 
+  enumeration_radius(enumeration_radius), 
+  preproc_cost(preproc_cost), target(target),
+  metric(metric),flags(flags), timeout(timeout)
+  {
+    import_tabulated_values();
+    load_basis_shapes(gso_rs);
+    set_min_pruning_bound();
+    if (timeout<0) 
+    {
+      timeout = PRUNER_DEFAULT_TIMEOUT_CONST * n * n;
+      flags |= PRUNER_TIMOUT_WARNING;
+    }
+    if (timeout==0)
     {
       // TODO : actually implement timeout
       timeout = 4.2e17; // The age of the universe in seconds
@@ -206,7 +241,7 @@ private:
   double descent_starting_clock;
   static FT tabulated_factorial[PRUNER_MAX_N];
   static FT tabulated_ball_vol[PRUNER_MAX_N];
-  static bool tabulated_value_imported;
+  static bool tabulated_values_imported;
 
   FT epsilon = std::pow(2., -7);    //< Epsilon to use for numerical differentiation
   FT min_step = std::pow(2., -6);   //< Minimal step in a given direction
@@ -279,7 +314,7 @@ private:
   void descent(/*io*/ evec &b);
 };
 
-template <class FT> bool Pruner<FT>::tabulated_value_imported = false;
+template <class FT> bool Pruner<FT>::tabulated_values_imported = false;
 template <class FT> FT Pruner<FT>::tabulated_factorial[PRUNER_MAX_N];
 template <class FT> FT Pruner<FT>::tabulated_ball_vol[PRUNER_MAX_N];
 

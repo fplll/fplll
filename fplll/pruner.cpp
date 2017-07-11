@@ -26,16 +26,14 @@ FPLLL_BEGIN_NAMESPACE
 
 template <class FT> FT svp_probability(const Pruning &pruning)
 {
-  // TODO, reimplement, despite Pruner actually needing a basis now...
-  // Pruner<FT> pru;
-  // return pru.measure_metric(pruning.coefficients);
+  Pruner<FT> pru(pruning.coefficients.size());
+  return pru.measure_metric(pruning.coefficients);
 }
 
 template <class FT> FT svp_probability(const vector<double> &pr)
 {
-  // TODO, reimplement, despite Pruner actualll needing a basis now...
-  // Pruner<FT> pru;
-  // return pru.measure_metric(pr);
+  Pruner<FT> pru(pr.size());
+  return pru.measure_metric(pr);
 }
 
 template <class FT> void Pruner<FT>::set_tabulated_consts()
@@ -79,6 +77,7 @@ void Pruner<FT>::load_basis_shape(const vector<double> &gso_r, bool reset_renorm
   if (reset_renormalization)
   {
     normalization_factor = exp(logvol / (-1.0 * n));
+    normalized_radius = sqrt(enumeration_radius * normalization_factor);
   }
 
   for (size_t i = 0; i < n; ++i)
@@ -837,7 +836,7 @@ void prune(/*output*/ Pruning &pruning,
   Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_r, target, metric, flags, timeout);
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
-  // TODO : also compute the ``radius_factor'' a.k.a. gh_factor
+  // TODO : also compute the gh_factor
   pruning.metric      = metric;
   pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }
@@ -849,6 +848,12 @@ void prune(/*output*/ Pruning &pruning,
            vector<vector<double>> &gso_rs, const double target, 
            const PrunerMetric metric, const int flags, const double timeout)
 {
+  Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_rs, target, metric, flags, timeout);
+  pruner.optimize_coefficients(pruning.coefficients);
+  pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
+  // TODO : also compute the gh_factor
+  pruning.metric      = metric;
+  pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }
 
 
