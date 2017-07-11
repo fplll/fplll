@@ -27,7 +27,7 @@ Pruning Pruning::LinearPruning(int block_size, int level)
   {
     pruning.coefficients[start_descent + k] = ((double)(block_size - k - 1)) / block_size;
   }
-  pruning.radius_factor = 1.0;
+  pruning.gh_factor = 1.0;
   pruning.metric        = PRUNER_METRIC_PROBABILITY_OF_SHORTEST;
   pruning.expectation   = fplll::svp_probability<FP_NR<double>>(pruning.coefficients).get_d();
 
@@ -65,9 +65,9 @@ const Pruning &Strategy::get_pruning(double radius, double gh) const
 
   for (auto it = pruning_parameters.begin(); it != pruning_parameters.end(); ++it)
   {
-    if (fabs(it->radius_factor - gh_factor) < closest_dist)
+    if (fabs(it->gh_factor - gh_factor) < closest_dist)
     {
-      closest_dist = fabs(it->radius_factor - gh_factor);
+      closest_dist = fabs(it->gh_factor - gh_factor);
       best         = it;
     }
   }
@@ -125,7 +125,7 @@ vector<Strategy> load_strategies_json(const std::string &filename)
       {
         const json &j_prun = *p_it;
         Pruning pruning;
-        pruning.radius_factor = j_prun[0];
+        pruning.gh_factor = j_prun[0];
 
         for (auto c_it = j_prun[1].begin(); c_it != j_prun[1].end(); ++c_it)
         {

@@ -34,18 +34,17 @@ class Pruning
 {
 
 public:
-  double radius_factor;              //< radius/Gaussian heuristic
+  double gh_factor;              //< radius/Gaussian heuristic (TODO: in square format ???)
   std::vector<double> coefficients;  //< pruning coefficients
   double expectation;                //< either success probability or number of solutions
-  PrunerMetric
-      metric;  //< metric used for optimisation (success probability or number of solutions)
+  PrunerMetric metric;  //< metric used for optimisation (success probability or number of solutions)
   std::vector<double> detailed_cost;  //< Expected nodes per level
 
   /**
      The default constructor means no pruning.
   */
 
-  Pruning() : radius_factor(1.), expectation(1.), metric(PRUNER_METRIC_PROBABILITY_OF_SHORTEST){};
+  Pruning() : gh_factor(1.), expectation(1.), metric(PRUNER_METRIC_PROBABILITY_OF_SHORTEST){};
 
   /** Set all pruning coefficients to 1, except the last <level>
       coefficients, these will be linearly with slope `-1 /

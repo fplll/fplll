@@ -837,7 +837,7 @@ void prune(/*output*/ Pruning &pruning,
   Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_r, target, metric, flags, timeout);
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
-  
+  // TODO : also compute the ``radius_factor'' a.k.a. gh_factor
   pruning.metric      = metric;
   pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }
