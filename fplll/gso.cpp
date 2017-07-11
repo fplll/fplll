@@ -47,6 +47,42 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::update_bf(int i)
   }
 }
 
+template <class ZT, class FT> bool MatGSO<ZT, FT>::update_gso_row(int i, int last_j)
+{
+  // FPLLL_TRACE_IN("Updating GSO up to (" << i << ", " << last_j << ")");
+  // FPLLL_TRACE("n_known_rows=" << n_known_rows << " n_source_rows=" << n_source_rows);
+  if (i >= n_known_rows)
+  {
+    discover_row();
+  }
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && last_j >= 0 && last_j < n_source_rows);
+
+  int j = max(0, gso_valid_cols[i]);
+
+  for (; j <= last_j; j++)
+  {
+    get_gram(ftmp1, i, j);
+    FPLLL_DEBUG_CHECK(j == i || gso_valid_cols[j] >= j);
+    for (int k = 0; k < j; k++)
+    {
+      ftmp2.mul(mu(j, k), r(i, k));
+      ftmp1.sub(ftmp1, ftmp2);
+    }
+    r(i, j) = ftmp1;
+    if (i > j)
+    {
+      mu(i, j).div(ftmp1, r(j, j));
+      if (!mu(i, j).is_finite())
+        return false;
+    }
+  }
+
+  gso_valid_cols[i] = j;  // = max(0, gso_valid_cols[i], last_j + 1)
+  // FPLLL_TRACE_OUT("End of GSO update");
+  return true;
+}
+
+
 template <class ZT, class FT> void MatGSO<ZT, FT>::invalidate_gram_row(int i)
 {
   for (int j = 0; j <= i; j++)
