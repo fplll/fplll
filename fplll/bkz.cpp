@@ -301,7 +301,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
     FPLLL_DEBUG_CHECK(pruning.metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
 
     evaluator.solutions.clear();
-    Enumeration<FT> enum_obj(m, evaluator);
+    Enumeration<Integer, FT> enum_obj(m, evaluator);
     enum_obj.enumerate(kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(),
                        vector<enumxt>(), pruning.coefficients, dual);
     nodes += enum_obj.get_nodes();

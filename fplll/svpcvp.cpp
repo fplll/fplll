@@ -60,7 +60,7 @@ static void get_basis_min(Integer &basis_min, const IntMatrix &b, int first, int
 static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
                           ErrorBoundedEvaluator &evaluator, const vector<enumf> &pruning, int flags)
 {
-  Enumeration<Float> enumobj(gso, evaluator);
+  Enumeration<Integer, Float> enumobj(gso, evaluator);
   bool dual = (flags & SVP_DUAL);
   if (d == 1 || !pruning.empty() || dual)
   {
@@ -435,7 +435,7 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
   FastErrorBoundedEvaluator evaluator(n, gso.get_mu_matrix(), gso.get_r_matrix(), EVALMODE_CV);
 
   // Main loop of the enumeration
-  Enumeration<Float> enumobj(gso, evaluator, max_indices);
+  Enumeration<Integer, Float> enumobj(gso, evaluator, max_indices);
   enumobj.enumerate(0, d, max_dist, 0, target_coord);
 
   int result = RED_ENUM_FAILURE;
