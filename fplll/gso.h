@@ -61,7 +61,7 @@ public:
   using MatGSOInterface<ZT, FT>::row_expo;
   using MatGSOInterface<ZT, FT>::n_known_cols;
   using MatGSOInterface<ZT, FT>::tmp_col_expo;
-  //  using MatGSOInterface<ZT,FT>::create_row;
+
   using MatGSOInterface<ZT, FT>::remove_last_row;
   using MatGSOInterface<ZT, FT>::print_mu_r_g;
   using MatGSOInterface<ZT, FT>::update_gso;
@@ -76,8 +76,6 @@ public:
   using MatGSOInterface<ZT, FT>::in_row_op_range;
 #endif
 
-  // using MatGSOInterface<ZT,FT>::update_gso_row;
-  // using MatGSOInterface<ZT,FT>::update_gso_row;
   /**
    * Constructor.
    * The precision of FT must be defined before creating an instance of the
@@ -110,7 +108,6 @@ public:
    *   Affects the behaviour of row_addmul(_we).
    *   See the documentation of row_addmul.
    */
-  //~ MatGSO(Matrix<ZT>& b, Matrix<ZT>& u, Matrix<ZT>& u_inv_t, int flags);
   MatGSO(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
       : MatGSOInterface<ZT, FT>(arg_u, arg_uinv_t, flags), b(arg_b)
   {
@@ -130,18 +127,16 @@ public:
 #endif
   }
 
+public:
   /**
    * Basis of the lattice
    */
-  // private:
   Matrix<ZT> &b;
-  // public:
   /**
    * Integer Gram matrix of the lattice
    */
   Matrix<ZT> g;
 
-public:
   virtual inline long get_max_exp_of_b();
   virtual inline bool b_row_is_zero(int i);
   virtual inline int get_cols_of_b();
@@ -162,6 +157,7 @@ public:
    * of (2^expo * ZT), which is faster if ZT=mpz_t but might lead to a loss of
    * precision (in LLL, more Babai iterations are needed).
    */
+  // --> moved to interface
   // virtual inline void row_addmul(int i, int j, const FT &x);
 
   /**
@@ -182,6 +178,9 @@ public:
   //  virtual inline void printparam(ostream &os);
   virtual inline FT &get_gram(FT &f, int i, int j);
 
+  // b[i] <-> b[j] (i < j)
+  virtual void row_swap(int i, int j);
+
 private:
   /* Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
    When enable_int_gram=false, initializes bf. */
@@ -200,13 +199,6 @@ private:
   // b[i] <- b[i] + (2^expo * x) * b[j] (i > j)
   virtual void row_addmul_si_2exp(int i, int j, long x, long expo);
   virtual void row_addmul_2exp(int i, int j, const ZT &x, long expo);
-
-public:
-  // b[i] <-> b[j] (i < j)
-  virtual void row_swap(int i, int j);
-  // virtual void apply_transform(const Matrix<FT> &transform, int src_base, int target_base);
-private:
-  //  virtual void symmetrize_g();
 };
 
 template <class ZT, class FT> inline long MatGSO<ZT, FT>::get_max_exp_of_b()
@@ -235,7 +227,6 @@ template <class ZT, class FT> inline void MatGSO<ZT, FT>::negate_row_of_b(int i)
     {
       if (j < i)
       {
-        // sym_g(i,j).neg(sym_g(i,j));
         g(i, j).neg(g(i, j));
       }
       else if (j > i)
@@ -246,98 +237,6 @@ template <class ZT, class FT> inline void MatGSO<ZT, FT>::negate_row_of_b(int i)
   }
 }
 
-/*
-template <class ZT, class FT> inline FT &MatGSO<ZT, FT>::get_gram(FT &f, int i, int j)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j <= i && j < n_source_rows &&
-                    !in_row_op_range(i));
-  if (enable_int_gram)
-    f.set_z(g(i, j));
-  else
-  {
-    if (gf(i, j).is_nan())
-    {
-      dot_product(gf(i, j), bf[i], bf[j], n_known_cols);
-    }
-    f = gf(i, j);
-  }
-  return f;
-}
-*/
-
-// TODO those functions only needed here, right? delete in gsob?
-/*
-template <class ZT, class FT> inline const FT &MatGSO<ZT, FT>::get_mu_exp(int i, int j, long &expo)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i && j < gso_valid_cols[i] &&
-                    !in_row_op_range(i));
-  if (enable_row_expo)
-    expo = row_expo[i] - row_expo[j];
-  else
-    expo = 0;
-  return mu(i, j);
-}
-
-template <class ZT, class FT> inline const FT &MatGSO<ZT, FT>::get_mu_exp(int i, int j)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i && j < gso_valid_cols[i] &&
-                    !in_row_op_range(i));
-  return mu(i, j);
-}
-
-template <class ZT, class FT> inline FT &MatGSO<ZT, FT>::get_mu(FT &f, int i, int j)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i && j < gso_valid_cols[i] &&
-                    !in_row_op_range(i));
-  f = mu(i, j);
-  if (enable_row_expo)
-    f.mul_2si(f, row_expo[i] - row_expo[j]);
-  return f;
-}
-
-template <class ZT, class FT> inline const FT &MatGSO<ZT, FT>::get_r_exp(int i, int j, long &expo)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < gso_valid_cols[i] &&
-                    !in_row_op_range(i));
-  if (enable_row_expo)
-    expo = row_expo[i] + row_expo[j];
-  else
-    expo = 0;
-  return r(i, j);
-}
-
-template <class ZT, class FT> inline const FT &MatGSO<ZT, FT>::get_r_exp(int i, int j)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < gso_valid_cols[i] &&
-                    !in_row_op_range(i));
-  return r(i, j);
-}
-
-template <class ZT, class FT> inline FT &MatGSO<ZT, FT>::get_r(FT &f, int i, int j)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < gso_valid_cols[i] &&
-                    !in_row_op_range(i));
-  f = r(i, j);
-  if (enable_row_expo)
-    f.mul_2si(f, row_expo[i] + row_expo[j]);
-  return f;
-}
-
-template <class ZT, class FT> inline void MatGSO<ZT, FT>::set_r(int i, int j, FT &f)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && gso_valid_cols[i] >= j && j >= 0 &&
-                    j < n_source_rows);
-  r(i, j) = f;
-  if (gso_valid_cols[i] == j)
-    gso_valid_cols[i]++;
-}
-*/
-/*
-template <class ZT, class FT> inline void MatGSO<ZT, FT>::row_addmul(int i, int j, const FT &x)
-{
-  row_addmul_we(i, j, x, 0);
-}
-*/
 template <class ZT, class FT> inline FT &MatGSO<ZT, FT>::get_gram(FT &f, int i, int j)
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j <= i && j < n_source_rows &&

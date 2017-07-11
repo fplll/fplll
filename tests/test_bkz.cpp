@@ -234,6 +234,7 @@ int main(int /*argc*/, char ** /*argv*/)
 {
 
   int status = 0;
+
   status |= test_linear_dep();
   status |= test_filename<mpz_t>("lattices/dim55_in", 10, FT_DEFAULT, BKZ_DEFAULT | BKZ_AUTO_ABORT);
 #ifdef FPLLL_HAVE_QD
