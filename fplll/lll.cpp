@@ -262,6 +262,12 @@ template class LLLReduction<Z_NR<mpz_t>, FP_NR<double>>;
 template bool
 is_lll_reduced<Z_NR<mpz_t>, FP_NR<double>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<double>> &m,
                                            double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<double>>(MatGSOInterface<Z_NR<long>, FP_NR<double>> &m,
+                                           double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<double>>(MatGSOInterface<Z_NR<double>, FP_NR<double>> &m,
+                                           double delta, double eta);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class LLLReduction<Z_NR<long>, FP_NR<long double>>;
@@ -270,6 +276,12 @@ template class LLLReduction<Z_NR<mpz_t>, FP_NR<long double>>;
 
 template bool
 is_lll_reduced<Z_NR<mpz_t>, FP_NR<long double>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<long double>> &m,
+                                                double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<long double>>(MatGSOInterface<Z_NR<long>, FP_NR<long double>> &m,
+                                                double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<long double>>(MatGSOInterface<Z_NR<double>, FP_NR<long double>> &m,
                                                 double delta, double eta);
 #endif
 
@@ -281,6 +293,12 @@ template class LLLReduction<Z_NR<mpz_t>, FP_NR<dd_real>>;
 template bool
 is_lll_reduced<Z_NR<mpz_t>, FP_NR<dd_real>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<dd_real>> &m,
                                             double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<dd_real>>(MatGSOInterface<Z_NR<long>, FP_NR<dd_real>> &m,
+                                           double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<dd_real>>(MatGSOInterface<Z_NR<double>, FP_NR<dd_real>> &m,
+                                             double delta, double eta);
 
 template class LLLReduction<Z_NR<long>, FP_NR<qd_real>>;
 template class LLLReduction<Z_NR<double>, FP_NR<qd_real>>;
@@ -289,6 +307,12 @@ template class LLLReduction<Z_NR<mpz_t>, FP_NR<qd_real>>;
 template bool
 is_lll_reduced<Z_NR<mpz_t>, FP_NR<qd_real>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<qd_real>> &m,
                                             double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<qd_real>>(MatGSOInterface<Z_NR<long>, FP_NR<qd_real>> &m,
+                                            double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<qd_real>>(MatGSOInterface<Z_NR<double>, FP_NR<qd_real>> &m,
+                                             double delta, double eta);
 #endif
 
 #ifdef FPLLL_WITH_DPE
@@ -298,6 +322,12 @@ template class LLLReduction<Z_NR<mpz_t>, FP_NR<dpe_t>>;
 template bool
 is_lll_reduced<Z_NR<mpz_t>, FP_NR<dpe_t>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<dpe_t>> &m,
                                           double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<dpe_t>>(MatGSOInterface<Z_NR<long>, FP_NR<dpe_t>> &m,
+                                         double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<dpe_t>>(MatGSOInterface<Z_NR<double>, FP_NR<dpe_t>> &m,
+                                           double delta, double eta);
 #endif
 
 template class LLLReduction<Z_NR<long>, FP_NR<mpfr_t>>;
@@ -305,6 +335,12 @@ template class LLLReduction<Z_NR<double>, FP_NR<mpfr_t>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
 template bool
 is_lll_reduced<Z_NR<mpz_t>, FP_NR<mpfr_t>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &m,
+                                           double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<mpfr_t>>(MatGSOInterface<Z_NR<long>, FP_NR<mpfr_t>> &m,
+                                           double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<mpfr_t>>(MatGSOInterface<Z_NR<double>, FP_NR<mpfr_t>> &m,
                                            double delta, double eta);
 
 FPLLL_END_NAMESPACE
