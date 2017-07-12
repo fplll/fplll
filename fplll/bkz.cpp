@@ -151,8 +151,10 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
   {
     // No, but one coordinate is equal to \pm 1, making
     // linear dependency easy to fix too.
+    int sol_i = solution[i_vector].get_si();
     if (dual)
     {
+      sol_i *= -1;
       m.row_op_begin(kappa, kappa + block_size);
     }
     else
@@ -166,13 +168,11 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
       {
         if (dual)
         {
-          ftmp = (solution[i_vector] < 0) ? solution[i] : -1 * solution[i];
-          m.row_addmul(kappa + i, kappa + i_vector, ftmp);
+          m.row_addmul(kappa + i, kappa + i_vector, sol_i*solution[i]);
         }
         else
         {
-          ftmp = (solution[i_vector] < 0) ? -1 * solution[i] : solution[i];
-          m.row_addmul(kappa + i_vector, kappa + i, ftmp);
+          m.row_addmul(kappa + i_vector, kappa + i, sol_i*solution[i]);
         }
       }
     }

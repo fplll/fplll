@@ -205,7 +205,6 @@ private:
   FT max_dist, delta_max_dist;
   double cputime_start;
   FT sld_potential;
-  FT ftmp;
 };
 
 int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param,
