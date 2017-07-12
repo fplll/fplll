@@ -191,13 +191,13 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
   else
   {
     // No, general case
-    svp_post_general(kappa, block_size, solution, dual);
+    svp_postprocessing_generic(kappa, block_size, solution, dual);
   }
   return false;
 }
 
 template <class FT>
-bool BKZReduction<FT>::svp_post_general(int kappa, int block_size, const vector<FT> &solution,
+bool BKZReduction<FT>::svp_postprocessing_generic(int kappa, int block_size, const vector<FT> &solution,
                                         bool dual)
 {
   vector<FT> x = solution;
@@ -462,7 +462,7 @@ bool BKZReduction<FT>::slide_tour(const int loop, const BKZParam &par, int min_r
       int block_size = min(max_row - kappa, par.block_size);
       clean &= svp_reduction(kappa, block_size, par);
     }
-    // SVP reduction takes care of the LLL reduction as long as BKZ_BOUNDED_LLL is off
+    // SVP reduction takes care of the LLL reduction if BKZ_BOUNDED_LLL is off
     if (par.flags & BKZ_BOUNDED_LLL)
     {
       if (!lll_obj.lll(min_row, min_row, max_row, 0))

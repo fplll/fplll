@@ -63,8 +63,6 @@ public:
 
   bool svp_postprocessing(int kappa, int block_size, const vector<FT> &solution, bool dual = false);
 
-  bool svp_post_general(int kappa, int block_size, const vector<FT> &solution, bool dual = false);
-
   /**
      Run enumeration to find a new shortest vector in the sublattice B[kappa,kappa+block_size]
 
@@ -190,6 +188,7 @@ private:
 
   const Pruning &get_pruning(int kappa, int block_size, const BKZParam &par) const;
 
+  bool svp_postprocessing_generic(int kappa, int block_size, const vector<FT> &solution, bool dual = false);
   bool trunc_tour(int &kappa_max, const BKZParam &param, int min_row, int max_row);
   bool trunc_dtour(const BKZParam &param, int min_row, int max_row);
 
