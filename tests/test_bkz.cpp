@@ -199,11 +199,15 @@ int test_filename_bkz_dump_gso(const char *input_filename)
     {
       return 1;
     }
-    string step = i["step"];
+
+    //Extract data from json file
+    const string step_js = i["step"];
+    const int loop_js = i["loop"];
+    const double time_js = i["time"];
     // Verify if loop of Input and Output have loop = -1
-    if (step.compare("Input") == 0 || step.compare("Output") == 0)
+    if (step_js.compare("Input") == 0 || step_js.compare("Output") == 0)
     {
-      if (i["loop"] != -1)
+      if (loop_js != -1)
       {
         return 1;
       }
@@ -212,16 +216,16 @@ int test_filename_bkz_dump_gso(const char *input_filename)
     {
       // Verify that loop increases
       loop++;
-      if (i["loop"] != loop)
+      if (loop_js != loop)
       {
         return 1;
       }
       // Verify that time increases
-      if (time > i["time"])
+      if (time > time_js)
       {
         return 1;
       }
-      time = i["time"];
+      time = time_js;
     }
   }
 
