@@ -187,6 +187,7 @@ int test_filename_bkz_dump_gso(const char *input_filename)
   std::ifstream fs("gso.json");
   if (fs.fail())
   {
+    cerr << "File cannot be loaded." << endl;
     return 1;
   }
   fs >> js;
@@ -197,6 +198,7 @@ int test_filename_bkz_dump_gso(const char *input_filename)
     // Verify if there are as much norms as there are rows in A
     if (A.get_rows() != (int)i["norms"].size())
     {
+      cerr << "Array norms does not contains enough value." << endl;
       return 1;
     }
 
@@ -209,6 +211,7 @@ int test_filename_bkz_dump_gso(const char *input_filename)
     {
       if (loop_js != -1)
       {
+        cerr << "Steps Input or Output are not with \"loop\" = -1." << endl;
         return 1;
       }
     }
@@ -218,11 +221,13 @@ int test_filename_bkz_dump_gso(const char *input_filename)
       loop++;
       if (loop_js != loop)
       {
+        cerr << "Loop does not increase." << endl;
         return 1;
       }
       // Verify that time increases
       if (time > time_js)
       {
+        cerr << "Time does not increase." << endl;
         return 1;
       }
       time = time_js;
