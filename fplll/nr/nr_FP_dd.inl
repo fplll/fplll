@@ -290,9 +290,9 @@ inline void FP_NR<dd_real>::hypot(const FP_NR<dd_real>& a, const FP_NR<dd_real>&
     dd_real abs_b = ::abs(b.data);
     
     if (abs_a > abs_b) {
-        data = abs_a* ::sqrt(1.0 + (pow(abs_b/abs_a,2)));
+        data = abs_a* ::sqrt(1.0 + (::pow(abs_b/abs_a,2)));
     } else {
-        data =  abs_b* ::sqrt(1.0 + (pow(abs_a/abs_b,2)));   
+        data =  abs_b* ::sqrt(1.0 + (::pow(abs_a/abs_b,2)));   
     }
     
 }
