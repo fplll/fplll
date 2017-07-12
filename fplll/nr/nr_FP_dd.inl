@@ -281,13 +281,13 @@ inline void FP_NR<dd_real>::swap(FP_NR<dd_real>& a) {
 */
 template<>
 inline void FP_NR<dd_real>::hypot(const FP_NR<dd_real>& a, const FP_NR<dd_real>& b, mp_rnd_t rnd) {
-    dd_real abs_a = abs(a);
-    dd_real abs_b = abs(b);
+    dd_real abs_a = ::abs(a.data);
+    dd_real abs_b = ::abs(b.data);
     
-    if (abs_a > abs_b) {
-        data = abs_a.data*sqrt(1 + (abs_b.data/abs_a.data)^2);
+    if (abs_a.data > abs_b.data) {
+        data = abs_a.data* ::sqrt(1 + (abs_b.data/abs_a.data)^2);
     } else {
-        data =  abs_b.data*sqrt(1 + (abs_a.data/abs_b.data)^2);   
+        data =  abs_b.data* ::sqrt(1 + (abs_a.data/abs_b.data)^2);   
     }
     
 }
