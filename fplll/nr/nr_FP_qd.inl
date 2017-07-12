@@ -281,14 +281,14 @@ inline void FP_NR<qd_real>::swap(FP_NR<qd_real>& a) {
 }
 
 template<>
-inline void FP_NR<dd_real>::hypot(const FP_NR<qd_real>& a, const FP_NR<qd_real>& b, mp_rnd_t rnd) {
+inline void FP_NR<qd_real>::hypot(const FP_NR<qd_real>& a, const FP_NR<qd_real>& b, mp_rnd_t rnd) {
   // Maybe decrease temporary 
   // variables with one, by
   // putting the absolute value of a
   // into this.data
 
-    dd_real abs_a = ::abs(a.data);
-    dd_real abs_b = ::abs(b.data);
+    qd_real abs_a = ::abs(a.data);
+    qd_real abs_b = ::abs(b.data);
     
     if (abs_a > abs_b) {
         data = abs_a* ::sqrt(1.0 + (::pow(abs_b/abs_a,2)));
