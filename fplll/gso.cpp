@@ -82,7 +82,6 @@ template <class ZT, class FT> bool MatGSO<ZT, FT>::update_gso_row(int i, int las
   return true;
 }
 
-
 template <class ZT, class FT> void MatGSO<ZT, FT>::invalidate_gram_row(int i)
 {
   for (int j = 0; j <= i; j++)

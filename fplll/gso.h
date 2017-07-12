@@ -68,8 +68,8 @@ public:
   using MatGSOInterface<ZT, FT>::update_gso_row;
   using MatGSOInterface<ZT, FT>::row_addmul;
   using MatGSOInterface<ZT, FT>::symmetrize_g;
-  using MatGSOInterface<ZT,FT>::ftmp1;
-  using MatGSOInterface<ZT,FT>::ftmp2;
+  using MatGSOInterface<ZT, FT>::ftmp1;
+  using MatGSOInterface<ZT, FT>::ftmp2;
 
 #ifdef DEBUG
   /* Used only in debug mode. */
@@ -150,7 +150,6 @@ public:
   virtual inline void remove_last_rows(int n_removed_rows);
 
   virtual void move_row(int old_r, int new_r);
-
 
   /**
    * Updates r(i, j) and mu(i, j) if needed for all j in [0, last_j].
