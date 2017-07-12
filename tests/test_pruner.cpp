@@ -302,12 +302,12 @@ template <class FT> int test_auto_prune(size_t n)
 {
   int status = 0;
   double cost;
-  IntMatrix A(2 * n, 2 * n);
+  ZZ_mat<mpz_t> A(2 * n, 2 * n);
   A.gen_qary(n, 30);
-  IntMatrix U;
-  MatGSO<Z_NR<mpz_t>, FP_NR<double>> M(A, U, U, GSO_DEFAULT);
-  LLLReduction<Z_NR<mpz_t>, FP_NR<double>> lll_obj =
-      LLLReduction<Z_NR<mpz_t>, FP_NR<double>>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
+  ZZ_mat<mpz_t> U;
+  MatGSO<Z_NR<>, FP_NR<double>> M(A, U, U, GSO_DEFAULT);
+  LLLReduction<Z_NR<>, FP_NR<double>> lll_obj =
+      LLLReduction<Z_NR<>, FP_NR<double>>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
   lll_obj.lll();
   FP_NR<double> radius;
   // NOTE: because NTRUlike lattice has a verri short vector 1111..
@@ -526,7 +526,7 @@ int main(int argc, char *argv[])
   print_status(status);
 #endif
   cerr << endl << "MPRF" << endl;
-  status += test_unpruned<FP_NR<mpfr_t>>();
+  status += test_unpruned<FP_NR<>>();
   print_status(status);
 
   status += test_prepruned<FP_NR<double>>();
@@ -535,7 +535,7 @@ int main(int argc, char *argv[])
   status += test_prepruned<FP_NR<long double>>();
   print_status(status);
 #endif
-  status += test_prepruned<FP_NR<mpfr_t>>();
+  status += test_prepruned<FP_NR<>>();
   print_status(status);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE

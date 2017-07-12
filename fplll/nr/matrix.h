@@ -318,7 +318,7 @@ and random sub-diagonal coefficients.
   */
 
   void gen_trg(double alpha);
-  void gen_trg2(FP_NR<mpfr_t> *w);
+  void gen_trg2(FP_NR<> *w);
 };
 
 /** FP_mat is a matrix of floating-point numbers. */
@@ -332,9 +332,6 @@ public:
       initialized with the default constructor of FP_NR&lt;T&gt;. */
   FP_mat(int rows, int cols) : Matrix<T>(rows, cols) {}
 };
-
-typedef ZZ_mat<IntegerT> IntMatrix;
-typedef FP_mat<FloatT> FloatMatrix;
 
 FPLLL_END_NAMESPACE
 

@@ -147,7 +147,7 @@ template <class ZT, class F> void GaussSieve<ZT, F>::init_list_rand()
   ZZ_mat<mpz_t> NewZ(nr, nc);
   ZZ_mat<ZT> New(nr, nc);
   mpz_t tmp;
-  Z_NR<mpz_t> tmpZ;
+  Z_NR<> tmpZ;
   mpz_init(tmp);
   FP_NR<double> c, t;
   Z_NR<ZT> x;

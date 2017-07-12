@@ -27,7 +27,7 @@
 FPLLL_BEGIN_NAMESPACE
 
 template <class FT>
-BKZReduction<FT>::BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lll_obj,
+BKZReduction<FT>::BKZReduction(MatGSO<Z_NR<>, FT> &m, LLLReduction<Z_NR<>, FT> &lll_obj,
                                const BKZParam &param)
     : status(RED_SUCCESS), nodes(0), param(param), m(m), lll_obj(lll_obj), algorithm(NULL),
       cputime_start(0)
@@ -299,7 +299,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
     FPLLL_DEBUG_CHECK(pruning.metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
     evaluator.solutions.clear();
-    Enumeration<Integer, FT> enum_obj(m, evaluator);
+    Enumeration<FT> enum_obj(m, evaluator);
     enum_obj.enumerate(kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(),
                        vector<enumxt>(), pruning.coefficients, dual);
     nodes += enum_obj.get_nodes();
@@ -635,7 +635,7 @@ template <class FT> bool BKZReduction<FT>::bkz()
 template <class FT> void BKZReduction<FT>::print_tour(const int loop, int min_row, int max_row)
 {
   FT r0;
-  Float fr0;
+  FP_NR<> fr0;
   long expo;
   r0  = m.get_r_exp(min_row, min_row, expo);
   fr0 = r0.get_d();
@@ -720,16 +720,16 @@ template <class FT> bool BKZAutoAbort<FT>::test_abort(double scale, int maxNoDec
  */
 
 template <class FT>
-int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_delta, IntMatrix &u,
-                    IntMatrix &u_inv)
+int bkz_reduction_f(ZZ_mat<mpz_t> &b, const BKZParam &param, int sel_ft, double lll_delta, ZZ_mat<mpz_t> &u,
+                    ZZ_mat<mpz_t> &u_inv)
 {
   int gso_flags = 0;
   if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;
   if (sel_ft == FT_DOUBLE || sel_ft == FT_LONG_DOUBLE)
     gso_flags |= GSO_ROW_EXPO;
-  MatGSO<Integer, FT> m_gso(b, u, u_inv, gso_flags);
-  LLLReduction<Integer, FT> lll_obj(m_gso, lll_delta, LLL_DEF_ETA, LLL_DEFAULT);
+  MatGSO<Z_NR<>, FT> m_gso(b, u, u_inv, gso_flags);
+  LLLReduction<Z_NR<>, FT> lll_obj(m_gso, lll_delta, LLL_DEF_ETA, LLL_DEFAULT);
   BKZReduction<FT> bkz_obj(m_gso, lll_obj, param);
   bkz_obj.bkz();
   return bkz_obj.status;
@@ -738,12 +738,12 @@ int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_
 /**
  * interface called from call_bkz() from main.cpp.
  */
-int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType float_type,
+int bkz_reduction(ZZ_mat<mpz_t> *B, ZZ_mat<mpz_t> *U, const BKZParam &param, FloatType float_type,
                   int precision)
 {
-  IntMatrix empty_mat;
-  IntMatrix &u     = U ? *U : empty_mat;
-  IntMatrix &u_inv = empty_mat;
+  ZZ_mat<mpz_t> empty_mat;
+  ZZ_mat<mpz_t> &u     = U ? *U : empty_mat;
+  ZZ_mat<mpz_t> &u_inv = empty_mat;
   FPLLL_CHECK(B, "B == NULL in bkzReduction");
 
   if (U && (!u.empty()))
@@ -797,9 +797,9 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType f
 #endif
   else if (sel_ft == FT_MPFR)
   {
-    int old_prec = FP_NR<mpfr_t>::set_prec(precision);
-    status       = bkz_reduction_f<FP_NR<mpfr_t>>(*B, param, sel_ft, lll_delta, u, u_inv);
-    FP_NR<mpfr_t>::set_prec(old_prec);
+    int old_prec = FP_NR<>::set_prec(precision);
+    status       = bkz_reduction_f<FP_NR<>>(*B, param, sel_ft, lll_delta, u, u_inv);
+    FP_NR<>::set_prec(old_prec);
   }
   else
   {
@@ -813,7 +813,7 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType f
  * We define BKZ/HKZ for each input type instead of using a template,
  * in order to force the compiler to instantiate the functions.
  */
-int bkz_reduction(IntMatrix &b, int block_size, int flags, FloatType float_type, int precision)
+int bkz_reduction(ZZ_mat<mpz_t> &b, int block_size, int flags, FloatType float_type, int precision)
 {
   vector<Strategy> strategies;
   BKZParam param(block_size, strategies);
@@ -821,7 +821,7 @@ int bkz_reduction(IntMatrix &b, int block_size, int flags, FloatType float_type,
   return bkz_reduction(&b, NULL, param, float_type, precision);
 }
 
-int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags, FloatType float_type,
+int bkz_reduction(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, int block_size, int flags, FloatType float_type,
                   int precision)
 {
   vector<Strategy> strategies;
@@ -830,7 +830,7 @@ int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags, FloatTy
   return bkz_reduction(&b, &u, param, float_type, precision);
 }
 
-int hkz_reduction(IntMatrix &b, int flags, FloatType float_type, int precision)
+int hkz_reduction(ZZ_mat<mpz_t> &b, int flags, FloatType float_type, int precision)
 {
   vector<Strategy> strategies;
   BKZParam param(b.get_rows(), strategies);
@@ -864,7 +864,7 @@ template class BKZReduction<FP_NR<qd_real>>;
 template class BKZAutoAbort<FP_NR<qd_real>>;
 #endif
 
-template class BKZReduction<FP_NR<mpfr_t>>;
-template class BKZAutoAbort<FP_NR<mpfr_t>>;
+template class BKZReduction<FP_NR<>>;
+template class BKZAutoAbort<FP_NR<>>;
 
 FPLLL_END_NAMESPACE

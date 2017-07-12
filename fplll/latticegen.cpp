@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
   int d          = atoi(argv[iArg + 1]);
   iArg += 2;
 
-  IntMatrix m;
+  ZZ_mat<mpz_t> m;
 
   // initialization+filling of the matrix
   switch (genMethod)
@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
   case 'T':
   {
     // clang-format off
-    FP_NR<mpfr_t> *w = new FP_NR<mpfr_t>[d];
+    FP_NR<> *w = new FP_NR<>[d];
     // clang-format on
 
     for (int i = 0; i < d; i++)

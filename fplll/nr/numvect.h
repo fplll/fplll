@@ -331,9 +331,6 @@ template <class T> ostream &operator<<(ostream &os, const NumVect<T> &v) { retur
 /** Reads a NumVect from stream is. */
 template <class T> istream &operator>>(istream &is, NumVect<T> &v) { return is >> v.data; }
 
-typedef vector<Integer> IntVect;
-typedef vector<Float> FloatVect;
-
 FPLLL_END_NAMESPACE
 
 #endif

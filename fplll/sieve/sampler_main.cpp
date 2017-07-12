@@ -48,7 +48,7 @@ int main()
   ZZ_mat<mpz_t> M2(dim, dim);
   M2.gen_GM(20 * dim);
   lllReduction(M2, 0.99, 0.51, LM_WRAPPER);
-  Z_NR<mpz_t> x2;
+  Z_NR<> x2;
   KleinSampler<mpz_t, FP_NR<double>> S2(M2);
 
   /* sample Z */
@@ -60,7 +60,7 @@ int main()
   cout << "# [done] (mpz_t, double) sample_z_basic()" << endl;
 
   /* sample vec */
-  NumVect<Z_NR<mpz_t>> vec2;
+  NumVect<Z_NR<>> vec2;
   stime = clock();
   for (int i = 0; i < 10000; i++)
   {
@@ -78,9 +78,9 @@ int main()
   ZZ_mat<mpz_t> M3(dim, dim);
   M3.gen_GM(20 * dim);
   lllReduction(M3, 0.99, 0.51, LM_WRAPPER);
-  Z_NR<mpz_t> x3;
-  KleinSampler<mpz_t, FP_NR<mpfr_t>> S3(M3);
-  FP_NR<mpfr_t> c2, t2;
+  Z_NR<> x3;
+  KleinSampler<mpz_t, FP_NR<>> S3(M3);
+  FP_NR<> c2, t2;
   c2 = 0.0;
   t2 = 1000.0;
 
@@ -92,7 +92,7 @@ int main()
   cout << "# [done] (mpz_t, mpfr_t) sample_z_dgs()" << endl;
 
   /* sample vec */
-  NumVect<Z_NR<mpz_t>> vec3;
+  NumVect<Z_NR<>> vec3;
   stime = clock();
   for (int i = 0; i < 10000; i++)
   {

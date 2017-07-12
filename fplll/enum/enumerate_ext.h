@@ -80,10 +80,10 @@ typedef uint64_t(extenum_fc_enumerate)(int dim, enumf maxdist,
 void set_external_enumerator(std::function<extenum_fc_enumerate> extenum = nullptr);
 std::function<extenum_fc_enumerate> get_external_enumerator();
 
-template <typename ZT, typename FT> class ExternalEnumeration
+template <typename FT> class ExternalEnumeration
 {
 public:
-  ExternalEnumeration(MatGSO<ZT, FT> &gso, Evaluator<FT> &evaluator)
+  ExternalEnumeration(MatGSO<Z_NR<>, FT> &gso, Evaluator<FT> &evaluator)
       : _gso(gso), _evaluator(evaluator)
   {
   }
@@ -100,7 +100,7 @@ private:
 
   void callback_process_subsol(enumf dist, enumf *subsol, int offset);
 
-  MatGSO<ZT, FT> &_gso;
+  MatGSO<Z_NR<>, FT> &_gso;
   Evaluator<FT> &_evaluator;
   vector<enumf> _pruning;
   long _normexp;

@@ -26,9 +26,9 @@ void set_external_enumerator(std::function<extenum_fc_enumerate> extenum)
 }
 std::function<extenum_fc_enumerate> get_external_enumerator() { return fplll_extenum; }
 
-template <typename ZT, typename FT>
-bool ExternalEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
-                                            const vector<enumf> &pruning, bool dual)
+template <typename FT>
+bool ExternalEnumeration<FT>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
+                                        const vector<enumf> &pruning, bool dual)
 {
   using namespace std::placeholders;
   if (fplll_extenum == nullptr)
@@ -60,18 +60,18 @@ bool ExternalEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, l
 
   // clang-format off
   _nodes = fplll_extenum(_d, _maxdist,
-                         std::bind(&ExternalEnumeration<ZT,FT>::callback_set_config, this, _1, _2, _3, _4, _5),
-                         std::bind(&ExternalEnumeration<ZT,FT>::callback_process_sol, this, _1, _2),
-                         std::bind(&ExternalEnumeration<ZT,FT>::callback_process_subsol, this, _1, _2, _3),
+               std::bind(&ExternalEnumeration<FT>::callback_set_config, this, _1, _2, _3, _4, _5),
+               std::bind(&ExternalEnumeration<FT>::callback_process_sol, this, _1, _2),
+               std::bind(&ExternalEnumeration<FT>::callback_process_subsol, this, _1, _2, _3),
                _dual, _evaluator.findsubsols
                );
   // clang-format on
   return _nodes != ~uint64_t(0);
 }
 
-template <typename ZT, typename FT>
-void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, bool mutranspose,
-                                                      enumf *rdiag, enumf *pruning)
+template <typename FT>
+void ExternalEnumeration<FT>::callback_set_config(enumf *mu, size_t mudim, bool mutranspose,
+                                                  enumf *rdiag, enumf *pruning)
 {
   FT fr, fmu;
   long rexpo;
@@ -122,8 +122,7 @@ void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, b
   }
 }
 
-template <typename ZT, typename FT>
-enumf ExternalEnumeration<ZT, FT>::callback_process_sol(enumf dist, enumf *sol)
+template <typename FT> enumf ExternalEnumeration<FT>::callback_process_sol(enumf dist, enumf *sol)
 {
   for (int i = 0; i < _d; ++i)
     _fx[i]   = sol[i];
@@ -131,8 +130,8 @@ enumf ExternalEnumeration<ZT, FT>::callback_process_sol(enumf dist, enumf *sol)
   return _maxdist;
 }
 
-template <typename ZT, typename FT>
-void ExternalEnumeration<ZT, FT>::callback_process_subsol(enumf dist, enumf *subsol, int offset)
+template <typename FT>
+void ExternalEnumeration<FT>::callback_process_subsol(enumf dist, enumf *subsol, int offset)
 {
   for (int i = 0; i < offset; ++i)
     _fx[i]   = 0.0;
@@ -141,40 +140,22 @@ void ExternalEnumeration<ZT, FT>::callback_process_subsol(enumf dist, enumf *sub
   _evaluator.eval_sub_sol(offset, _fx, dist);
 }
 
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<double>>;
+template class ExternalEnumeration<FP_NR<double>>;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<long double>>;
+template class ExternalEnumeration<FP_NR<long double>>;
 #endif
 
 #ifdef FPLLL_WITH_QD
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<dd_real>>;
+template class ExternalEnumeration<FP_NR<dd_real>>;
 
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<qd_real>>;
+template class ExternalEnumeration<FP_NR<qd_real>>;
 #endif
 
 #ifdef FPLLL_WITH_DPE
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<dpe_t>>;
+template class ExternalEnumeration<FP_NR<dpe_t>>;
 #endif
 
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
-
-template class ExternalEnumeration<Z_NR<long>, FP_NR<double>>;
-
-#ifdef FPLLL_WITH_LONG_DOUBLE
-template class ExternalEnumeration<Z_NR<long>, FP_NR<long double>>;
-#endif
-
-#ifdef FPLLL_WITH_QD
-template class ExternalEnumeration<Z_NR<long>, FP_NR<dd_real>>;
-
-template class ExternalEnumeration<Z_NR<long>, FP_NR<qd_real>>;
-#endif
-
-#ifdef FPLLL_WITH_DPE
-template class ExternalEnumeration<Z_NR<long>, FP_NR<dpe_t>>;
-#endif
-
-template class ExternalEnumeration<Z_NR<long>, FP_NR<mpfr_t>>;
+template class ExternalEnumeration<FP_NR<>>;
 
 FPLLL_END_NAMESPACE

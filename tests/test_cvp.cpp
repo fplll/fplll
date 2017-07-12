@@ -60,11 +60,11 @@ template <class ZT> void read_vector(vector<Z_NR<ZT>> &b, const char *input_file
    @return
 */
 
-template <class ZT> int test_cvp(ZZ_mat<ZT> &A, IntVect &target, IntVect &b, const int method)
+template <class ZT> int test_cvp(ZZ_mat<ZT> &A, vector<Z_NR<>> &target, vector<Z_NR<>> &b, const int method)
 {
-  IntVect sol_coord;  // In the LLL-reduced basis
-  IntVect solution;
-  IntMatrix u;
+  vector<Z_NR<>> sol_coord;  // In the LLL-reduced basis
+  vector<Z_NR<>> solution;
+  ZZ_mat<mpz_t> u;
 
   // cerr << "A " << endl << A << endl;
   int status =
@@ -118,10 +118,10 @@ int test_filename(const char *input_filename_lattice, const char *input_filename
   ZZ_mat<ZT> A;
   read_matrix(A, input_filename_lattice);
 
-  IntVect t;
+  vector<Z_NR<>> t;
   read_vector(t, input_filename_target);
 
-  IntVect b;
+  vector<Z_NR<>> b;
   read_vector(b, output_filename);
 
   return test_cvp<ZT>(A, t, b, method);

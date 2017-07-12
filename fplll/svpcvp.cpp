@@ -28,10 +28,10 @@ FPLLL_BEGIN_NAMESPACE
    If b is LLL-reduced, then for any reasonnable dimension,
    max(rdiag[0],...,rdiag[i-1]) / min(rdiag[0],...,rdiag[i-1])
    is much smaller than numeric_limits<double>::max */
-static int last_useful_index(const Matrix<Float> &r)
+static int last_useful_index(const Matrix<FP_NR<>> &r)
 {
   int i;
-  Float rdiag_min_value;
+  FP_NR<> rdiag_min_value;
   rdiag_min_value.mul_2si(r(0, 0), 1);
   for (i = r.get_rows() - 1; i > 0; i--)
   {
@@ -43,9 +43,9 @@ static int last_useful_index(const Matrix<Float> &r)
 
 /* Finds the shortest vector of the basis b and returns its squared norm in
    basisMin */
-static void get_basis_min(Integer &basis_min, const IntMatrix &b, int first, int last)
+static void get_basis_min(Z_NR<> &basis_min, const ZZ_mat<mpz_t> &b, int first, int last)
 {
-  Integer sq_norm;
+  Z_NR<> sq_norm;
   int n = b.get_cols();
   sqr_norm(basis_min, b[first], n);
 
@@ -57,19 +57,19 @@ static void get_basis_min(Integer &basis_min, const IntMatrix &b, int first, int
   }
 }
 
-static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
+static bool enumerate_svp(int d, MatGSO<Z_NR<>, FP_NR<>> &gso, FP_NR<> &max_dist,
                           ErrorBoundedEvaluator &evaluator, const vector<enumf> &pruning, int flags)
 {
-  Enumeration<Integer, Float> enumobj(gso, evaluator);
+  Enumeration<FP_NR<>> enumobj(gso, evaluator);
   bool dual = (flags & SVP_DUAL);
   if (d == 1 || !pruning.empty() || dual)
   {
-    enumobj.enumerate(0, d, max_dist, 0, vector<Float>(), vector<enumxt>(), pruning, dual);
+    enumobj.enumerate(0, d, max_dist, 0, vector<FP_NR<>>(), vector<enumxt>(), pruning, dual);
   }
   else
   {
     Enumerator enumerator(d, gso.get_mu_matrix(), gso.get_r_matrix());
-    Float bestdist = -1;
+    FP_NR<> bestdist = -1;
     while (enumerator.enum_next(max_dist))
     {
       if (flags & SVP_VERBOSE)
@@ -81,7 +81,7 @@ static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
 
       /* Enumerates short vectors only in enumerator.get_sub_tree()
         (about maxVolume iterations or less) */
-      enumobj.enumerate(0, d, max_dist, 0, FloatVect(), enumerator.get_sub_tree(), pruning);
+      enumobj.enumerate(0, d, max_dist, 0, vector<FP_NR<>>(), enumerator.get_sub_tree(), pruning);
 
       if (flags & SVP_VERBOSE)
       {
@@ -98,11 +98,11 @@ static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
   return !evaluator.empty();
 }
 
-static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method,
+static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, SVPMethod method,
                               const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
-                              long long &sol_count, vector<IntVect> *subsol_coord = nullptr,
+                              long long &sol_count, vector<vector<Z_NR<>>> *subsol_coord = nullptr,
                               vector<enumf> *subsol_dist    = nullptr,
-                              vector<IntVect> *auxsol_coord = nullptr,
+                              vector<vector<Z_NR<>>> *auxsol_coord = nullptr,
                               vector<enumf> *auxsol_dist = nullptr, int max_aux_sols = 0)
 {
   bool findsubsols = (subsol_coord != nullptr) && (subsol_dist != nullptr);
@@ -121,14 +121,14 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   double rho;
   int min_prec = gso_min_prec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
   int prec     = max(53, min_prec + 10);
-  int old_prec = Float::set_prec(prec);
+  int old_prec = FP_NR<>::set_prec(prec);
 
   // Allocates space for vectors and matrices in constructors
-  IntMatrix empty_mat;
-  MatGSO<Integer, Float> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
-  Float max_dist;
-  Integer int_max_dist;
-  Integer itmp1;
+  ZZ_mat<mpz_t> empty_mat;
+  MatGSO<Z_NR<>, FP_NR<>> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
+  FP_NR<> max_dist;
+  Z_NR<> int_max_dist;
+  Z_NR<> itmp1;
 
   // Computes the Gram-Schmidt orthogonalization in floating-point
   gso.update_gso();
@@ -183,7 +183,7 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
 
   if (!(flags & SVP_OVERRIDE_BND) && (eval_mode == EVALMODE_SV || method == SVPM_PROVED))
   {
-    Float ftmp1;
+    FP_NR<> ftmp1;
     bool result = evaluator->get_max_error_aux(max_dist, true, ftmp1);
     FPLLL_CHECK(result, "shortestVector: cannot compute an initial bound");
     max_dist.add(max_dist, ftmp1, GMP_RNDU);
@@ -200,7 +200,7 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   }
   else if (!evaluator->empty())
   {
-    /*Float fMaxError;
+    /*FP_NR<> fMaxError;
     validMaxError = evaluator->get_max_error(fMaxError);
     max_error = fMaxError.get_d(GMP_RNDU);*/
     for (int i = 0; i < d; i++)
@@ -220,7 +220,7 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
     {
       (*subsol_dist)[i] = evaluator->sub_solutions[i].first.get_d();
 
-      IntVect ss_c;
+      vector<Z_NR<>> ss_c;
       for (size_t j = 0; j < evaluator->sub_solutions[i].second.size(); ++j)
       {
         itmp1.set_f(evaluator->sub_solutions[i].second[j]);
@@ -241,7 +241,7 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
     {
       auxsol_dist->push_back(it->first.get_d());
 
-      IntVect as_c;
+      vector<Z_NR<>> as_c;
       for (size_t j = 0; j < it->second.size(); ++j)
       {
         itmp1.set_f(it->second[j]);
@@ -252,24 +252,24 @@ static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method
   }
 
   delete evaluator;
-  Float::set_prec(old_prec);
+  FP_NR<>::set_prec(old_prec);
   return result;
 }
 
-int shortest_vector(IntMatrix &b, IntVect &sol_coord, SVPMethod method, int flags)
+int shortest_vector(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, SVPMethod method, int flags)
 {
   long long tmp;
   return shortest_vector_ex(b, sol_coord, method, vector<double>(), flags, EVALMODE_SV, tmp);
 }
 
-int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, const vector<double> &pruning,
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, const vector<double> &pruning,
                             int flags)
 {
   long long tmp;
   return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp);
 }
 
-int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &subsol_coord,
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, vector<vector<Z_NR<>>> &subsol_coord,
                             vector<enumf> &subsol_dist, const vector<double> &pruning, int flags)
 {
   long long tmp;
@@ -277,7 +277,7 @@ int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &s
                             &subsol_coord, &subsol_dist);
 }
 
-int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &auxsol_coord,
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, vector<vector<Z_NR<>>> &auxsol_coord,
                             vector<enumf> &auxsol_dist, const int max_aux_sols,
                             const vector<double> &pruning, int flags)
 {
@@ -288,8 +288,8 @@ int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &a
 /* Closest vector problem
    ====================== */
 
-static void get_gscoords(const Matrix<Float> &matrix, const Matrix<Float> &mu,
-                         const Matrix<Float> &r, const FloatVect &v, FloatVect &vcoord)
+static void get_gscoords(const Matrix<FP_NR<>> &matrix, const Matrix<FP_NR<>> &mu,
+                         const Matrix<FP_NR<>> &r, const vector<FP_NR<>> &v, vector<FP_NR<>> &vcoord)
 {
 
   int n = matrix.get_rows(), m = matrix.get_cols();
@@ -313,8 +313,8 @@ static void get_gscoords(const Matrix<Float> &matrix, const Matrix<Float> &mu,
   }
 }
 
-static void babai(const FloatMatrix &matrix, const Matrix<Float> &mu, const Matrix<Float> &r,
-                  const FloatVect &target, FloatVect &target_coord)
+static void babai(const FP_mat<mpfr_t> &matrix, const Matrix<FP_NR<>> &mu, const Matrix<FP_NR<>> &r,
+                  const vector<FP_NR<>> &target, vector<FP_NR<>> &target_coord)
 {
 
   int d = matrix.get_rows();
@@ -327,7 +327,7 @@ static void babai(const FloatMatrix &matrix, const Matrix<Float> &mu, const Matr
   }
 }
 
-int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, int method,
+int closest_vector(ZZ_mat<mpz_t> &b, const vector<Z_NR<>> &int_target, vector<Z_NR<>> &sol_coord, int method,
                    int flags)
 {
   // d = lattice dimension (note that it might decrease during preprocessing)
@@ -343,14 +343,14 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
   double rho;
   int min_prec = gso_min_prec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
   int prec     = max(53, min_prec + 10);
-  int old_prec = Float::set_prec(prec);
+  int old_prec = FP_NR<>::set_prec(prec);
 
   // Allocates space for vectors and matrices in constructors
-  IntMatrix empty_mat;
-  MatGSO<Integer, Float> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
-  FloatVect target_coord;
-  Float max_dist;
-  Integer itmp1;
+  ZZ_mat<mpz_t> empty_mat;
+  MatGSO<Z_NR<>, FP_NR<>> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
+  vector<FP_NR<>> target_coord;
+  FP_NR<> max_dist;
+  Z_NR<> itmp1;
 
   // Computes the Gram-Schmidt orthogonalization in floating-point
   gso.update_gso();
@@ -358,9 +358,9 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
 
   /* Applies Babai's algorithm. Because we use fp, it might be necessary to
       do it several times (if ||target|| >> ||b_i||) */
-  FloatMatrix float_matrix(d, n);
-  FloatVect target(n), babai_sol;
-  IntVect int_new_target = int_target;
+  FP_mat<mpfr_t> float_matrix(d, n);
+  vector<FP_NR<>> target(n), babai_sol;
+  vector<Z_NR<>> int_new_target = int_target;
 
   for (int i = 0; i < d; i++)
     for (int j = 0; j < n; j++)
@@ -410,7 +410,7 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
     max_indices = vector<int>(d);
     int cur, max_index, previous_max_index;
     previous_max_index = max_index = d - 1;
-    Float max_val;
+    FP_NR<> max_val;
 
     while (max_index > 0)
     {
@@ -435,7 +435,7 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
   FastErrorBoundedEvaluator evaluator(n, gso.get_mu_matrix(), gso.get_r_matrix(), EVALMODE_CV);
 
   // Main loop of the enumeration
-  Enumeration<Integer, Float> enumobj(gso, evaluator, max_indices);
+  Enumeration<FP_NR<>> enumobj(gso, evaluator, max_indices);
   enumobj.enumerate(0, d, max_dist, 0, target_coord);
 
   int result = RED_ENUM_FAILURE;
@@ -452,7 +452,7 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
     result = RED_SUCCESS;
   }
 
-  Float::set_prec(old_prec);
+  FP_NR<>::set_prec(old_prec);
   return result;
 }
 

@@ -29,16 +29,16 @@ class Wrapper
 {
 public:
   /* u must be either empty or the identity matrix */
-  Wrapper(IntMatrix &b, IntMatrix &u, IntMatrix &u_inv, double delta, double eta, int flags);
+  Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta, int flags);
 
   bool lll();
 
   int status;
 
 private:
-  IntMatrix &b;
-  IntMatrix &u;
-  IntMatrix &u_inv;
+  ZZ_mat<mpz_t> &b;
+  ZZ_mat<mpz_t> &u;
+  ZZ_mat<mpz_t> &u_inv;
 
 #ifdef FPLLL_WITH_ZLONG
   ZZ_mat<long> b_long;

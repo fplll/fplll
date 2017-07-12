@@ -878,15 +878,15 @@ template void prune<FP_NR<double>>(Pruning &, double &, const double, const doub
 template FP_NR<double> svp_probability<FP_NR<double>>(const Pruning &pruning);
 template FP_NR<double> svp_probability<FP_NR<double>>(const vector<double> &pr);
 
-template class Pruner<FP_NR<mpfr_t>>;
+template class Pruner<FP_NR<>>;
 
-template void prune<FP_NR<mpfr_t>>(Pruning &, double &, const double, const double,
+template void prune<FP_NR<>>(Pruning &, double &, const double, const double,
                                    vector<double> &, const PrunerMethod, const PrunerMetric, bool);
-template void prune<FP_NR<mpfr_t>>(Pruning &, double &, const double, const double,
+template void prune<FP_NR<>>(Pruning &, double &, const double, const double,
                                    vector<vector<double>> &, const PrunerMethod, const PrunerMetric,
                                    bool);
-template FP_NR<mpfr_t> svp_probability<FP_NR<mpfr_t>>(const Pruning &pruning);
-template FP_NR<mpfr_t> svp_probability<FP_NR<mpfr_t>>(const vector<double> &pr);
+template FP_NR<> svp_probability<FP_NR<>>(const Pruning &pruning);
+template FP_NR<> svp_probability<FP_NR<>>(const vector<double> &pr);
 
 // LD
 

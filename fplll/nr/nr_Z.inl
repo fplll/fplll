@@ -16,8 +16,7 @@ template<class F> class FP_NR;
  *  for doing integer computations with several underlying types
  *  (long, double and mpz_t). 
  */
-template<class Z>
-class Z_NR
+template<class Z = mpz_t> class Z_NR
 {
 
   Z data;

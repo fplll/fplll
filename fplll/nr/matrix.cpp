@@ -535,7 +535,7 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_qary(int k, Z_NR<ZT> &q)
       matrix[i][j].randm(q);
 
   for (i = d - k; i < d; i++)
-    for (j         = 0; j < d; j++)
+    for (j         = 0; j < d - k; j++)
       matrix[i][j] = 0;
 
   for (i         = d - k; i < d; i++)
@@ -577,7 +577,7 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_trg(double alpha)
   }
 }
 
-template <class ZT> inline void ZZ_mat<ZT>::gen_trg2(FP_NR<mpfr_t> *w)
+template <class ZT> inline void ZZ_mat<ZT>::gen_trg2(FP_NR<> *w)
 {
   int i, j;
   Z_NR<ZT> ztmp, ztmp2;

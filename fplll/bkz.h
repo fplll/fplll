@@ -37,7 +37,7 @@ public:
      @return
   */
 
-  BKZAutoAbort(MatGSO<Integer, FT> &m, int num_rows, int start_row = 0)
+  BKZAutoAbort(MatGSO<Z_NR<>, FT> &m, int num_rows, int start_row = 0)
       : m(m), old_slope(numeric_limits<double>::max()), no_dec(-1), num_rows(num_rows),
         start_row(start_row)
   {
@@ -45,7 +45,7 @@ public:
   bool test_abort(double scale = 1.0, int maxNoDec = 5);
 
 private:
-  MatGSO<Integer, FT> &m;
+  MatGSO<Z_NR<>, FT> &m;
   double old_slope;
   int no_dec;
   int num_rows;
@@ -56,7 +56,7 @@ private:
 template <class FT> class BKZReduction
 {
 public:
-  BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lll_obj, const BKZParam &param);
+  BKZReduction(MatGSO<Z_NR<>, FT> &m, LLLReduction<Z_NR<>, FT> &lll_obj, const BKZParam &param);
   ~BKZReduction();
 
   bool svp_preprocessing(int kappa, int block_size, const BKZParam &param);
@@ -195,8 +195,8 @@ private:
 
   const BKZParam &param;
   int num_rows;
-  MatGSO<Integer, FT> &m;
-  LLLReduction<Integer, FT> &lll_obj;
+  MatGSO<Z_NR<>, FT> &m;
+  LLLReduction<Z_NR<>, FT> &lll_obj;
   FastEvaluator<FT> evaluator;
   FT delta;
 
@@ -208,14 +208,14 @@ private:
   FT sld_potential;
 };
 
-int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param,
+int bkz_reduction(ZZ_mat<mpz_t> *B, ZZ_mat<mpz_t> *U, const BKZParam &param,
                   FloatType float_type = FT_DEFAULT, int precision = 0);
-int bkz_reduction(IntMatrix &b, int block_size, int flags = BKZ_DEFAULT,
+int bkz_reduction(ZZ_mat<mpz_t> &b, int block_size, int flags = BKZ_DEFAULT,
                   FloatType float_type = FT_DEFAULT, int precision = 0);
-int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags = BKZ_DEFAULT,
+int bkz_reduction(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, int block_size, int flags = BKZ_DEFAULT,
                   FloatType float_type = FT_DEFAULT, int precision = 0);
 
-int hkz_reduction(IntMatrix &b, int flags = HKZ_DEFAULT, FloatType float_type = FT_DEFAULT,
+int hkz_reduction(ZZ_mat<mpz_t> &b, int flags = HKZ_DEFAULT, FloatType float_type = FT_DEFAULT,
                   int precision = 0);
 
 FPLLL_END_NAMESPACE
