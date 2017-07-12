@@ -245,63 +245,60 @@ template <class FT> int test_prepruned()
 
 template <class FT> int test_unpruned()
 {
-  // TODO : reimplement to the new API. In particular, exploit the detailed_cost and total_cost
 
-  // int status = 0;
-  // cerr << "Checking Un-pruned" << endl;
-  // Pruner<FT> pru;
-  // vector<double> gso_sq_norms;
-  // set_up_gso_norms(gso_sq_norms);
-  // pru.load_basis_shape(gso_sq_norms);
+  int status = 0;
+  cerr << "Checking Un-pruned" << endl;
+  vector<double> gso_sq_norms;
+  set_up_gso_norms(gso_sq_norms);
 
-  // vector<double> pr;
-  // for (int i = 0; i < N; ++i)
-  // {
-  //   pr.emplace_back(1.);
-  // }
-  // pru.enumeration_radius = .85;
-  // double cost            = pru.single_enum_cost(pr);
-  // cerr << "Cost per enum " << cost << endl;
-  // status += (abs(1 - cost / 3.20e+10) > .02);
-  // print_status(status);
-  // status += std::isnan(cost);
-  // print_status(status);
-  // double proba = pru.measure_metric(pr);
-  // cerr << "success proba " << proba << endl;
-  // status += (abs(1 - proba) > .02);
-  // print_status(status);
-  // status += std::isnan(proba);
-  // print_status(status);
+  vector<double> pr;
+  for (int i = 0; i < N; ++i)
+  {
+    pr.emplace_back(1.);
+  }
+  Pruner<FT> pru(.85, 0., gso_sq_norms);
 
-  // vector<vector<double>> gso_sq_norms_vec;
-  // vector<double> v1, v2, v3;
-  // v1 = gso_sq_norms;
-  // v2 = gso_sq_norms;
-  // v3 = gso_sq_norms;
+  double cost            = pru.single_enum_cost(pr);
+  cerr << "Cost per enum " << cost << endl;
+  status += (abs(1 - cost / 3.20e+10) > .02);
+  print_status(status);
+  status += std::isnan(cost);
+  print_status(status);
+  double proba = pru.measure_metric(pr);
+  cerr << "success proba " << proba << endl;
+  status += (abs(1 - proba) > .02);
+  print_status(status);
+  status += std::isnan(proba);
+  print_status(status);
 
-  // gso_sq_norms_vec.emplace_back(v1);
-  // gso_sq_norms_vec.emplace_back(v2);
-  // for (int i = 0; i < N; ++i)
-  // {
-  //   v3[i] *= 20;
-  // }
+  vector<vector<double>> gso_sq_norms_vec;
+  vector<double> v1, v2, v3;
+  v1 = gso_sq_norms;
+  v2 = gso_sq_norms;
+  v3 = gso_sq_norms;
 
-  // gso_sq_norms_vec.emplace_back(v3);
-  // pru.load_basis_shapes(gso_sq_norms_vec);
+  gso_sq_norms_vec.emplace_back(v1);
+  gso_sq_norms_vec.emplace_back(v2);
+  for (int i = 0; i < N; ++i)
+  {
+    v3[i] *= 20;
+  }   // 1 basis out of 3 is so large that it essentially induces no cost: new cost should be 2/3 of the previous
 
-  // cerr << "Repeating same checks with 3 bases" << endl;
+  gso_sq_norms_vec.emplace_back(v3);
 
-  // pru.enumeration_radius = .85;
-  // cost                   = pru.single_enum_cost(pr);
-  // cerr << "Cost per enum " << cost << endl;
+  cerr << "Repeating same checks with 3 bases" << endl;
+  Pruner<FT> pru2(.85, 0., gso_sq_norms_vec);
 
-  // status += (abs(1 - 3. / 2. * cost / 3.20e+10) > .02);
-  // print_status(status);
-  // proba = pru.measure_metric(pr);
-  // cerr << "success proba " << proba << endl;
-  // status += (abs(1 - proba) > .02);
-  // print_status(status);
-  // return status;
+  cost                   = pru2.single_enum_cost(pr);
+  cerr << "Cost per enum " << cost << endl;
+
+  status += (abs(1 - 3. / 2. * cost / 3.20e+10) > .02); // check that the new cost is indeed 2/3 of the original cost
+  print_status(status);
+  proba = pru2.measure_metric(pr);
+  cerr << "success proba " << proba << endl;
+  status += (abs(1 - proba) > .02);
+  print_status(status);
+  return status;
   return 0;
 }
 
