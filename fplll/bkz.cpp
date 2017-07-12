@@ -168,11 +168,11 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
       {
         if (dual)
         {
-          m.row_addmul(kappa + i, kappa + i_vector, sol_i*solution[i]);
+          m.row_addmul(kappa + i, kappa + i_vector, sol_i * solution[i]);
         }
         else
         {
-          m.row_addmul(kappa + i_vector, kappa + i, sol_i*solution[i]);
+          m.row_addmul(kappa + i_vector, kappa + i, sol_i * solution[i]);
         }
       }
     }
@@ -197,8 +197,8 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
 }
 
 template <class FT>
-bool BKZReduction<FT>::svp_postprocessing_generic(int kappa, int block_size, const vector<FT> &solution,
-                                        bool dual)
+bool BKZReduction<FT>::svp_postprocessing_generic(int kappa, int block_size,
+                                                  const vector<FT> &solution, bool dual)
 {
   vector<FT> x = solution;
   int d        = block_size;
