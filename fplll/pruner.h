@@ -161,7 +161,7 @@ public:
 
     import_tabulated_values();
     load_basis_shape(gso_r);
-    set_min_pruning_bound();
+    set_min_pruning_coefficients();
     if (timeout < 0)
     {
       timeout = PRUNER_DEFAULT_TIMEOUT_CONST * n * n;
@@ -186,7 +186,7 @@ public:
 
     import_tabulated_values();
     load_basis_shapes(gso_rs);
-    set_min_pruning_bound();
+    set_min_pruning_coefficients();
     if (timeout < 0)
     {
       timeout = PRUNER_DEFAULT_TIMEOUT_CONST * n * n;
@@ -270,7 +270,7 @@ private:
       Costs are average over all bases.  */
   void load_basis_shapes(const vector<vector<double>> &gso_rs);
   // Set the min_puning_bound
-  void set_min_pruning_bound();
+  void set_min_pruning_coefficients();
   // Removed : now just use greedy as the starting point
   // Initialize pruning coefficients (linear pruning)
   // void init_coefficients(evec &b);

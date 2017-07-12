@@ -115,7 +115,7 @@ template <class FT> void Pruner<FT>::load_basis_shapes(const vector<vector<doubl
   }
 }
 
-template <class FT> void Pruner<FT>::set_min_pruning_bound()
+template <class FT> void Pruner<FT>::set_min_pruning_coefficients()
 {
   // TODO : replace this bound by something more rational
   min_pruning_bound = .1;
@@ -219,7 +219,7 @@ template <class FT> inline FT Pruner<FT>::relative_volume(const int rd, /*i*/ co
     P[0] = -1.0 * eval_poly(ld, P, b[i] / b[rd - 1]);
   }
   FT res = P[0] * tabulated_factorial[rd];
-  return (rd % 2) ? (0.-res) : res;
+  return (rd % 2) ? -res : res;
 }
 
 template <class FT>
@@ -441,13 +441,7 @@ template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
 template <class FT> void Pruner<FT>::greedy(evec &b)
 {
 
-  // TODO : I see the point, but this seems an overzealous check. Greedy simply doesn't care about
-  // the metric
-  // if (metric != PRUNER_METRIC_EXPECTED_SOLUTIONS)
-  // {
-  //   throw std::invalid_argument(
-  //       "Pruner method greedy makes no sense with Metric != PRUNER_METRIC_EXPECTED_SOLUTIONS");
-  // }
+  // TODO : rewrite the shit out of this guy
   for (size_t i = 0; i < d; ++i)
   {
     b[i] = 1.;
