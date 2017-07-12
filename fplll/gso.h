@@ -68,8 +68,6 @@ public:
   using MatGSOInterface<ZT, FT>::update_gso_row;
   using MatGSOInterface<ZT, FT>::row_addmul;
   using MatGSOInterface<ZT, FT>::symmetrize_g;
-  using MatGSOInterface<ZT, FT>::ftmp1;
-  using MatGSOInterface<ZT, FT>::ftmp2;
 
 #ifdef DEBUG
   /* Used only in debug mode. */
@@ -115,7 +113,6 @@ public:
   {
     FPLLL_DEBUG_CHECK(!(enable_int_gram && enable_row_expo));
     d = b.get_rows();
-
     if (enable_row_expo)
     {
       tmp_col_expo.resize(b.get_cols());
@@ -150,14 +147,6 @@ public:
   virtual inline void remove_last_rows(int n_removed_rows);
 
   virtual void move_row(int old_r, int new_r);
-
-  /**
-   * Updates r(i, j) and mu(i, j) if needed for all j in [0, last_j].
-   * All coefficients of r and mu above the i-th row in columns
-   * [0, min(last_j, i - 1)] must be valid.
-   * If i=n_known_rows, n_known_rows is increased by one.
-   */
-  bool update_gso_row(int i, int last_j);
 
   /**
    * b[i] := b[i] + x * b[j].
