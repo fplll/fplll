@@ -166,7 +166,7 @@ public:
       pr[i]           = 1;
       pr[i + (n / 2)] = .3;
     }
-    
+
     proba = fplll::svp_probability<FP_NR<double>>(pr).get_d();
     error = std::abs(1 - proba / 0.07822479096);
     cerr << proba << " relative error " << error << endl;
@@ -541,7 +541,7 @@ int main(int argc, char *argv[])
   print_status(status);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-  Pruner<FP_NR<long double>>::TestPruner tp(Nbis);  
+  Pruner<FP_NR<long double>>::TestPruner tp(Nbis);
   status += tp.test_enforce();
   print_status(status);
   status += tp.test_eval_poly();

@@ -78,7 +78,7 @@ void prune(/*output*/ Pruning &pruning,
            const double enumeration_radius, const double preproc_cost, vector<double> &gso_r,
            const double target       = .9,
            const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
-           const int flags = PRUNER_GRADIENT);
+           const int flags           = PRUNER_GRADIENT);
 
 /**
    @brief prune function averaging over several bases
@@ -98,7 +98,7 @@ void prune(/*output*/ Pruning &pruning,
            /*inputs*/ double enumeration_radius, const double preproc_cost,
            vector<vector<double>> &gso_rs, const double target = .9,
            const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
-           const int flags = PRUNER_GRADIENT);
+           const int flags           = PRUNER_GRADIENT);
 
 /**
    @brief svp_probability function, hiding the Pruner class
@@ -141,7 +141,8 @@ public:
   // ostream &channel1; // Channel for important messages
   // ostream &channel2; // Channel for less important message
 
-  Pruner(const int n, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int flags = 0)
+  Pruner(const int n, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+         int flags = 0)
       : n(n), metric(metric)
   {
     verbosity = flags & PRUNER_VERBOSE;
@@ -149,7 +150,6 @@ public:
     d = n / 2;
     min_pruning_coefficients.resize(d);
     fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
-
   }
 
   Pruner(const FT enumeration_radius, const FT preproc_cost, const vector<double> &gso_r,
@@ -175,8 +175,8 @@ public:
         metric(metric), flags(flags)
   {
     verbosity = flags & PRUNER_VERBOSE;
-    n = gso_rs[0].size();
-    d = n / 2;
+    n         = gso_rs[0].size();
+    d         = n / 2;
     min_pruning_coefficients.resize(d);
     fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
 
@@ -224,7 +224,6 @@ public:
      then it is the gaussian heuristic of the first one.
   */
   FT gaussian_heuristic();
-
 
 private:
   double descent_starting_clock;
@@ -292,7 +291,6 @@ private:
   int nelder_mead_step(/*io*/ evec &b);
   // Run the whole escent to optimize pruning bounds
   void descent(/*io*/ evec &b);
-
 };
 
 template <class FT> bool Pruner<FT>::tabulated_values_imported = false;

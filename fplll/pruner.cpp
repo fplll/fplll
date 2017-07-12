@@ -56,7 +56,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients(/*io*/ vector<double>
 }
 
 template <class FT>
-void Pruner<FT>::load_basis_shape(const vector<double> &gso_r,  bool reset_normalization)
+void Pruner<FT>::load_basis_shape(const vector<double> &gso_r, bool reset_normalization)
 {
   FT logvol, tmp;
   logvol = 0.0;
@@ -70,8 +70,8 @@ void Pruner<FT>::load_basis_shape(const vector<double> &gso_r,  bool reset_norma
 
   if (reset_normalization)
   {
-    normalization_factor = exp(logvol /((float) (-n)));
-    normalized_radius = sqrt(enumeration_radius * normalization_factor);
+    normalization_factor = exp(logvol / ((float)(-n)));
+    normalized_radius    = sqrt(enumeration_radius * normalization_factor);
   }
 
   for (size_t i = 0; i < n; ++i)
@@ -114,10 +114,9 @@ template <class FT> void Pruner<FT>::load_basis_shapes(const vector<vector<doubl
   }
 }
 
-template <class FT>
-FT Pruner<FT>::gaussian_heuristic()
+template <class FT> FT Pruner<FT>::gaussian_heuristic()
 {
-  return  exp(2. * log(tabulated_ball_vol[n]) / ( (float) -n)) / normalization_factor;
+  return exp(2. * log(tabulated_ball_vol[n]) / ((float)-n)) / normalization_factor;
 }
 
 template <class FT>
@@ -242,7 +241,7 @@ inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b, vector<double> *deta
   }
 
   FT total;
-  total = 0.0;
+  total                    = 0.0;
   FT normalized_radius_pow = normalized_radius;
   for (size_t i = 0; i < 2 * d; ++i)
   {
@@ -421,7 +420,7 @@ template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
     greedy(b);
   }
 
-  if (flags & (PRUNER_GRADIENT|PRUNER_NELDER_MEAD))
+  if (flags & (PRUNER_GRADIENT | PRUNER_NELDER_MEAD))
   {
     preproc_cost *= .1;
     greedy(min_pruning_coefficients);
@@ -453,20 +452,23 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   evec new_b(d);
   FT nodes;
 
-  for (int j = 1; j < 2*d-1; j+=2)
+  for (int j = 1; j < 2 * d - 1; j += 2)
   {
-    int i = j/2;
-    if (i>1)
+    int i = j / 2;
+    if (i > 1)
     {
-      b[i] = b[i-1] > .9 ? 1 : 1.1 * b[i-1];
+      b[i] = b[i - 1] > .9 ? 1 : 1.1 * b[i - 1];
     }
-    double goal_factor = 1./(3.*n) + 4 * j * (n-j) / (n*n*n); // Make the tree width as a parabola, with maximum at n/2
+    double goal_factor =
+        1. / (3. * n) +
+        4 * j * (n - j) / (n * n * n);  // Make the tree width as a parabola, with maximum at n/2
     nodes = 1. + 1e10 * preproc_cost;
-    while((nodes > goal_factor * preproc_cost) & (b[i] > .001)){
+    while ((nodes > goal_factor * preproc_cost) & (b[i] > .001))
+    {
       b[i] *= .98;
       for (int k = 0; k < i; ++k)
       {
-        b[k] = b[k] < b[i] ? b[k] : b[i]; // Enforcing decreasing by hand
+        b[k] = b[k] < b[i] ? b[k] : b[i];  // Enforcing decreasing by hand
       }
       nodes = relative_volume((j + 1) / 2, b);
       nodes *= tabulated_ball_vol[j + 1];
@@ -729,7 +731,7 @@ void prune(/*output*/ Pruning &pruning,
   Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_r, target, metric, flags);
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
-  pruning.gh_factor = enumeration_radius / pruner.gaussian_heuristic().get_d();
+  pruning.gh_factor   = enumeration_radius / pruner.gaussian_heuristic().get_d();
   pruning.metric      = metric;
   pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }
@@ -743,7 +745,7 @@ void prune(/*output*/ Pruning &pruning,
   Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_rs, target, metric, flags);
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
-  pruning.gh_factor = enumeration_radius / pruner.gaussian_heuristic().get_d();
+  pruning.gh_factor   = enumeration_radius / pruner.gaussian_heuristic().get_d();
   pruning.metric      = metric;
   pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }

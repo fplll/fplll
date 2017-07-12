@@ -280,7 +280,7 @@ enum PrunerFlags
   PRUNER_GRADIENT         = 0x4,  // Activate the gradient descent
   PRUNER_NELDER_MEAD      = 0x8,
   // Verbosity
-  PRUNER_VERBOSE          = 0x10,
+  PRUNER_VERBOSE = 0x10,
 };
 
 #define PRUNER_DEFAULT_TIMEOUT_CONST 1e-4  // Default timeout = DEFAULT_TIMEOUT_CONST * dim^2
