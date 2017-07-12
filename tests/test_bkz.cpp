@@ -13,9 +13,9 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
+#include "io/json.hpp"
 #include <cstring>
 #include <fplll.h>
-#include "io/json.hpp"
 
 using json = nlohmann::json;
 
@@ -190,27 +190,35 @@ int test_filename_bkz_dump_gso(const char *input_filename)
     return 1;
   }
   fs >> js;
-  int loop = -1;
+  int loop    = -1;
   double time = 0.0;
-  for (auto i: js) {
-    //Verify if there are as much norms as there are rows in A
-    if (A.get_rows() != (int)i["norms"].size()) {
+  for (auto i : js)
+  {
+    // Verify if there are as much norms as there are rows in A
+    if (A.get_rows() != (int)i["norms"].size())
+    {
       return 1;
     }
     string step = i["step"];
-    //Verify if loop of Input and Output have loop = -1
-    if (step.compare("Input") == 0 || step.compare("Output") == 0) {
-      if (i["loop"] != -1) {
+    // Verify if loop of Input and Output have loop = -1
+    if (step.compare("Input") == 0 || step.compare("Output") == 0)
+    {
+      if (i["loop"] != -1)
+      {
         return 1;
       }
-    } else {
-      //Verify that loop increases
+    }
+    else
+    {
+      // Verify that loop increases
       loop++;
-      if (i["loop"] != loop) {
+      if (i["loop"] != loop)
+      {
         return 1;
       }
-      //Verify that time increases
-      if (time > i["time"]) {
+      // Verify that time increases
+      if (time > i["time"])
+      {
         return 1;
       }
       time = i["time"];
@@ -327,9 +335,9 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SD_VARIANT);
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SLD_RED);
 
-  //Test BKZ_DUMP_GSO
+  // Test BKZ_DUMP_GSO
   status |= test_filename<mpz_t>("lattices/dim55_in", 10, FT_DEFAULT, BKZ_DEFAULT | BKZ_DUMP_GSO);
-  //Use the produced gso.json of the previous call of test_filename<mpz_t>
+  // Use the produced gso.json of the previous call of test_filename<mpz_t>
   status |= test_filename_bkz_dump_gso("lattices/dim55_in");
 
   if (status == 0)

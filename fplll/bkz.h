@@ -172,8 +172,8 @@ public:
 
   /** I/O **/
 
-void dump_gso(const std::string &filename, bool append, const std::string &step,
-    const int loop, const double time);
+  void dump_gso(const std::string &filename, bool append, const std::string &step, const int loop,
+                const double time);
 
   int status;
 
