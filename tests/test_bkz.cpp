@@ -200,9 +200,9 @@ int test_filename_bkz_dump_gso(const char *input_filename)
       return 1;
     }
 
-    //Extract data from json file
+    // Extract data from json file
     const string step_js = i["step"];
-    const int loop_js = i["loop"];
+    const int loop_js    = i["loop"];
     const double time_js = i["time"];
     // Verify if loop of Input and Output have loop = -1
     if (step_js.compare("Input") == 0 || step_js.compare("Output") == 0)
