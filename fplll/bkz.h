@@ -61,9 +61,9 @@ public:
 
   bool svp_preprocessing(int kappa, int block_size, const BKZParam &param);
 
-  bool svp_postprocessing(int kappa, int block_size, const vector<FT> &solution);
-
-  bool dsvp_postprocessing(int kappa, int block_size, const vector<FT> &solution);
+  bool svp_postprocessing(int kappa, int block_size, const vector<FT> &solution, bool dual = false);
+  
+  bool svp_post_general(int kappa, int block_size, const vector<FT> &solution, bool dual = false);
 
   /**
      Run enumeration to find a new shortest vector in the sublattice B[kappa,kappa+block_size]
@@ -206,6 +206,7 @@ private:
   FT max_dist, delta_max_dist;
   double cputime_start;
   FT sld_potential;
+  FT ftmp;
 };
 
 int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param,
