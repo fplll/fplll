@@ -119,6 +119,7 @@ template <class FT> void Pruner<FT>::set_min_pruning_coefficients()
 {
   // TODO : replace this bound by something more rational
   min_pruning_bound = .1;
+  // TODO : Use Greedy, and divide min number of nodes at each level by 10 ?
 }
 
 template <class FT>
@@ -440,97 +441,35 @@ template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
 
 template <class FT> void Pruner<FT>::greedy(evec &b)
 {
-
-  // TODO : rewrite the shit out of this guy
-  for (size_t i = 0; i < d; ++i)
-  {
-    b[i] = 1.;
-  }
-  enforce_bounds(b);
-
+  // Do not call enforce in this function, as min_pruning_bounds may not have been set
+  // Indeed, the min_pruning_bound should now based on greedy.
+  b.resize(d);
+  std::fill(b.begin(), b.end(), 1.);
   evec new_b(d);
+  FT nodes;
 
-  FT min, max, val, tmp1, tmp, goal;
-  if (verbosity)
+  for (int j = 1; j < 2*d-1; j+=2)
   {
-    cerr << "Starting Greedy pruning" << endl;
+    int i = j/2;
+    if (i>1)
+    {
+      b[i] = b[i-1] > .9 ? 1 : 1.1 * b[i-1];
+    }
+
+    double goal_factor = 1./(3.*n) + 4 * j * (n-j) / (n*n*n); // Make the tree width as a parabola, with maximum at n/2
+    nodes = 1e10*preproc_cost;
+    while(nodes > goal_factor * preproc_cost){
+      b[i] *= .98;
+      for (int k = 0; k < i; ++k)
+      {
+        b[k] = b[k] < b[i] ? b[k] : b[i]; // Enforcing decreasing by hand
+      }
+      nodes = relative_volume((j + 1) / 2, b);
+      nodes *= tabulated_ball_vol[j + 1];
+      nodes *= pow_si(normalized_radius * sqrt(b[i]), j + 1);
+      nodes *= ipv[j];
+    }
   }
-  for (size_t j = 1; j < 2 * d; j += 2)
-  {
-    val = 1.;
-    max = 1.;
-    min = min_pruning_bound / 2;
-    if (j == 2 * d - 1)
-    {
-      goal = target;
-    }
-    else
-    {
-      goal = preproc_cost / (2 * d);
-    }
-    int count = 0;
-    tmp       = 0.;
-    while ((count < 8) && (min < .99))
-    {
-      if (val < min_pruning_bound)
-      {
-        enumeration_radius /= 1.1;
-        greedy(b);
-        return;
-      }
-      count++;
-      new_b        = b;
-      new_b[j / 2] = val;
-      enforce_bounds(new_b, j / 2);
-
-      tmp1 = relative_volume((j + 1) / 2, new_b);
-      tmp1 *= tabulated_ball_vol[j + 1];
-      tmp1 *= pow_si(normalized_radius * sqrt(new_b[j / 2]), j + 1);
-      tmp1 *= ipv[j];
-
-      tmp = 0.;
-      if (j < 2 * d - 1)
-      {
-        tmp = relative_volume((j + 1) / 2, new_b);
-        tmp *= tabulated_ball_vol[j];
-        tmp *= pow_si(normalized_radius * sqrt(new_b[j / 2]), j);
-        tmp *= ipv[j - 1];
-      }
-
-      tmp += tmp1;
-      tmp /= symmetry_factor;
-
-      if (tmp > goal)
-      {
-        max = val;
-      }
-      else
-      {
-        min = val;
-      }
-      val = (min + max) / 2.;
-    }
-    if (verbosity)
-    {
-      cerr << j << " : " << val << " ~ " << tmp.get_d() << " G " << goal << endl;
-    }
-    b[j / 2] = val;
-    enforce_bounds(b, j / 2);
-  }
-
-  FT factor = b[d - 1];
-  for (size_t i = 0; i < d; ++i)
-  {
-    b[i] /= factor;
-  }
-  enforce_bounds(b);
-  enumeration_radius *= factor;
-  normalized_radius = sqrt(enumeration_radius * normalization_factor);
-
-  tmp = relative_volume(d, b);
-  tmp *= tabulated_ball_vol[2 * d - 1];
-  tmp *= pow_si(normalized_radius * sqrt(b[d - 1]), 2 * d);
-  tmp *= ipv[2 * d - 1];
 }
 
 // Nelder-Mead method. Following the notation of
