@@ -72,6 +72,8 @@ public:
     b[j]  = .5;
 
     FT old_bj = b[j];
+    pru.min_pruning_coefficients.resize(d);
+    fill(pru.min_pruning_coefficients.begin(), pru.min_pruning_coefficients.end(), .1);
     pru.enforce_bounds(b, j);
 
     status += !((b[j] >= old_bj) && (b[j] <= old_bj));
@@ -164,7 +166,7 @@ public:
       pr[i]           = 1;
       pr[i + (n / 2)] = .3;
     }
-
+    
     proba = fplll::svp_probability<FP_NR<double>>(pr).get_d();
     error = std::abs(1 - proba / 0.07822479096);
     cerr << proba << " relative error " << error << endl;
@@ -226,7 +228,7 @@ template <class FT> int test_prepruned()
                        0.317642, 0.317642, 0.284261, 0.284261, 0.254584, 0.254584, 0.254584,
                        0.254584, 0.254584, 0.254584, 0.2,      0.2,      0.2,      0.2};
 
-  Pruner<FT> pru(.85, 0., gso_sq_norms);
+  Pruner<FT> pru(.85, 20000., gso_sq_norms);
   double cost = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
   status += std::isnan(cost);
@@ -255,7 +257,7 @@ template <class FT> int test_unpruned()
   {
     pr.emplace_back(1.);
   }
-  Pruner<FT> pru(.85, 0., gso_sq_norms);
+  Pruner<FT> pru(.85, 20000., gso_sq_norms);
 
   double cost = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
@@ -316,8 +318,6 @@ template <class FT> int test_auto_prune(size_t n)
       LLLReduction<Z_NR<mpz_t>, FP_NR<double>>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
   lll_obj.lll();
   FP_NR<double> radius;
-  // NOTE: because NTRUlike lattice has a verri short vector 1111..
-  // which is sometimes found by LLL, the pruner is only ran on dimension 1...2n-1.
   M.get_r(radius, 0, 0);
   vector<double> r;
   for (size_t i = 0; i < 2 * n; ++i)
@@ -332,15 +332,13 @@ template <class FT> int test_auto_prune(size_t n)
   double overhead = 1.0e6 * n * n;
   cerr << "Overhead " << overhead << endl;
 
-  double radius_d = radius.get_d();
+  double radius_d = radius.get_d() *.3;
 
   cerr << endl << "Greedy " << endl;
   prune<FT>(pruning, radius_d, overhead, r, 20, PRUNER_METRIC_EXPECTED_SOLUTIONS, 0);
   cerr << "Expected Solutions " << pruning.expectation << endl;
-  cerr << "Radius before/after " << 2 * radius.get_d() << "/" << radius_d << endl;
+  cerr << "Radius before " << radius.get_d() << "/" << radius_d << endl;
   status += !(pruning.expectation > 0.0);
-  print_status(status);
-  status += !(pruning.expectation < 100.0);
   print_status(status);
   status += !(pruning.gh_factor >= .999);
   print_status(status);
@@ -523,7 +521,7 @@ int main(int argc, char *argv[])
   print_status(status);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-  Pruner<FP_NR<long double>>::TestPruner tp(Nbis);
+  Pruner<FP_NR<long double>>::TestPruner tp(Nbis);  
   status += tp.test_enforce();
   print_status(status);
   status += tp.test_eval_poly();

@@ -78,7 +78,7 @@ void prune(/*output*/ Pruning &pruning,
            const double enumeration_radius, const double preproc_cost, vector<double> &gso_r,
            const double target       = .9,
            const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
-           const int flags = PRUNER_GRADIENT, const double timeout = -1.);
+           const int flags = PRUNER_GRADIENT);
 
 /**
    @brief prune function averaging over several bases
@@ -98,7 +98,7 @@ void prune(/*output*/ Pruning &pruning,
            /*inputs*/ double enumeration_radius, const double preproc_cost,
            vector<vector<double>> &gso_rs, const double target = .9,
            const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
-           const int flags = PRUNER_GRADIENT, const double timeout = -1.);
+           const int flags = PRUNER_GRADIENT);
 
 /**
    @brief svp_probability function, hiding the Pruner class
@@ -125,8 +125,7 @@ public:
   int flags;
   size_t n;  // Dimension of the (sub)-basis
   size_t d;  // Degree d = floor(n/2)
-  double timeout;
-  double min_pruning_bound;
+  vector<FT> min_pruning_coefficients;
 
   void import_tabulated_values()
   {
@@ -147,57 +146,37 @@ public:
   {
     import_tabulated_values();
     d = n / 2;
+    min_pruning_coefficients.resize(d);
+    fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
   }
 
   Pruner(const FT enumeration_radius, const FT preproc_cost, const vector<double> &gso_r,
          const FT target = 0.9, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
          int flags = PRUNER_GRADIENT, double timeout = -1)
       : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
-        metric(metric), flags(flags), timeout(timeout)
+        metric(metric), flags(flags)
   {
     n = gso_r.size();
-    cerr << "PRUNER n=" << n << endl;
     d = n / 2;
-
+    min_pruning_coefficients.resize(d);
+    fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
     import_tabulated_values();
     load_basis_shape(gso_r);
-    set_min_pruning_coefficients();
-    if (timeout < 0)
-    {
-      timeout = PRUNER_DEFAULT_TIMEOUT_CONST * n * n;
-      flags |= PRUNER_TIMOUT_WARNING;
-    }
-    if (timeout == 0)
-    {
-      // TODO : actually implement timeout
-      timeout = 4.2e17;  // The age of the universe in seconds
-    }
-    // TODO connect channels to cerr or
   }
 
   Pruner(const FT enumeration_radius, const FT preproc_cost, const vector<vector<double>> &gso_rs,
          const FT target = 0.9, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
          int flags = PRUNER_GRADIENT, double timeout = -1)
       : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
-        metric(metric), flags(flags), timeout(timeout)
+        metric(metric), flags(flags)
   {
     n = gso_rs[0].size();
     d = n / 2;
+    min_pruning_coefficients.resize(d);
+    fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
 
     import_tabulated_values();
     load_basis_shapes(gso_rs);
-    set_min_pruning_coefficients();
-    if (timeout < 0)
-    {
-      timeout = PRUNER_DEFAULT_TIMEOUT_CONST * n * n;
-      flags |= PRUNER_TIMOUT_WARNING;
-    }
-    if (timeout == 0)
-    {
-      // TODO : actually implement timeout
-      timeout = 4.2e17;  // The age of the universe in seconds
-    }
-    // TODO connect channels to cerr or
   }
 
   /** @brief optimize pruning coefficients
@@ -262,19 +241,11 @@ private:
 
   // Load the constants for factorial and ball-volumes
   void set_tabulated_consts();
-  // Has the descent exceeeded the timeout
-  bool timeouted();
   /** @brief load the shape of a basis from vector<double>.  */
   void load_basis_shape(const vector<double> &gso_r, bool reset_normalization = true);
   /** @brief load the shapes of many bases from vector<vector<double>>.
       Costs are average over all bases.  */
   void load_basis_shapes(const vector<vector<double>> &gso_rs);
-  // Set the min_puning_bound
-  void set_min_pruning_coefficients();
-  // Removed : now just use greedy as the starting point
-  // Initialize pruning coefficients (linear pruning)
-  // void init_coefficients(evec &b);
-
   // Load pruning coefficient from double*
   void load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr);
   // Save pruning coefficients to double*

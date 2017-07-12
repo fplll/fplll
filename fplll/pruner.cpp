@@ -115,13 +115,6 @@ template <class FT> void Pruner<FT>::load_basis_shapes(const vector<vector<doubl
   }
 }
 
-template <class FT> void Pruner<FT>::set_min_pruning_coefficients()
-{
-  // TODO : replace this bound by something more rational
-  min_pruning_bound = .1;
-  // TODO : Use Greedy, and divide min number of nodes at each level by 10 ?
-}
-
 template <class FT>
 void Pruner<FT>::load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr)
 {
@@ -151,7 +144,7 @@ void Pruner<FT>::save_coefficients(/*o*/ vector<double> &pr, /*i*/ const evec &b
 template <class FT> inline bool Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j)
 {
   bool status = false;
-  if ((b[d - 1] < .999) & (d - j != 1))
+  if ((b[d - 1] < .999) & (j != d - 1))
   {
     status   = 1;
     b[d - 1] = 1.;
@@ -159,12 +152,10 @@ template <class FT> inline bool Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt
   for (size_t i = 0; i < d; ++i)
   {
     status |= (b[i] > 1.0001);
-    if (b[i] > 1)
-    {
-      b[i] = 1.0;
-    }
-    if (b[i] <= min_pruning_bound)
-      b[i] = min_pruning_bound;
+    b[i] = b[i] > 1 ? 1. : b[i];
+
+    if (b[i] <= min_pruning_coefficients[i])
+      b[i] = min_pruning_coefficients[i];
   }
   for (size_t i = j; i < d - 1; ++i)
   {
@@ -425,6 +416,13 @@ template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
     greedy(b);
   }
 
+  if (flags & (PRUNER_GRADIENT|PRUNER_NELDER_MEAD))
+  {
+    preproc_cost *= .1;
+    greedy(min_pruning_coefficients);
+    preproc_cost *= 10;
+  }
+
   if (flags & PRUNER_GRADIENT)
   {
     while (gradient_step(b))
@@ -443,8 +441,10 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
 {
   // Do not call enforce in this function, as min_pruning_bounds may not have been set
   // Indeed, the min_pruning_bound should now based on greedy.
+  fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
+
   b.resize(d);
-  std::fill(b.begin(), b.end(), 1.);
+  fill(b.begin(), b.end(), 1.);
   evec new_b(d);
   FT nodes;
 
@@ -455,10 +455,9 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     {
       b[i] = b[i-1] > .9 ? 1 : 1.1 * b[i-1];
     }
-
     double goal_factor = 1./(3.*n) + 4 * j * (n-j) / (n*n*n); // Make the tree width as a parabola, with maximum at n/2
-    nodes = 1e10*preproc_cost;
-    while(nodes > goal_factor * preproc_cost){
+    nodes = 1. + 1e10 * preproc_cost;
+    while((nodes > goal_factor * preproc_cost) & (b[i] > .001)){
       b[i] *= .98;
       for (int k = 0; k < i; ++k)
       {
@@ -720,10 +719,9 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ evec &b)
 template <class FT>
 void prune(/*output*/ Pruning &pruning,
            /*inputs*/ const double enumeration_radius, const double preproc_cost,
-           vector<double> &gso_r, const double target, const PrunerMetric metric, const int flags,
-           const double timeout)
+           vector<double> &gso_r, const double target, const PrunerMetric metric, const int flags)
 {
-  Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_r, target, metric, flags, timeout);
+  Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_r, target, metric, flags);
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
   // TODO : also compute the gh_factor
@@ -735,9 +733,9 @@ template <class FT>
 void prune(/*output*/ Pruning &pruning,
            /*inputs*/ double enumeration_radius, const double preproc_cost,
            vector<vector<double>> &gso_rs, const double target, const PrunerMetric metric,
-           const int flags, const double timeout)
+           const int flags)
 {
-  Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_rs, target, metric, flags, timeout);
+  Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_rs, target, metric, flags);
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
   // TODO : also compute the gh_factor
@@ -752,15 +750,15 @@ void prune(/*output*/ Pruning &pruning,
 
 template class Pruner<FP_NR<double>>;
 
-template void prune<FP_NR<double>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int, const double);
-template void prune<FP_NR<double>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int, const double);
+template void prune<FP_NR<double>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int);
+template void prune<FP_NR<double>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int);
 template FP_NR<double> svp_probability<FP_NR<double>>(const Pruning &pruning);
 template FP_NR<double> svp_probability<FP_NR<double>>(const vector<double> &pr);
 
 template class Pruner<FP_NR<mpfr_t>>;
 
-template void prune<FP_NR<mpfr_t>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int, const double);
-template void prune<FP_NR<mpfr_t>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int, const double);
+template void prune<FP_NR<mpfr_t>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int);
+template void prune<FP_NR<mpfr_t>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int);
 template FP_NR<mpfr_t> svp_probability<FP_NR<mpfr_t>>(const Pruning &pruning);
 template FP_NR<mpfr_t> svp_probability<FP_NR<mpfr_t>>(const vector<double> &pr);
 
@@ -769,8 +767,8 @@ template FP_NR<mpfr_t> svp_probability<FP_NR<mpfr_t>>(const vector<double> &pr);
 #ifdef FPLLL_WITH_LONG_DOUBLE
 
 template class Pruner<FP_NR<long double>>;
-template void prune<FP_NR<long double>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int, const double);
-template void prune<FP_NR<long double>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int, const double);
+template void prune<FP_NR<long double>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int);
+template void prune<FP_NR<long double>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int);
 template FP_NR<long double> svp_probability<FP_NR<long double>>(const Pruning &pruning);
 template FP_NR<long double> svp_probability<FP_NR<long double>>(const vector<double> &pr);
 
@@ -779,14 +777,14 @@ template FP_NR<long double> svp_probability<FP_NR<long double>>(const vector<dou
 #ifdef FPLLL_WITH_QD
 
 template class Pruner<FP_NR<dd_real>>;
-template void prune<FP_NR<dd_real>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int, const double);
-template void prune<FP_NR<dd_real>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int, const double);
+template void prune<FP_NR<dd_real>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int);
+template void prune<FP_NR<dd_real>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int);
 template FP_NR<dd_real> svp_probability<FP_NR<dd_real>>(const Pruning &pruning);
 template FP_NR<dd_real> svp_probability<FP_NR<dd_real>>(const vector<double> &pr);
 
 template class Pruner<FP_NR<qd_real>>;
-template void prune<FP_NR<qd_real>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int, const double);
-template void prune<FP_NR<qd_real>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int, const double);
+template void prune<FP_NR<qd_real>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int);
+template void prune<FP_NR<qd_real>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int);
 template FP_NR<qd_real> svp_probability<FP_NR<qd_real>>(const Pruning &pruning);
 template FP_NR<qd_real> svp_probability<FP_NR<qd_real>>(const vector<double> &pr);
 
@@ -795,8 +793,8 @@ template FP_NR<qd_real> svp_probability<FP_NR<qd_real>>(const vector<double> &pr
 #ifdef FPLLL_WITH_DPE
 
 template class Pruner<FP_NR<dpe_t>>;
-template void prune<FP_NR<dpe_t>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int, const double);
-template void prune<FP_NR<dpe_t>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int, const double);
+template void prune<FP_NR<dpe_t>>(Pruning &,const double, const double, vector<double> &, const double, const PrunerMetric, const int);
+template void prune<FP_NR<dpe_t>>(Pruning &,const double, const double, vector<vector<double>> &, const double, const PrunerMetric, const int);
 template FP_NR<dpe_t> svp_probability<FP_NR<dpe_t>>(const Pruning &pruning);
 template FP_NR<dpe_t> svp_probability<FP_NR<dpe_t>>(const vector<double> &pr);
 
