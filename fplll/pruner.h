@@ -142,9 +142,10 @@ public:
   // ostream &channel1; // Channel for important messages
   // ostream &channel2; // Channel for less important message
 
-  Pruner(const int n): n(n)
+  Pruner(const int n, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST): n(n), metric(metric)
   {
     import_tabulated_values();
+    d = n/2;
   }
 
   Pruner(const FT enumeration_radius, const FT preproc_cost,
@@ -156,6 +157,7 @@ public:
   metric(metric),flags(flags), timeout(timeout)
   {
     n = gso_r.size();
+    cerr <<"PRUNER n=" << n << endl;
     d = n / 2;
 
     import_tabulated_values();

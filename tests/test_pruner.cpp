@@ -64,7 +64,7 @@ public:
       rs.emplace_back(1.);
     }
     pru.load_basis_shape(rs);
-    Pruner<FT>::evec b;
+    Pruner<FT>::evec b(n);
     for (int i = 0; i < d; ++i)
     {
       b[i] = .3 + (1. * ((i * i * i) % d)) / (2 * d);
@@ -92,7 +92,7 @@ public:
 
   int test_eval_poly()
   {
-    Pruner<FT>::poly p;
+    Pruner<FT>::poly p(4);
     FT x, y;
     x      = .3;
     int ld = 3;
@@ -108,7 +108,7 @@ public:
   }
   int test_integrate_poly()
   {
-    Pruner<FT>::poly p;
+    Pruner<FT>::poly p(5);
     int ld     = 3;
     int status = 0;
     p[0]       = 1.;

@@ -63,27 +63,39 @@ void Pruner<FT>::load_basis_shape(const vector<double> &gso_r, bool reset_renorm
 {
   FT logvol, tmp;
   logvol = 0.0;
+  r.resize(n);
+  ipv.resize(n);
+  cerr << "RESIZED" << endl;
   for (size_t i = 0; i < n; ++i)
   {
+    cerr << "ALOOP " << i << endl;
     r[i] = gso_r[n - 1 - i];
     logvol += log(r[i]);
   }
+  cerr << "ALOOP ENDED" << endl;
+
   if (reset_renormalization)
   {
+    cerr << "RESET_RNOR" << endl;
     normalization_factor = exp(logvol / (-1.0 * n));
     normalized_radius = sqrt(enumeration_radius * normalization_factor);
   }
+  cerr << "RESET_RNOR OK" << endl;
 
   for (size_t i = 0; i < n; ++i)
   {
+    cerr << "BLOOP " << i << endl;
     r[i] *= normalization_factor;
   }
+  cerr << "BLOOP ENDED" << endl;
   tmp = 1.;
   for (size_t i = 0; i < 2 * d; ++i)
   {
+    cerr << "CLOOP " << i << endl;
     tmp *= sqrt(r[i]);
     ipv[i] = 1.0 / tmp;
   }
+  cerr << "CLOOP ENDED" << endl;
 }
 
 template <class FT>
@@ -475,11 +487,11 @@ void Pruner<FT>::greedy(evec &b)
 {
 
   // TODO : I see the point, but this seems an overzealous check. Greedy simply doesn't care about the metric
-  if (metric != PRUNER_METRIC_EXPECTED_SOLUTIONS)
-  {
-    throw std::invalid_argument(
-        "Pruner method greedy makes no sense with Metric != PRUNER_METRIC_EXPECTED_SOLUTIONS");
-  }
+  // if (metric != PRUNER_METRIC_EXPECTED_SOLUTIONS)
+  // {
+  //   throw std::invalid_argument(
+  //       "Pruner method greedy makes no sense with Metric != PRUNER_METRIC_EXPECTED_SOLUTIONS");
+  // }
   for (size_t i = 0; i < d; ++i)
   {
     b[i] = 1.;
