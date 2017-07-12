@@ -27,9 +27,9 @@ Pruning Pruning::LinearPruning(int block_size, int level)
   {
     pruning.coefficients[start_descent + k] = ((double)(block_size - k - 1)) / block_size;
   }
-  pruning.gh_factor = 1.0;
-  pruning.metric        = PRUNER_METRIC_PROBABILITY_OF_SHORTEST;
-  pruning.expectation   = fplll::svp_probability<FP_NR<double>>(pruning.coefficients).get_d();
+  pruning.gh_factor   = 1.0;
+  pruning.metric      = PRUNER_METRIC_PROBABILITY_OF_SHORTEST;
+  pruning.expectation = fplll::svp_probability<FP_NR<double>>(pruning.coefficients).get_d();
 
   return pruning;
 }

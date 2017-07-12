@@ -271,24 +271,25 @@ enum PrunerMetric
   PRUNER_METRIC_EXPECTED_SOLUTIONS      = 1
 };
 
-
 enum PrunerFlags
 {
-  PRUNER_CVP              = 0x1,  // Do not Halve the count of nodes, according to enumeration optimization from symmetry
+  PRUNER_CVP =
+      0x1,  // Do not Halve the count of nodes, according to enumeration optimization from symmetry
   // Descent methods. If several activated, pruner will execute them in the order below.
-  PRUNER_START_FROM_INPUT = 0x2,  
-  PRUNER_GRADIENT         = 0x4, // Activate the gradient descent  
+  PRUNER_START_FROM_INPUT = 0x2,
+  PRUNER_GRADIENT         = 0x4,  // Activate the gradient descent
   PRUNER_NELDER_MEAD      = 0x8,
   // Verbosity
-  PRUNER_TIMOUT_WARNING   = 0x10,  // Print on stderr if timeout occured. This flag is forced on default timeout value.
-  PRUNER_TIMOUT_ERROR     = 0x20,  // Raise an error if timeout
-  PRUNER_VERBOSE          = 0x40,
-  PRUNER_VERY_VERBOSE     = 0x80
+  PRUNER_TIMOUT_WARNING =
+      0x10,  // Print on stderr if timeout occured. This flag is forced on default timeout value.
+  PRUNER_TIMOUT_ERROR = 0x20,  // Raise an error if timeout
+  PRUNER_VERBOSE      = 0x40,
+  PRUNER_VERY_VERBOSE = 0x80
 };
 
-#define PRUNER_DEFAULT_TIMEOUT_CONST 1e-4 // Default timeout = DEFAULT_TIMEOUT_CONST * dim^2
+#define PRUNER_DEFAULT_TIMEOUT_CONST 1e-4  // Default timeout = DEFAULT_TIMEOUT_CONST * dim^2
 
-#define PRUNER_ZEALOUS (PRUNER_GRADIENT|PRUNER_NELDER_MEAD)
+#define PRUNER_ZEALOUS (PRUNER_GRADIENT | PRUNER_NELDER_MEAD)
 
 FPLLL_END_NAMESPACE
 

@@ -74,11 +74,11 @@ FPLLL_BEGIN_NAMESPACE
 
 template <class FT>
 void prune(/*output*/ Pruning &pruning,
-           /*inputs*/ 
-const double enumeration_radius, const double preproc_cost, 
-vector<double> &gso_r, const double target = .9,
-const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-const int flags=PRUNER_GRADIENT, const double timeout = -1.);
+           /*inputs*/
+           const double enumeration_radius, const double preproc_cost, vector<double> &gso_r,
+           const double target       = .9,
+           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+           const int flags = PRUNER_GRADIENT, const double timeout = -1.);
 
 /**
    @brief prune function averaging over several bases
@@ -96,9 +96,9 @@ const int flags=PRUNER_GRADIENT, const double timeout = -1.);
 template <class FT>
 void prune(/*output*/ Pruning &pruning,
            /*inputs*/ double enumeration_radius, const double preproc_cost,
-vector<vector<double>> &gso_rs, const double target = .9, 
-const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-const int flags=PRUNER_GRADIENT, const double timeout = -1.);
+           vector<vector<double>> &gso_rs, const double target = .9,
+           const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+           const int flags = PRUNER_GRADIENT, const double timeout = -1.);
 
 /**
    @brief svp_probability function, hiding the Pruner class
@@ -136,54 +136,50 @@ public:
       tabulated_values_imported = true;
     }
   }
-  
+
   // TODO use channels to avoid explicit vebosity conditions
   // See https://stackoverflow.com/questions/11826554/standard-no-op-output-stream
   // ostream &channel1; // Channel for important messages
   // ostream &channel2; // Channel for less important message
 
-  Pruner(const int n, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST): n(n), metric(metric)
+  Pruner(const int n, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
+      : n(n), metric(metric)
   {
     import_tabulated_values();
-    d = n/2;
+    d = n / 2;
   }
 
-  Pruner(const FT enumeration_radius, const FT preproc_cost,
-   const vector<double> &gso_r, const FT target = 0.9,
-   const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-   int flags=PRUNER_GRADIENT, double timeout = -1): 
-  enumeration_radius(enumeration_radius), 
-  preproc_cost(preproc_cost), target(target),
-  metric(metric),flags(flags), timeout(timeout)
+  Pruner(const FT enumeration_radius, const FT preproc_cost, const vector<double> &gso_r,
+         const FT target = 0.9, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+         int flags = PRUNER_GRADIENT, double timeout = -1)
+      : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
+        metric(metric), flags(flags), timeout(timeout)
   {
     n = gso_r.size();
-    cerr <<"PRUNER n=" << n << endl;
+    cerr << "PRUNER n=" << n << endl;
     d = n / 2;
 
     import_tabulated_values();
     load_basis_shape(gso_r);
     set_min_pruning_bound();
-    if (timeout<0) 
+    if (timeout < 0)
     {
       timeout = PRUNER_DEFAULT_TIMEOUT_CONST * n * n;
       flags |= PRUNER_TIMOUT_WARNING;
     }
-    if (timeout==0)
+    if (timeout == 0)
     {
       // TODO : actually implement timeout
-      timeout = 4.2e17; // The age of the universe in seconds
+      timeout = 4.2e17;  // The age of the universe in seconds
     }
-  // TODO connect channels to cerr or   
+    // TODO connect channels to cerr or
   }
 
-
-  Pruner(const FT enumeration_radius, const FT preproc_cost,
-   const vector<vector<double>> &gso_rs, const FT target = 0.9,
-   const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, 
-   int flags=PRUNER_GRADIENT, double timeout = -1): 
-  enumeration_radius(enumeration_radius), 
-  preproc_cost(preproc_cost), target(target),
-  metric(metric),flags(flags), timeout(timeout)
+  Pruner(const FT enumeration_radius, const FT preproc_cost, const vector<vector<double>> &gso_rs,
+         const FT target = 0.9, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+         int flags = PRUNER_GRADIENT, double timeout = -1)
+      : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
+        metric(metric), flags(flags), timeout(timeout)
   {
     n = gso_rs[0].size();
     d = n / 2;
@@ -191,19 +187,18 @@ public:
     import_tabulated_values();
     load_basis_shapes(gso_rs);
     set_min_pruning_bound();
-    if (timeout<0) 
+    if (timeout < 0)
     {
       timeout = PRUNER_DEFAULT_TIMEOUT_CONST * n * n;
       flags |= PRUNER_TIMOUT_WARNING;
     }
-    if (timeout==0)
+    if (timeout == 0)
     {
       // TODO : actually implement timeout
-      timeout = 4.2e17; // The age of the universe in seconds
+      timeout = 4.2e17;  // The age of the universe in seconds
     }
-  // TODO connect channels to cerr or   
+    // TODO connect channels to cerr or
   }
-
 
   /** @brief optimize pruning coefficients
       @note Basis Shape and other parameters must have been set beforehand. See
@@ -246,25 +241,24 @@ private:
   static FT tabulated_ball_vol[PRUNER_MAX_N];
   static bool tabulated_values_imported;
 
-  FT epsilon = std::pow(2., -7);    //< Epsilon to use for numerical differentiation
-  FT min_step = std::pow(2., -6);   //< Minimal step in a given direction
-  FT min_cf_decrease  = .995;       //< Maximal ratio of two consectuive cost_factor in the descent before stopping
-  FT step_factor = std::pow(2, .5); //< Increment factor for steps in a given direction
-  FT shell_ratio  = .995;           //< Shell thickness Ratio when evaluating svp proba
-  FT symmetry_factor = 2;           //< 2 for SVP, 1 for CVP.
+  FT epsilon  = std::pow(2., -7);  //< Epsilon to use for numerical differentiation
+  FT min_step = std::pow(2., -6);  //< Minimal step in a given direction
+  FT min_cf_decrease =
+      .995;  //< Maximal ratio of two consectuive cost_factor in the descent before stopping
+  FT step_factor     = std::pow(2, .5);  //< Increment factor for steps in a given direction
+  FT shell_ratio     = .995;             //< Shell thickness Ratio when evaluating svp proba
+  FT symmetry_factor = 2;                //< 2 for SVP, 1 for CVP.
 
   // Following typedefs are given for readability
-  using vec  = vector<FT>; // Those have dimension n
-  using evec = vector<FT>; // Those have dimension d
-  using poly = vector<FT>; // Those have dimension d+1 (or less)
+  using vec  = vector<FT>;  // Those have dimension n
+  using evec = vector<FT>;  // Those have dimension d
+  using poly = vector<FT>;  // Those have dimension d+1 (or less)
 
-
-  vec r;                      // Gram-Schmidt length (squared, inverted ordering)
-  vec ipv;                    // Partial volumes (inverted ordering)
+  vec r;                    // Gram-Schmidt length (squared, inverted ordering)
+  vec ipv;                  // Partial volumes (inverted ordering)
   FT normalization_factor;  // internal renormalization factor to avoid over/underflows
-  FT normalized_radius;  // internal renormalization factor to avoid over/underflows
+  FT normalized_radius;     // internal renormalization factor to avoid over/underflows
   int verbosity = 0;
-
 
   // Load the constants for factorial and ball-volumes
   void set_tabulated_consts();
@@ -272,7 +266,7 @@ private:
   bool timeouted();
   /** @brief load the shape of a basis from vector<double>.  */
   void load_basis_shape(const vector<double> &gso_r, bool reset_normalization = true);
-  /** @brief load the shapes of many bases from vector<vector<double>>. 
+  /** @brief load the shapes of many bases from vector<vector<double>>.
       Costs are average over all bases.  */
   void load_basis_shapes(const vector<vector<double>> &gso_rs);
   // Set the min_puning_bound

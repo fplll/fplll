@@ -52,9 +52,8 @@ public:
   int n;
   int d;
   Pruner<FT> pru;
-  TestPruner(int n):n(n),pru(n){d = n/2; }
+  TestPruner(int n) : n(n), pru(n) { d = n / 2; }
 
-  
   int test_enforce()
   {
     vector<double> rs;
@@ -227,8 +226,8 @@ template <class FT> int test_prepruned()
                        0.317642, 0.317642, 0.284261, 0.284261, 0.254584, 0.254584, 0.254584,
                        0.254584, 0.254584, 0.254584, 0.2,      0.2,      0.2,      0.2};
 
-  Pruner<FT> pru(.85, 0., gso_sq_norms);  
-  double cost            = pru.single_enum_cost(pr);
+  Pruner<FT> pru(.85, 0., gso_sq_norms);
+  double cost = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
   status += std::isnan(cost);
   print_status(status);
@@ -258,7 +257,7 @@ template <class FT> int test_unpruned()
   }
   Pruner<FT> pru(.85, 0., gso_sq_norms);
 
-  double cost            = pru.single_enum_cost(pr);
+  double cost = pru.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
   status += (abs(1 - cost / 3.20e+10) > .02);
   print_status(status);
@@ -282,17 +281,20 @@ template <class FT> int test_unpruned()
   for (int i = 0; i < N; ++i)
   {
     v3[i] *= 20;
-  }   // 1 basis out of 3 is so large that it essentially induces no cost: new cost should be 2/3 of the previous
+  }
+  // 1 basis out of 3 is so large that it essentially induces no cost: new cost should be 2/3 of
+  // the previous
 
   gso_sq_norms_vec.emplace_back(v3);
 
   cerr << "Repeating same checks with 3 bases" << endl;
   Pruner<FT> pru2(.85, 0., gso_sq_norms_vec);
 
-  cost                   = pru2.single_enum_cost(pr);
+  cost = pru2.single_enum_cost(pr);
   cerr << "Cost per enum " << cost << endl;
 
-  status += (abs(1 - 3. / 2. * cost / 3.20e+10) > .02); // check that the new cost is indeed 2/3 of the original cost
+  status += (abs(1 - 3. / 2. * cost / 3.20e+10) >
+             .02);  // check that the new cost is indeed 2/3 of the original cost
   print_status(status);
   proba = pru2.measure_metric(pr);
   cerr << "success proba " << proba << endl;
@@ -355,7 +357,8 @@ template <class FT> int test_auto_prune(size_t n)
 
   cerr << endl << "Gradient " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_GRADIENT);
+  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+            PRUNER_GRADIENT);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
@@ -377,7 +380,8 @@ template <class FT> int test_auto_prune(size_t n)
 
   cerr << endl << "Reprune Gradient " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, r, 0.01, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_GRADIENT|PRUNER_START_FROM_INPUT);
+  prune<FT>(pruning, radius_d, overhead, r, 0.01, PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+            PRUNER_GRADIENT | PRUNER_START_FROM_INPUT);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
@@ -398,7 +402,8 @@ template <class FT> int test_auto_prune(size_t n)
 
   cerr << endl << "NelderMead " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_NELDER_MEAD);
+  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+            PRUNER_NELDER_MEAD);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
@@ -419,7 +424,8 @@ template <class FT> int test_auto_prune(size_t n)
 
   cerr << endl << "Reprune NelderMead " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_NELDER_MEAD|PRUNER_START_FROM_INPUT);
+  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+            PRUNER_NELDER_MEAD | PRUNER_START_FROM_INPUT);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
@@ -440,7 +446,8 @@ template <class FT> int test_auto_prune(size_t n)
 
   cerr << endl << "Zealous (Gradient then NelderMead) " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_ZEALOUS);
+  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+            PRUNER_ZEALOUS);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
@@ -461,7 +468,8 @@ template <class FT> int test_auto_prune(size_t n)
 
   cerr << endl << "Reprune Zealous " << endl;
   cerr << "radius " << radius_d << endl;
-  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST, PRUNER_ZEALOUS|PRUNER_START_FROM_INPUT);
+  prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+            PRUNER_ZEALOUS | PRUNER_START_FROM_INPUT);
   status += !(pruning.expectation <= 1.001);
   print_status(status);
   cerr << "Probability " << pruning.expectation << endl;
