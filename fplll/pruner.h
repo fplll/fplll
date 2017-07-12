@@ -123,8 +123,8 @@ public:
   PrunerMetric metric;
   int shapes_loaded = 0;
   int flags;
-  size_t n;  // Dimension of the (sub)-basis
-  size_t d;  // Degree d = floor(n/2)
+  int n;  // Dimension of the (sub)-basis
+  int d;  // Degree d = floor(n/2)
   vector<FT> min_pruning_coefficients;
 
   void import_tabulated_values()
@@ -214,6 +214,13 @@ public:
     return measure_metric(b).get_d();
   }
 
+  /**
+     @brief Provided the gaussian heuristic of the loaded basis. If multiple loaded,
+     then it is the gaussian heuristic of the first one.
+  */
+  FT gaussian_heuristic();
+
+
 private:
   double descent_starting_clock;
   static FT tabulated_factorial[PRUNER_MAX_N];
@@ -280,6 +287,7 @@ private:
   int nelder_mead_step(/*io*/ evec &b);
   // Run the whole escent to optimize pruning bounds
   void descent(/*io*/ evec &b);
+
 };
 
 template <class FT> bool Pruner<FT>::tabulated_values_imported = false;

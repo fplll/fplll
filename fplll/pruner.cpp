@@ -70,10 +70,9 @@ void Pruner<FT>::load_basis_shape(const vector<double> &gso_r,  bool reset_norma
 
   if (reset_normalization)
   {
-    normalization_factor = exp(logvol / (-1.0 * n));
+    normalization_factor = exp(logvol /((float) (-n)));
     normalized_radius = sqrt(enumeration_radius * normalization_factor);
   }
-  
 
   for (size_t i = 0; i < n; ++i)
   {
@@ -113,6 +112,12 @@ template <class FT> void Pruner<FT>::load_basis_shapes(const vector<vector<doubl
   {
     ipv[i] = sum_ipv[i] / (1.0 * count);
   }
+}
+
+template <class FT>
+FT Pruner<FT>::gaussian_heuristic()
+{
+  return  exp(2. * log(tabulated_ball_vol[n]) / ( (float) -n)) / normalization_factor;
 }
 
 template <class FT>
@@ -724,7 +729,7 @@ void prune(/*output*/ Pruning &pruning,
   Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_r, target, metric, flags);
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
-  // TODO : also compute the gh_factor
+  pruning.gh_factor = enumeration_radius / pruner.gaussian_heuristic().get_d();
   pruning.metric      = metric;
   pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }
@@ -738,7 +743,7 @@ void prune(/*output*/ Pruning &pruning,
   Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_rs, target, metric, flags);
   pruner.optimize_coefficients(pruning.coefficients);
   pruner.single_enum_cost(pruning.coefficients, &(pruning.detailed_cost));
-  // TODO : also compute the gh_factor
+  pruning.gh_factor = enumeration_radius / pruner.gaussian_heuristic().get_d();
   pruning.metric      = metric;
   pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }

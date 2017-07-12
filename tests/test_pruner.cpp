@@ -332,16 +332,21 @@ template <class FT> int test_auto_prune(size_t n)
   double overhead = 1.0e6 * n * n;
   cerr << "Overhead " << overhead << endl;
 
-  double radius_d = radius.get_d() *.3;
+  double radius_d = r[0] * .3;
 
   cerr << endl << "Greedy " << endl;
   prune<FT>(pruning, radius_d, overhead, r, 20, PRUNER_METRIC_EXPECTED_SOLUTIONS, 0);
   cerr << "Expected Solutions " << pruning.expectation << endl;
-  cerr << "Radius before " << radius.get_d() << "/" << radius_d << endl;
+  cerr << "Radius " << radius_d << endl;
+  cerr << "gh_factor " << pruning.gh_factor << endl;
+
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.gh_factor >= .999);
+  status += !(pruning.gh_factor >= .05);
   print_status(status);
+  status += !(pruning.gh_factor < 20.);
+  print_status(status);
+
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
   cost = 0.;
@@ -371,7 +376,9 @@ template <class FT> int test_auto_prune(size_t n)
 
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.gh_factor >= .999);
+  status += !(pruning.gh_factor >= .05);
+  print_status(status);
+  status += !(pruning.gh_factor < 20.);
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
@@ -393,7 +400,9 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Predicted Total Cost " << cost << endl;
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.gh_factor >= .999);
+  status += !(pruning.gh_factor >= .05);
+  print_status(status);
+  status += !(pruning.gh_factor < 20.);
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
@@ -415,7 +424,9 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Predicted Total Cost " << cost << endl;
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.gh_factor >= .999);
+  status += !(pruning.gh_factor >= .05);
+  print_status(status);
+  status += !(pruning.gh_factor < 20.);
   print_status(status);
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
@@ -437,8 +448,11 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Predicted Total Cost " << cost << endl;
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.gh_factor >= .999);
+  status += !(pruning.gh_factor >= .05);
   print_status(status);
+  status += !(pruning.gh_factor < 20.);
+  print_status(status);
+
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
 
@@ -459,8 +473,11 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Predicted Total Cost " << cost << endl;
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.gh_factor >= .999);
+  status += !(pruning.gh_factor >= .05);
   print_status(status);
+  status += !(pruning.gh_factor < 20.);
+  print_status(status);
+
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
 
@@ -481,8 +498,11 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Predicted Total Cost " << cost << endl;
   status += !(pruning.expectation > 0.0);
   print_status(status);
-  status += !(pruning.gh_factor >= .999);
+  status += !(pruning.gh_factor >= .05);
   print_status(status);
+  status += !(pruning.gh_factor < 20.);
+  print_status(status);
+
   status += !(pruning.coefficients[0] == 1.0);
   print_status(status);
 
