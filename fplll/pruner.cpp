@@ -56,43 +56,35 @@ template <class FT> void Pruner<FT>::optimize_coefficients(/*io*/ vector<double>
 }
 
 template <class FT>
-void Pruner<FT>::load_basis_shape(const vector<double> &gso_r, bool reset_renormalization)
+void Pruner<FT>::load_basis_shape(const vector<double> &gso_r,  bool reset_normalization)
 {
   FT logvol, tmp;
   logvol = 0.0;
   r.resize(n);
   ipv.resize(n);
-  cerr << "RESIZED" << endl;
   for (size_t i = 0; i < n; ++i)
   {
-    cerr << "ALOOP " << i << endl;
     r[i] = gso_r[n - 1 - i];
     logvol += log(r[i]);
   }
-  cerr << "ALOOP ENDED" << endl;
 
-  if (reset_renormalization)
+  if (reset_normalization)
   {
-    cerr << "RESET_RNOR" << endl;
     normalization_factor = exp(logvol / (-1.0 * n));
-    normalized_radius    = sqrt(enumeration_radius * normalization_factor);
+    normalized_radius = sqrt(enumeration_radius * normalization_factor);
   }
-  cerr << "RESET_RNOR OK" << endl;
+  
 
   for (size_t i = 0; i < n; ++i)
   {
-    cerr << "BLOOP " << i << endl;
     r[i] *= normalization_factor;
   }
-  cerr << "BLOOP ENDED" << endl;
   tmp = 1.;
   for (size_t i = 0; i < 2 * d; ++i)
   {
-    cerr << "CLOOP " << i << endl;
     tmp *= sqrt(r[i]);
     ipv[i] = 1.0 / tmp;
   }
-  cerr << "CLOOP ENDED" << endl;
 }
 
 template <class FT> void Pruner<FT>::load_basis_shapes(const vector<vector<double>> &gso_rs)
@@ -111,8 +103,7 @@ template <class FT> void Pruner<FT>::load_basis_shapes(const vector<vector<doubl
     {
       throw std::runtime_error("Inside Pruner : loading several bases with different dimensions");
     }
-    bool reset_renormalization = (k == 0);
-    load_basis_shape(gso_rs[k], reset_renormalization);
+    load_basis_shape(gso_rs[k], (k == 0));
     for (size_t i = 0; i < n; ++i)
     {
       sum_ipv[i] += ipv[i];
@@ -227,18 +218,8 @@ template <class FT> inline FT Pruner<FT>::relative_volume(const int rd, /*i*/ co
     ld++;
     P[0] = -1.0 * eval_poly(ld, P, b[i] / b[rd - 1]);
   }
-  // TODO replace by the following cleaner code
-  // FT res = P[0] * tabulated_factorial[rd];
-  // return (rd % 2) ? -res : res;
-
-  if (rd % 2)
-  {
-    return -1.0 * P[0] * tabulated_factorial[rd];
-  }
-  else
-  {
-    return P[0] * tabulated_factorial[rd];
-  }
+  FT res = P[0] * tabulated_factorial[rd];
+  return (rd % 2) ? (0.-res) : res;
 }
 
 template <class FT>
@@ -265,11 +246,6 @@ inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b, vector<double> *deta
 
   FT total;
   total = 0.0;
-  FT normalized_radius;
-
-  // TODO : remove when stable (done at construction)
-  normalized_radius = sqrt(enumeration_radius * normalization_factor);
-
   FT normalized_radius_pow = normalized_radius;
   for (size_t i = 0; i < 2 * d; ++i)
   {
@@ -308,9 +284,6 @@ template <class FT> inline FT Pruner<FT>::svp_probability(/*i*/ const evec &b)
 
 template <class FT> inline FT Pruner<FT>::expected_solutions(/*i*/ const evec &b)
 {
-  FT normalized_radius;
-  normalized_radius = sqrt(enumeration_radius * normalization_factor);
-
   int j  = d * 2 - 1;
   FT tmp = relative_volume((j + 1) / 2, b);
   tmp *= tabulated_ball_vol[j + 1];
@@ -482,9 +455,6 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   enforce_bounds(b);
 
   evec new_b(d);
-
-  FT normalized_radius;
-  normalized_radius = sqrt(enumeration_radius * normalization_factor);
 
   FT min, max, val, tmp1, tmp, goal;
   if (verbosity)
