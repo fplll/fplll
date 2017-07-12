@@ -127,7 +127,7 @@ public:
       : block_size(block_size), strategies(strategies), delta(delta), flags(flags),
         max_loops(max_loops), max_time(max_time), auto_abort_scale(auto_abort_scale),
         auto_abort_max_no_dec(auto_abort_max_no_dec), gh_factor(gh_factor),
-        dump_gso_filename("gso.log"), min_success_probability(min_success_probability),
+        dump_gso_filename("gso.json"), min_success_probability(min_success_probability),
         rerandomization_density(rerandomization_density)
   {
 

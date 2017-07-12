@@ -345,11 +345,8 @@ bool BKZReduction<FT>::tour(const int loop, int &kappa_max, const BKZParam &par,
 
   if (par.flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "End of BKZ loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(par.dump_gso_filename, prefix.str());
+    dump_gso(par.dump_gso_filename, true, "End of BKZ loop", loop,
+        (cputime() - cputime_start) * 0.001);
   }
 
   return clean;
@@ -427,11 +424,8 @@ bool BKZReduction<FT>::sd_tour(const int loop, const BKZParam &par, int min_row,
 
   if (par.flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "End of SD-BKZ loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(par.dump_gso_filename, prefix.str());
+    dump_gso(par.dump_gso_filename, true, "End of SD-BKZ loop",
+        loop, (cputime() - cputime_start) * 0.001 );
   }
 
   return clean;
@@ -471,11 +465,8 @@ bool BKZReduction<FT>::slide_tour(const int loop, const BKZParam &par, int min_r
 
   if (par.flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "End of SLD loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(par.dump_gso_filename, prefix.str());
+    dump_gso(par.dump_gso_filename, true, "End of SLD loop", loop,
+        (cputime() - cputime_start) * 0.001);
   }
 
   if (new_potential >= sld_potential)
@@ -501,9 +492,7 @@ template <class FT> bool BKZReduction<FT>::bkz()
 
   if (flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "Input";
-    dump_gso(param.dump_gso_filename, prefix.str(), false);
+    dump_gso(param.dump_gso_filename, false, "Input", -1, 0.0);
   }
 
   if (param.block_size < 2)
@@ -623,11 +612,8 @@ template <class FT> bool BKZReduction<FT>::bkz()
 
   if (flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "Output ";
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(param.dump_gso_filename, prefix.str());
+    dump_gso(param.dump_gso_filename, true, "Output", -1,
+        (cputime() - cputime_start) * 0.001);
   }
   return set_status(final_status);
 }
@@ -682,25 +668,45 @@ template <class FT> bool BKZReduction<FT>::set_status(int new_status)
   return status == RED_SUCCESS;
 }
 
+//Generate the json file by hand to generate a flexible human-readable file.
+//TODO: think about use io/json.hpp
 template <class FT>
-void BKZReduction<FT>::dump_gso(const std::string &filename, const std::string &prefix, bool append)
+void BKZReduction<FT>::dump_gso(const std::string &filename, bool append,
+    const std::string &step, const int loop, const double time)
 {
   ofstream dump;
   if (append)
+  {
     dump.open(filename.c_str(), std::ios_base::app);
-  else
+  } else {
     dump.open(filename.c_str());
-  dump << std::setw(4) << prefix << ": ";
+    dump << "[" << endl;
+  }
+  dump << string(8 , ' ') << "{" << endl;
+  dump << string(16, ' ') << "\"step\": \"" << step << "\"," << endl;
+  dump << string(16, ' ') << "\"loop\": " << loop << "," << endl;
+  dump << string(16, ' ') << "\"time\": " << time << "," << endl;
+
   FT f, log_f;
   long expo;
+  stringstream ss;
   for (int i = 0; i < num_rows; i++)
   {
     m.update_gso_row(i);
     f = m.get_r_exp(i, i, expo);
     log_f.log(f, GMP_RNDU);
-    dump << std::setprecision(8) << log_f.get_d() + expo * std::log(2.0) << " ";
+    ss << std::setprecision(8) << log_f.get_d() + expo * std::log(2.0) << ", ";
   }
-  dump << std::endl;
+  string s = ss.str();
+  dump << string(16, ' ') << "\"norms\": [" << s.substr(0, s.size() - 2) << "]" <<
+    endl;
+  dump << string(8,  ' ') << "}";
+  if (step.compare("Output") == 0) {
+    dump << endl << "]";
+  }
+  else {
+    dump << "," << endl;
+  }
   dump.close();
 }
 
