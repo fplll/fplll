@@ -15,6 +15,9 @@
 
 #include <cstring>
 #include <fplll.h>
+#include "io/json.hpp"
+
+using json = nlohmann::json;
 
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."
@@ -173,6 +176,54 @@ int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_
    @brief Test BKZ for matrix stored in file pointed to by `input_filename`.
 
    @param input_filename   a path
+ */
+
+int test_filename_bkz_dump_gso(const char *input_filename)
+{
+  ZZ_mat<mpz_t> A;
+  read_matrix(A, input_filename);
+
+  json js;
+  std::ifstream fs("gso.json");
+  if (fs.fail())
+  {
+    return 1;
+  }
+  fs >> js;
+  int loop = -1;
+  double time = 0.0;
+  for (auto i: js) {
+    //Verify if there are as much norms as there are rows in A
+    if (A.get_rows() != (int)i["norms"].size()) {
+      return 1;
+    }
+    string step = i["step"];
+    //Verify if loop of Input and Output have loop = -1
+    if (step.compare("Input") == 0 || step.compare("Output") == 0) {
+      if (i["loop"] != -1) {
+        return 1;
+      }
+    } else {
+      //Verify that loop increases
+      loop++;
+      if (i["loop"] != loop) {
+        return 1;
+      }
+      //Verify that time increases
+      if (time > i["time"]) {
+        return 1;
+      }
+      time = i["time"];
+    }
+  }
+
+  return 0;
+}
+
+/**
+   @brief Test BKZ for matrix stored in file pointed to by `input_filename`.
+
+   @param input_filename   a path
    @param block_size       block size
    @param float_type       floating point type to test
    @param flags            flags to use
@@ -275,6 +326,11 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE);
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SD_VARIANT);
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SLD_RED);
+
+  //Test BKZ_DUMP_GSO
+  status |= test_filename<mpz_t>("lattices/dim55_in", 10, FT_DEFAULT, BKZ_DEFAULT | BKZ_DUMP_GSO);
+  //Use the produced gso.json of the previous call of test_filename<mpz_t>
+  status |= test_filename_bkz_dump_gso("lattices/dim55_in");
 
   if (status == 0)
   {
