@@ -141,21 +141,25 @@ public:
   // ostream &channel1; // Channel for important messages
   // ostream &channel2; // Channel for less important message
 
-  Pruner(const int n, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
+  Pruner(const int n, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST, int flags = 0)
       : n(n), metric(metric)
   {
+    verbosity = flags & PRUNER_VERBOSE;
     import_tabulated_values();
     d = n / 2;
     min_pruning_coefficients.resize(d);
     fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
+
   }
 
   Pruner(const FT enumeration_radius, const FT preproc_cost, const vector<double> &gso_r,
          const FT target = 0.9, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
-         int flags = PRUNER_GRADIENT, double timeout = -1)
+         int flags = PRUNER_GRADIENT)
       : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
         metric(metric), flags(flags)
   {
+    verbosity = flags & PRUNER_VERBOSE;
+
     n = gso_r.size();
     d = n / 2;
     min_pruning_coefficients.resize(d);
@@ -166,10 +170,11 @@ public:
 
   Pruner(const FT enumeration_radius, const FT preproc_cost, const vector<vector<double>> &gso_rs,
          const FT target = 0.9, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
-         int flags = PRUNER_GRADIENT, double timeout = -1)
+         int flags = PRUNER_GRADIENT)
       : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
         metric(metric), flags(flags)
   {
+    verbosity = flags & PRUNER_VERBOSE;
     n = gso_rs[0].size();
     d = n / 2;
     min_pruning_coefficients.resize(d);
