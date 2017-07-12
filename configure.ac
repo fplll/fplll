@@ -131,6 +131,30 @@ AC_ARG_ENABLE(recursive-enum,
 AS_IF([test "x$enable_recursive_enum" != "xno"], [
         AC_DEFINE([FPLLL_WITH_RECURSIVE_ENUM], [1], [recursive enumeration enabled])])
 
+
+# ---- 
+# SIMD
+# ----
+
+AC_ARG_ENABLE([simd], AS_HELP_STRING([--disable-simd-module], [Disable the SIMD module. If enabled then specialized, hand-crafted functions will be compiled for all detected and suported SIMD instructions sets, the best of which is then chosen at runtime. To enable SIMD support outside the SIMD module use -march=native]))
+
+AS_IF([test "x$enable_simd_module" != "xno"], [AX_EXT()])
+
+# it is impolite to put HAVE_AVX in fplll/fplll_config.h because other projects using FPLLL might
+# make their own choices about AVX. Thus, we define FPLLL_HAVE_? 
+
+if test x"$ax_cv_have_avx_ext" = x"yes"; then
+   AC_DEFINE([FPLLL_HAVE_AVX], [1], [use AVX instruction set])
+fi
+
+if test x"$ax_cv_have_avx2_ext" = x"yes"; then
+   AC_DEFINE([FPLLL_HAVE_AVX2], [1], [use AVX2 instruction set])
+fi
+
+if test x"$ax_cv_have_avx512_ext" = x"yes"; then
+   AC_DEFINE([FPLLL_HAVE_AVX512], [1], [use AVX512 instruction set])
+fi
+
 # Store version numbers in header
 
 AC_DEFINE_UNQUOTED([FPLLL_MAJOR_VERSION],[$FPLLL_MAJOR_VERSION],[major version])
