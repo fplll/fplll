@@ -62,7 +62,7 @@ public:
   bool svp_preprocessing(int kappa, int block_size, const BKZParam &param);
 
   bool svp_postprocessing(int kappa, int block_size, const vector<FT> &solution, bool dual = false);
-  
+
   bool svp_post_general(int kappa, int block_size, const vector<FT> &solution, bool dual = false);
 
   /**

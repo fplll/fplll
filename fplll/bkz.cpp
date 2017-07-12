@@ -122,7 +122,8 @@ bool BKZReduction<FT>::svp_preprocessing(int kappa, int block_size, const BKZPar
 }
 
 template <class FT>
-bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vector<FT> &solution, bool dual)
+bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vector<FT> &solution,
+                                          bool dual)
 {
   // Is it already in the basis ?
   int nz_vectors = 0, i_vector = -1;
@@ -138,7 +139,7 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
   // nz_vectors is the number of nonzero coordinates
   // i_vector is the largest index for a \pm 1 coordinate
   FPLLL_DEBUG_CHECK(nz_vectors > 0);
-  
+
   int pos = dual ? kappa + block_size - 1 : kappa;
   if (nz_vectors == 1)
   {
@@ -150,35 +151,41 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
   {
     // No, but one coordinate is equal to \pm 1, making
     // linear dependency easy to fix too.
-    if (dual) {
+    if (dual)
+    {
       m.row_op_begin(kappa, kappa + block_size);
-    } else {
+    }
+    else
+    {
       m.row_op_begin(kappa + i_vector, kappa + i_vector + 1);
     }
-    
+
     for (int i = 0; i < block_size; ++i)
     {
-      if (!solution[i].is_zero() && (i != i_vector)) 
+      if (!solution[i].is_zero() && (i != i_vector))
       {
         if (dual)
         {
-          ftmp = (solution[i_vector] < 0) ? solution[i] : -1*solution[i];
+          ftmp = (solution[i_vector] < 0) ? solution[i] : -1 * solution[i];
           m.row_addmul(kappa + i, kappa + i_vector, ftmp);
         }
         else
         {
-          ftmp = (solution[i_vector] < 0) ? -1*solution[i] : solution[i];
+          ftmp = (solution[i_vector] < 0) ? -1 * solution[i] : solution[i];
           m.row_addmul(kappa + i_vector, kappa + i, ftmp);
         }
       }
     }
-    
-    if (dual) {
+
+    if (dual)
+    {
       m.row_op_end(kappa, kappa + block_size);
-    } else {
+    }
+    else
+    {
       m.row_op_end(kappa + i_vector, kappa + i_vector + 1);
     }
-    
+
     m.move_row(kappa + i_vector, pos);
   }
   else
@@ -190,10 +197,11 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
 }
 
 template <class FT>
-bool BKZReduction<FT>::svp_post_general(int kappa, int block_size, const vector<FT> &solution, bool dual)
+bool BKZReduction<FT>::svp_post_general(int kappa, int block_size, const vector<FT> &solution,
+                                        bool dual)
 {
   vector<FT> x = solution;
-  int d = block_size;
+  int d        = block_size;
   // don't want to deal with negativ coefficients
   for (int i = 0; i < d; i++)
   {
@@ -203,7 +211,7 @@ bool BKZReduction<FT>::svp_post_general(int kappa, int block_size, const vector<
       m.negate_row_of_b(i + kappa);
     }
   }
-  
+
   m.row_op_begin(kappa, kappa + d);
   // tree based gcd computation on x, performing operations also on b
   int off = 1;
@@ -226,11 +234,11 @@ bool BKZReduction<FT>::svp_post_general(int kappa, int block_size, const vector<
           while (x[k - off] <= x[k])
           {
             x[k] = x[k] - x[k - off];
-            if (dual) 
+            if (dual)
             {
               m.row_sub(kappa + k, kappa + k - off);
-            } 
-            else 
+            }
+            else
             {
               m.row_add(kappa + k - off, kappa + k);
             }
@@ -245,13 +253,13 @@ bool BKZReduction<FT>::svp_post_general(int kappa, int block_size, const vector<
     off *= 2;
   }
   m.row_op_end(kappa, kappa + d);
-  
-  if (!dual) {
+
+  if (!dual)
+  {
     m.move_row(kappa + d - 1, kappa);
   }
   return false;
 }
-
 
 template <class FT>
 bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &par, bool dual)
@@ -455,12 +463,14 @@ bool BKZReduction<FT>::slide_tour(const int loop, const BKZParam &par, int min_r
       clean &= svp_reduction(kappa, block_size, par);
     }
     // SVP reduction takes care of the LLL reduction as long as BKZ_BOUNDED_LLL is off
-    if (par.flags & BKZ_BOUNDED_LLL) {
+    if (par.flags & BKZ_BOUNDED_LLL)
+    {
       if (!lll_obj.lll(min_row, min_row, max_row, 0))
       {
         throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
       }
-      if (lll_obj.n_swaps > 0) {
+      if (lll_obj.n_swaps > 0)
+      {
         clean = false;
       }
     }

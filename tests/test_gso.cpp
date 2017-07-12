@@ -109,9 +109,9 @@ template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
   M.update_gso();
   MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(G, U, UT, 1);
   M2.update_gso();
-  
-  ZZ_mat<ZT> A1 (A);
-  MatGSO<Z_NR<ZT>, FP_NR<FT>> M3 (A1, U, UT, GSO_INT_GRAM);
+
+  ZZ_mat<ZT> A1(A);
+  MatGSO<Z_NR<ZT>, FP_NR<FT>> M3(A1, U, UT, GSO_INT_GRAM);
   M3.update_gso();
 
   FP_NR<FT> err  = .001;
@@ -132,7 +132,7 @@ template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
   M2.update_gso();
   M3.update_gso();
   bool retvalue2 = rs_are_equal(M, M2, err);
-  
+
   M.row_op_begin(0, r);
   M2.row_op_begin(0, r);
   M3.row_op_begin(0, r);
@@ -147,13 +147,13 @@ template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
   M.row_op_end(0, r);
   M2.row_op_end(0, r);
   M3.row_op_end(0, r);
-  
+
   M.update_gso();
   M2.update_gso();
   M3.update_gso();
   bool retvalue3 = rs_are_equal(M, M2, err);
   bool retvalue4 = rs_are_equal(M3, M2, err);
-  
+
   return (!retvalue1) * 1 + (!retvalue2) * 2 + (!retvalue3) * 4 + (!retvalue4) * 8;
 }
 
