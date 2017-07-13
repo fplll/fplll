@@ -122,7 +122,8 @@ bool BKZReduction<FT>::svp_preprocessing(int kappa, int block_size, const BKZPar
 }
 
 template <class FT>
-bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vector<FT> &solution)
+bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vector<FT> &solution,
+                                          bool dual)
 {
   // Is it already in the basis ?
   int nz_vectors = 0, i_vector = -1;
@@ -137,76 +138,81 @@ bool BKZReduction<FT>::svp_postprocessing(int kappa, int block_size, const vecto
   }
   // nz_vectors is the number of nonzero coordinates
   // i_vector is the largest index for a \pm 1 coordinate
-
   FPLLL_DEBUG_CHECK(nz_vectors > 0);
 
+  int pos = dual ? kappa + block_size - 1 : kappa;
   if (nz_vectors == 1)
   {
     // Yes, it is another vector
     FPLLL_DEBUG_CHECK(i_vector != -1 && i_vector != 0);
-    m.move_row(kappa + i_vector, kappa);
-    if (!lll_obj.lll(0, kappa, kappa + 1, 0))
-      throw lll_obj.status;
+    m.move_row(kappa + i_vector, pos);
   }
   else if (i_vector != -1)
   {
     // No, but one coordinate is equal to \pm 1, making
     // linear dependency easy to fix too.
-    int d = m.d;
-    m.create_row();
-    m.row_op_begin(d, d + 1);
-    for (int i = 0; i < block_size; i++)
+    int sol_i = solution[i_vector].get_si();
+    if (dual)
     {
-      m.row_addmul(d, kappa + i, solution[i]);
+      sol_i *= -1;
+      m.row_op_begin(kappa, kappa + block_size);
     }
-    m.row_op_end(d, d + 1);
-    m.move_row(d, kappa);
-    m.move_row(kappa + i_vector + 1, d);
-    m.remove_last_row();
-    if (!lll_obj.lll(0, kappa, kappa + 1, 0))
-      throw lll_obj.status;
+    else
+    {
+      m.row_op_begin(kappa + i_vector, kappa + i_vector + 1);
+    }
+
+    for (int i = 0; i < block_size; ++i)
+    {
+      if (!solution[i].is_zero() && (i != i_vector))
+      {
+        if (dual)
+        {
+          m.row_addmul(kappa + i, kappa + i_vector, sol_i * solution[i]);
+        }
+        else
+        {
+          m.row_addmul(kappa + i_vector, kappa + i, sol_i * solution[i]);
+        }
+      }
+    }
+
+    if (dual)
+    {
+      m.row_op_end(kappa, kappa + block_size);
+    }
+    else
+    {
+      m.row_op_end(kappa + i_vector, kappa + i_vector + 1);
+    }
+
+    m.move_row(kappa + i_vector, pos);
   }
   else
   {
     // No, general case
-    int d = m.d;
-    m.create_row();
-    m.row_op_begin(d, d + 1);
-    for (int i = 0; i < block_size; i++)
-    {
-      m.row_addmul(d, kappa + i, solution[i]);
-    }
-    m.row_op_end(d, d + 1);
-    m.move_row(d, kappa);
-    if (!lll_obj.lll(0, kappa, kappa + block_size + 1, 0))
-      throw lll_obj.status;
-    FPLLL_DEBUG_CHECK(m.b[kappa + block_size].is_zero());
-    m.move_row(kappa + block_size, d);
-    m.remove_last_row();
+    svp_postprocessing_generic(kappa, block_size, solution, dual);
   }
   return false;
 }
 
 template <class FT>
-bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vector<FT> &solution)
+bool BKZReduction<FT>::svp_postprocessing_generic(int kappa, int block_size,
+                                                  const vector<FT> &solution, bool dual)
 {
   vector<FT> x = solution;
-
-  int d = block_size;
-  m.row_op_begin(kappa, kappa + d);
+  int d        = block_size;
   // don't want to deal with negativ coefficients
   for (int i = 0; i < d; i++)
   {
     if (x[i] < 0)
     {
       x[i].neg(x[i]);
-      for (int j = 0; j < m.b.get_cols(); j++)
-      {
-        m.b[i + kappa][j].neg(m.b[i + kappa][j]);
-      }
+      m.negate_row_of_b(i + kappa);
     }
   }
 
+  m.row_op_begin(kappa, kappa + d);
   // tree based gcd computation on x, performing operations also on b
   int off = 1;
   int k;
@@ -220,7 +226,7 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
         if (x[k] < x[k - off])
         {
           x[k].swap(x[k - off]);
-          m.b.swap_rows(kappa + k, kappa + k - off);
+          m.row_swap(kappa + k - off, kappa + k);
         }
 
         while (!x[k - off].is_zero())
@@ -228,22 +234,29 @@ bool BKZReduction<FT>::dsvp_postprocessing(int kappa, int block_size, const vect
           while (x[k - off] <= x[k])
           {
             x[k] = x[k] - x[k - off];
-            m.b[kappa + k].sub(m.b[kappa + k - off]);
+            if (dual)
+            {
+              m.row_sub(kappa + k, kappa + k - off);
+            }
+            else
+            {
+              m.row_add(kappa + k - off, kappa + k);
+            }
           }
 
           x[k].swap(x[k - off]);
-          m.b.swap_rows(kappa + k, kappa + k - off);
+          m.row_swap(kappa + k - off, kappa + k);
         }
       }
       k -= 2 * off;
     }
     off *= 2;
   }
-
   m.row_op_end(kappa, kappa + d);
-  if (!lll_obj.lll(kappa, kappa, kappa + d, 0))
+
+  if (!dual)
   {
-    return set_status(lll_obj.status);
+    m.move_row(kappa + d - 1, kappa);
   }
   return false;
 }
@@ -306,11 +319,7 @@ bool BKZReduction<FT>::svp_reduction(int kappa, int block_size, const BKZParam &
 
     if (!evaluator.empty())
     {
-      if (dual)
-        dsvp_postprocessing(kappa, block_size, evaluator.begin()->second);
-      else
-        svp_postprocessing(kappa, block_size, evaluator.begin()->second);
-
+      svp_postprocessing(kappa, block_size, evaluator.begin()->second, dual);
       rerandomize = false;
     }
     else
@@ -441,12 +450,23 @@ bool BKZReduction<FT>::slide_tour(const int loop, const BKZParam &par, int min_r
   do
   {
     clean = true;
-    // SVP reduction takes care of the LLL reduction as long as BKZ_BOUNDED_LLL is off
     for (int i = 0; i < p; ++i)
     {
       int kappa      = min_row + i * par.block_size;
       int block_size = min(max_row - kappa, par.block_size);
       clean &= svp_reduction(kappa, block_size, par);
+    }
+    // SVP reduction takes care of the LLL reduction if BKZ_BOUNDED_LLL is off
+    if (par.flags & BKZ_BOUNDED_LLL)
+    {
+      if (!lll_obj.lll(min_row, min_row, max_row, 0))
+      {
+        throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
+      }
+      if (lll_obj.n_swaps > 0)
+      {
+        clean = false;
+      }
     }
   } while (!clean);
 
