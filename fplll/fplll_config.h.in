@@ -13,9 +13,6 @@
 /* fplll micro version */
 #define FPLLL_MICRO_VERSION @FPLLL_MICRO_VERSION@
 
-/* fplll sonum */
-#define FPLLL_SONUM @FPLLL_SONUM@
-
 /* fplll version */
 #define FPLLL_VERSION @FPLLL_VERSION@
 
@@ -27,5 +24,14 @@
 
 /* Recursive enumeration enabled */
 #undef FPLLL_WITH_RECURSIVE_ENUM
+
+/* use AVX instruction set */
+#undef FPLLL_HAVE_AVX
+
+/* use AVX2 instruction set */
+#undef FPLLL_HAVE_AVX2
+
+/* use AVX512 instruction set */
+#undef FPLLL_HAVE_AVX512
 
 #endif //FPLLL_CONFIG__H

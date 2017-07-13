@@ -138,22 +138,23 @@ AS_IF([test "x$enable_recursive_enum" != "xno"], [
 
 AC_ARG_ENABLE([simd], AS_HELP_STRING([--disable-simd-module], [Disable the SIMD module. If enabled then specialized, hand-crafted functions will be compiled for all detected and suported SIMD instructions sets, the best of which is then chosen at runtime. To enable SIMD support outside the SIMD module use -march=native]))
 
-AS_IF([test "x$enable_simd_module" != "xno"], [AX_EXT()])
+AS_IF([test "x$enable_simd_module" != "xno"],
+      [AX_CHECK_COMPILE_FLAG(-mavx, avx=yes, avx=no)])
 
-# it is impolite to put HAVE_AVX in fplll/fplll_config.h because other projects using FPLLL might
-# make their own choices about AVX. Thus, we define FPLLL_HAVE_? 
+AS_IF([test "x$enable_simd_module" != "xno"],
+      [AX_CHECK_COMPILE_FLAG(-mavx2, avx2=yes, avx2=no)])
 
-if test x"$ax_cv_have_avx_ext" = x"yes"; then
-   AC_DEFINE([FPLLL_HAVE_AVX], [1], [use AVX instruction set])
-fi
+AS_IF([test "x$enable_simd_module" != "xno"],
+      [AX_CHECK_COMPILE_FLAG(-mavx512, avx512=yes, avx512=no)])
 
-if test x"$ax_cv_have_avx2_ext" = x"yes"; then
-   AC_DEFINE([FPLLL_HAVE_AVX2], [1], [use AVX2 instruction set])
-fi
+AS_IF([test x"$avx" = x"yes"],
+       AC_DEFINE([FPLLL_HAVE_AVX], [1], [use AVX instruction set]))
 
-if test x"$ax_cv_have_avx512_ext" = x"yes"; then
-   AC_DEFINE([FPLLL_HAVE_AVX512], [1], [use AVX512 instruction set])
-fi
+AS_IF([test x"$avx2" = x"yes"],
+       AC_DEFINE([FPLLL_HAVE_AVX2], [1], [use AVX2 instruction set]))
+
+AS_IF([test x"$avx512" = x"yes"],
+       AC_DEFINE([FPLLL_HAVE_AVX512], [1], [use AVX512 instruction set]))
 
 # Store version numbers in header
 
