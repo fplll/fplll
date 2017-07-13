@@ -277,7 +277,33 @@ inline void FP_NR<dpe_t>::swap(FP_NR<dpe_t>& a) {
   dpe_swap(data, a.data);
 }
 
+template<>
+inline void FP_NR<dpe_t>::hypot(const FP_NR<dpe_t>& a, const FP_NR<dpe_t>& b, mp_rnd_t /*rnd*/) {
+    dpe_t tmp1;
+    dpe_t one;
+    dpe_set_d(one,1.0);
+    dpe_abs(data,a.data); // this <- abs(a)
+    dpe_abs(tmp1,b.data);  // tmp1 <- abs(b)
+    if (dpe_cmp(data,tmp1)) { // if this = abs_a <= abs_b = tmp1
+      dpe_div(data,data,tmp1);  // this <- abs_a/abs_b = this/tmp1
+      dpe_mul(data,data,data); // this <- (abs_a/abs_b)^2
+      dpe_add(data,data,one); // this <- 1 + (abs_a/abs_b)^2 
+      dpe_sqrt(data,data); // this <- sqrt(1 + (abs_a/abs_b)^2)
+      dpe_mul(data,data,tmp1); // this <- sqrt(1 + (abs_a/abs_b)^2)*abs_b
+    } else {
+      dpe_div(tmp1,tmp1,data);  // tmp1 <- abs_b/abs_a = tmp1/this
+      dpe_mul(tmp1,tmp1,tmp1); // tmp1 <- (abs_b/abs_a)^2
+      dpe_add(tmp1,tmp1,one); // tmp1 <- 1 + (abs_a/abs_b)^2 
+      dpe_sqrt(tmp1,tmp1); // tmp1 <- sqrt(1 + (abs_b/abs_a)^2)
+      dpe_mul(data,data,tmp1); // this <- abs)a*sqrt(1 + (abs_b/abs_a)^2)
+    }
 
+    // Naive implementation:
+    // 
+    //dpe_mul(data,a.data,a.data);
+    //dpe_addmul(data,b.data,b.data);
+    //dpe_sqrt(data,data);
+}
 
 /* operators FP_NR<dpe_t> */
 template<>
