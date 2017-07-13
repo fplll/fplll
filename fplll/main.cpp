@@ -20,7 +20,8 @@
 
 template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
 {
-  ZZ_mat<ZT> u, u_inv;
+  // Stupid intialization of u and u_inv to be not empty.
+  ZZ_mat<ZT> u(1, 1), u_inv(1, 1);
   const char *format = o.output_format ? o.output_format : "b";
   int status, flags = 0;
   if (o.verbose)
@@ -113,7 +114,8 @@ template <> int bkz(Options &o, IntMatrix &b)
   }
 
   BKZParam param(o.block_size, strategies);
-  IntMatrix u;
+  // Stupid intialization of u to be not empty.
+  IntMatrix u(1, 1);
   const char *format = o.output_format ? o.output_format : "b";
   int status;
 
@@ -506,7 +508,6 @@ void read_options(int argc, char **argv, Options &o)
     }
     else if ((strcmp(argv[ac], "-h") == 0) || (strcmp(argv[ac], "--help") == 0))
     {
-      // TODO: -of
       cout << "Usage: " << argv[0] << " [options] [file]\n"
 
            << "List of options:\n"
@@ -558,6 +559,10 @@ void read_options(int argc, char **argv, Options &o)
            << "        Restricts the LLL call\n"
            << "  -bkzdumpgso <file_name>\n"
            << "        Dumps the log of the Gram-Schmidt vectors in specified file\n"
+
+           << "  -of [bcstuv]\n"
+           << "        Output formats.\n"
+
            << "Please refer to https://github.com/fplll/fplll/README.md for more informations.\n";
       exit(0);
     }

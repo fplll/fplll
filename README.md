@@ -213,6 +213,17 @@ Without any of the last three options, BKZ runs until no block has been updated 
 
 * `-bkzdumgso file_name` :     dumps the log ||b_i*|| 's in specified file.
 
+Output formats:
+
+* `-of  ` : prints new line (if `-a [lll|bkz]`)
+* `-of b` : prints the basis (if `-a [lll|bkz]`, this value by default)
+* `-of c` : prints the closest vector (if `-a cvp`, this value by default)
+* `-of s` : prints the closest vector (if `-a svp`, this value by default)
+* `-of t` : prints status (if `-a [lll|bkz|cvp|svp]`)
+* `-of u` : prints unimodular matrix (if `-a [lll|bkz]`)
+* `-of v` : prints inverse of u (if `-a lll`)
+
+A combination of these option is allowed (e.g., `-of but`).
 
 ## llldiff ##
 
