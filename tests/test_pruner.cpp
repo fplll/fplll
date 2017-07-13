@@ -74,7 +74,7 @@ public:
     FT old_bj = b[j];
     pru.min_pruning_coefficients.resize(d);
     fill(pru.min_pruning_coefficients.begin(), pru.min_pruning_coefficients.end(), .1);
-    pru.enforce_bounds(b, j);
+    pru.enforce(b, j);
 
     status += !((b[j] >= old_bj) && (b[j] <= old_bj));
     print_status(status);

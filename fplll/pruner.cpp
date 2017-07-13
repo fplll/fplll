@@ -36,11 +36,13 @@ template <class FT> FT svp_probability(const vector<double> &pr)
 
 template <class FT> void Pruner<FT>::set_tabulated_consts()
 {
+  if (tabulated_values_imported) return;
   for (int i = 0; i < PRUNER_MAX_N; ++i)
   {
     tabulated_factorial[i] = pre_factorial[i];
     tabulated_ball_vol[i]  = pre_ball_vol[i];
   }
+  tabulated_values_imported = 1;
   return;
 }
 
@@ -51,13 +53,37 @@ template <class FT> void Pruner<FT>::optimize_coefficients(/*io*/ vector<double>
   {
     load_coefficients(b, pr);
   }
-  descent(b);
+  if (!(flags & PRUNER_START_FROM_INPUT))
+  {
+    greedy(b);
+  }
+
+  if (flags & (PRUNER_GRADIENT | PRUNER_NELDER_MEAD))
+  {
+    preproc_cost *= .1;
+    greedy(min_pruning_coefficients);
+    preproc_cost *= 10;
+  }
+
+  if (flags & PRUNER_GRADIENT)
+  {
+    while (gradient_descent_step(b))
+    {
+    };
+  };
+  if (flags & PRUNER_NELDER_MEAD)
+  {
+    while (nelder_mead_step(b))
+    {
+    };
+  };
   save_coefficients(pr, b);
 }
 
 template <class FT>
 void Pruner<FT>::load_basis_shape(const vector<double> &gso_r, bool reset_normalization)
 {
+  shape_loaded = true;
   FT logvol, tmp;
   logvol = 0.0;
   r.resize(n);
@@ -100,7 +126,7 @@ template <class FT> void Pruner<FT>::load_basis_shapes(const vector<vector<doubl
   {
     if (gso_rs[k].size() != n)
     {
-      throw std::runtime_error("Inside Pruner : loading several bases with different dimensions");
+      throw std::runtime_error("loading several bases with different dimensions");
     }
     load_basis_shape(gso_rs[k], (k == 0));
     for (size_t i = 0; i < n; ++i)
@@ -126,10 +152,9 @@ void Pruner<FT>::load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr
   {
     b[i] = pr[n - 1 - 2 * i];
   }
-  if (enforce_bounds(b))
+  if (enforce(b))
   {
-    throw std::runtime_error("Inside Pruner : Ill formed pruning coefficients (must be decreasing, "
-                             "starting with two 1.0)");
+    throw std::runtime_error("Ill formed pruning coefficients (must be decreasing, starting with two 1.0)");
   }
 }
 
@@ -145,7 +170,7 @@ void Pruner<FT>::save_coefficients(/*o*/ vector<double> &pr, /*i*/ const evec &b
   pr[0] = 1.;
 }
 
-template <class FT> inline bool Pruner<FT>::enforce_bounds(/*io*/ evec &b, /*opt i*/ const int j)
+template <class FT> inline bool Pruner<FT>::enforce(/*io*/ evec &b, /*opt i*/ const int j)
 {
   bool status = false;
   if ((b[d - 1] < .999) & (j != d - 1))
@@ -221,6 +246,10 @@ template <class FT> inline FT Pruner<FT>::relative_volume(const int rd, /*i*/ co
 template <class FT>
 inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b, vector<double> *detailed_cost)
 {
+  if (!shape_loaded)
+  {
+    throw std::invalid_argument("No basis shape was loaded");
+  }
 
   if (detailed_cost)
   {
@@ -249,7 +278,7 @@ inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b, vector<double> *deta
 
     tmp = normalized_radius_pow * rv[i] * tabulated_ball_vol[i + 1] *
           sqrt(pow_si(b[i / 2], 1 + i)) * ipv[i];
-    tmp /= symmetry_factor;
+    tmp *= symmetry_factor;
     if (detailed_cost)
     {
       (*detailed_cost)[2 * d - (i + 1)] = tmp.get_d();
@@ -280,12 +309,17 @@ template <class FT> inline FT Pruner<FT>::svp_probability(/*i*/ const evec &b)
 
 template <class FT> inline FT Pruner<FT>::expected_solutions(/*i*/ const evec &b)
 {
+  if (!shape_loaded)
+  {
+    throw std::invalid_argument("No basis shape was loaded");
+  }
+
   int j  = d * 2 - 1;
   FT tmp = relative_volume((j + 1) / 2, b);
   tmp *= tabulated_ball_vol[j + 1];
   tmp *= pow_si(normalized_radius * sqrt(b[j / 2]), j + 1);
   tmp *= ipv[j];
-  tmp /= symmetry_factor;
+  tmp *= symmetry_factor;
 
   return tmp;
 }
@@ -346,18 +380,18 @@ void Pruner<FT>::repeated_enum_cost_gradient(/*i*/ const evec &b, /*o*/ evec &re
   {
     b_plus_db = b;
     b_plus_db[i] *= (1.0 - epsilon);
-    enforce_bounds(b_plus_db, i);
+    enforce(b_plus_db, i);
     FT X = repeated_enum_cost(b_plus_db);
 
     b_plus_db = b;
     b_plus_db[i] *= (1.0 + epsilon);
-    enforce_bounds(b_plus_db, i);
+    enforce(b_plus_db, i);
     FT Y   = repeated_enum_cost(b_plus_db);
     res[i] = (log(X) - log(Y)) / epsilon;
   }
 }
 
-template <class FT> int Pruner<FT>::gradient_step(/*io*/ evec &b)
+template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ evec &b)
 {
 
   FT cf     = repeated_enum_cost(b);
@@ -395,7 +429,7 @@ template <class FT> int Pruner<FT>::gradient_step(/*io*/ evec &b)
       new_b[i] = new_b[i] + step * gradient[i];
     }
 
-    enforce_bounds(new_b);
+    enforce(new_b);
     new_cf = repeated_enum_cost(new_b);
 
     if (new_cf >= cf)
@@ -413,38 +447,15 @@ template <class FT> int Pruner<FT>::gradient_step(/*io*/ evec &b)
   return i;
 }
 
-template <class FT> void Pruner<FT>::descent(/*io*/ evec &b)
-{
-  if (!(flags & PRUNER_START_FROM_INPUT))
-  {
-    greedy(b);
-  }
-
-  if (flags & (PRUNER_GRADIENT | PRUNER_NELDER_MEAD))
-  {
-    preproc_cost *= .1;
-    greedy(min_pruning_coefficients);
-    preproc_cost *= 10;
-  }
-
-  if (flags & PRUNER_GRADIENT)
-  {
-    while (gradient_step(b))
-    {
-    };
-  };
-  if (flags & PRUNER_NELDER_MEAD)
-  {
-    while (nelder_mead_step(b))
-    {
-    };
-  };
-}
-
 template <class FT> void Pruner<FT>::greedy(evec &b)
 {
   // Do not call enforce in this function, as min_pruning_bounds may not have been set
   // Indeed, the min_pruning_bound should now based on greedy.
+  if (!shape_loaded)
+  {
+    throw std::invalid_argument("No basis shape was loaded");
+  }
+
   fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
 
   b.resize(d);
@@ -474,6 +485,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
       nodes *= tabulated_ball_vol[j + 1];
       nodes *= pow_si(normalized_radius * sqrt(b[i]), j + 1);
       nodes *= ipv[j];
+      nodes *= symmetry_factor;
     }
   }
 }
@@ -501,7 +513,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ evec &b)
     {
       bs[i][i] += (bs[i][i] < .5) ? ND_INIT_WIDTH : -ND_INIT_WIDTH;
     }
-    enforce_bounds(bs[i]);
+    enforce(bs[i]);
     fs[i] = repeated_enum_cost(bs[i]);  // initialize the value
   }
 
@@ -551,7 +563,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ evec &b)
         maxi2 = i;
     }
 
-    if (enforce_bounds(bo))
+    if (enforce(bo))
     {
       throw std::runtime_error("Concavity says that should not happen.");
     }
@@ -602,7 +614,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ evec &b)
     FT fr;       // Value at the reflexion point
     for (size_t i = 0; i < d; ++i)
       br[i]       = bo[i] + ND_ALPHA * (bo[i] - bs[maxi][i]);
-    enforce_bounds(br);
+    enforce(br);
     fr = repeated_enum_cost(br);
     if (verbosity)
     {
@@ -630,7 +642,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ evec &b)
       FT fe;
       for (size_t i = 0; i < d; ++i)
         be[i]       = bo[i] + ND_GAMMA * (br[i] - bo[i]);
-      enforce_bounds(be);
+      enforce(be);
       fe = repeated_enum_cost(be);
       if (verbosity)
       {
@@ -671,7 +683,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ evec &b)
     FT fc;
     for (size_t i = 0; i < d; ++i)
       bc[i]       = bo[i] + ND_RHO * (bs[maxi][i] - bo[i]);
-    enforce_bounds(bc);
+    enforce(bc);
     fc = repeated_enum_cost(bc);
     if (verbosity)
     {
@@ -701,7 +713,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ evec &b)
       {
         bs[j][i] = bs[mini][i] + ND_SIGMA * (bs[j][i] - bs[mini][i]);
       }
-      enforce_bounds(bs[j]);
+      enforce(bs[j]);
       fs[j] = repeated_enum_cost(bs[j]);  // initialize the value
     }
   }
