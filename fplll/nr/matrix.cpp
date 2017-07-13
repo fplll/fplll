@@ -535,7 +535,7 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_qary(int k, Z_NR<ZT> &q)
       matrix[i][j].randm(q);
 
   for (i = d - k; i < d; i++)
-    for (j         = 0; j < d - k; j++)
+    for (j         = 0; j < d; j++)
       matrix[i][j] = 0;
 
   for (i         = d - k; i < d; i++)

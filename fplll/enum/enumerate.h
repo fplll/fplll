@@ -28,10 +28,10 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <typename FT> class EnumerationDyn : public EnumerationBase
+template <typename ZT, typename FT> class EnumerationDyn : public EnumerationBase
 {
 public:
-  EnumerationDyn(MatGSO<Z_NR<>, FT> &gso, Evaluator<FT> &evaluator,
+  EnumerationDyn(MatGSO<ZT, FT> &gso, Evaluator<FT> &evaluator,
                  const vector<int> &max_indices = vector<int>())
       : _gso(gso), _evaluator(evaluator)
   {
@@ -47,7 +47,7 @@ public:
   inline uint64_t get_nodes() const { return nodes; }
 
 private:
-  MatGSO<Z_NR<>, FT> &_gso;
+  MatGSO<ZT, FT> &_gso;
   Evaluator<FT> &_evaluator;
   vector<FT> target;
 
@@ -65,12 +65,12 @@ private:
   virtual void process_subsolution(int offset, enumf newdist);
 };
 
-template <typename FT> class Enumeration
+template <typename ZT, typename FT> class Enumeration
 {
 public:
-  Enumeration(MatGSO<Z_NR<>, FT> &gso, Evaluator<FT> &evaluator,
+  Enumeration(MatGSO<ZT, FT> &gso, Evaluator<FT> &evaluator,
               const vector<int> &max_indices = vector<int>())
-      : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr)
+      : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr), _nodes(0)
   {
   }
 
@@ -84,7 +84,7 @@ public:
     if (get_external_enumerator() != nullptr && subtree.empty() && target_coord.empty())
     {
       if (enumext.get() == nullptr)
-        enumext.reset(new ExternalEnumeration<FT>(_gso, _evaluator));
+        enumext.reset(new ExternalEnumeration<ZT, FT>(_gso, _evaluator));
       if (enumext->enumerate(first, last, fmaxdist, fmaxdistexpo, pruning, dual))
       {
         _nodes = enumext->get_nodes();
@@ -94,7 +94,7 @@ public:
     // if external enumerator is not available, not possible or when it fails then fall through to
     // fplll enumeration
     if (enumdyn.get() == nullptr)
-      enumdyn.reset(new EnumerationDyn<FT>(_gso, _evaluator, _max_indices));
+      enumdyn.reset(new EnumerationDyn<ZT, FT>(_gso, _evaluator, _max_indices));
     enumdyn->enumerate(first, last, fmaxdist, fmaxdistexpo, target_coord, subtree, pruning, dual,
                        subtree_reset);
     _nodes = enumdyn->get_nodes();
@@ -103,11 +103,11 @@ public:
   inline uint64_t get_nodes() const { return _nodes; }
 
 private:
-  MatGSO<Z_NR<>, FT> &_gso;
+  MatGSO<ZT, FT> &_gso;
   Evaluator<FT> &_evaluator;
   vector<int> _max_indices;
-  std::unique_ptr<EnumerationDyn<FT>> enumdyn;
-  std::unique_ptr<ExternalEnumeration<FT>> enumext;
+  std::unique_ptr<EnumerationDyn<ZT, FT>> enumdyn;
+  std::unique_ptr<ExternalEnumeration<ZT, FT>> enumext;
   uint64_t _nodes;
 };
 
