@@ -7,6 +7,8 @@ EXTRA_DIST = io/json.hpp ballvol.const factorial.const
 
 CLEANFILES = *.gcov .libs/*.gcda .libs/*.gcno *.gcno *.gcda */*.gcno */*.gcda
 
+nodist_include_fplll_HEADERS=fplll_config.h
+
 nobase_include_fplll_HEADERS=defs.h fplll.h \
 	nr/dpe.h \
 	nr/matrix.h \
@@ -30,7 +32,7 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	util.h \
 	svpcvp.h bkz.h lll.h gso_interface.h gso_gram.h gso.h  \
 	enum/evaluator.h \
-	fplll_config.h wrapper.h \
+	wrapper.h \
 	bkz_param.h \
 	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h \
 	sieve/sieve_gauss.h sieve/sieve_common.h sieve/sieve_gauss_str.h sieve/sampler_basic.h \
