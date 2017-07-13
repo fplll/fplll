@@ -145,16 +145,30 @@ AS_IF([test "x$enable_simd_module" != "xno"],
       [AX_CHECK_COMPILE_FLAG(-mavx2, avx2=yes, avx2=no)])
 
 AS_IF([test "x$enable_simd_module" != "xno"],
+      [AX_CHECK_COMPILE_FLAG(-mavx256, avx256=yes, avx256=no)])
+
+AS_IF([test "x$enable_simd_module" != "xno"],
       [AX_CHECK_COMPILE_FLAG(-mavx512, avx512=yes, avx512=no)])
 
 AS_IF([test x"$avx" = x"yes"],
-       AC_DEFINE([FPLLL_HAVE_AVX], [1], [use AVX instruction set]))
+       [AC_DEFINE([FPLLL_HAVE_AVX], [1], [use AVX instruction set])
+       AVX_FLAGS="-mavx"
+       AC_SUBST(AVX_FLAGS)])
 
 AS_IF([test x"$avx2" = x"yes"],
-       AC_DEFINE([FPLLL_HAVE_AVX2], [1], [use AVX2 instruction set]))
+       [AC_DEFINE([FPLLL_HAVE_AVX2], [1], [use AVX2 instruction set])
+        AVX2_FLAGS="-mavx2"
+        AC_SUBST(AVX2_FLAGS)])
+
+AS_IF([test x"$avx256" = x"yes"],
+       [AC_DEFINE([FPLLL_HAVE_AVX256], [1], [use AVX256 instruction set])
+        AVX2_FLAGS="-mavx256"
+        AC_SUBST(AVX2_FLAGS)])
 
 AS_IF([test x"$avx512" = x"yes"],
-       AC_DEFINE([FPLLL_HAVE_AVX512], [1], [use AVX512 instruction set]))
+       [AC_DEFINE([FPLLL_HAVE_AVX512], [1], [use AVX512 instruction set])
+        AVX2_FLAGS="-mavx512"
+        AC_SUBST(AVX2_FLAGS)])
 
 # Store version numbers in header
 

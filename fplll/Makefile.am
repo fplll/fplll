@@ -93,8 +93,8 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	simd/simd.cpp simd/simd.h simd/simd_generic.h \
         simd/simd_avx256.cpp
 
-%_avx256.o : CXXFLAGS += $(SIMD_FLAGS)
-%_avx256.lo : CXXFLAGS += $(SIMD_FLAGS)
+%_avx256.o : CXXFLAGS += $(AVX256_FLAGS)
+%_avx256.lo : CXXFLAGS += $(AVX256_FLAGS)
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
 libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD)
