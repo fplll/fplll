@@ -606,7 +606,9 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_trg2(FP_NR<mpfr_t> *w)
   }
 }
 
-template <class ZTfrom, class ZTto> bool convert(const ZZ_mat<ZTfrom> &Afrom, ZZ_mat<ZTto> &Ato, int buffer) {
+template <class ZTfrom, class ZTto>
+bool convert(const ZZ_mat<ZTfrom> &Afrom, ZZ_mat<ZTto> &Ato, int buffer)
+{
   Ato.clear();
   int r = Afrom.get_rows();
   int c = Afrom.get_cols();
@@ -614,16 +616,19 @@ template <class ZTfrom, class ZTto> bool convert(const ZZ_mat<ZTfrom> &Afrom, ZZ
   long threshold = (1L << (numeric_limits<long>::digits - buffer - 1));
   //~ cerr << "Threshold = " << threshold << endl;
   Z_NR<ZTfrom> ztmp;
-  for (int i = 0; i < r; ++i) {
-    for (int j = 0 ; j < c; ++j) {
+  for (int i = 0; i < r; ++i)
+  {
+    for (int j = 0; j < c; ++j)
+    {
       ztmp.abs(Afrom[i][j]);
-      if (ztmp > threshold) {
+      if (ztmp > threshold)
+      {
         return false;
       }
       Ato[i][j] = Afrom[i][j].get_si();
     }
   }
-  
+
   return true;
 }
 
