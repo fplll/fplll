@@ -20,8 +20,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template<typename SIMD_type>
-class SIMD_generic_implementation: public SIMD_type
+template <typename SIMD_type> class SIMD_generic_implementation : public SIMD_type
 {
 public:
   using typename SIMD_type::vec_t;
@@ -29,41 +28,30 @@ public:
   using SIMD_type::v_zero;
   using SIMD_type::vv_mul;
   using SIMD_type::vv_add;
+  using SIMD_type::detect;
 
-  static vec_t* convert(double* x)
+  static vec_t *convert(double *x) { return reinterpret_cast<vec_t *>(x); }
+  static const vec_t *convert(const double *x) { return reinterpret_cast<const vec_t *>(x); }
+  static vec_t load(const vec_t *x) { return *x; }
+  static vec_t load(const double *x) { return *convert(x); }
+  static double &get(vec_t &x, size_t i) { return reinterpret_cast<double *>(&x)[j]; }
+  static const double &get(const vec_t &x, size_t i)
   {
-    return reinterpret_cast<vec_t*>(x);
+    return reinterpret_cast<const double *>(&x)[j];
   }
-  static const vec_t* convert(const double* x)
+  static double dot_product(const double *x, const double *y, size_t n)
   {
-    return reinterpret_cast<const vec_t*>(x);
-  }
-  static vec_t load(const vec_t* x)
-  {
-    return *x;
-  }
-  static vec_t load(const double* x)
-  {
-    return *convert(x);
-  }
+    vec_t res = v_zero();
 
-  static double dot_product(const double* x, const double* y, size_t n)
-  {
-    union {
-      vec_t v;
-      double d[width];
-    } res;
-    res.v = v_zero();
-
-    size_t i = 0, e = n & (size_t(0)-size_t(width));
+    size_t i = 0, e = n & (size_t(0) - size_t(width));
     for (; i != e; i += width)
     {
-      res.v = vv_add(res.v, vv_mul(load(x+i), load(y+i)));
+      res = vv_add(res, vv_mul(load(x + i), load(y + i)));
     }
     double r = 0;
-    for (size_t j = 1; j < width; ++j)
+    for (size_t j = 0; j < width; ++j)
     {
-      r += res.d[j];
+      r += get(res, j);
     }
     for (; i != n; ++i)
     {
