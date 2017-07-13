@@ -472,25 +472,37 @@ private:
   bool set_status(int new_status);
 
   const Pruning &get_pruning(int kappa, int block_size, const BKZParam &par) const;
-
+  
+  // handles the general case of inserting a vector into the (dual) basis, i.e.
+  // when none of the coefficients are \pm 1
   bool svp_postprocessing_generic(int kappa, int block_size, const vector<FT> &solution,
                                   bool dual = false);
+  // a truncated tour: svp reducing from min_row to max_row without decreasing the window
+  // size (simply returns when the last block is reduced)
   bool trunc_tour(int &kappa_max, const BKZParam &param, int min_row, int max_row);
+  // a truncated dual tour: dual svp reducing from max_row to min_row without decreasing
+  // the window size (simply returns when the first block is reduced)
   bool trunc_dtour(const BKZParam &param, int min_row, int max_row);
 
   const BKZParam &param;
   int num_rows;
   MatGSO<Integer, FT> &m;
   LLLReduction<Integer, FT> &lll_obj;
+  // evaluator passed to the enumeration object to handle solutions found
   FastEvaluator<FT> evaluator;
+  // slack variable for svp reductions
   FT delta;
 
+  // an acronym for the type of block reduction used, for reporting purposes
   const char *algorithm;
+  // current value of the potential function as defined in the slide reduction paper
+  // used to reliably determine terminating condition during slide reduction
+  FT sld_potential;
+  
   // Temporary data
   const vector<FT> empty_target, empty_sub_tree;
   FT max_dist, delta_max_dist;
   double cputime_start;
-  FT sld_potential;
 };
 
 /**
