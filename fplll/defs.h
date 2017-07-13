@@ -204,30 +204,42 @@ enum LLLFlags
   LLL_DEFAULT   = 0
 };
 
+/** This enum covers the shortest vector methods with default SVPM_PROVED
+ * or, alternatively SVPM_FAST which has effect on the ErrorBoundedEvaluator.
+ */
 enum SVPMethod
 {
-  SVPM_FAST   = 0,
-  SVPM_PROVED = 2
+  SVPM_FAST   = 0, /*! uses the FastErrorBoundedEvaluator */ 
+  SVPM_PROVED = 2  /*! uses the ExactErrorBoundedEvaluator */ 
 };
 
+/** This enum covers the closest vector methods with default CVPM_PROVED
+ * or, alternatively SVPM_FAST which has effect on the ErrorBoundedEvaluator.
+ */
 enum CVPMethod
 {
-  CVPM_FAST   = 0,
-  CVPM_PROVED = 2
+  CVPM_FAST   = 0, /*! is the standard behaviour */ 
+  CVPM_PROVED = 2 /*! Exact CVP needs to reset enumeration below depth with maximal r_i */ 
 };
 
+/** This enum covers the shortest vector flags with default SVP_DEFAULT
+ * or one of SVP_VERBOSE, SVP_OVERRIDE_BND, and SVP_DUAL.
+ */
 enum SVPFlags
 {
-  SVP_DEFAULT      = 0,
-  SVP_VERBOSE      = 1,
-  SVP_OVERRIDE_BND = 2,
-  SVP_DUAL         = 4
+  SVP_DEFAULT      = 0, /*! is the standard behaviour */ 
+  SVP_VERBOSE      = 1, /*! writing additional information to console */ 
+  SVP_OVERRIDE_BND = 2, /*! computing and checking initial max error bound */ 
+  SVP_DUAL         = 4  /*! computing the shortest vector of the dual lattice (in the dual basis) instead */ 
 };
 
+/** This enum covers the clostest vector flags with default SVP_DEFAULT
+ * or, alternatively SVP_VERBOSE, both taken from SVPFlags.
+ */
 enum CVPFlags
 {
-  CVP_DEFAULT = SVP_DEFAULT,
-  CVP_VERBOSE = SVP_VERBOSE
+  CVP_DEFAULT = SVP_DEFAULT,/*! is the standard behaviour */ 
+  CVP_VERBOSE = SVP_VERBOSE /*! writing additional information to console */ 
 };
 
 const double BKZ_DEF_AUTO_ABORT_SCALE        = 1.0;

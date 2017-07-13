@@ -23,10 +23,25 @@
 FPLLL_BEGIN_NAMESPACE
 
 /**
- * Computes a shortest vector of a lattice.
- * The vectors must be linearly independant and the basis must be LLL-reduced
- * with delta=LLL_DEF_DELTA and eta=LLL_DEF_ETA.
- * The result is guaranteed if method = SVPM_PROVED.
+ * @brief SVP solver - computes a shortest vector in a lattice.
+ * 
+ * @param[out] b
+ * basis vectors must be linearly independent and LLL-reduced.
+ * 
+ * @param[out] sol_coord
+ * coordinates of the shortest vector with respect to the basis b.
+ * 
+ * @param method = SVPM_PROVED
+ * The result is guaranteed if method = SVPM_PROVED opposed to SVPM_FAST.
+ * 
+ * @param flags = SVP_DEFAULT
+ * one of SVP_DEFAULT, SVP_VERBOSE, SVP_OVERRIDE_BND, and SVP_DUAL with:
+ * SVP_DEFAULT the standard behaviour, 
+ * SVP_VERBOSE writing additional information to console,
+ * SVP_OVERRIDE_BND computing and checking initial max error bound, and 
+ * SVP_DUAL computing the shortest vector of the dual lattice (in the dual basis) instead.
+ * 
+ * @return result Success or failure (due to numerical instability).
  */
 int shortest_vector(IntMatrix &b, IntVect &sol_coord, SVPMethod method = SVPM_PROVED,
                     int flags = SVP_DEFAULT);
@@ -43,7 +58,7 @@ int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &a
                             const vector<double> &pruning, int flags = SVP_DEFAULT);
 /**
  * Computes a closest vector of a lattice to a target.
- * The vectors must be linearly independant and the basis must be LLL-reduced
+ * The vectors must be linearly independent and the basis must be LLL-reduced
  * with delta=LLL_DEF_DELTA and eta=LLL_DEF_ETA.
  * The result is guaranteed if method = CVPM_PROVED.
  */

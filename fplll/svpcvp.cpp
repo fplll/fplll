@@ -25,7 +25,7 @@ FPLLL_BEGIN_NAMESPACE
 
 /* Returns i such that the shortest vector of L(b) belongs to
    L(b_0,...,b_(i-1)), assuming that the error on rdiag's is less than 100%.
-   If b is LLL-reduced, then for any reasonnable dimension,
+   If b is LLL-reduced, then for any reasonable dimension,
    max(rdiag[0],...,rdiag[i-1]) / min(rdiag[0],...,rdiag[i-1])
    is much smaller than numeric_limits<double>::max */
 static int last_useful_index(const Matrix<Float> &r)
@@ -60,7 +60,7 @@ static void get_basis_min(Integer &basis_min, const IntMatrix &b, int first, int
 static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
                           ErrorBoundedEvaluator &evaluator, const vector<enumf> &pruning, int flags)
 {
-  Enumeration<Integer, Float> enumobj(gso, evaluator);
+  Enumeration<Float> enumobj(gso, evaluator);
   bool dual = (flags & SVP_DUAL);
   if (d == 1 || !pruning.empty() || dual)
   {
@@ -97,6 +97,8 @@ static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
   }
   return !evaluator.empty();
 }
+
+
 
 static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method,
                               const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
@@ -406,7 +408,7 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
   vector<int> max_indices;
   if (method & CVPM_PROVED)
   {
-    // For Exact CVP, we need to reset enum below depth with maximal r_i
+    // For Exact CVP, we need to reset enumeration below depth with maximal r_i
     max_indices = vector<int>(d);
     int cur, max_index, previous_max_index;
     previous_max_index = max_index = d - 1;
@@ -435,7 +437,7 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
   FastErrorBoundedEvaluator evaluator(n, gso.get_mu_matrix(), gso.get_r_matrix(), EVALMODE_CV);
 
   // Main loop of the enumeration
-  Enumeration<Integer, Float> enumobj(gso, evaluator, max_indices);
+  Enumeration<Float> enumobj(gso, evaluator, max_indices);
   enumobj.enumerate(0, d, max_dist, 0, target_coord);
 
   int result = RED_ENUM_FAILURE;
