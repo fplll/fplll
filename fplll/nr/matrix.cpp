@@ -614,7 +614,6 @@ bool convert(const ZZ_mat<ZTfrom> &Afrom, ZZ_mat<ZTto> &Ato, int buffer)
   int c = Afrom.get_cols();
   Ato.resize(r, c);
   long threshold = (1L << (numeric_limits<long>::digits - buffer - 1));
-  //~ cerr << "Threshold = " << threshold << endl;
   Z_NR<ZTfrom> ztmp;
   for (int i = 0; i < r; ++i)
   {
