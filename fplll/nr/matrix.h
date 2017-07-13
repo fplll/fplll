@@ -321,6 +321,15 @@ and random sub-diagonal coefficients.
   void gen_trg2(FP_NR<mpfr_t> *w);
 };
 
+/**
+ * Converts integer matrices. Conversion is coing through get_si(), so ONLY use for 
+ * small numbers that fit into longs. More specifically, Afrom is converted to Ato 
+ * (and true is returned) if all numbers in Afrom fit into 
+ * numeric_limits<long>::digits - buffer bits. Otherwise, conversion is aborted and 
+ * false is returned.
+ */
+template <class ZTfrom, class ZTto> bool convert(const ZZ_mat<ZTfrom> &Afrom, ZZ_mat<ZTto> &Ato, int buffer = 0);
+
 /** FP_mat is a matrix of floating-point numbers. */
 template <class FT> class FP_mat : public Matrix<FP_NR<FT>>
 {
