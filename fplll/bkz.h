@@ -25,7 +25,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <class FT> class BKZAutoAbort
+template <class ZT, class FT> class BKZAutoAbort
 {
 public:
   /**
@@ -37,7 +37,7 @@ public:
      @return
   */
 
-  BKZAutoAbort(MatGSO<Integer, FT> &m, int num_rows, int start_row = 0)
+  BKZAutoAbort(MatGSO<ZT, FT> &m, int num_rows, int start_row = 0)
       : m(m), old_slope(numeric_limits<double>::max()), no_dec(-1), num_rows(num_rows),
         start_row(start_row)
   {
@@ -45,7 +45,7 @@ public:
   bool test_abort(double scale = 1.0, int maxNoDec = 5);
 
 private:
-  MatGSO<Integer, FT> &m;
+  MatGSO<ZT, FT> &m;
   double old_slope;
   int no_dec;
   int num_rows;
@@ -53,10 +53,10 @@ private:
 };
 
 /* The matrix must be LLL-reduced */
-template <class FT> class BKZReduction
+template <class ZT, class FT> class BKZReduction
 {
 public:
-  BKZReduction(MatGSO<Integer, FT> &m, LLLReduction<Integer, FT> &lll_obj, const BKZParam &param);
+  BKZReduction(MatGSO<ZT, FT> &m, LLLReduction<ZT, FT> &lll_obj, const BKZParam &param);
   ~BKZReduction();
 
   bool svp_preprocessing(int kappa, int block_size, const BKZParam &param);
@@ -195,8 +195,8 @@ private:
 
   const BKZParam &param;
   int num_rows;
-  MatGSO<Integer, FT> &m;
-  LLLReduction<Integer, FT> &lll_obj;
+  MatGSO<ZT, FT> &m;
+  LLLReduction<ZT, FT> &lll_obj;
   FastEvaluator<FT> evaluator;
   FT delta;
 
