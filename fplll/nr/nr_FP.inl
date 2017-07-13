@@ -40,7 +40,7 @@ public:
 
   /**
    * Sets the precision of new FP_NR&lt;F&gt; objects. Returns the
-   # previous value. This has no effect is F != mpfr_t.
+     previous value. This has no effect is F != mpfr_t.
    */
   static inline unsigned int set_prec(unsigned int prec);
 
