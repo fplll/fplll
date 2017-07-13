@@ -75,7 +75,8 @@ int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &a
  * coordinates of the target vector.
  * 
  * @param[in] method = CVPM_FAST
- * or, alternatively CVPM_PROVED which needs to reset enumeration below depth with maximal r_i.
+ * or, alternatively CVPM_PROVED which finds a guaranteed solution and resets
+ * enumeration below depth with maximal r_i.
  * 
  * @param[in] flags = SVP_DEFAULT
  * or, alternatively SVP_VERBOSE(!), both taken from SVPFlags.
