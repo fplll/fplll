@@ -284,6 +284,14 @@ inline void FP_NR<mpfr_t>::swap(FP_NR<mpfr_t>& a) {
   mpfr_swap(data, a.data);
 }
 
+/* the hypot function for Givens rotations */
+template<>
+inline void FP_NR<mpfr_t>::hypot(const FP_NR<mpfr_t>& a, const FP_NR<mpfr_t>& b, mp_rnd_t rnd) {
+  mpfr_hypot(data, a.data, b.data, rnd);
+}
+
+
+
 
 /* operators FP_NR<mpfr_t> */
 template<>
