@@ -101,11 +101,11 @@ public:
   /**
      @brief Create BKZ parameters
 
-     @param block_size               
+     @param block_size
         block size for the reduction
      @param strategies
         vector of strategies used for pruning and preprocessing
-     @param delta                    
+     @param delta
         LLL parameter delta
      @param flags
         various flags that can be arbitrarily combined (using |):
@@ -113,7 +113,8 @@ public:
           BKZ_NO_LLL        do not run LLL before block reduction (use at your own risk)
           BKZ_MAX_LOOPS     terminate after max_loops iterations
           BKZ_MAX_TIME      terminate after max_time time
-          BKZ_BOUNDED_LLL   only run LLL in current block during SVP preprocessing (use at your own risk)
+          BKZ_BOUNDED_LLL   only run LLL in current block during SVP preprocessing (use at your own
+     risk)
           BKZ_AUTO_ABORT    heuristically terminate the reduction if progress stalls
           BKZ_DUMP_GSO      after every iteration write the shape of the current basis to a file
           BKZ_GH_BND        use the Gaussian heuristic to reduce the enumeration bound of possible
@@ -131,7 +132,7 @@ public:
         set enumeration bound to Gaussian heuristic times `gh_factor`
      @param min_success_probability
         minimum success probability in an SVP reduction (when using pruning)
-     @param rerandomization_density  
+     @param rerandomization_density
         the heavier rerandomization, the better our guarantees and costs
   */
 

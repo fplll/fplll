@@ -111,7 +111,7 @@ bool BKZReduction<ZT, FT>::svp_preprocessing(int kappa, int block_size, const BK
   }
   if (lll_obj.n_swaps > 0)
     clean = false;
-  
+
   // run one tour of recursive preprocessing
   auto &preproc = param.strategies[block_size].preprocessing_block_sizes;
   for (auto it = preproc.begin(); it != preproc.end(); ++it)
@@ -161,8 +161,8 @@ bool BKZReduction<ZT, FT>::svp_postprocessing(int kappa, int block_size, const v
       m.row_op_begin(kappa, kappa + block_size);
     }
     else
-    { 
-      // in case of primal reduction, we can restrict invalidation to 
+    {
+      // in case of primal reduction, we can restrict invalidation to
       // the one vector we're adding rows to
       m.row_op_begin(kappa + i_vector, kappa + i_vector + 1);
     }
@@ -260,7 +260,7 @@ bool BKZReduction<ZT, FT>::svp_postprocessing_generic(int kappa, int block_size,
     off *= 2;
   }
   m.row_op_end(kappa, kappa + d);
-  
+
   // the gcd computation will leave the desired vector in last
   // position, so in case of primal reduction we need to move it up
   if (!dual)
@@ -282,9 +282,9 @@ bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZPar
   // already in the basis). if size reduction is not called,
   // old_first might be incorrect (e.g. close to 0) and the function
   // will return an incorrect clean flag
-  // WARNING: do not try to increase the size reduction beyond first. 
+  // WARNING: do not try to increase the size reduction beyond first.
   // GSO might be invalid beyond this and this can cause numerical issues
-  // and even nullpointers! 
+  // and even nullpointers!
   if (!lll_obj.size_reduction(0, first + 1, 0))
   {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
@@ -346,9 +346,9 @@ bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZPar
   {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
-  
+
   // in order to check if we made progress, we compare the new shortest vector to the
-  // old one (note that simply checking clean flags is not sufficient since 
+  // old one (note that simply checking clean flags is not sufficient since
   // preprocessing can have changed things but we don't know if it made progress)
   long new_first_expo;
   FT new_first = m.get_r_exp(first, first, new_first_expo);
@@ -514,7 +514,7 @@ bool BKZReduction<ZT, FT>::slide_tour(const int loop, const BKZParam &par, int m
            << (cputime() - cputime_start) * 0.001 << "s)";
     dump_gso(par.dump_gso_filename, prefix.str());
   }
-  
+
   // we check the potential function to see if we made progress
   if (new_potential >= sld_potential)
     return true;
@@ -759,7 +759,6 @@ template <class ZT, class FT> bool BKZAutoAbort<ZT, FT>::test_abort(double scale
   old_slope = min(old_slope, new_slope);
   return no_dec >= maxNoDec;
 }
-
 
 // call LLLReduction() and then BKZReduction.
 template <class FT>
