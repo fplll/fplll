@@ -16,42 +16,32 @@
 #ifndef FPLLL_SIMD_AVX256_H
 #define FPLLL_SIMD_AVX256_H
 
-#ifdef FPLLL_HAVE_AVX256
-
+#include "simd.h"
 #include "simd_generic.h"
-#include "immintrin.h"
+#include <immintrin.h>
 
 FPLLL_BEGIN_NAMESPACE
 
 struct SIMD_avx256
 {
-  typedef __m256d vec_t; 
+  typedef __m256d vec_t;
   static const size_t width = 4;
 
-  static vec_t v_zero()
+  static vec_t v_zero() { return _mm256_setzero_pd(); }
+  static vec_t vv_mul(vec_t x, vec_t y) { return _mm256_mul_pd(x, y); }
+  static vec_t vv_add(vec_t x, vec_t y) { return _mm256_add_pd(x, y); }
+  static bool detect()
   {
-    return _mm256_setzero_pd();
-  }
-  static vec_t vv_mul(vec_t x, vec_t y)
-  {
-    return _mm256_mul_pd(x, y);
-  }
-  static vec_t vv_add(vec_t x, vec_t y)
-  {
-    return _mm256_add_pd(x, y);
+    __builtin_cpu_init();
+    return __builtin_cpu_supports("avx");
   }
 };
 
-static bool detect_avx256()
-{
-  return true;
-}
+template class SIMD_generic_implementation<SIMD_avx256>;
+using AVX256 = SIMD_generic_implementation<SIMD_avx256>;
 
-const SIMD_functions SIMD_avx256_functions = 
-  { detect_avx256, SIMD_generic_implementation<SIMD_avx256>::dot_product };
+const SIMD_functions SIMD_avx256_functions = {AVX256::detect, AVX256::dot_product};
 
 FPLLL_END_NAMESPACE
-
-#endif
 
 #endif

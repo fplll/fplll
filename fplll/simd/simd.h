@@ -21,20 +21,22 @@
 FPLLL_BEGIN_NAMESPACE
 
 /* each SIMD version provides a struct of pointers to use */
-struct SIMD_functions {
+struct SIMD_functions
+{
   typedef bool (*cpu_supported_ptr)();
   cpu_supported_ptr cpu_supported;
 
-  typedef double (*dot_product_ptr)(const double*, const double*, size_t n);
+  typedef double (*dot_product_ptr)(const double *, const double *, size_t n);
   dot_product_ptr dot_product;
 };
 
-class SIMD_operations {
+class SIMD_operations
+{
 public:
   /* detect which SIMD version to use and initialize functions */
   SIMD_operations();
 
-  double dot_product(const double* x, const double* y, size_t n) const
+  double dot_product(const double *x, const double *y, size_t n) const
   {
     return (*functions.dot_product)(x, y, n);
   }

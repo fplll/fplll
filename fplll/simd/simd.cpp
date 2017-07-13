@@ -23,20 +23,17 @@ extern const SIMD_functions SIMD_avx256_functions;
 #endif
 
 /* non-SIMD implementation */
-static bool always_true()
-{
-  return true;
-}
-static double dot_product(const double* x, const double* y, size_t n)
+static bool always_true() { return true; }
+static double dot_product(const double *x, const double *y, size_t n)
 {
   double ret = 0;
   for (size_t i = 0; i < n; ++i)
   {
-    ret += x[i]*y[i];
+    ret += x[i] * y[i];
   }
   return ret;
 }
-const SIMD_functions SIMD_nonsimd_functions = { always_true, dot_product };
+const SIMD_functions SIMD_nonsimd_functions = {always_true, dot_product};
 
 /* SIMD_operations constructor: decide which SIMD version to use */
 SIMD_operations::SIMD_operations()
