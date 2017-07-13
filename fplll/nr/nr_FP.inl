@@ -326,6 +326,11 @@ public:
    * Efficiently swaps the values of two FP_NR.
    */
   inline void swap(FP_NR<F> &a);
+  /**
+   * value := sqrt(a^2 + b^2).
+   * Needed for givens rotations
+   */
+  inline void hypot(const FP_NR<F> &a, const FP_NR<F> &b, mp_rnd_t rnd = GMP_RNDN);
 
 };  // End class FP_NR
 
