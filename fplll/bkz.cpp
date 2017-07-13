@@ -755,21 +755,21 @@ int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_
     gso_flags |= GSO_ROW_EXPO;
 
   ZZ_mat<long> bl;
-  if (convert<IntegerT, long>(b, bl, 10))
+  if (convert<long, mpz_t>(bl, b, 10))
   {
     ZZ_mat<long> ul;
-    convert<IntegerT, long>(u, ul, 0);
+    convert<long, mpz_t>(ul, u, 0);
     ZZ_mat<long> ul_inv;
-    convert<IntegerT, long>(u_inv, ul_inv, 0);
+    convert<long, mpz_t>(ul_inv, u_inv, 0);
 
     MatGSO<Z_NR<long>, FT> m_gso(bl, ul, ul_inv, gso_flags);
     LLLReduction<Z_NR<long>, FT> lll_obj(m_gso, lll_delta, LLL_DEF_ETA, LLL_DEFAULT);
     BKZReduction<Z_NR<long>, FT> bkz_obj(m_gso, lll_obj, param);
     bkz_obj.bkz();
 
-    convert<long, IntegerT>(bl, b, 0);
-    convert<long, IntegerT>(ul, u, 0);
-    convert<long, IntegerT>(ul_inv, u_inv, 0);
+    convert<mpz_t, long>(b, bl, 0);
+    convert<mpz_t, long>(u, ul, 0);
+    convert<mpz_t, long>(u_inv, ul_inv, 0);
     return bkz_obj.status;
   }
   else

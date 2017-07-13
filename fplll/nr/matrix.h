@@ -328,8 +328,8 @@ and random sub-diagonal coefficients.
  * numeric_limits<long>::digits - buffer bits. Otherwise, conversion is aborted and
  * false is returned.
  */
-template <class ZTfrom, class ZTto>
-bool convert(const ZZ_mat<ZTfrom> &Afrom, ZZ_mat<ZTto> &Ato, int buffer = 0);
+template <class ZTto, class ZTfrom>
+bool convert(ZZ_mat<ZTto> &Ato, const ZZ_mat<ZTfrom> &Afrom, int buffer = 0);
 
 /** FP_mat is a matrix of floating-point numbers. */
 template <class FT> class FP_mat : public Matrix<FP_NR<FT>>

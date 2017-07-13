@@ -606,8 +606,8 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_trg2(FP_NR<mpfr_t> *w)
   }
 }
 
-template <class ZTfrom, class ZTto>
-bool convert(const ZZ_mat<ZTfrom> &Afrom, ZZ_mat<ZTto> &Ato, int buffer)
+template <class ZTto, class ZTfrom>
+bool convert(ZZ_mat<ZTto> &Ato, const ZZ_mat<ZTfrom> &Afrom, int buffer)
 {
   Ato.clear();
   int r = Afrom.get_rows();
