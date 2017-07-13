@@ -299,6 +299,12 @@ This library does not currently use multiple cores and running multiple threads 
    ./latticegen r 30 3000 | ./fplll -a svp
    ```
 
+5. Solving CVP
+
+   ```
+   echo "[[17 42 4][50 75 108][11 47 33]][100 101 102]" | ./fplll -a cvp
+   ```
+
 # Alternative interfaces #
 
 - [fpylll](https://github.com/malb/fpylll) is a stand-alone Python interface for fplll.
