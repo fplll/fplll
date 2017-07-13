@@ -20,7 +20,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <typename SIMD_type> class SIMD_generic_implementation : public SIMD_type
+template <typename SIMD_type> class SIMD_double_implementation : public SIMD_type
 {
 public:
   using typename SIMD_type::vec_t;
@@ -28,16 +28,16 @@ public:
   using SIMD_type::v_zero;
   using SIMD_type::vv_mul;
   using SIMD_type::vv_add;
-  using SIMD_type::detect;
+  using SIMD_type::cpu_supported;
 
   static vec_t *convert(double *x) { return reinterpret_cast<vec_t *>(x); }
   static const vec_t *convert(const double *x) { return reinterpret_cast<const vec_t *>(x); }
   static vec_t load(const vec_t *x) { return *x; }
   static vec_t load(const double *x) { return *convert(x); }
-  static double &get(vec_t &x, size_t i) { return reinterpret_cast<double *>(&x)[j]; }
+  static double &get(vec_t &x, size_t i) { return reinterpret_cast<double *>(&x)[i]; }
   static const double &get(const vec_t &x, size_t i)
   {
-    return reinterpret_cast<const double *>(&x)[j];
+    return reinterpret_cast<const double *>(&x)[i];
   }
   static double dot_product(const double *x, const double *y, size_t n)
   {

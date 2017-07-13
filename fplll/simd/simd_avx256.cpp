@@ -22,25 +22,25 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-struct SIMD_avx256
+struct SIMD_double_avx256
 {
   typedef __m256d vec_t;
   static const size_t width = 4;
 
-  static vec_t v_zero() { return _mm256_setzero_pd(); }
-  static vec_t vv_mul(vec_t x, vec_t y) { return _mm256_mul_pd(x, y); }
-  static vec_t vv_add(vec_t x, vec_t y) { return _mm256_add_pd(x, y); }
-  static bool detect()
+  static inline vec_t v_zero() { return _mm256_setzero_pd(); }
+  static inline vec_t vv_mul(vec_t x, vec_t y) { return _mm256_mul_pd(x, y); }
+  static inline vec_t vv_add(vec_t x, vec_t y) { return _mm256_add_pd(x, y); }
+  static bool cpu_supported()
   {
     __builtin_cpu_init();
     return __builtin_cpu_supports("avx");
   }
 };
 
-template class SIMD_generic_implementation<SIMD_avx256>;
-using AVX256 = SIMD_generic_implementation<SIMD_avx256>;
+using AVX256D = SIMD_double_implementation<SIMD_double_avx256>;
+template class SIMD_double_implementation<SIMD_double_avx256>;
 
-const SIMD_functions SIMD_avx256_functions = {AVX256::detect, AVX256::dot_product};
+const SIMD_double_functions SIMD_double_avx256_functions = {AVX256D::cpu_supported, AVX256D::dot_product};
 
 FPLLL_END_NAMESPACE
 
