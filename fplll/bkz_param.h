@@ -109,17 +109,17 @@ public:
         LLL parameter delta
      @param flags
         various flags that can be arbitrarily combined (using |):
-          BKZ_VERBOSE       print additional information during reduction
-          BKZ_NO_LLL        do not run LLL before block reduction (use at your own risk)
-          BKZ_MAX_LOOPS     terminate after max_loops iterations
-          BKZ_MAX_TIME      terminate after max_time time
-          BKZ_BOUNDED_LLL   only run LLL in current block during SVP preprocessing (use at your own
+          - BKZ_VERBOSE       print additional information during reduction
+          - BKZ_NO_LLL        do not run LLL before block reduction (use at your own risk)
+          - BKZ_MAX_LOOPS     terminate after max_loops iterations
+          - BKZ_MAX_TIME      terminate after max_time time
+          - BKZ_BOUNDED_LLL   only run LLL in current block during SVP preprocessing (use at your own
      risk)
-          BKZ_AUTO_ABORT    heuristically terminate the reduction if progress stalls
-          BKZ_DUMP_GSO      after every iteration write the shape of the current basis to a file
-          BKZ_GH_BND        use the Gaussian heuristic to reduce the enumeration bound of possible
-          BKZ_SD_VARIANT    run SD-BKZ
-          BKZ_SLD_RED       run slide reduction
+          - BKZ_AUTO_ABORT    heuristically terminate the reduction if progress stalls
+          - BKZ_DUMP_GSO      after every iteration write the shape of the current basis to a file  
+          - BKZ_GH_BND        use the Gaussian heuristic to reduce the enumeration bound of possible  
+          - BKZ_SD_VARIANT    run SD-BKZ  
+          - BKZ_SLD_RED       run slide reduction
      @param max_loops
         maximum number of loops (or zero to disable this)
      @param max_time
