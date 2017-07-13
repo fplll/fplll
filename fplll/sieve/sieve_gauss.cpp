@@ -15,6 +15,8 @@
 #include "sieve_gauss_4sieve.cpp"
 #include "wrapper.h"
 
+FPLLL_BEGIN_NAMESPACE
+
 #define REDUCE_TIMING
 
 /**
@@ -25,17 +27,17 @@ GaussSieve<ZT, F>::GaussSieve(ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
 {
 
   /* stats */
-  b             = B;
-  nr            = b.get_rows();
-  nc            = b.get_cols();
-  max_list_size = 0;
-  iterations    = 0;
-  collisions    = 0;
-  reductions    = 0;
-  samples       = 0;
-  goal_sqr_norm = 0;
-  mem_lower     = pow(2.0, 0.18 * nc);
-  alg           = alg_arg;
+  b               = B;
+  nr              = b.get_rows();
+  nc              = b.get_cols();
+  max_list_size   = 0;
+  iterations      = 0;
+  collisions      = 0;
+  reductions      = 0;
+  samples         = 0;
+  target_sqr_norm = 0;
+  mem_lower       = pow(2.0, 0.18 * nc);
+  alg             = alg_arg;
   set_verbose(ver);
 
   /* sanity check */
@@ -64,10 +66,7 @@ GaussSieve<ZT, F>::GaussSieve(ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
     iterations_step = 5;
   }
   else
-  {
-    cout << " Error, only support 2-, 3- and 4-sieve" << endl;
-    exit(1);
-  }
+    throw std::invalid_argument("only support 2-, 3- and 4-sieve");
 
   /* clean up list */
   free_list_queue();
@@ -126,10 +125,7 @@ template <class ZT, class F> void GaussSieve<ZT, F>::add_mat_list(ZZ_mat<ZT> &B)
     else if (alg == 4)
       current_norm = update_p_4reduce(p);
     else
-    {
-      cout << " Error, only support 2-, 3- and 4-sieve" << endl;
-      exit(1);
-    }
+      throw std::invalid_argument("only support 2-, 3- and 4-sieve");
 
     if ((current_norm < best_sqr_norm) && (current_norm > 0))
       // if ((current_norm < best_sqr_norm) )
@@ -236,9 +232,9 @@ template <class ZT, class F> void GaussSieve<ZT, F>::free_sampler() { delete Sam
 /**
  * set targeted norm^2
  */
-template <class ZT, class F> void GaussSieve<ZT, F>::set_goal_norm2(Z_NR<ZT> norm)
+template <class ZT, class F> void GaussSieve<ZT, F>::set_target_norm2(Z_NR<ZT> norm)
 {
-  goal_sqr_norm = norm;
+  target_sqr_norm = norm;
 }
 
 /**
@@ -300,7 +296,6 @@ template <class ZT, class F> void GaussSieve<ZT, F>::print_final_info()
     cout << "# [info] true log2(max|L|)/n = " << log2(first_size) / nc << endl;
     cout << "# [info] sv is" << endl;
   }
-  cout << List.front()->v << endl;
   if (verbose)
   {
     final_norm.set_z(best_sqr_norm);
@@ -314,5 +309,18 @@ template <class ZT, class F> NumVect<Z_NR<ZT>> GaussSieve<ZT, F>::return_first()
   return List.front()->v;
 }
 
+template <class ZT, class F> bool GaussSieve<ZT, F>::sieve(Z_NR<ZT> target_norm)
+{
+  set_target_norm2(target_norm);
+  if (alg == 3)
+    return run_3sieve();
+  else if (alg == 4)
+    return run_4sieve();
+  else
+    return run_2sieve();
+}
+
 template class GaussSieve<mpz_t, FP_NR<double>>;
 template class GaussSieve<long, FP_NR<double>>;
+
+FPLLL_END_NAMESPACE

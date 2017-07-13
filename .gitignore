@@ -66,3 +66,5 @@ doc/html/
 /tests/test_sieve
 /fplll-?.?.?/
 /tests/test_cvp
+/tests/test_gso
+/tests/test_lll_gram

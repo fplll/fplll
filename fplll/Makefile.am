@@ -5,6 +5,10 @@ strategydir = $(pkgdatadir)/strategies
 AM_CPPFLAGS = -DFPLLL_DEFAULT_STRATEGY_PATH=\"$(strategydir)\" -DFPLLL_DEFAULT_STRATEGY=\"$(strategydir)/default.json\" -I$(TOPSRCDIR)
 EXTRA_DIST = io/json.hpp ballvol.const factorial.const
 
+CLEANFILES = *.gcov .libs/*.gcda .libs/*.gcno *.gcno *.gcda */*.gcno */*.gcda
+
+nodist_include_fplll_HEADERS=fplll_config.h
+
 nobase_include_fplll_HEADERS=defs.h fplll.h \
 	nr/dpe.h \
 	nr/matrix.h \
@@ -26,11 +30,12 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	nr/nr_Z_mpz.inl \
 	nr/numvect.h \
 	util.h \
-	svpcvp.h bkz.h lll.h gso.h  \
+	svpcvp.h bkz.h lll.h gso_interface.h gso_gram.h gso.h  \
 	enum/evaluator.h \
-	fplll_config.h wrapper.h \
+	wrapper.h \
 	bkz_param.h \
 	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h \
+	sieve/sieve_gauss.h sieve/sieve_common.h sieve/sieve_gauss_str.h sieve/sampler_basic.h \
 	pruner.h
 
 bin_PROGRAMS=fplll latticegen latsieve
@@ -75,7 +80,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	wrapper.cpp wrapper.h \
 	bkz.cpp bkz.h \
 	bkz_param.cpp bkz_param.h \
-	gso.cpp gso.h \
+	gso_interface.cpp gso_interface.h gso_gram.cpp gso_gram.h gso.cpp gso.h \
 	pruner.cpp pruner.h \
 	sieve/sieve_gauss.cpp \
 	sieve/sieve_gauss.h  \

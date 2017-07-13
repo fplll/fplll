@@ -1,6 +1,7 @@
 # fplll #
 
-[![Build Status](https://travis-ci.org/fplll/fplll.svg?branch=master)](https://travis-ci.org/fplll/fplll)
+[![Build Status](https://travis-ci.org/fplll/fplll.svg?branch=master)](https://travis-ci.org/fplll/fplll) [![codecov](https://codecov.io/gh/fplll/fplll/branch/master/graph/badge.svg)](https://codecov.io/gh/fplll/fplll)
+
 
 fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL [[LLL82](#LLL82)] is central to the code, hence the name.
 
@@ -153,7 +154,6 @@ The options are:
 * `-a svp` : prints a shortest non-zero vector of the lattice.
 * `-a sdb` : self dual variant of BKZ-reduction.
 * `-a sld` : Slide reduction.
-* `-a svp` : print a shortest vector of the lattice.
 * `-v` : verbose mode. 
 * `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution).
 * `-r` `size`, `-c` `size` : ignored, provided for compatibility with previous versions of fplll.

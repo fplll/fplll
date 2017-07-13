@@ -25,13 +25,13 @@ FPLLL_BEGIN_NAMESPACE
 static inline bool is_power_of_2(int i) { return (i & (i - 1)) == 0; }
 
 template <class ZT, class FT>
-LLLReduction<ZT, FT>::LLLReduction(MatGSO<ZT, FT> &m, double delta, double eta, int flags)
+LLLReduction<ZT, FT>::LLLReduction(MatGSOInterface<ZT, FT> &m, double delta, double eta, int flags)
     : status(RED_SUCCESS), final_kappa(0), last_early_red(0), n_swaps(0), m(m)
 {
   /* No early reduction in proved mode (i.e. enable_int_gram=true).
      NOTE: To make this possible, the hypothesis "g(i, j) is valid if
      0 <= i < n_known_rows and j <= i" in gso.h should be changed and
-     MatGSO<ZT, FT>::discover_row() should be rewritten. */
+     MatGSOInterface<ZT, FT>::discover_row() should be rewritten. */
   enable_early_red = (flags & LLL_EARLY_RED) && !m.enable_int_gram;
   siegel           = flags & LLL_SIEGEL;
   verbose          = flags & LLL_VERBOSE;
@@ -63,7 +63,7 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end,
   extend_vect(babai_mu, kappa_end);
   extend_vect(babai_expo, kappa_end);
 
-  for (; zeros < d && m.b[0].is_zero(); zeros++)
+  for (; zeros < d && m.b_row_is_zero(0); zeros++)
   {
     m.move_row(kappa_min, kappa_end - 1 - zeros);
   }
@@ -77,7 +77,7 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end,
 
   long long iter, max_iter;
   max_iter = static_cast<long long>(
-      d - 2 * d * (d + 1) * ((m.b.get_max_exp() + 3) / std::log(delta.get_d())));
+      d - 2 * d * (d + 1) * ((m.get_max_exp_of_b() + 3) / std::log(delta.get_d())));
 
   for (iter = 0; iter < max_iter && kappa < kappa_end - zeros; iter++)
   {
@@ -220,7 +220,8 @@ bool LLLReduction<ZT, FT>::babai(int kappa, int size_reduction_end, int size_red
   return true;
 }
 
-template <class ZT, class FT> bool is_lll_reduced(MatGSO<ZT, FT> &m, double delta, double eta)
+template <class ZT, class FT>
+bool is_lll_reduced(MatGSOInterface<ZT, FT> &m, double delta, double eta)
 {
   FT ftmp1;
   FT ftmp2;
@@ -258,8 +259,15 @@ template <class ZT, class FT> bool is_lll_reduced(MatGSO<ZT, FT> &m, double delt
 template class LLLReduction<Z_NR<long>, FP_NR<double>>;
 template class LLLReduction<Z_NR<double>, FP_NR<double>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<double>>;
-template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<double>>(MatGSO<Z_NR<mpz_t>, FP_NR<double>> &m,
-                                                         double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<mpz_t>, FP_NR<double>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<double>> &m,
+                                           double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<double>>(MatGSOInterface<Z_NR<long>, FP_NR<double>> &m,
+                                          double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<double>>(MatGSOInterface<Z_NR<double>, FP_NR<double>> &m,
+                                            double delta, double eta);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class LLLReduction<Z_NR<long>, FP_NR<long double>>;
@@ -267,8 +275,13 @@ template class LLLReduction<Z_NR<double>, FP_NR<long double>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<long double>>;
 
 template bool
-is_lll_reduced<Z_NR<mpz_t>, FP_NR<long double>>(MatGSO<Z_NR<mpz_t>, FP_NR<long double>> &m,
+is_lll_reduced<Z_NR<mpz_t>, FP_NR<long double>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<long double>> &m,
                                                 double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<long double>>(MatGSOInterface<Z_NR<long>, FP_NR<long double>> &m,
+                                               double delta, double eta);
+template bool is_lll_reduced<Z_NR<double>, FP_NR<long double>>(
+    MatGSOInterface<Z_NR<double>, FP_NR<long double>> &m, double delta, double eta);
 #endif
 
 #ifdef FPLLL_WITH_QD
@@ -276,29 +289,56 @@ template class LLLReduction<Z_NR<long>, FP_NR<dd_real>>;
 template class LLLReduction<Z_NR<double>, FP_NR<dd_real>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<dd_real>>;
 
-template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<dd_real>>(MatGSO<Z_NR<mpz_t>, FP_NR<dd_real>> &m,
-                                                          double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<mpz_t>, FP_NR<dd_real>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<dd_real>> &m,
+                                            double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<dd_real>>(MatGSOInterface<Z_NR<long>, FP_NR<dd_real>> &m,
+                                           double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<dd_real>>(MatGSOInterface<Z_NR<double>, FP_NR<dd_real>> &m,
+                                             double delta, double eta);
 
 template class LLLReduction<Z_NR<long>, FP_NR<qd_real>>;
 template class LLLReduction<Z_NR<double>, FP_NR<qd_real>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<qd_real>>;
 
-template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<qd_real>>(MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>> &m,
-                                                          double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<mpz_t>, FP_NR<qd_real>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<qd_real>> &m,
+                                            double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<qd_real>>(MatGSOInterface<Z_NR<long>, FP_NR<qd_real>> &m,
+                                           double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<qd_real>>(MatGSOInterface<Z_NR<double>, FP_NR<qd_real>> &m,
+                                             double delta, double eta);
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template class LLLReduction<Z_NR<long>, FP_NR<dpe_t>>;
 template class LLLReduction<Z_NR<double>, FP_NR<dpe_t>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<dpe_t>>;
-template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<dpe_t>>(MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>> &m,
-                                                        double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<mpz_t>, FP_NR<dpe_t>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<dpe_t>> &m,
+                                          double delta, double eta);
+template bool is_lll_reduced<Z_NR<long>, FP_NR<dpe_t>>(MatGSOInterface<Z_NR<long>, FP_NR<dpe_t>> &m,
+                                                       double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<dpe_t>>(MatGSOInterface<Z_NR<double>, FP_NR<dpe_t>> &m,
+                                           double delta, double eta);
 #endif
 
 template class LLLReduction<Z_NR<long>, FP_NR<mpfr_t>>;
 template class LLLReduction<Z_NR<double>, FP_NR<mpfr_t>>;
 template class LLLReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
-template bool is_lll_reduced<Z_NR<mpz_t>, FP_NR<mpfr_t>>(MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &m,
-                                                         double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<mpz_t>, FP_NR<mpfr_t>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &m,
+                                           double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<mpfr_t>>(MatGSOInterface<Z_NR<long>, FP_NR<mpfr_t>> &m,
+                                          double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<mpfr_t>>(MatGSOInterface<Z_NR<double>, FP_NR<mpfr_t>> &m,
+                                            double delta, double eta);
 
 FPLLL_END_NAMESPACE

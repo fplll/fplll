@@ -57,7 +57,7 @@ matrix:
       - sudo apt-get install -qq -y clang-format-3.9
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-6 CLANGFORMAT=clang-format-3.9
+    env: COMPILER=g++-6 CLANGFORMAT=clang-format-3.9 CXXFLAGS="-O3 -ggdb -fprofile-arcs -ftest-coverage" 
     addons:
       apt:
         sources:
@@ -72,6 +72,13 @@ matrix:
       - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
       - sudo apt-get update -qq 
       - sudo apt-get install -qq -y clang-format-3.9
+    script:
+      - make
+      - make check
+      - cd fplll && gcov --object-directory .libs *.cpp && cd ..
+      - make distcheck
+    after_success:
+      - bash <(curl -s https://codecov.io/bash)
   - os: linux
     compiler: clang
     env: COMPILER=clang++ CLANGFORMAT=clang-format-3.9
@@ -91,7 +98,7 @@ matrix:
     env: COMPILER=clang++ CLANGFORMAT=clang-format
     before_install:
       - brew reinstall gmp
-      - brew install mpfr qd autoconf automake libtool clang-format
+      - brew install mpfr qd autoconf libtool clang-format
 
 install:
   - export CXX="$COMPILER"
@@ -99,7 +106,7 @@ install:
 
 before_script:
   - "./autogen.sh"
-  - "./configure"
+  - "./configure --disable-static --with-max-enumeration-dimension=64"
   - bash .travis-check-style.sh # check that clang-format was used
 
 script:
@@ -110,6 +117,10 @@ script:
 notifications:
   on_success: change
   on_failure: always
+
+branches:
+  only:
+    - master
 
 deploy:
   provider: releases

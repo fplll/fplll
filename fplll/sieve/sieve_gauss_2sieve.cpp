@@ -109,7 +109,7 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::run_2sieve()
   /*
     Loop till you find a short enough vector,
     or enough collisions. */
-  while ((best_sqr_norm > goal_sqr_norm) && (collisions < mult * max_list_size + add))
+  while ((best_sqr_norm > target_sqr_norm) && (collisions < mult * max_list_size + add))
   {
     /* update stats */
     iterations++;
@@ -184,7 +184,7 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::run_2sieve()
     cout << "# Error: check 2-reduced not OK" << endl;
 #endif
 
-  if (best_sqr_norm > goal_sqr_norm)
+  if (best_sqr_norm > target_sqr_norm)
     return false;
   return true;
 }

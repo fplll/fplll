@@ -38,6 +38,25 @@ template <class FT> int test_arithmetic()
   return status;
 }
 
+template <class FT> bool test_hypot()
+{
+  FT a, b, c, d;
+  a = 3.0;
+  b = 4.0;
+  // the hypot function is asymmetric,
+  // so we test both hypot(a,b) and hypot(b,a)
+  // a^2 + b^2 = c^2 = d^2 = 5^2
+  c.hypot(a, b);
+  d.hypot(b, a);
+  int status = (!(abs(c - 5.0) < 0.001) || !(abs(d - 5.0) < 0.001));
+
+  if (status == 1)
+  {
+    cerr << c;
+  }
+  return status;
+}
+
 /**
    @brief
 
@@ -72,7 +91,9 @@ int main(int argc, char *argv[])
 
   int status = 0;
   status |= test_arithmetic<FP_NR<double>>();
+#ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_arithmetic<FP_NR<long double>>();
+#endif
 #ifdef FPLLL_WITH_DPE
   status |= test_arithmetic<FP_NR<dpe_t>>();
 #endif
@@ -83,7 +104,9 @@ int main(int argc, char *argv[])
   status |= test_arithmetic<FP_NR<mpfr_t>>();
 
   status |= test_std<FP_NR<double>>();
+#ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_std<FP_NR<long double>>();
+#endif
 #ifdef FPLLL_WITH_DPE
   status |= test_std<FP_NR<dpe_t>>();
 #endif
@@ -94,7 +117,9 @@ int main(int argc, char *argv[])
   status |= test_std<FP_NR<mpfr_t>>();
 
   status |= test_root<FP_NR<double>>();
+#ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_root<FP_NR<long double>>();
+#endif
 #ifdef FPLLL_WITH_QD
   status |= test_root<FP_NR<dd_real>>();
   status |= test_root<FP_NR<qd_real>>();
@@ -102,7 +127,9 @@ int main(int argc, char *argv[])
   status |= test_root<FP_NR<mpfr_t>>();
 
   status |= test_str<FP_NR<double>>();
+#ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_str<FP_NR<long double>>();
+#endif
 #ifdef FPLLL_WITH_DPE
   status |= test_str<FP_NR<dpe_t>>();
 #endif
@@ -111,6 +138,21 @@ int main(int argc, char *argv[])
   status |= test_str<FP_NR<qd_real>>();
 #endif
   status |= test_str<FP_NR<mpfr_t>>();
+
+  status |= test_hypot<FP_NR<double>>();
+#ifdef FPLLL_WITH_LONG_DOUBLE
+  status |= test_hypot<FP_NR<long double>>();
+#endif
+
+#ifdef FPLLL_WITH_DPE
+  status |= test_hypot<FP_NR<dpe_t>>();
+#endif
+
+#ifdef FPLLL_WITH_QD
+  status |= test_hypot<FP_NR<dd_real>>();
+  status |= test_hypot<FP_NR<qd_real>>();
+#endif
+  status |= test_hypot<FP_NR<mpfr_t>>();
 
   if (status == 0)
   {
