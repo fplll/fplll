@@ -28,16 +28,15 @@ FPLLL_BEGIN_NAMESPACE
 template <class ZT, class FT> class BKZAutoAbort
 {
 
-/**
- * @brief Performs a heuristic check if BKZ can be terminated.
- *
- * Checks if the slope of the basis hasn't decreased in a while.
-*/
-public:
-
   /**
-   * @brief Create an BKZAutoAbort object.  
-   * 
+   * @brief Performs a heuristic check if BKZ can be terminated.
+   *
+   * Checks if the slope of the basis hasn't decreased in a while.
+  */
+public:
+  /**
+   * @brief Create an BKZAutoAbort object.
+   *
    * @param m
    *    GSO object of the basis to be tested
    * @param num_rows
@@ -90,7 +89,7 @@ template <class ZT, class FT> class BKZReduction
 {
   /**
    * @brief Create a BKZObject
-   * 
+   *
    * @param m
    *    GSO object corresponding to the basis to be reduced
    * @param lll_obj
@@ -112,7 +111,7 @@ public:
    * @param block_size
    *    size of the block
    * @param param
-   *    parameter object for the current block size (the parameter object for the recursive 
+   *    parameter object for the current block size (the parameter object for the recursive
    *    calls will be created in this function using the information from this object)
    *@returns
    *    false if it modified the basis, true otherwise
@@ -169,7 +168,7 @@ public:
    * @brief Same as svp_reduction(), but catches exceptions and returns with
    * error status.
    *
-   * Essentially does the same as svp_reduction() with two differences: 
+   * Essentially does the same as svp_reduction() with two differences:
    *    1) it has as additional parameter a clean flag, which is set instead of returned.
    *    2) it catches failures in the reductions and instead of throwing an exception and
    *        returns false in case of a failure (true in case of success).
@@ -227,7 +226,7 @@ public:
    * @brief Same as tour(), but catches exceptions and returns with
    * error status.
    *
-   * Essentially does the same as tour() with two differences: 
+   * Essentially does the same as tour() with two differences:
    *    1) it has as additional parameter a clean flag, which is set instead of returned.
    *    2) it catches failures in the reductions and instead of throwing an exception and
    *        returns false in case of a failure (true in case of success).
@@ -285,11 +284,11 @@ public:
    * @brief Same as sd_tour(), but catches exceptions and returns with
    * error status.
    *
-   * Essentially does the same as sd_tour() with two differences: 
+   * Essentially does the same as sd_tour() with two differences:
    *    1) it has as additional parameter a clean flag, which is set instead of returned.
    *    2) it catches failures in the reductions and instead of throwing an exception and
    *        returns false in case of a failure (true in case of success).
-   *  
+   *
    * @param loop
    *    counter indicating the iteration, only for reporting purposes
    * @param param
@@ -340,11 +339,11 @@ public:
    * @brief Same as hkz(), but catches exceptions and returns with
    * error status.
    *
-   * Essentially does the same as hkz() with two differences: 
+   * Essentially does the same as hkz() with two differences:
    *    1) it has as additional parameter a clean flag, which is set instead of returned.
    *    2) it catches failures in the reductions and instead of throwing an exception and
    *        returns false in case of a failure (true in case of success).
-   * 
+   *
    * @param kappa_max
    *    the largest kappa s.t. the block from min_row to kappa is BKZ reduced, also
    *    only for reporting purposes
@@ -397,11 +396,11 @@ public:
    * @brief Same as slide_tour(), but catches exceptions and returns with
    * error status.
    *
-   * Essentially does the same as slide_tour()with two differences: 
+   * Essentially does the same as slide_tour()with two differences:
    *    1) it has as additional parameter a clean flag, which is set instead of returned.
    *    2) it catches failures in the reductions and instead of throwing an exception and
    *        returns false in case of a failure (true in case of success).
-   * 
+   *
    * @param loop
    *    counter indicating the iteration, only for reporting purposes
    * @param param
