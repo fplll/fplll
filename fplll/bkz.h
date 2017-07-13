@@ -131,7 +131,7 @@ public:
    *    flag specifying if 'solution' is a dual or primal vector and to be
    *    inserted into the basis or its dual
    * @returns
-   *    false if it modified the basis, true otherwise
+   *    false if it made progress, true otherwise
    */
   bool svp_postprocessing(int kappa, int block_size, const vector<FT> &solution, bool dual = false);
 
@@ -154,7 +154,7 @@ public:
    * @param dual
    *    flag specifying if the block is to be SVP or dual SVP reduced.
    * @returns
-   *    false if it modified the basis, true otherwise
+   *    false if it made progress, true otherwise
   */
   bool svp_reduction(int kappa, int block_size, const BKZParam &param, bool dual = false);
 
@@ -210,7 +210,7 @@ public:
    * @param max_row
    *    end of the tour
    * @return
-   *    false if it modified the basis, true otherwise
+   *    false if it made progress, true otherwise
    */
   bool tour(const int loop, int &kappa_max, const BKZParam &param, int min_row, int max_row);
 
@@ -267,7 +267,7 @@ public:
    * @param max_row
    *    end of the tour
    * @return
-   *    false if it modified the basis, true otherwise
+   *    false if it made progress, true otherwise
    */
   bool sd_tour(const int loop, const BKZParam &param, int min_row, int max_row);
   
@@ -320,7 +320,7 @@ public:
    * @param max_row
    *    end of the tour
    * @return
-   *    false if it modified the basis, true otherwise
+   *    false if it made progress, true otherwise
    */
   bool hkz(int &kappa_max, const BKZParam &param, int min_row, int max_row);
   
@@ -375,7 +375,7 @@ public:
    * @param max_row
    *    end of the tour
    * @return
-   *    false if it modified the basis, true otherwise
+   *    false if it made progress, true otherwise
    */
   bool slide_tour(const int loop, const BKZParam &param, int min_row, int max_row);
 
