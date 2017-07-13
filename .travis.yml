@@ -118,6 +118,10 @@ notifications:
   on_success: change
   on_failure: always
 
+branches:
+  only:
+    - master
+
 deploy:
   provider: releases
   file_glob: true
