@@ -17,12 +17,15 @@
 #define FPLLL_SIMD_H
 
 #include <fplll/defs.h>
+#include <string>
 
 FPLLL_BEGIN_NAMESPACE
 
 /* each SIMD version provides a struct of pointers to use */
 struct SIMD_double_functions
 {
+  const char* name;
+
   typedef bool (*cpu_supported_ptr)();
   cpu_supported_ptr cpu_supported;
 
@@ -33,8 +36,11 @@ struct SIMD_double_functions
 class SIMD_operations
 {
 public:
-  /* detect which SIMD version to use and initialize functions */
-  SIMD_operations();
+  /* detect which SIMD version to use and initialize functions, 
+     disable by keywords: sse128d avx256d avx512d */
+  SIMD_operations(const std::string& disable_versions = "");
+
+  std::string simd_double_version() const { return std::string(double_functions.name); }
 
   inline double dot_product(const double *x, const double *y, size_t n) const
   {

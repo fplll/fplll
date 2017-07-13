@@ -18,7 +18,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-#ifdef FPLLL_HAVE_AVX256
+#ifdef FPLLL_HAVE_AVX
 extern const SIMD_double_functions SIMD_double_avx256_functions;
 #endif
 
@@ -33,13 +33,13 @@ static double dot_product(const double *x, const double *y, size_t n)
   }
   return ret;
 }
-const SIMD_double_functions SIMD_double_nonsimd_functions = {always_true, dot_product};
+SIMD_double_functions SIMD_double_nonsimd_functions({"nonsimd", always_true, dot_product});
 
 /* SIMD_operations constructor: decide which SIMD version to use */
-SIMD_operations::SIMD_operations()
+SIMD_operations::SIMD_operations(const std::string& disable_versions)
 {
-#ifdef FPLLL_HAVE_AVX256
-  if (SIMD_double_avx256_functions.cpu_supported())
+#ifdef FPLLL_HAVE_AVX
+  if (disable_versions.find("avx256d") == std::string::npos && SIMD_double_avx256_functions.cpu_supported())
   {
     double_functions = SIMD_double_avx256_functions;
     return;

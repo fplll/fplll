@@ -29,11 +29,8 @@ public:
   using SIMD_type::vv_mul;
   using SIMD_type::vv_add;
   using SIMD_type::cpu_supported;
+  using SIMD_type::load;
 
-  static vec_t *convert(double *x) { return reinterpret_cast<vec_t *>(x); }
-  static const vec_t *convert(const double *x) { return reinterpret_cast<const vec_t *>(x); }
-  static vec_t load(const vec_t *x) { return *x; }
-  static vec_t load(const double *x) { return *convert(x); }
   static double &get(vec_t &x, size_t i) { return reinterpret_cast<double *>(&x)[i]; }
   static const double &get(const vec_t &x, size_t i)
   {
