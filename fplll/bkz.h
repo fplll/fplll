@@ -27,12 +27,17 @@ FPLLL_BEGIN_NAMESPACE
 
 template <class ZT, class FT> class BKZAutoAbort
 {
+
+/**
+ * @brief Performs a heuristic check if BKZ can be terminated.
+ *
+ * Checks if the slope of the basis hasn't decreased in a while.
+*/
 public:
+
   /**
-   * @brief Performs a heuristic check if BKZ can be terminated.
-   *
-   * Checks if the slope of the basis hasn't decreased in a while.
-   *
+   * @brief Create an BKZAutoAbort object.  
+   * 
    * @param m
    *    GSO object of the basis to be tested
    * @param num_rows
@@ -40,7 +45,6 @@ public:
    * @param start_row
    *    the starting point of the vectors to check
   */
-
   BKZAutoAbort(MatGSO<ZT, FT> &m, int num_rows, int start_row = 0)
       : m(m), old_slope(numeric_limits<double>::max()), no_dec(-1), num_rows(num_rows),
         start_row(start_row)
@@ -75,16 +79,18 @@ private:
   int start_row;
 };
 
-/* The matrix must be LLL-reduced */
-template <class ZT, class FT> class BKZReduction
-{
-  /**
+/**
    * @brief The class performing block reduction.
    *
    * This class implements BKZ, SD-BKZ and Slide Reduction. For this
    * it relies on the GSO, LLL, and Enumeration modules. It assumes
    * that the basis is LLL reduced.
-   *
+**/
+template <class ZT, class FT> class BKZReduction
+{
+  /**
+   * @brief Create a BKZObject
+   * 
    * @param m
    *    GSO object corresponding to the basis to be reduced
    * @param lll_obj
@@ -99,14 +105,15 @@ public:
   /**
    * @brief Preprocesses a block
    *
-   * Preprocess a block using LLL or stringer recursive preprocessing.
+   * Preprocess a block using LLL or stronger recursive preprocessing.
    *
    * @param kappa
    *    start of the block
    * @param block_size
    *    size of the block
    * @param param
-   *    parameter object
+   *    parameter object for the current block size (the parameter object for the recursive 
+   *    calls will be created in this function using the information from this object)
    *@returns
    *    false if it modified the basis, true otherwise
    */
@@ -159,11 +166,13 @@ public:
   bool svp_reduction(int kappa, int block_size, const BKZParam &param, bool dual = false);
 
   /**
-   * @brief Same as svp_reduction, but catches exceptions and returns with
+   * @brief Same as svp_reduction(), but catches exceptions and returns with
    * error status.
    *
-   * Essentially does the same as svp_reduction with exception handling, but has as
-   * additional parameter a clean flag, which is set instead of returned.
+   * Essentially does the same as svp_reduction() with two differences: 
+   *    1) it has as additional parameter a clean flag, which is set instead of returned.
+   *    2) it catches failures in the reductions and instead of throwing an exception and
+   *        returns false in case of a failure (true in case of success).
    *
    * @param kappa
    *    start of the block
@@ -215,12 +224,13 @@ public:
   bool tour(const int loop, int &kappa_max, const BKZParam &param, int min_row, int max_row);
 
   /**
-   * @brief Same as tour, but catches exceptions and returns with
+   * @brief Same as tour(), but catches exceptions and returns with
    * error status.
    *
-   * Essentially does the same as tour with exception handling, but has as
-   * additional parameter a clean flag, which is set instead of returned.
-   *
+   * Essentially does the same as tour() with two differences: 
+   *    1) it has as additional parameter a clean flag, which is set instead of returned.
+   *    2) it catches failures in the reductions and instead of throwing an exception and
+   *        returns false in case of a failure (true in case of success).
    * @param loop
    *    counter indicating the iteration, only for reporting purposes
    * @param kappa_max
@@ -272,12 +282,14 @@ public:
   bool sd_tour(const int loop, const BKZParam &param, int min_row, int max_row);
 
   /**
-   * @brief Same as sd_tour, but catches exceptions and returns with
+   * @brief Same as sd_tour(), but catches exceptions and returns with
    * error status.
    *
-   * Essentially does the same as sd_tour with exception handling, but has as
-   * additional parameter a clean flag, which is set instead of returned.
-   *
+   * Essentially does the same as sd_tour() with two differences: 
+   *    1) it has as additional parameter a clean flag, which is set instead of returned.
+   *    2) it catches failures in the reductions and instead of throwing an exception and
+   *        returns false in case of a failure (true in case of success).
+   *  
    * @param loop
    *    counter indicating the iteration, only for reporting purposes
    * @param param
@@ -325,21 +337,23 @@ public:
   bool hkz(int &kappa_max, const BKZParam &param, int min_row, int max_row);
 
   /**
-   * @brief Same as hkz, but catches exceptions and returns with
+   * @brief Same as hkz(), but catches exceptions and returns with
    * error status.
    *
-   * Essentially does the same as tour with exception handling, but has as
-   * additional parameter a clean flag, which is set instead of returned.
-   *
+   * Essentially does the same as hkz() with two differences: 
+   *    1) it has as additional parameter a clean flag, which is set instead of returned.
+   *    2) it catches failures in the reductions and instead of throwing an exception and
+   *        returns false in case of a failure (true in case of success).
+   * 
    * @param kappa_max
    *    the largest kappa s.t. the block from min_row to kappa is BKZ reduced, also
    *    only for reporting purposes
    * @param param
    *    parameter object
    * @param min_row
-   *    start of the tour
+   *    start of the reduction
    * @param max_row
-   *    end of the tour
+   *    end of the reduction
    * @param clean
    *    clean flag which is set to false if the first (last dual) vector is reduced.
    *    Otherwise the flag is left unchanged.
@@ -380,12 +394,14 @@ public:
   bool slide_tour(const int loop, const BKZParam &param, int min_row, int max_row);
 
   /**
-   * @brief Same as slide_tour, but catches exceptions and returns with
+   * @brief Same as slide_tour(), but catches exceptions and returns with
    * error status.
    *
-   * Essentially does the same as slide_tour with exception handling, but has as
-   * additional parameter a clean flag, which is set instead of returned.
-   *
+   * Essentially does the same as slide_tour()with two differences: 
+   *    1) it has as additional parameter a clean flag, which is set instead of returned.
+   *    2) it catches failures in the reductions and instead of throwing an exception and
+   *        returns false in case of a failure (true in case of success).
+   * 
    * @param loop
    *    counter indicating the iteration, only for reporting purposes
    * @param param
