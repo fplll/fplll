@@ -373,7 +373,6 @@ bool BKZReduction<ZT, FT>::trunc_tour(int &kappa_max, const BKZParam &par, int m
   int block_size = par.block_size;
   for (int kappa = min_row; kappa < max_row - block_size; ++kappa)
   {
-    //~ cerr << "kappa: " << kappa << endl;
     clean &= svp_reduction(kappa, block_size, par);
     if ((par.flags & BKZ_VERBOSE) && kappa_max < kappa && clean)
     {
@@ -406,7 +405,6 @@ bool BKZReduction<ZT, FT>::hkz(int &kappa_max, const BKZParam &param, int min_ro
   bool clean = true;
   for (int kappa = min_row; kappa < max_row - 1; ++kappa)
   {
-    //~ cerr << "kappa: " << kappa << endl;
     int block_size = max_row - kappa;
     clean &= svp_reduction(kappa, block_size, param);
     if ((param.flags & BKZ_VERBOSE) && kappa_max < kappa && clean)
