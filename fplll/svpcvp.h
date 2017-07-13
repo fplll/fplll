@@ -31,10 +31,10 @@ FPLLL_BEGIN_NAMESPACE
  * @param[out] sol_coord
  * coordinates of the shortest vector with respect to the basis b.
  * 
- * @param method = SVPM_PROVED
+ * @param[in] method = SVPM_PROVED
  * The result is guaranteed if method = SVPM_PROVED opposed to SVPM_FAST.
  * 
- * @param flags = SVP_DEFAULT
+ * @param[in] flags = SVP_DEFAULT
  * one of SVP_DEFAULT, SVP_VERBOSE, SVP_OVERRIDE_BND, and SVP_DUAL with:
  * SVP_DEFAULT the standard behaviour, 
  * SVP_VERBOSE writing additional information to console,
@@ -61,6 +61,26 @@ int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &a
  * The vectors must be linearly independent and the basis must be LLL-reduced
  * with delta=LLL_DEF_DELTA and eta=LLL_DEF_ETA.
  * The result is guaranteed if method = CVPM_PROVED.
+ */
+/**
+ * @brief CVP solver - computes a closest vector in a lattice with respect to a target.
+ * 
+ * @param[out] b
+ * basis vectors must be linearly independent and LLL-reduced.
+ * 
+ * @param[out] sol_coord
+ * coordinates of the closest lattice vector with respect to the basis b.
+ * 
+ * @param[in] int_target
+ * coordinates of the target vector.
+ * 
+ * @param[in] method = CVPM_FAST
+ * or, alternatively CVPM_PROVED which needs to reset enumeration below depth with maximal r_i.
+ * 
+ * @param[in] flags = SVP_DEFAULT
+ * or, alternatively SVP_VERBOSE(!), both taken from SVPFlags.
+ * 
+ * @return result Success or failure (due to numerical instability).
  */
 int closest_vector(IntMatrix &b, const IntVect &int_target, vector<Integer> &sol_coord,
                    int method = CVPM_FAST, int flags = CVP_DEFAULT);
