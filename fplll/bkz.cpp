@@ -634,7 +634,10 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
     {
       // hkz reduce the last window, which sd leaves unreduced
       hkz(dummy_kappa_max, param, num_rows - param.block_size, num_rows);
-      print_tour(i, 0, num_rows);
+      if (flags & BKZ_DUMP_GSO)
+      {
+        print_tour(i, 0, num_rows);
+      }
     }
     catch (RedStatus &e)
     {
@@ -655,7 +658,10 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
         int end   = min(num_rows, kappa + param.block_size - 1);
         hkz(dummy_kappa_max, param, kappa, end);
       }
-      print_tour(i, 0, num_rows);
+      if (flags & BKZ_DUMP_GSO)
+      {
+        print_tour(i, 0, num_rows);
+      }
     }
     catch (RedStatus &e)
     {
