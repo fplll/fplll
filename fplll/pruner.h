@@ -373,7 +373,7 @@ private:
   @brief Enforce contraints on pruning coefficients
   @param b input/output
   @param j Keeps index j unchanged when possible
-  @return was a contraint violated ?
+  @return was a constraint violated ?
   */
   inline bool enforce(/*io*/ evec &b, /*opt i*/ const int j = 0);
   /**

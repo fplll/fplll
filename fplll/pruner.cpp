@@ -522,7 +522,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ evec &b)
   evec bo(d);  // centeroid
   FT fo;       // value at the centroid
 
-  FT fs_maxi_last;  // value of the last centroid
+  FT fs_maxi_last = fs[0];  // value of the last centroid
 
   if (verbosity)
   {
@@ -540,27 +540,25 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ evec &b)
     ////////////////
     for (size_t i = 1; i < l; ++i)  // determine min and max, and centroid
     {
-      if (fs[i] < fs[mini])
-        mini = i;
-      if (fs[i] > fs[maxi])
-        maxi = i;
+      mini = (fs[i] < fs[mini]) ? i : mini;
+      maxi = (fs[i] > fs[mini]) ? i : maxi;
       for (size_t j = 0; j < d; ++j)
+      {
         bo[j] += bs[i][j];
+      }
     }
     FT tmp;
     tmp = l;
     for (size_t i = 0; i < d; ++i)
       bo[i] /= tmp;  // Centroid calculated
 
-    if (!counter)
-      fs_maxi_last = fs[maxi];
+    fs_maxi_last = (!counter) ? fs[maxi] : fs_maxi_last;
 
     if (!maxi)
       maxi2++;
-    for (size_t i = 1; i < l; ++i)  // determine min and max, and centroid
+    for (size_t i = 1; i < l; ++i)  // determine the second maximum
     {
-      if ((fs[i] > fs[maxi2]) && (i != maxi))
-        maxi2 = i;
+      maxi2 = ((fs[i] > fs[maxi2]) && (i != maxi)) ? i : maxi2;
     }
 
     if (enforce(bo))
