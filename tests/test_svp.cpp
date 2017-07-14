@@ -253,7 +253,7 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, IntVect &b)
 
   vector<Strategy> strategies;
   BKZParam dummy(d, strategies);
-  BKZReduction<Float> bkz_obj(gso, lll_obj, dummy);
+  BKZReduction<Integer, Float> bkz_obj(gso, lll_obj, dummy);
   bool clean = true;
 
   bkz_obj.svp_reduction_ex(0, d, dummy, clean, true);
