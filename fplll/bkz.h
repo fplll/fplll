@@ -25,14 +25,13 @@
 
 FPLLL_BEGIN_NAMESPACE
 
+/**
+ * @brief Performs a heuristic check if BKZ can be terminated.
+ *
+ * Checks if the slope of the basis hasn't decreased in a while.
+*/
 template <class ZT, class FT> class BKZAutoAbort
 {
-
-  /**
-   * @brief Performs a heuristic check if BKZ can be terminated.
-   *
-   * Checks if the slope of the basis hasn't decreased in a while.
-  */
 public:
   /**
    * @brief Create an BKZAutoAbort object.
