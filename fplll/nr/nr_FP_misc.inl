@@ -153,7 +153,7 @@ inline void FP_NR<qd_real>::set_z(const Z_NR<mpz_t>& a, mp_rnd_t /*rnd*/) {
 #ifdef FPLLL_WITH_ZLONG
 /** set_z (from long to mpfr_t) */
 template<> template<>
-inline void FP_NR<>::set_z(const Z_NR<long>& a, mp_rnd_t rnd) {
+inline void FP_NR<mpfr_t>::set_z(const Z_NR<long>& a, mp_rnd_t rnd) {
   mpfr_set_si(data, a.get_data(), rnd);
 }
 #endif
@@ -161,14 +161,14 @@ inline void FP_NR<>::set_z(const Z_NR<long>& a, mp_rnd_t rnd) {
 #ifdef FPLLL_WITH_ZDOUBLE
 /** set_z (from double to mpfr_t) */
 template<> template<>
-inline void FP_NR<>::set_z(const Z_NR<double>& a, mp_rnd_t rnd) {
+inline void FP_NR<mpfr_t>::set_z(const Z_NR<double>& a, mp_rnd_t rnd) {
   mpfr_set_d(data, a.get_data(), rnd);
 }
 #endif
 
 /** set_z (from mpz_t to mpfr_t) */
 template<> template<>
-inline void FP_NR<>::set_z(const Z_NR<mpz_t>& a, mp_rnd_t rnd) {
+inline void FP_NR<mpfr_t>::set_z(const Z_NR<mpz_t>& a, mp_rnd_t rnd) {
   mpfr_set_z(data, a.get_data(), rnd);
 }
 
@@ -353,7 +353,7 @@ inline void FP_NR<qd_real>::get_z_exp(Z_NR<Z>& a, long& expo) const {
 #ifdef FPLLL_WITH_ZLONG
 /** get_z_exp (from mpfr_t to Z_NR&ltlong&gt) */
 template<> template<>
-inline void FP_NR<>::get_z_exp(Z_NR<long>& a, long& expo) const {
+inline void FP_NR<mpfr_t>::get_z_exp(Z_NR<long>& a, long& expo) const {
   expo = 0;
   a = get_si();
 }
@@ -362,7 +362,7 @@ inline void FP_NR<>::get_z_exp(Z_NR<long>& a, long& expo) const {
 #ifdef FPLLL_WITH_ZDOUBLE
 /** get_z_exp (from mpfr_t to Z_NR&ltdouble&gt) */
 template<> template<>
-inline void FP_NR<>::get_z_exp(Z_NR<double>& a, long& expo) const {
+inline void FP_NR<mpfr_t>::get_z_exp(Z_NR<double>& a, long& expo) const {
   expo = 0;
   a.get_data() = trunc(mpfr_get_d(data, GMP_RNDZ));
 }
@@ -370,7 +370,7 @@ inline void FP_NR<>::get_z_exp(Z_NR<double>& a, long& expo) const {
 
 /** get_z_exp (from mpfr_t to Z_NR&ltmpz_t&gt) */
 template<> template<>
-inline void FP_NR<>::get_z_exp(Z_NR<mpz_t>& a, long& expo) const {
+inline void FP_NR<mpfr_t>::get_z_exp(Z_NR<mpz_t>& a, long& expo) const {
   expo = mpfr_get_z_exp(a.get_data(), data);
   if (expo < 0) {
     a.mul_2si(a, expo);
@@ -380,7 +380,7 @@ inline void FP_NR<>::get_z_exp(Z_NR<mpz_t>& a, long& expo) const {
 
 /** get_z_exp_we (from mpfr_t to Z_NR&ltclass Z&gt) */
 template<> template<class Z>
-inline void FP_NR<>::get_z_exp_we(Z_NR<Z>& a, long& expo, long /*expo_add*/) const {
+inline void FP_NR<mpfr_t>::get_z_exp_we(Z_NR<Z>& a, long& expo, long /*expo_add*/) const {
   return get_z_exp(a, expo);
 }
 
