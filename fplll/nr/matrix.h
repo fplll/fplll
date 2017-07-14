@@ -22,13 +22,18 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-enum MatPrintMode { MAT_PRINT_COMPACT = 0, MAT_PRINT_REGULAR = 1 };
+enum MatPrintMode
+{
+  MAT_PRINT_COMPACT = 0,
+  MAT_PRINT_REGULAR = 1
+};
 
 template <class T> class Matrix;
 
 /** MatrixRow stores a reference to a row of a Matrix. It supports a subset
     of operations available on vectors. */
-template <class T> class MatrixRow {
+template <class T> class MatrixRow
+{
 public:
   /** Returns a reference to the i-th element of this row. */
   T &operator[](int i) { return row[i]; }
@@ -49,21 +54,22 @@ public:
   void sub(const MatrixRow<T> &v, int n) { row.sub(v.row, n); }
   void addmul(const MatrixRow<T> &v, T x) { row.addmul(v.row, x); }
   void addmul(const MatrixRow<T> &v, T x, int n) { row.addmul(v.row, x, n); }
-  void addmul_2exp(const MatrixRow<T> &v, const T &x, long expo, T &tmp) {
+  void addmul_2exp(const MatrixRow<T> &v, const T &x, long expo, T &tmp)
+  {
     row.addmul_2exp(v.row, x, expo, tmp);
   }
-  void addmul_2exp(const MatrixRow<T> &v, const T &x, long expo, int /*n*/,
-                   T &tmp) {
+  void addmul_2exp(const MatrixRow<T> &v, const T &x, long expo, int /*n*/, T &tmp)
+  {
     row.addmul_2exp(v.row, x, expo, tmp);
   }
   void addmul_si(const MatrixRow<T> &v, long x) { row.addmul_si(v.row, x); }
-  void addmul_si(const MatrixRow<T> &v, long x, int n) {
-    row.addmul_si(v.row, x, n);
-  }
-  void addmul_si_2exp(const MatrixRow<T> &v, long x, long expo, T &tmp) {
+  void addmul_si(const MatrixRow<T> &v, long x, int n) { row.addmul_si(v.row, x, n); }
+  void addmul_si_2exp(const MatrixRow<T> &v, long x, long expo, T &tmp)
+  {
     row.addmul_si_2exp(v.row, x, expo, tmp);
   }
-  void addmul_si_2exp(const MatrixRow<T> &v, long x, long expo, int n, T &tmp) {
+  void addmul_si_2exp(const MatrixRow<T> &v, long x, long expo, int n, T &tmp)
+  {
     row.addmul_si_2exp(v.row, x, expo, n, tmp);
   }
 
@@ -75,24 +81,26 @@ private:
 };
 /** Computes the dot product between two rows of a Matrix */
 template <class T>
-void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2,
-                 int n) {
+void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2, int n)
+{
   FPLLL_DEBUG_CHECK(n > 0 && n <= v1.size() && v1.size() == v2.size() &&
                     (v1.is_zero(n) || v2.is_zero(n)));
   result.mul(v1[0], v2[0]);
-  for (int i = 1; i < n; i++) {
+  for (int i = 1; i < n; i++)
+  {
     result.addmul(v1[i], v2[i]);
   }
 }
 /** Computes (inline) the dot product between two rows of a Matrix */
 template <class T>
-inline void dot_product(T &result, const MatrixRow<T> &v1,
-                        const MatrixRow<T> &v2) {
+inline void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2)
+{
   dot_product(result, v1, v2, v1.size());
 }
 
 /** Prints a MatrixRow on stream os. */
-template <class T> ostream &operator<<(ostream &os, const MatrixRow<T> &row) {
+template <class T> ostream &operator<<(ostream &os, const MatrixRow<T> &row)
+{
   row.print(os);
   return os;
 }
@@ -101,7 +109,8 @@ template <class T> ostream &operator<<(ostream &os, const MatrixRow<T> &row) {
     elements are in constant time. The amortized complexity of resizing the
     matrix is proportional to the number of added/removed elements. All indices
     are 0-based. */
-template <class T> class Matrix {
+template <class T> class Matrix
+{
 public:
   /** Creates an empty matrix (0 x 0). */
   Matrix() : r(0), c(0) {}
@@ -110,7 +119,8 @@ public:
   Matrix(int rows, int cols) : r(0), c(0) { resize(rows, cols); }
 
   /** Sets number of rows and the number of columns to 0. */
-  void clear() {
+  void clear()
+  {
     r = c = 0;
     matrix.clear();
   }
@@ -128,7 +138,8 @@ public:
   /** Fills this matrix with a given value. */
   template <class U> void fill(U value);
   /** Efficiently swaps two matrices. */
-  void swap(Matrix<T> &m) {
+  void swap(Matrix<T> &m)
+  {
     matrix.swap(m.matrix);
     std::swap(r, m.r);
     std::swap(c, m.c);
@@ -139,23 +150,27 @@ public:
   /** Returns the number of columns */
   int get_cols() const { return c; }
   /** Returns a reference to the element (i, j). */
-  T &operator()(int i, int j) {
+  T &operator()(int i, int j)
+  {
     FPLLL_DEBUG_CHECK(i >= 0 && i < r && j >= 0 && j < c);
     return matrix[i][j];
   }
   /** Returns a constant reference to the element (i, j) on constant objects. */
-  const T &operator()(int i, int j) const {
+  const T &operator()(int i, int j) const
+  {
     FPLLL_DEBUG_CHECK(i >= 0 && i < r && j >= 0 && j < c);
     return matrix[i][j];
   }
   /** Returns a MatrixRow object pointing to the i-th row of this matrix. */
-  MatrixRow<T> operator[](int i) {
+  MatrixRow<T> operator[](int i)
+  {
     FPLLL_DEBUG_CHECK(i >= 0 && i < r);
     return MatrixRow<T>(matrix[i]);
   }
   /** Returns a MatrixRow object pointing to the i-th row of this matrix
       on constant objects. */
-  const MatrixRow<T> operator[](int i) const {
+  const MatrixRow<T> operator[](int i) const
+  {
     FPLLL_DEBUG_CHECK(i >= 0 && i < r);
     return MatrixRow<T>(matrix[i]);
   }
@@ -163,20 +178,14 @@ public:
   void swap_rows(int r1, int r2) { matrix[r1].swap(matrix[r2]); }
   /** Rows permutation.
       (m[first],...,m[last]) becomes (m[first+1],...,m[last],m[first]) */
-  void rotate_left(int first, int last) {
-    rotate_left_by_swap(matrix, first, last);
-  }
+  void rotate_left(int first, int last) { rotate_left_by_swap(matrix, first, last); }
   /** Rows permutation.
       (m[first],...,m[last]) becomes (m[last],m[first],...,m[last-1]) */
-  void rotate_right(int first, int last) {
-    rotate_right_by_swap(matrix, first, last);
-  }
+  void rotate_right(int first, int last) { rotate_right_by_swap(matrix, first, last); }
   /** Rows permutation.
       (m[first],...,m[middle-1],m[middle],m[last]) becomes
       (m[middle],...,m[last],m[first],...,m[middle-1]) */
-  void rotate(int first, int middle, int last) {
-    rotate_by_swap(matrix, first, middle, last);
-  }
+  void rotate(int first, int middle, int last) { rotate_by_swap(matrix, first, middle, last); }
   /** Transformation needed to update the lower triangular Gram matrix when
      rotate_left(first, last) is done on the basis of the lattice. */
   void rotate_gram_left(int first, int last, int n_valid_rows);
@@ -195,9 +204,10 @@ public:
   /** Reads this matrix from a stream. */
   void read(istream &is);
   /** Change the output format style of Matrix */
-  static int set_print_mode(int new_print_mode) {
+  static int set_print_mode(int new_print_mode)
+  {
     int old_mode = print_mode;
-    print_mode = new_print_mode;
+    print_mode   = new_print_mode;
     return old_mode;
   }
 
@@ -210,18 +220,21 @@ protected:
 
 template <class T> int Matrix<T>::print_mode = MAT_PRINT_COMPACT;
 
-template <class T> ostream &operator<<(ostream &os, const Matrix<T> &m) {
+template <class T> ostream &operator<<(ostream &os, const Matrix<T> &m)
+{
   m.print(os);
   return os;
 }
 
-template <class T> istream &operator>>(istream &is, Matrix<T> &m) {
+template <class T> istream &operator>>(istream &is, Matrix<T> &m)
+{
   m.read(is);
   return is;
 }
 
 /** ZZ_mat is a matrix of integers. */
-template <class ZT> class ZZ_mat : public Matrix<Z_NR<ZT>> {
+template <class ZT> class ZZ_mat : public Matrix<Z_NR<ZT>>
+{
 public:
   typedef Z_NR<ZT> T;
   using Matrix<T>::r;
@@ -238,66 +251,65 @@ public:
   ZZ_mat(int rows, int cols) : Matrix<T>(rows, cols) {}
 
   /** Generate a zero matrix */
-  void gen_zero(int d, int n) {
+  void gen_zero(int d, int n)
+  {
     resize(d, n);
     for (int i = 0; i < d; i++)
       matrix[i].fill(0);
   }
   /** Generate an identity matrix */
-  void gen_identity(int d) {
+  void gen_identity(int d)
+  {
     gen_zero(d, d);
-    for (int i = 0; i < d; i++)
+    for (int i     = 0; i < d; i++)
       matrix[i][i] = 1;
   }
 
-  /** Generate an augmented matrix of random coefficients for the first column
-   */
+  /** Generate an augmented matrix of random coefficients for the first column */
   void gen_intrel(int bits);
   /** Generate a matrix with coefficients of the first row and the diagonal */
   void gen_simdioph(int bits, int bits2);
   /** Generate a random matrix of uniform distribution. */
   void gen_uniform(int bits);
 
-  /** Construct a matrix `[[I,H],[0,qI]]` where `H` is constructed from
-  rotations of a vector ``h``.
+  /** Construct a matrix `[[I,H],[0,qI]]` where `H` is constructed from rotations of a vector ``h``.
 
-     @note The constructed matrix will not come with a guarantee of unusually
-  short vectors.
+     @note The constructed matrix will not come with a guarantee of unusually short vectors.
   **/
 
   void gen_ntrulike(int bits);
   void gen_ntrulike_withq(int q);
 
-  /** Construct a matrix ``[[qI,0],[H,I]]`` where ``H`` is constructed from
-    rotations of a vector
+  /** Construct a matrix ``[[qI,0],[H,I]]`` where ``H`` is constructed from rotations of a vector
     ``h``.
 
-    @note The constructed matrix will not come with a guarantee of unusually
-    short vectors.
+    @note The constructed matrix will not come with a guarantee of unusually short vectors.
   */
 
   void gen_ntrulike2(int bits);
   void gen_ntrulike2_withq(int q);
 
-  /** Construct a matrix ``[[I,H],[0,Iq]]`` where ``H`` is uniform mod q, of
-   * dimensions (n-k) x k.
+  /** Construct a matrix ``[[I,H],[0,Iq]]`` where ``H`` is uniform mod q, of dimensions (n-k) x k.
   */
 
   void gen_qary(int k, Z_NR<ZT> &q);
 
-  void gen_qary(int k, int bits) {
+  void gen_qary(int k, int bits)
+  {
     Z_NR<ZT> q;
     q.randb(bits);
     gen_qary(k, q);
   }
 
-  void gen_qary_withq(int k, int q) {
+  void gen_qary_withq(int k, int q)
+  {
     Z_NR<ZT> q2;
     q2 = q;
     gen_qary(k, q2);
   }
 
-  void gen_qary_prime(int k, int bits) {
+  void gen_qary_prime(int k, int bits)
+  {
     Z_NR<ZT> q;
     q.randb(bits);
     q.nextprime(q);
@@ -313,20 +325,18 @@ and random sub-diagonal coefficients.
 };
 
 /**
- * Converts integer matrices. Conversion is coing through get_si(), so ONLY use
- * for
- * small numbers that fit into longs. More specifically, Afrom is converted to
- * Ato
+ * Converts integer matrices. Conversion is coing through get_si(), so ONLY use for
+ * small numbers that fit into longs. More specifically, Afrom is converted to Ato
  * (and true is returned) if all numbers in Afrom fit into
- * numeric_limits<long>::digits - buffer bits. Otherwise, conversion is aborted
- * and
+ * numeric_limits<long>::digits - buffer bits. Otherwise, conversion is aborted and
  * false is returned.
  */
 template <class ZTto, class ZTfrom>
 bool convert(ZZ_mat<ZTto> &Ato, const ZZ_mat<ZTfrom> &Afrom, int buffer = 0);
 
 /** FP_mat is a matrix of floating-point numbers. */
-template <class FT> class FP_mat : public Matrix<FP_NR<FT>> {
+template <class FT> class FP_mat : public Matrix<FP_NR<FT>>
+{
 public:
   typedef FP_NR<FT> T;
   /** Creates an empty matrix (0 x 0). */
