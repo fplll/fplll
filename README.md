@@ -153,7 +153,8 @@ The options are:
 * `-a hkz` : HKZ-reduction.
 * `-a svp` : prints a shortest non-zero vector of the lattice.
 * `-a sdb` : self dual variant of BKZ-reduction.
-* `-a sld` : Slide reduction.
+* `-a sld` : slide reduction.
+* `-a cvp` : prints the vector in the lattice closest to the input vector.
 * `-v` : verbose mode. 
 * `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution).
 * `-r` `size`, `-c` `size` : ignored, provided for compatibility with previous versions of fplll.
@@ -174,8 +175,9 @@ Options for LLL-reduction:
 * `-f double` : sets the floating-point type to double (default if `m=fast/fastearly`).
 * `-f longdouble` : sets the floating-point type to long double.
 
-* `-z int` : sets the integer type to int.
 * `-z mpz` : sets the integer type to mpz, the integer type of GMP (default).
+* `-z int` : sets the integer type to int.
+* `-z long` : as `-z int`.
 * `-z double` : sets the integer type to double.
 
 * `-m wrapper` : uses the wrapper. (default if `z=mpz`).
@@ -184,6 +186,7 @@ Options for LLL-reduction:
 * `-m heuristic` : uses the heuristic method.
 * `-m heuristicearly` : uses the heuristic method with early reduction.
 * `-m proved` : uses the proved version of the algorithm.
+* `-y` : early reduction.
 
 With the wrapper or the proved version, it is guaranteed that the basis is LLL-reduced with δ'=2×δ-1
 and η'=2×η-1/2. For instance, with the default options, it is guaranteed that the basis is
@@ -192,24 +195,35 @@ and η'=2×η-1/2. For instance, with the default options, it is guaranteed that
 
 Options for BKZ-reduction:
 
-* `-b block_size` :            Block size, mandatory, between 2 and the number of vectors.
+* `-b block_size` :            block size, mandatory, between 2 and the number of vectors.
 
-* `-f float_type` :            Same as LLL (`-p` is required if `float_type=mpfr`).
-* `-p precision` :             Precision of the floating-point arithmetic with `-f mpfr`.
+* `-f float_type` :            same as LLL (`-p` is required if `float_type=mpfr`).
+* `-p precision` :             precision of the floating-point arithmetic with `-f mpfr`.
 
-* `-bkzmaxloops loops` :       Maximum number of full loop iterations.
-* `-bkzmaxtime time` :         Stops after `time` seconds (up to completion of the current loop iteration).
-* `-bkzautoabort` :            Stops when the average slope of the log ||b_i*||'s does not decrease fast enough.
+* `-bkzmaxloops loops` :       maximum number of full loop iterations.
+* `-bkzmaxtime time` :         stops after `time` seconds (up to completion of the current loop iteration).
+* `-bkzautoabort` :            stops when the average slope of the log ||b_i*||'s does not decrease fast enough.
 
 Without any of the last three options, BKZ runs until no block has been updated for a full loop iteration.
 
-* `-s filename.json` :         Use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.
+* `-s filename.json` :         use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.
 
-* `-bkzghbound factor` :       Multiplies the Gaussian heuristic by factor (of float type) to set the enumeration radius of the SVP calls.
-* `-bkzboundedlll` :	       Restricts the LLL call before considering a block to vector indices within that block.
+* `-bkzghbound factor` :       multiplies the Gaussian heuristic by `factor` (of float type) to set the enumeration radius of the SVP calls.
+* `-bkzboundedlll` :	       restricts the LLL call before considering a block to vector indices within that block.
 
-* `-bkzdumgso file_name` :     Dumps the log ||b_i*|| 's in specified file.
+* `-bkzdumgso file_name` :     dumps the log ||b_i*|| 's in specified file.
 
+Output formats:
+
+* `-of  ` : prints new line (if `-a [lll|bkz]`)
+* `-of b` : prints the basis (if `-a [lll|bkz]`, this value by default)
+* `-of c` : prints the closest vector (if `-a cvp`, this value by default)
+* `-of s` : prints the closest vector (if `-a svp`, this value by default)
+* `-of t` : prints status (if `-a [lll|bkz|cvp|svp]`)
+* `-of u` : prints unimodular matrix (if `-a [lll|bkz]`)
+* `-of v` : prints inverse of u (if `-a lll`)
+
+A combination of these option is allowed (e.g., `-of but`).
 
 ## llldiff ##
 
@@ -283,6 +297,12 @@ This library does not currently use multiple cores and running multiple threads 
 
    ```
    ./latticegen r 30 3000 | ./fplll -a svp
+   ```
+
+5. Solving CVP
+
+   ```
+   echo "[[17 42 4][50 75 108][11 47 33]][100 101 102]" | ./fplll -a cvp
    ```
 
 # Alternative interfaces #

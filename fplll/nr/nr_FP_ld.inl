@@ -277,6 +277,11 @@ inline void FP_NR<long double>::swap(FP_NR<long double>& a) {
   std::swap(data, a.data);
 }
 
+template<>
+inline void FP_NR<long double>::hypot(const FP_NR<long double>& a, const FP_NR<long double>& b, mp_rnd_t /*rnd*/) {
+  data = hypotl(a.data, b.data);
+}
+
 
 #endif // End FPLLL_WITH_LONG_DOUBLE
 

@@ -535,7 +535,7 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_qary(int k, Z_NR<ZT> &q)
       matrix[i][j].randm(q);
 
   for (i = d - k; i < d; i++)
-    for (j         = 0; j < d - k; j++)
+    for (j         = 0; j < d; j++)
       matrix[i][j] = 0;
 
   for (i         = d - k; i < d; i++)
@@ -604,6 +604,31 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_trg2(FP_NR<mpfr_t> *w)
       matrix[i][j] = 0;
     }
   }
+}
+
+template <class ZTto, class ZTfrom>
+bool convert(ZZ_mat<ZTto> &Ato, const ZZ_mat<ZTfrom> &Afrom, int buffer)
+{
+  Ato.clear();
+  int r = Afrom.get_rows();
+  int c = Afrom.get_cols();
+  Ato.resize(r, c);
+  long threshold = (1L << (numeric_limits<long>::digits - buffer - 1));
+  Z_NR<ZTfrom> ztmp;
+  for (int i = 0; i < r; ++i)
+  {
+    for (int j = 0; j < c; ++j)
+    {
+      ztmp.abs(Afrom[i][j]);
+      if (ztmp > threshold)
+      {
+        return false;
+      }
+      Ato[i][j] = Afrom[i][j].get_si();
+    }
+  }
+
+  return true;
 }
 
 FPLLL_END_NAMESPACE
