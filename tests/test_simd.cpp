@@ -13,6 +13,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
+#include <chrono>
 #include <cstring>
 #include <fplll.h>
 #include <fplll/simd/simd.h>
@@ -64,6 +65,35 @@ int test_dotproduct(const std::string &disable_versions)
   return status;
 }
 
+int benchmark_dotproduct(const std::string &disable_versions)
+{
+  int status = 0;
+  SIMD_operations simd(disable_versions);
+  cout << "Benchmarking SIMD dotproduct: " << simd.simd_double_version() << endl;
+  double vec1[256];
+  double vec2[256];
+  for (int i = 0; i < 256; ++i)
+  {
+    vec1[i] = 0.2 - 1.5 * double(i);
+    vec2[i] = -6.0 + 0.2 * double(i);
+  }
+  // ensure we check all possible alignment issues
+  for (int i = 0; i < 4; ++i)
+  {
+    cout << "Relative alignment: " << i << ": " << flush;
+    auto start = std::chrono::system_clock::now();
+    double r   = 0;
+    for (int j = 0; j < (1 << 18); ++j)
+    {
+      r += simd.dot_product(vec1 + i, vec2, 250);
+    }
+    auto end                          = std::chrono::system_clock::now();
+    std::chrono::duration<double> dur = end - start;
+    cout << dur.count() * 1000 << "ms (" << r << ")" << endl;
+  }
+  return status;
+}
+
 int main(int argc, char *argv[])
 {
   SIMD_operations best_simd;
@@ -74,6 +104,10 @@ int main(int argc, char *argv[])
     status |= test_dotproduct("avx512d");
     status |= test_dotproduct("avx256d avx512d");
     status |= test_dotproduct("sse128d avx256d avx512d");
+    benchmark_dotproduct("");
+    benchmark_dotproduct("avx512d");
+    benchmark_dotproduct("avx256d avx512d");
+    benchmark_dotproduct("sse128d avx256d avx512d");
   }
   catch (exception &e)
   {
