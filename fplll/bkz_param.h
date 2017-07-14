@@ -101,20 +101,40 @@ public:
   /**
      @brief Create BKZ parameters
 
-     @param block_size               block size > 2
-     @param strategies               vector of strategies used for pruning and preprocessing
-     @param delta                    LLL parameter delta
-     @param flags                    flags
-     @param max_loops                maximum number of loops (or zero to disable this)
-     @param max_time                 maximum number of time  (or zero to disable this)
-     @param auto_abort_scale         auto abort when next tour does not improve slope over `scale` *
-     previous tour
-     @param auto_abort_max_no_dec    auto abort when next tour does not improve slope `no_dec` times
-     @param gh_factor                set enumeration bound to Gaussian heuristic times `gh_factor`
-     @param min_success_probability  minimum success probability in an SVP reduction (when using
-     pruning)
-     @param rerandomization_density  the heavier rerandomization, the better our guarantees and
-     costs
+     @param block_size
+        block size for the reduction
+     @param strategies
+        vector of strategies used for pruning and preprocessing
+     @param delta
+        LLL parameter delta
+     @param flags
+        various flags that can be arbitrarily combined (using |):
+          - BKZ_VERBOSE       print additional information during reduction
+          - BKZ_NO_LLL        do not run LLL before block reduction (use at your own risk)
+          - BKZ_MAX_LOOPS     terminate after max_loops iterations
+          - BKZ_MAX_TIME      terminate after max_time time
+          - BKZ_BOUNDED_LLL   only run LLL in current block during SVP preprocessing (use at your
+     own
+     risk)
+          - BKZ_AUTO_ABORT    heuristically terminate the reduction if progress stalls
+          - BKZ_DUMP_GSO      after every iteration write the shape of the current basis to a file
+          - BKZ_GH_BND        use the Gaussian heuristic to reduce the enumeration bound of possible
+          - BKZ_SD_VARIANT    run SD-BKZ
+          - BKZ_SLD_RED       run slide reduction
+     @param max_loops
+        maximum number of loops (or zero to disable this)
+     @param max_time
+        maximum number of time  (or zero to disable this)
+     @param auto_abort_scale
+        auto abort when next tour does not improve slope over `scale`* previous tour
+     @param auto_abort_max_no_dec
+        auto abort when next tour does not improve slope `no_dec` times
+     @param gh_factor
+        set enumeration bound to Gaussian heuristic times `gh_factor`
+     @param min_success_probability
+        minimum success probability in an SVP reduction (when using pruning)
+     @param rerandomization_density
+        the heavier rerandomization, the better our guarantees and costs
   */
 
   BKZParam(int block_size, vector<Strategy> &strategies, double delta = LLL_DEF_DELTA,
@@ -169,13 +189,11 @@ public:
   /** If BKZ_GH_BND is set, the enumeration bound will be set to gh_factor times
       the Gaussian Heuristic
   */
-
   double gh_factor;
 
   /** If BKZ_DUMP_GSO is set, the norms of the GSO matrix are written to this
       file after each complete round.
   */
-
   string dump_gso_filename;
 
   /** minimum success probability when using extreme pruning */
