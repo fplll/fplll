@@ -101,9 +101,9 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::run_2sieve()
 #ifdef REDUCE_TIMING
   struct timeval time, time2;
   gettimeofday(&time, 0);
-  long startt = 1000000 * time.tv_sec + time.tv_usec;
+  long startt      = 1000000 * time.tv_sec + time.tv_usec;
   double sec, sec2 = 0.0;
-  long nred = 0;
+  long nred        = 0;
 #endif
 
   /*

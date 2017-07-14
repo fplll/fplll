@@ -26,7 +26,7 @@ public:
 template <class ZT> inline ListPoint<ZT> *new_listpoint(int n)
 {
   ListPoint<ZT> *p = new ListPoint<ZT>;
-  p->norm          = 0;
+  p->norm = 0;
   p->v.resize(n);
   for (int i = 0; i < n; ++i)
   {
@@ -185,7 +185,7 @@ template <class ZT> inline bool check_2reduce_order_list(const list<ListPoint<ZT
   for (i = List.begin(); i != List.end(); ++i)
   {
     v1 = *i;
-    j  = i;
+    j = i;
     advance(j, 1);
     for (; j != List.end(); ++j)
     {
@@ -304,11 +304,11 @@ template <class ZT> inline bool check_3reduce_order_list(const list<ListPoint<ZT
   for (i = List.begin(); i != List.end(); ++i)
   {
     v1 = *i;
-    j  = i;
+    j = i;
     for (; j != List.end(); ++j)
     {
       v2 = *j;
-      k  = j;
+      k = j;
       if (v1->norm >= v2->norm)
         continue;
       for (; k != List.end(); ++k)
@@ -525,17 +525,17 @@ template <class ZT> inline bool check_4reduce_order_list(const list<ListPoint<ZT
   for (i = List.begin(); i != List.end(); ++i)
   {
     v1 = *i;
-    j  = i;
+    j = i;
     for (; j != List.end(); ++j)
     {
       v2 = *j;
-      k  = j;
+      k = j;
       if (v1->norm >= v2->norm)
         continue;
       for (; k != List.end(); ++k)
       {
         v3 = *k;
-        l  = k;
+        l = k;
         if (v2->norm >= v3->norm || v1->norm >= v3->norm)
           continue;
         for (; l != List.end(); ++l)
@@ -619,7 +619,7 @@ inline void matrix_row_to_list_point(const MatrixRow<Z_NR<ZT>> &row, ListPoint<Z
 template <class ZT> inline ListPoint<ZT> *num_vec_to_list_point(const NumVect<Z_NR<ZT>> &vec, int n)
 {
   ListPoint<ZT> *p = new_listpoint<ZT>(n);
-  int dims         = vec.size();
+  int dims = vec.size();
   p->v.resize(dims);
   p->norm = 0;
   Z_NR<ZT> t;
@@ -644,7 +644,7 @@ template <class ZT> bool apply_filtering(const ListPoint<ZT> *p1, const ListPoin
   t2 = (p2->norm).get_d();
   t  = t / t1;
   t  = t / t2;
-  t  = abs(sqrt(t));
+  t = abs(sqrt(t));
   if (t >= 1 / 3.0)
     return false;
   else

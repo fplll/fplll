@@ -61,7 +61,7 @@ template <class ZT, class FT> inline ZT MatGSOInterface<ZT, FT>::get_max_gram()
       throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
     Matrix<ZT> gr = *gptr;
-    tmp           = gr(0, 0);
+    tmp = gr(0, 0);
     for (int i = 0; i < n_known_rows; i++)
       tmp = tmp.max_z(gr(i, i));
   }
@@ -250,7 +250,7 @@ template <class ZT, class FT>
 FT MatGSOInterface<ZT, FT>::get_slide_potential(int start_row, int end_row, int block_size)
 {
   FT potential = 0.0;
-  int p        = (end_row - start_row) / block_size;
+  int p = (end_row - start_row) / block_size;
   if ((end_row - start_row) % block_size == 0)
   {
     --p;
@@ -271,7 +271,7 @@ void adjust_radius_to_gh_bound(FT &max_dist, long max_dist_expo, int block_size,
   t        = pow(M_E, t * 2.0 / (double)block_size);
   t        = t / M_PI;
   FT f     = t;
-  f        = f * root_det;
+  f = f * root_det;
   f.mul_2si(f, -max_dist_expo);
   f = f * gh_factor;
   if (f < max_dist)

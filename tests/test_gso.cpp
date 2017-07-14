@@ -58,7 +58,7 @@ template <class ZT, class FT> bool rs_are_equal(MatGSO<ZT, FT> M1, MatGSOGram<ZT
   Matrix<FT> diff = matrix_relative_difference<ZT, FT>(r1, r2);
 
   FT max_entry = 0.0;
-  max_entry    = diff.get_max();
+  max_entry = diff.get_max();
   if (max_entry > error)
   {
     diff.print(cerr);

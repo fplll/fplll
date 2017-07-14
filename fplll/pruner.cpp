@@ -448,7 +448,7 @@ template <class FT> void Pruner<FT>::init_coefficients(evec &b)
 {
   FT save_radius           = enumeration_radius;
   PrunerMetric metric_save = metric;
-  metric                   = PRUNER_METRIC_EXPECTED_SOLUTIONS;
+  metric = PRUNER_METRIC_EXPECTED_SOLUTIONS;
   greedy(b);
   metric             = metric_save;
   enumeration_radius = save_radius;
@@ -514,7 +514,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
       goal = preproc_cost / (2 * d);
     }
     int count = 0;
-    tmp       = 0.;
+    tmp = 0.;
     while ((count < 8) && (min < .99))
     {
       if (val < PRUNER_MIN_BOUND)
@@ -629,7 +629,7 @@ template <class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b)
   {
     mini = maxi = maxi2 = 0;
     for (size_t i = 0; i < d; ++i)
-      bo[i]       = bs[0][i];
+      bo[i] = bs[0][i];
     ////////////////
     // step 1. and 2. : Order and centroid
     ////////////////
@@ -708,7 +708,7 @@ template <class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b)
     evec br;  // reflected point
     FT fr;    // Value at the reflexion point
     for (size_t i = 0; i < d; ++i)
-      br[i]       = bo[i] + ND_ALPHA * (bo[i] - bs[maxi][i]);
+      br[i] = bo[i] + ND_ALPHA * (bo[i] - bs[maxi][i]);
     enforce_bounds(br);
     fr = repeated_enum_cost(br);
     if (verbosity)
@@ -736,7 +736,7 @@ template <class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b)
       evec be;
       FT fe;
       for (size_t i = 0; i < d; ++i)
-        be[i]       = bo[i] + ND_GAMMA * (br[i] - bo[i]);
+        be[i] = bo[i] + ND_GAMMA * (br[i] - bo[i]);
       enforce_bounds(be);
       fe = repeated_enum_cost(be);
       if (verbosity)
@@ -777,7 +777,7 @@ template <class FT> int Pruner<FT>::nelder_mead(/*io*/ evec &b)
     evec bc;
     FT fc;
     for (size_t i = 0; i < d; ++i)
-      bc[i]       = bo[i] + ND_RHO * (bs[maxi][i] - bo[i]);
+      bc[i] = bo[i] + ND_RHO * (bs[maxi][i] - bo[i]);
     enforce_bounds(bc);
     fc = repeated_enum_cost(bc);
     if (verbosity)

@@ -242,11 +242,11 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_simdioph(int bits, int bits2)
     matrix[0][i].randb(bits);
   for (i = 1; i < r; i++)
   {
-    for (j         = 1; j < i; j++)
+    for (j = 1; j < i; j++)
       matrix[j][i] = 0;
-    matrix[i][i]   = 1;
+    matrix[i][i] = 1;
     matrix[i][i].mul_2si(matrix[i][i], bits);
-    for (j         = i + 1; j < c; j++)
+    for (j = i + 1; j < c; j++)
       matrix[j][i] = 0;
   }
 }
@@ -296,26 +296,26 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits)
   // I in A00
   for (i = 0; i < d; i++)
   {
-    for (j         = 0; j < i; j++)
+    for (j = 0; j < i; j++)
       matrix[i][j] = 0;
-    matrix[i][i]   = 1;
-    for (j         = i + 1; j < d; j++)
+    matrix[i][i] = 1;
+    for (j = i + 1; j < d; j++)
       matrix[i][j] = 0;
   }
 
   // 0 in A10
   for (i = d; i < r; i++)
   {
-    for (j         = 0; j < d; j++)
+    for (j = 0; j < d; j++)
       matrix[i][j] = 0;
   }
   // qI in A11
   for (i = d; i < r; i++)
   {
-    for (j         = d; j < i; j++)
+    for (j = d; j < i; j++)
       matrix[i][j] = 0;
-    matrix[i][i]   = q;
-    for (j         = i + 1; j < c; j++)
+    matrix[i][i] = q;
+    for (j = i + 1; j < c; j++)
       matrix[i][j] = 0;
   }
   // H in A01
@@ -364,26 +364,26 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike_withq(int q)
   // I in A00
   for (i = 0; i < d; i++)
   {
-    for (j         = 0; j < i; j++)
+    for (j = 0; j < i; j++)
       matrix[i][j] = 0;
-    matrix[i][i]   = 1;
-    for (j         = i + 1; j < d; j++)
+    matrix[i][i] = 1;
+    for (j = i + 1; j < d; j++)
       matrix[i][j] = 0;
   }
 
   // 0 in A10
   for (i = d; i < r; i++)
   {
-    for (j         = 0; j < d; j++)
+    for (j = 0; j < d; j++)
       matrix[i][j] = 0;
   }
   // qI in A11
   for (i = d; i < r; i++)
   {
-    for (j         = d; j < i; j++)
+    for (j = d; j < i; j++)
       matrix[i][j] = 0;
-    matrix[i][i]   = q2;
-    for (j         = i + 1; j < c; j++)
+    matrix[i][i] = q2;
+    for (j = i + 1; j < c; j++)
       matrix[i][j] = 0;
   }
   // H in A01
@@ -429,16 +429,16 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(int bits)
 
   for (i = 0; i < d; i++)
   {
-    for (j         = 0; j < c; j++)
+    for (j = 0; j < c; j++)
       matrix[i][j] = 0;
   }
 
-  for (i         = 0; i < d; i++)
+  for (i = 0; i < d; i++)
     matrix[i][i] = q;
   for (i = d; i < r; i++)
-    for (j         = d; j < c; j++)
+    for (j = d; j < c; j++)
       matrix[i][j] = 0;
-  for (i         = d; i < c; i++)
+  for (i = d; i < c; i++)
     matrix[i][i] = 1;
 
   for (i = d; i < r; i++)
@@ -485,16 +485,16 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2_withq(int q)
 
   for (i = 0; i < d; i++)
   {
-    for (j         = 0; j < c; j++)
+    for (j = 0; j < c; j++)
       matrix[i][j] = 0;
   }
 
-  for (i         = 0; i < d; i++)
+  for (i = 0; i < d; i++)
     matrix[i][i] = q2;
   for (i = d; i < r; i++)
-    for (j         = d; j < c; j++)
+    for (j = d; j < c; j++)
       matrix[i][j] = 0;
-  for (i         = d; i < c; i++)
+  for (i = d; i < c; i++)
     matrix[i][i] = 1;
 
   for (i = d; i < r; i++)
@@ -524,10 +524,10 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_qary(int k, Z_NR<ZT> &q)
   }
 
   for (i = 0; i < d - k; i++)
-    for (j         = 0; j < d - k; j++)
+    for (j = 0; j < d - k; j++)
       matrix[i][j] = 0;
 
-  for (i         = 0; i < d - k; i++)
+  for (i = 0; i < d - k; i++)
     matrix[i][i] = 1;
 
   for (i = 0; i < d - k; i++)
@@ -535,10 +535,10 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_qary(int k, Z_NR<ZT> &q)
       matrix[i][j].randm(q);
 
   for (i = d - k; i < d; i++)
-    for (j         = 0; j < d; j++)
+    for (j = 0; j < d; j++)
       matrix[i][j] = 0;
 
-  for (i         = d - k; i < d; i++)
+  for (i = d - k; i < d; i++)
     matrix[i][i] = q;
 }
 

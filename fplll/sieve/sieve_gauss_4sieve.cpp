@@ -110,7 +110,7 @@ template <class ZT, class F> Z_NR<ZT> GaussSieve<ZT, F>::update_p_4reduce_3reduc
     while (lp_it2 != List.end())
     {
       tmp_lp_it = lp_it2;
-      v2        = *lp_it2;
+      v2 = *lp_it2;
       if (v2->norm <= v1->norm || v2->norm <= p->norm)
       {
         ++lp_it2;
@@ -264,7 +264,7 @@ template <class ZT, class F> Z_NR<ZT> GaussSieve<ZT, F>::update_p_4reduce(ListPo
       while (lp_it3 != List.end())
       {
         tmp_lp_it = lp_it3;
-        v3        = *lp_it3;
+        v3 = *lp_it3;
         if (v3->norm <= v1->norm || v3->norm <= v2->norm || v3->norm <= p->norm)
         {
           ++lp_it3;

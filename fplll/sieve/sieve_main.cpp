@@ -156,7 +156,7 @@ int main(int argc, char **argv)
     lll_reduction(B, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER);
 
   clock_t etime = clock();
-  double secs   = (etime - stime) / (double)CLOCKS_PER_SEC;
+  double secs = (etime - stime) / (double)CLOCKS_PER_SEC;
   if (flag_verbose)
   {
     if (bs > 0)
@@ -187,7 +187,7 @@ int main(int argc, char **argv)
     main_run_sieve<mpz_t>(B, target_norm, alg, flag_verbose, seed);
 
   etime = clock();
-  secs  = (etime - stime) / (double)CLOCKS_PER_SEC;
+  secs = (etime - stime) / (double)CLOCKS_PER_SEC;
   if (flag_verbose)
   {
     cout << "# [info] sieve took time " << secs << " s" << endl;

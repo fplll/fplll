@@ -261,7 +261,7 @@ public:
   void gen_identity(int d)
   {
     gen_zero(d, d);
-    for (int i     = 0; i < d; i++)
+    for (int i = 0; i < d; i++)
       matrix[i][i] = 1;
   }
 

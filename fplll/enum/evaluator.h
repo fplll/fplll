@@ -47,9 +47,9 @@ enum EvaluatorStrategy
 template <class FT> class Evaluator
 {
 public:
-  Evaluator(size_t nr_solutions               = 1,
+  Evaluator(size_t nr_solutions = 1,
             EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
-            bool find_subsolutions            = false)
+            bool find_subsolutions = false)
       : max_sols(nr_solutions), strategy(update_strategy), findsubsols(find_subsolutions),
         sol_count(0)
   {
@@ -152,9 +152,9 @@ public:
   using Evaluator<FT>::normExp;
   using Evaluator<FT>::sub_solutions;
 
-  FastEvaluator(size_t nr_solutions               = 1,
+  FastEvaluator(size_t nr_solutions = 1,
                 EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
-                bool find_subsolutions            = false)
+                bool find_subsolutions = false)
       : Evaluator<FT>(nr_solutions, update_strategy, find_subsolutions)
   {
   }
@@ -181,7 +181,7 @@ public:
     {
       sub_solutions[offset].first  = dist;
       sub_solutions[offset].second = new_sub_sol_coord;
-      for (int i                        = 0; i < offset; ++i)
+      for (int i = 0; i < offset; ++i)
         sub_solutions[offset].second[i] = 0.0;
     }
   }
@@ -196,8 +196,8 @@ class ErrorBoundedEvaluator : public Evaluator<Float>
 public:
   ErrorBoundedEvaluator(int dim, const Matrix<Float> &mmu, const Matrix<Float> &mr,
                         EvaluatorMode evalmode, size_t nr_solutions = 1,
-                        EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
-                        bool find_subsolutions            = false)
+                        EvaluatorStrategy update_strategy           = EVALSTRATEGY_BEST_N_SOLUTIONS,
+                        bool find_subsolutions = false)
       : Evaluator(nr_solutions, update_strategy, find_subsolutions), eval_mode(evalmode), d(dim),
         mu(mmu), r(mr), input_error_defined(false)
   {
@@ -245,7 +245,7 @@ public:
                             const Matrix<Float> &r  = Matrix<Float>(),
                             EvaluatorMode eval_mode = EVALMODE_SV, size_t nr_solutions = 1,
                             EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
-                            bool find_subsolutions            = false)
+                            bool find_subsolutions = false)
       : ErrorBoundedEvaluator(d, mu, r, eval_mode, nr_solutions, update_strategy, find_subsolutions)
   {
   }
@@ -268,7 +268,7 @@ public:
                              const Matrix<Float> &r, EvaluatorMode eval_mode,
                              size_t nr_solutions               = 1,
                              EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
-                             bool find_subsolutions            = false)
+                             bool find_subsolutions = false)
       : ErrorBoundedEvaluator(d, mu, r, eval_mode, nr_solutions, update_strategy,
                               find_subsolutions),
         matrix(matrix)

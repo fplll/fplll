@@ -22,7 +22,7 @@ using namespace fplll;
 template <class FT> int test_str()
 {
   int status = 0;
-  FT a       = "1.01";
+  FT a = "1.01";
   status |= !(abs(a - 1.01) < 0.001);
   return status;
 }

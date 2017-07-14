@@ -60,7 +60,7 @@ static void get_basis_min(Integer &basis_min, const IntMatrix &b, int first, int
 static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
                           ErrorBoundedEvaluator &evaluator, const vector<enumf> &pruning, int flags)
 {
-  Enumeration<Float> enumobj(gso, evaluator);
+  Enumeration<Integer, Float> enumobj(gso, evaluator);
   bool dual = (flags & SVP_DUAL);
   if (d == 1 || !pruning.empty() || dual)
   {
@@ -98,13 +98,11 @@ static bool enumerate_svp(int d, MatGSO<Integer, Float> &gso, Float &max_dist,
   return !evaluator.empty();
 }
 
-
-
 static int shortest_vector_ex(IntMatrix &b, IntVect &sol_coord, SVPMethod method,
                               const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
                               long long &sol_count, vector<IntVect> *subsol_coord = nullptr,
-                              vector<enumf> *subsol_dist    = nullptr,
-                              vector<IntVect> *auxsol_coord = nullptr,
+                              vector<enumf> *subsol_dist                          = nullptr,
+                              vector<IntVect> *auxsol_coord                       = nullptr,
                               vector<enumf> *auxsol_dist = nullptr, int max_aux_sols = 0)
 {
   bool findsubsols = (subsol_coord != nullptr) && (subsol_dist != nullptr);
@@ -425,7 +423,7 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
           max_index = cur;
         }
       }
-      for (cur                        = max_index; cur < previous_max_index; ++cur)
+      for (cur = max_index; cur < previous_max_index; ++cur)
         max_indices[cur]              = max_index;
       max_indices[previous_max_index] = previous_max_index;
       previous_max_index              = max_index;
@@ -437,7 +435,7 @@ int closest_vector(IntMatrix &b, const IntVect &int_target, IntVect &sol_coord, 
   FastErrorBoundedEvaluator evaluator(n, gso.get_mu_matrix(), gso.get_r_matrix(), EVALMODE_CV);
 
   // Main loop of the enumeration
-  Enumeration<Float> enumobj(gso, evaluator, max_indices);
+  Enumeration<Integer, Float> enumobj(gso, evaluator, max_indices);
   enumobj.enumerate(0, d, max_dist, 0, target_coord);
 
   int result = RED_ENUM_FAILURE;

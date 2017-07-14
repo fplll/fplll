@@ -109,7 +109,7 @@ public:
     p[0]       = 1.;
     p[1]       = 1.;
     p[2]       = 2.;
-    p[3]       = 3.;
+    p[3] = 3.;
     pru.integrate_poly(ld, p);
     cerr << "Testing integrate_poly" << endl;
     for (int i = 0; i < 5; ++i)
@@ -158,7 +158,7 @@ public:
 
     for (int i = 0; i < Nbis / 2; ++i)
     {
-      pr[i]              = 1;
+      pr[i] = 1;
       pr[i + (Nbis / 2)] = .3;
     }
 
@@ -170,7 +170,7 @@ public:
 
     for (int i = 0; i < Nbis / 2; ++i)
     {
-      pr[i]              = 1;
+      pr[i] = 1;
       pr[i + (Nbis / 2)] = .5;
     }
 
@@ -182,7 +182,7 @@ public:
 
     for (int i = 0; i < Nbis / 2; ++i)
     {
-      pr[i]              = 1;
+      pr[i] = 1;
       pr[i + (Nbis / 2)] = .7;
     }
 
