@@ -21,7 +21,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-/** Extend the size of the given vector. */
+/** Extends the size of the given vector. */
 template <class T> void extend_vect(vector<T> &v, int size)
 {
   if (static_cast<int>(v.size()) < size)
@@ -37,7 +37,7 @@ template <class T> void reverse_by_swap(vector<T> &v, int first, int last)
     v[first].swap(v[last]);
 }
 
-/** Rotate a vector by consecutive swaps. */
+/** Rotates a vector by consecutive swaps. */
 template <class T> void rotate_by_swap(vector<T> &v, int first, int middle, int last)
 {
   // Algorithm from STL code
@@ -73,7 +73,7 @@ template <class T> void rotate_right_by_swap(vector<T> &v, int first, int last)
   }
 }
 
-/** Prints a vector on stream os. */
+/** Print a vector on stream os. */
 template <class T> ostream &operator<<(ostream &os, const vector<T> &v)
 {
   os << "[";
@@ -138,12 +138,13 @@ public:
       undefined. */
   NumVect(int size) : data(size) {}
   NumVect(int size, const T &t) : data(size, t) {}
-  /** Sets the NumVect to the reference of the given NumVect. (?) */
+  /** Sets the NumVect to the elements of the given NumVect. */
   void operator=(const NumVect &v)
   {
     if (this != &v)
       data = v.data;
   }
+  /** Swaps the data between the NumVect and the given NumVect. */
   void swap(NumVect &v) { data.swap(v.data); }
   /** Returns an iterator to the beginning of NumVect.*/
   const iterator begin() { return data.begin(); }
