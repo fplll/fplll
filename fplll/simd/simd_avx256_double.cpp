@@ -114,8 +114,9 @@ struct AVX256D
   }
 };
 
-SIMD_double_functions SIMD_double_avx256_functions({"avx256d", AVX256D::cpu_supported,
-                                                    AVX256D::dot_product});
+SIMD_double_functions SIMD_double_avx256_functions({"avx256d", AVX256D::cpu_supported, nonsimd_add,
+                                                    nonsimd_sub, nonsimd_addmul, nonsimd_addmul2,
+                                                    AVX256D::dot_product, nonsimd_givens_rotation});
 
 FPLLL_END_NAMESPACE
 
