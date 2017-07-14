@@ -35,7 +35,7 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h \
 	sieve/sieve_gauss.h sieve/sieve_common.h sieve/sieve_gauss_str.h sieve/sampler_basic.h \
 	pruner.h \
-	simd/simd.h simd/simd_generic.h
+	simd/simd.h
 
 bin_PROGRAMS=fplll latticegen latsieve
 check_PROGRAMS=llldiff
@@ -90,7 +90,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	sieve/sieve_gauss_4sieve.cpp \
 	sieve/sampler_basic.h \
 	sieve/sampler_basic.cpp \
-	simd/simd.cpp simd/simd.h simd/simd_generic.h \
+	simd/simd.cpp simd/simd.h \
         simd/simd_avx256_double.cpp
 
 %_avx256_double.o : CXXFLAGS += $(AVX_FLAGS)

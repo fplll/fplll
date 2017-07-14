@@ -17,31 +17,102 @@
 #define FPLLL_SIMD_AVX256_H
 
 #include "simd.h"
-#include "simd_generic.h"
 
 #ifdef FPLLL_HAVE_AVX
+#include <cpuid.h>
 #include <immintrin.h>
 
 FPLLL_BEGIN_NAMESPACE
 
-struct SIMD_double_avx256
+struct AVX256D
 {
   typedef __m256d vec_t;
-  static const size_t width = 4;
+  static const size_t width     = 4;
+  static const size_t alignment = 32;  // vector byte alignment for aligned load/write
 
   static inline vec_t v_zero() { return _mm256_setzero_pd(); }
   static inline vec_t vv_mul(vec_t x, vec_t y) { return _mm256_mul_pd(x, y); }
   static inline vec_t vv_add(vec_t x, vec_t y) { return _mm256_add_pd(x, y); }
-  static inline vec_t load(const double *p) { return _mm256_loadu_pd(p); }
+  static inline vec_t unaligned_load(const double *p) { return _mm256_loadu_pd(p); }
+  static inline vec_t aligned_load(const double *p) { return _mm256_load_pd(p); }
+
   static bool cpu_supported()
   {
-    __builtin_cpu_init();
-    return __builtin_cpu_supports("avx");
+    unsigned int a, b, c, d;
+    __cpuid_count(0, 0, a, b, c, d);
+    unsigned int ID = a;
+    if (!(ID >= 0x00000001))
+      return false;
+    __cpuid_count(0x00000001, 0, a, b, c, d);
+    if (0 == (c & (1 << 28)))
+      return false;
+    // TODO: check if OS has enabled AVX support
+    return true;
+  }
+
+  static double dot_product(const double *x, const double *y, size_t n)
+  {
+    if (n < width * 2)
+    {
+      // for short rows we use the non-simd version
+      double r = 0;
+      for (size_t i = 0; i < n; ++i)
+      {
+        r += x[i] * y[i];
+      }
+      return r;
+    }
+    if ((size_t(x) - size_t(y)) % alignment == 0)
+    {
+      // aligned version
+      double r = 0;
+      size_t i = 0, e = ((size_t(32) - size_t(x)) % alignment) / sizeof(double);
+      for (; i < e; ++i)
+      {
+        r += x[i] * y[i];
+      }
+      vec_t rv = v_zero();
+      for (; i + width <= n; i += width)
+      {
+        rv = vv_add(rv, vv_mul(aligned_load(x + i), aligned_load(y + i)));
+      }
+      for (; i < n; ++i)
+      {
+        r += x[i] * y[i];
+      }
+      for (i = 0; i < width; ++i)
+      {
+        r += reinterpret_cast<double *>(&rv)[i];
+      }
+      return r;
+    }
+    else
+    {
+      // one aligned, other unaligned version
+      // aligned version
+      double r = 0;
+      size_t i = 0, e = ((size_t(32) - size_t(x)) % alignment) / sizeof(double);
+      for (; i < e; ++i)
+      {
+        r += x[i] * y[i];
+      }
+      vec_t rv = v_zero();
+      for (; i + width <= n; i += width)
+      {
+        rv = vv_add(rv, vv_mul(aligned_load(x + i), unaligned_load(y + i)));
+      }
+      for (; i < n; ++i)
+      {
+        r += x[i] * y[i];
+      }
+      for (i = 0; i < width; ++i)
+      {
+        r += reinterpret_cast<double *>(&rv)[i];
+      }
+      return r;
+    }
   }
 };
-
-using AVX256D = SIMD_double_implementation<SIMD_double_avx256>;
-template class SIMD_double_implementation<SIMD_double_avx256>;
 
 SIMD_double_functions SIMD_double_avx256_functions({"avx256d", AVX256D::cpu_supported,
                                                     AVX256D::dot_product});

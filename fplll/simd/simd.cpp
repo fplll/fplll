@@ -14,7 +14,6 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "simd.h"
-#include "simd_generic.h"
 
 FPLLL_BEGIN_NAMESPACE
 
