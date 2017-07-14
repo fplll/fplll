@@ -71,7 +71,7 @@ bool Enumerator::enum_next(const Float &max_sqr_length)
           newcenter.submul(x[j], mu(j, k));
 
         center[k] = newcenter;
-        dist[k]   = newdist;
+        dist[k] = newdist;
         x[k].rnd(newcenter);
         dx[k]  = 0.0;
         ddx[k] = newcenter >= x[k] ? -1.0 : 1.0;

@@ -274,7 +274,7 @@ template <class ZT, class FT> inline void MatGSO<ZT, FT>::create_rows(int n_new_
     u.set_rows(d);
     for (int i = old_d; i < d; i++)
       for (int j = 0; j < u.get_cols(); j++)
-        u[i][j]  = 0;
+        u[i][j] = 0;
   }
   size_increased();
   if (n_known_rows == old_d)

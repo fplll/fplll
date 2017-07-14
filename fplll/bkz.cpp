@@ -91,7 +91,7 @@ const Pruning &BKZReduction<ZT, FT>::get_pruning(int kappa, int block_size,
   long max_dist_expo;
   FT max_dist    = m.get_r_exp(kappa, kappa, max_dist_expo);
   FT gh_max_dist = max_dist;
-  FT root_det    = m.get_root_det(kappa, kappa + block_size);
+  FT root_det = m.get_root_det(kappa, kappa + block_size);
   adjust_radius_to_gh_bound(gh_max_dist, max_dist_expo, block_size, root_det, 1.0);
   return strat.get_pruning(max_dist.get_d() * pow(2, max_dist_expo),
                            gh_max_dist.get_d() * pow(2, max_dist_expo));
@@ -117,7 +117,7 @@ bool BKZReduction<ZT, FT>::svp_preprocessing(int kappa, int block_size, const BK
   for (auto it = preproc.begin(); it != preproc.end(); ++it)
   {
     int dummy_kappa_max = num_rows;
-    BKZParam prepar     = BKZParam(*it, param.strategies, LLL_DEF_DELTA, BKZ_GH_BND);
+    BKZParam prepar = BKZParam(*it, param.strategies, LLL_DEF_DELTA, BKZ_GH_BND);
     clean &= tour(0, dummy_kappa_max, prepar, kappa, kappa + block_size);
   }
 
@@ -442,7 +442,7 @@ template <class ZT, class FT>
 bool BKZReduction<ZT, FT>::sd_tour(const int loop, const BKZParam &par, int min_row, int max_row)
 {
   int dummy_kappa_max = num_rows;
-  bool clean          = true;
+  bool clean = true;
   clean &= trunc_dtour(par, min_row, max_row);
   clean &= trunc_tour(dummy_kappa_max, par, min_row, max_row);
 
@@ -582,7 +582,7 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
     lll_obj.lll(0, 0, num_rows, 0);
 
   int kappa_max = -1;
-  bool clean    = true;
+  bool clean = true;
   for (i = 0;; ++i)
   {
     if ((flags & BKZ_MAX_LOOPS) && i >= param.max_loops)
@@ -655,7 +655,7 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
       for (int j = 0; j < p; ++j)
       {
         int kappa = j * param.block_size + 1;
-        int end   = min(num_rows, kappa + param.block_size - 1);
+        int end = min(num_rows, kappa + param.block_size - 1);
         hkz(dummy_kappa_max, param, kappa, end);
       }
       if (flags & BKZ_DUMP_GSO)
@@ -867,7 +867,7 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType f
   else if (sel_ft == FT_MPFR)
   {
     int old_prec = FP_NR<mpfr_t>::set_prec(precision);
-    status       = bkz_reduction_f<FP_NR<mpfr_t>>(*B, param, sel_ft, lll_delta, u, u_inv);
+    status = bkz_reduction_f<FP_NR<mpfr_t>>(*B, param, sel_ft, lll_delta, u, u_inv);
     FP_NR<mpfr_t>::set_prec(old_prec);
   }
   else
@@ -900,7 +900,7 @@ int hkz_reduction(IntMatrix &b, int flags, FloatType float_type, int precision)
   vector<Strategy> strategies;
   BKZParam param(b.get_rows(), strategies);
   param.block_size = b.get_rows();
-  param.delta      = 1;
+  param.delta = 1;
   if (flags & HKZ_VERBOSE)
     param.flags |= BKZ_VERBOSE;
   return bkz_reduction(&b, NULL, param, float_type, precision);

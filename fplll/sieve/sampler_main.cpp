@@ -18,7 +18,7 @@ int main()
   Z_NR<long> x1;
   long flag = 0;
   c         = 0.0;
-  t         = 1000.0;
+  t = 1000.0;
   KleinSampler<long, FP_NR<double>> S1(M1);
 
   /* sample Z */

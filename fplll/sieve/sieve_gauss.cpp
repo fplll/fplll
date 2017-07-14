@@ -37,7 +37,7 @@ GaussSieve<ZT, F>::GaussSieve(ZZ_mat<ZT> &B, int alg_arg, bool ver, int seed)
   samples         = 0;
   target_sqr_norm = 0;
   mem_lower       = pow(2.0, 0.18 * nc);
-  alg             = alg_arg;
+  alg = alg_arg;
   set_verbose(ver);
 
   /* sanity check */

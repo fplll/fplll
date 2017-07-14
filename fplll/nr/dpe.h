@@ -98,7 +98,8 @@
 #define DPE_EXPMIN INT_MIN /* smallest possible exponent */
 #endif
 
-typedef union {
+typedef union
+{
   double d;
   int i[2];
 } dpe_double_words;
@@ -127,21 +128,21 @@ DPE_INLINE void dpe_clear(dpe_t x DPE_UNUSED_ATTR) {}
 DPE_INLINE void dpe_set(dpe_t x, const dpe_t y)
 {
   DPE_MANT(x) = DPE_MANT(y);
-  DPE_EXP(x)  = DPE_EXP(y);
+  DPE_EXP(x) = DPE_EXP(y);
 }
 
 /* set x to -y */
 DPE_INLINE void dpe_neg(dpe_t x, const dpe_t y)
 {
   DPE_MANT(x) = -DPE_MANT(y);
-  DPE_EXP(x)  = DPE_EXP(y);
+  DPE_EXP(x) = DPE_EXP(y);
 }
 
 /* set x to |y| */
 DPE_INLINE void dpe_abs(dpe_t x, const dpe_t y)
 {
   DPE_MANT(x) = (DPE_MANT(y) >= 0) ? DPE_MANT(y) : -DPE_MANT(y);
-  DPE_EXP(x)  = DPE_EXP(y);
+  DPE_EXP(x) = DPE_EXP(y);
 }
 
 /* set mantissa in [1/2, 1), except for 0 which has minimum exponent */
@@ -159,12 +160,12 @@ static void dpe_normalize(dpe_t x)
 #ifdef DPE_LITTLEENDIAN32 /* 32-bit little endian */
     dpe_double_words dw;
     dw.d = DPE_MANT(x);
-    e    = (dw.i[1] >> 20) & 0x7FF; /* unbiased exponent, 1022 for m=1/2 */
+    e = (dw.i[1] >> 20) & 0x7FF; /* unbiased exponent, 1022 for m=1/2 */
     DPE_EXP(x) += e - 1022;
-    dw.i[1]     = (dw.i[1] & 0x800FFFFF) | 0x3FE00000;
+    dw.i[1] = (dw.i[1] & 0x800FFFFF) | 0x3FE00000;
     DPE_MANT(x) = dw.d;
 #else /* portable code */
-    double m    = DPE_MANT(x);
+    double m = DPE_MANT(x);
     DPE_MANT(x) = DPE_FREXP(m, &e);
     DPE_EXP(x) += e;
 #endif
@@ -203,7 +204,7 @@ DPE_INLINE double dpe_scale(double d, int s)
 DPE_INLINE void dpe_set_d(dpe_t x, double y)
 {
   DPE_MANT(x) = (DPE_DOUBLE)y;
-  DPE_EXP(x)  = 0;
+  DPE_EXP(x) = 0;
   dpe_normalize(x);
 }
 
@@ -211,7 +212,7 @@ DPE_INLINE void dpe_set_d(dpe_t x, double y)
 DPE_INLINE void dpe_set_ld(dpe_t x, long double y)
 {
   DPE_MANT(x) = (DPE_DOUBLE)y;
-  DPE_EXP(x)  = 0;
+  DPE_EXP(x) = 0;
   dpe_normalize(x);
 }
 
@@ -219,7 +220,7 @@ DPE_INLINE void dpe_set_ld(dpe_t x, long double y)
 DPE_INLINE void dpe_set_ui(dpe_t x, unsigned long y)
 {
   DPE_MANT(x) = (DPE_DOUBLE)y;
-  DPE_EXP(x)  = 0;
+  DPE_EXP(x) = 0;
   dpe_normalize(x);
 }
 
@@ -227,7 +228,7 @@ DPE_INLINE void dpe_set_ui(dpe_t x, unsigned long y)
 DPE_INLINE void dpe_set_si(dpe_t x, long y)
 {
   DPE_MANT(x) = (DPE_DOUBLE)y;
-  DPE_EXP(x)  = 0;
+  DPE_EXP(x) = 0;
   dpe_normalize(x);
 }
 
@@ -253,7 +254,7 @@ DPE_INLINE void dpe_set_z(dpe_t x, const mpz_t y)
 {
   long e;
   DPE_MANT(x) = mpz_get_d_2exp(&e, y);
-  DPE_EXP(x)  = (DPE_EXP_T)e;
+  DPE_EXP(x) = (DPE_EXP_T)e;
 }
 
 /* set x to y, rounded to nearest */
@@ -300,7 +301,7 @@ DPE_INLINE void dpe_set_mpfr(dpe_t x, const mpfr_t y)
 {
   long exp;
   DPE_MANT(x) = mpfr_get_d_2exp(&exp, y, GMP_RNDN);
-  DPE_EXP(x)  = exp;
+  DPE_EXP(x) = exp;
   dpe_normalize(x);
 }
 
@@ -321,12 +322,12 @@ DPE_INLINE void dpe_add(dpe_t x, const dpe_t y, const dpe_t z)
     if (d >= 0)
     {
       DPE_MANT(x) = DPE_MANT(y) + dpe_scale(DPE_MANT(z), -d);
-      DPE_EXP(x)  = DPE_EXP(y);
+      DPE_EXP(x) = DPE_EXP(y);
     }
     else
     {
       DPE_MANT(x) = DPE_MANT(z) + dpe_scale(DPE_MANT(y), d);
-      DPE_EXP(x)  = DPE_EXP(z);
+      DPE_EXP(x) = DPE_EXP(z);
     }
     dpe_normalize(x);
   }
@@ -347,12 +348,12 @@ DPE_INLINE void dpe_sub(dpe_t x, const dpe_t y, const dpe_t z)
     if (d >= 0)
     {
       DPE_MANT(x) = DPE_MANT(y) - dpe_scale(DPE_MANT(z), -d);
-      DPE_EXP(x)  = DPE_EXP(y);
+      DPE_EXP(x) = DPE_EXP(y);
     }
     else
     {
       DPE_MANT(x) = dpe_scale(DPE_MANT(y), d) - DPE_MANT(z);
-      DPE_EXP(x)  = DPE_EXP(z);
+      DPE_EXP(x) = DPE_EXP(z);
     }
     dpe_normalize(x);
   }
@@ -362,7 +363,7 @@ DPE_INLINE void dpe_sub(dpe_t x, const dpe_t y, const dpe_t z)
 DPE_INLINE void dpe_mul(dpe_t x, const dpe_t y, const dpe_t z)
 {
   DPE_MANT(x) = DPE_MANT(y) * DPE_MANT(z);
-  DPE_EXP(x)  = DPE_EXP(y) + DPE_EXP(z);
+  DPE_EXP(x) = DPE_EXP(y) + DPE_EXP(z);
   dpe_normalize(x);
 }
 
@@ -372,7 +373,7 @@ DPE_INLINE void dpe_mul_d(dpe_t x, const dpe_t y, const double z)
   dpe_t zt;
   dpe_set_d(zt, z);
   DPE_MANT(x) = DPE_MANT(y) * DPE_MANT(zt);
-  DPE_EXP(x)  = DPE_EXP(y) + DPE_EXP(zt);
+  DPE_EXP(x) = DPE_EXP(y) + DPE_EXP(zt);
   dpe_normalize(x);
 }
 
@@ -400,12 +401,12 @@ DPE_INLINE void dpe_sqrt(dpe_t x, const dpe_t y)
   {
     /* since 1/2 <= my < 1, 1/4 <= my/2 < 1 */
     DPE_MANT(x) = sqrt(0.5 * DPE_MANT(y));
-    DPE_EXP(x)  = (ey + 1) / 2;
+    DPE_EXP(x) = (ey + 1) / 2;
   }
   else
   {
     DPE_MANT(x) = sqrt(DPE_MANT(y));
-    DPE_EXP(x)  = ey / 2;
+    DPE_EXP(x) = ey / 2;
   }
 }
 
@@ -414,7 +415,7 @@ DPE_INLINE void dpe_sqrt(dpe_t x, const dpe_t y)
 DPE_INLINE void dpe_div(dpe_t x, const dpe_t y, const dpe_t z)
 {
   DPE_MANT(x) = DPE_MANT(y) / DPE_MANT(z);
-  DPE_EXP(x)  = DPE_EXP(y) - DPE_EXP(z);
+  DPE_EXP(x) = DPE_EXP(y) - DPE_EXP(z);
   dpe_normalize(x);
 }
 
@@ -422,7 +423,7 @@ DPE_INLINE void dpe_div(dpe_t x, const dpe_t y, const dpe_t z)
 DPE_INLINE void dpe_mul_ui(dpe_t x, const dpe_t y, unsigned long z)
 {
   DPE_MANT(x) = DPE_MANT(y) * (DPE_DOUBLE)z;
-  DPE_EXP(x)  = DPE_EXP(y);
+  DPE_EXP(x) = DPE_EXP(y);
   dpe_normalize(x);
 }
 
@@ -430,7 +431,7 @@ DPE_INLINE void dpe_mul_ui(dpe_t x, const dpe_t y, unsigned long z)
 DPE_INLINE void dpe_div_ui(dpe_t x, const dpe_t y, unsigned long z)
 {
   DPE_MANT(x) = DPE_MANT(y) / (DPE_DOUBLE)z;
-  DPE_EXP(x)  = DPE_EXP(y);
+  DPE_EXP(x) = DPE_EXP(y);
   dpe_normalize(x);
 }
 
@@ -438,21 +439,21 @@ DPE_INLINE void dpe_div_ui(dpe_t x, const dpe_t y, unsigned long z)
 DPE_INLINE void dpe_mul_2si(dpe_t x, const dpe_t y, long e)
 {
   DPE_MANT(x) = DPE_MANT(y);
-  DPE_EXP(x)  = DPE_EXP(y) + (DPE_EXP_T)e;
+  DPE_EXP(x) = DPE_EXP(y) + (DPE_EXP_T)e;
 }
 
 /* x <- y * 2^e */
 DPE_INLINE void dpe_mul_2exp(dpe_t x, const dpe_t y, unsigned long e)
 {
   DPE_MANT(x) = DPE_MANT(y);
-  DPE_EXP(x)  = DPE_EXP(y) + (DPE_EXP_T)e;
+  DPE_EXP(x) = DPE_EXP(y) + (DPE_EXP_T)e;
 }
 
 /* x <- y / 2^e */
 DPE_INLINE void dpe_div_2exp(dpe_t x, const dpe_t y, unsigned long e)
 {
   DPE_MANT(x) = DPE_MANT(y);
-  DPE_EXP(x)  = DPE_EXP(y) - (DPE_EXP_T)e;
+  DPE_EXP(x) = DPE_EXP(y) - (DPE_EXP_T)e;
 }
 
 /* return e and x such that y = x*2^e (equality is not guaranteed if the 'long'
@@ -484,7 +485,7 @@ static int dpe_out_str(FILE *s, int base, const dpe_t x)
   DPE_DOUBLE d = DPE_MANT(x);
   DPE_EXP_T e2 = DPE_EXP(x);
   int e10      = 0;
-  char sign    = ' ';
+  char sign = ' ';
   if (DPE_UNLIKELY(base != 10))
   {
     fprintf(stderr, "Error in dpe_out_str, only base 10 allowed\n");
@@ -692,10 +693,10 @@ DPE_INLINE void dpe_swap(dpe_t x, dpe_t y)
 {
   DPE_EXP_T i  = DPE_EXP(x);
   DPE_DOUBLE d = DPE_MANT(x);
-  DPE_EXP(x)   = DPE_EXP(y);
-  DPE_MANT(x)  = DPE_MANT(y);
-  DPE_EXP(y)   = i;
-  DPE_MANT(y)  = d;
+  DPE_EXP(x) = DPE_EXP(y);
+  DPE_MANT(x) = DPE_MANT(y);
+  DPE_EXP(y) = i;
+  DPE_MANT(y) = d;
 }
 
 /* Ugly hacks: No correct rounding guaranteed */
@@ -716,7 +717,7 @@ DPE_INLINE void dpe_ugly_exp(dpe_t x, const dpe_t y)
 DPE_INLINE void dpe_pow_si(dpe_t x, const dpe_t y, const unsigned int k)
 {
   DPE_MANT(x) = pow(DPE_MANT(y), k);
-  DPE_EXP(x)  = DPE_EXP(y) * k;
+  DPE_EXP(x) = DPE_EXP(y) * k;
   dpe_normalize(x);
 }
 

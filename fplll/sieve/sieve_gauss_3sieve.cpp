@@ -157,7 +157,7 @@ template <class ZT, class F> Z_NR<ZT> GaussSieve<ZT, F>::update_p_3reduce(ListPo
     while (lp_it2 != List.end())
     {
       tmp_lp_it = lp_it2;
-      v2        = *lp_it2;
+      v2 = *lp_it2;
       if (v2->norm <= v1->norm || v2->norm <= p->norm)
       {
         ++lp_it2;

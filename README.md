@@ -227,8 +227,8 @@ A combination of these option is allowed (e.g., `-of but`).
 
 ## llldiff ##
 
-`llldiff` compares two bases (b1,...,bd) and (c1,...c_d'): they are considered
-equal iff d=d' and for any i, bi = +- ci. Concretely, if basis B is in file 'B.txt' and if basis C is in file 'C.txt' (in the fplll format), then one may run `cat B.txt C.txt | ./llldiff`.
+`llldiff` compares two bases (b_1,...,b_d) and (c_1,...c_d'): they are considered
+equal iff d=d' and for any i, b_i = c_i or b_i = - c_i. Concretely, if basis B is in file 'B.txt' and if basis C is in file 'C.txt' (in the fplll format), then one may run `cat B.txt C.txt | ./llldiff`.
 
 
 ## latsieve ##

@@ -55,7 +55,7 @@ static int compute_min_prec(double &rho, int d, double delta, double eta, double
     // eta - 0.5 is an exact fp operation
     if (f_epsilon > eta - 0.5)
       f_epsilon = eta - 0.5;
-    tmp1        = 1.0;
+    tmp1 = 1.0;
     tmp1.sub(tmp1, f_delta, GMP_RNDD);
     if (f_epsilon > tmp1)
       f_epsilon = tmp1;
