@@ -85,14 +85,14 @@ struct AVX256D
     {
       for (size_t i = 0; i < n; ++i)
       {
-        dstx[i] = x[i] + y[i];
+        dstx[i] = x[i] - y[i];
       }
       return;
     }
     size_t i = 0, e = ((size_t(32) - size_t(x)) % alignment) / sizeof(double);
     for (; i < e; ++i)
     {
-      dstx[i] = x[i] + y[i];
+      dstx[i] = x[i] - y[i];
     }
     for (; i + width <= n; i += width)
     {
@@ -100,7 +100,7 @@ struct AVX256D
     }
     for (; i < n; ++i)
     {
-      dstx[i] = x[i] + y[i];
+      dstx[i] = x[i] - y[i];
     }
   }
 
