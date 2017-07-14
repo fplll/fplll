@@ -31,10 +31,14 @@ struct AVX256D
   static const size_t alignment = 32;  // vector byte alignment for aligned load/write
 
   static inline vec_t v_zero() { return _mm256_setzero_pd(); }
+  static inline vec_t v_val(double a) { return _mm256_set1_pd(a); }
   static inline vec_t vv_mul(vec_t x, vec_t y) { return _mm256_mul_pd(x, y); }
   static inline vec_t vv_add(vec_t x, vec_t y) { return _mm256_add_pd(x, y); }
+  static inline vec_t vv_sub(vec_t x, vec_t y) { return _mm256_sub_pd(x, y); }
   static inline vec_t unaligned_load(const double *p) { return _mm256_loadu_pd(p); }
   static inline vec_t aligned_load(const double *p) { return _mm256_load_pd(p); }
+  static inline void unaligned_store(double *p, vec_t x) { return _mm256_storeu_pd(p, x); }
+  static inline void aligned_store(double *p, vec_t x) { return _mm256_store_pd(p, x); }
 
   static bool cpu_supported()
   {
@@ -48,6 +52,109 @@ struct AVX256D
       return false;
     // TODO: check if OS has enabled AVX support
     return true;
+  }
+
+  static void add(double *dstx, const double *x, const double *y, size_t n)
+  {
+    if (n < width * 2)
+    {
+      for (size_t i = 0; i < n; ++i)
+      {
+        dstx[i] = x[i] + y[i];
+      }
+      return;
+    }
+    size_t i = 0, e = ((size_t(32) - size_t(x)) % alignment) / sizeof(double);
+    for (; i < e; ++i)
+    {
+      dstx[i] = x[i] + y[i];
+    }
+    for (; i + width <= n; i += width)
+    {
+      unaligned_store(dstx + i, vv_add(aligned_load(x + i), unaligned_load(y + i)));
+    }
+    for (; i < n; ++i)
+    {
+      dstx[i] = x[i] + y[i];
+    }
+  }
+
+  static void sub(double *dstx, const double *x, const double *y, size_t n)
+  {
+    if (n < width * 2)
+    {
+      for (size_t i = 0; i < n; ++i)
+      {
+        dstx[i] = x[i] + y[i];
+      }
+      return;
+    }
+    size_t i = 0, e = ((size_t(32) - size_t(x)) % alignment) / sizeof(double);
+    for (; i < e; ++i)
+    {
+      dstx[i] = x[i] + y[i];
+    }
+    for (; i + width <= n; i += width)
+    {
+      unaligned_store(dstx + i, vv_sub(aligned_load(x + i), unaligned_load(y + i)));
+    }
+    for (; i < n; ++i)
+    {
+      dstx[i] = x[i] + y[i];
+    }
+  }
+
+  static void addmul(double *dstx, const double *x, double a, const double *y, size_t n)
+  {
+    if (n < width * 2)
+    {
+      for (size_t i = 0; i < n; ++i)
+      {
+        dstx[i] = x[i] + a * y[i];
+      }
+      return;
+    }
+    size_t i = 0, e = ((size_t(32) - size_t(x)) % alignment) / sizeof(double);
+    for (; i < e; ++i)
+    {
+      dstx[i] = x[i] + a * y[i];
+    }
+    vec_t va = v_val(a);
+    for (; i + width <= n; i += width)
+    {
+      unaligned_store(dstx + i, vv_add(aligned_load(x + i), vv_mul(va, unaligned_load(y + i))));
+    }
+    for (; i < n; ++i)
+    {
+      dstx[i] = x[i] + a * y[i];
+    }
+  }
+
+  static void addmul2(double *dstx, double a, const double *x, double b, const double *y, size_t n)
+  {
+    if (n < width * 2)
+    {
+      for (size_t i = 0; i < n; ++i)
+      {
+        dstx[i] = a * x[i] + b * y[i];
+      }
+      return;
+    }
+    size_t i = 0, e = ((size_t(32) - size_t(x)) % alignment) / sizeof(double);
+    for (; i < e; ++i)
+    {
+      dstx[i] = a * x[i] + b * y[i];
+    }
+    vec_t va = v_val(a), vb = v_val(b);
+    for (; i + width <= n; i += width)
+    {
+      unaligned_store(dstx + i,
+                      vv_add(vv_mul(va, aligned_load(x + i)), vv_mul(vb, unaligned_load(y + i))));
+    }
+    for (; i < n; ++i)
+    {
+      dstx[i] = a * x[i] + b * y[i];
+    }
   }
 
   static double dot_product(const double *x, const double *y, size_t n)
@@ -112,11 +219,53 @@ struct AVX256D
       return r;
     }
   }
+
+  static void givens_rotation(double *dstx, double *dsty, const double *x, const double *y,
+                              double a, double b, size_t n)
+  {
+    if (n < width * 2)
+    {
+      for (size_t i = 0; i < n; ++i)
+      {
+        const double dstxi = a * x[i] + b * y[i];
+        const double dstyi = -b * x[i] + a * y[i];
+        dstx[i]            = dstxi;
+        dsty[i]            = dstyi;
+      }
+      return;
+    }
+    size_t i = 0, e = ((size_t(32) - size_t(x)) % alignment) / sizeof(double);
+    for (; i < e; ++i)
+    {
+      const double dstxi = a * x[i] + b * y[i];
+      const double dstyi = -b * x[i] + a * y[i];
+      dstx[i]            = dstxi;
+      dsty[i]            = dstyi;
+    }
+    vec_t va = v_val(a), vb = v_val(b);
+    for (; i + width <= n; i += width)
+    {
+      vec_t vx    = aligned_load(x + i);
+      vec_t vy    = unaligned_load(y + i);
+      vec_t dstxv = vv_add(vv_mul(va, vx), vv_mul(vb, vy));
+      vec_t dstyv = vv_sub(vv_mul(va, vy), vv_mul(vb, vx));
+      unaligned_store(dstx + i, dstxv);
+      unaligned_store(dsty + i, dstyv);
+    }
+    for (; i < n; ++i)
+    {
+      const double dstxi = a * x[i] + b * y[i];
+      const double dstyi = -b * x[i] + a * y[i];
+      dstx[i]            = dstxi;
+      dsty[i]            = dstyi;
+    }
+  }
 };
 
-SIMD_double_functions SIMD_double_avx256_functions({"avx256d", AVX256D::cpu_supported, nonsimd_add,
-                                                    nonsimd_sub, nonsimd_addmul, nonsimd_addmul2,
-                                                    AVX256D::dot_product, nonsimd_givens_rotation});
+SIMD_double_functions SIMD_double_avx256_functions({"avx256d", AVX256D::cpu_supported, AVX256D::add,
+                                                    AVX256D::sub, AVX256D::addmul, AVX256D::addmul2,
+                                                    AVX256D::dot_product,
+                                                    AVX256D::givens_rotation});
 
 FPLLL_END_NAMESPACE
 
