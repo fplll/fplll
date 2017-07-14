@@ -32,7 +32,7 @@ struct SIMD_double_avx256
   static inline vec_t v_zero() { return _mm256_setzero_pd(); }
   static inline vec_t vv_mul(vec_t x, vec_t y) { return _mm256_mul_pd(x, y); }
   static inline vec_t vv_add(vec_t x, vec_t y) { return _mm256_add_pd(x, y); }
-  static inline vec_t load(const double* p) { return _mm256_loadu_pd(p); }
+  static inline vec_t load(const double *p) { return _mm256_loadu_pd(p); }
   static bool cpu_supported()
   {
     __builtin_cpu_init();
@@ -43,7 +43,8 @@ struct SIMD_double_avx256
 using AVX256D = SIMD_double_implementation<SIMD_double_avx256>;
 template class SIMD_double_implementation<SIMD_double_avx256>;
 
-SIMD_double_functions SIMD_double_avx256_functions({"avx256d",AVX256D::cpu_supported, AVX256D::dot_product});
+SIMD_double_functions SIMD_double_avx256_functions({"avx256d", AVX256D::cpu_supported,
+                                                    AVX256D::dot_product});
 
 FPLLL_END_NAMESPACE
 

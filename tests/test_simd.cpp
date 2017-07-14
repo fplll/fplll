@@ -14,27 +14,28 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include <cstring>
-#include <iostream>
 #include <fplll.h>
 #include <fplll/simd/simd.h>
+#include <iostream>
 
 using namespace std;
 using namespace fplll;
 
-int test_dotproduct(const std::string& disable_versions)
+int test_dotproduct(const std::string &disable_versions)
 {
   int status = 0;
   SIMD_operations nonsimd("sse128d avx256d avx512d");
   SIMD_operations simd(disable_versions);
-  cout << "Testing SIMD dotproduct: " << nonsimd.simd_double_version() << " vs " << simd.simd_double_version() << endl;
+  cout << "Testing SIMD dotproduct: " << nonsimd.simd_double_version() << " vs "
+       << simd.simd_double_version() << endl;
   status |= nonsimd.simd_double_version() != "nonsimd";
   double vec1[256];
   double vec2[256];
-  cout << "Alignment: " << (size_t(vec1)&63) << " " << (size_t(vec2)&63) << endl;
+  cout << "Alignment: " << (size_t(vec1) & 63) << " " << (size_t(vec2) & 63) << endl;
   for (int i = 0; i < 256; ++i)
   {
-    vec1[i] = i - i*i;
-    vec2[i] = (i*i)/2 + 5*i;
+    vec1[i] = i - i * i;
+    vec2[i] = (i * i) / 2 + 5 * i;
   }
   // ensure we check all possible alignment issues
   for (int i = 0; i < 4; ++i)
@@ -42,37 +43,40 @@ int test_dotproduct(const std::string& disable_versions)
     for (int j = 0; j < 4; ++j)
     {
       // ensure we test possible exception cases
-      for (int n = 0; n < 3*16; ++n)
+      for (int n = 0; n < 3 * 16; ++n)
       {
         if (status)
         {
           cout << i << " " << j << " " << n << ": " << flush;
         }
-        double r1 = nonsimd.dot_product(vec1+i, vec2+j, n);
-        double r2 = simd.dot_product(vec1+i, vec2+j, n);
-        status |= (r1/r2) >= 1.000001;
-        status |= (r2/r1) >= 1.000001;
+        double r1 = nonsimd.dot_product(vec1 + i, vec2 + j, n);
+        double r2 = simd.dot_product(vec1 + i, vec2 + j, n);
+        status |= (r1 / r2) >= 1.000001;
+        status |= (r2 / r1) >= 1.000001;
         if (status)
         {
-          cout << r1 << " " << r2 << " " << (r1/r2) << " " << (r2/r1) << " " << status << endl;
+          cout << r1 << " " << r2 << " " << (r1 / r2) << " " << (r2 / r1) << " " << status << endl;
         }
       }
     }
   }
-  cout << "Status: " << (status==0?"passed":"failed") << endl;
+  cout << "Status: " << (status == 0 ? "passed" : "failed") << endl;
   return status;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
   SIMD_operations best_simd;
   int status = 0;
-  try {
+  try
+  {
     status |= test_dotproduct("");
     status |= test_dotproduct("avx512d");
     status |= test_dotproduct("avx256d avx512d");
     status |= test_dotproduct("sse128d avx256d avx512d");
-  } catch (exception& e) {
+  }
+  catch (exception &e)
+  {
     cerr << "Caught exception: " << e.what() << endl;
     status |= 1;
   }

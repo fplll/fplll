@@ -36,10 +36,11 @@ static double dot_product(const double *x, const double *y, size_t n)
 SIMD_double_functions SIMD_double_nonsimd_functions({"nonsimd", always_true, dot_product});
 
 /* SIMD_operations constructor: decide which SIMD version to use */
-SIMD_operations::SIMD_operations(const std::string& disable_versions)
+SIMD_operations::SIMD_operations(const std::string &disable_versions)
 {
 #ifdef FPLLL_HAVE_AVX
-  if (disable_versions.find("avx256d") == std::string::npos && SIMD_double_avx256_functions.cpu_supported())
+  if (disable_versions.find("avx256d") == std::string::npos &&
+      SIMD_double_avx256_functions.cpu_supported())
   {
     double_functions = SIMD_double_avx256_functions;
     return;
