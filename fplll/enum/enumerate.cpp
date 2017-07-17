@@ -107,7 +107,9 @@ void EnumerationDyn<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long f
       fr = _gso.get_r_exp(i + first, i + first, rexpo);
       fr.mul_2si(fr, rexpo - normexp);
       rdiag[d - i - 1] = enumf(1.0) / fr.get_d();
+      cerr << "(" << fr << ", " << fr.get_d() << ", " <<  rdiag[d - i - 1] << ")";
     }
+    cerr << endl;
     for (int i = 0; i < d; ++i)
     {
       for (int j = i + 1; j < d; ++j)
@@ -228,6 +230,7 @@ template <typename ZT, typename FT> void EnumerationDyn<ZT, FT>::process_solutio
   FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << nodes << ")");
   for (int j = 0; j < d; ++j)
     fx[j]    = x[j];
+  FPLLL_TRACE("Sol: " << fx);
   _evaluator.eval_sol(fx, newmaxdist, maxdist);
 
   set_bounds();

@@ -147,7 +147,11 @@ bool BKZReduction<ZT, FT>::svp_postprocessing(int kappa, int block_size, const v
   if (nz_vectors == 1)
   {
     // Yes, it is another vector
-    FPLLL_DEBUG_CHECK(i_vector != -1 && i_vector != 0);
+    if(i_vector == (pos - kappa)) {
+      cerr << solution << endl;
+      abort();
+    }
+    FPLLL_DEBUG_CHECK(i_vector != -1 && i_vector != (pos - kappa));
     m.move_row(kappa + i_vector, pos);
   }
   else if (i_vector != -1)
@@ -326,12 +330,21 @@ bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZPar
     FPLLL_DEBUG_CHECK(pruning.metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
     evaluator.solutions.clear();
     Enumeration<ZT, FT> enum_obj(m, evaluator);
+    vector<double> r;
+    m.dump_r_d(r, kappa, block_size);
+    cerr << r << endl;
+    
+    cerr << "max_dist: " << max_dist << endl;
     enum_obj.enumerate(kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(),
                        vector<enumxt>(), pruning.coefficients, dual);
     nodes += enum_obj.get_nodes();
 
     if (!evaluator.empty())
     {
+      cerr << evaluator.begin()->second << endl;
+      
+      
+      
       svp_postprocessing(kappa, block_size, evaluator.begin()->second, dual);
       rerandomize = false;
     }
