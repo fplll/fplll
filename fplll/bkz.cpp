@@ -147,7 +147,7 @@ bool BKZReduction<ZT, FT>::svp_postprocessing(int kappa, int block_size, const v
   if (nz_vectors == 1)
   {
     // Yes, it is another vector
-    FPLLL_DEBUG_CHECK(i_vector != -1 && i_vector != 0);
+    FPLLL_DEBUG_CHECK(i_vector != -1 && i_vector != (pos - kappa));
     m.move_row(kappa + i_vector, pos);
   }
   else if (i_vector != -1)
