@@ -95,12 +95,12 @@ void EnumerationDyn<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long f
     fr      = _gso.get_r_exp(i + first, i + first, rexpo);
     normexp = max(normexp, rexpo + fr.exponent());
   }
-  // normalization is multiplication by 2^(-normexp). in case of dual, we are normalizing 
+  // normalization is multiplication by 2^(-normexp). in case of dual, we are normalizing
   // the inverse of r, so we negate the normalizing exponent
   if (dual)
   {
     normexp *= -1;
-  }  
+  }
   fmaxdistnorm.mul_2si(fmaxdist, fmaxdistexpo - normexp);
   maxdist = fmaxdistnorm.get_d(GMP_RNDU);
   _evaluator.set_normexp(normexp);
