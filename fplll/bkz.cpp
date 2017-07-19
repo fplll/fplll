@@ -880,7 +880,7 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType f
     else
     {
       // it's an invalid choice
-      FPLLL_ABORT("Floating point type " << sel_ft << "not supported");
+      FPLLL_ABORT("Floating point type " << sel_ft << "not supported in BKZ");
     }
   }
   zeros_first(*B, u, u_inv);
