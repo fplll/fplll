@@ -144,14 +144,14 @@ enum RedStatus
 {
   RED_SUCCESS = 0,
   // Skips value 1
-  RED_GSO_FAILURE = 2,
-  RED_BABAI_FAILURE,
-  RED_LLL_FAILURE,
-  RED_ENUM_FAILURE,
-  RED_BKZ_FAILURE,
-  RED_BKZ_TIME_LIMIT,
-  RED_BKZ_LOOPS_LIMIT,
-  RED_STATUS_MAX
+  RED_GSO_FAILURE     = 2,
+  RED_BABAI_FAILURE   = 3,
+  RED_LLL_FAILURE     = 4,
+  RED_ENUM_FAILURE    = 5,
+  RED_BKZ_FAILURE     = 6,
+  RED_BKZ_TIME_LIMIT  = 7,
+  RED_BKZ_LOOPS_LIMIT = 8,
+  RED_STATUS_MAX      = 9
 };
 
 const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
@@ -166,32 +166,32 @@ const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
 
 enum LLLMethod
 {
-  LM_WRAPPER,
-  LM_PROVED,
-  LM_HEURISTIC,
-  LM_FAST
+  LM_WRAPPER   = 0,
+  LM_PROVED    = 1,
+  LM_HEURISTIC = 2,
+  LM_FAST      = 3
 };
 
 const char *const LLL_METHOD_STR[6] = {"wrapper", "proved", "heuristic", "fast"};
 
 enum IntType
 {
-  ZT_MPZ,
-  ZT_LONG,
-  ZT_DOUBLE
+  ZT_MPZ    = 0,
+  ZT_LONG   = 1,
+  ZT_DOUBLE = 2
 };
 
 const char *const INT_TYPE_STR[5] = {"mpz", "long", "double"};
 
 enum FloatType
 {
-  FT_DEFAULT,
-  FT_DOUBLE,
-  FT_LONG_DOUBLE,
-  FT_DPE,
-  FT_DD,
-  FT_QD,
-  FT_MPFR
+  FT_DEFAULT     = 0,
+  FT_DOUBLE      = 1,
+  FT_LONG_DOUBLE = 2,
+  FT_DPE         = 3,
+  FT_DD          = 4,
+  FT_QD          = 5,
+  FT_MPFR        = 6
 };
 
 const char *const FLOAT_TYPE_STR[7] = {"", "double", "long double", "dpe", "dd", "qd", "mpfr"};
