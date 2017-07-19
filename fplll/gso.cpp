@@ -233,7 +233,6 @@ void MatGSO<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
   }
 }
 
-// in row_addmul_we we must have i > j
 template <class ZT, class FT>
 void MatGSO<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_add)
 {

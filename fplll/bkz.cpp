@@ -112,6 +112,7 @@ bool BKZReduction<ZT, FT>::svp_preprocessing(int kappa, int block_size, const BK
   if (lll_obj.n_swaps > 0)
     clean = false;
 
+  // run one tour of recursive preprocessing
   auto &preproc = param.strategies[block_size].preprocessing_block_sizes;
   for (auto it = preproc.begin(); it != preproc.end(); ++it)
   {
@@ -146,13 +147,13 @@ bool BKZReduction<ZT, FT>::svp_postprocessing(int kappa, int block_size, const v
   if (nz_vectors == 1)
   {
     // Yes, it is another vector
-    FPLLL_DEBUG_CHECK(i_vector != -1 && i_vector != 0);
+    FPLLL_DEBUG_CHECK(i_vector != -1 && i_vector != (pos - kappa));
     m.move_row(kappa + i_vector, pos);
   }
   else if (i_vector != -1)
   {
-    // No, but one coordinate is equal to \pm 1, making
-    // linear dependency easy to fix too.
+    // No, but one coordinate is equal to \pm 1, we'll
+    // just compute the new vector in that position.
     int sol_i = solution[i_vector].get_si();
     if (dual)
     {
@@ -161,6 +162,8 @@ bool BKZReduction<ZT, FT>::svp_postprocessing(int kappa, int block_size, const v
     }
     else
     {
+      // in case of primal reduction, we can restrict invalidation to
+      // the one vector we're adding rows to
       m.row_op_begin(kappa + i_vector, kappa + i_vector + 1);
     }
 
@@ -216,6 +219,8 @@ bool BKZReduction<ZT, FT>::svp_postprocessing_generic(int kappa, int block_size,
 
   m.row_op_begin(kappa, kappa + d);
   // tree based gcd computation on x, performing operations also on b
+  // (or the dual operations in case of primal [sounds weird,
+  // but is correct] svp reduction)
   int off = 1;
   int k;
   while (off < d)
@@ -256,6 +261,8 @@ bool BKZReduction<ZT, FT>::svp_postprocessing_generic(int kappa, int block_size,
   }
   m.row_op_end(kappa, kappa + d);
 
+  // the gcd computation will leave the desired vector in last
+  // position, so in case of primal reduction we need to move it up
   if (!dual)
   {
     m.move_row(kappa + d - 1, kappa);
@@ -275,6 +282,9 @@ bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZPar
   // already in the basis). if size reduction is not called,
   // old_first might be incorrect (e.g. close to 0) and the function
   // will return an incorrect clean flag
+  // WARNING: do not try to increase the size reduction beyond first.
+  // GSO might be invalid beyond this and this can cause numerical issues
+  // and even nullpointers!
   if (!lll_obj.size_reduction(0, first + 1, 0))
   {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
@@ -295,6 +305,7 @@ bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZPar
 
     svp_preprocessing(kappa, block_size, par);
 
+    // compute enumeration radius
     long max_dist_expo;
     FT max_dist = m.get_r_exp(first, first, max_dist_expo);
     if (dual)
@@ -335,6 +346,10 @@ bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZPar
   {
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
+
+  // in order to check if we made progress, we compare the new shortest vector to the
+  // old one (note that simply checking clean flags is not sufficient since
+  // preprocessing can have changed things but we don't know if it made progress)
   long new_first_expo;
   FT new_first = m.get_r_exp(first, first, new_first_expo);
   new_first.mul_2si(new_first, new_first_expo - old_first_expo);
@@ -500,6 +515,7 @@ bool BKZReduction<ZT, FT>::slide_tour(const int loop, const BKZParam &par, int m
     dump_gso(par.dump_gso_filename, prefix.str());
   }
 
+  // we check the potential function to see if we made progress
   if (new_potential >= sld_potential)
     return true;
 
@@ -605,17 +621,23 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
       return set_status(e);
     }
 
+    // if we do hkz reduction, we only need one tour
     if (clean || param.block_size >= num_rows)
       break;
   }
 
+  // some post processing
   int dummy_kappa_max = num_rows;
   if (sd)
   {
     try
     {
+      // hkz reduce the last window, which sd leaves unreduced
       hkz(dummy_kappa_max, param, num_rows - param.block_size, num_rows);
-      print_tour(i, 0, num_rows);
+      if (flags & BKZ_DUMP_GSO)
+      {
+        print_tour(i, 0, num_rows);
+      }
     }
     catch (RedStatus &e)
     {
@@ -626,6 +648,7 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
   {
     try
     {
+      // hkz reduce the blocks (which are otherwise only svp and dual svp reduced)
       int p = num_rows / param.block_size;
       if (num_rows % param.block_size)
         ++p;
@@ -635,7 +658,10 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
         int end   = min(num_rows, kappa + param.block_size - 1);
         hkz(dummy_kappa_max, param, kappa, end);
       }
-      print_tour(i, 0, num_rows);
+      if (flags & BKZ_DUMP_GSO)
+      {
+        print_tour(i, 0, num_rows);
+      }
     }
     catch (RedStatus &e)
     {
@@ -740,10 +766,7 @@ template <class ZT, class FT> bool BKZAutoAbort<ZT, FT>::test_abort(double scale
   return no_dec >= maxNoDec;
 }
 
-/**
- * call LLLReduction() and then BKZReduction.
- */
-
+// call LLLReduction() and then BKZReduction.
 template <class FT>
 int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_delta, IntMatrix &u,
                     IntMatrix &u_inv)
@@ -755,6 +778,7 @@ int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_
     gso_flags |= GSO_ROW_EXPO;
 
   ZZ_mat<long> bl;
+  // we check if we can convert the basis to long integers for performance
   if (convert<long, mpz_t>(bl, b, 10))
   {
     ZZ_mat<long> ul;
@@ -782,9 +806,7 @@ int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_
   }
 }
 
-/**
- * interface called from call_bkz() from main.cpp.
- */
+// interface called from call_bkz() from main.cpp.
 int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType float_type,
                   int precision)
 {
@@ -856,10 +878,6 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType f
   return status;
 }
 
-/**
- * We define BKZ/HKZ for each input type instead of using a template,
- * in order to force the compiler to instantiate the functions.
- */
 int bkz_reduction(IntMatrix &b, int block_size, int flags, FloatType float_type, int precision)
 {
   vector<Strategy> strategies;

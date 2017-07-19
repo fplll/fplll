@@ -181,6 +181,7 @@ template <bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBa
   if (k >= k_end)
     return;
 
+  center_partsum_begin[0] = 0;
   for (int i = 0; i < k_end; ++i)
   {
     center_partsum_begin[i + 1] = k_end - 1;
