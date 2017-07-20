@@ -16,14 +16,47 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
-#include "bkz_param.h"
+#include <vector>
 #include "defs.h"
-#include "gso.h"
-#include <array>
 
 FPLLL_BEGIN_NAMESPACE
 
 #define PRUNER_MAX_N 2047
+
+/**
+   Pruning parameters for one radius (expressed as a ratio to the Gaussian heuristic)
+ */
+
+class PruningParams
+{
+
+public:
+  double gh_factor;                  //< radius^2/Gaussian heuristic^2
+  std::vector<double> coefficients;  //< pruning coefficients
+  double expectation;                //< either expected success probability or number of solutions
+  /**
+      metric used for optimisation (success probability or number of solutions)
+   */
+  PrunerMetric metric;
+  std::vector<double> detailed_cost;  //< Expected nodes per level
+
+  /**
+     The default constructor means no pruning.
+  */
+
+  PruningParams() : gh_factor(1.), expectation(1.), metric(PRUNER_METRIC_PROBABILITY_OF_SHORTEST){};
+
+  /** Set all pruning coefficients to 1, except the last <level>
+      coefficients, these will be linearly with slope `-1 /
+      block_size`.
+
+      @param level number of levels in linear descent
+  */
+
+  static PruningParams LinearPruningParams(int block_size, int level);
+};
+
+
 
 /**
    @brief Search for optimal pruning parameters.
@@ -90,7 +123,7 @@ FPLLL_BEGIN_NAMESPACE
 */
 
 template <class FT>
-void prune(/*(input)output*/ Pruning &pruning,
+void prune(/*(input)output*/ PruningParams &pruning,
            /*inputs*/
            const double enumeration_radius, const double preproc_cost, const vector<double> &gso_r,
            const double target       = .9,
@@ -117,7 +150,7 @@ void prune(/*(input)output*/ Pruning &pruning,
 
 */
 template <class FT>
-void prune(/*output*/ Pruning &pruning,
+void prune(/*output*/ PruningParams &pruning,
            /*inputs*/
            double enumeration_radius, const double preproc_cost,
            const vector<vector<double>> &gso_rs, const double target = .9,
@@ -135,7 +168,7 @@ void prune(/*output*/ Pruning &pruning,
 
    @return probability
 */
-template <class FT> FT svp_probability(const Pruning &pruning);
+template <class FT> FT svp_probability(const PruningParams &pruning);
 
 /**
    @brief Probability that a pruned enumeration indeed returns the shortest vector.
@@ -184,7 +217,7 @@ public:
    @brief (limited) Constructor for Pruner. Only for svp_probability.
    @param n dimension of the pruned block
   */
-  Pruner(const int n) : metric(PRUNER_METRIC_PROBABILITY_OF_SHORTEST), flags(0), n(n)
+  explicit Pruner(const int n) : metric(PRUNER_METRIC_PROBABILITY_OF_SHORTEST), flags(0), n(n)
   {
     verbosity = flags & PRUNER_VERBOSE;
     set_tabulated_consts();

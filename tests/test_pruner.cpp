@@ -218,7 +218,7 @@ template <class FT> int test_prepruned()
   vector<double> gso_sq_norms;
   set_up_gso_norms(gso_sq_norms);
 
-  Pruning pruning;
+  PruningParams pruning;
   vector<double> pr = {1,        1,        1,        1,        1,        1,        1,
                        1,        1,        1,        1,        1,        1,        1,
                        0.937197, 0.937197, 0.871731, 0.871731, 0.814304, 0.814304, 0.762232,
@@ -327,7 +327,7 @@ template <class FT> int test_auto_prune(size_t n)
     r.push_back(x.get_d());
   }
 
-  Pruning pruning;
+  PruningParams pruning;
   cerr << "Testing auto_prune " << endl;
   double overhead = 1.0e6 * n * n;
   cerr << "Overhead " << overhead << endl;

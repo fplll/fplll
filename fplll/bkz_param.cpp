@@ -1,15 +1,17 @@
+
 #include "bkz_param.h"
+#include "nr/nr.h"
 #include "io/json.hpp"
-#include "pruner.h"
 #include <cstdio>
+
 using json = nlohmann::json;
 
 FPLLL_BEGIN_NAMESPACE
 
-Pruning Pruning::LinearPruning(int block_size, int level)
+PruningParams PruningParams::LinearPruningParams(int block_size, int level)
 {
 
-  Pruning pruning   = Pruning();
+  PruningParams pruning   = PruningParams();
   int start_descent = block_size - level;
 
   if (start_descent > block_size)
@@ -57,7 +59,7 @@ const std::string &default_strategy()
   return ret;
 }
 
-const Pruning &Strategy::get_pruning(double radius, double gh) const
+const PruningParams &Strategy::get_pruning(double radius, double gh) const
 {
   double gh_factor    = radius / gh;
   double closest_dist = pow(2, 80);
@@ -124,7 +126,7 @@ vector<Strategy> load_strategies_json(const std::string &filename)
            p_it != j_strat["pruning_parameters"].end(); ++p_it)
       {
         const json &j_prun = *p_it;
-        Pruning pruning;
+        PruningParams pruning;
         pruning.gh_factor = j_prun[0];
 
         for (auto c_it = j_prun[1].begin(); c_it != j_prun[1].end(); ++c_it)
@@ -148,7 +150,7 @@ vector<Strategy> load_strategies_json(const std::string &filename)
   for (auto it = strategies.begin(); it != strategies.end(); ++it)
   {
     if (it->pruning_parameters.size() == 0)
-      it->pruning_parameters.emplace_back(Pruning());
+      it->pruning_parameters.emplace_back(PruningParams());
   }
 
   return strategies;

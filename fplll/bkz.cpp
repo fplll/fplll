@@ -80,8 +80,8 @@ void BKZReduction<ZT, FT>::rerandomize_block(int min_row, int max_row, int densi
 }
 
 template <class ZT, class FT>
-const Pruning &BKZReduction<ZT, FT>::get_pruning(int kappa, int block_size,
-                                                 const BKZParam &par) const
+const PruningParams &BKZReduction<ZT, FT>::get_pruning(int kappa, int block_size,
+                                                       const BKZParam &par) const
 {
 
   FPLLL_DEBUG_CHECK(param.strategies.size() > block_size);
@@ -321,7 +321,7 @@ bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZPar
       adjust_radius_to_gh_bound(max_dist, max_dist_expo, block_size, root_det, par.gh_factor);
     }
 
-    const Pruning &pruning = get_pruning(kappa, block_size, par);
+    const PruningParams &pruning = get_pruning(kappa, block_size, par);
 
     FPLLL_DEBUG_CHECK(pruning.metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
     evaluator.solutions.clear();

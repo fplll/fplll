@@ -20,42 +20,12 @@
 
 */
 
-#include "defs.h"
 #include <string>
 #include <vector>
+#include "defs.h"
+#include "pruner.h"
 
 FPLLL_BEGIN_NAMESPACE
-
-/**
-   Pruning parameters for one radius (expressed as a ratio to the Gaussian heuristic)
- */
-
-class Pruning
-{
-
-public:
-  double gh_factor;                  //< radius/Gaussian heuristic (TODO: in square format ???)
-  std::vector<double> coefficients;  //< pruning coefficients
-  double expectation;                //< either success probability or number of solutions
-  PrunerMetric
-      metric;  //< metric used for optimisation (success probability or number of solutions)
-  std::vector<double> detailed_cost;  //< Expected nodes per level
-
-  /**
-     The default constructor means no pruning.
-  */
-
-  Pruning() : gh_factor(1.), expectation(1.), metric(PRUNER_METRIC_PROBABILITY_OF_SHORTEST){};
-
-  /** Set all pruning coefficients to 1, except the last <level>
-      coefficients, these will be linearly with slope `-1 /
-      block_size`.
-
-      @param level number of levels in linear descent
-  */
-
-  static Pruning LinearPruning(int block_size, int level);
-};
 
 /**
    A strategy covers pruning parameters and preprocessing block_sizes
@@ -65,7 +35,7 @@ class Strategy
 {
 public:
   size_t block_size;                         //< block size
-  vector<Pruning> pruning_parameters;        //< Pruning parameters
+  vector<PruningParams> pruning_parameters;  //< Pruning parameters
   vector<size_t> preprocessing_block_sizes;  //< For each block size we run one tour
 
   /** Construct an empty strategy
@@ -79,7 +49,7 @@ public:
   {
     Strategy strat;
     strat.block_size = block_size;
-    strat.pruning_parameters.emplace_back(Pruning());
+    strat.pruning_parameters.emplace_back(PruningParams());
     return strat;
   };
 
@@ -92,7 +62,7 @@ public:
 
    */
 
-  const Pruning &get_pruning(double radius, double gh) const;
+  const PruningParams &get_pruning(double radius, double gh) const;
 };
 
 class BKZParam
