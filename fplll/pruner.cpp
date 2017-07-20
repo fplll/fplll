@@ -544,7 +544,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ evec &b)
     {
       mini = (fs[i] < fs[mini]) ? i : mini;
       maxi = (fs[i] > fs[mini]) ? i : maxi;
-      for (size_t j = 0; j < d; ++j)
+      for (int j = 0; j < d; ++j)
       {
         bo[j] += bs[i][j];
       }
