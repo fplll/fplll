@@ -560,7 +560,7 @@ void read_options(int argc, char **argv, Options &o)
            << "  -bkzdumpgso <file_name>\n"
            << "        Dumps the log of the Gram-Schmidt vectors in specified file\n"
 
-           << "  -of [bcstuv]\n"
+           << "  -of [b|c|s|t|u|v]\n"
            << "        Output formats.\n"
 
            << "Please refer to https://github.com/fplll/fplll/README.md for more informations.\n";
