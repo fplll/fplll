@@ -694,19 +694,39 @@ void BKZReduction<FT>::dump_gso(const std::string &filename, bool append, const 
                                 const int loop, const double time)
 {
   ofstream dump;
-  if (append)
+  // Enable exceptions
+  dump.exceptions(ios_base::failbit | ios_base::badbit);
+
+  try
   {
-    dump.open(filename.c_str(), std::ios_base::app);
+    if (append)
+    {
+      dump.open(filename.c_str(), std::ios_base::app);
+    }
+    else
+    {
+      dump.open(filename.c_str());
+      dump << "[" << endl;
+    }
   }
-  else
+  catch (const ios_base::failure &e)
   {
-    dump.open(filename.c_str());
-    dump << "[" << endl;
+    cerr << "Cannot open " << filename << endl;
+    throw;
   }
-  dump << string(8, ' ') << "{" << endl;
-  dump << string(16, ' ') << "\"step\": \"" << step << "\"," << endl;
-  dump << string(16, ' ') << "\"loop\": " << loop << "," << endl;
-  dump << string(16, ' ') << "\"time\": " << time << "," << endl;
+
+  try
+  {
+    dump << string(8, ' ') << "{" << endl;
+    dump << string(16, ' ') << "\"step\": \"" << step << "\"," << endl;
+    dump << string(16, ' ') << "\"loop\": " << loop << "," << endl;
+    dump << string(16, ' ') << "\"time\": " << time << "," << endl;
+  }
+  catch (const ios_base::failure &e)
+  {
+    cerr << "Cannot open " << filename << endl;
+    throw;
+  }
 
   FT f, log_f;
   long expo;
@@ -719,16 +739,25 @@ void BKZReduction<FT>::dump_gso(const std::string &filename, bool append, const 
     ss << std::setprecision(8) << log_f.get_d() + expo * std::log(2.0) << ", ";
   }
   string s = ss.str();
-  dump << string(16, ' ') << "\"norms\": [" << s.substr(0, s.size() - 2) << "]" << endl;
-  dump << string(8, ' ') << "}";
-  if (step.compare("Output") == 0)
+  try
   {
-    dump << endl << "]";
+    dump << string(16, ' ') << "\"norms\": [" << s.substr(0, s.size() - 2) << "]" << endl;
+    dump << string(8, ' ') << "}";
+    if (step.compare("Output") == 0)
+    {
+      dump << endl << "]";
+    }
+    else
+    {
+      dump << "," << endl;
+    }
   }
-  else
+  catch (const ios_base::failure &e)
   {
-    dump << "," << endl;
+    cerr << "Cannot open " << filename << endl;
+    throw;
   }
+
   dump.close();
 }
 
