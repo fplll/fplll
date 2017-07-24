@@ -195,7 +195,7 @@ inline void FP_NR<dd_real>::mul_2si(const FP_NR<dd_real>& b, long c) {
 }
 
 template<>
-inline void FP_NR<dd_real>::div(const FP_NR<dd_real>& a, const FP_NR<dd_real>& b, mp_rnd_t rnd) {
+inline void FP_NR<dd_real>::div(const FP_NR<dd_real>& a, const FP_NR<dd_real>& b, mp_rnd_t /*rnd*/) {
   data = a.data / b.data;
 }
 
@@ -280,7 +280,7 @@ inline void FP_NR<dd_real>::swap(FP_NR<dd_real>& a) {
     double-double
 */
 template<>
-inline void FP_NR<dd_real>::hypot(const FP_NR<dd_real>& a, const FP_NR<dd_real>& b, mp_rnd_t rnd) {
+inline void FP_NR<dd_real>::hypot(const FP_NR<dd_real>& a, const FP_NR<dd_real>& b, mp_rnd_t /*rnd*/) {
   // Maybe decrease temporary 
   // variables with one, by
   // putting the absolute value of a

@@ -95,9 +95,14 @@ void EnumerationDyn<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long f
     fr      = _gso.get_r_exp(i + first, i + first, rexpo);
     normexp = max(normexp, rexpo + fr.exponent());
   }
-  fmaxdistnorm.mul_2si(fmaxdist, dual ? normexp - fmaxdistexpo : fmaxdistexpo - normexp);
+  // normalization is multiplication by 2^(-normexp). in case of dual, we are normalizing
+  // the inverse of r, so we negate the normalizing exponent
+  if (dual)
+  {
+    normexp *= -1;
+  }
+  fmaxdistnorm.mul_2si(fmaxdist, fmaxdistexpo - normexp);
   maxdist = fmaxdistnorm.get_d(GMP_RNDU);
-
   _evaluator.set_normexp(normexp);
 
   if (dual)
@@ -105,7 +110,7 @@ void EnumerationDyn<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long f
     for (int i = 0; i < d; ++i)
     {
       fr = _gso.get_r_exp(i + first, i + first, rexpo);
-      fr.mul_2si(fr, rexpo - normexp);
+      fr.mul_2si(fr, rexpo + normexp);
       rdiag[d - i - 1] = enumf(1.0) / fr.get_d();
     }
     for (int i = 0; i < d; ++i)
@@ -144,7 +149,7 @@ void EnumerationDyn<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long f
 
   fmaxdistnorm = maxdist;  // Exact
 
-  fmaxdist.mul_2si(fmaxdistnorm, dual ? fmaxdistexpo - normexp : normexp - fmaxdistexpo);
+  fmaxdist.mul_2si(fmaxdistnorm, normexp - fmaxdistexpo);
 
   if (dual && !_evaluator.empty())
   {

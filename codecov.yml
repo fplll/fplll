@@ -22,3 +22,6 @@ coverage:
         enabled: yes             # must be yes|true to enable this status
         target: 50%              # specify the target "X%" coverage to hit
 
+  ignore:
+    - "tests"
+    - "fplll/io/json.hpp"

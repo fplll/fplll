@@ -20,7 +20,8 @@
 
 template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
 {
-  ZZ_mat<ZT> u, u_inv;
+  // Stupid intialization of u and u_inv to be not empty.
+  ZZ_mat<ZT> u(1, 1), u_inv(1, 1);
   const char *format = o.output_format ? o.output_format : "b";
   int status, flags = 0;
   if (o.verbose)
@@ -113,7 +114,8 @@ template <> int bkz(Options &o, IntMatrix &b)
   }
 
   BKZParam param(o.block_size, strategies);
-  IntMatrix u;
+  // Stupid intialization of u to be not empty.
+  IntMatrix u(1, 1);
   const char *format = o.output_format ? o.output_format : "b";
   int status;
 
@@ -507,31 +509,61 @@ void read_options(int argc, char **argv, Options &o)
     else if ((strcmp(argv[ac], "-h") == 0) || (strcmp(argv[ac], "--help") == 0))
     {
       cout << "Usage: " << argv[0] << " [options] [file]\n"
+
            << "List of options:\n"
-           << "  -a [lll|svp|bkz|sld|sdbkz]\n"
+           << "  -a [lll|bkz|hkz|svp|sdb|sld|cvp]\n"
            << "       lll = LLL-reduce the input matrix (default)\n"
            << "       bkz = BKZ-reduce the input matrix\n"
+           << "       hkz = HKZ-reduce the input matrix\n"
+           << "       svp = compute a shortest non-zero vector of the lattice\n"
            << "       sdb = reduce the input matrix using the self dual BKZ variant\n"
            << "       sld = slide reduce the input matrix\n"
-           << "       svp = compute a shortest non-zero vector of the lattice\n"
-           << "  -m [proved|heuristic|fast|wrapper]\n"
-           << "       LLL version (default: wrapper)\n"
-           << "  -z [int|mpz|double]\n"
-           << "       Integer type in LLL (default: mpz)\n"
-           << "  -f [mpfr|qd|dd|dpe|double]\n"
-           << "       Floating-point type in LLL (proved/heuristic method only; default: dpe)\n"
+           << "       cvp = compute the vector in the input lattice closest to an input vector\n"
+           << "  -v\n"
+           << "       Enable verbose mode\n"
+           << "  -nolll\n"
+           << "       Does not apply intial LLL-reduction (for bkz, hkz and svp)\n"
+           << "  -c <size>\n"
+           << "       Was the number of columns (ignored)\n"
+           << "  -r <size>\n"
+           << "       Was the number of rows (ignored)\n"
+
+           << "  -d <delta> (default=0.99; alias to -delta <delta>)\n"
+           << "  -e <eta> (default=0.51; alias to -eta <eta>)\n"
+           << "  -l <lovasz>\n"
+           << "       If <lovasz> != 0, Lovasz's condition, otherwise, Siegel's condition\n"
+           << "  -f [mpfr|dd|qd|dpe|double|longdouble]\n"
+           << "       Floating-point type in LLL\n"
            << "  -p <precision>\n"
            << "       Floating-point precision (only with -f mpfr)\n"
-           << "  -d <delta> (default=0.99)\n"
-           << "  -e <eta> (default=0.51)\n"
-           << "  -l <lovasz>\n"
-           << "  -s <filename.json> load BKZ strategies from filename"
+           << "  -z [mpz|int|long|double]\n"
+           << "       Integer type in LLL (default: mpz; long is an alias to int)\n"
+           << "  -m [wrapper|fast|fastearly|heuristic|heuristicearly|proved]\n"
+           << "       LLL version (default: wrapper)\n"
            << "  -y\n"
            << "       Enable early reduction\n"
+
            << "  -b <block_size>\n"
            << "       Size of BKZ blocks\n"
-           << "  -v\n"
-           << "       Enable verbose mode\n";
+           << "  -bkzmaxloops <loops>\n"
+           << "       Maximum number of full loop iterations\n"
+           << "  -bkzmaxtime <time>\n"
+           << "        Stops after <time> seconds\n"
+           << "  -bkzautoabort\n"
+           << "        Stops when the average slope does not decrease fast enough\n"
+           << "  -s <filename.json>\n"
+           << "        Load BKZ strategies from filename\n"
+           << "  -bkzghbound <factor>\n"
+           << "        Multiplies the Gaussian heuristic by <factor> (of float type)\n"
+           << "  -bkzboundedlll\n"
+           << "        Restricts the LLL call\n"
+           << "  -bkzdumpgso <file_name>\n"
+           << "        Dumps the log of the Gram-Schmidt vectors in specified file\n"
+
+           << "  -of [bcstuv]\n"
+           << "        Output formats.\n"
+
+           << "Please refer to https://github.com/fplll/fplll/README.md for more informations.\n";
       exit(0);
     }
     else if (strcmp(argv[ac], "--version") == 0)
