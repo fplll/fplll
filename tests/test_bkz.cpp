@@ -71,7 +71,9 @@ int test_bkz(ZZ_mat<ZT> &A, const int block_size, FloatType float_type, int flag
    @return zero on success.
 */
 
-template <class ZT> int test_bkz_param(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_DEFAULT)
+template <class ZT>
+int test_bkz_param(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_DEFAULT,
+                   string dump_gso_filename = string())
 {
 
   int status = 0;
@@ -96,7 +98,8 @@ template <class ZT> int test_bkz_param(ZZ_mat<ZT> &A, const int block_size, int 
   }
 
   BKZParam params(block_size, strategies);
-  params.flags = flags;
+  params.flags             = flags;
+  params.dump_gso_filename = dump_gso_filename;
   // zero on success
   status = bkz_reduction(&A, NULL, params, FT_DEFAULT, 53);
   if (status != RED_SUCCESS)
@@ -173,21 +176,37 @@ int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_
 }
 
 /**
-   @brief Test BKZ for matrix stored in file pointed to by `input_filename`.
+   @brief Test BKZ_DUMP_GSO for matrix stored in file pointed to by `input_filename`.
 
    @param input_filename   a path
- */
+   @param block_size       block size
+   @param flags            flags to use
 
-int test_filename_bkz_dump_gso(const char *input_filename)
+   @return zero on success.
+ */
+template <class ZT>
+int test_filename_bkz_dump_gso(const char *input_filename, const int block_size,
+                               int flags = BKZ_DEFAULT | BKZ_DUMP_GSO)
 {
-  ZZ_mat<mpz_t> A;
+  ZZ_mat<ZT> A, B;
   read_matrix(A, input_filename);
+  B          = A;
+  int status = 0;
+  // TODO: maybe not safe.
+  string file_bkz_dump_gso = tmpnam(nullptr);
+  status |= test_bkz_param<ZT>(B, block_size, flags, file_bkz_dump_gso);
+
+  if (status != 0)
+  {
+    cerr << "Error in test_bkz_param." << endl;
+    return status;
+  }
 
   json js;
-  std::ifstream fs("gso.json");
+  std::ifstream fs(file_bkz_dump_gso);
   if (fs.fail())
   {
-    cerr << "File cannot be loaded." << endl;
+    cerr << "File " << file_bkz_dump_gso << " cannot be loaded." << endl;
     return 1;
   }
   fs >> js;
@@ -198,7 +217,8 @@ int test_filename_bkz_dump_gso(const char *input_filename)
     // Verify if there are as much norms as there are rows in A
     if (A.get_rows() != (int)i["norms"].size())
     {
-      cerr << "Array norms does not contains enough value." << endl;
+      cerr << "Array norms does not contains all the values. ";
+      cerr << "Expected " << A.get_rows() << ", get " << (int)i["norms"].size() << endl;
       return 1;
     }
 
@@ -345,9 +365,7 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SLD_RED);
 
   // Test BKZ_DUMP_GSO
-  status |= test_filename<mpz_t>("lattices/dim55_in", 10, FT_DEFAULT, BKZ_DEFAULT | BKZ_DUMP_GSO);
-  // Use the produced gso.json of the previous call of test_filename<mpz_t>
-  status |= test_filename_bkz_dump_gso("lattices/dim55_in");
+  status |= test_filename_bkz_dump_gso<mpz_t>("lattices/dim55_in", 10);
 
   if (status == 0)
   {
