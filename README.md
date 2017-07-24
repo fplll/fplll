@@ -157,7 +157,6 @@ The options are:
 * `-a cvp` : prints the vector in the lattice closest to the input vector.
 * `-v` : verbose mode. 
 * `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution).
-* `-r` `size`, `-c` `size` : ignored, provided for compatibility with previous versions of fplll.
 
 
 Options for LLL-reduction:
@@ -182,9 +181,7 @@ Options for LLL-reduction:
 
 * `-m wrapper` : uses the wrapper. (default if `z=mpz`).
 * `-m fast` : uses the fast method, works only with `-f double`.
-* `-m fastearly` : uses the fast method with early reduction, works only with `-f double`.
 * `-m heuristic` : uses the heuristic method.
-* `-m heuristicearly` : uses the heuristic method with early reduction.
 * `-m proved` : uses the proved version of the algorithm.
 * `-y` : early reduction.
 

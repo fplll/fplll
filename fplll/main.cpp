@@ -381,11 +381,9 @@ void read_options(int argc, char **argv, Options &o)
       o.bkz_dump_gso_filename = argv[ac];
       o.bkz_flags |= BKZ_DUMP_GSO;
     }
-    else if (strcmp(argv[ac], "-c") == 0)
+    else if (strcmp(argv[ac], "-c") == 0 || strcmp(argv[ac], "-r") == 0)
     {
-      ++ac;
-      CHECK(ac < argc, "missing value after -c switch");
-      // o.c=atoi(argv[ac]); // ignored (was the number of columns)
+      ABORT_MSG("option " << argv[ac] << " no more supported");
     }
     else if (strcmp(argv[ac], "-bkzghbound") == 0)
     {
@@ -449,15 +447,11 @@ void read_options(int argc, char **argv, Options &o)
         o.method = LM_HEURISTIC;
       else if (strcmp("fast", argv[ac]) == 0)
         o.method = LM_FAST;
-      else if (strcmp("fastearly", argv[ac]) == 0)
+      else if (strcmp("fastearly", argv[ac]) == 0 || strcmp("heuristicearly", argv[ac]) == 0)
       {
-        o.method    = LM_FAST;
-        o.early_red = true;
-      }
-      else if (strcmp("heuristicearly", argv[ac]) == 0)
-      {
-        o.method    = LM_HEURISTIC;
-        o.early_red = true;
+        string m = string(argv[ac]);
+        // m.substr(0, m.size() - 4) remove early from the string
+        ABORT_MSG("use '-m " << m.substr(0, m.size() - 5) << " -y' instead of " << argv[ac]);
       }
       else
         ABORT_MSG("parse error in -m switch : proved, heuristic, fast, "
@@ -478,12 +472,6 @@ void read_options(int argc, char **argv, Options &o)
       ++ac;
       CHECK(ac < argc, "missing value after -p switch");
       o.precision = atoi(argv[ac]);
-    }
-    else if (strcmp(argv[ac], "-r") == 0)
-    {
-      ++ac;
-      CHECK(ac < argc, "missing value after -r switch");
-      // o.r = atoi(argv[ac]); // ignored (was the number of rows)
     }
     else if (strcmp(argv[ac], "-v") == 0)
     {
@@ -523,10 +511,6 @@ void read_options(int argc, char **argv, Options &o)
            << "       Enable verbose mode\n"
            << "  -nolll\n"
            << "       Does not apply intial LLL-reduction (for bkz, hkz and svp)\n"
-           << "  -c <size>\n"
-           << "       Was the number of columns (ignored)\n"
-           << "  -r <size>\n"
-           << "       Was the number of rows (ignored)\n"
 
            << "  -d <delta> (default=0.99; alias to -delta <delta>)\n"
            << "  -e <eta> (default=0.51; alias to -eta <eta>)\n"
@@ -538,7 +522,7 @@ void read_options(int argc, char **argv, Options &o)
            << "       Floating-point precision (only with -f mpfr)\n"
            << "  -z [mpz|int|long|double]\n"
            << "       Integer type in LLL (default: mpz; long is an alias to int)\n"
-           << "  -m [wrapper|fast|fastearly|heuristic|heuristicearly|proved]\n"
+           << "  -m [wrapper|fast|heuristic|proved]\n"
            << "       LLL version (default: wrapper)\n"
            << "  -y\n"
            << "       Enable early reduction\n"
