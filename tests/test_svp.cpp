@@ -254,15 +254,8 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, IntVect &b)
   vector<Strategy> strategies;
   BKZParam dummy(d, strategies);
   BKZReduction<Integer, Float> bkz_obj(gso, lll_obj, dummy);
-  bool clean = true;
 
-  bkz_obj.svp_reduction_ex(0, d, dummy, clean, true);
-  status = bkz_obj.status;
-  if (status != RED_SUCCESS)
-  {
-    cerr << "Failure: " << get_red_status_str(status) << endl;
-    return status;
-  }
+  bkz_obj.svp_reduction(0, d, dummy, true);
 
   Float norm_sol;
   Integer zero;
