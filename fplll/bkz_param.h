@@ -20,10 +20,10 @@
 
 */
 
-#include <string>
-#include <vector>
 #include "defs.h"
 #include "pruner.h"
+#include <string>
+#include <vector>
 
 FPLLL_BEGIN_NAMESPACE
 

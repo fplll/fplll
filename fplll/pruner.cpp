@@ -14,9 +14,9 @@
   along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "pruner.h"
-#include "fplll/nr/nr.h"
 #include "ballvol.const"
 #include "factorial.const"
+#include "fplll/nr/nr.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -555,20 +555,20 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ evec &b)
       bo[i] /= tmp;  // Centroid calculated
 
     fs_maxi_last = (!counter) ? fs[maxi] : fs_maxi_last;
-   
-   	// determine min and max, and centroid
-    maxi2+= (!maxi);
-    for (int i = 1; i < l; ++i)  
+
+    // determine min and max, and centroid
+    maxi2 += (!maxi);
+    for (int i = 1; i < l; ++i)
     {
       maxi2 = ((fs[i] > fs[maxi2]) && (i != maxi)) ? i : maxi2;
     }
 
-    if (enforce(bo)) // Maybe want to skip this test, that may be kinda costly.
+    if (enforce(bo))  // Maybe want to skip this test, that may be kinda costly.
     {
       throw std::runtime_error("Concavity says that should not happen.");
     }
 
-    if (verbosity) // Not sure such verbosity is now of any use
+    if (verbosity)  // Not sure such verbosity is now of any use
     {
       cerr << "  melder_mead step " << counter << "cf = " << fs[mini]
            << " proba = " << measure_metric(bs[mini]) << " cost = " << single_enum_cost(bs[mini])

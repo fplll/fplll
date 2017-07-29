@@ -1,7 +1,7 @@
 
 #include "bkz_param.h"
-#include "nr/nr.h"
 #include "io/json.hpp"
+#include "nr/nr.h"
 #include <cstdio>
 
 using json = nlohmann::json;
@@ -11,8 +11,8 @@ FPLLL_BEGIN_NAMESPACE
 PruningParams PruningParams::LinearPruningParams(int block_size, int level)
 {
 
-  PruningParams pruning   = PruningParams();
-  int start_descent = block_size - level;
+  PruningParams pruning = PruningParams();
+  int start_descent     = block_size - level;
 
   if (start_descent > block_size)
     start_descent = block_size;

@@ -137,7 +137,8 @@ int test_bkz_param_linear_pruning(ZZ_mat<ZT> &A, const int block_size, int flags
   }
 
   Strategy strategy;
-  strategy.pruning_parameters.emplace_back(PruningParams::LinearPruningParams(block_size, block_size / 2));
+  strategy.pruning_parameters.emplace_back(
+      PruningParams::LinearPruningParams(block_size, block_size / 2));
   strategies.emplace_back(std::move(strategy));
 
   BKZParam params(block_size, strategies);

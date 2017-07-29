@@ -16,8 +16,8 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
-#include <vector>
 #include "defs.h"
+#include <vector>
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -55,8 +55,6 @@ public:
 
   static PruningParams LinearPruningParams(int block_size, int level);
 };
-
-
 
 /**
    @brief Search for optimal pruning parameters.
