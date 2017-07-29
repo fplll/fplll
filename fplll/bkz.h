@@ -301,7 +301,7 @@ private:
 
   bool set_status(int new_status);
 
-  const Pruning &get_pruning(int kappa, int block_size, const BKZParam &par) const;
+  const PruningParams &get_pruning(int kappa, int block_size, const BKZParam &par) const;
 
   // handles the general case of inserting a vector into the (dual) basis, i.e.
   // when none of the coefficients are \pm 1

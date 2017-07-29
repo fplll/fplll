@@ -76,7 +76,7 @@ template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
 
 /* BKZ reduction */
 
-void read_pruning_vector(const char *file_name, Pruning &pr, int n)
+void read_pruning_vector(const char *file_name, PruningParams &pr, int n)
 {
   double x;
   FILE *file = fopen(file_name, "r");
