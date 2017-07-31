@@ -288,6 +288,13 @@ public:
    * value := -b.
    */
   inline void neg(const FP_NR<F> &b);
+  inline FP_NR<F> operator-() const
+  {
+    FP_NR<F> r;
+    r.neg(*this);
+    return r;
+  }
+
 
   /**
    * value := absolute value of b.
