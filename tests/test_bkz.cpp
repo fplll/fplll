@@ -177,20 +177,23 @@ int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_
 }
 
 /**
-   @brief Test BKZ_DUMP_GSO for matrix stored in file pointed to by `input_filename`.
+   @brief Test BKZ_DUMP_GSO for a matrix d × (d+1) integer relations matrix with bit size b (copied from test_int_rel)
 
-   @param input_filename   a path
+   @param d                dimension
+   @param b                bit size
    @param block_size       block size
+   @param float_type       floating point type to test
    @param flags            flags to use
 
    @return zero on success.
  */
 template <class ZT>
-int test_filename_bkz_dump_gso(const char *input_filename, const int block_size,
+int test_int_rel_bkz_dump_gso(int d, int b, const int block_size, FloatType float_type = FT_DEFAULT,
                                int flags = BKZ_DEFAULT | BKZ_DUMP_GSO)
 {
   ZZ_mat<ZT> A, B;
-  read_matrix(A, input_filename);
+  A.resize(d, d + 1);
+  A.gen_intrel(b);
   B          = A;
   int status = 0;
   // TODO: maybe not safe.
@@ -218,8 +221,8 @@ int test_filename_bkz_dump_gso(const char *input_filename, const int block_size,
     // Verify if there are as much norms as there are rows in A
     if (A.get_rows() != (int)i["norms"].size())
     {
-      cerr << "Array norms does not contains all the values. ";
-      cerr << "Expected " << A.get_rows() << ", get " << (int)i["norms"].size() << endl;
+      cerr << "Array norms does not contains enough value." << endl;
+      cerr << A.get_rows() << " : " << (int)i["norms"].size() << endl;
       return 1;
     }
 
@@ -366,7 +369,7 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SLD_RED);
 
   // Test BKZ_DUMP_GSO
-  status |= test_filename_bkz_dump_gso<mpz_t>("lattices/dim55_in", 10);
+  status |= test_int_rel_bkz_dump_gso<mpz_t>(50, 1000, 15, FT_MPFR, BKZ_DEFAULT | BKZ_DUMP_GSO);
 
   if (status == 0)
   {
