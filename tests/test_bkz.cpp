@@ -177,7 +177,8 @@ int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_
 }
 
 /**
-   @brief Test BKZ_DUMP_GSO for a matrix d × (d+1) integer relations matrix with bit size b (copied from test_int_rel)
+   @brief Test BKZ_DUMP_GSO for a matrix d × (d+1) integer relations matrix with bit size b (copied
+   from test_int_rel)
 
    @param d                dimension
    @param b                bit size
@@ -189,7 +190,7 @@ int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_
  */
 template <class ZT>
 int test_int_rel_bkz_dump_gso(int d, int b, const int block_size, FloatType float_type = FT_DEFAULT,
-                               int flags = BKZ_DEFAULT | BKZ_DUMP_GSO)
+                              int flags = BKZ_DEFAULT | BKZ_DUMP_GSO)
 {
   ZZ_mat<ZT> A, B;
   A.resize(d, d + 1);
