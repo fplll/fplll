@@ -19,7 +19,7 @@
 #include <gso_interface.h>
 #include <nr/matrix.h>
 //#include <random>
-#include <test_utils.h>
+#include <../tests/test_utils.h>
 
 using namespace std;
 using namespace fplll;
