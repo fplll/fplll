@@ -15,6 +15,7 @@
 
 #include <cstring>
 #include <fplll.h>
+#include <test_utils.h>
 
 using namespace std;
 using namespace fplll;
@@ -22,27 +23,6 @@ using namespace fplll;
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."
 #endif
-
-/**
-   @brief Read matrix from `input_filename`.
-
-   @param A
-   @param input_filename
-   @return zero if A is not empty.
-*/
-template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> A;
-  int status = 0;
-  if (A.empty())
-  {
-    status = 1;
-    cerr << "File " << input_filename << " was (probably) not opened." << endl;
-  }
-  delete is;
-  return status;
-}
 
 /**
    @brief Test the tester.

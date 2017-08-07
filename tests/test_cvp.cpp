@@ -15,56 +15,13 @@
 
 #include <cstring>
 #include <fplll.h>
+#include <test_utils.h>
 
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."
 #endif
 using namespace std;
 using namespace fplll;
-
-/**
-   @brief Read matrix from `input_filename`.
-
-   @param A
-   @param input_filename
-   @return zero if A is not empty.
-*/
-
-template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> A;
-  int status = 0;
-  if (A.empty())
-  {
-    status = 1;
-    cerr << "File " << input_filename << " was (probably) not opened." << endl;
-  }
-  delete is;
-  return status;
-}
-
-/**
-   @brief Read vector from `input_filename` into `b`.
-
-   @param b                vector
-   @param input_filename   filename
-   @return zero if b is not empty.
-*/
-
-template <class ZT> int read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> b;
-  int status = 0;
-  if (b.empty())
-  {
-    status = 1;
-    cerr << "File " << input_filename << " was (probably) not opened." << endl;
-  }
-  delete is;
-  return status;
-}
 
 /**
    @brief Test if CVP function returns correct vector.
