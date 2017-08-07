@@ -151,7 +151,12 @@ template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
 template <class ZT, class FT> int test_filename(const char *input_filename)
 {
   ZZ_mat<ZT> A;
-  read_matrix(A, input_filename);
+  int status = read_matrix(A, input_filename);
+  // if status == 1, read_matrix fails.
+  if (status == 1)
+  {
+    return 1;
+  }
   int retvalue = test_ggso<ZT, FT>(A);
   if (retvalue & 1)
   {
