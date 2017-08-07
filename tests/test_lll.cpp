@@ -23,6 +23,13 @@ using namespace fplll;
 #define TESTDATADIR ".."
 #endif
 
+/**
+   @brief Read matrix from `input_filename`.
+
+   @param A
+   @param input_filename
+   @return zero if A is not empty.
+*/
 template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 {
   istream *is = new ifstream(input_filename);

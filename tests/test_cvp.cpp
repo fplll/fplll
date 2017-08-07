@@ -27,7 +27,7 @@ using namespace fplll;
 
    @param A
    @param input_filename
-   @return
+   @return zero if A is not empty.
 */
 
 template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
@@ -49,7 +49,7 @@ template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 
    @param b                vector
    @param input_filename   filename
-   @return
+   @return zero if b is not empty.
 */
 
 template <class ZT> int read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)

@@ -14,7 +14,7 @@ using namespace fplll;
 
    @param A
    @param input_filename
-   @return
+   @return zero if A is not empty.
 */
 template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 {

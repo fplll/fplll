@@ -46,6 +46,13 @@ bool have_equal_grammatrix(MatGSO<Z_NR<ZT>, FP_NR<FT>> M1, MatGSOGram<Z_NR<ZT>, 
   return true;
 }
 
+/**
+   @brief Read matrix from `input_filename`.
+
+   @param A
+   @param input_filename
+   @return zero if A is not empty.
+*/
 template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 {
   ifstream is(input_filename);
