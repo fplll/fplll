@@ -222,8 +222,8 @@ int test_int_rel_bkz_dump_gso(int d, int b, const int block_size, FloatType floa
     // Verify if there are as much norms as there are rows in A
     if (A.get_rows() != (int)i["norms"].size())
     {
-      cerr << "Array norms does not contains enough value." << endl;
-      cerr << A.get_rows() << " : " << (int)i["norms"].size() << endl;
+      cerr << "The array \"norms\" does not contain enough values (" << A.get_rows()
+           << " expected but " << i["norms"].size() << " found)." << endl;
       return 1;
     }
 
