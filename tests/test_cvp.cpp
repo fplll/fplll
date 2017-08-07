@@ -30,11 +30,18 @@ using namespace fplll;
    @return
 */
 
-template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
+template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 {
   istream *is = new ifstream(input_filename);
   *is >> A;
+  int status = 0;
+  if (A.empty())
+  {
+    status = 1;
+    cerr << "File " << input_filename << " was (probably) not opened." << endl;
+  }
   delete is;
+  return status;
 }
 
 /**
@@ -45,11 +52,18 @@ template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
    @return
 */
 
-template <class ZT> void read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
+template <class ZT> int read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
 {
   istream *is = new ifstream(input_filename);
   *is >> b;
+  int status = 0;
+  if (b.empty())
+  {
+    status = 1;
+    cerr << "File " << input_filename << " was (probably) not opened." << endl;
+  }
   delete is;
+  return status;
 }
 
 /**
@@ -116,15 +130,17 @@ int test_filename(const char *input_filename_lattice, const char *input_filename
                   const char *output_filename, const int method = CVPM_FAST)
 {
   ZZ_mat<ZT> A;
-  read_matrix(A, input_filename_lattice);
+  int status = 0;
+  status |= read_matrix(A, input_filename_lattice);
 
   IntVect t;
-  read_vector(t, input_filename_target);
+  status |= read_vector(t, input_filename_target);
 
   IntVect b;
-  read_vector(b, output_filename);
+  status |= read_vector(b, output_filename);
 
-  return test_cvp<ZT>(A, t, b, method);
+  status |= test_cvp<ZT>(A, t, b, method);
+  return status;
 }
 
 /**

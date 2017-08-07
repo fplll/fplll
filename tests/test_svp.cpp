@@ -39,11 +39,18 @@ enum Test
    @return
 */
 
-template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
+template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 {
   istream *is = new ifstream(input_filename);
   *is >> A;
+  int status = 0;
+  if (A.empty())
+  {
+    status = 1;
+    cerr << "File " << input_filename << " was (probably) not opened." << endl;
+  }
   delete is;
+  return status;
 }
 
 /**
@@ -54,11 +61,18 @@ template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
    @return
 */
 
-template <class ZT> void read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
+template <class ZT> int read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
 {
   istream *is = new ifstream(input_filename);
   *is >> b;
+  int status = 0;
+  if (b.empty())
+  {
+    status = 1;
+    cerr << "File " << input_filename << " was (probably) not opened." << endl;
+  }
   delete is;
+  return status;
 }
 
 /**
@@ -293,19 +307,23 @@ int test_filename(const char *input_filename, const char *output_filename,
                   const Test test = SVP_ENUM)
 {
   ZZ_mat<ZT> A;
-  read_matrix(A, input_filename);
+  int status = 0;
+  status |= read_matrix(A, input_filename);
 
   IntVect b;
-  read_vector(b, output_filename);
+  status |= read_vector(b, output_filename);
 
   switch (test)
   {
   case SVP_ENUM:
-    return test_svp<ZT>(A, b);
+    status |= test_svp<ZT>(A, b);
+    return status;
   case DSVP_ENUM:
-    return test_dual_svp<ZT>(A, b);
+    status |= test_dual_svp<ZT>(A, b);
+    return status;
   case DSVP_REDUCE:
-    return test_dsvp_reduce<ZT>(A, b);
+    status |= test_dsvp_reduce<ZT>(A, b);
+    return status;
   }
 
   cerr << "Unknown test." << endl;

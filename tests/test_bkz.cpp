@@ -23,11 +23,18 @@
 using namespace std;
 using namespace fplll;
 
-template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
+template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 {
   istream *is = new ifstream(input_filename);
   *is >> A;
+  int status = 0;
+  if (A.empty())
+  {
+    status = 1;
+    cerr << "File " << input_filename << " was (probably) not opened." << endl;
+  }
   delete is;
+  return status;
 }
 
 /**
@@ -187,9 +194,9 @@ int test_filename(const char *input_filename, const int block_size,
                   FloatType float_type = FT_DEFAULT, int flags = BKZ_DEFAULT, int prec = 0)
 {
   ZZ_mat<ZT> A, B;
-  read_matrix(A, input_filename);
-  B          = A;
   int status = 0;
+  status |= read_matrix(A, input_filename);
+  B = A;
   status |= test_bkz<ZT>(A, block_size, float_type, flags, prec);
   status |= test_bkz_param<ZT>(B, block_size);
   return status;
