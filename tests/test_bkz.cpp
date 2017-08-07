@@ -13,8 +13,11 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
+#include "io/json.hpp"
 #include <cstring>
 #include <fplll.h>
+
+using json = nlohmann::json;
 
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."
@@ -68,7 +71,9 @@ int test_bkz(ZZ_mat<ZT> &A, const int block_size, FloatType float_type, int flag
    @return zero on success.
 */
 
-template <class ZT> int test_bkz_param(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_DEFAULT)
+template <class ZT>
+int test_bkz_param(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_DEFAULT,
+                   string dump_gso_filename = string())
 {
 
   int status = 0;
@@ -93,7 +98,8 @@ template <class ZT> int test_bkz_param(ZZ_mat<ZT> &A, const int block_size, int 
   }
 
   BKZParam params(block_size, strategies);
-  params.flags = flags;
+  params.flags             = flags;
+  params.dump_gso_filename = dump_gso_filename;
   // zero on success
   status = bkz_reduction(&A, NULL, params, FT_DEFAULT, 53);
   if (status != RED_SUCCESS)
@@ -168,6 +174,92 @@ int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_
     cerr << "BKZ parameter test failed with error '" << get_red_status_str(status) << "'" << endl;
   }
   return status;
+}
+
+/**
+   @brief Test BKZ_DUMP_GSO for a matrix d × (d+1) integer relations matrix with bit size b (copied
+   from test_int_rel)
+
+   @param d                dimension
+   @param b                bit size
+   @param block_size       block size
+   @param float_type       floating point type to test
+   @param flags            flags to use
+
+   @return zero on success.
+ */
+template <class ZT>
+int test_int_rel_bkz_dump_gso(int d, int b, const int block_size, FloatType float_type = FT_DEFAULT,
+                              int flags = BKZ_DEFAULT | BKZ_DUMP_GSO)
+{
+  ZZ_mat<ZT> A, B;
+  A.resize(d, d + 1);
+  A.gen_intrel(b);
+  B          = A;
+  int status = 0;
+  // TODO: maybe not safe.
+  string file_bkz_dump_gso = tmpnam(nullptr);
+  status |= test_bkz_param<ZT>(B, block_size, flags, file_bkz_dump_gso);
+
+  if (status != 0)
+  {
+    cerr << "Error in test_bkz_param." << endl;
+    return status;
+  }
+
+  json js;
+  std::ifstream fs(file_bkz_dump_gso);
+  if (fs.fail())
+  {
+    cerr << "File " << file_bkz_dump_gso << " cannot be loaded." << endl;
+    return 1;
+  }
+  fs >> js;
+  int loop    = -1;
+  double time = 0.0;
+  for (auto i : js)
+  {
+    // Verify if there are as much norms as there are rows in A
+    if (A.get_rows() != (int)i["norms"].size())
+    {
+      cerr << "The array \"norms\" does not contain enough values (" << A.get_rows()
+           << " expected but " << i["norms"].size() << " found)." << endl;
+      return 1;
+    }
+
+    // Extract data from json file
+    const string step_js = i["step"];
+    const int loop_js    = i["loop"];
+    const double time_js = i["time"];
+    // Verify if loop of Input and Output have loop = -1
+    if (step_js.compare("Input") == 0 || step_js.compare("Output") == 0)
+    {
+      if (loop_js != -1)
+      {
+        cerr << "Steps Input or Output are not with \"loop\" = -1." << endl;
+        return 1;
+      }
+    }
+    else
+    {
+      // Verify that loop increases
+      loop++;
+      if (loop_js != loop)
+      {
+        cerr << "Loop does not increase." << endl;
+        return 1;
+      }
+      // Verify that time increases
+      if (time > time_js)
+      {
+        cerr << "Time does not increase." << endl;
+        return 1;
+      }
+      time = time_js;
+    }
+  }
+
+  return 0;
 }
 
 /**
@@ -276,6 +368,9 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE);
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SD_VARIANT);
   status |= test_filename<mpz_t>("lattices/example_in", 10, FT_DOUBLE, BKZ_SLD_RED);
+
+  // Test BKZ_DUMP_GSO
+  status |= test_int_rel_bkz_dump_gso<mpz_t>(50, 1000, 15, FT_MPFR, BKZ_DEFAULT | BKZ_DUMP_GSO);
 
   if (status == 0)
   {

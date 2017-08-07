@@ -371,11 +371,8 @@ bool BKZReduction<ZT, FT>::tour(const int loop, int &kappa_max, const BKZParam &
 
   if (par.flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "End of BKZ loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(par.dump_gso_filename, prefix.str());
+    dump_gso(par.dump_gso_filename, true, "End of BKZ loop", loop,
+             (cputime() - cputime_start) * 0.001);
   }
 
   return clean;
@@ -453,11 +450,8 @@ bool BKZReduction<ZT, FT>::sd_tour(const int loop, const BKZParam &par, int min_
 
   if (par.flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "End of SD-BKZ loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(par.dump_gso_filename, prefix.str());
+    dump_gso(par.dump_gso_filename, true, "End of SD-BKZ loop", loop,
+             (cputime() - cputime_start) * 0.001);
   }
 
   return clean;
@@ -508,11 +502,8 @@ bool BKZReduction<ZT, FT>::slide_tour(const int loop, const BKZParam &par, int m
 
   if (par.flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "End of SLD loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(par.dump_gso_filename, prefix.str());
+    dump_gso(par.dump_gso_filename, true, "End of SLD loop", loop,
+             (cputime() - cputime_start) * 0.001);
   }
 
   // we check the potential function to see if we made progress
@@ -539,9 +530,7 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
 
   if (flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "Input";
-    dump_gso(param.dump_gso_filename, prefix.str(), false);
+    dump_gso(param.dump_gso_filename, false, "Input", -1, 0.0);
   }
 
   if (param.block_size < 2)
@@ -671,11 +660,7 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
 
   if (flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "Output ";
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(param.dump_gso_filename, prefix.str());
+    dump_gso(param.dump_gso_filename, true, "Output", -1, (cputime() - cputime_start) * 0.001);
   }
   return set_status(final_status);
 }
@@ -732,26 +717,77 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::set_status(int new_stat
   return status == RED_SUCCESS;
 }
 
+// Generate the json file by hand to generate a flexible human-readable file.
+// TODO: think about use io/json.hpp
 template <class ZT, class FT>
-void BKZReduction<ZT, FT>::dump_gso(const std::string &filename, const std::string &prefix,
-                                    bool append)
+void BKZReduction<ZT, FT>::dump_gso(const std::string &filename, bool append,
+                                    const std::string &step, const int loop, const double time)
 {
   ofstream dump;
-  if (append)
-    dump.open(filename.c_str(), std::ios_base::app);
-  else
-    dump.open(filename.c_str());
-  dump << std::setw(4) << prefix << ": ";
+  // Enable exceptions
+  dump.exceptions(ios_base::failbit | ios_base::badbit);
+
+  try
+  {
+    if (append)
+    {
+      dump.open(filename.c_str(), std::ios_base::app);
+    }
+    else
+    {
+      dump.open(filename.c_str());
+      dump << "[" << endl;
+    }
+  }
+  catch (const ios_base::failure &e)
+  {
+    cerr << "Cannot open " << filename << endl;
+    throw;
+  }
+
+  try
+  {
+    dump << string(8, ' ') << "{" << endl;
+    dump << string(16, ' ') << "\"step\": \"" << step << "\"," << endl;
+    dump << string(16, ' ') << "\"loop\": " << loop << "," << endl;
+    dump << string(16, ' ') << "\"time\": " << time << "," << endl;
+  }
+  catch (const ios_base::failure &e)
+  {
+    cerr << "Cannot open " << filename << endl;
+    throw;
+  }
+
   FT f, log_f;
   long expo;
+  stringstream ss;
   for (int i = 0; i < num_rows; i++)
   {
     m.update_gso_row(i);
     f = m.get_r_exp(i, i, expo);
     log_f.log(f, GMP_RNDU);
-    dump << std::setprecision(8) << log_f.get_d() + expo * std::log(2.0) << " ";
+    ss << std::setprecision(8) << log_f.get_d() + expo * std::log(2.0) << ", ";
   }
-  dump << std::endl;
+  string s = ss.str();
+  try
+  {
+    dump << string(16, ' ') << "\"norms\": [" << s.substr(0, s.size() - 2) << "]" << endl;
+    dump << string(8, ' ') << "}";
+    if (step.compare("Output") == 0)
+    {
+      dump << endl << "]";
+    }
+    else
+    {
+      dump << "," << endl;
+    }
+  }
+  catch (const ios_base::failure &e)
+  {
+    cerr << "Cannot open " << filename << endl;
+    throw;
+  }
+
   dump.close();
 }
 
