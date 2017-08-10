@@ -469,6 +469,11 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ evec &b)
 
   for (i = 0;; ++i)
   {
+    if (step > d)
+    {
+      throw std::runtime_error("Infinite loop in pruner gradient_descent_step");
+    }
+
     for (int i = 0; i < d; ++i)
     {
       new_b[i] = new_b[i] + step * gradient[i];
