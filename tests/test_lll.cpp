@@ -13,6 +13,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
+#include <../tests/test_utils.h>
 #include <cstring>
 #include <fplll.h>
 
@@ -22,13 +23,6 @@ using namespace fplll;
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."
 #endif
-
-template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> A;
-  delete is;
-}
 
 /**
    @brief Test the tester.
@@ -124,8 +118,10 @@ int test_filename(const char *input_filename, LLLMethod method, FloatType float_
                   int flags = LLL_DEFAULT, int prec = 0)
 {
   ZZ_mat<ZT> A;
-  read_matrix(A, input_filename);
-  return test_lll<ZT>(A, method, float_type, flags, prec);
+  int status = 0;
+  status |= read_matrix(A, input_filename);
+  status |= test_lll<ZT>(A, method, float_type, flags, prec);
+  return status;
 }
 
 /**
