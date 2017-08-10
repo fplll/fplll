@@ -16,7 +16,7 @@ FPLLL_BEGIN_NAMESPACE
 
 /* constructor */
 template<>
-inline FP_NR<long double>::FP_NR() {}
+inline FP_NR<long double>::FP_NR() : data(0.0) {}
 
 template<>
 inline FP_NR<long double>::FP_NR(const FP_NR<long double>& f) : data (f.data) {}
