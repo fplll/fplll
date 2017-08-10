@@ -395,7 +395,7 @@ template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const evec &b
       trials = 1;
     if (!(trials.is_finite()))
     {
-      throw std::runtime_error("NaN or inf in repeated_enum_cost (METRIC_EXPECTED_SOLUTIONST)");
+      throw std::runtime_error("NaN or inf in repeated_enum_cost (METRIC_EXPECTED_SOLUTION)");
     }
 
     return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
