@@ -298,7 +298,7 @@ inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b, vector<double> *deta
     total += tmp;
     normalized_radius_pow *= normalized_radius;
   }
-  if (!(total.is_finite()))
+  if (!total.is_finite())
   {
     throw std::runtime_error("NaN or inf in single_enum_cost");
   }
@@ -320,14 +320,13 @@ template <class FT> inline FT Pruner<FT>::svp_probability(/*i*/ const evec &b)
   FT vol  = relative_volume(d, b);
   FT dxn  = pow_si(dx, 2 * d);
   FT dvol = dxn * relative_volume(d, b_minus_db) - vol;
-  FT res =  dvol / (dxn - 1.);
+  FT res  = dvol / (dxn - 1.);
 
-  if (!(res.is_finite()))
+  if (!res.is_finite())
   {
     throw std::runtime_error("NaN or inf in svp_probability");
   }
   return res;
-
 }
 
 template <class FT> inline FT Pruner<FT>::expected_solutions(/*i*/ const evec &b)
@@ -344,12 +343,11 @@ template <class FT> inline FT Pruner<FT>::expected_solutions(/*i*/ const evec &b
   tmp *= ipv[j];
   tmp *= symmetry_factor;
 
-  if (!(tmp.is_finite()))
+  if (!tmp.is_finite())
   {
     throw std::runtime_error("NaN or inf in expected_solutions");
   }
   return tmp;
-
 }
 
 template <class FT> inline FT Pruner<FT>::measure_metric(/*i*/ const evec &b)
@@ -377,7 +375,7 @@ template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const evec &b
       return single_enum_cost(b);
 
     FT trials = log(1.0 - target) / log(1.0 - probability);
-    if (!(trials.is_finite()))
+    if (!trials.is_finite())
     {
       throw std::runtime_error("NaN or inf in repeated_enum_cost (METRIC_PROBABILITY_OF_SHORTEST)");
     }
@@ -393,7 +391,7 @@ template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const evec &b
     FT trials = target / expected;
     if (trials < 1.)
       trials = 1;
-    if (!(trials.is_finite()))
+    if (!trials.is_finite())
     {
       throw std::runtime_error("NaN or inf in repeated_enum_cost (METRIC_EXPECTED_SOLUTION)");
     }
@@ -444,17 +442,18 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ evec &b)
     new_b[i] = b[i];
   }
 
-  if (verbosity){
+  if (verbosity)
+  {
     cerr << "  Gradient descent step starts at cf=" << cf << endl;
   }
 
   norm /= (double)d;
   norm = sqrt(norm);
 
-  if (verbosity){
+  if (verbosity)
+  {
     cerr << "  Gradient norm " << norm << endl;
   }
-
 
   if (norm <= 0.)
     return 0;
@@ -486,16 +485,15 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ evec &b)
     cf = new_cf;
     step *= step_factor;
   }
-  if (verbosity){
-    cerr << "  Gradient descent step ends after " 
-         << i << " mini-steps at cf=" << cf << endl;  
+  if (verbosity)
+  {
+    cerr << "  Gradient descent step ends after " << i << " mini-steps at cf=" << cf << endl;
   }
-
 
   if (cf > old_cf * min_cf_decrease)
   {
     return 0;
-  } 
+  }
   return i;
 }
 
