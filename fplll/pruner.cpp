@@ -300,7 +300,7 @@ inline FT Pruner<FT>::single_enum_cost(/*i*/ const evec &b, vector<double> *deta
   }
   if (!total.is_finite())
   {
-    throw std::runtime_error("NaN or inf in single_enum_cost");
+    throw std::range_error("NaN or inf in single_enum_cost");
   }
 
   return total;
@@ -324,7 +324,7 @@ template <class FT> inline FT Pruner<FT>::svp_probability(/*i*/ const evec &b)
 
   if (!res.is_finite())
   {
-    throw std::runtime_error("NaN or inf in svp_probability");
+    throw std::range_error("NaN or inf in svp_probability");
   }
   return res;
 }
@@ -345,7 +345,7 @@ template <class FT> inline FT Pruner<FT>::expected_solutions(/*i*/ const evec &b
 
   if (!tmp.is_finite())
   {
-    throw std::runtime_error("NaN or inf in expected_solutions");
+    throw std::range_error("NaN or inf in expected_solutions");
   }
   return tmp;
 }
@@ -377,7 +377,7 @@ template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const evec &b
     FT trials = log(1.0 - target) / log(1.0 - probability);
     if (!trials.is_finite())
     {
-      throw std::runtime_error("NaN or inf in repeated_enum_cost (METRIC_PROBABILITY_OF_SHORTEST)");
+      throw std::range_error("NaN or inf in repeated_enum_cost (METRIC_PROBABILITY_OF_SHORTEST)");
     }
     return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
   }
@@ -393,7 +393,7 @@ template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const evec &b
       trials = 1;
     if (!trials.is_finite())
     {
-      throw std::runtime_error("NaN or inf in repeated_enum_cost (METRIC_EXPECTED_SOLUTION)");
+      throw std::range_error("NaN or inf in repeated_enum_cost (METRIC_EXPECTED_SOLUTION)");
     }
 
     return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
