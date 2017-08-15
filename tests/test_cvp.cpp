@@ -31,10 +31,10 @@ using namespace fplll;
    @return
 */
 
-template <class ZT> int test_cvp(ZZ_mat<ZT> &A, vector<Z_NR<>> &target, vector<Z_NR<>> &b, const int method)
+template <class ZT> int test_cvp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &target, vector<Z_NR<mpz_t>> &b, const int method)
 {
-  vector<Z_NR<>> sol_coord;  // In the LLL-reduced basis
-  vector<Z_NR<>> solution;
+  vector<Z_NR<mpz_t>> sol_coord;  // In the LLL-reduced basis
+  vector<Z_NR<mpz_t>> solution;
   ZZ_mat<mpz_t> u;
 
   // cerr << "A " << endl << A << endl;
@@ -90,10 +90,10 @@ int test_filename(const char *input_filename_lattice, const char *input_filename
   int status = 0;
   status |= read_matrix(A, input_filename_lattice);
 
-  vector<Z_NR<>> t;
+  vector<Z_NR<mpz_t>> t;
   status |= read_vector(t, input_filename_target);
 
-  vector<Z_NR<>> b;
+  vector<Z_NR<mpz_t>> b;
   status |= read_vector(b, output_filename);
 
   status |= test_cvp<ZT>(A, t, b, method);

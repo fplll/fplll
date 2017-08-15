@@ -43,9 +43,9 @@ static int last_useful_index(const Matrix<FP_NR<>> &r)
 
 /* Finds the shortest vector of the basis b and returns its squared norm in
    basisMin */
-static void get_basis_min(Z_NR<> &basis_min, const ZZ_mat<mpz_t> &b, int first, int last)
+static void get_basis_min(Z_NR<mpz_t> &basis_min, const ZZ_mat<mpz_t> &b, int first, int last)
 {
-  Z_NR<> sq_norm;
+  Z_NR<mpz_t> sq_norm;
   int n = b.get_cols();
   sqr_norm(basis_min, b[first], n);
 
@@ -57,10 +57,10 @@ static void get_basis_min(Z_NR<> &basis_min, const ZZ_mat<mpz_t> &b, int first, 
   }
 }
 
-static bool enumerate_svp(int d, MatGSO<Z_NR<>, FP_NR<>> &gso, FP_NR<> &max_dist,
+static bool enumerate_svp(int d, MatGSO<Z_NR<mpz_t>, FP_NR<>> &gso, FP_NR<> &max_dist,
                           ErrorBoundedEvaluator &evaluator, const vector<enumf> &pruning, int flags)
 {
-  Enumeration<Z_NR<>, FP_NR<>> enumobj(gso, evaluator);
+  Enumeration<Z_NR<mpz_t>, FP_NR<>> enumobj(gso, evaluator);
   bool dual = (flags & SVP_DUAL);
   if (d == 1 || !pruning.empty() || dual)
   {
@@ -98,11 +98,11 @@ static bool enumerate_svp(int d, MatGSO<Z_NR<>, FP_NR<>> &gso, FP_NR<> &max_dist
   return !evaluator.empty();
 }
 
-static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, SVPMethod method,
+static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, SVPMethod method,
                               const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
-                              long long &sol_count, vector<vector<Z_NR<>>> *subsol_coord = nullptr,
+                              long long &sol_count, vector<vector<Z_NR<mpz_t>>> *subsol_coord = nullptr,
                               vector<enumf> *subsol_dist    = nullptr,
-                              vector<vector<Z_NR<>>> *auxsol_coord = nullptr,
+                              vector<vector<Z_NR<mpz_t>>> *auxsol_coord = nullptr,
                               vector<enumf> *auxsol_dist = nullptr, int max_aux_sols = 0)
 {
   bool findsubsols = (subsol_coord != nullptr) && (subsol_dist != nullptr);
@@ -125,10 +125,10 @@ static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, SVPMe
 
   // Allocates space for vectors and matrices in constructors
   ZZ_mat<mpz_t> empty_mat;
-  MatGSO<Z_NR<>, FP_NR<>> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
+  MatGSO<Z_NR<mpz_t>, FP_NR<>> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
   FP_NR<> max_dist;
-  Z_NR<> int_max_dist;
-  Z_NR<> itmp1;
+  Z_NR<mpz_t> int_max_dist;
+  Z_NR<mpz_t> itmp1;
 
   // Computes the Gram-Schmidt orthogonalization in floating-point
   gso.update_gso();
@@ -220,7 +220,7 @@ static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, SVPMe
     {
       (*subsol_dist)[i] = evaluator->sub_solutions[i].first.get_d();
 
-      vector<Z_NR<>> ss_c;
+      vector<Z_NR<mpz_t>> ss_c;
       for (size_t j = 0; j < evaluator->sub_solutions[i].second.size(); ++j)
       {
         itmp1.set_f(evaluator->sub_solutions[i].second[j]);
@@ -241,7 +241,7 @@ static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, SVPMe
     {
       auxsol_dist->push_back(it->first.get_d());
 
-      vector<Z_NR<>> as_c;
+      vector<Z_NR<mpz_t>> as_c;
       for (size_t j = 0; j < it->second.size(); ++j)
       {
         itmp1.set_f(it->second[j]);
@@ -256,20 +256,20 @@ static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, SVPMe
   return result;
 }
 
-int shortest_vector(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, SVPMethod method, int flags)
+int shortest_vector(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, SVPMethod method, int flags)
 {
   long long tmp;
   return shortest_vector_ex(b, sol_coord, method, vector<double>(), flags, EVALMODE_SV, tmp);
 }
 
-int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, const vector<double> &pruning,
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, const vector<double> &pruning,
                             int flags)
 {
   long long tmp;
   return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp);
 }
 
-int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, vector<vector<Z_NR<>>> &subsol_coord,
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, vector<vector<Z_NR<mpz_t>>> &subsol_coord,
                             vector<enumf> &subsol_dist, const vector<double> &pruning, int flags)
 {
   long long tmp;
@@ -277,7 +277,7 @@ int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, vector<
                             &subsol_coord, &subsol_dist);
 }
 
-int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<>> &sol_coord, vector<vector<Z_NR<>>> &auxsol_coord,
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, vector<vector<Z_NR<mpz_t>>> &auxsol_coord,
                             vector<enumf> &auxsol_dist, const int max_aux_sols,
                             const vector<double> &pruning, int flags)
 {
@@ -327,7 +327,7 @@ static void babai(const FP_mat<mpfr_t> &matrix, const Matrix<FP_NR<>> &mu, const
   }
 }
 
-int closest_vector(ZZ_mat<mpz_t> &b, const vector<Z_NR<>> &int_target, vector<Z_NR<>> &sol_coord, int method,
+int closest_vector(ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &int_target, vector<Z_NR<mpz_t>> &sol_coord, int method,
                    int flags)
 {
   // d = lattice dimension (note that it might decrease during preprocessing)
@@ -347,10 +347,10 @@ int closest_vector(ZZ_mat<mpz_t> &b, const vector<Z_NR<>> &int_target, vector<Z_
 
   // Allocates space for vectors and matrices in constructors
   ZZ_mat<mpz_t> empty_mat;
-  MatGSO<Z_NR<>, FP_NR<>> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
+  MatGSO<Z_NR<mpz_t>, FP_NR<>> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
   vector<FP_NR<>> target_coord;
   FP_NR<> max_dist;
-  Z_NR<> itmp1;
+  Z_NR<mpz_t> itmp1;
 
   // Computes the Gram-Schmidt orthogonalization in floating-point
   gso.update_gso();
@@ -360,7 +360,7 @@ int closest_vector(ZZ_mat<mpz_t> &b, const vector<Z_NR<>> &int_target, vector<Z_
       do it several times (if ||target|| >> ||b_i||) */
   FP_mat<mpfr_t> float_matrix(d, n);
   vector<FP_NR<>> target(n), babai_sol;
-  vector<Z_NR<>> int_new_target = int_target;
+  vector<Z_NR<mpz_t>> int_new_target = int_target;
 
   for (int i = 0; i < d; i++)
     for (int j = 0; j < n; j++)
@@ -435,7 +435,7 @@ int closest_vector(ZZ_mat<mpz_t> &b, const vector<Z_NR<>> &int_target, vector<Z_
   FastErrorBoundedEvaluator evaluator(n, gso.get_mu_matrix(), gso.get_r_matrix(), EVALMODE_CV);
 
   // Main loop of the enumeration
-  Enumeration<Z_NR<>, FP_NR<>> enumobj(gso, evaluator, max_indices);
+  Enumeration<Z_NR<mpz_t>, FP_NR<>> enumobj(gso, evaluator, max_indices);
   enumobj.enumerate(0, d, max_dist, 0, target_coord);
 
   int result = RED_ENUM_FAILURE;

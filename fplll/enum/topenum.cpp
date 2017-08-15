@@ -17,7 +17,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-Enumerator::Enumerator(int d, const Matrix<FP_NR<>> &mu, const Matrix<FP_NR<>> &r, double argMaxVolume,
+Enumerator::Enumerator(int d, const Matrix<FP_NR<mpfr_t>> &mu, const Matrix<FP_NR<mpfr_t>> &r, double argMaxVolume,
                        int min_level)
     : mu(mu), r(r), kmin(min_level), d(d)
 {
@@ -30,9 +30,9 @@ Enumerator::Enumerator(int d, const Matrix<FP_NR<>> &mu, const Matrix<FP_NR<>> &
   svp_init_needed = true;
 }
 
-bool Enumerator::enum_next(const FP_NR<> &max_sqr_length)
+bool Enumerator::enum_next(const FP_NR<mpfr_t> &max_sqr_length)
 {
-  FP_NR<> newdist, newcenter, y, volume, rtmp1;
+  FP_NR<mpfr_t> newdist, newcenter, y, volume, rtmp1;
   bool notFound = true;
 
   if (svp_init_needed)

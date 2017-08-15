@@ -17,7 +17,7 @@ using namespace fplll;
    @param b              shortest vector
    @return
 */
-template <class ZT> int test_sieve_alg(ZZ_mat<ZT> &A, vector<Z_NR<>> &b, int alg)
+template <class ZT> int test_sieve_alg(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b, int alg)
 {
   GaussSieve<ZT, FP_NR<double>> gsieve(A, alg, 0, 0);
   Z_NR<ZT> goal_norm;
@@ -39,7 +39,7 @@ template <class ZT> int test_sieve_alg(ZZ_mat<ZT> &A, vector<Z_NR<>> &b, int alg
   return 0;
 }
 
-template <class ZT> int test_sieve(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
+template <class ZT> int test_sieve(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
 {
   int r = 0;
   r |= test_sieve_alg<ZT>(A, b, 2);
@@ -59,7 +59,7 @@ template <class ZT> int test_filename(const char *input_filename, const char *ou
   ZZ_mat<ZT> A;
   int status = 0;
   status |= read_matrix(A, input_filename);
-  vector<Z_NR<>> b;
+  vector<Z_NR<mpz_t>> b;
   status |= read_vector(b, output_filename);
   status |= test_sieve<ZT>(A, b);
   return status;

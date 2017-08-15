@@ -194,12 +194,12 @@ template <class ZT> int svpcvp(Options &o, ZZ_mat<ZT> &b, const vector<Z_NR<ZT>>
   }
 }
 
-template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<>> &target)
+template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &target)
 {
   const char *format = o.output_format ? o.output_format : "s";
-  vector<Z_NR<>> sol_coord;    // In the LLL-reduced basis
-  vector<Z_NR<>> sol_coord_2;  // In the initial basis
-  vector<Z_NR<>> solution;
+  vector<Z_NR<mpz_t>> sol_coord;    // In the LLL-reduced basis
+  vector<Z_NR<mpz_t>> sol_coord_2;  // In the initial basis
+  vector<Z_NR<mpz_t>> solution;
   ZZ_mat<mpz_t> u;
   bool with_coord     = strchr(format, 'c') != NULL;
   bool with_coord_std = strchr(format, 's') != NULL;

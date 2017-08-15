@@ -138,7 +138,7 @@ int main(int argc, char **argv)
   }
 
   /* set targeted norm */
-  Z_NR<> target_norm, max;
+  Z_NR<mpz_t> target_norm, max;
   if (target_norm_s != NULL)
   {
     target_norm.set_str(target_norm_s);

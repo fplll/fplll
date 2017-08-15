@@ -206,10 +206,10 @@ public:
  * ErrorBoundEvaluator provides an extra interface to provide
  * information about the accuracy of solutions.
  */
-class ErrorBoundedEvaluator : public Evaluator<FP_NR<>>
+class ErrorBoundedEvaluator : public Evaluator<FP_NR<mpfr_t>>
 {
 public:
-  ErrorBoundedEvaluator(int dim, const Matrix<FP_NR<>> &mmu, const Matrix<FP_NR<>> &mr,
+  ErrorBoundedEvaluator(int dim, const Matrix<FP_NR<mpfr_t>> &mmu, const Matrix<FP_NR<mpfr_t>> &mr,
                         EvaluatorMode evalmode, size_t nr_solutions = 1,
                         EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
                         bool find_subsolutions            = false)
@@ -225,14 +225,14 @@ public:
   /** Configuration */
   EvaluatorMode eval_mode;
   int d;
-  const Matrix<FP_NR<>> &mu;
-  const Matrix<FP_NR<>> &r;
+  const Matrix<FP_NR<mpfr_t>> &mu;
+  const Matrix<FP_NR<mpfr_t>> &r;
 
   /* To enable error estimation, the caller must set
   input_error_defined=true and fill max_dr_diag and max_dm_u */
   bool input_error_defined;
-  vector<FP_NR<>> max_dr_diag, max_dm_u;  // Error bounds on input parameters
-  //  FP_NR<> last_partial_dist;          // Approx. squared norm of the last solution
+  vector<FP_NR<mpfr_t>> max_dr_diag, max_dm_u;  // Error bounds on input parameters
+  //  FP_NR<mpfr_t> last_partial_dist;          // Approx. squared norm of the last solution
 
   void init_delta_def(int prec, double rho, bool withRoundingToEnumf);
 
@@ -241,10 +241,10 @@ public:
    * normOfSolution^2 <= (1 + max_error) * lambda_1(L)^2.
    * The default implementation might fail (i.e. return false).
    */
-  virtual bool get_max_error(FP_NR<> &max_error, const FP_NR<> &sol_dist) = 0;
+  virtual bool get_max_error(FP_NR<mpfr_t> &max_error, const FP_NR<mpfr_t> &sol_dist) = 0;
 
   // Internal use
-  bool get_max_error_aux(const FP_NR<> &max_dist, bool boundOnExactVal, FP_NR<> &maxDE);
+  bool get_max_error_aux(const FP_NR<mpfr_t> &max_dist, bool boundOnExactVal, FP_NR<mpfr_t> &maxDE);
 };
 
 /**
@@ -256,8 +256,8 @@ public:
 class FastErrorBoundedEvaluator : public ErrorBoundedEvaluator
 {
 public:
-  FastErrorBoundedEvaluator(int d = 0, const Matrix<FP_NR<>> &mu = Matrix<FP_NR<>>(),
-                            const Matrix<FP_NR<>> &r  = Matrix<FP_NR<>>(),
+  FastErrorBoundedEvaluator(int d = 0, const Matrix<FP_NR<mpfr_t>> &mu = Matrix<FP_NR<mpfr_t>>(),
+                            const Matrix<FP_NR<mpfr_t>> &r  = Matrix<FP_NR<mpfr_t>>(),
                             EvaluatorMode eval_mode = EVALMODE_SV, size_t nr_solutions = 1,
                             EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
                             bool find_subsolutions            = false)
@@ -266,10 +266,10 @@ public:
   }
   virtual ~FastErrorBoundedEvaluator() {}
 
-  virtual bool get_max_error(FP_NR<> &max_error, const FP_NR<> &sol_dist);
-  virtual void eval_sol(const vector<FP_NR<>> &new_sol_coord, const enumf &new_partial_dist,
+  virtual bool get_max_error(FP_NR<mpfr_t> &max_error, const FP_NR<mpfr_t> &sol_dist);
+  virtual void eval_sol(const vector<FP_NR<mpfr_t>> &new_sol_coord, const enumf &new_partial_dist,
                         enumf &max_dist);
-  virtual void eval_sub_sol(int offset, const vector<FP_NR<>> &new_sub_sol_coord, const enumf &sub_dist);
+  virtual void eval_sub_sol(int offset, const vector<FP_NR<mpfr_t>> &new_sub_sol_coord, const enumf &sub_dist);
 };
 
 /**
@@ -279,8 +279,8 @@ public:
 class ExactErrorBoundedEvaluator : public ErrorBoundedEvaluator
 {
 public:
-  ExactErrorBoundedEvaluator(int d, const ZZ_mat<mpz_t> &matrix, const Matrix<FP_NR<>> &mu,
-                             const Matrix<FP_NR<>> &r, EvaluatorMode eval_mode,
+  ExactErrorBoundedEvaluator(int d, const ZZ_mat<mpz_t> &matrix, const Matrix<FP_NR<mpfr_t>> &mu,
+                             const Matrix<FP_NR<mpfr_t>> &r, EvaluatorMode eval_mode,
                              size_t nr_solutions               = 1,
                              EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
                              bool find_subsolutions            = false)
@@ -296,20 +296,20 @@ public:
   /**
    * Sets max_error to 0: the result is guaranteed.
    */
-  virtual bool get_max_error(FP_NR<> &max_error, const FP_NR<> &sol_dist);
+  virtual bool get_max_error(FP_NR<mpfr_t> &max_error, const FP_NR<mpfr_t> &sol_dist);
 
-  virtual void eval_sol(const vector<FP_NR<>> &new_sol_coord, const enumf &new_partial_dist,
+  virtual void eval_sol(const vector<FP_NR<mpfr_t>> &new_sol_coord, const enumf &new_partial_dist,
                         enumf &max_dist);
 
-  virtual void eval_sub_sol(int offset, const vector<FP_NR<>> &new_sub_sol_coord, const enumf &sub_dist);
+  virtual void eval_sub_sol(int offset, const vector<FP_NR<mpfr_t>> &new_sub_sol_coord, const enumf &sub_dist);
 
-  Z_NR<> int_max_dist;  // Exact norm of the last vector
+  Z_NR<mpz_t> int_max_dist;  // Exact norm of the last vector
 
-  Z_NR<> exact_sol_dist(const vector<FP_NR<>> &sol_coord);
-  Z_NR<> exact_subsol_dist(int offset, const vector<FP_NR<>> &sol_coord);
+  Z_NR<mpz_t> exact_sol_dist(const vector<FP_NR<mpfr_t>> &sol_coord);
+  Z_NR<mpz_t> exact_subsol_dist(int offset, const vector<FP_NR<mpfr_t>> &sol_coord);
 
 private:
-  FP_NR<> int_dist2Float(Z_NR<> int_dist);
+  FP_NR<mpfr_t> int_dist2Float(Z_NR<mpz_t> int_dist);
 
   const ZZ_mat<mpz_t> &matrix;  // matrix of the lattice
 };

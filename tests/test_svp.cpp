@@ -40,11 +40,11 @@ enum Test
    @return
 */
 
-template <class ZT> int test_svp(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
+template <class ZT> int test_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
 {
-  vector<Z_NR<>> sol_coord;   // In the LLL-reduced basis
-  vector<Z_NR<>> sol_coord2;  // In the initial basis
-  vector<Z_NR<>> solution;
+  vector<Z_NR<mpz_t>> sol_coord;   // In the LLL-reduced basis
+  vector<Z_NR<mpz_t>> sol_coord2;  // In the initial basis
+  vector<Z_NR<mpz_t>> solution;
   ZZ_mat<mpz_t> u;
 
   int status =
@@ -91,7 +91,7 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
    @param b              coefficients of shortest dual vector
    @return
 */
-template <class ZT> int dual_length(FP_NR<> &norm, ZZ_mat<ZT> &A, const vector<Z_NR<>> &coords)
+template <class ZT> int dual_length(FP_NR<mpfr_t> &norm, ZZ_mat<ZT> &A, const vector<Z_NR<mpz_t>> &coords)
 {
   int d = coords.size();
   if (A.get_rows() != d)
@@ -100,25 +100,25 @@ template <class ZT> int dual_length(FP_NR<> &norm, ZZ_mat<ZT> &A, const vector<Z
     cerr << A.get_rows() << " vs " << d << endl;
     return 1;
   }
-  vector<FP_NR<>> coords_d(d);
+  vector<FP_NR<mpfr_t>> coords_d(d);
   for (int i = 0; i < d; i++)
   {
     coords_d[i] = coords[i].get_d();
   }
 
   ZZ_mat<mpz_t> empty_mat;
-  MatGSO<Z_NR<>, FP_NR<>> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
+  MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
   if (!gso.update_gso())
   {
     cerr << "GSO Failure." << endl;
     return 1;
   }
-  FP_NR<> tmp;
+  FP_NR<mpfr_t> tmp;
   gso.get_r(tmp, d - 1, d - 1);
   tmp.pow_si(tmp, -1);
 
-  vector<FP_NR<>> alpha(d);
-  FP_NR<> mu, alpha2, r_inv;
+  vector<FP_NR<mpfr_t>> alpha(d);
+  FP_NR<mpfr_t> mu, alpha2, r_inv;
   norm = 0.0;
   for (int i = 0; i < d; i++)
   {
@@ -145,13 +145,13 @@ template <class ZT> int dual_length(FP_NR<> &norm, ZZ_mat<ZT> &A, const vector<Z
    @return
 */
 
-template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
+template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
 {
-  vector<Z_NR<>> sol_coord;  // In the LLL-reduced basis
-  vector<Z_NR<>> solution;
+  vector<Z_NR<mpz_t>> sol_coord;  // In the LLL-reduced basis
+  vector<Z_NR<mpz_t>> solution;
   ZZ_mat<mpz_t> u;
 
-  FP_NR<> normb;
+  FP_NR<mpfr_t> normb;
   if (dual_length(normb, A, b))
   {
     return 1;
@@ -173,13 +173,13 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
     return status;
   }
 
-  FP_NR<> norm_sol;
+  FP_NR<mpfr_t> norm_sol;
   if (dual_length(norm_sol, A, sol_coord))
   {
     return 1;
   }
 
-  FP_NR<> error;
+  FP_NR<mpfr_t> error;
   error = 1;
   error.mul_2si(error, -(int)error.get_prec());
   normb += error;
@@ -199,12 +199,12 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
    @param b              shortest dual vector
    @return
 */
-template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
+template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
 {
   ZZ_mat<mpz_t> u;
   int d = A.get_rows();
 
-  FP_NR<> normb;
+  FP_NR<mpfr_t> normb;
   if (dual_length(normb, A, b))
   {
     return 1;
@@ -219,8 +219,8 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
   }
 
   ZZ_mat<mpz_t> empty_mat;
-  MatGSO<Z_NR<>, FP_NR<>> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
-  LLLReduction<Z_NR<>, FP_NR<>> lll_obj(gso, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
+  MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
+  LLLReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>> lll_obj(gso, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
 
   vector<Strategy> strategies;
   BKZParam dummy(d, strategies);
@@ -228,17 +228,17 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
 
   bkz_obj.svp_reduction(0, d, dummy, true);
 
-  FP_NR<> norm_sol;
-  Z_NR<> zero;
+  FP_NR<mpfr_t> norm_sol;
+  Z_NR<mpz_t> zero;
   zero = 0;
-  vector<Z_NR<>> e_n(d, zero);
+  vector<Z_NR<mpz_t>> e_n(d, zero);
   e_n[d - 1] = 1;
   if (dual_length(norm_sol, A, e_n))
   {
     return 1;
   }
 
-  FP_NR<> error;
+  FP_NR<mpfr_t> error;
   error = 1;
   error.mul_2si(error, -(int)error.get_prec());
   normb += error;
@@ -267,7 +267,7 @@ int test_filename(const char *input_filename, const char *output_filename,
   int status = 0;
   status |= read_matrix(A, input_filename);
 
-  vector<Z_NR<>> b;
+  vector<Z_NR<mpz_t>> b;
   status |= read_vector(b, output_filename);
 
   switch (test)

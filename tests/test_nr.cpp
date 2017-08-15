@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
   status |= test_arithmetic<FP_NR<dd_real>>();
   status |= test_arithmetic<FP_NR<qd_real>>();
 #endif
-  status |= test_arithmetic<FP_NR<>>();
+  status |= test_arithmetic<FP_NR<mpfr_t>>();
 
   status |= test_std<FP_NR<double>>();
 #ifdef FPLLL_WITH_LONG_DOUBLE
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
   status |= test_std<FP_NR<dd_real>>();
   status |= test_std<FP_NR<qd_real>>();
 #endif
-  status |= test_std<FP_NR<>>();
+  status |= test_std<FP_NR<mpfr_t>>();
 
   status |= test_root<FP_NR<double>>();
 #ifdef FPLLL_WITH_LONG_DOUBLE
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
   status |= test_root<FP_NR<dd_real>>();
   status |= test_root<FP_NR<qd_real>>();
 #endif
-  status |= test_root<FP_NR<>>();
+  status |= test_root<FP_NR<mpfr_t>>();
 
   status |= test_str<FP_NR<double>>();
 #ifdef FPLLL_WITH_LONG_DOUBLE
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
   status |= test_str<FP_NR<dd_real>>();
   status |= test_str<FP_NR<qd_real>>();
 #endif
-  status |= test_str<FP_NR<>>();
+  status |= test_str<FP_NR<mpfr_t>>();
 
   status |= test_hypot<FP_NR<double>>();
 #ifdef FPLLL_WITH_LONG_DOUBLE

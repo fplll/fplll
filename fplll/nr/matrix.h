@@ -321,7 +321,7 @@ and random sub-diagonal coefficients.
   */
 
   void gen_trg(double alpha);
-  void gen_trg2(FP_NR<> *w);
+  void gen_trg2(FP_NR<mpfr_t> *w);
 };
 
 /**
