@@ -32,6 +32,21 @@ enum EvaluatorMode
 
 enum EvaluatorStrategy
 {
+  /*
+   * Strategies for updating the enumeration bound as solutions are found.
+   * Possible values are:
+   *
+   * EVALSTRATEGY_BEST_N_SOLUTIONS
+   *   Starting with the max_sols-th solution, every time a new solution is found
+   *   the enumeration bound is updated to the length of the longest solution. If
+   *   more than max_sols were found, the longest is dropped.
+   * EVALSTRATEGY_OPPORTUNISTIC_N_SOLUTIONS
+   *   Every time a solution is found, update the enumeration distance to the length
+   *   of the solution. If more than max_sols were found, the longest is dropped.
+   * EVALSTRATEGY_FIRST_N_SOLUTIONS
+   *   The enumeration bound is not updated. As soon as max_sols are found, enumeration
+   *   stops.
+  */
   EVALSTRATEGY_BEST_N_SOLUTIONS          = 0,
   EVALSTRATEGY_OPPORTUNISTIC_N_SOLUTIONS = 1,
   EVALSTRATEGY_FIRST_N_SOLUTIONS         = 2

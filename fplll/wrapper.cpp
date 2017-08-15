@@ -555,7 +555,15 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
   }
   else
   {
-    FPLLL_ABORT("Compiled without support for LLL reduction with " << FLOAT_TYPE_STR[sel_ft]);
+    if (0 <= sel_ft && sel_ft <= FT_MPFR)
+    {
+      // it's a valid choice but we don't have support for it
+      FPLLL_ABORT("Compiled without support for LLL reduction with " << FLOAT_TYPE_STR[sel_ft]);
+    }
+    else
+    {
+      FPLLL_ABORT("Floating point type " << sel_ft << "not supported in LLL");
+    }
   }
   zeros_first(b, u, u_inv);
   return status;

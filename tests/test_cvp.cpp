@@ -13,6 +13,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
+#include <../tests/test_utils.h>
 #include <cstring>
 #include <fplll.h>
 
@@ -21,36 +22,6 @@
 #endif
 using namespace std;
 using namespace fplll;
-
-/**
-   @brief Read matrix from `input_filename`.
-
-   @param A
-   @param input_filename
-   @return
-*/
-
-template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> A;
-  delete is;
-}
-
-/**
-   @brief Read vector from `input_filename` into `b`.
-
-   @param b                vector
-   @param input_filename   filename
-   @return
-*/
-
-template <class ZT> void read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> b;
-  delete is;
-}
 
 /**
    @brief Test if CVP function returns correct vector.
@@ -116,15 +87,17 @@ int test_filename(const char *input_filename_lattice, const char *input_filename
                   const char *output_filename, const int method = CVPM_FAST)
 {
   ZZ_mat<ZT> A;
-  read_matrix(A, input_filename_lattice);
+  int status = 0;
+  status |= read_matrix(A, input_filename_lattice);
 
-  vector<Z_NR<>> t;
-  read_vector(t, input_filename_target);
+  IntVect t;
+  status |= read_vector(t, input_filename_target);
 
-  vector<Z_NR<>> b;
-  read_vector(b, output_filename);
+  IntVect b;
+  status |= read_vector(b, output_filename);
 
-  return test_cvp<ZT>(A, t, b, method);
+  status |= test_cvp<ZT>(A, t, b, method);
+  return status;
 }
 
 /**

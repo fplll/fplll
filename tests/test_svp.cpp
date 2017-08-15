@@ -14,6 +14,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
+#include <../tests/test_utils.h>
 #include <cstring>
 #include <fplll.h>
 
@@ -30,36 +31,6 @@ enum Test
   DSVP_ENUM,
   DSVP_REDUCE
 };
-
-/**
-   @brief Read matrix from `input_filename`.
-
-   @param A
-   @param input_filename
-   @return
-*/
-
-template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> A;
-  delete is;
-}
-
-/**
-   @brief Read vector from `input_filename` into `b`.
-
-   @param b                vector
-   @param input_filename   filename
-   @return
-*/
-
-template <class ZT> void read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> b;
-  delete is;
-}
 
 /**
    @brief Test if SVP function returns vector with right norm.
@@ -253,16 +224,9 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
 
   vector<Strategy> strategies;
   BKZParam dummy(d, strategies);
-  BKZReduction<FP_NR<>> bkz_obj(gso, lll_obj, dummy);
-  bool clean = true;
+  BKZReduction<Integer, Float> bkz_obj(gso, lll_obj, dummy);
 
-  bkz_obj.svp_reduction_ex(0, d, dummy, clean, true);
-  status = bkz_obj.status;
-  if (status != RED_SUCCESS)
-  {
-    cerr << "Failure: " << get_red_status_str(status) << endl;
-    return status;
-  }
+  bkz_obj.svp_reduction(0, d, dummy, true);
 
   FP_NR<> norm_sol;
   Z_NR<> zero;
@@ -300,19 +264,23 @@ int test_filename(const char *input_filename, const char *output_filename,
                   const Test test = SVP_ENUM)
 {
   ZZ_mat<ZT> A;
-  read_matrix(A, input_filename);
+  int status = 0;
+  status |= read_matrix(A, input_filename);
 
-  vector<Z_NR<>> b;
-  read_vector(b, output_filename);
+  IntVect b;
+  status |= read_vector(b, output_filename);
 
   switch (test)
   {
   case SVP_ENUM:
-    return test_svp<ZT>(A, b);
+    status |= test_svp<ZT>(A, b);
+    return status;
   case DSVP_ENUM:
-    return test_dual_svp<ZT>(A, b);
+    status |= test_dual_svp<ZT>(A, b);
+    return status;
   case DSVP_REDUCE:
-    return test_dsvp_reduce<ZT>(A, b);
+    status |= test_dsvp_reduce<ZT>(A, b);
+    return status;
   }
 
   cerr << "Unknown test." << endl;

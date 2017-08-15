@@ -1,4 +1,5 @@
 #include <../fplll/sieve/sieve_main.h> /* standalone bin */
+#include <../tests/test_utils.h>
 #include <cstring>
 #include <fplll.h>
 
@@ -8,34 +9,6 @@
 
 using namespace std;
 using namespace fplll;
-
-/**
-   @brief Read matrix from `input_filename`.
-
-   @param A
-   @param input_filename
-   @return
-*/
-template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> A;
-  delete is;
-}
-
-/**
-   @brief Read vector from `input_filename` into `b`.
-
-   @param b                vector
-   @param input_filename   filename
-   @return
-*/
-template <class ZT> void read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> b;
-  delete is;
-}
 
 /**
    @brief Test sieve by checking if function returns correct vector.
@@ -84,10 +57,12 @@ template <class ZT> int test_sieve(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
 template <class ZT> int test_filename(const char *input_filename, const char *output_filename)
 {
   ZZ_mat<ZT> A;
-  read_matrix(A, input_filename);
-  vector<Z_NR<>> b;
-  read_vector(b, output_filename);
-  return test_sieve<ZT>(A, b);
+  int status = 0;
+  status |= read_matrix(A, input_filename);
+  IntVect b;
+  status |= read_vector(b, output_filename);
+  status |= test_sieve<ZT>(A, b);
+  return status;
 }
 
 /*
