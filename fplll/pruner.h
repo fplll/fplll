@@ -34,9 +34,9 @@ public:
   double gh_factor;                  //< radius^2/Gaussian heuristic^2
   std::vector<double> coefficients;  //< pruning coefficients
   double expectation;                //< either expected success probability or number of solutions
-  /**
-      metric used for optimisation (success probability or number of solutions)
-   */
+                                     /**
+                                         metric used for optimisation (success probability or number of solutions)
+                                      */
   PrunerMetric metric;
   std::vector<double> detailed_cost;  //< Expected nodes per level
 

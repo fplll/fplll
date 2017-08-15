@@ -38,14 +38,6 @@ FPLLL_BEGIN_NAMESPACE
  * Some defaults.
  */
 
-/* Default floating-point type */
-typedef mpfr_t FloatT;
-typedef FP_NR<FloatT> Float;
-
-/* Default integer type */
-typedef mpz_t IntegerT;
-typedef Z_NR<IntegerT> Integer;
-
 /* Floating-point type inside the SVP/CVP solver */
 typedef double enumf;
 typedef double enumxt;

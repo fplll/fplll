@@ -104,7 +104,7 @@ void read_pruning_vector(const char *file_name, PruningParams &pr, int n)
 
 template <class ZT> int bkz(Options &o, ZZ_mat<ZT> &b) { ABORT_MSG("mpz required for BKZ"); }
 
-template <> int bkz(Options &o, IntMatrix &b)
+template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
 {
   CHECK(o.block_size > 0, "Option -b is missing");
   vector<Strategy> strategies;
@@ -115,7 +115,7 @@ template <> int bkz(Options &o, IntMatrix &b)
 
   BKZParam param(o.block_size, strategies);
   // Stupid intialization of u to be not empty.
-  IntMatrix u(1, 1);
+  ZZ_mat<mpz_t> u(1, 1);
   const char *format = o.output_format ? o.output_format : "b";
   int status;
 
@@ -197,10 +197,10 @@ template <class ZT> int svpcvp(Options &o, ZZ_mat<ZT> &b, const vector<Z_NR<ZT>>
 template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &target)
 {
   const char *format = o.output_format ? o.output_format : "s";
-  IntVect sol_coord;    // In the LLL-reduced basis
-  IntVect sol_coord_2;  // In the initial basis
-  IntVect solution;
-  IntMatrix u;
+  vector<Z_NR<mpz_t>> sol_coord;    // In the LLL-reduced basis
+  vector<Z_NR<mpz_t>> sol_coord_2;  // In the initial basis
+  vector<Z_NR<mpz_t>> solution;
+  ZZ_mat<mpz_t> u;
   bool with_coord     = strchr(format, 'c') != NULL;
   bool with_coord_std = strchr(format, 's') != NULL;
   int flags           = SVP_DEFAULT | (o.verbose ? SVP_VERBOSE : 0);
@@ -595,7 +595,7 @@ int main(int argc, char **argv)
   int result;
   Options o;
   read_options(argc, argv, o);
-  IntMatrix::set_print_mode(MAT_PRINT_REGULAR);
+  ZZ_mat<mpz_t>::set_print_mode(MAT_PRINT_REGULAR);
   switch (o.int_type)
   {
   case ZT_MPZ:

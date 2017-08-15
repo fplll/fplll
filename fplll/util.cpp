@@ -42,8 +42,8 @@ gmp_randstate_t RandGen::gmp_state;
 static int compute_min_prec(double &rho, int d, double delta, double eta, double epsilon,
                             MinPrecAlgo algo)
 {
-  int old_prec = Float::set_prec(53);
-  Float f_minprec, f_rho, f_d, f_eta, f_delta, f_epsilon, tmp1, tmp2;
+  int old_prec = FP_NR<>::set_prec(53);
+  FP_NR<> f_minprec, f_rho, f_d, f_eta, f_delta, f_epsilon, tmp1, tmp2;
 
   // These four conversions are exact
   f_d       = static_cast<double>(d);
@@ -90,7 +90,7 @@ static int compute_min_prec(double &rho, int d, double delta, double eta, double
   f_minprec.add(tmp1, tmp2, GMP_RNDU);
   int minprec = static_cast<int>(ceil(f_minprec.get_d(GMP_RNDU)));
   mpfr_free_cache();
-  Float::set_prec(old_prec);
+  FP_NR<>::set_prec(old_prec);
   return minprec;
 }
 
@@ -108,9 +108,9 @@ int l2_min_prec(int d, double delta, double eta, double epsilon)
 /**
  * Computes the volume of a d-dimensional hypersphere of radius 1.
  */
-void sphere_volume(Float &volume, int d)
+void sphere_volume(FP_NR<> &volume, int d)
 {
-  Float rtmp1;
+  FP_NR<> rtmp1;
   volume = pow(M_PI, (double)(d / 2));
 
   if (d % 2 == 0)
@@ -130,9 +130,9 @@ void sphere_volume(Float &volume, int d)
 /**
  * Estimates the cost of the enumeration for SVP.
  */
-void cost_estimate(Float &cost, const Float &bound, const Matrix<Float> &r, int dimMax)
+void cost_estimate(FP_NR<> &cost, const FP_NR<> &bound, const Matrix<FP_NR<>> &r, int dimMax)
 {
-  Float det, level_cost, tmp1;
+  FP_NR<> det, level_cost, tmp1;
   det  = 1.0;
   cost = 0.0;
 

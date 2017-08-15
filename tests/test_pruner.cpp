@@ -310,9 +310,9 @@ template <class FT> int test_auto_prune(size_t n)
 {
   int status = 0;
   double cost;
-  IntMatrix A(2 * n, 2 * n);
+  ZZ_mat<mpz_t> A(2 * n, 2 * n);
   A.gen_qary(n, 30);
-  IntMatrix U;
+  ZZ_mat<mpz_t> U;
   MatGSO<Z_NR<mpz_t>, FP_NR<double>> M(A, U, U, GSO_DEFAULT);
   LLLReduction<Z_NR<mpz_t>, FP_NR<double>> lll_obj =
       LLLReduction<Z_NR<mpz_t>, FP_NR<double>>(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
