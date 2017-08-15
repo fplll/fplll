@@ -318,7 +318,6 @@ private:
 
   const BKZParam &param;
   int num_rows;
-
   MatGSO<ZT, FT> &m;
   LLLReduction<ZT, FT> &lll_obj;
   // evaluator passed to the enumeration object to handle solutions found

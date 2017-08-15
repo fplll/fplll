@@ -18,7 +18,7 @@ template <class F> class Z_NR;
  * types (double, dpe_t and mpfr_t). For all functions, the rounding
  * mode rnd is ignored unless F=mpfr_t.
  */
-template <class F> class FP_NR
+template <class F = mpfr_t> class FP_NR
 {
 
   F data;
@@ -40,7 +40,7 @@ public:
 
   /**
    * Sets the precision of new FP_NR&lt;F&gt; objects. Returns the
-   # previous value. This has no effect is F != mpfr_t.
+     previous value. This has no effect is F != mpfr_t.
    */
   static inline unsigned int set_prec(unsigned int prec);
 
@@ -232,7 +232,7 @@ public:
   /**
    * value := a * b where b is mpfr_t.
    */
-  inline void mul_mpfr(const FP_NR<mpfr_t> &a, const mpfr_t b, mp_rnd_t rnd = GMP_RNDN);
+  inline void mul_mpfr(const FP_NR<> &a, const mpfr_t b, mp_rnd_t rnd = GMP_RNDN);
 
   /**
    * value := a * 2^b.
@@ -590,7 +590,7 @@ template <class T> ostream &operator<<(ostream &os, const FP_NR<T> &x) { return 
 template <> ostream &operator<<(ostream &os, const FP_NR<dpe_t> &x);
 #endif
 
-template <> ostream &operator<<(ostream &os, const FP_NR<mpfr_t> &x);
+template <> ostream &operator<<(ostream &os, const FP_NR<> &x);
 
 FPLLL_END_NAMESPACE
 

@@ -282,7 +282,7 @@ void adjust_radius_to_gh_bound(FT &max_dist, long max_dist_expo, int block_size,
 
 template class MatGSOInterface<Z_NR<long>, FP_NR<double>>;
 template class MatGSOInterface<Z_NR<double>, FP_NR<double>>;
-template class MatGSOInterface<Z_NR<mpz_t>, FP_NR<double>>;
+template class MatGSOInterface<Z_NR<>, FP_NR<double>>;
 template void adjust_radius_to_gh_bound<FP_NR<double>>(FP_NR<double> &max_dist, long max_dist_expo,
                                                        int block_size,
                                                        const FP_NR<double> &root_det,
@@ -291,7 +291,7 @@ template void adjust_radius_to_gh_bound<FP_NR<double>>(FP_NR<double> &max_dist, 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class MatGSOInterface<Z_NR<long>, FP_NR<long double>>;
 template class MatGSOInterface<Z_NR<double>, FP_NR<long double>>;
-template class MatGSOInterface<Z_NR<mpz_t>, FP_NR<long double>>;
+template class MatGSOInterface<Z_NR<>, FP_NR<long double>>;
 template void adjust_radius_to_gh_bound<FP_NR<long double>>(FP_NR<long double> &max_dist,
                                                             long max_dist_expo, int block_size,
                                                             const FP_NR<long double> &root_det,
@@ -302,14 +302,14 @@ template void adjust_radius_to_gh_bound<FP_NR<long double>>(FP_NR<long double> &
 #ifdef FPLLL_WITH_QD
 template class MatGSOInterface<Z_NR<long>, FP_NR<dd_real>>;
 template class MatGSOInterface<Z_NR<double>, FP_NR<dd_real>>;
-template class MatGSOInterface<Z_NR<mpz_t>, FP_NR<dd_real>>;
+template class MatGSOInterface<Z_NR<>, FP_NR<dd_real>>;
 template void adjust_radius_to_gh_bound<FP_NR<dd_real>>(FP_NR<dd_real> &max_dist,
                                                         long max_dist_expo, int block_size,
                                                         const FP_NR<dd_real> &root_det,
                                                         double gh_factor);
 template class MatGSOInterface<Z_NR<long>, FP_NR<qd_real>>;
 template class MatGSOInterface<Z_NR<double>, FP_NR<qd_real>>;
-template class MatGSOInterface<Z_NR<mpz_t>, FP_NR<qd_real>>;
+template class MatGSOInterface<Z_NR<>, FP_NR<qd_real>>;
 template void adjust_radius_to_gh_bound<FP_NR<qd_real>>(FP_NR<qd_real> &max_dist,
                                                         long max_dist_expo, int block_size,
                                                         const FP_NR<qd_real> &root_det,
@@ -319,18 +319,18 @@ template void adjust_radius_to_gh_bound<FP_NR<qd_real>>(FP_NR<qd_real> &max_dist
 #ifdef FPLLL_WITH_DPE
 template class MatGSOInterface<Z_NR<long>, FP_NR<dpe_t>>;
 template class MatGSOInterface<Z_NR<double>, FP_NR<dpe_t>>;
-template class MatGSOInterface<Z_NR<mpz_t>, FP_NR<dpe_t>>;
+template class MatGSOInterface<Z_NR<>, FP_NR<dpe_t>>;
 template void adjust_radius_to_gh_bound<FP_NR<dpe_t>>(FP_NR<dpe_t> &max_dist, long max_dist_expo,
                                                       int block_size, const FP_NR<dpe_t> &root_det,
                                                       double gh_factor);
 #endif
 
-template class MatGSOInterface<Z_NR<long>, FP_NR<mpfr_t>>;
-template class MatGSOInterface<Z_NR<double>, FP_NR<mpfr_t>>;
-template class MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
-template void adjust_radius_to_gh_bound<FP_NR<mpfr_t>>(FP_NR<mpfr_t> &max_dist, long max_dist_expo,
+template class MatGSOInterface<Z_NR<long>, FP_NR<>>;
+template class MatGSOInterface<Z_NR<double>, FP_NR<>>;
+template class MatGSOInterface<Z_NR<>, FP_NR<>>;
+template void adjust_radius_to_gh_bound<FP_NR<>>(FP_NR<> &max_dist, long max_dist_expo,
                                                        int block_size,
-                                                       const FP_NR<mpfr_t> &root_det,
+                                                       const FP_NR<> &root_det,
                                                        double gh_factor);
 
 FPLLL_END_NAMESPACE

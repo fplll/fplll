@@ -98,12 +98,12 @@ int l2_min_prec(int d, double delta, double eta, double epsilon);
 /**
  * Computes the volume of a d-dimensional hypersphere of radius 1.
  */
-void sphere_volume(Float &volume, int d);
+void sphere_volume(FP_NR<> &volume, int d);
 
 /**
  * Estimates the cost of the enumeration for SVP.
  */
-void cost_estimate(Float &cost, const Float &bound, const Matrix<Float> &r, int dimMax);
+void cost_estimate(FP_NR<> &cost, const FP_NR<> &bound, const Matrix<FP_NR<>> &r, int dimMax);
 
 template <class ZT> void zeros_first(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv_t);
 

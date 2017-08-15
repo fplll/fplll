@@ -577,7 +577,7 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_trg(double alpha)
   }
 }
 
-template <class ZT> inline void ZZ_mat<ZT>::gen_trg2(FP_NR<mpfr_t> *w)
+template <class ZT> inline void ZZ_mat<ZT>::gen_trg2(FP_NR<> *w)
 {
   int i, j;
   Z_NR<ZT> ztmp, ztmp2;

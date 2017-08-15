@@ -36,9 +36,9 @@ template <class ZT> int test_test(ZZ_mat<ZT> &A)
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
 
-  MatGSO<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, U, UT, 0);
+  MatGSO<Z_NR<ZT>, FP_NR<>> M(A, U, UT, 0);
 
-  int is_reduced = is_lll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
+  int is_reduced = is_lll_reduced<Z_NR<ZT>, FP_NR<>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
 
   if (is_reduced)
     cerr << "is_lll_reduced reports success when it should not" << endl;
@@ -84,15 +84,15 @@ int test_lll(ZZ_mat<ZT> &A, LLLMethod method, FloatType float_type, int flags = 
     return status;
   }
 
-  const int old_prec = prec ? FP_NR<mpfr_t>::set_prec(prec) : 0;
+  const int old_prec = prec ? FP_NR<>::set_prec(prec) : 0;
 
-  MatGSO<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, U, UT, 0);
+  MatGSO<Z_NR<ZT>, FP_NR<>> M(A, U, UT, 0);
 
   // one on success
-  status = is_lll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
+  status = is_lll_reduced<Z_NR<ZT>, FP_NR<>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
 
   if (prec)
-    FP_NR<mpfr_t>::set_prec(old_prec);
+    FP_NR<>::set_prec(old_prec);
 
   if (status == 0)
     cerr << "Output of LLL reduction is not LLL reduced with method " << LLL_METHOD_STR[method]

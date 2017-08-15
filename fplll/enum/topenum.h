@@ -26,19 +26,19 @@ const int ENUM_MIN_LEVEL     = 20;
 class Enumerator
 {
 public:
-  Enumerator(int d, const Matrix<Float> &mu, const Matrix<Float> &r,
+  Enumerator(int d, const Matrix<FP_NR<>> &mu, const Matrix<FP_NR<>> &r,
              double max_volume = ENUM_MAX_VOLUME, int min_level = ENUM_MIN_LEVEL);
-  bool enum_next(const Float &max_sqr_length);
+  bool enum_next(const FP_NR<> &max_sqr_length);
   inline const vector<enumxt> &get_sub_tree() { return sub_tree; }
 private:
-  const Matrix<Float> &mu;
-  const Matrix<Float> &r;
+  const Matrix<FP_NR<>> &mu;
+  const Matrix<FP_NR<>> &r;
   int k, kmin, kmax, d;
-  FloatVect center, dist;
-  FloatVect x, dx, ddx;
-  //  FloatVect sub_tree;
+  vector<FP_NR<>> center, dist;
+  vector<FP_NR<>> x, dx, ddx;
+  //  vector<FP_NR<>> sub_tree;
   vector<enumxt> sub_tree;
-  Float max_volume;
+  FP_NR<> max_volume;
   bool svp_init_needed;
 };
 

@@ -54,7 +54,7 @@ inline void Z_NR<long>::get_f_exp(FP_NR<qd_real>& f, long& expo) {
 #endif
 
 template<> template<>
-inline void Z_NR<long>::get_f_exp(FP_NR<mpfr_t>& /*f*/, long& /*expo*/) {
+inline void Z_NR<long>::get_f_exp(FP_NR<>& /*f*/, long& /*expo*/) {
   FPLLL_DEBUG_ABORT("get_f_exp unimplemented for mpfr_t");
 }
 
@@ -103,7 +103,7 @@ inline void Z_NR<double>::get_f_exp(FP_NR<qd_real>& f, long& expo) {
 #endif
 
 template<> template<>
-inline void Z_NR<double>::get_f_exp(FP_NR<mpfr_t>& f, long& expo) {
+inline void Z_NR<double>::get_f_exp(FP_NR<>& f, long& expo) {
   int int_expo;
   f = frexp(data, &int_expo);
   expo = int_expo;
@@ -115,37 +115,37 @@ inline void Z_NR<double>::get_f_exp(FP_NR<mpfr_t>& f, long& expo) {
 
 /* get_f_exp (mpz_t to double) */
 template<> template<>
-inline void Z_NR<mpz_t>::get_f_exp(FP_NR<double>& f, long& expo) {
+inline void Z_NR<>::get_f_exp(FP_NR<double>& f, long& expo) {
   f.get_data() = mpz_get_d_2exp(&expo, data);
 }
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template<> template<>
-inline void Z_NR<mpz_t>::get_f_exp(FP_NR<long double>& f, long& expo) {
+inline void Z_NR<>::get_f_exp(FP_NR<long double>& f, long& expo) {
   f.get_data() = LDConvHelper::mpz_get_ld_2exp(&expo, data);
 }
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template<> template<>
-inline void Z_NR<mpz_t>::get_f_exp(FP_NR<dpe_t>& /*f*/, long& /*expo*/) {
+inline void Z_NR<>::get_f_exp(FP_NR<dpe_t>& /*f*/, long& /*expo*/) {
   FPLLL_DEBUG_ABORT("get_f_exp unimplemented for dpe_t");
 }
 #endif
 
 #ifdef FPLLL_WITH_QD
 template<> template<>
-inline void Z_NR<mpz_t>::get_f_exp(FP_NR<dd_real>& f, long& expo) {
+inline void Z_NR<>::get_f_exp(FP_NR<dd_real>& f, long& expo) {
   f.get_data() = mpz_get_d_2exp(&expo, data);
 }
 template<> template<>
-inline void Z_NR<mpz_t>::get_f_exp(FP_NR<qd_real>& f, long& expo) {
+inline void Z_NR<>::get_f_exp(FP_NR<qd_real>& f, long& expo) {
   f.get_data() = mpz_get_d_2exp(&expo, data);
 }
 #endif
 
 template<> template<>
-inline void Z_NR<mpz_t>::get_f_exp(FP_NR<mpfr_t>& f, long& expo) {
+inline void Z_NR<>::get_f_exp(FP_NR<>& f, long& expo) {
   f = mpz_get_d_2exp(&expo, data);
 }
 
@@ -189,7 +189,7 @@ inline void Z_NR<long>::set_f(const FP_NR<dpe_t>& a) {
 #endif
 
 template<> template<>
-inline void Z_NR<long>::set_f(const FP_NR<mpfr_t>& a) {
+inline void Z_NR<long>::set_f(const FP_NR<>& a) {
   data = a.get_si();
 }
 
@@ -230,34 +230,34 @@ inline void Z_NR<double>::set_f(const FP_NR<qd_real>& a) {
 #endif
 
 template<> template<>
-inline void Z_NR<double>::set_f(const FP_NR<mpfr_t>& a) {
+inline void Z_NR<double>::set_f(const FP_NR<>& a) {
   data = a.get_d();
 }
 #endif // #ifdef FPLLL_WITH_ZDOUBLE
 
 /* set_f (FP_NR to mpz_t) */
 template<> template<>
-inline void Z_NR<mpz_t>::set_f(const FP_NR<double>& a) {
+inline void Z_NR<>::set_f(const FP_NR<double>& a) {
   mpz_set_d(data, a.get_data());
 }
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template<> template<>
-inline void Z_NR<mpz_t>::set_f(const FP_NR<long double>& a) {
+inline void Z_NR<>::set_f(const FP_NR<long double>& a) {
   LDConvHelper::mpz_set_ld(data, a.get_data());
 }
 #endif
 
 #ifdef FPLLL_WITH_DPE
 template<> template<>
-inline void Z_NR<mpz_t>::set_f(const FP_NR<dpe_t>& a) {
+inline void Z_NR<>::set_f(const FP_NR<dpe_t>& a) {
   dpe_get_z(data, const_cast<dpe_t&>(a.get_data()));
 }
 #endif
 
 #ifdef FPLLL_WITH_QD
 template<> template<>
-inline void Z_NR<mpz_t>::set_f(const FP_NR<dd_real>& a) {
+inline void Z_NR<>::set_f(const FP_NR<dd_real>& a) {
   mpfr_t t;
   mpfr_init(t);
   a.get_mpfr (t, GMP_RNDN);
@@ -266,7 +266,7 @@ inline void Z_NR<mpz_t>::set_f(const FP_NR<dd_real>& a) {
 }
 
 template<> template<>
-inline void Z_NR<mpz_t>::set_f(const FP_NR<qd_real>& a) {
+inline void Z_NR<>::set_f(const FP_NR<qd_real>& a) {
   mpfr_t t;
   mpfr_init(t);
   a.get_mpfr (t, GMP_RNDN);
@@ -276,7 +276,7 @@ inline void Z_NR<mpz_t>::set_f(const FP_NR<qd_real>& a) {
 #endif
 
 template<> template<>
-inline void Z_NR<mpz_t>::set_f(const FP_NR<mpfr_t>& a) {
+inline void Z_NR<>::set_f(const FP_NR<>& a) {
   mpfr_get_z(data, a.get_data(), GMP_RNDN);
 }
 

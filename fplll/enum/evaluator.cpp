@@ -26,7 +26,7 @@ void ErrorBoundedEvaluator::init_delta_def(int prec, double rho, bool withRoundi
       The following formula is used to bound absolute error on r_i:
       |r~_i - r_i| <= r_i * maxRelDR <= (r~_i + |r~_i - r_i| * maxRelDR)
       ==> |r~_i - r_i| <= r~_i * maxRelDR / (1 - maxRelDR)  */
-  Float rhoPow, maxRelDR, ftmp1;
+  FP_NR<> rhoPow, maxRelDR, ftmp1;
   input_error_defined = true;
   for (int j = 0; j < d; j++)
   {
@@ -48,7 +48,7 @@ void ErrorBoundedEvaluator::init_delta_def(int prec, double rho, bool withRoundi
   }
   if (withRoundingToEnumf)
   {
-    Float halfULP;
+    FP_NR<> halfULP;
     halfULP = numeric_limits<double>::epsilon() * 0.5;
     for (int j = 0; j < d; j++)
     {
@@ -72,18 +72,18 @@ void ErrorBoundedEvaluator::init_delta_def(int prec, double rho, bool withRoundi
    - a,b,c,... represent exact values
    - a~,b~,c~,... are approx. values used or computed by the fp algorithm */
 
-bool ErrorBoundedEvaluator::get_max_error_aux(const Float &max_dist, bool boundOnExactVal,
-                                              Float &maxDE)
+bool ErrorBoundedEvaluator::get_max_error_aux(const FP_NR<> &max_dist, bool boundOnExactVal,
+                                              FP_NR<> &maxDE)
 {
 
   FPLLL_CHECK(input_error_defined,
               "Evaluator: error evaluation failed because the input error is undefined");
 
-  Float ulp, halfULP, K, tmp1, tmp2;
-  Float rdiagTilde, minRDiag, maxRDiag, muTilde, maxMu, maxMuTildeX;
-  Float maxC, maxCTilde, maxY, maxYTilde, maxY2Tilde, maxRY2Tilde;
-  Float maxDC, maxDY, maxDY2, maxDRY2;
-  FloatVect maxX(d);
+  FP_NR<> ulp, halfULP, K, tmp1, tmp2;
+  FP_NR<> rdiagTilde, minRDiag, maxRDiag, muTilde, maxMu, maxMuTildeX;
+  FP_NR<> maxC, maxCTilde, maxY, maxYTilde, maxY2Tilde, maxRY2Tilde;
+  FP_NR<> maxDC, maxDY, maxDY2, maxDRY2;
+  vector<FP_NR<>> maxX(d);
 
   ulp = numeric_limits<double>::epsilon();
   halfULP.mul_2si(ulp, -1);
@@ -210,13 +210,13 @@ bool ErrorBoundedEvaluator::get_max_error_aux(const Float &max_dist, bool boundO
   return true;
 }
 
-void FastErrorBoundedEvaluator::eval_sol(const FloatVect &new_sol_coord,
+void FastErrorBoundedEvaluator::eval_sol(const vector<FP_NR<>> &new_sol_coord,
                                          const enumf &new_partial_dist, enumf &max_dist)
 {
   // Assumes that the solution is valid
   if (eval_mode == EVALMODE_SV)
   {
-    Float dist(new_partial_dist);
+    FP_NR<> dist(new_partial_dist);
     dist.mul_2si(dist, normExp);
     this->process_sol(dist, new_sol_coord, max_dist);
   }
@@ -226,10 +226,10 @@ void FastErrorBoundedEvaluator::eval_sol(const FloatVect &new_sol_coord,
   }
 }
 
-void FastErrorBoundedEvaluator::eval_sub_sol(int offset, const FloatVect &new_sub_sol_coord,
+void FastErrorBoundedEvaluator::eval_sub_sol(int offset, const vector<FP_NR<>> &new_sub_sol_coord,
                                              const enumf &sub_dist)
 {
-  Float dist = sub_dist;
+  FP_NR<> dist = sub_dist;
   dist.mul_2si(dist, normExp);
 
   sub_solutions.resize(std::max(sub_solutions.size(), std::size_t(offset + 1)));
@@ -243,9 +243,9 @@ void FastErrorBoundedEvaluator::eval_sub_sol(int offset, const FloatVect &new_su
   }
 }
 
-bool FastErrorBoundedEvaluator::get_max_error(Float &max_error, const Float &last_partial_dist)
+bool FastErrorBoundedEvaluator::get_max_error(FP_NR<> &max_error, const FP_NR<> &last_partial_dist)
 {
-  Float maxE, maxDE, maxOptDE, minOptE, one;
+  FP_NR<> maxE, maxDE, maxOptDE, minOptE, one;
 
   if (solutions.empty() || !input_error_defined)
     return false;
@@ -266,18 +266,18 @@ bool FastErrorBoundedEvaluator::get_max_error(Float &max_error, const Float &las
   return true;
 }
 
-bool ExactErrorBoundedEvaluator::get_max_error(Float &max_error, const Float &last_partial_dist)
+bool ExactErrorBoundedEvaluator::get_max_error(FP_NR<> &max_error, const FP_NR<> &last_partial_dist)
 {
   max_error = 0.0;
   return true;
 }
 
-void ExactErrorBoundedEvaluator::eval_sol(const FloatVect &new_sol_coord,
+void ExactErrorBoundedEvaluator::eval_sol(const vector<FP_NR<>> &new_sol_coord,
                                           const enumf &new_partial_dist, enumf &max_dist)
 {
   int n = matrix.get_cols();
-  Integer new_sol_dist, coord;
-  IntVect new_sol;
+  Z_NR<> new_sol_dist, coord;
+  vector<Z_NR<>> new_sol;
 
   gen_zero_vect(new_sol, n);
   new_sol_dist = 0;
@@ -310,15 +310,15 @@ void ExactErrorBoundedEvaluator::eval_sol(const FloatVect &new_sol_coord,
   }
 }
 
-void ExactErrorBoundedEvaluator::eval_sub_sol(int offset, const FloatVect &new_sub_sol_coord,
+void ExactErrorBoundedEvaluator::eval_sub_sol(int offset, const vector<FP_NR<>> &new_sub_sol_coord,
                                               const enumf &sub_dist)
 {
-  Integer minusone;
+  Z_NR<> minusone;
   minusone = -1;
 
   int n = matrix.get_cols();
-  Integer new_sol_dist, coord;
-  IntVect new_sol;
+  Z_NR<> new_sol_dist, coord;
+  vector<Z_NR<>> new_sol;
 
   gen_zero_vect(new_sol, n);
   new_sol_dist = 0;
@@ -335,7 +335,7 @@ void ExactErrorBoundedEvaluator::eval_sub_sol(int offset, const FloatVect &new_s
     coord = new_sol[i];
     new_sol_dist.addmul(coord, coord);
   }
-  Float subdist = int_dist2Float(new_sol_dist);
+  FP_NR<> subdist = int_dist2Float(new_sol_dist);
 
   sub_solutions.resize(std::max(sub_solutions.size(), std::size_t(offset + 1)));
   if (sub_solutions[offset].second.empty() || subdist <= sub_solutions[offset].first)
@@ -347,9 +347,9 @@ void ExactErrorBoundedEvaluator::eval_sub_sol(int offset, const FloatVect &new_s
   }
 }
 
-Float ExactErrorBoundedEvaluator::int_dist2Float(Integer int_dist)
+FP_NR<> ExactErrorBoundedEvaluator::int_dist2Float(Z_NR<> int_dist)
 {
-  Float fMaxDist, maxDE;
+  FP_NR<> fMaxDist, maxDE;
   fMaxDist.set_z(int_dist, GMP_RNDU);
   bool result = get_max_error_aux(fMaxDist, true, maxDE);
   FPLLL_CHECK(result, "ExactEvaluator: error cannot be bounded");

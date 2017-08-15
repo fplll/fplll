@@ -669,7 +669,7 @@ template <class ZT, class FT>
 void BKZReduction<ZT, FT>::print_tour(const int loop, int min_row, int max_row)
 {
   FT r0;
-  Float fr0;
+  FP_NR<> fr0;
   long expo;
   r0  = m.get_r_exp(min_row, min_row, expo);
   fr0 = r0.get_d();
@@ -804,15 +804,14 @@ template <class ZT, class FT> bool BKZAutoAbort<ZT, FT>::test_abort(double scale
 
 // call LLLReduction() and then BKZReduction.
 template <class FT>
-int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_delta, IntMatrix &u,
-                    IntMatrix &u_inv)
+int bkz_reduction_f(ZZ_mat<mpz_t> &b, const BKZParam &param, int sel_ft, double lll_delta, ZZ_mat<mpz_t> &u,
+                    ZZ_mat<mpz_t> &u_inv)
 {
   int gso_flags = 0;
   if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;
   if (sel_ft == FT_DOUBLE || sel_ft == FT_LONG_DOUBLE)
     gso_flags |= GSO_ROW_EXPO;
-
   ZZ_mat<long> bl;
   // we check if we can convert the basis to long integers for performance
   if (convert<long, mpz_t>(bl, b, 10))
@@ -846,9 +845,9 @@ int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_
 int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType float_type,
                   int precision)
 {
-  IntMatrix empty_mat;
-  IntMatrix &u     = U ? *U : empty_mat;
-  IntMatrix &u_inv = empty_mat;
+  ZZ_mat<mpz_t> empty_mat;
+  ZZ_mat<mpz_t> &u     = U ? *U : empty_mat;
+  ZZ_mat<mpz_t> &u_inv = empty_mat;
   FPLLL_CHECK(B, "B == NULL in bkzReduction");
 
   if (U && (!u.empty()))
@@ -902,9 +901,9 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType f
 #endif
   else if (sel_ft == FT_MPFR)
   {
-    int old_prec = FP_NR<mpfr_t>::set_prec(precision);
-    status       = bkz_reduction_f<FP_NR<mpfr_t>>(*B, param, sel_ft, lll_delta, u, u_inv);
-    FP_NR<mpfr_t>::set_prec(old_prec);
+    int old_prec = FP_NR<>::set_prec(precision);
+    status       = bkz_reduction_f<FP_NR<>>(*B, param, sel_ft, lll_delta, u, u_inv);
+    FP_NR<>::set_prec(old_prec);
   }
   else
   {
@@ -931,7 +930,7 @@ int bkz_reduction(IntMatrix &b, int block_size, int flags, FloatType float_type,
   return bkz_reduction(&b, NULL, param, float_type, precision);
 }
 
-int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags, FloatType float_type,
+int bkz_reduction(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, int block_size, int flags, FloatType float_type,
                   int precision)
 {
   vector<Strategy> strategies;
@@ -940,7 +939,7 @@ int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags, FloatTy
   return bkz_reduction(&b, &u, param, float_type, precision);
 }
 
-int hkz_reduction(IntMatrix &b, int flags, FloatType float_type, int precision)
+int hkz_reduction(ZZ_mat<mpz_t> &b, int flags, FloatType float_type, int precision)
 {
   vector<Strategy> strategies;
   BKZParam param(b.get_rows(), strategies);

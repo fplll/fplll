@@ -31,11 +31,11 @@ using namespace fplll;
    @return
 */
 
-template <class ZT> int test_cvp(ZZ_mat<ZT> &A, IntVect &target, IntVect &b, const int method)
+template <class ZT> int test_cvp(ZZ_mat<ZT> &A, vector<Z_NR<>> &target, vector<Z_NR<>> &b, const int method)
 {
-  IntVect sol_coord;  // In the LLL-reduced basis
-  IntVect solution;
-  IntMatrix u;
+  vector<Z_NR<>> sol_coord;  // In the LLL-reduced basis
+  vector<Z_NR<>> solution;
+  ZZ_mat<mpz_t> u;
 
   // cerr << "A " << endl << A << endl;
   int status =

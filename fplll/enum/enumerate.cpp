@@ -268,29 +268,29 @@ template <typename ZT, typename FT> void EnumerationDyn<ZT, FT>::do_enumerate()
     enumerate_loop<false, false, true>();
 }
 
-template class Enumeration<Z_NR<mpz_t>, FP_NR<double>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<double>>;
+template class Enumeration<Z_NR<>, FP_NR<double>>;
+template class EnumerationDyn<Z_NR<>, FP_NR<double>>;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class Enumeration<Z_NR<mpz_t>, FP_NR<long double>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<long double>>;
+template class Enumeration<Z_NR<>, FP_NR<long double>>;
+template class EnumerationDyn<Z_NR<>, FP_NR<long double>>;
 #endif
 
 #ifdef FPLLL_WITH_QD
-template class Enumeration<Z_NR<mpz_t>, FP_NR<dd_real>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<dd_real>>;
+template class Enumeration<Z_NR<>, FP_NR<dd_real>>;
+template class EnumerationDyn<Z_NR<>, FP_NR<dd_real>>;
 
-template class Enumeration<Z_NR<mpz_t>, FP_NR<qd_real>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<qd_real>>;
+template class Enumeration<Z_NR<>, FP_NR<qd_real>>;
+template class EnumerationDyn<Z_NR<>, FP_NR<qd_real>>;
 #endif
 
 #ifdef FPLLL_WITH_DPE
-template class Enumeration<Z_NR<mpz_t>, FP_NR<dpe_t>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<dpe_t>>;
+template class Enumeration<Z_NR<>, FP_NR<dpe_t>>;
+template class EnumerationDyn<Z_NR<>, FP_NR<dpe_t>>;
 #endif
 
-template class Enumeration<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
+template class Enumeration<Z_NR<>, FP_NR<>>;
+template class EnumerationDyn<Z_NR<>, FP_NR<>>;
 
 template class Enumeration<Z_NR<long>, FP_NR<double>>;
 template class EnumerationDyn<Z_NR<long>, FP_NR<double>>;
@@ -313,7 +313,7 @@ template class Enumeration<Z_NR<long>, FP_NR<dpe_t>>;
 template class EnumerationDyn<Z_NR<long>, FP_NR<dpe_t>>;
 #endif
 
-template class Enumeration<Z_NR<long>, FP_NR<mpfr_t>>;
-template class EnumerationDyn<Z_NR<long>, FP_NR<mpfr_t>>;
+template class Enumeration<Z_NR<long>, FP_NR<>>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<>>;
 
 FPLLL_END_NAMESPACE
