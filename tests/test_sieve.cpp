@@ -59,7 +59,7 @@ template <class ZT> int test_filename(const char *input_filename, const char *ou
   ZZ_mat<ZT> A;
   int status = 0;
   status |= read_matrix(A, input_filename);
-  IntVect b;
+  vector<Z_NR<>> b;
   status |= read_vector(b, output_filename);
   status |= test_sieve<ZT>(A, b);
   return status;

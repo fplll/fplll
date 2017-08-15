@@ -833,16 +833,16 @@ int bkz_reduction_f(ZZ_mat<mpz_t> &b, const BKZParam &param, int sel_ft, double 
   }
   else
   {
-    MatGSO<Integer, FT> m_gso(b, u, u_inv, gso_flags);
-    LLLReduction<Integer, FT> lll_obj(m_gso, lll_delta, LLL_DEF_ETA, LLL_DEFAULT);
-    BKZReduction<Integer, FT> bkz_obj(m_gso, lll_obj, param);
+    MatGSO<Z_NR<mpz_t>, FT> m_gso(b, u, u_inv, gso_flags);
+    LLLReduction<Z_NR<mpz_t>, FT> lll_obj(m_gso, lll_delta, LLL_DEF_ETA, LLL_DEFAULT);
+    BKZReduction<Z_NR<mpz_t>, FT> bkz_obj(m_gso, lll_obj, param);
     bkz_obj.bkz();
     return bkz_obj.status;
   }
 }
 
 // interface called from call_bkz() from main.cpp.
-int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType float_type,
+int bkz_reduction(ZZ_mat<mpz_t> *B, ZZ_mat<mpz_t> *U, const BKZParam &param, FloatType float_type,
                   int precision)
 {
   ZZ_mat<mpz_t> empty_mat;
@@ -922,7 +922,7 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType f
   return status;
 }
 
-int bkz_reduction(IntMatrix &b, int block_size, int flags, FloatType float_type, int precision)
+int bkz_reduction(ZZ_mat<mpz_t> &b, int block_size, int flags, FloatType float_type, int precision)
 {
   vector<Strategy> strategies;
   BKZParam param(block_size, strategies);
@@ -952,34 +952,34 @@ int hkz_reduction(ZZ_mat<mpz_t> &b, int flags, FloatType float_type, int precisi
 
 /** enforce instantiation of complete templates **/
 
-template class BKZReduction<Integer, FP_NR<double>>;
-template class BKZAutoAbort<Integer, FP_NR<double>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<double>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<double>>;
 
 template class BKZReduction<Z_NR<long>, FP_NR<double>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<double>>;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class BKZReduction<Integer, FP_NR<long double>>;
-template class BKZAutoAbort<Integer, FP_NR<long double>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<long double>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<long double>>;
 
 template class BKZReduction<Z_NR<long>, FP_NR<long double>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<long double>>;
 #endif
 
 #ifdef FPLLL_WITH_DPE
-template class BKZReduction<Integer, FP_NR<dpe_t>>;
-template class BKZAutoAbort<Integer, FP_NR<dpe_t>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<dpe_t>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<dpe_t>>;
 
 template class BKZReduction<Z_NR<long>, FP_NR<dpe_t>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<dpe_t>>;
 #endif
 
 #ifdef FPLLL_WITH_QD
-template class BKZReduction<Integer, FP_NR<dd_real>>;
-template class BKZAutoAbort<Integer, FP_NR<dd_real>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<dd_real>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<dd_real>>;
 
-template class BKZReduction<Integer, FP_NR<qd_real>>;
-template class BKZAutoAbort<Integer, FP_NR<qd_real>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<qd_real>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<qd_real>>;
 
 template class BKZReduction<Z_NR<long>, FP_NR<dd_real>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<dd_real>>;
@@ -988,8 +988,8 @@ template class BKZReduction<Z_NR<long>, FP_NR<qd_real>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<qd_real>>;
 #endif
 
-template class BKZReduction<Integer, FP_NR<mpfr_t>>;
-template class BKZAutoAbort<Integer, FP_NR<mpfr_t>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
 
 template class BKZReduction<Z_NR<long>, FP_NR<mpfr_t>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<mpfr_t>>;

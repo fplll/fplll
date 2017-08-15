@@ -224,7 +224,7 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<>> &b)
 
   vector<Strategy> strategies;
   BKZParam dummy(d, strategies);
-  BKZReduction<Integer, Float> bkz_obj(gso, lll_obj, dummy);
+  BKZReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>> bkz_obj(gso, lll_obj, dummy);
 
   bkz_obj.svp_reduction(0, d, dummy, true);
 
@@ -267,7 +267,7 @@ int test_filename(const char *input_filename, const char *output_filename,
   int status = 0;
   status |= read_matrix(A, input_filename);
 
-  IntVect b;
+  vector<Z_NR<>> b;
   status |= read_vector(b, output_filename);
 
   switch (test)

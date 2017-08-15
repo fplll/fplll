@@ -115,7 +115,7 @@ template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
 
   BKZParam param(o.block_size, strategies);
   // Stupid intialization of u to be not empty.
-  IntMatrix u(1, 1);
+  ZZ_mat<mpz_t> u(1, 1);
   const char *format = o.output_format ? o.output_format : "b";
   int status;
 

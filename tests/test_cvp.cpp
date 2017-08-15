@@ -90,10 +90,10 @@ int test_filename(const char *input_filename_lattice, const char *input_filename
   int status = 0;
   status |= read_matrix(A, input_filename_lattice);
 
-  IntVect t;
+  vector<Z_NR<>> t;
   status |= read_vector(t, input_filename_target);
 
-  IntVect b;
+  vector<Z_NR<>> b;
   status |= read_vector(b, output_filename);
 
   status |= test_cvp<ZT>(A, t, b, method);
