@@ -107,10 +107,10 @@ int Wrapper::call_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_invZ, LLLMethod
   if (method != LM_PROVED && precision == 0)
     gso_flags |= GSO_OP_FORCE_LONG;
 
-  int old_prec = FP_NR<>::get_prec();
+  int old_prec = FP_NR<mpfr_t>::get_prec();
   if (precision > 0)
   {
-    FP_NR<>::set_prec(precision);
+    FP_NR<mpfr_t>::set_prec(precision);
   }
   MatGSO<ZT, FT> m_gso(bz, uz, u_invZ, gso_flags);
   LLLReduction<ZT, FT> lll_obj(m_gso, delta, eta, flags);
@@ -120,7 +120,7 @@ int Wrapper::call_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_invZ, LLLMethod
   last_early_red = max(last_early_red, lll_obj.last_early_red);
   if (precision > 0)
   {
-    FP_NR<>::set_prec(old_prec);
+    FP_NR<mpfr_t>::set_prec(old_prec);
   }
 
   if (flags & LLL_VERBOSE)
@@ -550,9 +550,9 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
 #endif
   else if (sel_ft == FT_MPFR)
   {
-    int old_prec = FP_NR<>::set_prec(sel_prec);
+    int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
     status       = lll_reduction_zf<ZT, mpfr_t>(b, u, u_inv, delta, eta, method, flags);
-    FP_NR<>::set_prec(old_prec);
+    FP_NR<mpfr_t>::set_prec(old_prec);
   }
   else
   {

@@ -54,7 +54,7 @@ inline void Z_NR<long>::get_f_exp(FP_NR<qd_real>& f, long& expo) {
 #endif
 
 template<> template<>
-inline void Z_NR<long>::get_f_exp(FP_NR<>& /*f*/, long& /*expo*/) {
+inline void Z_NR<long>::get_f_exp(FP_NR<mpfr_t>& /*f*/, long& /*expo*/) {
   FPLLL_DEBUG_ABORT("get_f_exp unimplemented for mpfr_t");
 }
 
@@ -103,7 +103,7 @@ inline void Z_NR<double>::get_f_exp(FP_NR<qd_real>& f, long& expo) {
 #endif
 
 template<> template<>
-inline void Z_NR<double>::get_f_exp(FP_NR<>& f, long& expo) {
+inline void Z_NR<double>::get_f_exp(FP_NR<mpfr_t>& f, long& expo) {
   int int_expo;
   f = frexp(data, &int_expo);
   expo = int_expo;
@@ -145,7 +145,7 @@ inline void Z_NR<mpz_t>::get_f_exp(FP_NR<qd_real>& f, long& expo) {
 #endif
 
 template<> template<>
-inline void Z_NR<mpz_t>::get_f_exp(FP_NR<>& f, long& expo) {
+inline void Z_NR<mpz_t>::get_f_exp(FP_NR<mpfr_t>& f, long& expo) {
   f = mpz_get_d_2exp(&expo, data);
 }
 
@@ -189,7 +189,7 @@ inline void Z_NR<long>::set_f(const FP_NR<dpe_t>& a) {
 #endif
 
 template<> template<>
-inline void Z_NR<long>::set_f(const FP_NR<>& a) {
+inline void Z_NR<long>::set_f(const FP_NR<mpfr_t>& a) {
   data = a.get_si();
 }
 
@@ -230,7 +230,7 @@ inline void Z_NR<double>::set_f(const FP_NR<qd_real>& a) {
 #endif
 
 template<> template<>
-inline void Z_NR<double>::set_f(const FP_NR<>& a) {
+inline void Z_NR<double>::set_f(const FP_NR<mpfr_t>& a) {
   data = a.get_d();
 }
 #endif // #ifdef FPLLL_WITH_ZDOUBLE
@@ -276,7 +276,7 @@ inline void Z_NR<mpz_t>::set_f(const FP_NR<qd_real>& a) {
 #endif
 
 template<> template<>
-inline void Z_NR<mpz_t>::set_f(const FP_NR<>& a) {
+inline void Z_NR<mpz_t>::set_f(const FP_NR<mpfr_t>& a) {
   mpfr_get_z(data, a.get_data(), GMP_RNDN);
 }
 

@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
   case 'T':
   {
     // clang-format off
-    FP_NR<> *w = new FP_NR<>[d];
+    FP_NR<mpfr_t> *w = new FP_NR<mpfr_t>[d];
     // clang-format on
 
     for (int i = 0; i < d; i++)

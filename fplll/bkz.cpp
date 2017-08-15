@@ -669,7 +669,7 @@ template <class ZT, class FT>
 void BKZReduction<ZT, FT>::print_tour(const int loop, int min_row, int max_row)
 {
   FT r0;
-  FP_NR<> fr0;
+  FP_NR<mpfr_t> fr0;
   long expo;
   r0  = m.get_r_exp(min_row, min_row, expo);
   fr0 = r0.get_d();
@@ -901,9 +901,9 @@ int bkz_reduction(ZZ_mat<mpz_t> *B, ZZ_mat<mpz_t> *U, const BKZParam &param, Flo
 #endif
   else if (sel_ft == FT_MPFR)
   {
-    int old_prec = FP_NR<>::set_prec(precision);
-    status       = bkz_reduction_f<FP_NR<>>(*B, param, sel_ft, lll_delta, u, u_inv);
-    FP_NR<>::set_prec(old_prec);
+    int old_prec = FP_NR<mpfr_t>::set_prec(precision);
+    status       = bkz_reduction_f<FP_NR<mpfr_t>>(*B, param, sel_ft, lll_delta, u, u_inv);
+    FP_NR<mpfr_t>::set_prec(old_prec);
   }
   else
   {

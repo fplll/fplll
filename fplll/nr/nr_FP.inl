@@ -232,7 +232,7 @@ public:
   /**
    * value := a * b where b is mpfr_t.
    */
-  inline void mul_mpfr(const FP_NR<> &a, const mpfr_t b, mp_rnd_t rnd = GMP_RNDN);
+  inline void mul_mpfr(const FP_NR<mpfr_t> &a, const mpfr_t b, mp_rnd_t rnd = GMP_RNDN);
 
   /**
    * value := a * 2^b.
@@ -590,7 +590,7 @@ template <class T> ostream &operator<<(ostream &os, const FP_NR<T> &x) { return 
 template <> ostream &operator<<(ostream &os, const FP_NR<dpe_t> &x);
 #endif
 
-template <> ostream &operator<<(ostream &os, const FP_NR<> &x);
+template <> ostream &operator<<(ostream &os, const FP_NR<mpfr_t> &x);
 
 FPLLL_END_NAMESPACE
 

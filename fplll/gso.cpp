@@ -429,8 +429,8 @@ template class MatGSO<Z_NR<double>, FP_NR<dpe_t>>;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<dpe_t>>;
 #endif
 
-template class MatGSO<Z_NR<long>, FP_NR<>>;
-template class MatGSO<Z_NR<double>, FP_NR<>>;
-template class MatGSO<Z_NR<mpz_t>, FP_NR<>>;
+template class MatGSO<Z_NR<long>, FP_NR<mpfr_t>>;
+template class MatGSO<Z_NR<double>, FP_NR<mpfr_t>>;
+template class MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
 
 FPLLL_END_NAMESPACE
