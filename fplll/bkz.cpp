@@ -804,8 +804,8 @@ template <class ZT, class FT> bool BKZAutoAbort<ZT, FT>::test_abort(double scale
 
 // call LLLReduction() and then BKZReduction.
 template <class FT>
-int bkz_reduction_f(ZZ_mat<mpz_t> &b, const BKZParam &param, int sel_ft, double lll_delta, ZZ_mat<mpz_t> &u,
-                    ZZ_mat<mpz_t> &u_inv)
+int bkz_reduction_f(ZZ_mat<mpz_t> &b, const BKZParam &param, int sel_ft, double lll_delta,
+                    ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv)
 {
   int gso_flags = 0;
   if (b.get_rows() == 0 || b.get_cols() == 0)
@@ -930,8 +930,8 @@ int bkz_reduction(ZZ_mat<mpz_t> &b, int block_size, int flags, FloatType float_t
   return bkz_reduction(&b, NULL, param, float_type, precision);
 }
 
-int bkz_reduction(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, int block_size, int flags, FloatType float_type,
-                  int precision)
+int bkz_reduction(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, int block_size, int flags,
+                  FloatType float_type, int precision)
 {
   vector<Strategy> strategies;
   BKZParam param(block_size, strategies);

@@ -226,7 +226,8 @@ void FastErrorBoundedEvaluator::eval_sol(const vector<FP_NR<mpfr_t>> &new_sol_co
   }
 }
 
-void FastErrorBoundedEvaluator::eval_sub_sol(int offset, const vector<FP_NR<mpfr_t>> &new_sub_sol_coord,
+void FastErrorBoundedEvaluator::eval_sub_sol(int offset,
+                                             const vector<FP_NR<mpfr_t>> &new_sub_sol_coord,
                                              const enumf &sub_dist)
 {
   FP_NR<mpfr_t> dist = sub_dist;
@@ -243,7 +244,8 @@ void FastErrorBoundedEvaluator::eval_sub_sol(int offset, const vector<FP_NR<mpfr
   }
 }
 
-bool FastErrorBoundedEvaluator::get_max_error(FP_NR<mpfr_t> &max_error, const FP_NR<mpfr_t> &last_partial_dist)
+bool FastErrorBoundedEvaluator::get_max_error(FP_NR<mpfr_t> &max_error,
+                                              const FP_NR<mpfr_t> &last_partial_dist)
 {
   FP_NR<mpfr_t> maxE, maxDE, maxOptDE, minOptE, one;
 
@@ -266,7 +268,8 @@ bool FastErrorBoundedEvaluator::get_max_error(FP_NR<mpfr_t> &max_error, const FP
   return true;
 }
 
-bool ExactErrorBoundedEvaluator::get_max_error(FP_NR<mpfr_t> &max_error, const FP_NR<mpfr_t> &last_partial_dist)
+bool ExactErrorBoundedEvaluator::get_max_error(FP_NR<mpfr_t> &max_error,
+                                               const FP_NR<mpfr_t> &last_partial_dist)
 {
   max_error = 0.0;
   return true;
@@ -310,7 +313,8 @@ void ExactErrorBoundedEvaluator::eval_sol(const vector<FP_NR<mpfr_t>> &new_sol_c
   }
 }
 
-void ExactErrorBoundedEvaluator::eval_sub_sol(int offset, const vector<FP_NR<mpfr_t>> &new_sub_sol_coord,
+void ExactErrorBoundedEvaluator::eval_sub_sol(int offset,
+                                              const vector<FP_NR<mpfr_t>> &new_sub_sol_coord,
                                               const enumf &sub_dist)
 {
   Z_NR<mpz_t> minusone;

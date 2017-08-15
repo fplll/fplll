@@ -257,7 +257,7 @@ class FastErrorBoundedEvaluator : public ErrorBoundedEvaluator
 {
 public:
   FastErrorBoundedEvaluator(int d = 0, const Matrix<FP_NR<mpfr_t>> &mu = Matrix<FP_NR<mpfr_t>>(),
-                            const Matrix<FP_NR<mpfr_t>> &r  = Matrix<FP_NR<mpfr_t>>(),
+                            const Matrix<FP_NR<mpfr_t>> &r = Matrix<FP_NR<mpfr_t>>(),
                             EvaluatorMode eval_mode = EVALMODE_SV, size_t nr_solutions = 1,
                             EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
                             bool find_subsolutions            = false)
@@ -269,7 +269,8 @@ public:
   virtual bool get_max_error(FP_NR<mpfr_t> &max_error, const FP_NR<mpfr_t> &sol_dist);
   virtual void eval_sol(const vector<FP_NR<mpfr_t>> &new_sol_coord, const enumf &new_partial_dist,
                         enumf &max_dist);
-  virtual void eval_sub_sol(int offset, const vector<FP_NR<mpfr_t>> &new_sub_sol_coord, const enumf &sub_dist);
+  virtual void eval_sub_sol(int offset, const vector<FP_NR<mpfr_t>> &new_sub_sol_coord,
+                            const enumf &sub_dist);
 };
 
 /**
@@ -301,7 +302,8 @@ public:
   virtual void eval_sol(const vector<FP_NR<mpfr_t>> &new_sol_coord, const enumf &new_partial_dist,
                         enumf &max_dist);
 
-  virtual void eval_sub_sol(int offset, const vector<FP_NR<mpfr_t>> &new_sub_sol_coord, const enumf &sub_dist);
+  virtual void eval_sub_sol(int offset, const vector<FP_NR<mpfr_t>> &new_sub_sol_coord,
+                            const enumf &sub_dist);
 
   Z_NR<mpz_t> int_max_dist;  // Exact norm of the last vector
 

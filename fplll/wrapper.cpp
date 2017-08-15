@@ -41,7 +41,8 @@ const double eta_dep[10] = {1.,       // 0.5
                             2.1025,   // 0.9
                             2.5117};  // 0.95
 
-Wrapper::Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta, int flags)
+Wrapper::Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
+                 int flags)
     : status(RED_SUCCESS), b(b), u(u), u_inv(u_inv), delta(delta), eta(eta), use_long(false),
       last_early_red(0)
 {
@@ -397,8 +398,8 @@ int lll_reduction_wrapper(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, doubl
 }
 
 template <>
-int lll_reduction_wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
-                          FloatType float_type, int precision, int flags)
+int lll_reduction_wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta,
+                          double eta, FloatType float_type, int precision, int flags)
 {
   FPLLL_CHECK(float_type == FT_DEFAULT,
               "The floating point type cannot be specified with the wrapper method");

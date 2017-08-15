@@ -91,7 +91,8 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
    @param b              coefficients of shortest dual vector
    @return
 */
-template <class ZT> int dual_length(FP_NR<mpfr_t> &norm, ZZ_mat<ZT> &A, const vector<Z_NR<mpz_t>> &coords)
+template <class ZT>
+int dual_length(FP_NR<mpfr_t> &norm, ZZ_mat<ZT> &A, const vector<Z_NR<mpz_t>> &coords)
 {
   int d = coords.size();
   if (A.get_rows() != d)

@@ -134,7 +134,7 @@ public:
   NumVect() {}
   /** Initializes NumVect with the elements of the given NumVect. */
   NumVect(const NumVect &v) : data(v.data) {}
-  /** Initializes NumVect of specific size, The initial content is 
+  /** Initializes NumVect of specific size, The initial content is
       undefined. */
   NumVect(int size) : data(size) {}
   NumVect(int size, const T &t) : data(size, t) {}
@@ -170,12 +170,12 @@ public:
   void pop_back() { data.pop_back(); }
   /** Returns a reference to the front element of NumVect. */
   T &front() { return data.front(); }
-  /** Returns a const reference to the front element of NumVect, 
+  /** Returns a const reference to the front element of NumVect,
       on constant object. */
   const T &front() const { return data.front(); }
   /** Returns a reference to the back element of NumVect. */
   T &back() { return data.back(); }
-  /** Returns a const reference to the back element of NumVect, 
+  /** Returns a const reference to the back element of NumVect,
       on constant object. */
   const T &back() const { return data.back(); }
   /** Extends the size of NumVect, only if it is needed. */
@@ -202,10 +202,10 @@ public:
   void mul(const NumVect<T> &v, int n, T c);
   /** Multiplication of NumVector and a number c. */
   void mul(const NumVect<T> &v, T c) { mul(v, size(), c); }
-  /** Incremeanting each coefficient of NumVector by its product with 
+  /** Incremeanting each coefficient of NumVector by its product with
       number c, till index n. */
   void addmul(const NumVect<T> &v, T x, int n);
-  /** Incremeanting each coefficient of NumVector by its product with 
+  /** Incremeanting each coefficient of NumVector by its product with
       number c. */
   void addmul(const NumVect<T> &v, T x) { addmul(v, x, size()); }
   void addmul_2exp(const NumVect<T> &v, const T &x, long expo, T &tmp)

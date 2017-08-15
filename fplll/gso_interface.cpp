@@ -329,8 +329,7 @@ template class MatGSOInterface<Z_NR<long>, FP_NR<>>;
 template class MatGSOInterface<Z_NR<double>, FP_NR<>>;
 template class MatGSOInterface<Z_NR<mpz_t>, FP_NR<>>;
 template void adjust_radius_to_gh_bound<FP_NR<>>(FP_NR<> &max_dist, long max_dist_expo,
-                                                       int block_size,
-                                                       const FP_NR<> &root_det,
-                                                       double gh_factor);
+                                                 int block_size, const FP_NR<> &root_det,
+                                                 double gh_factor);
 
 FPLLL_END_NAMESPACE

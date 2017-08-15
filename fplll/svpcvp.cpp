@@ -100,8 +100,9 @@ static bool enumerate_svp(int d, MatGSO<Z_NR<mpz_t>, FP_NR<>> &gso, FP_NR<> &max
 
 static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, SVPMethod method,
                               const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
-                              long long &sol_count, vector<vector<Z_NR<mpz_t>>> *subsol_coord = nullptr,
-                              vector<enumf> *subsol_dist    = nullptr,
+                              long long &sol_count,
+                              vector<vector<Z_NR<mpz_t>>> *subsol_coord = nullptr,
+                              vector<enumf> *subsol_dist                = nullptr,
                               vector<vector<Z_NR<mpz_t>>> *auxsol_coord = nullptr,
                               vector<enumf> *auxsol_dist = nullptr, int max_aux_sols = 0)
 {
@@ -262,24 +263,25 @@ int shortest_vector(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, SVPMethod 
   return shortest_vector_ex(b, sol_coord, method, vector<double>(), flags, EVALMODE_SV, tmp);
 }
 
-int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, const vector<double> &pruning,
-                            int flags)
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
+                            const vector<double> &pruning, int flags)
 {
   long long tmp;
   return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp);
 }
 
-int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, vector<vector<Z_NR<mpz_t>>> &subsol_coord,
-                            vector<enumf> &subsol_dist, const vector<double> &pruning, int flags)
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
+                            vector<vector<Z_NR<mpz_t>>> &subsol_coord, vector<enumf> &subsol_dist,
+                            const vector<double> &pruning, int flags)
 {
   long long tmp;
   return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp,
                             &subsol_coord, &subsol_dist);
 }
 
-int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, vector<vector<Z_NR<mpz_t>>> &auxsol_coord,
-                            vector<enumf> &auxsol_dist, const int max_aux_sols,
-                            const vector<double> &pruning, int flags)
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
+                            vector<vector<Z_NR<mpz_t>>> &auxsol_coord, vector<enumf> &auxsol_dist,
+                            const int max_aux_sols, const vector<double> &pruning, int flags)
 {
   long long tmp;
   return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp, nullptr,
@@ -289,7 +291,8 @@ int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, ve
    ====================== */
 
 static void get_gscoords(const Matrix<FP_NR<>> &matrix, const Matrix<FP_NR<>> &mu,
-                         const Matrix<FP_NR<>> &r, const vector<FP_NR<>> &v, vector<FP_NR<>> &vcoord)
+                         const Matrix<FP_NR<>> &r, const vector<FP_NR<>> &v,
+                         vector<FP_NR<>> &vcoord)
 {
 
   int n = matrix.get_rows(), m = matrix.get_cols();
@@ -327,8 +330,8 @@ static void babai(const FP_mat<mpfr_t> &matrix, const Matrix<FP_NR<>> &mu, const
   }
 }
 
-int closest_vector(ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &int_target, vector<Z_NR<mpz_t>> &sol_coord, int method,
-                   int flags)
+int closest_vector(ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &int_target,
+                   vector<Z_NR<mpz_t>> &sol_coord, int method, int flags)
 {
   // d = lattice dimension (note that it might decrease during preprocessing)
   int d = b.get_rows();

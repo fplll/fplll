@@ -31,7 +31,8 @@ using namespace fplll;
    @return
 */
 
-template <class ZT> int test_cvp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &target, vector<Z_NR<mpz_t>> &b, const int method)
+template <class ZT>
+int test_cvp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &target, vector<Z_NR<mpz_t>> &b, const int method)
 {
   vector<Z_NR<mpz_t>> sol_coord;  // In the LLL-reduced basis
   vector<Z_NR<mpz_t>> solution;

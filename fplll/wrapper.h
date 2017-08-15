@@ -29,7 +29,8 @@ class Wrapper
 {
 public:
   /* u must be either empty or the identity matrix */
-  Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta, int flags);
+  Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
+          int flags);
 
   bool lll();
 

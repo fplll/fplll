@@ -17,8 +17,8 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-Enumerator::Enumerator(int d, const Matrix<FP_NR<mpfr_t>> &mu, const Matrix<FP_NR<mpfr_t>> &r, double argMaxVolume,
-                       int min_level)
+Enumerator::Enumerator(int d, const Matrix<FP_NR<mpfr_t>> &mu, const Matrix<FP_NR<mpfr_t>> &r,
+                       double argMaxVolume, int min_level)
     : mu(mu), r(r), kmin(min_level), d(d)
 {
   max_volume = argMaxVolume > 0 ? argMaxVolume : ENUM_MAX_VOLUME;
