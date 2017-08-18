@@ -26,6 +26,10 @@ template<>
 inline unsigned int FP_NR<dd_real>::get_prec() {return PREC_DD;}
 
 template<>
+inline unsigned int FP_NR<dd_real>::get_min_prec() {return PREC_DD;}
+
+
+template<>
 inline unsigned int FP_NR<dd_real>::set_prec(unsigned int) {
   return get_prec(); // ignored
 }
@@ -34,6 +38,11 @@ inline unsigned int FP_NR<dd_real>::set_prec(unsigned int) {
 template<>
 inline double FP_NR<dd_real>::get_d(mp_rnd_t) const {
   return ::to_double(data);
+}
+
+template<>
+inline int FP_NR<dd_real>::get_type() {
+  return 1;
 }
 
 template<>
@@ -168,6 +177,11 @@ inline int FP_NR<dd_real>::is_finite() const {
   return data.isfinite();
 }
 
+template<>
+inline int FP_NR<dd_real>::fits_slong() const {
+  return 1;
+}
+
 /* arithmetic */
 template<>
 inline void FP_NR<dd_real>::add(const FP_NR<dd_real>& b, const FP_NR<dd_real>& c, mp_rnd_t /*rnd*/) {
@@ -187,6 +201,11 @@ inline void FP_NR<dd_real>::mul(const FP_NR<dd_real>& b, const FP_NR<dd_real>& c
 template<>
 inline void FP_NR<dd_real>::mul_d(const FP_NR<dd_real>& b, const double c, mp_rnd_t /*rnd*/) {
   data = b.data * c;
+}
+
+template<>
+inline void FP_NR<dd_real>::mul_si(const FP_NR<dd_real>& b, long c) {
+  data = b.data * static_cast<double>(c);
 }
 
 template<>

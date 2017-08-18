@@ -30,6 +30,12 @@ inline unsigned int FP_NR<dpe_t>::get_prec() {
 }
 
 template<>
+inline unsigned int FP_NR<dpe_t>::get_min_prec() {
+  return DPE_BITSIZE;
+}
+
+
+template<>
 inline unsigned int FP_NR<dpe_t>::set_prec(unsigned int /*prec*/) {
   return get_prec(); // ignored
 }
@@ -38,6 +44,11 @@ inline unsigned int FP_NR<dpe_t>::set_prec(unsigned int /*prec*/) {
 template<>
 inline double FP_NR<dpe_t>::get_d(mp_rnd_t /*rnd*/) const {
   return dpe_get_d(data);
+}
+
+template<>
+inline int FP_NR<dpe_t>::get_type() {
+  return 1;
 }
 
 template<>
@@ -176,6 +187,11 @@ inline int FP_NR<dpe_t>::is_finite() const {
   return isfinite(DPE_MANT(data));
 }
 
+template<>
+inline int FP_NR<dpe_t>::fits_slong() const {
+  return 0;
+}
+
 /* arithmetic */
 template<>
 inline void FP_NR<dpe_t>::add(const FP_NR<dpe_t>& a, const FP_NR<dpe_t>& b, mp_rnd_t /*rnd*/) {
@@ -200,6 +216,11 @@ inline void FP_NR<dpe_t>::mul_d(const FP_NR<dpe_t>& a, const double b, mp_rnd_t 
 template<>
 inline void FP_NR<dpe_t>::mul_2si(const FP_NR<dpe_t>& a, long b) {
   dpe_mul_2si(data, a.data, b);
+}
+
+template<>
+inline void FP_NR<dpe_t>::mul_si(const FP_NR<dpe_t>& a, long b) {
+  dpe_mul_si(data, a.data, b);
 }
 
 template<>

@@ -17,6 +17,12 @@
 
 #include "main.h"
 #include <config.h>
+/*
+long long a_count = 0;
+long long a_small_count = 0;
+long long b_count = 0;
+long long b_small_count = 0;
+*/
 
 template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
 {
@@ -614,5 +620,21 @@ int main(int argc, char **argv)
   default:
     ABORT_MSG("compiled without support for this integer type");
   }
+
+  cout << " all MPFR_MUL a_count " << a_count << endl;
+  cout << " all MPFR_MUL b_count " << b_count << endl;  
+  cout << " small a_count " << a_small_count  << endl;
+  cout << " small b_count " << b_small_count  << endl;
+  cout << endl;
+  
+  cout << " 1. MPFRs in update_gso_row() " << gso_mul_count  << endl;
+  cout << " small MPFRs in update_gso_row() " << a_small_lll1_count  << endl;
+  cout << endl;
+  
+  cout << " 2 (a). MPFRs in lll-lovasz " << lll1_mul_count  << endl;
+  cout << " 2 (b). MPFRs in lll-babai " << lll2_mul_count  << endl;
+  cout << " small MPFRs in lll-babai " << a_small_lll2_count  << endl;    
+ 
+  
   return result;
 }

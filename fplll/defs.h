@@ -110,7 +110,15 @@ struct DebugTracer
   namespace fplll                                                                                  \
   {
 #define FPLLL_END_NAMESPACE }
-
+extern long long a_count;
+extern long long a_small_count;
+extern long long b_count;
+extern long long b_small_count;
+extern long long gso_mul_count;
+extern long long lll1_mul_count;
+extern long long lll2_mul_count;
+extern long long a_small_lll1_count;
+extern long long a_small_lll2_count;
 /** \namespace fplll
     The fplll namespace */
 FPLLL_BEGIN_NAMESPACE
@@ -139,6 +147,10 @@ const double LLL_DEF_DELTA        = 0.99;
 const double LLL_DEF_ETA          = 0.51;
 const double LLL_DEF_EPSILON      = 0.01;
 const int SIZE_RED_FAILURE_THRESH = 5;
+
+
+
+
 
 enum RedStatus
 {

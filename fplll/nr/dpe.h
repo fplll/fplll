@@ -426,6 +426,14 @@ DPE_INLINE void dpe_mul_ui(dpe_t x, const dpe_t y, unsigned long z)
   dpe_normalize(x);
 }
 
+/* x <- y * z, assuming y normalized, returns x normalized */
+DPE_INLINE void dpe_mul_si(dpe_t x, const dpe_t y, long z)
+{
+  DPE_MANT(x) = DPE_MANT(y) * (DPE_DOUBLE)z;
+  DPE_EXP(x)  = DPE_EXP(y);
+  dpe_normalize(x);
+}
+
 /* x <- y / z, assuming y normalized, z non-zero, returns x normalized */
 DPE_INLINE void dpe_div_ui(dpe_t x, const dpe_t y, unsigned long z)
 {

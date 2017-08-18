@@ -38,11 +38,15 @@ public:
    */
   static inline unsigned int get_prec();
 
+   inline unsigned int get_min_prec();
+  
   /**
    * Sets the precision of new FP_NR&lt;F&gt; objects. Returns the
      previous value. This has no effect is F != mpfr_t.
    */
   static inline unsigned int set_prec(unsigned int prec);
+
+  static inline  int get_type();  
 
   /** get data */
 
@@ -207,6 +211,8 @@ public:
    */
   inline int is_finite() const;
 
+  inline int fits_slong() const;
+  
   /** arithmetic */
 
   /**
@@ -234,6 +240,11 @@ public:
    */
   inline void mul_mpfr(const FP_NR<mpfr_t> &a, const mpfr_t b, mp_rnd_t rnd = GMP_RNDN);
 
+  /**
+   * value := a * b.
+   */
+  inline void mul_si(const FP_NR<F> &a, long b);
+  
   /**
    * value := a * 2^b.
    */

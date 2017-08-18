@@ -100,6 +100,7 @@ private:
   vector<long> babai_expo;
   ZT ztmp1;
   FT mu_m_ant, ftmp1;
+  long mu_m_ant_si;
 };
 
 template <class ZT, class FT>

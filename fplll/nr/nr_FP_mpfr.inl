@@ -4,8 +4,10 @@
 
 #ifndef FPLLL_NR_FP_MPFR_H
 #define FPLLL_NR_FP_MPFR_H
+#define MPFR_PREC(x) ((x)->_mpfr_prec)
 
 FPLLL_BEGIN_NAMESPACE
+
 
 /* MPFR specialization */
 
@@ -24,6 +26,17 @@ inline FP_NR<mpfr_t>::~FP_NR() {mpfr_clear(data);}
 template<>
 inline unsigned int FP_NR<mpfr_t>::get_prec() {
   return mpfr_get_default_prec();
+}
+
+
+template<>
+inline unsigned int FP_NR<mpfr_t>::get_min_prec() {
+  return mpfr_min_prec(data);
+}
+
+template<>
+inline int FP_NR<mpfr_t>::get_type() {
+  return 0;
 }
 
 template<>
@@ -175,6 +188,11 @@ inline int FP_NR<mpfr_t>::is_finite() const {
   return mpfr_number_p(data);
 }
 
+template<>
+inline int FP_NR<mpfr_t>::fits_slong() const {
+  return mpfr_fits_slong_p (data, GMP_RNDN);
+}
+
 /* arithmetic */
 template<>
 inline void FP_NR<mpfr_t>::add(const FP_NR<mpfr_t>& a, const FP_NR<mpfr_t>& b, mp_rnd_t rnd) {
@@ -188,7 +206,24 @@ inline void FP_NR<mpfr_t>::sub(const FP_NR<mpfr_t>& a, const FP_NR<mpfr_t>& b, m
 
 template<>
 inline void FP_NR<mpfr_t>::mul(const FP_NR<mpfr_t>& a, const FP_NR<mpfr_t>& b, mp_rnd_t rnd) {
+      
   mpfr_mul(data, a.data, b.data, rnd);
+  
+  if (mpfr_min_prec (a.data) <= 53)
+    ++a_small_count;
+  ++a_count;
+  if (mpfr_min_prec (b.data) <= 53)
+    ++b_small_count;
+  ++b_count;    
+  /*
+  printf ( "LOG:  %lu (%lu) %lu(%lu) --> %lu\n",
+           MPFR_PREC(a.data),
+           mpfr_min_prec (a.data),
+           MPFR_PREC(b.data),
+           mpfr_min_prec (b.data),
+           MPFR_PREC (data) );
+  */
+  
 }
 
 template<>
@@ -199,6 +234,11 @@ inline void FP_NR<mpfr_t>::mul_d(const FP_NR<mpfr_t>& a, double b, mp_rnd_t rnd)
 template<>
 inline void FP_NR<mpfr_t>::mul_mpfr(const FP_NR<mpfr_t>& a, const mpfr_t b, mp_rnd_t rnd) {
   mpfr_mul(data, a.data, b, rnd);
+}
+
+template<>
+inline void FP_NR<mpfr_t>::mul_si(const FP_NR<mpfr_t>& a, long b) {
+  mpfr_mul_si(data, a.data, b, GMP_RNDN);
 }
 
 template<>

@@ -30,8 +30,19 @@ inline unsigned int FP_NR<long double>::get_prec() {
 }
 
 template<>
+inline unsigned int FP_NR<long double>::get_min_prec() {
+  return numeric_limits<long double>::digits;
+}
+
+
+template<>
 inline unsigned int FP_NR<long double>::set_prec(unsigned int /*prec*/) {
   return get_prec(); // ignored
+}
+
+template<>
+inline int FP_NR<long double>::get_type() {
+  return 1;
 }
 
 /* return data */
@@ -171,6 +182,11 @@ inline int FP_NR<long double>::is_finite() const {
   return isfinite(data);
 }
 
+template<>
+inline int FP_NR<long double>::fits_slong() const {
+  return 1;
+}
+
 /* arithmetic */
 template<>
 inline void FP_NR<long double>::add(const FP_NR<long double>& b, const FP_NR<long double>& c, mp_rnd_t /*rnd*/) {
@@ -190,6 +206,11 @@ inline void FP_NR<long double>::mul(const FP_NR<long double>& b, const FP_NR<lon
 template<>
 inline void FP_NR<long double>::mul_d(const FP_NR<long double>& b, const double c, mp_rnd_t /*rnd*/) {
   data = b.data * c;
+}
+
+template<>
+inline void FP_NR<long double>::mul_si(const FP_NR<long double>& b, long c) {
+  data = b.data * static_cast<long double>(c);
 }
 
 template<>

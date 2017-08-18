@@ -127,6 +127,8 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end,
       for (kappa--; kappa > kappa_min; kappa--)
       {
         ftmp1.mul(m.get_r_exp(kappa - 1, kappa - 1), swap_threshold);
+        if (m.get_r_exp(kappa - 1, kappa - 1).get_type()==0)
+          ++ lll1_mul_count;
         if (m.enable_row_expo)
         {
           ftmp1.mul_2si(ftmp1, 2 * (m.row_expo[kappa - 1] - m.row_expo[old_k]));
@@ -201,14 +203,64 @@ bool LLLReduction<ZT, FT>::babai(int kappa, int size_reduction_end, int size_red
       mu_m_ant.rnd_we(babai_mu[j], babai_expo[j]);
       if (mu_m_ant.zero_p())
         continue;
-      // Approximate update of the mu_(kappa,k)'s
-      for (int k = size_reduction_start; k < j; k++)
-      {
-        ftmp1.mul(mu_m_ant, m.get_mu_exp(j, k));
-        /* When enable_row_expo=true, the following line relies on the fact that
-           get_mu_exp(a, b, expo) returns expo = row_expo[a] - row_expo[b]. */
-        babai_mu[k].sub(babai_mu[k], ftmp1);
+
+#if 1
+      if (mu_m_ant.fits_slong()!=0) {
+        mu_m_ant_si = mu_m_ant.get_si();
+        // Approximate update of the mu_(kappa,k)'s
+        for (int k = size_reduction_start; k < j; k++)
+        {
+          ftmp1.mul_si(m.get_mu_exp(j, k), mu_m_ant_si);
+
+          if (mu_m_ant.get_type()==0) {
+            /*
+            if (mu_m_ant.get_min_prec() < 53)
+              ++a_small_lll2_count;
+            */
+            ++lll2_mul_count;
+          }
+
+          /* When enable_row_expo=true, the following line relies on the fact that
+             get_mu_exp(a, b, expo) returns expo = row_expo[a] - row_expo[b]. */
+          babai_mu[k].sub(babai_mu[k], ftmp1);
+        }
       }
+      else {
+        // Approximate update of the mu_(kappa,k)'s
+        for (int k = size_reduction_start; k < j; k++)
+        {
+          ftmp1.mul(mu_m_ant, m.get_mu_exp(j, k));
+
+          if (mu_m_ant.get_type()==0) {
+            if (mu_m_ant.get_min_prec() < 53)
+              ++a_small_lll2_count;
+            ++lll2_mul_count;
+          }
+
+          
+          /* When enable_row_expo=true, the following line relies on the fact that
+             get_mu_exp(a, b, expo) returns expo = row_expo[a] - row_expo[b]. */
+          babai_mu[k].sub(babai_mu[k], ftmp1);
+        }
+      }
+#else
+      // Approximate update of the mu_(kappa,k)'s
+        for (int k = size_reduction_start; k < j; k++)
+        {
+          ftmp1.mul(mu_m_ant, m.get_mu_exp(j, k));
+
+          if (mu_m_ant.get_type()==0) {
+            if (mu_m_ant.get_min_prec() < 53)
+              ++a_small_lll2_count;
+            ++lll2_mul_count;
+          }
+          
+          /* When enable_row_expo=true, the following line relies on the fact that
+             get_mu_exp(a, b, expo) returns expo = row_expo[a] - row_expo[b]. */
+          babai_mu[k].sub(babai_mu[k], ftmp1);
+        }
+#endif
+      
       // Operation on the basis
       // FPLLL_TRACE("Babai : row[" << kappa << "] += " << mu_m_ant << " * 2^" << babai_expo[j] << "
       // * row[" << j << "]");
