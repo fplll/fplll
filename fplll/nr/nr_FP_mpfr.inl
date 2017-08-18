@@ -8,7 +8,6 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-
 /* MPFR specialization */
 
 /* constructor */
@@ -28,15 +27,9 @@ inline unsigned int FP_NR<mpfr_t>::get_prec() {
   return mpfr_get_default_prec();
 }
 
-
 template<>
 inline unsigned int FP_NR<mpfr_t>::get_min_prec() {
   return mpfr_min_prec(data);
-}
-
-template<>
-inline int FP_NR<mpfr_t>::get_type() {
-  return 0;
 }
 
 template<>
@@ -206,24 +199,7 @@ inline void FP_NR<mpfr_t>::sub(const FP_NR<mpfr_t>& a, const FP_NR<mpfr_t>& b, m
 
 template<>
 inline void FP_NR<mpfr_t>::mul(const FP_NR<mpfr_t>& a, const FP_NR<mpfr_t>& b, mp_rnd_t rnd) {
-      
   mpfr_mul(data, a.data, b.data, rnd);
-  
-  if (mpfr_min_prec (a.data) <= 53)
-    ++a_small_count;
-  ++a_count;
-  if (mpfr_min_prec (b.data) <= 53)
-    ++b_small_count;
-  ++b_count;    
-  /*
-  printf ( "LOG:  %lu (%lu) %lu(%lu) --> %lu\n",
-           MPFR_PREC(a.data),
-           mpfr_min_prec (a.data),
-           MPFR_PREC(b.data),
-           mpfr_min_prec (b.data),
-           MPFR_PREC (data) );
-  */
-  
 }
 
 template<>

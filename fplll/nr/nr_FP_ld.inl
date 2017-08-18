@@ -34,15 +34,9 @@ inline unsigned int FP_NR<long double>::get_min_prec() {
   return numeric_limits<long double>::digits;
 }
 
-
 template<>
 inline unsigned int FP_NR<long double>::set_prec(unsigned int /*prec*/) {
   return get_prec(); // ignored
-}
-
-template<>
-inline int FP_NR<long double>::get_type() {
-  return 1;
 }
 
 /* return data */

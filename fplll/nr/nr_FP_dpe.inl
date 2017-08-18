@@ -34,7 +34,6 @@ inline unsigned int FP_NR<dpe_t>::get_min_prec() {
   return DPE_BITSIZE;
 }
 
-
 template<>
 inline unsigned int FP_NR<dpe_t>::set_prec(unsigned int /*prec*/) {
   return get_prec(); // ignored
@@ -44,11 +43,6 @@ inline unsigned int FP_NR<dpe_t>::set_prec(unsigned int /*prec*/) {
 template<>
 inline double FP_NR<dpe_t>::get_d(mp_rnd_t /*rnd*/) const {
   return dpe_get_d(data);
-}
-
-template<>
-inline int FP_NR<dpe_t>::get_type() {
-  return 1;
 }
 
 template<>

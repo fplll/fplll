@@ -38,15 +38,16 @@ public:
    */
   static inline unsigned int get_prec();
 
-   inline unsigned int get_min_prec();
+  /**
+   * Returns the current min precision for the FP_NR&lt;F&gt; objects.
+   */
+  inline unsigned int get_min_prec();
   
   /**
    * Sets the precision of new FP_NR&lt;F&gt; objects. Returns the
      previous value. This has no effect is F != mpfr_t.
    */
   static inline unsigned int set_prec(unsigned int prec);
-
-  static inline  int get_type();  
 
   /** get data */
 
@@ -241,7 +242,7 @@ public:
   inline void mul_mpfr(const FP_NR<mpfr_t> &a, const mpfr_t b, mp_rnd_t rnd = GMP_RNDN);
 
   /**
-   * value := a * b.
+   * value := a * b where b is signed long.
    */
   inline void mul_si(const FP_NR<F> &a, long b);
   

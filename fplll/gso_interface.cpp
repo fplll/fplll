@@ -146,11 +146,6 @@ template <class ZT, class FT> bool MatGSOInterface<ZT, FT>::update_gso_row(int i
     for (int k = 0; k < j; k++)
     {
       ftmp2.mul(mu(j, k), r(i, k));
-      if (mu(j, k).get_type()==0) {
-        if (mu(j, k).get_min_prec() < 53)
-          ++a_small_lll1_count;
-        ++ gso_mul_count;
-      }
       ftmp1.sub(ftmp1, ftmp2);
     }
     r(i, j) = ftmp1;

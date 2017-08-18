@@ -19,17 +19,6 @@
 int debug_depth = 0;
 #endif
 
-long long a_count = 0;
-long long a_small_count = 0;
-long long b_count = 0;
-long long b_small_count = 0;
-long long gso_mul_count = 0;
-long long lll1_mul_count = 0;
-long long lll2_mul_count = 0;
-
-long long a_small_lll1_count = 0;
-long long a_small_lll2_count = 0;
-
 FPLLL_BEGIN_NAMESPACE
 
 enum MinPrecAlgo

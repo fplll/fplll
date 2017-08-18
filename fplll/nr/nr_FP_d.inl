@@ -35,10 +35,6 @@ inline unsigned int FP_NR<double>::set_prec(unsigned int) {
   return get_prec(); // ignored
 }
 
-template<>
-inline int FP_NR<double>::get_type() {return 1;}
-
-
 /* return data */
 template<>
 inline double FP_NR<double>::get_d(mp_rnd_t) const {

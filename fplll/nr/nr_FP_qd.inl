@@ -33,7 +33,6 @@ inline unsigned int FP_NR<qd_real>::get_min_prec() {
   return PREC_QD;
 }
 
-
 template<>
 inline unsigned int FP_NR<qd_real>::set_prec(unsigned int) {
   return get_prec(); // ignored
@@ -44,12 +43,6 @@ template<>
 inline double FP_NR<qd_real>::get_d(mp_rnd_t /*rnd*/) const {
   return ::to_double(data);
 }
-
-template<>
-inline int FP_NR<qd_real>::get_type() {
-  return 1;
-}
-
 
 template<>
 inline void FP_NR<qd_real>::get_mpfr(mpfr_t r, mp_rnd_t rnd) const {

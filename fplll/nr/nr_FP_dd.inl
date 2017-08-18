@@ -28,7 +28,6 @@ inline unsigned int FP_NR<dd_real>::get_prec() {return PREC_DD;}
 template<>
 inline unsigned int FP_NR<dd_real>::get_min_prec() {return PREC_DD;}
 
-
 template<>
 inline unsigned int FP_NR<dd_real>::set_prec(unsigned int) {
   return get_prec(); // ignored
@@ -38,11 +37,6 @@ inline unsigned int FP_NR<dd_real>::set_prec(unsigned int) {
 template<>
 inline double FP_NR<dd_real>::get_d(mp_rnd_t) const {
   return ::to_double(data);
-}
-
-template<>
-inline int FP_NR<dd_real>::get_type() {
-  return 1;
 }
 
 template<>
