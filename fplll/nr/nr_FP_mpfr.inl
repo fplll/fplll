@@ -199,7 +199,7 @@ inline void FP_NR<mpfr_t>::sub(const FP_NR<mpfr_t>& a, const FP_NR<mpfr_t>& b, m
 
 template<>
 inline void FP_NR<mpfr_t>::mul(const FP_NR<mpfr_t>& a, const FP_NR<mpfr_t>& b, mp_rnd_t rnd) {
-  mpfr_mul(data, a.data, b.data, rnd);
+    mpfr_mul(data, a.data, b.data, rnd);
 }
 
 template<>
