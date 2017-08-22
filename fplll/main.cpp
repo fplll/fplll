@@ -422,6 +422,8 @@ void read_options(int argc, char **argv, Options &o)
         o.float_type = FT_DOUBLE;
       else if (strcmp("longdouble", argv[ac]) == 0)
         o.float_type = FT_LONG_DOUBLE;
+      else if (strcmp("float128", argv[ac]) == 0)
+        o.float_type = FT_FLOAT128;
       else
         ABORT_MSG("parse error in -f switch : mpfr, qd, dd, dpe or double expected");
     }
@@ -532,7 +534,7 @@ void read_options(int argc, char **argv, Options &o)
            << "  -e <eta> (default=0.51; alias to -eta <eta>)\n"
            << "  -l <lovasz>\n"
            << "       If <lovasz> != 0, Lovasz's condition, otherwise, Siegel's condition\n"
-           << "  -f [mpfr|dd|qd|dpe|double|longdouble]\n"
+           << "  -f [mpfr|dd|qd|dpe|double|longdouble|float128]\n"
            << "       Floating-point type in LLL\n"
            << "  -p <precision>\n"
            << "       Floating-point precision (only with -f mpfr)\n"

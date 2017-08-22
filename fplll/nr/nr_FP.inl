@@ -586,6 +586,8 @@ template <class F> inline bool FP_NR<F>::operator>(double a) const { return cmp(
  */
 template <class T> ostream &operator<<(ostream &os, const FP_NR<T> &x) { return os << x.get_data(); }
 
+template <> ostream &operator<<(ostream &os, const FP_NR<__float128> &x);
+
 #ifdef FPLLL_WITH_DPE
 template <> ostream &operator<<(ostream &os, const FP_NR<dpe_t> &x);
 #endif

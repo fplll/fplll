@@ -99,6 +99,20 @@ AS_IF([test "x${have_libqd}" = "xyes"], [
 
 AC_SUBST(LIBQD_LIBADD)
 
+AC_ARG_ENABLE([quadmath],
+    [AC_HELP_STRING([--enable-quadmath],
+        [enable support for __float128 floating point arithmetics (default: yes)])],
+    [enable_quadmath="${enableval}"],
+    [enable_quadmath="yes"]
+)
+
+if test x"$enable_quadmath" = x"yes"; then
+  LIBQUAD_LIBADD="-lquadmath"
+	AC_CHECK_LIB(quadmath,sinhq)
+fi
+
+AC_SUBST(LIBQUAD_LIBADD)
+
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([limits.h cstdio iostream string limits vector])

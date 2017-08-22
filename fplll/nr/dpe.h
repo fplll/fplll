@@ -750,4 +750,5 @@ DPE_INLINE void dpe_log(dpe_t x, const dpe_t y)
   dpe_set_d(x, (double)DPE_EXP(y) * log(2.0) + log(DPE_MANT(y)));
 }
 
+
 #endif /* FPLLL_DPE_H */

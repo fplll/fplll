@@ -288,6 +288,15 @@ template void adjust_radius_to_gh_bound<FP_NR<double>>(FP_NR<double> &max_dist, 
                                                        const FP_NR<double> &root_det,
                                                        double gh_factor);
 
+
+template class MatGSOInterface<Z_NR<long>, FP_NR<__float128>>;
+template class MatGSOInterface<Z_NR<double>, FP_NR<__float128>>;
+template class MatGSOInterface<Z_NR<mpz_t>, FP_NR<__float128>>;
+template void adjust_radius_to_gh_bound<FP_NR<__float128>>(FP_NR<__float128> &max_dist, long max_dist_expo,
+                                                       int block_size,
+                                                       const FP_NR<__float128> &root_det,
+                                                       double gh_factor);
+
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class MatGSOInterface<Z_NR<long>, FP_NR<long double>>;
 template class MatGSOInterface<Z_NR<double>, FP_NR<long double>>;

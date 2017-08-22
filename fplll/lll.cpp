@@ -269,6 +269,20 @@ template bool
 is_lll_reduced<Z_NR<double>, FP_NR<double>>(MatGSOInterface<Z_NR<double>, FP_NR<double>> &m,
                                             double delta, double eta);
 
+
+template class LLLReduction<Z_NR<long>, FP_NR<__float128>>;
+template class LLLReduction<Z_NR<double>, FP_NR<__float128>>;
+template class LLLReduction<Z_NR<mpz_t>, FP_NR<__float128>>;
+template bool
+is_lll_reduced<Z_NR<mpz_t>, FP_NR<__float128>>(MatGSOInterface<Z_NR<mpz_t>, FP_NR<__float128>> &m,
+                                           double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<long>, FP_NR<__float128>>(MatGSOInterface<Z_NR<long>, FP_NR<__float128>> &m,
+                                          double delta, double eta);
+template bool
+is_lll_reduced<Z_NR<double>, FP_NR<__float128>>(MatGSOInterface<Z_NR<double>, FP_NR<__float128>> &m,
+                                            double delta, double eta);
+
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class LLLReduction<Z_NR<long>, FP_NR<long double>>;
 template class LLLReduction<Z_NR<double>, FP_NR<long double>>;

@@ -22,6 +22,13 @@ inline void Z_NR<long>::get_f_exp(FP_NR<double>& f, long& expo) {
   expo = int_expo;
 }
 
+template<> template<>
+inline void Z_NR<long>::get_f_exp(FP_NR<__float128>& f, long& expo) {
+  int int_expo;
+  f.get_data() = frexp(static_cast<double>(data), &int_expo);
+  expo = int_expo;
+}
+
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template<> template<>
 inline void Z_NR<long>::get_f_exp(FP_NR<long double>& f, long& expo) {
@@ -66,6 +73,14 @@ inline void Z_NR<long>::get_f_exp(FP_NR<mpfr_t>& /*f*/, long& /*expo*/) {
 
 template<> template<>
 inline void Z_NR<double>::get_f_exp(FP_NR<double>& f, long& expo) {
+  int int_expo;
+  f.get_data() = frexp(data, &int_expo);
+  expo = int_expo;
+}
+
+
+template<> template<>
+inline void Z_NR<double>::get_f_exp(FP_NR<__float128>& f, long& expo) {
   int int_expo;
   f.get_data() = frexp(data, &int_expo);
   expo = int_expo;
@@ -119,6 +134,11 @@ inline void Z_NR<mpz_t>::get_f_exp(FP_NR<double>& f, long& expo) {
   f.get_data() = mpz_get_d_2exp(&expo, data);
 }
 
+template<> template<>
+inline void Z_NR<mpz_t>::get_f_exp(FP_NR<__float128>& f, long& expo) {
+  f.get_data() = mpz_get_d_2exp(&expo, data);
+}
+
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template<> template<>
 inline void Z_NR<mpz_t>::get_f_exp(FP_NR<long double>& f, long& expo) {
@@ -159,6 +179,11 @@ inline void Z_NR<mpz_t>::get_f_exp(FP_NR<mpfr_t>& f, long& expo) {
 
 template<> template<>
 inline void Z_NR<long>::set_f(const FP_NR<double>& a) {
+  data = a.get_si();
+}
+
+template<> template<>
+inline void Z_NR<long>::set_f(const FP_NR<__float128>& a) {
   data = a.get_si();
 }
 
@@ -203,6 +228,11 @@ inline void Z_NR<double>::set_f(const FP_NR<double>& a) {
   data = a.get_d();
 }
 
+template<> template<>
+inline void Z_NR<double>::set_f(const FP_NR<__float128>& a) {
+  data = a.get_d();
+}
+
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template<> template<>
 inline void Z_NR<double>::set_f(const FP_NR<long double>& a) {
@@ -238,6 +268,12 @@ inline void Z_NR<double>::set_f(const FP_NR<mpfr_t>& a) {
 /* set_f (FP_NR to mpz_t) */
 template<> template<>
 inline void Z_NR<mpz_t>::set_f(const FP_NR<double>& a) {
+  mpz_set_d(data, a.get_data());
+}
+
+
+template<> template<>
+inline void Z_NR<mpz_t>::set_f(const FP_NR<__float128>& a) {
   mpz_set_d(data, a.get_data());
 }
 

@@ -27,6 +27,8 @@
 #include "fplll/nr/nr_FP_qd.inl"
 #endif
 
+#include "fplll/nr/nr_FP_float128.inl"
+
 #include "fplll/nr/nr_FP_mpfr.inl"
 
 #include "fplll/nr/nr_FP_misc.inl"

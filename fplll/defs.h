@@ -134,7 +134,7 @@ const int MAX_EXP_DOUBLE = 1000;
 const int PREC_DOUBLE    = 53;
 const int PREC_DD        = 106;
 const int PREC_QD        = 212;
-
+const int PREC_FLOAT128    = 128;
 const double LLL_DEF_DELTA        = 0.99;
 const double LLL_DEF_ETA          = 0.51;
 const double LLL_DEF_EPSILON      = 0.01;
@@ -191,10 +191,11 @@ enum FloatType
   FT_DPE         = 3,
   FT_DD          = 4,
   FT_QD          = 5,
-  FT_MPFR        = 6
+  FT_MPFR        = 6,
+  FT_FLOAT128        = 7 
 };
 
-const char *const FLOAT_TYPE_STR[7] = {"", "double", "long double", "dpe", "dd", "qd", "mpfr"};
+const char *const FLOAT_TYPE_STR[8] = {"", "double", "long double", "dpe", "dd", "qd", "mpfr", "__float128"};
 
 enum LLLFlags
 {

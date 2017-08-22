@@ -94,6 +94,30 @@ inline void FP_NR<dpe_t>::set_z(const Z_NR<mpz_t>& a, mp_rnd_t /*rnd*/) {
 #endif
 
 
+/* set_z (to __float128) */
+#ifdef FPLLL_WITH_ZLONG
+/** set_z (from long to __float128) */
+template<> template<>
+inline void FP_NR<__float128>::set_z(const Z_NR<long>& a, mp_rnd_t) {
+  data = a.get_data();
+}
+#endif
+
+#ifdef FPLLL_WITH_ZDOUBLE
+/** set_z (from double to __float128) */
+template<> template<>
+inline void FP_NR<__float128>::set_z(const Z_NR<double>& a, mp_rnd_t /*rnd*/) {
+  data = a.get_data();
+}
+#endif
+
+/** set_z (from default mpz_t to __float128) */
+template<> template<>
+inline void FP_NR<__float128>::set_z(const Z_NR<mpz_t>& a, mp_rnd_t /*rnd*/) {
+  data = mpz_get_d(a.get_data());
+}
+
+
 /* set_z (to dd_real) */
 #ifdef FPLLL_WITH_QD
 
@@ -210,6 +234,38 @@ inline void FP_NR<double>::get_z_exp_we(Z_NR<mpz_t>& a, long& expo, long expo_ad
 /** get_z_exp_we (from double to Z_NR<class Z>) */
 template<> template<class Z>
 inline void FP_NR<double>::get_z_exp(Z_NR<Z>& a, long& expo) const {
+  return get_z_exp_we(a, expo, 0);
+}
+
+
+#ifdef FPLLL_WITH_ZLONG
+/** get_z_exp_we (from double to Z_NR<long>) */
+template<> template<>
+inline void FP_NR<__float128>::get_z_exp_we(Z_NR<long>& a, long& expo, long expo_add) const {
+  expo = 0;
+  a = static_cast<long>(ldexpq(data, expo_add));
+}
+#endif
+
+#ifdef FPLLL_WITH_ZDOUBLE
+/** get_z_exp_we (from double to Z_NR<double>) */
+template<> template<>
+inline void FP_NR<__float128>::get_z_exp_we(Z_NR<double>& a, long& expo, long expo_add) const {
+  expo = 0;
+  a.get_data() = truncq(ldexpq(data, expo_add));
+}
+#endif
+
+/** get_z_exp_we (from double to default mpz_t Z_NR<mpz_t>) */
+template<> template<>
+inline void FP_NR<__float128>::get_z_exp_we(Z_NR<mpz_t>& a, long& expo, long expo_add) const {
+  expo = max(exponent() + expo_add - numeric_limits<double>::digits, 0L);
+  mpz_set_d(a.get_data(), ldexpq(data, expo_add - expo));
+}
+
+/** get_z_exp_we (from double to Z_NR<class Z>) */
+template<> template<class Z>
+inline void FP_NR<__float128>::get_z_exp(Z_NR<Z>& a, long& expo) const {
   return get_z_exp_we(a, expo, 0);
 }
 

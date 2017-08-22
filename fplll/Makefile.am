@@ -21,6 +21,7 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	nr/nr_FP_misc.inl \
 	nr/nr_FP_mpfr.inl \
 	nr/nr_FP_qd.inl \
+	nr/nr_FP_float128.inl \
 	nr/nr.h \
 	nr/nr_rand.inl \
 	nr/nr_Z_d.inl \
@@ -35,10 +36,9 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	wrapper.h \
 	bkz_param.h \
 	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h \
-	sieve/sieve_gauss.h sieve/sieve_common.h sieve/sieve_gauss_str.h sieve/sampler_basic.h \
 	pruner.h
 
-bin_PROGRAMS=fplll latticegen latsieve
+bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff
 EXTRA_PROGRAMS=fplll_dbg latticegen_dbg
 lib_LTLIBRARIES=libfplll.la
@@ -65,8 +65,8 @@ llldiff_SOURCES=llldiff.cpp
 llldiff_LDADD=libfplll.la
 
 # latsieve bin
-latsieve_SOURCES=sieve/sieve_main.cpp sieve/sieve_main.h
-latsieve_LDADD=libfplll.la $(LIBQD_LIBADD)
+#latsieve_SOURCES=sieve/sieve_main.cpp sieve/sieve_main.h
+#latsieve_LDADD=libfplll.la $(LIBQD_LIBADD) $(LIBQUAD_LIBADD)
 
 # libfplll
 libfplll_la_SOURCES=fplll.cpp fplll.h \
@@ -81,19 +81,10 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	bkz.cpp bkz.h \
 	bkz_param.cpp bkz_param.h \
 	gso_interface.cpp gso_interface.h gso_gram.cpp gso_gram.h gso.cpp gso.h \
-	pruner.cpp pruner.h \
-	sieve/sieve_gauss.cpp \
-	sieve/sieve_gauss.h  \
-	sieve/sieve_common.h\
-	sieve/sieve_gauss_str.h \
-	sieve/sieve_gauss_2sieve.cpp \
-	sieve/sieve_gauss_3sieve.cpp \
-	sieve/sieve_gauss_4sieve.cpp \
-	sieve/sampler_basic.h \
-	sieve/sampler_basic.cpp
+	pruner.cpp pruner.h
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
-libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD)
+libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD) $(LIBQUAD_LIBADD)
 libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REVISION@:@FPLLL_LT_AGE@
 
 libfplllv_la_SOURCES=$(libfplll_la_SOURCES)

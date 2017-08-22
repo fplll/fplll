@@ -464,6 +464,8 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
 #ifdef FPLLL_WITH_QD
     else if (sel_prec <= static_cast<int>(FP_NR<dd_real>::get_prec()))
       sel_ft = FT_DD;
+    else if (sel_prec <= static_cast<int>(FP_NR<__float128>::get_prec()))
+      sel_ft = FT_FLOAT128;
     else if (sel_prec <= static_cast<int>(FP_NR<qd_real>::get_prec()))
       sel_ft = FT_QD;
 #endif
@@ -471,9 +473,9 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
       sel_ft = FT_MPFR;
   }
   else if (method == LM_FAST &&
-           (sel_ft != FT_DOUBLE && sel_ft != FT_LONG_DOUBLE && sel_ft != FT_DD && sel_ft != FT_QD))
+           (sel_ft != FT_DOUBLE && sel_ft != FT_LONG_DOUBLE && sel_ft != FT_DD && sel_ft != FT_FLOAT128 && sel_ft != FT_QD))
   {
-    FPLLL_ABORT("'double' or 'long double' or 'dd' or 'qd' required for "
+    FPLLL_ABORT("'double' or 'long double' or 'dd' or '__float128' or 'qd' required for "
                 << LLL_METHOD_STR[method]);
   }
 
@@ -490,6 +492,8 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
 #ifdef FPLLL_WITH_QD
   else if (sel_ft == FT_DD)
     sel_prec = FP_NR<dd_real>::get_prec();
+  else if (sel_ft == FT_FLOAT128)
+    sel_prec = FP_NR<__float128>::get_prec();
   else if (sel_ft == FT_QD)
     sel_prec = FP_NR<qd_real>::get_prec();
 #endif
@@ -539,6 +543,10 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
     fpu_fix_start(&old_cw);
     status = lll_reduction_zf<ZT, dd_real>(b, u, u_inv, delta, eta, method, flags);
     fpu_fix_end(&old_cw);
+  }
+  else if (sel_ft == FT_FLOAT128)
+  {
+    status = lll_reduction_zf<ZT, __float128>(b, u, u_inv, delta, eta, method, flags);    
   }
   else if (sel_ft == FT_QD)
   {

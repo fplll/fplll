@@ -410,7 +410,6 @@ template class MatGSO<Z_NR<mpz_t>, FP_NR<double>>;
 template class MatGSO<Z_NR<long>, FP_NR<long double>>;
 template class MatGSO<Z_NR<double>, FP_NR<long double>>;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<long double>>;
-
 #endif
 
 #ifdef FPLLL_WITH_QD
@@ -422,6 +421,10 @@ template class MatGSO<Z_NR<long>, FP_NR<qd_real>>;
 template class MatGSO<Z_NR<double>, FP_NR<qd_real>>;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<qd_real>>;
 #endif
+
+template class MatGSO<Z_NR<long>, FP_NR<__float128>>;
+template class MatGSO<Z_NR<double>, FP_NR<__float128>>;
+template class MatGSO<Z_NR<mpz_t>, FP_NR<__float128>>;
 
 #ifdef FPLLL_WITH_DPE
 template class MatGSO<Z_NR<long>, FP_NR<dpe_t>>;
