@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.1.0</a>
+                    <a class="navbar-brand">fplll 5.2.0</a>
                 </div>
             </div>
         </nav>
@@ -87,6 +87,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="sieve__main_8h_source.html">../fplll/sieve/sieve_main.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="test__utils_8h_source.html">../tests/test_utils.h</a>&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;<a class="el" href="fplll_8h_source.html">fplll.h</a>&gt;</code><br />
 </div><table class="memberdecls">
@@ -97,21 +98,13 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1c61d0cfa2a1b0dddd36a7c853901622"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
-<tr class="memitem:a1c61d0cfa2a1b0dddd36a7c853901622"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__sieve_8cpp.html#a1c61d0cfa2a1b0dddd36a7c853901622">read_matrix</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A, const char *input_filename)</td></tr>
-<tr class="memdesc:a1c61d0cfa2a1b0dddd36a7c853901622"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read matrix from <code>input_filename</code>.  <a href="#a1c61d0cfa2a1b0dddd36a7c853901622">More...</a><br /></td></tr>
-<tr class="separator:a1c61d0cfa2a1b0dddd36a7c853901622"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e315cf1e35f0a1c19105d07a0de0df5"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
-<tr class="memitem:a4e315cf1e35f0a1c19105d07a0de0df5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__sieve_8cpp.html#a4e315cf1e35f0a1c19105d07a0de0df5">read_vector</a> (vector&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; ZT &gt;&gt; &amp;b, const char *input_filename)</td></tr>
-<tr class="memdesc:a4e315cf1e35f0a1c19105d07a0de0df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read vector from <code>input_filename</code> into <code>b</code>.  <a href="#a4e315cf1e35f0a1c19105d07a0de0df5">More...</a><br /></td></tr>
-<tr class="separator:a4e315cf1e35f0a1c19105d07a0de0df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a403ee942ba0d6884137ff318c0503d84"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
-<tr class="memitem:a403ee942ba0d6884137ff318c0503d84"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__sieve_8cpp.html#a403ee942ba0d6884137ff318c0503d84">test_sieve_alg</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A, <a class="el" href="numvect_8h.html#aa6b675c8ad7943e2a72f02c4bfb58db5">IntVect</a> &amp;b, int alg)</td></tr>
-<tr class="memdesc:a403ee942ba0d6884137ff318c0503d84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test sieve by checking if function returns correct vector.  <a href="#a403ee942ba0d6884137ff318c0503d84">More...</a><br /></td></tr>
-<tr class="separator:a403ee942ba0d6884137ff318c0503d84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adea32d4c1feedf8e4a4bf3ec5d20c06b"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
-<tr class="memitem:adea32d4c1feedf8e4a4bf3ec5d20c06b"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__sieve_8cpp.html#adea32d4c1feedf8e4a4bf3ec5d20c06b">test_sieve</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A, <a class="el" href="numvect_8h.html#aa6b675c8ad7943e2a72f02c4bfb58db5">IntVect</a> &amp;b)</td></tr>
-<tr class="separator:adea32d4c1feedf8e4a4bf3ec5d20c06b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a473b3157b219fbcbbc6588f8738049c8"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
+<tr class="memitem:a473b3157b219fbcbbc6588f8738049c8"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__sieve_8cpp.html#a473b3157b219fbcbbc6588f8738049c8">test_sieve_alg</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A, vector&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;&gt; &amp;b, int alg)</td></tr>
+<tr class="memdesc:a473b3157b219fbcbbc6588f8738049c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test sieve by checking if function returns correct vector.  <a href="#a473b3157b219fbcbbc6588f8738049c8">More...</a><br /></td></tr>
+<tr class="separator:a473b3157b219fbcbbc6588f8738049c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12c96a46243fd514f0c4981796f2ce12"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
+<tr class="memitem:a12c96a46243fd514f0c4981796f2ce12"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__sieve_8cpp.html#a12c96a46243fd514f0c4981796f2ce12">test_sieve</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A, vector&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;&gt; &amp;b)</td></tr>
+<tr class="separator:a12c96a46243fd514f0c4981796f2ce12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a2451b6591c9ff85dfa23d542d845e9"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
 <tr class="memitem:a5a2451b6591c9ff85dfa23d542d845e9"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__sieve_8cpp.html#a5a2451b6591c9ff85dfa23d542d845e9">test_filename</a> (const char *input_filename, const char *output_filename)</td></tr>
 <tr class="memdesc:a5a2451b6591c9ff85dfa23d542d845e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test sieve for matrix stored in file pointed to by <code>input_filename</code>.  <a href="#a5a2451b6591c9ff85dfa23d542d845e9">More...</a><br /></td></tr>
@@ -163,86 +156,6 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a1c61d0cfa2a1b0dddd36a7c853901622"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c61d0cfa2a1b0dddd36a7c853901622">&#9670;&nbsp;</a></span>read_matrix()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class ZT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void read_matrix </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
-          <td class="paramname"><em>A</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>input_filename</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Read matrix from <code>input_filename</code>. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">A</td><td></td></tr>
-    <tr><td class="paramname">input_filename</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
-
-</div>
-</div>
-<a id="a4e315cf1e35f0a1c19105d07a0de0df5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e315cf1e35f0a1c19105d07a0de0df5">&#9670;&nbsp;</a></span>read_vector()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class ZT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void read_vector </td>
-          <td>(</td>
-          <td class="paramtype">vector&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; ZT &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>b</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>input_filename</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Read vector from <code>input_filename</code> into <code>b</code>. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">b</td><td>vector </td></tr>
-    <tr><td class="paramname">input_filename</td><td>filename </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd></dd></dl>
-
-</div>
-</div>
 <a id="a5a2451b6591c9ff85dfa23d542d845e9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5a2451b6591c9ff85dfa23d542d845e9">&#9670;&nbsp;</a></span>test_filename()</h2>
 
@@ -282,8 +195,8 @@ template&lt;class ZT &gt; </div>
 
 </div>
 </div>
-<a id="adea32d4c1feedf8e4a4bf3ec5d20c06b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adea32d4c1feedf8e4a4bf3ec5d20c06b">&#9670;&nbsp;</a></span>test_sieve()</h2>
+<a id="a12c96a46243fd514f0c4981796f2ce12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12c96a46243fd514f0c4981796f2ce12">&#9670;&nbsp;</a></span>test_sieve()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -299,7 +212,7 @@ template&lt;class ZT &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="numvect_8h.html#aa6b675c8ad7943e2a72f02c4bfb58db5">IntVect</a> &amp;&#160;</td>
+          <td class="paramtype">vector&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;&gt; &amp;&#160;</td>
           <td class="paramname"><em>b</em>&#160;</td>
         </tr>
         <tr>
@@ -312,8 +225,8 @@ template&lt;class ZT &gt; </div>
 
 </div>
 </div>
-<a id="a403ee942ba0d6884137ff318c0503d84"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a403ee942ba0d6884137ff318c0503d84">&#9670;&nbsp;</a></span>test_sieve_alg()</h2>
+<a id="a473b3157b219fbcbbc6588f8738049c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a473b3157b219fbcbbc6588f8738049c8">&#9670;&nbsp;</a></span>test_sieve_alg()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -329,7 +242,7 @@ template&lt;class ZT &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="numvect_8h.html#aa6b675c8ad7943e2a72f02c4bfb58db5">IntVect</a> &amp;&#160;</td>
+          <td class="paramtype">vector&lt; <a class="el" href="classZ__NR.html">Z_NR</a>&lt; mpz_t &gt;&gt; &amp;&#160;</td>
           <td class="paramname"><em>b</em>, </td>
         </tr>
         <tr>

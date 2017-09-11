@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.1.0</a>
+                    <a class="navbar-brand">fplll 5.2.0</a>
                 </div>
             </div>
         </nav>
@@ -100,6 +100,7 @@ $(function() {
 <code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;limits&gt;</code><br />
 <code>#include &lt;sstream&gt;</code><br />
+<code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;sys/resource.h&gt;</code><br />
 <code>#include &lt;sys/time.h&gt;</code><br />
@@ -111,7 +112,8 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="defs_8h__dep__incl.svg" width="2150" height="1067"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="defs_8h__dep__incl.svg" width="2243" height="1082"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 </div>
 </div>
 <p><a href="defs_8h_source.html">Go to the source code of this file.</a></p>
@@ -155,44 +157,46 @@ Macros</h2></td></tr>
 <tr class="separator:a50502615b0aaaf509e50b8b6a6d251a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad554a6514277daa857a6e54c8399573c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#ad554a6514277daa857a6e54c8399573c">FPLLL_DEFAULT_STRATEGY</a>&#160;&#160;&#160;&quot;&quot;</td></tr>
 <tr class="separator:ad554a6514277daa857a6e54c8399573c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af216ef451b42e7967a05fec2c7c32102"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#af216ef451b42e7967a05fec2c7c32102">PRUNER_ZEALOUS</a>&#160;&#160;&#160;(<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a3281602adb24c04e3e37d04e152438c1">PRUNER_GRADIENT</a> | <a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a224093a8b8e04d67103350c6ed8040ca">PRUNER_NELDER_MEAD</a>)</td></tr>
+<tr class="separator:af216ef451b42e7967a05fec2c7c32102"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
 <tr class="memitem:a5bc9cc17a20cb4546d3d80d0ac0c6fe5"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5">RedStatus</a> { <br />
 &#160;&#160;<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a969c417014c076ba40f0e28d8d1c9725">RED_SUCCESS</a> = 0, 
 <a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a11ce7c46bf6c4b2fac8ba7a76c7dde3c">RED_GSO_FAILURE</a> = 2, 
-<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a1ce524f0579d294137f05e54fe5b2748">RED_BABAI_FAILURE</a>, 
-<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a196f0a76df03789dc2edeb5361042ec6">RED_LLL_FAILURE</a>, 
+<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a1ce524f0579d294137f05e54fe5b2748">RED_BABAI_FAILURE</a> = 3, 
+<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a196f0a76df03789dc2edeb5361042ec6">RED_LLL_FAILURE</a> = 4, 
 <br />
-&#160;&#160;<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a3bb85f86c7c0125e9c352b68dda16167">RED_ENUM_FAILURE</a>, 
-<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a25098aff32746c06189980631ca6d325">RED_BKZ_FAILURE</a>, 
-<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a07a49310c3a8373db244eb3501b1659a">RED_BKZ_TIME_LIMIT</a>, 
-<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a674cdd801040c34bff1404d3d51ac955">RED_BKZ_LOOPS_LIMIT</a>, 
+&#160;&#160;<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a3bb85f86c7c0125e9c352b68dda16167">RED_ENUM_FAILURE</a> = 5, 
+<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a25098aff32746c06189980631ca6d325">RED_BKZ_FAILURE</a> = 6, 
+<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a07a49310c3a8373db244eb3501b1659a">RED_BKZ_TIME_LIMIT</a> = 7, 
+<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a674cdd801040c34bff1404d3d51ac955">RED_BKZ_LOOPS_LIMIT</a> = 8, 
 <br />
-&#160;&#160;<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5af52499b62bae7c4636a1308c81c83e17">RED_STATUS_MAX</a>
+&#160;&#160;<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5af52499b62bae7c4636a1308c81c83e17">RED_STATUS_MAX</a> = 9
 <br />
  }</td></tr>
 <tr class="separator:a5bc9cc17a20cb4546d3d80d0ac0c6fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63feabd2ed811cf202f109b0426922e7"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7">LLLMethod</a> { <a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7aad46b5fdf5b41213df0f02179b765de8">LM_WRAPPER</a>, 
-<a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7a3d220119f226308d23d0aed9746f4f6a">LM_PROVED</a>, 
-<a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7a7a9f05219d69fc54d0c8c53da36d2328">LM_HEURISTIC</a>, 
-<a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7a180bca0ade9f343fa87eef0fa5330632">LM_FAST</a>
+<tr class="memitem:a63feabd2ed811cf202f109b0426922e7"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7">LLLMethod</a> { <a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7aad46b5fdf5b41213df0f02179b765de8">LM_WRAPPER</a> = 0, 
+<a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7a3d220119f226308d23d0aed9746f4f6a">LM_PROVED</a> = 1, 
+<a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7a7a9f05219d69fc54d0c8c53da36d2328">LM_HEURISTIC</a> = 2, 
+<a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7a180bca0ade9f343fa87eef0fa5330632">LM_FAST</a> = 3
  }</td></tr>
 <tr class="separator:a63feabd2ed811cf202f109b0426922e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5b2eeac230a658259cf105702f447db"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#ab5b2eeac230a658259cf105702f447db">IntType</a> { <a class="el" href="defs_8h.html#ab5b2eeac230a658259cf105702f447dba66ea7e8fd71e280accc2d1eb7d178ce5">ZT_MPZ</a>, 
-<a class="el" href="defs_8h.html#ab5b2eeac230a658259cf105702f447dba9bbf18c1dc101048dc6e1a6bb46f48f5">ZT_LONG</a>, 
-<a class="el" href="defs_8h.html#ab5b2eeac230a658259cf105702f447dba36a91163abd259816c910834f3c1704a">ZT_DOUBLE</a>
+<tr class="memitem:ab5b2eeac230a658259cf105702f447db"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#ab5b2eeac230a658259cf105702f447db">IntType</a> { <a class="el" href="defs_8h.html#ab5b2eeac230a658259cf105702f447dba66ea7e8fd71e280accc2d1eb7d178ce5">ZT_MPZ</a> = 0, 
+<a class="el" href="defs_8h.html#ab5b2eeac230a658259cf105702f447dba9bbf18c1dc101048dc6e1a6bb46f48f5">ZT_LONG</a> = 1, 
+<a class="el" href="defs_8h.html#ab5b2eeac230a658259cf105702f447dba36a91163abd259816c910834f3c1704a">ZT_DOUBLE</a> = 2
  }</td></tr>
 <tr class="separator:ab5b2eeac230a658259cf105702f447db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa039815ec6b74d0fe4cb016415781c08"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> { <br />
-&#160;&#160;<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08ad9ebca53c82a7c8c161584806f09eb2b">FT_DEFAULT</a>, 
-<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08aafceb973967cd32b81182b7cd8835e7c">FT_DOUBLE</a>, 
-<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08ab81731a6cb907a77cd2db3b76bc5ee73">FT_LONG_DOUBLE</a>, 
-<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08a1f702333a3793d73dc44fd9a33644b03">FT_DPE</a>, 
+&#160;&#160;<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08ad9ebca53c82a7c8c161584806f09eb2b">FT_DEFAULT</a> = 0, 
+<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08aafceb973967cd32b81182b7cd8835e7c">FT_DOUBLE</a> = 1, 
+<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08ab81731a6cb907a77cd2db3b76bc5ee73">FT_LONG_DOUBLE</a> = 2, 
+<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08a1f702333a3793d73dc44fd9a33644b03">FT_DPE</a> = 3, 
 <br />
-&#160;&#160;<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08a7a840a3c14807a655e3e4cc335dcbdbc">FT_DD</a>, 
-<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08a154525ea8d15dd4b5ff0dff687733b6a">FT_QD</a>, 
-<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08a788360151749bbccaba77643dc7be880">FT_MPFR</a>
+&#160;&#160;<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08a7a840a3c14807a655e3e4cc335dcbdbc">FT_DD</a> = 4, 
+<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08a154525ea8d15dd4b5ff0dff687733b6a">FT_QD</a> = 5, 
+<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08a788360151749bbccaba77643dc7be880">FT_MPFR</a> = 6
 <br />
  }</td></tr>
 <tr class="separator:aa039815ec6b74d0fe4cb016415781c08"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -241,16 +245,20 @@ Enumerations</h2></td></tr>
 <a class="el" href="defs_8h.html#aa64cacebdbeb24061018e33a9dd1cfb5ace6f9aa24278f52931b08c44c848029b">HKZ_VERBOSE</a> = 1
  }</td></tr>
 <tr class="separator:aa64cacebdbeb24061018e33a9dd1cfb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a172f6be81a9eaae1747a290a3211e767"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767">PrunerMethod</a> { <a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767a6be3b4c315a5575e9d0911a2da3bb966">PRUNER_METHOD_GREEDY</a> = 0, 
-<a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767ad4087b702c886e48d51de5046632cf19">PRUNER_METHOD_GRADIENT</a> = 1, 
-<a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767aa57d0c748f527530170f00e1b8c5ec9f">PRUNER_METHOD_NM</a> = 2, 
-<a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767a86191796c443cd508bd4d7ad5241dc13">PRUNER_METHOD_HYBRID</a> = 3
- }</td></tr>
-<tr class="separator:a172f6be81a9eaae1747a290a3211e767"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca0154ca2cffd3fbbde877b7436333c0"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0">PrunerMetric</a> { <a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0a2e463055f41a65c3fc05823b7b267ed9">PRUNER_METRIC_PROBABILITY_OF_SHORTEST</a> = 0, 
 <a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0a8e0b621db228d3587a86f18b3c088148">PRUNER_METRIC_EXPECTED_SOLUTIONS</a> = 1
  }</td></tr>
 <tr class="separator:aca0154ca2cffd3fbbde877b7436333c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeecb158ab74a8748b28a07c8cb3d5925"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925">PrunerFlags</a> { <br />
+&#160;&#160;<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a3c01c8fc0b80ef2b099256e3f9b102a5">PRUNER_CVP</a>, 
+<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a0b8fd5f034bd62e84bc173f2e4f0beb9">PRUNER_START_FROM_INPUT</a> = 0x2, 
+<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a3281602adb24c04e3e37d04e152438c1">PRUNER_GRADIENT</a> = 0x4, 
+<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a224093a8b8e04d67103350c6ed8040ca">PRUNER_NELDER_MEAD</a> = 0x8, 
+<br />
+&#160;&#160;<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a20d82d69ccb304a187f3c3c097a8aa4b">PRUNER_VERBOSE</a> = 0x10
+<br />
+ }</td></tr>
+<tr class="separator:aeecb158ab74a8748b28a07c8cb3d5925"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -561,6 +569,20 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="af216ef451b42e7967a05fec2c7c32102"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af216ef451b42e7967a05fec2c7c32102">&#9670;&nbsp;</a></span>PRUNER_ZEALOUS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define PRUNER_ZEALOUS&#160;&#160;&#160;(<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a3281602adb24c04e3e37d04e152438c1">PRUNER_GRADIENT</a> | <a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a224093a8b8e04d67103350c6ed8040ca">PRUNER_NELDER_MEAD</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a421c505152986d864de8d1c65ffc9d50"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a421c505152986d864de8d1c65ffc9d50">&#9670;&nbsp;</a></span>BKZFlags</h2>
@@ -725,22 +747,23 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a172f6be81a9eaae1747a290a3211e767"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a172f6be81a9eaae1747a290a3211e767">&#9670;&nbsp;</a></span>PrunerMethod</h2>
+<a id="aeecb158ab74a8748b28a07c8cb3d5925"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeecb158ab74a8748b28a07c8cb3d5925">&#9670;&nbsp;</a></span>PrunerFlags</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767">PrunerMethod</a></td>
+          <td class="memname">enum <a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925">PrunerFlags</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a172f6be81a9eaae1747a290a3211e767a6be3b4c315a5575e9d0911a2da3bb966"></a>PRUNER_METHOD_GREEDY&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a172f6be81a9eaae1747a290a3211e767ad4087b702c886e48d51de5046632cf19"></a>PRUNER_METHOD_GRADIENT&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a172f6be81a9eaae1747a290a3211e767aa57d0c748f527530170f00e1b8c5ec9f"></a>PRUNER_METHOD_NM&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a172f6be81a9eaae1747a290a3211e767a86191796c443cd508bd4d7ad5241dc13"></a>PRUNER_METHOD_HYBRID&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aeecb158ab74a8748b28a07c8cb3d5925a3c01c8fc0b80ef2b099256e3f9b102a5"></a>PRUNER_CVP&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aeecb158ab74a8748b28a07c8cb3d5925a0b8fd5f034bd62e84bc173f2e4f0beb9"></a>PRUNER_START_FROM_INPUT&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aeecb158ab74a8748b28a07c8cb3d5925a3281602adb24c04e3e37d04e152438c1"></a>PRUNER_GRADIENT&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aeecb158ab74a8748b28a07c8cb3d5925a224093a8b8e04d67103350c6ed8040ca"></a>PRUNER_NELDER_MEAD&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aeecb158ab74a8748b28a07c8cb3d5925a20d82d69ccb304a187f3c3c097a8aa4b"></a>PRUNER_VERBOSE&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>

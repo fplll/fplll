@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['unlock_5fcols',['unlock_cols',['../classMatGSO.html#a0cc0f2bec384c21f26e639251d2322fd',1,'MatGSO']]],
-  ['update_5fgso',['update_gso',['../classMatGSO.html#adcaff3931d7a5bf4c084895c0b7dfa5c',1,'MatGSO']]],
-  ['update_5fgso_5frow',['update_gso_row',['../classMatGSO.html#a3460a7571b6d1b078191b58660c78784',1,'MatGSO::update_gso_row(int i, int last_j)'],['../classMatGSO.html#ae635da7a606b4a0397b47900fe69b40d',1,'MatGSO::update_gso_row(int i)']]]
+  ['unlock_5fcols',['unlock_cols',['../classMatGSOInterface.html#ac761657420131637e20bb428d2d3feb3',1,'MatGSOInterface']]],
+  ['update_5fbf',['update_bf',['../classMatGSOInterface.html#ab87181739ac93389622a0ab75765fb99',1,'MatGSOInterface']]],
+  ['update_5fgso',['update_gso',['../classMatGSOInterface.html#a2db2a26e0feff6ad2aae6930767eb39b',1,'MatGSOInterface']]],
+  ['update_5fgso_5frow',['update_gso_row',['../classMatGSOInterface.html#a52c653c077be9f6ad3a1c92cc1de015d',1,'MatGSOInterface::update_gso_row(int i, int last_j)'],['../classMatGSOInterface.html#a4a159611332851486527350c7c4c8658',1,'MatGSOInterface::update_gso_row(int i)']]]
 ];

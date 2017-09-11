@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.1.0</a>
+                    <a class="navbar-brand">fplll 5.2.0</a>
                 </div>
             </div>
         </nav>
@@ -210,13 +210,25 @@ Data Fields</h2></td></tr>
 <p>Create BKZ parameters. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">block_size</td><td>block size &gt; 2 </td></tr>
+    <tr><td class="paramname">block_size</td><td>block size for the reduction </td></tr>
     <tr><td class="paramname">strategies</td><td>vector of strategies used for pruning and preprocessing </td></tr>
     <tr><td class="paramname">delta</td><td>LLL parameter delta </td></tr>
-    <tr><td class="paramname">flags</td><td>flags </td></tr>
+    <tr><td class="paramname">flags</td><td>various flags that can be arbitrarily combined (using |):<ul>
+<li>BKZ_VERBOSE print additional information during reduction</li>
+<li>BKZ_NO_LLL do not run LLL before block reduction (use at your own risk)</li>
+<li>BKZ_MAX_LOOPS terminate after max_loops iterations</li>
+<li>BKZ_MAX_TIME terminate after max_time time</li>
+<li>BKZ_BOUNDED_LLL only run LLL in current block during SVP preprocessing (use at your own risk)</li>
+<li>BKZ_AUTO_ABORT heuristically terminate the reduction if progress stalls</li>
+<li>BKZ_DUMP_GSO after every iteration write the shape of the current basis to a file</li>
+<li>BKZ_GH_BND use the Gaussian heuristic to reduce the enumeration bound of possible</li>
+<li>BKZ_SD_VARIANT run SD-BKZ</li>
+<li>BKZ_SLD_RED run slide reduction </li>
+</ul>
+</td></tr>
     <tr><td class="paramname">max_loops</td><td>maximum number of loops (or zero to disable this) </td></tr>
     <tr><td class="paramname">max_time</td><td>maximum number of time (or zero to disable this) </td></tr>
-    <tr><td class="paramname">auto_abort_scale</td><td>auto abort when next tour does not improve slope over <code>scale</code> * previous tour </td></tr>
+    <tr><td class="paramname">auto_abort_scale</td><td>auto abort when next tour does not improve slope over <code>scale</code>* previous tour </td></tr>
     <tr><td class="paramname">auto_abort_max_no_dec</td><td>auto abort when next tour does not improve slope <code>no_dec</code> times </td></tr>
     <tr><td class="paramname">gh_factor</td><td>set enumeration bound to Gaussian heuristic times <code>gh_factor</code> </td></tr>
     <tr><td class="paramname">min_success_probability</td><td>minimum success probability in an SVP reduction (when using pruning) </td></tr>

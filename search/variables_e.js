@@ -6,9 +6,8 @@ var searchData=
   ['prec_5fdouble',['PREC_DOUBLE',['../defs_8h.html#a7da5b64b690ad347b27b5daa641df7c5',1,'defs.h']]],
   ['prec_5fqd',['PREC_QD',['../defs_8h.html#a731677e5d836510ca5135bbb6301f959',1,'defs.h']]],
   ['precision',['precision',['../structOptions.html#af3e21501b38e7136444cbc97f21007b0',1,'Options']]],
-  ['preproc_5fcost',['preproc_cost',['../classPruner.html#a9ebddada6ef44c50ea653be1682df7f2',1,'Pruner']]],
   ['preprocessing_5fblock_5fsizes',['preprocessing_block_sizes',['../classStrategy.html#a23888fd72fc470e9f61e488713da3e0a',1,'Strategy']]],
   ['print_5fmode',['print_mode',['../classMatrix.html#a58653ffd34876b10e518f5eac02a668c',1,'Matrix']]],
   ['pru',['pru',['../classPruner_1_1TestPruner.html#a555c273bc9116e0b424b511a2d8282e5',1,'Pruner::TestPruner']]],
-  ['pruning_5fparameters',['pruning_parameters',['../classStrategy.html#aea79558043eaaeda166020c3ec0dd1ba',1,'Strategy']]]
+  ['pruning_5fparameters',['pruning_parameters',['../classStrategy.html#ad413c6b7a58d4110410843726169919e',1,'Strategy']]]
 ];

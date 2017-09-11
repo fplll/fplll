@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.1.0</a>
+                    <a class="navbar-brand">fplll 5.2.0</a>
                 </div>
             </div>
         </nav>
@@ -78,6 +78,9 @@ $(function() {
 &#160;
 
 <h3><a id="index_g"></a>- g -</h3><ul>
+<li>gaussian_heuristic()
+: <a class="el" href="classPruner.html#a0fa68fd92550a70f9c418049e0a97425">Pruner&lt; FT &gt;</a>
+</li>
 <li>GaussSieve()
 : <a class="el" href="classGaussSieve.html#afdba405d4e8af79b16dd03db40dee5ef">GaussSieve&lt; ZT, F &gt;</a>
 </li>
@@ -133,8 +136,13 @@ $(function() {
 <li>get_cols()
 : <a class="el" href="classMatrix.html#a29b0f6e5bad57903d0371b92dd7a300d">Matrix&lt; T &gt;</a>
 </li>
+<li>get_cols_of_b()
+: <a class="el" href="classMatGSO.html#a91dc8b769ff24dd04e6d6f0ea8237feb">MatGSO&lt; ZT, FT &gt;</a>
+, <a class="el" href="classMatGSOGram.html#a223be023d3d1928b5df539c960b76e2f">MatGSOGram&lt; ZT, FT &gt;</a>
+, <a class="el" href="classMatGSOInterface.html#a9b7569f89d44dda5b289897dc0f4c0ef">MatGSOInterface&lt; ZT, FT &gt;</a>
+</li>
 <li>get_current_slope()
-: <a class="el" href="classMatGSO.html#a7af82a90318d3a3800b1fd06e58d6a5c">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#aa39efda4dd6337e3cacff39cccdfa20e">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_d()
 : <a class="el" href="classFP__NR.html#a3787d1a9f04d2aae9a197dc993a03a2b">FP_NR&lt; F &gt;</a>
@@ -148,109 +156,121 @@ $(function() {
 : <a class="el" href="classZ__NR.html#a872e4c7fbd76899bc088da43163a7fae">Z_NR&lt; Z &gt;</a>
 </li>
 <li>get_g_matrix()
-: <a class="el" href="classMatGSO.html#a8cae7a8de889e582aa5fcf6f9df3fd7b">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#a74b53137b2416dfb45cb3be85e7dbb0c">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_gmp_state()
 : <a class="el" href="classRandGen.html#ab86ce5a4f27bdeb10544f2de3769beec">RandGen</a>
 </li>
 <li>get_gram()
 : <a class="el" href="classMatGSO.html#a1501a05f3f349e855ec0e425892c3fb9">MatGSO&lt; ZT, FT &gt;</a>
+, <a class="el" href="classMatGSOGram.html#a9da8defa44d368422c684c132af76ea2">MatGSOGram&lt; ZT, FT &gt;</a>
+, <a class="el" href="classMatGSOInterface.html#a7e2c25c7501f0ce453c4980fc0829ec5">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_initialized()
 : <a class="el" href="classRandGen.html#a1ff0576de4e818c081b6f4f446f5d737">RandGen</a>
 </li>
 <li>get_log_det()
-: <a class="el" href="classMatGSO.html#acf09331eff47cf619824060e827aae1c">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#a585a887a732ad2cf7eb480e1a30164d0">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_max()
 : <a class="el" href="classMatrix.html#ada1faefeefd46b005e10eb7f68b866bd">Matrix&lt; T &gt;</a>
 </li>
 <li>get_max_bstar()
-: <a class="el" href="classMatGSO.html#acb74e34ff1698ddb17f49e5de6f69664">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#ad09bce7fd97c670c4ef82e635e29976a">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_max_error()
-: <a class="el" href="classErrorBoundedEvaluator.html#afdc547d22d333117c07ca8d208decc80">ErrorBoundedEvaluator</a>
-, <a class="el" href="classExactErrorBoundedEvaluator.html#a2fb0c6ed393b0c9f4a917a262050d4e9">ExactErrorBoundedEvaluator</a>
-, <a class="el" href="classFastErrorBoundedEvaluator.html#a3b28b37e300fef4e782fa73a20f5178a">FastErrorBoundedEvaluator</a>
+: <a class="el" href="classErrorBoundedEvaluator.html#ab8bac27f741c38ae71a4b080823305d8">ErrorBoundedEvaluator</a>
+, <a class="el" href="classExactErrorBoundedEvaluator.html#acd8a35c70be497873a91db3b55d80b3d">ExactErrorBoundedEvaluator</a>
+, <a class="el" href="classFastErrorBoundedEvaluator.html#acf789fede459b9c3fe5e5f99f5d18957">FastErrorBoundedEvaluator</a>
 </li>
 <li>get_max_error_aux()
-: <a class="el" href="classErrorBoundedEvaluator.html#ab301921ca213d5d25c4ccde9a9edf308">ErrorBoundedEvaluator</a>
+: <a class="el" href="classErrorBoundedEvaluator.html#a2bb0bf1dc363635380c544f2250b9baa">ErrorBoundedEvaluator</a>
 </li>
 <li>get_max_exp()
 : <a class="el" href="classMatrix.html#a81ac738e8090a990617d4c0b9e7a037f">Matrix&lt; T &gt;</a>
+</li>
+<li>get_max_exp_of_b()
+: <a class="el" href="classMatGSO.html#a703fe3705395d9cac9770dc215243fe3">MatGSO&lt; ZT, FT &gt;</a>
+, <a class="el" href="classMatGSOGram.html#a957d07057b11d3d426946972656589af">MatGSOGram&lt; ZT, FT &gt;</a>
+, <a class="el" href="classMatGSOInterface.html#a1a0a67d3e9e4814aade56156e9efeca7">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_max_exponent()
 : <a class="el" href="classNumVect.html#afb229fc04ef64453334ddb2b76cc3c14">NumVect&lt; T &gt;</a>
 </li>
 <li>get_max_gram()
-: <a class="el" href="classMatGSO.html#af021e00af9dfc4c2bc30d4394b82a57d">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#a0f00b32980ee8deef0fcbfcf0eecdaba">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_max_mu_exp()
-: <a class="el" href="classMatGSO.html#a3f1586ec5a8e357673519f84ec136699">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#a73da80571c6b63294dba6b2f7e0bab2e">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_mpfr()
-: <a class="el" href="classFP__NR.html#aeaec170cb5b9fad8cb3c67ec71e2195f">FP_NR&lt; F &gt;</a>
+: <a class="el" href="classFP__NR.html#a695da576444f0186d69bd4e45cb31acb">FP_NR&lt; F &gt;</a>
 </li>
 <li>get_mpz()
-: <a class="el" href="classZ__NR.html#a0d8bc338c2a6dd64f50a106c8526925d">Z_NR&lt; Z &gt;</a>
+: <a class="el" href="classZ__NR.html#a98088f49e2bba1dea6e3208a247d32ec">Z_NR&lt; Z &gt;</a>
 </li>
 <li>get_mu()
-: <a class="el" href="classMatGSO.html#a0da66de05973c16b3072a019b7f6eea3">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#a9c2598aad5886a49646bf726be765620">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_mu_exp()
-: <a class="el" href="classMatGSO.html#a65037631f9a1820f4ee6f579ecef0df3">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#ac7e259f1d655bbca6f2c08fa7ffb8844">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_mu_matrix()
-: <a class="el" href="classMatGSO.html#a6a356f84fbf8b4faf106cb0aa926137f">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#a9335b920d2b9e8c8b807e5a72e242ca5">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_nodes()
-: <a class="el" href="classEnumeration.html#a9cf14228f325116a3c16d8b6bb2516a8">Enumeration&lt; FT &gt;</a>
+: <a class="el" href="classEnumeration.html#a0ec05f620d98265791373049922a9fce">Enumeration&lt; ZT, FT &gt;</a>
 , <a class="el" href="classEnumerationBase.html#ae84ab79935e901b5f21e4aff4e3a3e58">EnumerationBase</a>
-, <a class="el" href="classEnumerationDyn.html#ac27ba323bd920344f8ec17f8ee0c13c1">EnumerationDyn&lt; FT &gt;</a>
-, <a class="el" href="classExternalEnumeration.html#a9eedfbe07d72573e88b6bcb95a13dc88">ExternalEnumeration&lt; FT &gt;</a>
+, <a class="el" href="classEnumerationDyn.html#aad729ae10175b7c6e15d2816ad571796">EnumerationDyn&lt; ZT, FT &gt;</a>
+, <a class="el" href="classExternalEnumeration.html#af30f8d6a6856a5069e232849879b6c1e">ExternalEnumeration&lt; ZT, FT &gt;</a>
 </li>
 <li>get_prec()
-: <a class="el" href="classFP__NR.html#a339ebb9f4af0a746a49560f2a1b22347">FP_NR&lt; F &gt;</a>
+: <a class="el" href="classFP__NR.html#aa4a5ac73c28941f9932d6a2970deae9f">FP_NR&lt; F &gt;</a>
 </li>
 <li>get_pruning()
-: <a class="el" href="classStrategy.html#a01796b52da8c93a54ea1f60e68cc3b3a">Strategy</a>
+: <a class="el" href="classStrategy.html#ad45ee60d67c6afd779f686f120c1b476">Strategy</a>
 </li>
 <li>get_r()
-: <a class="el" href="classMatGSO.html#aa14dabc76b82a1d68b1d46006c6c6c28">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#a25e1371613c5198263b4b3591f13ad47">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_r_exp()
-: <a class="el" href="classMatGSO.html#af598f3f80aa918028b196e6d461c4c18">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#a30c1137495c4c384d87ec44140b830ba">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_r_matrix()
-: <a class="el" href="classMatGSO.html#a27cc489de4300053d69cb6c5c50c8641">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#aead111d6d5bf1b4c077d43f31577a29f">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_root_det()
-: <a class="el" href="classMatGSO.html#a05041f45be7632c313fc01a3fb19f3fc">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#ad8a0766c9b92ec9e2a724825046e5699">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_rows()
 : <a class="el" href="classMatrix.html#a644b387f8dedfd75066e7e93f4bd3514">Matrix&lt; T &gt;</a>
 </li>
+<li>get_rows_of_b()
+: <a class="el" href="classMatGSO.html#a94b591f1961f97ea6c4983f238b56ef4">MatGSO&lt; ZT, FT &gt;</a>
+, <a class="el" href="classMatGSOGram.html#aa27f5211cd8cd766f47d9e4cd5c08970">MatGSOGram&lt; ZT, FT &gt;</a>
+, <a class="el" href="classMatGSOInterface.html#a5270e13807e0e97163acb1d12899bb6e">MatGSOInterface&lt; ZT, FT &gt;</a>
+</li>
 <li>get_si()
-: <a class="el" href="classFP__NR.html#a696cb6b32a52f09131de4dd8452ebf78">FP_NR&lt; F &gt;</a>
+: <a class="el" href="classFP__NR.html#a91163959d3cd883238092c43d75e50bf">FP_NR&lt; F &gt;</a>
 , <a class="el" href="classZ__NR.html#a55b3f03d40f308cb1e5a19bb120b0a5b">Z_NR&lt; Z &gt;</a>
 </li>
 <li>get_si_exp()
-: <a class="el" href="classFP__NR.html#acde815407c45d615056e06ae7f4e9c9b">FP_NR&lt; F &gt;</a>
+: <a class="el" href="classFP__NR.html#a019787f2074514ad3f7e817b2496b6c4">FP_NR&lt; F &gt;</a>
 </li>
 <li>get_si_exp_we()
-: <a class="el" href="classFP__NR.html#afb73960985b4a886f35e94fd5871ec19">FP_NR&lt; F &gt;</a>
+: <a class="el" href="classFP__NR.html#a1b4f46c4a162c1043ac5eb3f533a1520">FP_NR&lt; F &gt;</a>
 </li>
 <li>get_slide_potential()
-: <a class="el" href="classMatGSO.html#af919a7b68e5df274a8437cde962c3ef9">MatGSO&lt; ZT, FT &gt;</a>
+: <a class="el" href="classMatGSOInterface.html#a2463f4dd7566feeaf11d3ec70227dfed">MatGSOInterface&lt; ZT, FT &gt;</a>
 </li>
 <li>get_sub_tree()
 : <a class="el" href="classEnumerator.html#a21a9ce6fd71856a0c0af4f46bdacbbd1">Enumerator</a>
 </li>
 <li>get_z_exp()
-: <a class="el" href="classFP__NR.html#acce9c55e1889149cfdc639e6c28b3021">FP_NR&lt; F &gt;</a>
+: <a class="el" href="classFP__NR.html#a824fd9369f627ff0cfc2946c98df5df0">FP_NR&lt; F &gt;</a>
 </li>
 <li>get_z_exp_we()
-: <a class="el" href="classFP__NR.html#a3683c67012b74baad0d47de0daf5add2">FP_NR&lt; F &gt;</a>
+: <a class="el" href="classFP__NR.html#aa103dadc3f736ef748a1decc5915cb2a">FP_NR&lt; F &gt;</a>
 </li>
 </ul>
 </div><!-- contents -->

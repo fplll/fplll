@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['pruner_5fmethod_5fgradient',['PRUNER_METHOD_GRADIENT',['../defs_8h.html#a172f6be81a9eaae1747a290a3211e767ad4087b702c886e48d51de5046632cf19',1,'defs.h']]],
-  ['pruner_5fmethod_5fgreedy',['PRUNER_METHOD_GREEDY',['../defs_8h.html#a172f6be81a9eaae1747a290a3211e767a6be3b4c315a5575e9d0911a2da3bb966',1,'defs.h']]],
-  ['pruner_5fmethod_5fhybrid',['PRUNER_METHOD_HYBRID',['../defs_8h.html#a172f6be81a9eaae1747a290a3211e767a86191796c443cd508bd4d7ad5241dc13',1,'defs.h']]],
-  ['pruner_5fmethod_5fnm',['PRUNER_METHOD_NM',['../defs_8h.html#a172f6be81a9eaae1747a290a3211e767aa57d0c748f527530170f00e1b8c5ec9f',1,'defs.h']]],
+  ['pruner_5fcvp',['PRUNER_CVP',['../defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a3c01c8fc0b80ef2b099256e3f9b102a5',1,'defs.h']]],
+  ['pruner_5fgradient',['PRUNER_GRADIENT',['../defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a3281602adb24c04e3e37d04e152438c1',1,'defs.h']]],
   ['pruner_5fmetric_5fexpected_5fsolutions',['PRUNER_METRIC_EXPECTED_SOLUTIONS',['../defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0a8e0b621db228d3587a86f18b3c088148',1,'defs.h']]],
-  ['pruner_5fmetric_5fprobability_5fof_5fshortest',['PRUNER_METRIC_PROBABILITY_OF_SHORTEST',['../defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0a2e463055f41a65c3fc05823b7b267ed9',1,'defs.h']]]
+  ['pruner_5fmetric_5fprobability_5fof_5fshortest',['PRUNER_METRIC_PROBABILITY_OF_SHORTEST',['../defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0a2e463055f41a65c3fc05823b7b267ed9',1,'defs.h']]],
+  ['pruner_5fnelder_5fmead',['PRUNER_NELDER_MEAD',['../defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a224093a8b8e04d67103350c6ed8040ca',1,'defs.h']]],
+  ['pruner_5fstart_5ffrom_5finput',['PRUNER_START_FROM_INPUT',['../defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a0b8fd5f034bd62e84bc173f2e4f0beb9',1,'defs.h']]],
+  ['pruner_5fverbose',['PRUNER_VERBOSE',['../defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a20d82d69ccb304a187f3c3c097a8aa4b',1,'defs.h']]]
 ];

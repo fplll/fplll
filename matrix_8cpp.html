@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.1.0</a>
+                    <a class="navbar-brand">fplll 5.2.0</a>
                 </div>
             </div>
         </nav>
@@ -80,7 +80,8 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a>  </div>
+<a href="#define-members">Macros</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">matrix.cpp File Reference</div>  </div>
 </div><!--header-->
@@ -90,13 +91,20 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="matrix_8cpp__dep__incl.svg" width="2235" height="768"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="matrix_8cpp__dep__incl.svg" width="2419" height="754"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:aed792c157be536dbffbd1785da9b1fb3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="matrix_8cpp.html#aed792c157be536dbffbd1785da9b1fb3">FPLLL_MATRIX_CPP</a></td></tr>
 <tr class="separator:aed792c157be536dbffbd1785da9b1fb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:aa2093b40e87c9ca9907432c4f357f7f7"><td class="memTemplParams" colspan="2">template&lt;class ZTto , class ZTfrom &gt; </td></tr>
+<tr class="memitem:aa2093b40e87c9ca9907432c4f357f7f7"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="matrix_8cpp.html#aa2093b40e87c9ca9907432c4f357f7f7">convert</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZTto &gt; &amp;Ato, const <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZTfrom &gt; &amp;Afrom, int buffer)</td></tr>
+<tr class="separator:aa2093b40e87c9ca9907432c4f357f7f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="aed792c157be536dbffbd1785da9b1fb3"></a>
@@ -110,6 +118,44 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="aa2093b40e87c9ca9907432c4f357f7f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2093b40e87c9ca9907432c4f357f7f7">&#9670;&nbsp;</a></span>convert()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZTto , class ZTfrom &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool convert </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZTto &gt; &amp;&#160;</td>
+          <td class="paramname"><em>Ato</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZTfrom &gt; &amp;&#160;</td>
+          <td class="paramname"><em>Afrom</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>buffer</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Converts integer matrices. Conversion is coing through get_si(), so ONLY use for small numbers that fit into longs. More specifically, Afrom is converted to Ato (and true is returned) if all numbers in Afrom fit into numeric_limits&lt;long&gt;::digits - buffer bits. Otherwise, conversion is aborted and false is returned. </p>
 
 </div>
 </div>

@@ -31,7 +31,6 @@ var searchData=
   ['fplll_5fwith_5fdpe',['FPLLL_WITH_DPE',['../defs_8h.html#afc23b41c7d767b35a021d6583353d3d6',1,'defs.h']]],
   ['fplll_5fwith_5fgetrusage',['FPLLL_WITH_GETRUSAGE',['../defs_8h.html#a1f79260d438f0341579e0a9c2d5a4035',1,'defs.h']]],
   ['fplll_5fwith_5flong_5fdouble',['FPLLL_WITH_LONG_DOUBLE',['../defs_8h.html#a08536b74db0fac36d1d55080c69e10b0',1,'defs.h']]],
-  ['fplll_5fwith_5frecursive_5fenum',['FPLLL_WITH_RECURSIVE_ENUM',['../enumerate__base_8h.html#a6d5bc0e7a7ea6590b938e1ca6c298043',1,'enumerate_base.h']]],
   ['fplll_5fwith_5fzdouble',['FPLLL_WITH_ZDOUBLE',['../defs_8h.html#a603aafb02cebb170dbc14aa11db466aa',1,'defs.h']]],
   ['fplll_5fwith_5fzlong',['FPLLL_WITH_ZLONG',['../defs_8h.html#a8e7694eff3dc6acd0ae673f2f7090c5a',1,'defs.h']]]
 ];

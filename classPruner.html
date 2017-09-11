@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.1.0</a>
+                    <a class="navbar-brand">fplll 5.2.0</a>
                 </div>
             </div>
         </nav>
@@ -78,12 +78,14 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Data Fields</a> &#124;
 <a href="#friends">Friends</a>  </div>
   <div class="headertitle">
 <div class="title">Pruner&lt; FT &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a> class, to compute and optimize cost and success probability of pruned enumeration.  
+ <a href="classPruner.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="pruner_8h_source.html">pruner.h</a>&gt;</code></p>
 <table class="memberdecls">
@@ -94,53 +96,59 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae1d60ead19e9df0a9e3d551ba4e264d2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#ae1d60ead19e9df0a9e3d551ba4e264d2">Pruner</a> (FT <a class="el" href="classPruner.html#a9bfd449c7d972b176e853c077e42655d">enumeration_radius</a>=0.0, FT <a class="el" href="classPruner.html#a9ebddada6ef44c50ea653be1682df7f2">preproc_cost</a>=0.0, FT <a class="el" href="classPruner.html#a53cad5b244e2924ffc903dfae6790eb4">target</a>=0.9, <a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767">PrunerMethod</a> <a class="el" href="classPruner.html#a52b5a920b635b2a4c235d5c24e528897">method</a>=<a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767a86191796c443cd508bd4d7ad5241dc13">PRUNER_METHOD_HYBRID</a>, <a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0">PrunerMetric</a> <a class="el" href="classPruner.html#aaa6d3cd6449907166b8eff66ea751912">metric</a>=<a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0a2e463055f41a65c3fc05823b7b267ed9">PRUNER_METRIC_PROBABILITY_OF_SHORTEST</a>, size_t n=0, size_t d=0)</td></tr>
-<tr class="separator:ae1d60ead19e9df0a9e3d551ba4e264d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7cee53bae91d1c202920336c30f5263e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a7cee53bae91d1c202920336c30f5263e">load_basis_shape</a> (const vector&lt; double &gt; &amp;gso_sq_norms, bool reset_renorm=true)</td></tr>
-<tr class="memdesc:a7cee53bae91d1c202920336c30f5263e"><td class="mdescLeft">&#160;</td><td class="mdescRight">load the shape of a basis from vector&lt;double&gt;. Mostly for testing purposes  <a href="#a7cee53bae91d1c202920336c30f5263e">More...</a><br /></td></tr>
-<tr class="separator:a7cee53bae91d1c202920336c30f5263e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c354dd0d1c320b84a5e4534443a80e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a0c354dd0d1c320b84a5e4534443a80e9">load_basis_shapes</a> (const vector&lt; vector&lt; double &gt;&gt; &amp;gso_sq_norms_vec)</td></tr>
-<tr class="memdesc:a0c354dd0d1c320b84a5e4534443a80e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">load the shapes of may bases from vector&lt;vector&lt;double&gt;&gt; . Cost are average over all bases. Mostly for testing purposes  <a href="#a0c354dd0d1c320b84a5e4534443a80e9">More...</a><br /></td></tr>
-<tr class="separator:a0c354dd0d1c320b84a5e4534443a80e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af154edf66940bc9e63cd49f54baeed5d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#af154edf66940bc9e63cd49f54baeed5d">optimize_coefficients</a> (vector&lt; double &gt; &amp;pr, const bool reset=true)</td></tr>
-<tr class="memdesc:af154edf66940bc9e63cd49f54baeed5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">optimize pruning coefficients  <a href="#af154edf66940bc9e63cd49f54baeed5d">More...</a><br /></td></tr>
-<tr class="separator:af154edf66940bc9e63cd49f54baeed5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae31ec5daebe28100cacae71bf64a21d5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#ae31ec5daebe28100cacae71bf64a21d5">Pruner</a> (const int n)</td></tr>
+<tr class="memdesc:ae31ec5daebe28100cacae71bf64a21d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">(limited) Constructor for <a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a>. Only for svp_probability.  <a href="#ae31ec5daebe28100cacae71bf64a21d5">More...</a><br /></td></tr>
+<tr class="separator:ae31ec5daebe28100cacae71bf64a21d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ec170621f085b74b8ec5623a278208f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a2ec170621f085b74b8ec5623a278208f">Pruner</a> (const FT enumeration_radius, const FT preproc_cost, const vector&lt; double &gt; &amp;gso_r, const FT target=0.9, const <a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0">PrunerMetric</a> metric=<a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0a2e463055f41a65c3fc05823b7b267ed9">PRUNER_METRIC_PROBABILITY_OF_SHORTEST</a>, int flags=<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a3281602adb24c04e3e37d04e152438c1">PRUNER_GRADIENT</a>)</td></tr>
+<tr class="memdesc:a2ec170621f085b74b8ec5623a278208f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for <a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a>.  <a href="#a2ec170621f085b74b8ec5623a278208f">More...</a><br /></td></tr>
+<tr class="separator:a2ec170621f085b74b8ec5623a278208f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a520d1f20ca38720a8dab5a07b4f185a0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a520d1f20ca38720a8dab5a07b4f185a0">Pruner</a> (const FT enumeration_radius, const FT preproc_cost, const vector&lt; vector&lt; double &gt;&gt; &amp;gso_rs, const FT target=0.9, const <a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0">PrunerMetric</a> metric=<a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0a2e463055f41a65c3fc05823b7b267ed9">PRUNER_METRIC_PROBABILITY_OF_SHORTEST</a>, int flags=<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a3281602adb24c04e3e37d04e152438c1">PRUNER_GRADIENT</a>)</td></tr>
+<tr class="memdesc:a520d1f20ca38720a8dab5a07b4f185a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for <a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a> with multiple basis (averaging the cost function over all of them)  <a href="#a520d1f20ca38720a8dab5a07b4f185a0">More...</a><br /></td></tr>
+<tr class="separator:a520d1f20ca38720a8dab5a07b4f185a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad66283687b7299421410b7cde8d4a520"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#ad66283687b7299421410b7cde8d4a520">optimize_coefficients</a> (vector&lt; double &gt; &amp;pr)</td></tr>
+<tr class="memdesc:ad66283687b7299421410b7cde8d4a520"><td class="mdescLeft">&#160;</td><td class="mdescRight">run the optimization process  <a href="#ad66283687b7299421410b7cde8d4a520">More...</a><br /></td></tr>
+<tr class="separator:ad66283687b7299421410b7cde8d4a520"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae754a53f2da0ea4ddc3f122f52d1f23d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#ae754a53f2da0ea4ddc3f122f52d1f23d">single_enum_cost</a> (const vector&lt; double &gt; &amp;pr, vector&lt; double &gt; *detailed_cost=nullptr)</td></tr>
 <tr class="memdesc:ae754a53f2da0ea4ddc3f122f52d1f23d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the cost of a single enumeration.  <a href="#ae754a53f2da0ea4ddc3f122f52d1f23d">More...</a><br /></td></tr>
 <tr class="separator:ae754a53f2da0ea4ddc3f122f52d1f23d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6030c2080c0066085b18664ec4c662b0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a6030c2080c0066085b18664ec4c662b0">repeated_enum_cost</a> (const vector&lt; double &gt; &amp;pr)</td></tr>
-<tr class="memdesc:a6030c2080c0066085b18664ec4c662b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the cost of r enumeration and (r-1) preprocessing, where r is the required number of retrials to reach target.  <a href="#a6030c2080c0066085b18664ec4c662b0">More...</a><br /></td></tr>
+<tr class="memdesc:a6030c2080c0066085b18664ec4c662b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cost of repeating enumeration and preprocessing until reaching target.  <a href="#a6030c2080c0066085b18664ec4c662b0">More...</a><br /></td></tr>
 <tr class="separator:a6030c2080c0066085b18664ec4c662b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa132b8db17f7becd456df3cbca4c7db1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#aa132b8db17f7becd456df3cbca4c7db1">measure_metric</a> (const vector&lt; double &gt; &amp;pr)</td></tr>
 <tr class="memdesc:aa132b8db17f7becd456df3cbca4c7db1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the success proba of a single enumeration.  <a href="#aa132b8db17f7becd456df3cbca4c7db1">More...</a><br /></td></tr>
 <tr class="separator:aa132b8db17f7becd456df3cbca4c7db1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Data Fields</h2></td></tr>
-<tr class="memitem:a9bfd449c7d972b176e853c077e42655d"><td class="memItemLeft" align="right" valign="top">FT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a9bfd449c7d972b176e853c077e42655d">enumeration_radius</a></td></tr>
-<tr class="memdesc:a9bfd449c7d972b176e853c077e42655d"><td class="mdescLeft">&#160;</td><td class="mdescRight">enumeration radius (squared)  <a href="#a9bfd449c7d972b176e853c077e42655d">More...</a><br /></td></tr>
-<tr class="separator:a9bfd449c7d972b176e853c077e42655d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ebddada6ef44c50ea653be1682df7f2"><td class="memItemLeft" align="right" valign="top">FT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a9ebddada6ef44c50ea653be1682df7f2">preproc_cost</a></td></tr>
-<tr class="memdesc:a9ebddada6ef44c50ea653be1682df7f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">cost of pre-processing a basis for a retrial  <a href="#a9ebddada6ef44c50ea653be1682df7f2">More...</a><br /></td></tr>
-<tr class="separator:a9ebddada6ef44c50ea653be1682df7f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53cad5b244e2924ffc903dfae6790eb4"><td class="memItemLeft" align="right" valign="top">FT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a53cad5b244e2924ffc903dfae6790eb4">target</a></td></tr>
-<tr class="memdesc:a53cad5b244e2924ffc903dfae6790eb4"><td class="mdescLeft">&#160;</td><td class="mdescRight">desired success probability after several retrial  <a href="#a53cad5b244e2924ffc903dfae6790eb4">More...</a><br /></td></tr>
-<tr class="separator:a53cad5b244e2924ffc903dfae6790eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af61ef0f88abb3810ed53bba270eff437"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#af61ef0f88abb3810ed53bba270eff437">verbosity</a> = 0</td></tr>
-<tr class="separator:af61ef0f88abb3810ed53bba270eff437"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52b5a920b635b2a4c235d5c24e528897"><td class="memItemLeft" align="right" valign="top"><a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767">PrunerMethod</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a52b5a920b635b2a4c235d5c24e528897">method</a></td></tr>
-<tr class="separator:a52b5a920b635b2a4c235d5c24e528897"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa6d3cd6449907166b8eff66ea751912"><td class="memItemLeft" align="right" valign="top"><a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0">PrunerMetric</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#aaa6d3cd6449907166b8eff66ea751912">metric</a></td></tr>
-<tr class="separator:aaa6d3cd6449907166b8eff66ea751912"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fa68fd92550a70f9c418049e0a97425"><td class="memItemLeft" align="right" valign="top">FT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a0fa68fd92550a70f9c418049e0a97425">gaussian_heuristic</a> ()</td></tr>
+<tr class="memdesc:a0fa68fd92550a70f9c418049e0a97425"><td class="mdescLeft">&#160;</td><td class="mdescRight">gaussian heuristic for the shortest vector length of the loaded basis.  <a href="#a0fa68fd92550a70f9c418049e0a97425">More...</a><br /></td></tr>
+<tr class="separator:a0fa68fd92550a70f9c418049e0a97425"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
 <tr class="memitem:a6af9f405bf16c4faeeb47ae5f39bbd7d"><td class="memItemLeft" align="right" valign="top">class&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a6af9f405bf16c4faeeb47ae5f39bbd7d">TestPruner</a></td></tr>
 <tr class="separator:a6af9f405bf16c4faeeb47ae5f39bbd7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ae1d60ead19e9df0a9e3d551ba4e264d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1d60ead19e9df0a9e3d551ba4e264d2">&#9670;&nbsp;</a></span>Pruner()</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class FT&gt;<br />
+class Pruner&lt; FT &gt;</h3>
+
+<p><a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a> class, to compute and optimize cost and success probability of pruned enumeration. </p>
+<p>The class is templated by a Floating Point Type, which are used for internal computations.</p>
+<p>This class provides an implementation of the numerically optimized pruning strategy of [Gama Nguyen Regev 2010].</p>
+<p>Many details for implementation follows from the thesis [Chen 2013] Some simplifications have been made, for example we restrict ourselves to ``even vector bounds'' i.e., the bound at indices 2i and 2i+1 are kept equal, as to allow volume estimation by symbolic integration (see [GNR10,Chen13])</p>
+<p>naming conventions:</p><ul>
+<li>b is for bound (squared)</li>
+<li>ipv is for inverse partial volumes (NOT squared)</li>
+<li>r is for gram schmidt length (squared). Automatically renormalized to avoid overflowing partial volumes</li>
+<li>p is for polynomial</li>
+</ul>
+<p>inside this code, b,pv,and r are in reversed order as to conform with the algorithm description of [Chen13] reversing the order is handled by the load and save methods.</p>
+<ul>
+<li>n is for the dimension of the basis to prune</li>
+<li>d is for degrees of polynomials. md is for max_degree</li>
+<li>d is floor(n/2 at most). Odd n are dealt with by ignoring the first component </li>
+</ul>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ae31ec5daebe28100cacae71bf64a21d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae31ec5daebe28100cacae71bf64a21d5">&#9670;&nbsp;</a></span>Pruner() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -153,44 +161,74 @@ template&lt;class FT &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::<a class="el" href="classPruner.html">Pruner</a> </td>
           <td>(</td>
-          <td class="paramtype">FT&#160;</td>
-          <td class="paramname"><em>enumeration_radius</em> = <code>0.0</code>, </td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>(limited) Constructor for <a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a>. Only for svp_probability. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>dimension of the pruned block </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2ec170621f085b74b8ec5623a278208f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ec170621f085b74b8ec5623a278208f">&#9670;&nbsp;</a></span>Pruner() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::<a class="el" href="classPruner.html">Pruner</a> </td>
+          <td>(</td>
+          <td class="paramtype">const FT&#160;</td>
+          <td class="paramname"><em>enumeration_radius</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">FT&#160;</td>
-          <td class="paramname"><em>preproc_cost</em> = <code>0.0</code>, </td>
+          <td class="paramtype">const FT&#160;</td>
+          <td class="paramname"><em>preproc_cost</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">FT&#160;</td>
+          <td class="paramtype">const vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>gso_r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FT&#160;</td>
           <td class="paramname"><em>target</em> = <code>0.9</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767">PrunerMethod</a>&#160;</td>
-          <td class="paramname"><em>method</em> = <code><a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767a86191796c443cd508bd4d7ad5241dc13">PRUNER_METHOD_HYBRID</a></code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0">PrunerMetric</a>&#160;</td>
+          <td class="paramtype">const <a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0">PrunerMetric</a>&#160;</td>
           <td class="paramname"><em>metric</em> = <code><a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0a2e463055f41a65c3fc05823b7b267ed9">PRUNER_METRIC_PROBABILITY_OF_SHORTEST</a></code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>n</em> = <code>0</code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>d</em> = <code>0</code>&#160;</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em> = <code><a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a3281602adb24c04e3e37d04e152438c1">PRUNER_GRADIENT</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -205,28 +243,68 @@ template&lt;class FT &gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Constructor for <a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a>. </p>
+<p>Algorithmic details are given for the wrapping function <a class="el" href="pruner_8cpp.html#aef8c3b453b5e55ed8553ac1d97c392a5" title="Search for optimal pruning parameters. ">prune()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">enumeration_radius</td><td>radius of the desired enumeration </td></tr>
+    <tr><td class="paramname">preproc_cost</td><td>cost of preprocessing (i.e. additive cost for a retrying an enumeration) </td></tr>
+    <tr><td class="paramname">gso_r</td><td>vector Gram-Schmidt length (squared) of the enumerated block over several bases </td></tr>
+    <tr><td class="paramname">target</td><td>desired target success probability/expected solutions after all retrial. </td></tr>
+    <tr><td class="paramname">metric</td><td>metric is to be optimized : PRUNER_METRIC_PROBABILITY_OF_SHORTEST or PRUNER_METRIC_EXPECTED_SOLUTIONS </td></tr>
+    <tr><td class="paramname">flags</td><td>complementary parameters : PRUNER_CVP PRUNER_START_FROM_INPUT PRUNER_GRADIENT PRUNER_NELDER_MEAD PRUNER_VERBOSE </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7cee53bae91d1c202920336c30f5263e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cee53bae91d1c202920336c30f5263e">&#9670;&nbsp;</a></span>load_basis_shape()</h2>
+<a id="a520d1f20ca38720a8dab5a07b4f185a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a520d1f20ca38720a8dab5a07b4f185a0">&#9670;&nbsp;</a></span>Pruner() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class FT &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::load_basis_shape </td>
+          <td class="memname"><a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::<a class="el" href="classPruner.html">Pruner</a> </td>
           <td>(</td>
-          <td class="paramtype">const vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>gso_sq_norms</em>, </td>
+          <td class="paramtype">const FT&#160;</td>
+          <td class="paramname"><em>enumeration_radius</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>reset_renorm</em> = <code>true</code>&#160;</td>
+          <td class="paramtype">const FT&#160;</td>
+          <td class="paramname"><em>preproc_cost</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const vector&lt; vector&lt; double &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>gso_rs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const FT&#160;</td>
+          <td class="paramname"><em>target</em> = <code>0.9</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0">PrunerMetric</a>&#160;</td>
+          <td class="paramname"><em>metric</em> = <code><a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0a2e463055f41a65c3fc05823b7b267ed9">PRUNER_METRIC_PROBABILITY_OF_SHORTEST</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em> = <code><a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a3281602adb24c04e3e37d04e152438c1">PRUNER_GRADIENT</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -234,15 +312,32 @@ template&lt;class FT &gt; </div>
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>load the shape of a basis from vector&lt;double&gt;. Mostly for testing purposes </p>
-<p>PUBLIC METHODS. </p>
+<p>Constructor for <a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a> with multiple basis (averaging the cost function over all of them) </p>
+<p>Algorithmic details are given for the wrapping function <a class="el" href="pruner_8cpp.html#aef8c3b453b5e55ed8553ac1d97c392a5" title="Search for optimal pruning parameters. ">prune()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">enumeration_radius</td><td>radius of the desired enumeration </td></tr>
+    <tr><td class="paramname">preproc_cost</td><td>cost of preprocessing (i.e. additive cost for a retrying an enumeration) </td></tr>
+    <tr><td class="paramname">gso_rs</td><td>vector of vector Gram-Schmidt length (squared) of the enumerated block over several bases </td></tr>
+    <tr><td class="paramname">target</td><td>desired target success probability/expected solutions after all retrial. </td></tr>
+    <tr><td class="paramname">metric</td><td>metric is to be optimized : PRUNER_METRIC_PROBABILITY_OF_SHORTEST or PRUNER_METRIC_EXPECTED_SOLUTIONS </td></tr>
+    <tr><td class="paramname">flags</td><td>complementary parameters : PRUNER_CVP PRUNER_START_FROM_INPUT PRUNER_GRADIENT PRUNER_NELDER_MEAD PRUNER_VERBOSE </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a id="a0c354dd0d1c320b84a5e4534443a80e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0c354dd0d1c320b84a5e4534443a80e9">&#9670;&nbsp;</a></span>load_basis_shapes()</h2>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a0fa68fd92550a70f9c418049e0a97425"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fa68fd92550a70f9c418049e0a97425">&#9670;&nbsp;</a></span>gaussian_heuristic()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -250,16 +345,16 @@ template&lt;class FT &gt; </div>
 template&lt;class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::load_basis_shapes </td>
+          <td class="memname">FT <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::gaussian_heuristic </td>
           <td>(</td>
-          <td class="paramtype">const vector&lt; vector&lt; double &gt;&gt; &amp;&#160;</td>
-          <td class="paramname"><em>gso_sq_norms_vec</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>load the shapes of may bases from vector&lt;vector&lt;double&gt;&gt; . Cost are average over all bases. Mostly for testing purposes </p>
+<p>gaussian heuristic for the shortest vector length of the loaded basis. </p>
+<dl class="section note"><dt>Note</dt><dd>If multiple loaded then it is the gaussian heuristic of the first one. </dd></dl>
 
 </div>
 </div>
@@ -293,8 +388,8 @@ template&lt;class FT &gt; </div>
 
 </div>
 </div>
-<a id="af154edf66940bc9e63cd49f54baeed5d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af154edf66940bc9e63cd49f54baeed5d">&#9670;&nbsp;</a></span>optimize_coefficients()</h2>
+<a id="ad66283687b7299421410b7cde8d4a520"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad66283687b7299421410b7cde8d4a520">&#9670;&nbsp;</a></span>optimize_coefficients()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -305,24 +400,14 @@ template&lt;class FT &gt; </div>
           <td class="memname">void <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::optimize_coefficients </td>
           <td>(</td>
           <td class="paramtype">vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>pr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>pr</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">const bool&#160;</td>
-          <td class="paramname"><em>reset</em> = <code>true</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>optimize pruning coefficients </p>
-<dl class="section note"><dt>Note</dt><dd>Basis Shape and other parameters must have been set beforehand. See auto_prune for an example of proper usage. </dd></dl>
+<p>run the optimization process </p>
+<p>Run the optimization process, successively using the algorithm activated </p>
 
 </div>
 </div>
@@ -352,6 +437,7 @@ template&lt;class FT &gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Cost of repeating enumeration and preprocessing until reaching target. </p>
 <p>Compute the cost of r enumeration and (r-1) preprocessing, where r is the required number of retrials to reach target. </p>
 
 </div>
@@ -417,111 +503,6 @@ template&lt;class FT &gt; </div>
 <span class="mlabels"><span class="mlabel">friend</span></span>  </td>
   </tr>
 </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Field Documentation</h2>
-<a id="a9bfd449c7d972b176e853c077e42655d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9bfd449c7d972b176e853c077e42655d">&#9670;&nbsp;</a></span>enumeration_radius</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">FT <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::enumeration_radius</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>enumeration radius (squared) </p>
-
-</div>
-</div>
-<a id="a52b5a920b635b2a4c235d5c24e528897"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a52b5a920b635b2a4c235d5c24e528897">&#9670;&nbsp;</a></span>method</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="defs_8h.html#a172f6be81a9eaae1747a290a3211e767">PrunerMethod</a> <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::method</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aaa6d3cd6449907166b8eff66ea751912"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa6d3cd6449907166b8eff66ea751912">&#9670;&nbsp;</a></span>metric</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="defs_8h.html#aca0154ca2cffd3fbbde877b7436333c0">PrunerMetric</a> <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::metric</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a9ebddada6ef44c50ea653be1682df7f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ebddada6ef44c50ea653be1682df7f2">&#9670;&nbsp;</a></span>preproc_cost</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">FT <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::preproc_cost</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>cost of pre-processing a basis for a retrial </p>
-<p>This cost should be expressed in terms of ``nodes'' in an enumeration. Roughly, a node is equivalent to 100 CPU cycles. </p>
-
-</div>
-</div>
-<a id="a53cad5b244e2924ffc903dfae6790eb4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53cad5b244e2924ffc903dfae6790eb4">&#9670;&nbsp;</a></span>target</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">FT <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::target</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>desired success probability after several retrial </p>
-<dl class="section note"><dt>Note</dt><dd>one can try to force probability &gt;= target by setting a prohibitive preproc_cost. But beware: this may induces numerical stability issue, especially with the gradient method. </dd></dl>
-
-</div>
-</div>
-<a id="af61ef0f88abb3810ed53bba270eff437"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af61ef0f88abb3810ed53bba270eff437">&#9670;&nbsp;</a></span>verbosity</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">int <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::verbosity = 0</td>
-        </tr>
-      </table>
 </div><div class="memdoc">
 
 </div>

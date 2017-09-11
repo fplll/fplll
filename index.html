@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.1.0</a>
+                    <a class="navbar-brand">fplll 5.2.0</a>
                 </div>
             </div>
         </nav>
@@ -79,7 +79,7 @@ $(function() {
 <div class="title">fplll </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a href="https://travis-ci.org/fplll/fplll"></a></p>
+<div class="textblock"><p><a href="https://travis-ci.org/fplll/fplll"></a> <a href="https://codecov.io/gh/fplll/fplll"></a></p>
 <p>fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL [<a href="#LLL82">LLL82</a>] is central to the code, hence the name.</p>
 <p>It includes implementations of floating-point LLL reduction algorithms [<a href="#NS09">NS09</a>,<a href="#MSV09">MSV09</a>], offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible [<a href="#S10">S10</a>]. In the case of the wrapper, the succession of variants is oblivious to the user.</p>
 <p>It includes an implementation of the BKZ reduction algorithm [<a href="#SE94">SE94</a>], including the BKZ-2.0 [<a href="#CN11">CN11</a>] improvements (extreme enumeration pruning, pre-processing of blocks, early termination). Additionally, Slide reduction [<a href="#GN08">GN08</a>] and self dual BKZ [<a href="#MW16">MW16</a>] are supported.</p>
@@ -180,8 +180,8 @@ make install            # (as root)
 <li><code>-a hkz</code> : HKZ-reduction.</li>
 <li><code>-a svp</code> : prints a shortest non-zero vector of the lattice.</li>
 <li><code>-a sdb</code> : self dual variant of BKZ-reduction.</li>
-<li><code>-a sld</code> : Slide reduction.</li>
-<li><code>-a svp</code> : print a shortest vector of the lattice.</li>
+<li><code>-a sld</code> : slide reduction.</li>
+<li><code>-a cvp</code> : prints the vector in the lattice closest to the input vector.</li>
 <li><code>-v</code> : verbose mode.</li>
 <li><code>-nolll</code> : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution).</li>
 <li><code>-r</code> <code>size</code>, <code>-c</code> <code>size</code> : ignored, provided for compatibility with previous versions of fplll.</li>
@@ -198,8 +198,9 @@ make install            # (as root)
 <li><code>-f dpe</code> : sets the floating-point type to DPE (default if <code>m=heuristic/heuristicearly</code>).</li>
 <li><code>-f double</code> : sets the floating-point type to double (default if <code>m=fast/fastearly</code>).</li>
 <li><code>-f longdouble</code> : sets the floating-point type to long double.</li>
-<li><code>-z int</code> : sets the integer type to int.</li>
 <li><code>-z mpz</code> : sets the integer type to mpz, the integer type of GMP (default).</li>
+<li><code>-z int</code> : sets the integer type to int.</li>
+<li><code>-z long</code> : as <code>-z int</code>.</li>
 <li><code>-z double</code> : sets the integer type to double.</li>
 <li><code>-m wrapper</code> : uses the wrapper. (default if <code>z=mpz</code>).</li>
 <li><code>-m fast</code> : uses the fast method, works only with <code>-f double</code>.</li>
@@ -207,24 +208,36 @@ make install            # (as root)
 <li><code>-m heuristic</code> : uses the heuristic method.</li>
 <li><code>-m heuristicearly</code> : uses the heuristic method with early reduction.</li>
 <li><code>-m proved</code> : uses the proved version of the algorithm.</li>
+<li><code>-y</code> : early reduction.</li>
 </ul>
 <p>With the wrapper or the proved version, it is guaranteed that the basis is LLL-reduced with δ'=2×δ-1 and η'=2×η-1/2. For instance, with the default options, it is guaranteed that the basis is (0.98,0.52)-LLL-reduced.</p>
 <p><a class="el" href="structOptions.html">Options</a> for BKZ-reduction:</p>
 <ul>
-<li><code>-b block_size</code> : Block size, mandatory, between 2 and the number of vectors.</li>
-<li><code>-f float_type</code> : Same as LLL (<code>-p</code> is required if <code>float_type=mpfr</code>).</li>
-<li><code>-p precision</code> : Precision of the floating-point arithmetic with <code>-f mpfr</code>.</li>
-<li><code>-bkzmaxloops loops</code> : Maximum number of full loop iterations.</li>
-<li><code>-bkzmaxtime time</code> : Stops after <code>time</code> seconds (up to completion of the current loop iteration).</li>
-<li><code>-bkzautoabort</code> : Stops when the average slope of the log ||b_i*||'s does not decrease fast enough.</li>
+<li><code>-b block_size</code> : block size, mandatory, between 2 and the number of vectors.</li>
+<li><code>-f float_type</code> : same as LLL (<code>-p</code> is required if <code>float_type=mpfr</code>).</li>
+<li><code>-p precision</code> : precision of the floating-point arithmetic with <code>-f mpfr</code>.</li>
+<li><code>-bkzmaxloops loops</code> : maximum number of full loop iterations.</li>
+<li><code>-bkzmaxtime time</code> : stops after <code>time</code> seconds (up to completion of the current loop iteration).</li>
+<li><code>-bkzautoabort</code> : stops when the average slope of the log ||b_i*||'s does not decrease fast enough.</li>
 </ul>
 <p>Without any of the last three options, BKZ runs until no block has been updated for a full loop iteration.</p>
 <ul>
-<li><code>-s filename.json</code> : Use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.</li>
-<li><code>-bkzghbound factor</code> : Multiplies the Gaussian heuristic by factor (of float type) to set the enumeration radius of the SVP calls.</li>
-<li><code>-bkzboundedlll</code> : Restricts the LLL call before considering a block to vector indices within that block.</li>
-<li><code>-bkzdumgso file_name</code> : Dumps the log ||b_i*|| 's in specified file.</li>
+<li><code>-s filename.json</code> : use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.</li>
+<li><code>-bkzghbound factor</code> : multiplies the Gaussian heuristic by <code>factor</code> (of float type) to set the enumeration radius of the SVP calls.</li>
+<li><code>-bkzboundedlll</code> : restricts the LLL call before considering a block to vector indices within that block.</li>
+<li><code>-bkzdumgso file_name</code> : dumps the log ||b_i*|| 's in specified file.</li>
 </ul>
+<p>Output formats:</p>
+<ul>
+<li><code>-of</code> : prints new line (if <code>-a [lll|bkz]</code>)</li>
+<li><code>-of b</code> : prints the basis (if <code>-a [lll|bkz]</code>, this value by default)</li>
+<li><code>-of c</code> : prints the closest vector (if <code>-a cvp</code>, this value by default)</li>
+<li><code>-of s</code> : prints the closest vector (if <code>-a svp</code>, this value by default)</li>
+<li><code>-of t</code> : prints status (if <code>-a [lll|bkz|cvp|svp]</code>)</li>
+<li><code>-of u</code> : prints unimodular matrix (if <code>-a [lll|bkz]</code>)</li>
+<li><code>-of v</code> : prints inverse of u (if <code>-a lll</code>)</li>
+</ul>
+<p>A combination of these option is allowed (e.g., <code>-of but</code>).</p>
 <h2>llldiff</h2>
 <p><code>llldiff</code> compares two bases (b1,...,bd) and (c1,...c_d'): they are considered equal iff d=d' and for any i, bi = +- ci. Concretely, if basis B is in file 'B.txt' and if basis C is in file 'C.txt' (in the fplll format), then one may run <code>cat B.txt C.txt | ./llldiff</code>.</p>
 <h2>latsieve</h2>
@@ -257,7 +270,10 @@ make install            # (as root)
 <div class="fragment"><div class="line">./latticegen -randseed 1234 r 10 1000 | ./fplll</div><div class="line">./latticegen -randseed time u 10 16 | ./fplll</div></div><!-- fragment --><ol type="1">
 <li>Solving SVP</li>
 </ol>
-<div class="fragment"><div class="line">./latticegen r 30 3000 | ./fplll -a svp</div></div><!-- fragment --><h1>Alternative interfaces</h1>
+<div class="fragment"><div class="line">./latticegen r 30 3000 | ./fplll -a svp</div></div><!-- fragment --><ol type="1">
+<li>Solving CVP</li>
+</ol>
+<div class="fragment"><div class="line">echo &quot;[[17 42 4][50 75 108][11 47 33]][100 101 102]&quot; | ./fplll -a cvp</div></div><!-- fragment --><h1>Alternative interfaces</h1>
 <ul>
 <li><a href="https://github.com/malb/fpylll">fpylll</a> is a stand-alone Python interface for fplll.</li>
 <li>fplll is included in <a href="http://sagemath.org">Sage</a>, see documentation for <a href="http://doc.sagemath.org/html/en/reference/matrices/sage/matrix/matrix_integer_dense.html">IntegerMatrix</a> and <a href="http://doc.sagemath.org/html/en/reference/modules/sage/modules/free_module_integer.html">IntegerLattice</a>.</li>
@@ -306,7 +322,7 @@ make install            # (as root)
 <p><a class="anchor" id="CN11"></a>[CN11] Y. Chen and P. Q. Nguyen. BKZ 2.0: Better Lattice Security Estimates. ASIACRYPT 2011: 1-20</p>
 <p><a class="anchor" id="GM03"></a>[GM03] D. Goldstein and A. Mayer. On the equidistribution of Hecke points. Forum Mathematicum, 15:165–189 (2003)</p>
 <p><a class="anchor" id="GN08"></a>[GN08] N. Gama and P. Q. Nguyen. Finding Short Lattice Vectors within Mordell's Inequality. STOC 2008: 207-216</p>
-<p><a class="anchor" id="GNR13"></a>[GNR13] N. Gama, P. Q. Nguyen and Oded Regev. Lattice <a class="el" href="classEnumeration.html">Enumeration</a> Using Extreme <a class="el" href="classPruning.html">Pruning</a>.</p>
+<p><a class="anchor" id="GNR13"></a>[GNR13] N. Gama, P. Q. Nguyen and Oded Regev. Lattice <a class="el" href="classEnumeration.html">Enumeration</a> Using Extreme Pruning.</p>
 <p><a class="anchor" id="HPS98"></a>[HPS98] J. Hoffstein, J. Pipher, J. H. Silverman. NTRU: A Ring-Based Public Key Cryptosystem. ANTS 1998: 267-288</p>
 <p><a class="anchor" id="K83"></a>[K83] R. Kannan. Improved algorithms for integer programming and related lattice problems. STOC 1983, 99-108</p>
 <p><a class="anchor" id="FP85"></a>[FP85] U. Fincke and M. Pohst. Improved methods for calculating vectors of short length in a lattice, including a complexity analysis. Math. Comp., 44(170):463–471 (1985)</p>

@@ -8,7 +8,7 @@
         <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
         <meta name="generator" content="Doxygen 1.8.13"/>
         <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-        <title>fplll: BKZReduction&lt; FT &gt; Class Template Reference</title>
+        <title>fplll: BKZReduction&lt; ZT, FT &gt; Class Template Reference</title>
         <!--<link href="tabs.css" rel="stylesheet" type="text/css"/>-->
         <script type="text/javascript" src="dynsections.js"></script>
         <link href="search/search.css" rel="stylesheet" type="text/css"/>
@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.1.0</a>
+                    <a class="navbar-brand">fplll 5.2.0</a>
                 </div>
             </div>
         </nav>
@@ -79,77 +79,84 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle">
-<div class="title">BKZReduction&lt; FT &gt; Class Template Reference</div>  </div>
+<div class="title">BKZReduction&lt; ZT, FT &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>The class performing block reduction.  
+ <a href="classBKZReduction.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="bkz_8h_source.html">bkz.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa57f2153812dabf64beb03a144a2ea4f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#aa57f2153812dabf64beb03a144a2ea4f">BKZReduction</a> (<a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="nr_8h.html#ad45aebb66d5c62bba193ecec3b122213">Integer</a>, FT &gt; &amp;m, <a class="el" href="classLLLReduction.html">LLLReduction</a>&lt; <a class="el" href="nr_8h.html#ad45aebb66d5c62bba193ecec3b122213">Integer</a>, FT &gt; &amp;lll_obj, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param)</td></tr>
-<tr class="separator:aa57f2153812dabf64beb03a144a2ea4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a47994d1881d9fd7de35f3e8a13da21bd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a47994d1881d9fd7de35f3e8a13da21bd">~BKZReduction</a> ()</td></tr>
-<tr class="separator:a47994d1881d9fd7de35f3e8a13da21bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14125429188218162235fb5ae63405bf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a14125429188218162235fb5ae63405bf">svp_preprocessing</a> (int kappa, int block_size, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param)</td></tr>
-<tr class="separator:a14125429188218162235fb5ae63405bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac553304fe6669bb33e727708600abe8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#aac553304fe6669bb33e727708600abe8">svp_postprocessing</a> (int kappa, int block_size, const vector&lt; FT &gt; &amp;solution)</td></tr>
-<tr class="separator:aac553304fe6669bb33e727708600abe8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8cb0ae585ce9045a8bae43891725d22"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#ac8cb0ae585ce9045a8bae43891725d22">dsvp_postprocessing</a> (int kappa, int block_size, const vector&lt; FT &gt; &amp;solution)</td></tr>
-<tr class="separator:ac8cb0ae585ce9045a8bae43891725d22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a731e8ba8ef222008342a1d2912fc612b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a731e8ba8ef222008342a1d2912fc612b">svp_reduction</a> (int kappa, int block_size, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, bool dual=false)</td></tr>
-<tr class="separator:a731e8ba8ef222008342a1d2912fc612b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab535ebeb4e0088954faaee127b778b86"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#ab535ebeb4e0088954faaee127b778b86">svp_reduction_ex</a> (int kappa, int block_size, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, bool &amp;clean, bool dual=false)</td></tr>
-<tr class="separator:ab535ebeb4e0088954faaee127b778b86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a863be22bbb1a88249c2ecc4ebcae4da6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a863be22bbb1a88249c2ecc4ebcae4da6">tour</a> (const int loop, int &amp;kappa_max, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row)</td></tr>
-<tr class="separator:a863be22bbb1a88249c2ecc4ebcae4da6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4fdc90527280194225cd1ba27cce5157"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a4fdc90527280194225cd1ba27cce5157">tour_ex</a> (const int loop, int &amp;kappa_max, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row, bool &amp;clean)</td></tr>
-<tr class="separator:a4fdc90527280194225cd1ba27cce5157"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40c7756551f4e8b18bda6d7dbf25c211"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a40c7756551f4e8b18bda6d7dbf25c211">sd_tour</a> (const int loop, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row)</td></tr>
-<tr class="separator:a40c7756551f4e8b18bda6d7dbf25c211"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f4302a3e27f8f6859696f71ba227690"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a4f4302a3e27f8f6859696f71ba227690">sd_tour_ex</a> (const int loop, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row, bool &amp;clean)</td></tr>
-<tr class="separator:a4f4302a3e27f8f6859696f71ba227690"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3b45feb0a6b08629e01d25fd4d0b1f9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#ad3b45feb0a6b08629e01d25fd4d0b1f9">hkz</a> (int &amp;kappa_max, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row)</td></tr>
-<tr class="separator:ad3b45feb0a6b08629e01d25fd4d0b1f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ca9e9463ba88d6d9e621bbe5cd501b5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a4ca9e9463ba88d6d9e621bbe5cd501b5">hkz_ex</a> (int &amp;kappa_max, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row, bool &amp;clean)</td></tr>
-<tr class="separator:a4ca9e9463ba88d6d9e621bbe5cd501b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28c51711100ec7a9dc0466d8c344aa6f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a28c51711100ec7a9dc0466d8c344aa6f">slide_tour</a> (const int loop, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row)</td></tr>
-<tr class="separator:a28c51711100ec7a9dc0466d8c344aa6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a0285d34c7b7b89abe65378aa94848c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a5a0285d34c7b7b89abe65378aa94848c">slide_tour_ex</a> (const int loop, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row, bool &amp;clean)</td></tr>
-<tr class="separator:a5a0285d34c7b7b89abe65378aa94848c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed79f448c3b80a5f553e2ab3ffb826f4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#aed79f448c3b80a5f553e2ab3ffb826f4">bkz</a> ()</td></tr>
-<tr class="separator:aed79f448c3b80a5f553e2ab3ffb826f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abea7abfdf371fd94862427aabe904df7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#abea7abfdf371fd94862427aabe904df7">rerandomize_block</a> (int min_row, int max_row, int density)</td></tr>
-<tr class="separator:abea7abfdf371fd94862427aabe904df7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae408ad0f3b8d717ff539c99a3711a530"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#ae408ad0f3b8d717ff539c99a3711a530">dump_gso</a> (const std::string &amp;filename, const std::string &amp;prefix, bool append=true)</td></tr>
-<tr class="separator:ae408ad0f3b8d717ff539c99a3711a530"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1568c2e02ddf7e7020dd3884490e94aa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a1568c2e02ddf7e7020dd3884490e94aa">BKZReduction</a> (<a class="el" href="classMatGSO.html">MatGSO</a>&lt; ZT, FT &gt; &amp;m, <a class="el" href="classLLLReduction.html">LLLReduction</a>&lt; ZT, FT &gt; &amp;lll_obj, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param)</td></tr>
+<tr class="memdesc:a1568c2e02ddf7e7020dd3884490e94aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a BKZObject.  <a href="#a1568c2e02ddf7e7020dd3884490e94aa">More...</a><br /></td></tr>
+<tr class="separator:a1568c2e02ddf7e7020dd3884490e94aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab290fe4f613372cdb56bb693f7997438"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#ab290fe4f613372cdb56bb693f7997438">~BKZReduction</a> ()</td></tr>
+<tr class="separator:ab290fe4f613372cdb56bb693f7997438"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8338882f0fd1cd86673d3072749660fa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a8338882f0fd1cd86673d3072749660fa">svp_preprocessing</a> (int kappa, int block_size, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param)</td></tr>
+<tr class="memdesc:a8338882f0fd1cd86673d3072749660fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preprocesses a block.  <a href="#a8338882f0fd1cd86673d3072749660fa">More...</a><br /></td></tr>
+<tr class="separator:a8338882f0fd1cd86673d3072749660fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90aace557fd353e6e80ab6873851c343"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a90aace557fd353e6e80ab6873851c343">svp_postprocessing</a> (int kappa, int block_size, const vector&lt; FT &gt; &amp;solution, bool dual=false)</td></tr>
+<tr class="memdesc:a90aace557fd353e6e80ab6873851c343"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inserts given (dual) vector into the basis.  <a href="#a90aace557fd353e6e80ab6873851c343">More...</a><br /></td></tr>
+<tr class="separator:a90aace557fd353e6e80ab6873851c343"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8db3f84e77987624bdb8a531556c9cfb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a8db3f84e77987624bdb8a531556c9cfb">svp_reduction</a> (int kappa, int block_size, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, bool dual=false)</td></tr>
+<tr class="memdesc:a8db3f84e77987624bdb8a531556c9cfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">(d)SVP-reduce a block.  <a href="#a8db3f84e77987624bdb8a531556c9cfb">More...</a><br /></td></tr>
+<tr class="separator:a8db3f84e77987624bdb8a531556c9cfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5bab51ba8c9045e6621690aac2be9b5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#ab5bab51ba8c9045e6621690aac2be9b5">tour</a> (const int loop, int &amp;kappa_max, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row)</td></tr>
+<tr class="memdesc:ab5bab51ba8c9045e6621690aac2be9b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs a BKZ tour.  <a href="#ab5bab51ba8c9045e6621690aac2be9b5">More...</a><br /></td></tr>
+<tr class="separator:ab5bab51ba8c9045e6621690aac2be9b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3af69e0f9282af4ec0a90a4855e6a310"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a3af69e0f9282af4ec0a90a4855e6a310">sd_tour</a> (const int loop, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row)</td></tr>
+<tr class="memdesc:a3af69e0f9282af4ec0a90a4855e6a310"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs a SD-BKZ tour.  <a href="#a3af69e0f9282af4ec0a90a4855e6a310">More...</a><br /></td></tr>
+<tr class="separator:a3af69e0f9282af4ec0a90a4855e6a310"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82366ca09350688356767c8601c951fc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a82366ca09350688356767c8601c951fc">hkz</a> (int &amp;kappa_max, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row)</td></tr>
+<tr class="memdesc:a82366ca09350688356767c8601c951fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">HKZ reduces a block.  <a href="#a82366ca09350688356767c8601c951fc">More...</a><br /></td></tr>
+<tr class="separator:a82366ca09350688356767c8601c951fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aceee4f8ba4427ca4db86b7a0f6018a22"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#aceee4f8ba4427ca4db86b7a0f6018a22">slide_tour</a> (const int loop, const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;param, int min_row, int max_row)</td></tr>
+<tr class="memdesc:aceee4f8ba4427ca4db86b7a0f6018a22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs a tour of slide reduction.  <a href="#aceee4f8ba4427ca4db86b7a0f6018a22">More...</a><br /></td></tr>
+<tr class="separator:aceee4f8ba4427ca4db86b7a0f6018a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b0fc808b95ca09e13010885c9a95fe3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a0b0fc808b95ca09e13010885c9a95fe3">bkz</a> ()</td></tr>
+<tr class="memdesc:a0b0fc808b95ca09e13010885c9a95fe3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the main loop of block reduction.  <a href="#a0b0fc808b95ca09e13010885c9a95fe3">More...</a><br /></td></tr>
+<tr class="separator:a0b0fc808b95ca09e13010885c9a95fe3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3707fc7b4719cae86f6b6b9d1c4a0325"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a3707fc7b4719cae86f6b6b9d1c4a0325">rerandomize_block</a> (int min_row, int max_row, int density)</td></tr>
+<tr class="separator:a3707fc7b4719cae86f6b6b9d1c4a0325"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d0b5885e630a5ac95ed281df5992056"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a8d0b5885e630a5ac95ed281df5992056">dump_gso</a> (const std::string &amp;filename, bool append, const std::string &amp;step, const int loop, const double time)</td></tr>
+<tr class="memdesc:a8d0b5885e630a5ac95ed281df5992056"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dumps the shape of the basis.  <a href="#a8d0b5885e630a5ac95ed281df5992056">More...</a><br /></td></tr>
+<tr class="separator:a8d0b5885e630a5ac95ed281df5992056"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:a1d5b478132e6007c5a9ab81224755830"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a1d5b478132e6007c5a9ab81224755830">status</a></td></tr>
-<tr class="separator:a1d5b478132e6007c5a9ab81224755830"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dac0007a19815ce8f92eda6df749f12"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a6dac0007a19815ce8f92eda6df749f12">nodes</a></td></tr>
-<tr class="separator:a6dac0007a19815ce8f92eda6df749f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d1b696147dbcda48b7653f6b560c221"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a3d1b696147dbcda48b7653f6b560c221">status</a></td></tr>
+<tr class="separator:a3d1b696147dbcda48b7653f6b560c221"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0dd16ffbff20bdd4066cccaa81c40382"><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBKZReduction.html#a0dd16ffbff20bdd4066cccaa81c40382">nodes</a></td></tr>
+<tr class="separator:a0dd16ffbff20bdd4066cccaa81c40382"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aa57f2153812dabf64beb03a144a2ea4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa57f2153812dabf64beb03a144a2ea4f">&#9670;&nbsp;</a></span>BKZReduction()</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class ZT, class FT&gt;<br />
+class BKZReduction&lt; ZT, FT &gt;</h3>
+
+<p>The class performing block reduction. </p>
+<p>This class implements BKZ, SD-BKZ and Slide Reduction. For this it relies on the GSO, LLL, and <a class="el" href="classEnumeration.html">Enumeration</a> modules. It assumes that the basis is LLL reduced. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a1568c2e02ddf7e7020dd3884490e94aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1568c2e02ddf7e7020dd3884490e94aa">&#9670;&nbsp;</a></span>BKZReduction()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="defs_8h.html#ae244ad7ce1da4fe7f22265a1de800a2e">FPLLL_BEGIN_NAMESPACE</a> <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::<a class="el" href="classBKZReduction.html">BKZReduction</a> </td>
+          <td class="memname"><a class="el" href="defs_8h.html#ae244ad7ce1da4fe7f22265a1de800a2e">FPLLL_BEGIN_NAMESPACE</a> <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::<a class="el" href="classBKZReduction.html">BKZReduction</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classMatGSO.html">MatGSO</a>&lt; <a class="el" href="nr_8h.html#ad45aebb66d5c62bba193ecec3b122213">Integer</a>, FT &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classMatGSO.html">MatGSO</a>&lt; ZT, FT &gt; &amp;&#160;</td>
           <td class="paramname"><em>m</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classLLLReduction.html">LLLReduction</a>&lt; <a class="el" href="nr_8h.html#ad45aebb66d5c62bba193ecec3b122213">Integer</a>, FT &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classLLLReduction.html">LLLReduction</a>&lt; ZT, FT &gt; &amp;&#160;</td>
           <td class="paramname"><em>lll_obj</em>, </td>
         </tr>
         <tr>
@@ -166,18 +173,28 @@ template&lt;class FT &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Create a BKZObject. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">m</td><td>GSO object corresponding to the basis to be reduced </td></tr>
+    <tr><td class="paramname">lll_obj</td><td>LLL object associated to the same GSO object m </td></tr>
+    <tr><td class="paramname">param</td><td>parameter object (see <a class="el" href="bkz__param_8h.html">bkz_param.h</a>) </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="a47994d1881d9fd7de35f3e8a13da21bd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47994d1881d9fd7de35f3e8a13da21bd">&#9670;&nbsp;</a></span>~BKZReduction()</h2>
+<a id="ab290fe4f613372cdb56bb693f7997438"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab290fe4f613372cdb56bb693f7997438">&#9670;&nbsp;</a></span>~BKZReduction()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::~<a class="el" href="classBKZReduction.html">BKZReduction</a> </td>
+          <td class="memname"><a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::~<a class="el" href="classBKZReduction.html">BKZReduction</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -188,16 +205,16 @@ template&lt;class FT &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aed79f448c3b80a5f553e2ab3ffb826f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed79f448c3b80a5f553e2ab3ffb826f4">&#9670;&nbsp;</a></span>bkz()</h2>
+<a id="a0b0fc808b95ca09e13010885c9a95fe3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b0fc808b95ca09e13010885c9a95fe3">&#9670;&nbsp;</a></span>bkz()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::bkz </td>
+          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::bkz </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -205,54 +222,22 @@ template&lt;class FT &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Runs the main loop of block reduction. </p>
+<p>Top level function implementing block reduction by repeatedly calling the corresponding tour and regularly checking terminating conditions. Also performs some postprocessing.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if the reduction was successful, false otherwise. </dd></dl>
+
 </div>
 </div>
-<a id="ac8cb0ae585ce9045a8bae43891725d22"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8cb0ae585ce9045a8bae43891725d22">&#9670;&nbsp;</a></span>dsvp_postprocessing()</h2>
+<a id="a8d0b5885e630a5ac95ed281df5992056"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d0b5885e630a5ac95ed281df5992056">&#9670;&nbsp;</a></span>dump_gso()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::dsvp_postprocessing </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>kappa</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>block_size</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const vector&lt; FT &gt; &amp;&#160;</td>
-          <td class="paramname"><em>solution</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae408ad0f3b8d717ff539c99a3711a530"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae408ad0f3b8d717ff539c99a3711a530">&#9670;&nbsp;</a></span>dump_gso()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::dump_gso </td>
+          <td class="memname">void <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::dump_gso </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>filename</em>, </td>
@@ -260,14 +245,26 @@ template&lt;class FT &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>prefix</em>, </td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>append</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>append</em> = <code>true</code>&#160;</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>step</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>loop</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>time</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -276,20 +273,30 @@ template&lt;class FT &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>I/O </p>
+
+<p>Dumps the shape of the basis. </p>
+<p>Writes the specified prefix and shape of the current basis into the specified file.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">filename</td><td>name of the file </td></tr>
+    <tr><td class="paramname">prefix</td><td>string to write into the file before the shape of the basis </td></tr>
+    <tr><td class="paramname">append</td><td>flag specifying if the shape should be appended to the file (or if the file should be overwritten) </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a id="ad3b45feb0a6b08629e01d25fd4d0b1f9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3b45feb0a6b08629e01d25fd4d0b1f9">&#9670;&nbsp;</a></span>hkz()</h2>
+<a id="a82366ca09350688356767c8601c951fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82366ca09350688356767c8601c951fc">&#9670;&nbsp;</a></span>hkz()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::hkz </td>
+          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::hkz </td>
           <td>(</td>
           <td class="paramtype">int &amp;&#160;</td>
           <td class="paramname"><em>kappa_max</em>, </td>
@@ -320,74 +327,31 @@ template&lt;class FT &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>HKZ reduces a block. </p>
+<p>Runs HKZ reduction from min_row to max_row by successively calling svp_reduction.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">kappa_max</td><td>the largest kappa s.t. the block from min_row to kappa is BKZ reduced, also only for reporting purposes </td></tr>
+    <tr><td class="paramname">param</td><td>parameter object </td></tr>
+    <tr><td class="paramname">min_row</td><td>start of the tour </td></tr>
+    <tr><td class="paramname">max_row</td><td>end of the tour </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>false if it made progress, true otherwise </dd></dl>
+
 </div>
 </div>
-<a id="a4ca9e9463ba88d6d9e621bbe5cd501b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ca9e9463ba88d6d9e621bbe5cd501b5">&#9670;&nbsp;</a></span>hkz_ex()</h2>
+<a id="a3707fc7b4719cae86f6b6b9d1c4a0325"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3707fc7b4719cae86f6b6b9d1c4a0325">&#9670;&nbsp;</a></span>rerandomize_block()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::hkz_ex </td>
-          <td>(</td>
-          <td class="paramtype">int &amp;&#160;</td>
-          <td class="paramname"><em>kappa_max</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;&#160;</td>
-          <td class="paramname"><em>param</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>min_row</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>max_row</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool &amp;&#160;</td>
-          <td class="paramname"><em>clean</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="abea7abfdf371fd94862427aabe904df7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abea7abfdf371fd94862427aabe904df7">&#9670;&nbsp;</a></span>rerandomize_block()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::rerandomize_block </td>
+          <td class="memname">void <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::rerandomize_block </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>min_row</em>, </td>
@@ -428,16 +392,16 @@ template&lt;class FT &gt; </div>
 
 </div>
 </div>
-<a id="a40c7756551f4e8b18bda6d7dbf25c211"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a40c7756551f4e8b18bda6d7dbf25c211">&#9670;&nbsp;</a></span>sd_tour()</h2>
+<a id="a3af69e0f9282af4ec0a90a4855e6a310"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3af69e0f9282af4ec0a90a4855e6a310">&#9670;&nbsp;</a></span>sd_tour()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::sd_tour </td>
+          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::sd_tour </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>loop</em>, </td>
@@ -468,74 +432,31 @@ template&lt;class FT &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Runs a SD-BKZ tour. </p>
+<p>Runs a dual BKZ tour from max_row to min_row and a BKZ tour from min_row to max_row by successively calling svp_reduction.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">loop</td><td>counter indicating the iteration, only for reporting purposes </td></tr>
+    <tr><td class="paramname">param</td><td>parameter object </td></tr>
+    <tr><td class="paramname">min_row</td><td>start of the tour </td></tr>
+    <tr><td class="paramname">max_row</td><td>end of the tour </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>false if it made progress, true otherwise </dd></dl>
+
 </div>
 </div>
-<a id="a4f4302a3e27f8f6859696f71ba227690"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4f4302a3e27f8f6859696f71ba227690">&#9670;&nbsp;</a></span>sd_tour_ex()</h2>
+<a id="aceee4f8ba4427ca4db86b7a0f6018a22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aceee4f8ba4427ca4db86b7a0f6018a22">&#9670;&nbsp;</a></span>slide_tour()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::sd_tour_ex </td>
-          <td>(</td>
-          <td class="paramtype">const int&#160;</td>
-          <td class="paramname"><em>loop</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;&#160;</td>
-          <td class="paramname"><em>param</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>min_row</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>max_row</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool &amp;&#160;</td>
-          <td class="paramname"><em>clean</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a28c51711100ec7a9dc0466d8c344aa6f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28c51711100ec7a9dc0466d8c344aa6f">&#9670;&nbsp;</a></span>slide_tour()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::slide_tour </td>
+          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::slide_tour </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>loop</em>, </td>
@@ -566,74 +487,31 @@ template&lt;class FT &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Runs a tour of slide reduction. </p>
+<p>Runs a tour of slide reduction from min_row to max_row by 1) alternating LLL and svp reductions on disjoint blocks 2) dual svp reductions on slightly shifted disjoint blocks</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">loop</td><td>counter indicating the iteration, only for reporting purposes </td></tr>
+    <tr><td class="paramname">param</td><td>parameter object </td></tr>
+    <tr><td class="paramname">min_row</td><td>start of the tour </td></tr>
+    <tr><td class="paramname">max_row</td><td>end of the tour </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>false if it made progress, true otherwise </dd></dl>
+
 </div>
 </div>
-<a id="a5a0285d34c7b7b89abe65378aa94848c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a0285d34c7b7b89abe65378aa94848c">&#9670;&nbsp;</a></span>slide_tour_ex()</h2>
+<a id="a90aace557fd353e6e80ab6873851c343"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90aace557fd353e6e80ab6873851c343">&#9670;&nbsp;</a></span>svp_postprocessing()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::slide_tour_ex </td>
-          <td>(</td>
-          <td class="paramtype">const int&#160;</td>
-          <td class="paramname"><em>loop</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;&#160;</td>
-          <td class="paramname"><em>param</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>min_row</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>max_row</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool &amp;&#160;</td>
-          <td class="paramname"><em>clean</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aac553304fe6669bb33e727708600abe8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac553304fe6669bb33e727708600abe8">&#9670;&nbsp;</a></span>svp_postprocessing()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::svp_postprocessing </td>
+          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::svp_postprocessing </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>kappa</em>, </td>
@@ -648,7 +526,13 @@ template&lt;class FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const vector&lt; FT &gt; &amp;&#160;</td>
-          <td class="paramname"><em>solution</em>&#160;</td>
+          <td class="paramname"><em>solution</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>dual</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -658,18 +542,31 @@ template&lt;class FT &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Inserts given (dual) vector into the basis. </p>
+<p>Inserts a (dual) vector into the basis. This function does not produce any linear dependencies, i.e. the result is a basis with the specified (dual) vector in the first (resp, last) position, but there are no guarantees beyond that, i.e. the basis might not be LLL reduced or even size reduced.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">kappa</td><td>start of the block </td></tr>
+    <tr><td class="paramname">block_size</td><td>size of the block </td></tr>
+    <tr><td class="paramname">solution</td><td>the coefficients of the (dual) vector in the current (dual) basis </td></tr>
+    <tr><td class="paramname">dual</td><td>flag specifying if 'solution' is a dual or primal vector and to be inserted into the basis or its dual </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>false if it made progress, true otherwise </dd></dl>
+
 </div>
 </div>
-<a id="a14125429188218162235fb5ae63405bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14125429188218162235fb5ae63405bf">&#9670;&nbsp;</a></span>svp_preprocessing()</h2>
+<a id="a8338882f0fd1cd86673d3072749660fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8338882f0fd1cd86673d3072749660fa">&#9670;&nbsp;</a></span>svp_preprocessing()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::svp_preprocessing </td>
+          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::svp_preprocessing </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>kappa</em>, </td>
@@ -694,73 +591,30 @@ template&lt;class FT &gt; </div>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a731e8ba8ef222008342a1d2912fc612b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a731e8ba8ef222008342a1d2912fc612b">&#9670;&nbsp;</a></span>svp_reduction()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::svp_reduction </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>kappa</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>block_size</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;&#160;</td>
-          <td class="paramname"><em>param</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>dual</em> = <code>false</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Run enumeration to find a new shortest vector in the sublattice B[kappa,kappa+block_size]</p>
+<p>Preprocesses a block. </p>
+<p>Preprocess a block using LLL or stronger recursive preprocessing.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">kappa</td><td>Start row </td></tr>
-    <tr><td class="paramname">block_size</td><td>Block size to use, this may be &lt; param.block_size </td></tr>
-    <tr><td class="paramname">param</td><td>Parameters to use for this enumeration (block_size is ignored)</td></tr>
+    <tr><td class="paramname">kappa</td><td>start of the block </td></tr>
+    <tr><td class="paramname">block_size</td><td>size of the block </td></tr>
+    <tr><td class="paramname">param</td><td>parameter object for the current block size (the parameter object for the recursive calls will be created in this function using the information from this object) </td></tr>
   </table>
   </dd>
 </dl>
-<p><code>_ex</code> variant is exception handling. </p>
+<dl class="section return"><dt>Returns</dt><dd>false if it modified the basis, true otherwise </dd></dl>
 
 </div>
 </div>
-<a id="ab535ebeb4e0088954faaee127b778b86"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab535ebeb4e0088954faaee127b778b86">&#9670;&nbsp;</a></span>svp_reduction_ex()</h2>
+<a id="a8db3f84e77987624bdb8a531556c9cfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8db3f84e77987624bdb8a531556c9cfb">&#9670;&nbsp;</a></span>svp_reduction()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::svp_reduction_ex </td>
+          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::svp_reduction </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>kappa</em>, </td>
@@ -780,12 +634,6 @@ template&lt;class FT &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool &amp;&#160;</td>
-          <td class="paramname"><em>clean</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>dual</em> = <code>false</code>&#160;</td>
         </tr>
@@ -795,25 +643,33 @@ template&lt;class FT &gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
+
+<p>(d)SVP-reduce a block. </p>
+<p>Ensures that the first (resp. last) vector in a block of the (dual) basis is the shortest vector in the projected lattice generated by the block (or its dual, resp.). This is implemented using pruned enumeration with rerandomization. The results returned by the enumeration are inserted using postprocessing, and so are no guarantees beyond that, i.e. the basis might not be LLL reduced or even size reduced.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">kappa</td><td>start of the block </td></tr>
+    <tr><td class="paramname">block_size</td><td>size of the block </td></tr>
+    <tr><td class="paramname">param</td><td>parameter object (may be different from the one in the constructor) </td></tr>
+    <tr><td class="paramname">dual</td><td>flag specifying if the block is to be SVP or dual SVP reduced. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>false if it made progress, true otherwise </dd></dl>
 
 </div>
 </div>
-<a id="a863be22bbb1a88249c2ecc4ebcae4da6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a863be22bbb1a88249c2ecc4ebcae4da6">&#9670;&nbsp;</a></span>tour()</h2>
+<a id="ab5bab51ba8c9045e6621690aac2be9b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5bab51ba8c9045e6621690aac2be9b5">&#9670;&nbsp;</a></span>tour()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::tour </td>
+          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::tour </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>loop</em>, </td>
@@ -850,81 +706,33 @@ template&lt;class FT &gt; </div>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a4fdc90527280194225cd1ba27cce5157"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4fdc90527280194225cd1ba27cce5157">&#9670;&nbsp;</a></span>tour_ex()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class FT &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::tour_ex </td>
-          <td>(</td>
-          <td class="paramtype">const int&#160;</td>
-          <td class="paramname"><em>loop</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int &amp;&#160;</td>
-          <td class="paramname"><em>kappa_max</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="classBKZParam.html">BKZParam</a> &amp;&#160;</td>
-          <td class="paramname"><em>param</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>min_row</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>max_row</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool &amp;&#160;</td>
-          <td class="paramname"><em>clean</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
+<p>Runs a BKZ tour. </p>
+<p>Runs a BKZ tour from min_row to max_row by successively calling svp_reduction.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">loop</td><td>counter indicating the iteration, only for reporting purposes </td></tr>
+    <tr><td class="paramname">kappa_max</td><td>the largest kappa s.t. the block from min_row to kappa is BKZ reduced, also only for reporting purposes </td></tr>
+    <tr><td class="paramname">param</td><td>parameter object </td></tr>
+    <tr><td class="paramname">min_row</td><td>start of the tour </td></tr>
+    <tr><td class="paramname">max_row</td><td>end of the tour </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>false if it made progress, true otherwise </dd></dl>
 
 </div>
 </div>
 <h2 class="groupheader">Field Documentation</h2>
-<a id="a6dac0007a19815ce8f92eda6df749f12"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6dac0007a19815ce8f92eda6df749f12">&#9670;&nbsp;</a></span>nodes</h2>
+<a id="a0dd16ffbff20bdd4066cccaa81c40382"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0dd16ffbff20bdd4066cccaa81c40382">&#9670;&nbsp;</a></span>nodes</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">long <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::nodes</td>
+          <td class="memname">long <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::nodes</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -932,19 +740,20 @@ template&lt;class FT &gt; </div>
 
 </div>
 </div>
-<a id="a1d5b478132e6007c5a9ab81224755830"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d5b478132e6007c5a9ab81224755830">&#9670;&nbsp;</a></span>status</h2>
+<a id="a3d1b696147dbcda48b7653f6b560c221"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d1b696147dbcda48b7653f6b560c221">&#9670;&nbsp;</a></span>status</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class FT &gt; </div>
+template&lt;class ZT , class FT &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; FT &gt;::status</td>
+          <td class="memname">int <a class="el" href="classBKZReduction.html">BKZReduction</a>&lt; ZT, FT &gt;::status</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Status of reduction (see <a class="el" href="defs_8h.html">defs.h</a>) </p>
 
 </div>
 </div>

@@ -1,15 +1,18 @@
 <map id="fplll/bkz.h" name="fplll/bkz.h">
-<area shape="rect" id="node2" href="$bkz_8cpp.html" title="fplll/bkz.cpp" alt="" coords="566,80,658,107"/>
-<area shape="rect" id="node3" href="$fplll_8h.html" title="fplll/fplll.h" alt="" coords="683,80,760,107"/>
+<area shape="rect" id="node2" href="$bkz_8cpp.html" title="fplll/bkz.cpp" alt="" coords="434,80,526,107"/>
+<area shape="rect" id="node3" href="$fplll_8h.html" title="fplll/fplll.h" alt="" coords="551,80,628,107"/>
 <area shape="rect" id="node4" href="$fplll_8cpp.html" title="fplll/fplll.cpp" alt="" coords="5,155,96,181"/>
 <area shape="rect" id="node5" href="$main_8h.html" title="fplll/main.h" alt="" coords="120,155,205,181"/>
 <area shape="rect" id="node7" href="$sieve__main_8cpp.html" title="fplll/sieve/sieve_main.cpp" alt="" coords="230,155,402,181"/>
-<area shape="rect" id="node8" href="$test__bkz_8cpp.html" title="tests/test_bkz.cpp" alt="" coords="427,155,557,181"/>
-<area shape="rect" id="node9" href="$test__cvp_8cpp.html" title="tests/test_cvp.cpp" alt="" coords="581,155,712,181"/>
-<area shape="rect" id="node10" href="$test__lll_8cpp.html" title="tests/test_lll.cpp" alt="" coords="737,155,855,181"/>
-<area shape="rect" id="node11" href="$test__nr_8cpp.html" title="tests/test_nr.cpp" alt="" coords="880,155,1000,181"/>
-<area shape="rect" id="node12" href="$test__pruner_8cpp.html" title="tests/test_pruner.cpp" alt="" coords="1025,155,1170,181"/>
-<area shape="rect" id="node13" href="$test__sieve_8cpp.html" title="tests/test_sieve.cpp" alt="" coords="1194,155,1334,181"/>
-<area shape="rect" id="node14" href="$test__svp_8cpp.html" title="tests/test_svp.cpp" alt="" coords="1359,155,1489,181"/>
-<area shape="rect" id="node6" href="$main_8cpp.html" title="fplll/main.cpp" alt="" coords="113,229,212,256"/>
+<area shape="rect" id="node8" href="$test__bkz_8cpp.html" title="tests/test_bkz.cpp" alt="" coords="147,229,277,256"/>
+<area shape="rect" id="node9" href="$test__cvp_8cpp.html" title="tests/test_cvp.cpp" alt="" coords="301,229,432,256"/>
+<area shape="rect" id="node10" href="$test__lll_8cpp.html" title="tests/test_lll.cpp" alt="" coords="457,229,575,256"/>
+<area shape="rect" id="node11" href="$test__lll__gram_8cpp.html" title="tests/test_lll_gram.cpp" alt="" coords="753,229,908,256"/>
+<area shape="rect" id="node12" href="$test__nr_8cpp.html" title="tests/test_nr.cpp" alt="" coords="875,155,995,181"/>
+<area shape="rect" id="node13" href="$test__pruner_8cpp.html" title="tests/test_pruner.cpp" alt="" coords="1019,155,1165,181"/>
+<area shape="rect" id="node14" href="$test__sieve_8cpp.html" title="tests/test_sieve.cpp" alt="" coords="933,229,1073,256"/>
+<area shape="rect" id="node15" href="$test__svp_8cpp.html" title="tests/test_svp.cpp" alt="" coords="1097,229,1228,256"/>
+<area shape="rect" id="node16" href="$test__utils_8h.html" title="tests/test_utils.h" alt="" coords="579,155,698,181"/>
+<area shape="rect" id="node6" href="$main_8cpp.html" title="fplll/main.cpp" alt="" coords="24,229,123,256"/>
+<area shape="rect" id="node17" href="$test__gso_8cpp.html" title="tests/test_gso.cpp" alt="" coords="599,229,729,256"/>
 </map>

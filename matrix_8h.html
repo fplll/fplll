@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.1.0</a>
+                    <a class="navbar-brand">fplll 5.2.0</a>
                 </div>
             </div>
         </nav>
@@ -81,7 +81,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
@@ -93,7 +92,8 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="matrix_8h__dep__incl.svg" width="2235" height="694"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="matrix_8h__dep__incl.svg" width="2338" height="679"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 </div>
 </div>
 <p><a href="matrix_8h_source.html">Go to the source code of this file.</a></p>
@@ -110,13 +110,6 @@ Data Structures</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFP__mat.html">FP_mat&lt; FT &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:a174a2fceccf494fde4546fb09b7a8f1f"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; <a class="el" href="nr_8h.html#ae0aa09c2165e830df4c2bbf215743a48">IntegerT</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a></td></tr>
-<tr class="separator:a174a2fceccf494fde4546fb09b7a8f1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af5e1849c307151dc6e3f0a32e46a907e"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="classFP__mat.html">FP_mat</a>&lt; <a class="el" href="nr_8h.html#ac9f75bfcd7865e8e86b2a815f48f2ab5">FloatT</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="matrix_8h.html#af5e1849c307151dc6e3f0a32e46a907e">FloatMatrix</a></td></tr>
-<tr class="separator:af5e1849c307151dc6e3f0a32e46a907e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -142,36 +135,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a0a4633089662e9b3e952997d07af8d18"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:a0a4633089662e9b3e952997d07af8d18"><td class="memTemplItemLeft" align="right" valign="top">istream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="matrix_8h.html#a0a4633089662e9b3e952997d07af8d18">operator&gt;&gt;</a> (istream &amp;is, <a class="el" href="classMatrix.html">Matrix</a>&lt; T &gt; &amp;m)</td></tr>
 <tr class="separator:a0a4633089662e9b3e952997d07af8d18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8d9de1da1d439b3f78ec129cc0d9e0e"><td class="memTemplParams" colspan="2">template&lt;class ZTto , class ZTfrom &gt; </td></tr>
+<tr class="memitem:ad8d9de1da1d439b3f78ec129cc0d9e0e"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="matrix_8h.html#ad8d9de1da1d439b3f78ec129cc0d9e0e">convert</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZTto &gt; &amp;Ato, const <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZTfrom &gt; &amp;Afrom, int buffer=0)</td></tr>
+<tr class="separator:ad8d9de1da1d439b3f78ec129cc0d9e0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Typedef Documentation</h2>
-<a id="af5e1849c307151dc6e3f0a32e46a907e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af5e1849c307151dc6e3f0a32e46a907e">&#9670;&nbsp;</a></span>FloatMatrix</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef <a class="el" href="classFP__mat.html">FP_mat</a>&lt;<a class="el" href="nr_8h.html#ac9f75bfcd7865e8e86b2a815f48f2ab5">FloatT</a>&gt; <a class="el" href="matrix_8h.html#af5e1849c307151dc6e3f0a32e46a907e">FloatMatrix</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a174a2fceccf494fde4546fb09b7a8f1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a174a2fceccf494fde4546fb09b7a8f1f">&#9670;&nbsp;</a></span>IntMatrix</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt;<a class="el" href="nr_8h.html#ae0aa09c2165e830df4c2bbf215743a48">IntegerT</a>&gt; <a class="el" href="matrix_8h.html#a174a2fceccf494fde4546fb09b7a8f1f">IntMatrix</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="a820a3598561fd904b2974e1efc8c3e09"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a820a3598561fd904b2974e1efc8c3e09">&#9670;&nbsp;</a></span>MatPrintMode</h2>
@@ -192,6 +159,43 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="ad8d9de1da1d439b3f78ec129cc0d9e0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8d9de1da1d439b3f78ec129cc0d9e0e">&#9670;&nbsp;</a></span>convert()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZTto , class ZTfrom &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool convert </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZTto &gt; &amp;&#160;</td>
+          <td class="paramname"><em>Ato</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZTfrom &gt; &amp;&#160;</td>
+          <td class="paramname"><em>Afrom</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>buffer</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Converts integer matrices. Conversion is coing through get_si(), so ONLY use for small numbers that fit into longs. More specifically, Afrom is converted to Ato (and true is returned) if all numbers in Afrom fit into numeric_limits&lt;long&gt;::digits - buffer bits. Otherwise, conversion is aborted and false is returned. </p>
+
+</div>
+</div>
 <a id="a726322a4500e51ff498ff115735dc1e4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a726322a4500e51ff498ff115735dc1e4">&#9670;&nbsp;</a></span>dot_product() <span class="overload">[1/2]</span></h2>
 
@@ -231,6 +235,7 @@ template&lt;class T &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Computes the dot product between two rows of a <a class="el" href="classMatrix.html">Matrix</a> </p>
 
 </div>
 </div>
@@ -275,6 +280,7 @@ template&lt;class T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Computes (inline) the dot product between two rows of a <a class="el" href="classMatrix.html">Matrix</a> </p>
 
 </div>
 </div>

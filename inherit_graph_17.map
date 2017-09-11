@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classMatGSO.html" title="MatGSO\&lt; Z_NR, FT \&gt;" alt="" coords="5,5,161,32"/>
+<area shape="rect" id="node1" href="$classMatGSOInterface.html" title="MatGSOInterface\&lt; ZT,\l FT \&gt;" alt="" coords="5,23,161,65"/>
+<area shape="rect" id="node2" href="$classMatGSO.html" title="MatGSO\&lt; ZT, FT \&gt;" alt="" coords="225,5,363,32"/>
+<area shape="rect" id="node3" href="$classMatGSOGram.html" title="MatGSOGram\&lt; ZT, FT \&gt;" alt="" coords="209,56,379,83"/>
 </map>

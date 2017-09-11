@@ -1,6 +1,7 @@
 var searchData=
 [
   ['b',['b',['../classMatGSO.html#a546e1ce97835021c360de7f7cc572089',1,'MatGSO']]],
+  ['bf',['bf',['../classMatGSOInterface.html#a230a34d0cfc0a49276e376fd343a4263',1,'MatGSOInterface']]],
   ['bkz_5fdef_5fauto_5fabort_5fmax_5fno_5fdec',['BKZ_DEF_AUTO_ABORT_MAX_NO_DEC',['../defs_8h.html#abe08f8e84d09d3e3569313e868b9dbd4',1,'defs.h']]],
   ['bkz_5fdef_5fauto_5fabort_5fscale',['BKZ_DEF_AUTO_ABORT_SCALE',['../defs_8h.html#abd99bbb24087a345ec47a805b8ce9ab8',1,'defs.h']]],
   ['bkz_5fdef_5fgh_5ffactor',['BKZ_DEF_GH_FACTOR',['../defs_8h.html#aa9785cf6f7d9088984d489bc19cc1c4f',1,'defs.h']]],

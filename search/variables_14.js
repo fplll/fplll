@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['zeros',['zeros',['../classLLLReduction.html#a89f30b607de16f992f0e4271cdd47acc',1,'LLLReduction']]]
+  ['x',['x',['../classEnumerationBase.html#a696de75c80d93206f75edbefee96d426',1,'EnumerationBase']]]
 ];

@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.1.0</a>
+                    <a class="navbar-brand">fplll 5.2.0</a>
                 </div>
             </div>
         </nav>
@@ -81,12 +81,15 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">test_bkz.cpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;cstring&gt;</code><br />
+<div class="textblock"><code>#include &quot;io/json.hpp&quot;</code><br />
+<code>#include &lt;<a class="el" href="test__utils_8h_source.html">../tests/test_utils.h</a>&gt;</code><br />
+<code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;<a class="el" href="fplll_8h_source.html">fplll.h</a>&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
@@ -94,19 +97,21 @@ Macros</h2></td></tr>
 <tr class="memitem:ac113d790114db55db497a92effbb759c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__bkz_8cpp.html#ac113d790114db55db497a92effbb759c">TESTDATADIR</a>&#160;&#160;&#160;&quot;..&quot;</td></tr>
 <tr class="separator:ac113d790114db55db497a92effbb759c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ab701e3ac61a85b337ec5c1abaad6742d"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__bkz_8cpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> = nlohmann::json</td></tr>
+<tr class="separator:ab701e3ac61a85b337ec5c1abaad6742d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1c61d0cfa2a1b0dddd36a7c853901622"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
-<tr class="memitem:a1c61d0cfa2a1b0dddd36a7c853901622"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__bkz_8cpp.html#a1c61d0cfa2a1b0dddd36a7c853901622">read_matrix</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A, const char *input_filename)</td></tr>
-<tr class="separator:a1c61d0cfa2a1b0dddd36a7c853901622"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba867ad7343eb17a2a5bf6736fb3cbf7"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
 <tr class="memitem:aba867ad7343eb17a2a5bf6736fb3cbf7"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__bkz_8cpp.html#aba867ad7343eb17a2a5bf6736fb3cbf7">test_bkz</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A, const int block_size, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> float_type, int flags=<a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50a8dfa23763b2537c0f37ad9e842f86009">BKZ_DEFAULT</a>, int prec=0)</td></tr>
 <tr class="memdesc:aba867ad7343eb17a2a5bf6736fb3cbf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test BKZ reduction.  <a href="#aba867ad7343eb17a2a5bf6736fb3cbf7">More...</a><br /></td></tr>
 <tr class="separator:aba867ad7343eb17a2a5bf6736fb3cbf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a853c8e2ce5b33fee45ac2334f7779efe"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
-<tr class="memitem:a853c8e2ce5b33fee45ac2334f7779efe"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__bkz_8cpp.html#a853c8e2ce5b33fee45ac2334f7779efe">test_bkz_param</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A, const int block_size, int flags=<a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50a8dfa23763b2537c0f37ad9e842f86009">BKZ_DEFAULT</a>)</td></tr>
-<tr class="memdesc:a853c8e2ce5b33fee45ac2334f7779efe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test BKZ strategy interface.  <a href="#a853c8e2ce5b33fee45ac2334f7779efe">More...</a><br /></td></tr>
-<tr class="separator:a853c8e2ce5b33fee45ac2334f7779efe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c49ed8350039f8f26efe3afbe577c47"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
+<tr class="memitem:a7c49ed8350039f8f26efe3afbe577c47"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__bkz_8cpp.html#a7c49ed8350039f8f26efe3afbe577c47">test_bkz_param</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A, const int block_size, int flags=<a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50a8dfa23763b2537c0f37ad9e842f86009">BKZ_DEFAULT</a>, string dump_gso_filename=string())</td></tr>
+<tr class="memdesc:a7c49ed8350039f8f26efe3afbe577c47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test BKZ strategy interface.  <a href="#a7c49ed8350039f8f26efe3afbe577c47">More...</a><br /></td></tr>
+<tr class="separator:a7c49ed8350039f8f26efe3afbe577c47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2815e6516305221ae37d001b6a0c66d0"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
 <tr class="memitem:a2815e6516305221ae37d001b6a0c66d0"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__bkz_8cpp.html#a2815e6516305221ae37d001b6a0c66d0">test_bkz_param_linear_pruning</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A, const int block_size, int flags=<a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50a8dfa23763b2537c0f37ad9e842f86009">BKZ_DEFAULT</a>)</td></tr>
 <tr class="memdesc:a2815e6516305221ae37d001b6a0c66d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test BKZ with pruning.  <a href="#a2815e6516305221ae37d001b6a0c66d0">More...</a><br /></td></tr>
@@ -114,6 +119,10 @@ Functions</h2></td></tr>
 <tr class="memitem:a29df4ffd66619d6c39205a8bfd3939db"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
 <tr class="memitem:a29df4ffd66619d6c39205a8bfd3939db"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__bkz_8cpp.html#a29df4ffd66619d6c39205a8bfd3939db">test_bkz_param_pruning</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A, const int block_size, int flags=<a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50a8dfa23763b2537c0f37ad9e842f86009">BKZ_DEFAULT</a>)</td></tr>
 <tr class="separator:a29df4ffd66619d6c39205a8bfd3939db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7dd5e8daba5022e6f7882c4ec2daf503"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
+<tr class="memitem:a7dd5e8daba5022e6f7882c4ec2daf503"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__bkz_8cpp.html#a7dd5e8daba5022e6f7882c4ec2daf503">test_int_rel_bkz_dump_gso</a> (int d, int b, const int block_size, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> float_type=<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08ad9ebca53c82a7c8c161584806f09eb2b">FT_DEFAULT</a>, int flags=<a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50a8dfa23763b2537c0f37ad9e842f86009">BKZ_DEFAULT</a>|<a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50ae3bc8a468a46a837059a460295080fc2">BKZ_DUMP_GSO</a>)</td></tr>
+<tr class="memdesc:a7dd5e8daba5022e6f7882c4ec2daf503"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test BKZ_DUMP_GSO for a matrix d × (d+1) integer relations matrix with bit size b (copied from test_int_rel)  <a href="#a7dd5e8daba5022e6f7882c4ec2daf503">More...</a><br /></td></tr>
+<tr class="separator:a7dd5e8daba5022e6f7882c4ec2daf503"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad42811c2ae85b8bb4f66be869c90151"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
 <tr class="memitem:aad42811c2ae85b8bb4f66be869c90151"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__bkz_8cpp.html#aad42811c2ae85b8bb4f66be869c90151">test_filename</a> (const char *input_filename, const int block_size, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> float_type=<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08ad9ebca53c82a7c8c161584806f09eb2b">FT_DEFAULT</a>, int flags=<a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50a8dfa23763b2537c0f37ad9e842f86009">BKZ_DEFAULT</a>, int prec=0)</td></tr>
 <tr class="memdesc:aad42811c2ae85b8bb4f66be869c90151"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test BKZ for matrix stored in file pointed to by <code>input_filename</code>.  <a href="#aad42811c2ae85b8bb4f66be869c90151">More...</a><br /></td></tr>
@@ -142,6 +151,21 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="ab701e3ac61a85b337ec5c1abaad6742d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab701e3ac61a85b337ec5c1abaad6742d">&#9670;&nbsp;</a></span>json</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="bkz__param_8cpp.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> =  nlohmann::json</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a2c3f6775325c30275d11c6abee2db6a0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2c3f6775325c30275d11c6abee2db6a0">&#9670;&nbsp;</a></span>main()</h2>
@@ -160,36 +184,6 @@ Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">char **&#160;</td>
           <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a1c61d0cfa2a1b0dddd36a7c853901622"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c61d0cfa2a1b0dddd36a7c853901622">&#9670;&nbsp;</a></span>read_matrix()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class ZT &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void read_matrix </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
-          <td class="paramname"><em>A</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>input_filename</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -262,8 +256,8 @@ template&lt;class ZT &gt; </div>
 
 </div>
 </div>
-<a id="a853c8e2ce5b33fee45ac2334f7779efe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a853c8e2ce5b33fee45ac2334f7779efe">&#9670;&nbsp;</a></span>test_bkz_param()</h2>
+<a id="a7c49ed8350039f8f26efe3afbe577c47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c49ed8350039f8f26efe3afbe577c47">&#9670;&nbsp;</a></span>test_bkz_param()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -286,7 +280,13 @@ template&lt;class ZT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>flags</em> = <code><a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50a8dfa23763b2537c0f37ad9e842f86009">BKZ_DEFAULT</a></code>&#160;</td>
+          <td class="paramname"><em>flags</em> = <code><a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50a8dfa23763b2537c0f37ad9e842f86009">BKZ_DEFAULT</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>dump_gso_filename</em> = <code>string()</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -516,6 +516,67 @@ template&lt;class ZT &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>zero on success </dd></dl>
+
+</div>
+</div>
+<a id="a7dd5e8daba5022e6f7882c4ec2daf503"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7dd5e8daba5022e6f7882c4ec2daf503">&#9670;&nbsp;</a></span>test_int_rel_bkz_dump_gso()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int test_int_rel_bkz_dump_gso </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>d</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>block_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a>&#160;</td>
+          <td class="paramname"><em>float_type</em> = <code><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08ad9ebca53c82a7c8c161584806f09eb2b">FT_DEFAULT</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em> = <code><a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50a8dfa23763b2537c0f37ad9e842f86009">BKZ_DEFAULT</a>&#160;|&#160;<a class="el" href="defs_8h.html#a421c505152986d864de8d1c65ffc9d50ae3bc8a468a46a837059a460295080fc2">BKZ_DUMP_GSO</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Test BKZ_DUMP_GSO for a matrix d × (d+1) integer relations matrix with bit size b (copied from test_int_rel) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">d</td><td>dimension </td></tr>
+    <tr><td class="paramname">b</td><td>bit size </td></tr>
+    <tr><td class="paramname">block_size</td><td>block size </td></tr>
+    <tr><td class="paramname">float_type</td><td>floating point type to test </td></tr>
+    <tr><td class="paramname">flags</td><td>flags to use</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>zero on success. </dd></dl>
 
 </div>
 </div>
