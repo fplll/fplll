@@ -98,7 +98,7 @@ matrix:
     env: COMPILER=clang++ CLANGFORMAT=clang-format
     before_install:
       - brew reinstall gmp
-      - brew install mpfr qd autoconf libtool clang-format
+      - brew install qd autoconf libtool clang-format
 
 install:
   - export CXX="$COMPILER"
