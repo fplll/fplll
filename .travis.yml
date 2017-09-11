@@ -118,9 +118,9 @@ notifications:
   on_success: change
   on_failure: always
 
-branches:
-  only:
-    - master
+# branches:
+#   only:
+#     - master
 
 deploy:
   provider: releases
