@@ -1,7 +1,7 @@
 #include <../fplll/sieve/sieve_main.h> /* standalone bin */
-#include <../tests/test_utils.h>
 #include <cstring>
 #include <fplll.h>
+#include <test_utils.h>
 
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."
