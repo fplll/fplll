@@ -13,7 +13,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
-#include <../tests/test_utils.h>
+#include <test_utils.h>
 #include <cstring>
 #include <fplll.h>
 #include <gso.h>

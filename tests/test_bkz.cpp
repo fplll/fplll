@@ -14,7 +14,7 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "io/json.hpp"
-#include <../tests/test_utils.h>
+#include <test_utils.h>
 #include <cstring>
 #include <fplll.h>
 
