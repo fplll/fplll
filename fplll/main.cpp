@@ -20,7 +20,7 @@
 
 template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
 {
-  // Stupid intialization of u and u_inv to be not empty.
+  // Stupid initialization of u and u_inv to be not empty.
   ZZ_mat<ZT> u(1, 1), u_inv(1, 1);
   const char *format = o.output_format ? o.output_format : "b";
   int status, flags = 0;
@@ -114,7 +114,7 @@ template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
   }
 
   BKZParam param(o.block_size, strategies);
-  // Stupid intialization of u to be not empty.
+  // Stupid initialization of u to be not empty.
   ZZ_mat<mpz_t> u(1, 1);
   const char *format = o.output_format ? o.output_format : "b";
   int status;
@@ -522,7 +522,7 @@ void read_options(int argc, char **argv, Options &o)
            << "  -v\n"
            << "       Enable verbose mode\n"
            << "  -nolll\n"
-           << "       Does not apply intial LLL-reduction (for bkz, hkz and svp)\n"
+           << "       Does not apply initial LLL-reduction (for bkz, hkz and svp)\n"
            << "  -c <size>\n"
            << "       Was the number of columns (ignored)\n"
            << "  -r <size>\n"
@@ -563,7 +563,7 @@ void read_options(int argc, char **argv, Options &o)
            << "  -of [bcstuv]\n"
            << "        Output formats.\n"
 
-           << "Please refer to https://github.com/fplll/fplll/README.md for more informations.\n";
+           << "Please refer to https://github.com/fplll/fplll/README.md for more information.\n";
       exit(0);
     }
     else if (strcmp(argv[ac], "--version") == 0)
