@@ -79,14 +79,14 @@ private:
   MatrixRow(const NumVect<T> &row) : row(const_cast<NumVect<T> &>(row)) {}
   NumVect<T> &row;
 };
-/** Computes the dot product between two rows of a Matrix */
+/** Computes truncated dot product between two rows of a Matrix using the coefficients [beg, n). */
 template <class T>
-void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2, int n)
+void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2, int beg, int n)
 {
   FPLLL_DEBUG_CHECK(n > 0 && n <= v1.size() && v1.size() == v2.size() &&
-                    (v1.is_zero(n) || v2.is_zero(n)));
-  result.mul(v1[0], v2[0]);
-  for (int i = 1; i < n; i++)
+                    (v1.is_zero(n) || v2.is_zero(n)) && beg >= 0 && beg < n);
+  result.mul(v1[beg], v2[beg]);
+  for (int i = beg + 1; i < n; i++)
   {
     result.addmul(v1[i], v2[i]);
   }
@@ -96,7 +96,7 @@ void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2, int 
 template <class T>
 inline void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2)
 {
-  dot_product(result, v1, v2, v1.size());
+  dot_product(result, v1, v2, 0, v1.size());
 }
 
 /** Prints a MatrixRow on stream os. */
