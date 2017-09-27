@@ -43,9 +43,18 @@ inline void FP_NR<dd_real>::get_mpfr(mpfr_t r, mp_rnd_t rnd) const {
   mpfr_add_d (r, r, data._hi(), rnd);
 }
 
-template<>
+
+template<> 
 inline void FP_NR<dd_real>::set_mpfr(mpfr_t r, mp_rnd_t rnd) {
-  data = mpfr_get_ld (r, rnd);
+  
+  double hi;
+  hi = mpfr_get_d (r, rnd);
+  
+  mpfr_t tf;
+  mpfr_init(tf);
+  mpfr_sub_d(tf,r,hi,rnd);
+
+  data = dd_real(hi,mpfr_get_d (tf, rnd));
 }
 
 template<>
