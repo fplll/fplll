@@ -113,10 +113,19 @@ inline void FP_NR<dd_real>::set_z(const Z_NR<double>& a, mp_rnd_t /*rnd*/) {
 }
 #endif
 
-/** set_z (from default mpz_t to dd_real) */
+
+/** set_z (from default mpz_t to dd_real) */ 
 template<> template<>
 inline void FP_NR<dd_real>::set_z(const Z_NR<mpz_t>& a, mp_rnd_t /*rnd*/) {
-  data = mpz_get_d(a.get_data());
+
+  double hi = mpz_get_d(a.get_data());
+
+  mpz_t tz;
+  mpz_init(tz);
+  mpz_set_d(tz,hi);
+  mpz_sub(tz,a.get_data(),tz);
+   
+  data = dd_real(hi,mpz_get_d(tz));
 }
 
 #endif
