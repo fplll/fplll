@@ -69,6 +69,42 @@ template <class ZT, class FT> bool rs_are_equal(MatGSO<ZT, FT> M1, MatGSOGram<ZT
   return true;
 }
 
+template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
+{
+  ZZ_mat<ZT> U;
+  ZZ_mat<ZT> UT;
+  MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, GSO_INT_GRAM | GSO_HOUSEHOLDER);
+  M.update_gso();
+
+  FP_NR<FT> r;
+  FP_NR<FT> rh;
+  FP_NR<FT> rhd;
+  FP_NR<FT> mu;
+
+  for (int i = 0; i < A.get_rows(); i++)
+  {
+    for (int j = 0; j < i; j++)
+    {
+      M.get_r(r, i, j);
+      M.get_mu(mu, i, j);
+      M.get_r_householder(rh, i, j);
+      M.get_r_householder(rhd, j, j);
+      if (abs(abs(mu) - abs(rh / rhd)) > 0.001)
+      {
+        cerr << "Error: " << abs(mu) << " != " << abs(rh / rhd) << endl;
+        return 1;
+      }
+      if (abs(abs(r) - abs(rh * rhd)) > 0.001)
+      {
+        cerr << "Error: " << abs(r) << " != " << abs(rh * rhd) << endl;
+        return 1;
+      }
+    }
+  }
+
+  return 0;
+}
+
 template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
 {
   // TEST A
@@ -174,6 +210,7 @@ template <class ZT, class FT> int test_filename(const char *input_filename)
     cerr << input_filename << " shows different GSO-outputs for grammatrix representation and "
                               "basis representation after adding rows.\n";
   }
+  retvalue |= test_householder<ZT, FT>(A);
   if (retvalue > 0)
   {
     return 1;
@@ -211,7 +248,7 @@ int test_int_rel(int d, int b, FloatType float_type = FT_DEFAULT, int prec = 0)
         << " shows different GSO-outputs for grammatrix representation and basis representation.\n";
     return 1;
   }
-  return 0;
+  return test_householder<ZT, FT>(A);
 }
 
 int main(int /*argc*/, char ** /*argv*/)
@@ -220,6 +257,7 @@ int main(int /*argc*/, char ** /*argv*/)
   int status = 0;
 
   status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example3_in");
   status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
   status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
   status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
@@ -229,6 +267,7 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_int_rel<mpz_t, double>(40, 10);
 
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example3_in");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
@@ -239,6 +278,7 @@ int main(int /*argc*/, char ** /*argv*/)
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example3_in");
   status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
   status |=
       test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
@@ -253,6 +293,7 @@ int main(int /*argc*/, char ** /*argv*/)
 #endif
 #ifdef FPLLL_WITH_QD
   status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example3_in");
   status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
   status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
   status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
@@ -262,6 +303,7 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_int_rel<mpz_t, dd_real>(40, 10);
 
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example3_in");
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");
@@ -272,6 +314,7 @@ int main(int /*argc*/, char ** /*argv*/)
 #endif
 #ifdef FPLLL_WITH_DPE
   status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example2_in");
+  status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example3_in");
   status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
   status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
   status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice3");

@@ -27,7 +27,8 @@ enum MatGSOInterfaceFlags
   GSO_DEFAULT       = 0,
   GSO_INT_GRAM      = 1,
   GSO_ROW_EXPO      = 2,
-  GSO_OP_FORCE_LONG = 4
+  GSO_OP_FORCE_LONG = 4,
+  GSO_HOUSEHOLDER   = 16  // GSO_GIVENS in kodebro:master_with_givens is equal to 8
 };
 
 /**
@@ -95,9 +96,9 @@ public:
   MatGSOInterface(Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
       : enable_int_gram(flags & GSO_INT_GRAM), enable_row_expo(flags & GSO_ROW_EXPO),
         enable_transform(arg_u.get_rows() > 0), enable_inverse_transform(arg_uinv_t.get_rows() > 0),
-        row_op_force_long(flags & GSO_OP_FORCE_LONG), u(arg_u), u_inv_t(arg_uinv_t),
-        n_known_rows(0), n_source_rows(0), n_known_cols(0), cols_locked(false), alloc_dim(0),
-        gptr(nullptr)
+        enable_householder(flags & GSO_HOUSEHOLDER), row_op_force_long(flags & GSO_OP_FORCE_LONG),
+        u(arg_u), u_inv_t(arg_uinv_t), n_known_rows(0), n_source_rows(0), n_known_cols(0),
+        cols_locked(false), alloc_dim(0), gptr(nullptr)
   {
 #ifdef DEBUG
     row_op_first = row_op_last = -1;
@@ -280,7 +281,7 @@ public:
   /**
    * Updates all GSO coefficients (mu and r).
    */
-  inline bool update_gso();
+  virtual inline bool update_gso();
 
   /**
    * Allows row_addmul(_we) for all rows even if the GSO has never been computed.
@@ -451,6 +452,9 @@ public:
    * This matrix has very large coefficients, computing it is slow.
    */
   const bool enable_inverse_transform;
+
+  /** Computation uses Householder transformation. */
+  const bool enable_householder;
 
   /**
    * Changes the behaviour of row_addmul(_we).
@@ -650,6 +654,7 @@ template <class ZT, class FT> inline FT &MatGSOInterface<ZT, FT>::get_mu(FT &f, 
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i && j < gso_valid_cols[i] &&
                     !in_row_op_range(i));
+
   f = mu(i, j);
   if (enable_row_expo)
     f.mul_2si(f, row_expo[i] - row_expo[j]);

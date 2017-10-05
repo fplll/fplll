@@ -45,6 +45,8 @@ public:
   using MatGSOInterface<ZT, FT>::sym_g;
   using MatGSOInterface<ZT, FT>::mu;
   using MatGSOInterface<ZT, FT>::r;
+  using MatGSOInterface<ZT, FT>::ftmp1;
+  using MatGSOInterface<ZT, FT>::ftmp2;
   using MatGSOInterface<ZT, FT>::ztmp1;
   using MatGSOInterface<ZT, FT>::ztmp2;
   using MatGSOInterface<ZT, FT>::row_op_force_long;
@@ -68,6 +70,8 @@ public:
   using MatGSOInterface<ZT, FT>::update_gso_row;
   using MatGSOInterface<ZT, FT>::row_addmul;
   using MatGSOInterface<ZT, FT>::symmetrize_g;
+
+  using MatGSOInterface<ZT, FT>::enable_householder;
 
 #ifdef DEBUG
   /* Used only in debug mode. */
@@ -121,6 +125,10 @@ public:
     {
       gptr = &g;
     }
+    if (enable_householder)
+    {
+      initialize_householder(arg_b);
+    }
     size_increased();
 #ifdef DEBUG
     row_op_first = row_op_last = -1;
@@ -136,6 +144,11 @@ public:
    * Integer Gram matrix of the lattice
    */
   Matrix<ZT> g;
+
+  /**
+   * Updates all GSO coefficients (mu and r).
+   */
+  inline bool update_gso() override;
 
   virtual inline long get_max_exp_of_b();
   virtual inline bool b_row_is_zero(int i);
@@ -181,6 +194,18 @@ public:
   // b[i] <-> b[j] (i < j)
   virtual void row_swap(int i, int j);
 
+  /**
+   * Returns f = householder_r(i, j).
+   *
+   * Returns reference to `f`.
+   */
+  inline FT &get_r_householder(FT &f, int i, int j);
+
+  /**
+   * Returns the r_householder matrix
+   */
+  const Matrix<FT> &get_r_householder_matrix() { return r_householder; }
+
 private:
   /* Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
    When enable_int_gram=false, initializes bf. */
@@ -199,6 +224,22 @@ private:
   // b[i] <- b[i] + (2^expo * x) * b[j] (i > j)
   virtual void row_addmul_si_2exp(int i, int j, long x, long expo);
   virtual void row_addmul_2exp(int i, int j, const ZT &x, long expo);
+
+  /**
+   * b = r_householder * q_householder.
+   * r_householder is lower triangular.
+   */
+  Matrix<FT> r_householder;
+
+  /**
+   * Apply Householder transformation on row i.
+   */
+  void update_r_householder_row(int i);
+
+  /**
+   * Copy b into r_householder using floating point conversion.
+   */
+  inline void initialize_householder(Matrix<ZT> &arg_b);
 };
 
 template <class ZT, class FT> inline long MatGSO<ZT, FT>::get_max_exp_of_b()
@@ -290,6 +331,40 @@ template <class ZT, class FT> inline void MatGSO<ZT, FT>::remove_last_rows(int n
   b.set_rows(d);
   if (enable_transform)
     u.set_rows(d);
+}
+
+template <class ZT, class FT> inline FT &MatGSO<ZT, FT>::get_r_householder(FT &f, int i, int j)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && j >= 0 && j <= i);
+  f = r_householder(i, j);
+  return f;
+}
+
+template <class ZT, class FT> inline void MatGSO<ZT, FT>::initialize_householder(Matrix<ZT> &arg_b)
+{
+  r_householder.resize(arg_b.get_rows(), arg_b.get_cols());
+  for (int i = 0; i < arg_b.get_rows(); i++)
+  {
+    for (int j = 0; j < arg_b.get_cols(); j++)
+    {
+      r_householder(i, j).set_z(arg_b(i, j));
+    }
+  }
+}
+
+template <class ZT, class FT> inline bool MatGSO<ZT, FT>::update_gso()
+{
+  for (int i = 0; i < d; i++)
+  {
+    if (!update_gso_row(i))
+      return false;
+    if (enable_householder)
+    {
+      update_r_householder_row(i);
+    }
+  }
+
+  return true;
 }
 
 FPLLL_END_NAMESPACE
