@@ -159,6 +159,9 @@ template <class ZT, class FT> bool MatGSOInterface<ZT, FT>::update_gso_row(int i
 
   gso_valid_cols[i] = j;  // = max(0, gso_valid_cols[i], last_j + 1)
   // FPLLL_TRACE_OUT("End of GSO update");
+  //
+  if (enable_householder)
+    update_r_householder_row(i);
   return true;
 }
 
@@ -277,6 +280,64 @@ void adjust_radius_to_gh_bound(FT &max_dist, long max_dist_expo, int block_size,
   if (f < max_dist)
   {
     max_dist = f;
+  }
+}
+
+template <class ZT, class FT> void MatGSOInterface<ZT, FT>::update_r_householder_row(int i)
+{
+  FT norm_r_square;
+  dot_product(norm_r_square, r_householder[i], r_householder[i], i, r_householder[i].size());
+
+  if (r_householder(i, i) * r_householder(i, i) != norm_r_square)
+  {
+    FT snorm_r = sqrt(norm_r_square);
+    if (r_householder(i, i).cmp(0) > 0)
+    {
+      snorm_r = -snorm_r;
+    }
+    // u = r + snorm_r * e_i
+    FT norm_u_square = norm_r_square + norm_r_square + 2.0 * r_householder(i, i) * snorm_r;
+    ftmp1            = 2.0 / norm_u_square;
+
+    for (int j = i + 1; j < d; j++)
+    {
+      dot_product(ftmp2, r_householder[i], r_householder[j], i, r_householder[i].size());
+      ftmp2.addmul(r_householder(j, i), snorm_r);
+      // At this point, dot_product_i(ftmp2, u, r_householder[j], i, r_householder[j].size())
+      ftmp2 *= ftmp1;
+
+      // r_householder(j, i) = r_householder[j][i] - dot_product_i(u, R[j], i, c) * ftmp1 * u[k]
+      r_householder(j, i).submul(ftmp2, r_householder(i, i) + snorm_r);
+
+      for (int k = i + 1; k < r_householder[i].size(); k++)
+      {
+        // r_householder(j, k) = r_householder(j, k) - dot_product_i(u, R[j], i, c) * ftmp1 * u[k]
+        r_householder(j, k).submul(ftmp2, r_householder(i, k));
+      }
+    }
+
+    ftmp2 = norm_r_square;
+    ftmp2.addmul(r_householder(i, i), snorm_r);
+    // At this point, dot_product_i(ftmp2, u, r_householder[i], i, r_householder[i].size())
+    ftmp2 *= ftmp1;
+    // r_householder(i, i) = r_householder(i, i) - dot_product_i(u, r_householder[i], i, c) * ftmp1
+    // * u[i]
+    r_householder(i, i).submul(ftmp2, r_householder(i, i) + snorm_r);
+
+    for (int k = i + 1; k < r_householder[i].size(); k++)
+    {
+      r_householder(i, k) = 0.0;
+      FPLLL_DEBUG_CHECK(r_householder(i, k).is_zero());
+    }
+  }
+
+  // r_householder(i, i) must be non-negative
+  if (r_householder(i, i).cmp(0) < 0)
+  {
+    for (int k = 0; k < i + 1; k++)
+    {
+      r_householder(i, k) = -r_householder(i, k);
+    }
   }
 }
 

@@ -134,7 +134,7 @@ template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
 
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, GSO_DEFAULT);
   M.update_gso();
-  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(G, U, UT, 1);
+  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(A, G, U, UT, 1);
   M2.update_gso();
 
   ZZ_mat<ZT> A1(A);
