@@ -334,9 +334,9 @@ template <class ZT, class FT> void MatGSOInterface<ZT, FT>::update_r_householder
   // r_householder(i, i) must be non-negative
   if (r_householder(i, i).cmp(0) < 0)
   {
-    for (int k = 0; k < i + 1; k++)
+    for (int k = i; k < d; k++)
     {
-      r_householder(i, k) = -r_householder(i, k);
+      r_householder(k, i) = -r_householder(k, i);
     }
   }
 }

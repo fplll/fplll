@@ -89,12 +89,12 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
       M.get_mu(mu, i, j);
       M.get_r_householder(rh, i, j);
       M.get_r_householder(rhd, j, j);
-      if (abs(abs(mu) - abs(rh / rhd)) > 0.001)
+      if (abs(mu - rh / rhd) > 0.001)
       {
         cerr << "Error: " << abs(mu) << " != " << abs(rh / rhd) << endl;
         return 1;
       }
-      if (abs(abs(r) - abs(rh * rhd)) > 0.001)
+      if (abs(r - rh * rhd) > 0.001)
       {
         cerr << "Error: " << abs(r) << " != " << abs(rh * rhd) << endl;
         return 1;
