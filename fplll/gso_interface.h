@@ -572,12 +572,6 @@ protected:
    */
   Matrix<FT> r;
 
-  /**
-   * b = r_householder * q_householder.
-   * r_householder is lower triangular.
-   */
-  Matrix<FT> r_householder;
-
 public:
   /** Replaced the gram matrix by a pointer. In the gso-class
     * there is also a matrix g, and in the constructor gptr is
@@ -615,6 +609,22 @@ protected:
 
 private:
   /**
+   * b = r_householder * q_householder.
+   * r_householder is lower triangular and the diagonal coefficient are >= 0.
+   */
+  Matrix<FT> r_householder;
+
+  /**
+   * Vector v following [MSV, ISSAC'09].
+   */
+  Matrix<FT> v_householder;
+
+  /**
+   * Sigma values following [MSV, ISSAC'09].
+   */
+  FT *sigma_householder;
+
+  /**
    * Copy b into r_householder using floating point conversion.
    */
   inline void initialize_householder(Matrix<ZT> &b);
@@ -623,6 +633,8 @@ private:
 template <class ZT, class FT> inline MatGSOInterface<ZT, FT>::~MatGSOInterface()
 {
   // delete gptr;
+  if (enable_householder)
+    delete[] sigma_householder;
 }
 
 template <class ZT, class FT> inline void MatGSOInterface<ZT, FT>::symmetrize_g()
@@ -858,12 +870,17 @@ inline void MatGSOInterface<ZT, FT>::dump_r_d(vector<double> &r, int offset, int
 template <class ZT, class FT>
 inline void MatGSOInterface<ZT, FT>::initialize_householder(Matrix<ZT> &b)
 {
+  sigma_householder = new FT[b.get_rows()];
   r_householder.resize(b.get_rows(), b.get_cols());
+  v_householder.resize(b.get_rows(), b.get_cols());
   for (int i = 0; i < b.get_rows(); i++)
   {
     for (int j = 0; j < b.get_cols(); j++)
     {
       r_householder(i, j).set_z(b(i, j));
+#ifdef DEBUG
+      v_householder(i, j).set_nan();
+#endif  // DEBUG
     }
   }
 }

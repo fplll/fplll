@@ -283,6 +283,7 @@ void adjust_radius_to_gh_bound(FT &max_dist, long max_dist_expo, int block_size,
   }
 }
 
+#if 0
 template <class ZT, class FT> void MatGSOInterface<ZT, FT>::update_r_householder_row(int i)
 {
   FT norm_r_square;
@@ -303,24 +304,24 @@ template <class ZT, class FT> void MatGSOInterface<ZT, FT>::update_r_householder
     {
       dot_product(ftmp2, r_householder[i], r_householder[j], i, r_householder[i].size());
       ftmp2.addmul(r_householder(j, i), snorm_r);
-      // At this point, dot_product_i(ftmp2, u, r_householder[j], i, r_householder[j].size())
+      // At this point, dot_product(ftmp2, u, r_householder[j], i, r_householder[j].size())
       ftmp2 *= ftmp1;
 
-      // r_householder(j, i) = r_householder[j][i] - dot_product_i(u, R[j], i, c) * ftmp1 * u[k]
+      // r_householder(j, i) = r_householder[j][i] - dot_product(u, R[j], i, c) * ftmp1 * u[k]
       r_householder(j, i).submul(ftmp2, r_householder(i, i) + snorm_r);
 
       for (int k = i + 1; k < r_householder[i].size(); k++)
       {
-        // r_householder(j, k) = r_householder(j, k) - dot_product_i(u, R[j], i, c) * ftmp1 * u[k]
+        // r_householder(j, k) = r_householder(j, k) - dot_product(u, R[j], i, c) * ftmp1 * u[k]
         r_householder(j, k).submul(ftmp2, r_householder(i, k));
       }
     }
 
     ftmp2 = norm_r_square;
     ftmp2.addmul(r_householder(i, i), snorm_r);
-    // At this point, dot_product_i(ftmp2, u, r_householder[i], i, r_householder[i].size())
+    // At this point, dot_product(ftmp2, u, r_householder[i], i, r_householder[i].size())
     ftmp2 *= ftmp1;
-    // r_householder(i, i) = r_householder(i, i) - dot_product_i(u, r_householder[i], i, c) * ftmp1
+    // r_householder(i, i) = r_householder(i, i) - dot_product(u, r_householder[i], i, c) * ftmp1
     // * u[i]
     r_householder(i, i).submul(ftmp2, r_householder(i, i) + snorm_r);
 
@@ -340,6 +341,58 @@ template <class ZT, class FT> void MatGSOInterface<ZT, FT>::update_r_householder
     }
   }
 }
+#else   // 0
+template <class ZT, class FT> void MatGSOInterface<ZT, FT>::update_r_householder_row(int i)
+{
+  FT tmp;
+  for (int j = 0; j < i; j++)
+  {
+    // vj * ri[j..n]^T
+    dot_product(ftmp1, v_householder[j], r_householder[i], j, r_householder[i].size());
+    //-vj * ri[j..n]^T
+    ftmp1.neg(ftmp1);
+    for (int k = j; k < r_householder[i].size(); k++)
+    {
+      // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
+      r_householder(i, k).addmul(v_householder(j, k), ftmp1);
+    }
+    // ri[j] = sigma[j] * ri[j]
+    r_householder(i, j).mul(sigma_householder[j], r_householder(i, j));
+  }
+  // sigma[i] = sign(r[1])
+  sigma_householder[i] = (r_householder(i, i).cmp(0) < 0) ? -1.0 : 1.0;
+  // r^T * r
+  dot_product(ftmp1, r_householder[i], r_householder[i], i, r_householder[i].size());
+  if (ftmp1.cmp(0) != 0)
+  {
+    ftmp2.sqrt(ftmp1);
+    // s = sigma[i] * ||r|| = sigma[i] * sqrt(r * r^T)
+    tmp.mul(sigma_householder[i], ftmp2);
+    v_householder(i, i).mul(r_householder(i, i), r_householder(i, i));
+    v_householder(i, i).sub(v_householder(i, i), ftmp1);
+    ftmp1.add(r_householder(i, i), tmp);
+    v_householder(i, i).div(v_householder(i, i), ftmp1);
+    // Here, vi[1] = (-sum(r[j]^2, j, 2, n-i+1) / (r[1] + s)
+    if (v_householder(i, i).cmp(0) != 0)
+    {
+      tmp.neg(tmp);
+      tmp.mul(tmp, v_householder(i, i));
+      tmp.sqrt(tmp);
+      tmp.div(1.0, tmp);
+      // Here, tmp = 1 / sqrt(-s * vi[1])
+      v_householder(i, i).mul(v_householder(i, i), tmp);
+      r_householder(i, i) = ftmp2;
+      for (int k = i + 1; k < r_householder[i].size(); k++)
+      {
+        v_householder(i, k).mul(r_householder(i, k), tmp);
+        r_householder(i, k) = 0.0;
+        FPLLL_DEBUG_CHECK(r_householder(i, k).is_zero());
+      }
+      // Here, vi = vi / tmp and ri[i..n] = (||r||, 0, 0, ..., 0)
+    }
+  }
+}
+#endif  // 0
 
 template class MatGSOInterface<Z_NR<long>, FP_NR<double>>;
 template class MatGSOInterface<Z_NR<double>, FP_NR<double>>;
