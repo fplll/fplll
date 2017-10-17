@@ -45,8 +45,6 @@ public:
   using MatGSOInterface<ZT, FT>::sym_g;
   using MatGSOInterface<ZT, FT>::mu;
   using MatGSOInterface<ZT, FT>::r;
-  using MatGSOInterface<ZT, FT>::ftmp1;
-  using MatGSOInterface<ZT, FT>::ftmp2;
   using MatGSOInterface<ZT, FT>::ztmp1;
   using MatGSOInterface<ZT, FT>::ztmp2;
   using MatGSOInterface<ZT, FT>::row_op_force_long;
@@ -111,7 +109,7 @@ public:
    *   See the documentation of row_addmul.
    */
   MatGSO(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
-      : MatGSOInterface<ZT, FT>(arg_b, arg_u, arg_uinv_t, flags), b(arg_b)
+      : MatGSOInterface<ZT, FT>(arg_u, arg_uinv_t, flags), b(arg_b)
   {
     FPLLL_DEBUG_CHECK(!(enable_int_gram && enable_row_expo));
     d = b.get_rows();

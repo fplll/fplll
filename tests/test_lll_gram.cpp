@@ -55,7 +55,7 @@ template <class ZT, class FT> int is_already_reduced(ZZ_mat<ZT> &A, Matrix<Z_NR<
   // MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 0);
   // changed this to flag = 1
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 1);
-  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(A, G, U, UT, 1);
+  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(G, U, UT, 1);
 
   int is_reduced  = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
   int is_greduced = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(M2, LLL_DEF_DELTA, LLL_DEF_ETA);
@@ -93,7 +93,7 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   // changed flag to 1 here
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 1);
   M.update_gso();
-  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> Mgram(A, G, U, UT, 1);
+  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> Mgram(G, U, UT, 1);
   Mgram.update_gso();
   // -------------------------------------------------
 

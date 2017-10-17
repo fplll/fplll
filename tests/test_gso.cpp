@@ -16,6 +16,7 @@
 #include <cstring>
 #include <gso.h>
 #include <gso_gram.h>
+#include <gso_householder.h>
 #include <gso_interface.h>
 #include <nr/matrix.h>
 //#include <random>
@@ -73,8 +74,10 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
 {
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
-  MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, GSO_INT_GRAM | GSO_HOUSEHOLDER);
+  MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, GSO_INT_GRAM);
+  MatGSOHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A, U, UT, GSO_INT_GRAM);
   M.update_gso();
+  Mhouseholder.update_gso();
 
   FP_NR<FT> r;
   FP_NR<FT> rh;
@@ -87,8 +90,8 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
     {
       M.get_r(r, i, j);
       M.get_mu(mu, i, j);
-      M.get_r_householder(rh, i, j);
-      M.get_r_householder(rhd, j, j);
+      Mhouseholder.get_r_householder(rh, i, j);
+      Mhouseholder.get_r_householder(rhd, j, j);
       if (abs(mu - rh / rhd) > 0.001)
       {
         cerr << "Error: " << abs(mu) << " != " << abs(rh / rhd) << endl;
@@ -134,7 +137,7 @@ template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
 
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, GSO_DEFAULT);
   M.update_gso();
-  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(A, G, U, UT, 1);
+  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(G, U, UT, 1);
   M2.update_gso();
 
   ZZ_mat<ZT> A1(A);

@@ -27,8 +27,7 @@ enum MatGSOInterfaceFlags
   GSO_DEFAULT       = 0,
   GSO_INT_GRAM      = 1,
   GSO_ROW_EXPO      = 2,
-  GSO_OP_FORCE_LONG = 4,
-  GSO_HOUSEHOLDER   = 16  // GSO_GIVENS in kodebro:master_with_givens is equal to 8
+  GSO_OP_FORCE_LONG = 4
 };
 
 /**
@@ -87,29 +86,22 @@ public:
    *   This option cannot be enabled if enable_int_gram=true and works only
    *   with FT=double and FT=long double. It is useless and MUST NOT be used
    *   for FT=dpe or FT=mpfr_t.
-   * @param enable_householder
-   *   If true, compute an R matrix using Householder transformations.
    * @param row_op_force_long
    *   Affects the behaviour of row_addmul(_we).
    *   See the documentation of row_addmul.
    */
   virtual ~MatGSOInterface();
 
-  MatGSOInterface(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
+  MatGSOInterface(Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
       : enable_int_gram(flags & GSO_INT_GRAM), enable_row_expo(flags & GSO_ROW_EXPO),
         enable_transform(arg_u.get_rows() > 0), enable_inverse_transform(arg_uinv_t.get_rows() > 0),
-        enable_householder(flags & GSO_HOUSEHOLDER), row_op_force_long(flags & GSO_OP_FORCE_LONG),
-        u(arg_u), u_inv_t(arg_uinv_t), n_known_rows(0), n_source_rows(0), n_known_cols(0),
-        cols_locked(false), alloc_dim(0), gptr(nullptr)
+        row_op_force_long(flags & GSO_OP_FORCE_LONG), u(arg_u), u_inv_t(arg_uinv_t),
+        n_known_rows(0), n_source_rows(0), n_known_cols(0), cols_locked(false), alloc_dim(0),
+        gptr(nullptr)
   {
 #ifdef DEBUG
     row_op_first = row_op_last = -1;
 #endif
-
-    if (enable_householder)
-    {
-      initialize_householder(arg_b);
-    }
   }
 
   /**
@@ -275,7 +267,7 @@ public:
    * [0, min(last_j, i - 1)] must be valid.
    * If i=n_known_rows, n_known_rows is increased by one.
    */
-  bool update_gso_row(int i, int last_j);
+  virtual bool update_gso_row(int i, int last_j);
 
   /**
    * Updates r(i, j) and mu(i, j) if needed for all j.
@@ -466,26 +458,6 @@ public:
    */
   const bool row_op_force_long;
 
-  /** Computation uses Householder transformation. */
-  const bool enable_householder;
-
-  /**
-   * Returns f = householder_r(i, j).
-   *
-   * Returns reference to `f`.
-   */
-  inline FT &get_r_householder(FT &f, int i, int j);
-
-  /**
-   * Returns the r_householder matrix
-   */
-  const Matrix<FT> &get_r_householder_matrix() { return r_householder; }
-
-  /**
-   * Apply Householder transformation on row i.
-   */
-  void update_r_householder_row(int i);
-
 protected:
   /** Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
     * When enable_int_gram=false, initializes bf.
@@ -606,35 +578,11 @@ protected:
   int row_op_first, row_op_last;
   bool in_row_op_range(int i) { return i >= row_op_first && i < row_op_last; }
 #endif
-
-private:
-  /**
-   * b = r_householder * q_householder.
-   * r_householder is lower triangular and the diagonal coefficient are >= 0.
-   */
-  Matrix<FT> r_householder;
-
-  /**
-   * Vector v following [MSV, ISSAC'09].
-   */
-  Matrix<FT> v_householder;
-
-  /**
-   * Sigma values following [MSV, ISSAC'09].
-   */
-  FT *sigma_householder;
-
-  /**
-   * Copy b into r_householder using floating point conversion.
-   */
-  inline void initialize_householder(Matrix<ZT> &b);
 };
 
 template <class ZT, class FT> inline MatGSOInterface<ZT, FT>::~MatGSOInterface()
 {
   // delete gptr;
-  if (enable_householder)
-    delete[] sigma_householder;
 }
 
 template <class ZT, class FT> inline void MatGSOInterface<ZT, FT>::symmetrize_g()
@@ -702,7 +650,6 @@ template <class ZT, class FT> inline FT &MatGSOInterface<ZT, FT>::get_mu(FT &f, 
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i && j < gso_valid_cols[i] &&
                     !in_row_op_range(i));
-
   f = mu(i, j);
   if (enable_row_expo)
     f.mul_2si(f, row_expo[i] - row_expo[j]);
@@ -865,32 +812,6 @@ inline void MatGSOInterface<ZT, FT>::dump_r_d(vector<double> &r, int offset, int
     get_r(e, offset + i, offset + i);
     r.push_back(e.get_d());
   }
-}
-
-template <class ZT, class FT>
-inline void MatGSOInterface<ZT, FT>::initialize_householder(Matrix<ZT> &b)
-{
-  sigma_householder = new FT[b.get_rows()];
-  r_householder.resize(b.get_rows(), b.get_cols());
-  v_householder.resize(b.get_rows(), b.get_cols());
-  for (int i = 0; i < b.get_rows(); i++)
-  {
-    for (int j = 0; j < b.get_cols(); j++)
-    {
-      r_householder(i, j).set_z(b(i, j));
-#ifdef DEBUG
-      v_householder(i, j).set_nan();
-#endif  // DEBUG
-    }
-  }
-}
-
-template <class ZT, class FT>
-inline FT &MatGSOInterface<ZT, FT>::get_r_householder(FT &f, int i, int j)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && j >= 0 && j <= i);
-  f = r_householder(i, j);
-  return f;
 }
 
 FPLLL_END_NAMESPACE
