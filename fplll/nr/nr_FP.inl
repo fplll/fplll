@@ -153,7 +153,7 @@ public:
   inline FP_NR<F>& operator=(const char *s);
   inline FP_NR<F>& operator=(double a);
   // inline FP_NR<F>& operator=(mpfr_t& a);
-  inline FP_NR<F>& operator=(mpfr_t &a) { set_mpfr(a, MPFR_RNDN); };
+  inline FP_NR<F>& operator=(mpfr_t &a) { set_mpfr(a, GMP_RNDN); };
 
   inline bool operator==(const FP_NR<F> &a) const { return cmp(a) == 0; }
   inline bool operator==(double a) const { return cmp(a) == 0; }

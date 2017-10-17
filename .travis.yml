@@ -97,6 +97,7 @@ matrix:
     compiler: clang
     env: COMPILER=clang++ CLANGFORMAT=clang-format
     before_install:
+      - brew update
       - brew reinstall gmp
       - brew install qd autoconf libtool clang-format
 
