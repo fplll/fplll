@@ -267,7 +267,7 @@ public:
    * [0, min(last_j, i - 1)] must be valid.
    * If i=n_known_rows, n_known_rows is increased by one.
    */
-  virtual bool update_gso_row(int i, int last_j);
+  bool update_gso_row(int i, int last_j);
 
   /**
    * Updates r(i, j) and mu(i, j) if needed for all j.
