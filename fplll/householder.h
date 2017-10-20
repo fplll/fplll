@@ -45,7 +45,7 @@ public:
     size_increased();
   }
 
-  ~MatHouseholder() { delete[] sigma_householder; }
+  ~MatHouseholder() {}
 
   /**
    * Returns f = householder_r(i, j).
@@ -109,12 +109,12 @@ private:
   /**
    * Vector v following [MSV, ISSAC'09].
    */
-  Matrix<FT> v_householder;
+  Matrix<FT> V;
 
   /**
    * Sigma values following [MSV, ISSAC'09].
    */
-  FT *sigma_householder;
+  vector<FT> sigma;
 
   /* Used by update_gso_row (+ update_gso), get_max_mu_exp and row_addmul_we. */
   FT ftmp0, ftmp1, ftmp2;
