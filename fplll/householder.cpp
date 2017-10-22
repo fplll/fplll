@@ -21,81 +21,23 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_bf(int i)
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, int last_j)
 {
-  for (int j = 0; j < n; j++)
-  {
-    bf(i, j).set_z(b(i, j));
-  }
-}
+  // Restriction on last_j
+  FPLLL_DEBUG_CHECK(last_j == i || last_j == i - 1);
+  // To update i, we need to know n_known_rows rows
+  FPLLL_DEBUG_CHECK(i <= n_known_rows);
 
-#if 0
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i)
-{
-  FT norm_r_square;
-  dot_product(norm_r_square, R[i], R[i], i, n);
-
-  if (R(i, i) * R(i, i) != norm_r_square)
-  {
-    FT snorm_r = sqrt(norm_r_square);
-    if (R(i, i).cmp(0) > 0)
-    {
-      snorm_r = -snorm_r;
-    }
-    // u = r + snorm_r * e_i
-    FT norm_u_square = norm_r_square + norm_r_square + 2.0 * R(i, i) * snorm_r;
-    ftmp1            = 2.0 / norm_u_square;
-
-    for (int j = i + 1; j < d; j++)
-    {
-      dot_product(ftmp2, R[i], R[j], i, n);
-      ftmp2.addmul(R(j, i), snorm_r);
-      // At this point, dot_product(ftmp2, u, R[j], i, n)
-      ftmp2 *= ftmp1;
-
-      // R(j, i) = R[j][i] - dot_product(u, R[j], i, c) * ftmp1 * u[k]
-      R(j, i).submul(ftmp2, R(i, i) + snorm_r);
-
-      for (int k = i + 1; k < n; k++)
-      {
-        // R(j, k) = R(j, k) - dot_product(u, R[j], i, c) * ftmp1 * u[k]
-        R(j, k).submul(ftmp2, R(i, k));
-      }
-    }
-
-    ftmp2 = norm_r_square;
-    ftmp2.addmul(R(i, i), snorm_r);
-    // At this point, dot_product(ftmp2, u, R[i], i, n
-    ftmp2 *= ftmp1;
-    // R(i, i) = R(i, i) - dot_product(u, R[i], i, c) * ftmp1
-    // * u[i]
-    R(i, i).submul(ftmp2, R(i, i) + snorm_r);
-
-    for (int k = i + 1; k < n; k++)
-    {
-      R(i, k) = 0.0;
-      FPLLL_DEBUG_CHECK(R(i, k).is_zero());
-    }
-  }
-
-  // R(i, i) must be non-negative
-  if (R(i, i).cmp(0) < 0)
-  {
-    for (int k = i; k < d; k++)
-    {
-      R(k, i) = -R(k, i);
-    }
-  }
-}
-#else  // 0
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i)
-{
   int j, k;
-  for (j = 0; j < n; j++)
+  if (valid_cols[i] == 0)
   {
-    R(i, j) = bf(i, j);
+    for (j = 0; j < n; j++)
+    {
+      R(i, j) = bf(i, j);
+    }
   }
-  for (j = 0; j < i; j++)
+  int j_stop = last_j == i ? i - 1 : last_j;
+  for (j = valid_cols[i]; j <= j_stop; j++)
   {
     // vj * ri[j..n]^T
     dot_product(ftmp1, V[j], R[i], j, n);
@@ -109,69 +51,45 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i)
     // ri[j] = sigma[j] * ri[j]
     R(i, j).mul(sigma[j], R(i, j));
   }
-  // sigma[i] = sign(r[1])
-  sigma[i] = (R(i, i).cmp(0) < 0) ? -1.0 : 1.0;
-  // r^T * r
-  dot_product(ftmp1, R[i], R[i], i, n);
-  if (ftmp1.cmp(0) != 0)
+  if (last_j == i)
   {
-    ftmp2.sqrt(ftmp1);
-    // s = sigma[i] * ||r|| = sigma[i] * sqrt(r * r^T)
-    ftmp0.mul(sigma[i], ftmp2);
-    V(i, i).mul(R(i, i), R(i, i));
-    V(i, i).sub(V(i, i), ftmp1);
-    ftmp1.add(R(i, i), ftmp0);
-    V(i, i).div(V(i, i), ftmp1);
-    // Here, vi[1] = (-sum(r[j]^2, j, 2, n-i+1) / (r[1] + s)
-    if (V(i, i).cmp(0) != 0)
+    // sigma[i] = sign(r[1])
+    sigma[i] = (R(i, i).cmp(0) < 0) ? -1.0 : 1.0;
+    // r^T * r
+    dot_product(ftmp1, R[i], R[i], i, n);
+    if (ftmp1.cmp(0) != 0)
     {
-      ftmp0.neg(ftmp0);
-      ftmp0.mul(ftmp0, V(i, i));
-      ftmp0.sqrt(ftmp0);
-      ftmp0.div(1.0, ftmp0);
-      // Here, ftmp0 = 1 / sqrt(-s * vi[1])
-      V(i, i).mul(V(i, i), ftmp0);
-      R(i, i) = ftmp2;
-      for (k = i + 1; k < n; k++)
+      ftmp2.sqrt(ftmp1);
+      // s = sigma[i] * ||r|| = sigma[i] * sqrt(r * r^T)
+      ftmp0.mul(sigma[i], ftmp2);
+      V(i, i).mul(R(i, i), R(i, i));
+      V(i, i).sub(V(i, i), ftmp1);
+      ftmp1.add(R(i, i), ftmp0);
+      V(i, i).div(V(i, i), ftmp1);
+      // Here, vi[1] = (-sum(r[j]^2, j, 2, n-i+1) / (r[1] + s)
+      if (V(i, i).cmp(0) != 0)
       {
-        V(i, k).mul(R(i, k), ftmp0);
+        ftmp0.neg(ftmp0);
+        ftmp0.mul(ftmp0, V(i, i));
+        ftmp0.sqrt(ftmp0);
+        ftmp0.div(1.0, ftmp0);
+        // Here, ftmp0 = 1 / sqrt(-s * vi[1])
+        V(i, i).mul(V(i, i), ftmp0);
+        R(i, i) = ftmp2;
+        for (k = i + 1; k < n; k++)
+        {
+          V(i, k).mul(R(i, k), ftmp0);
 #ifdef DEBUG
-        R(i, k) = 0.0;
-        FPLLL_DEBUG_CHECK(R(i, k).is_zero());
+          R(i, k) = 0.0;
+          FPLLL_DEBUG_CHECK(R(i, k).is_zero());
 #endif  // DEBUG
-      }
-      // Here, vi = vi / ftmp0 and ri[i..n] = (||r||, 0, 0, ..., 0)
-    }
-  }
-}
-#endif  // 0
-
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::size_increased()
-{
-  int old_d = bf.get_rows();
-
-  if (d > alloc_dim)
-  {
-    bf.resize(d, n);
-    sigma.resize(d);
-    R.resize(d, n);
-    V.resize(d, n);
-#ifdef DEBUG
-    for (int i = 0; i < d; i++)
-    {
-      for (int j = 0; j < n; j++)
-      {
-        V(i, j).set_nan();
+        }
+        // Here, vi = vi / ftmp0 and ri[i..n] = (||r||, 0, 0, ..., 0)
       }
     }
-#endif  // DEBUG
-    alloc_dim = d;
+    n_known_rows++;
   }
-
-  for (int i = old_d; i < d; i++)
-  {
-    update_bf(i);
-  }
+  valid_cols[i] = last_j + 1;
 }
 
 template class MatHouseholder<Z_NR<long>, FP_NR<double>>;

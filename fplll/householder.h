@@ -39,10 +39,26 @@ public:
    */
   MatHouseholder(Matrix<ZT> &arg_b) : b(arg_b)
   {
-    alloc_dim = 0;
-    d         = b.get_rows();
-    n         = b.get_cols();
-    size_increased();
+    d            = b.get_rows();
+    n            = b.get_cols();
+    n_known_rows = 0;
+    bf.resize(d, n);
+    sigma.resize(d);
+    R.resize(d, n);
+    V.resize(d, n);
+    valid_cols.resize(d);
+
+    for (int i = 0; i < d; i++)
+    {
+      FPLLL_DEBUG_CHECK(valid_cols[i] == 0);
+      for (int j = 0; j < n; j++)
+      {
+        bf(i, j).set_z(b(i, j));
+#ifdef DEBUG
+        V(i, j).set_nan();
+#endif  // DEBUG
+      }
+    }
   }
 
   ~MatHouseholder() {}
@@ -58,6 +74,12 @@ public:
    * Returns the R matrix
    */
   const Matrix<FT> &get_R_matrix() { return R; }
+
+  /**
+   * Apply Householder transformation on row i, from cols 0 to last_j.
+   * Restriction: last_j == i - 1 or i.
+   */
+  void update_R_row(int i, int last_j);
 
   /**
    * Apply Householder transformation on row i.
@@ -90,16 +112,6 @@ private:
    */
   Matrix<FT> bf;
 
-  /* Allocates matrices and arrays whose size depends on d.
-   When enable_int_gram=false, initializes bf. */
-  void size_increased();
-
-  void discover_row();
-
-  /* Upates the i-th row of bf. It does not invalidate anything, so the caller
-     must take into account that it might change row_expo. */
-  void update_bf(int i);
-
   /**
    * bf = R * q_householder.
    * R is lower triangular and the diagonal coefficient are >= 0.
@@ -119,14 +131,23 @@ private:
   /* Used by update_gso_row (+ update_gso), get_max_mu_exp and row_addmul_we. */
   FT ftmp0, ftmp1, ftmp2;
 
-  int alloc_dim;
+  // R[i] is invalid for i >= n_known_rows
+  int n_known_rows;
+  /* Number of valid columns of the i-th row of R.
+     Valid only for 0 <= i < n_known_rows */
+  vector<int> valid_cols;
 };
 
 template <class ZT, class FT> inline FT &MatHouseholder<ZT, FT>::get_R(FT &f, int i, int j)
 {
-  FPLLL_DEBUG_CHECK(i >= 0 && j >= 0 && j <= i);
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < valid_cols[i]);
   f = R(i, j);
   return f;
+}
+
+template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R_row(int i)
+{
+  update_R_row(i, i);
 }
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R()
