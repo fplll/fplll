@@ -29,15 +29,19 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
   FPLLL_DEBUG_CHECK(i <= n_known_rows);
 
   int j, k;
-  if (valid_cols[i] == 0)
+  for (j = 0; j < n; j++)
   {
-    for (j = 0; j < n; j++)
+    if (enable_bf)
     {
       R(i, j) = bf(i, j);
     }
+    else
+    {
+      R(i, j).set_z(b(i, j));
+    }
   }
   int j_stop = last_j == i ? i - 1 : last_j;
-  for (j = valid_cols[i]; j <= j_stop; j++)
+  for (j = 0; j <= j_stop; j++)
   {
     // vj * ri[j..n]^T
     dot_product(ftmp1, V[j], R[i], j, n);
@@ -86,10 +90,40 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
         }
         // Here, vi = vi / ftmp0 and ri[i..n] = (||r||, 0, 0, ..., 0)
       }
+      else
+      {
+        for (k = i + 1; k < n; k++)
+        {
+          V(i, k) = 0.0;
+          FPLLL_DEBUG_CHECK(R(i, k).is_zero());
+#ifdef DEBUG
+          R(i, k) = 0.0;
+          FPLLL_DEBUG_CHECK(R(i, k).is_zero());
+#endif  // DEBUG
+        }
+      }
     }
     n_known_rows++;
   }
-  valid_cols[i] = last_j + 1;
+}
+
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::add_mul_b_rows(int k, ZT *x)
+{
+  FPLLL_DEBUG_CHECK(k > 0 && k < d);
+
+  for (int j = 0; j < n; j++)
+  {
+    ztmp0.mul(x[0], b(0, j));
+    for (int i = 1; i < k; i++)
+    {
+      ztmp0.addmul(x[i], b(i, j));
+    }
+    b(k, j).add(b(k, j), ztmp0);
+
+    if (enable_bf)
+      bf(k, j).set_z(b(k, j));
+  }
+  invalidate_row(k);
 }
 
 template class MatHouseholder<Z_NR<long>, FP_NR<double>>;

@@ -83,8 +83,7 @@ private:
 template <class T>
 void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2, int beg, int n)
 {
-  FPLLL_DEBUG_CHECK(n > 0 && n <= v1.size() && v1.size() == v2.size() &&
-                    (v1.is_zero(n) || v2.is_zero(n)) && beg >= 0 && beg < n);
+  FPLLL_DEBUG_CHECK(n > 0 && n <= v1.size() && v1.size() == v2.size() && beg >= 0 && beg < n);
   result.mul(v1[beg], v2[beg]);
   for (int i = beg + 1; i < n; i++)
   {

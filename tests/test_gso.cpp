@@ -75,7 +75,7 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, GSO_INT_GRAM);
-  MatHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A);
+  MatHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A, HOUSEHOLDER_DEFAULT);
   M.update_gso();
   Mhouseholder.update_R();
 
