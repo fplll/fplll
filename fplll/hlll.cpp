@@ -1,0 +1,124 @@
+/* Copyright (C) 2005-2008 Damien Stehle.
+   Copyright (C) 2007 David Cade.
+   Copyright (C) 2011 Xavier Pujol.
+
+   This file is part of fplll. fplll is free software: you
+   can redistribute it and/or modify it under the terms of the GNU Lesser
+   General Public License as published by the Free Software Foundation,
+   either version 2.1 of the License, or (at your option) any later version.
+
+   fplll is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with fplll. If not, see <http://www.gnu.org/licenses/>. */
+
+/* Template source file */
+
+#include "hlll.h"
+
+FPLLL_BEGIN_NAMESPACE
+
+template <class ZT, class FT> void HouseholderLLLReduction<ZT, FT>::lll()
+{
+  int k = 1;
+  FT s;
+  FT tmp;
+  FT sum;
+  FT delta_ = delta;  // TODO: not exactly the good value
+  while (k < m.get_d())
+  {
+    if (k == 1)
+      m.update_R_row(0);
+
+    size_reduction(k);
+
+    m.norm_square_b_row(s, k);  // s = ||b[k]||^2
+    m.norm_square_R_row(sum, k, k - 1);
+    s.sub(s, sum);  // s = s - sum_{i = 0}^{i < k - 1}R[k][i]^2
+    m.get_R(tmp, k - 1, k - 1);
+    tmp.mul(tmp, tmp);
+    tmp.mul(delta_, tmp);  // tmp = delta_ * R(k - 1, k - 1)^2
+
+    if (tmp <= s)
+      k++;
+    else
+    {
+      m.swap(k - 1, k);
+      k = max(k - 1, 1);
+    }
+  }
+}
+
+template <class ZT, class FT> void HouseholderLLLReduction<ZT, FT>::size_reduction(int k)
+{
+  ZT *x = new ZT[k];
+  FT t, ftmp0, ftmp1;
+
+  do
+  {
+    m.update_R_row(k, k - 1);
+    for (int i = k - 1; i >= 0; i--)
+    {
+      m.get_R(t, k, i);
+      m.get_R(ftmp0, i, i);
+
+      t.div(t, ftmp0);  // t = R(k, i) / R(i, i)
+      t.rnd(t);
+      t.neg(t);
+      x[i].set_f(t);
+      for (int j = 0; j < i; j++)
+      {
+        m.get_R(ftmp1, i, j);
+        ftmp1.mul(t, ftmp1);  // ftmp1 = x[i] * R(i, j)
+        m.get_R(ftmp0, k, j);
+        ftmp0.add(ftmp0, ftmp1);  // ftmp0 = R(k, j) + x[i] * R(i, j)
+        m.set_R(ftmp0, k, j);
+      }
+    }
+    m.norm_square_b_row(t, k);  // t = ||b[k]||^2
+    m.add_mul_b_rows(k, x);
+    m.norm_square_b_row(ftmp0, k);  // ftmp0 = ||b[k]||^2
+    t.mul(sr, t);                   // t = 2^(-cd) * t
+  } while (ftmp0 < t);
+
+  m.update_R_row(k);
+
+  delete[] x;
+}
+
+/** instantiate functions **/
+
+template class HouseholderLLLReduction<Z_NR<long>, FP_NR<double>>;
+template class HouseholderLLLReduction<Z_NR<double>, FP_NR<double>>;
+template class HouseholderLLLReduction<Z_NR<mpz_t>, FP_NR<double>>;
+
+#ifdef FPLLL_WITH_LONG_DOUBLE
+template class HouseholderLLLReduction<Z_NR<long>, FP_NR<long double>>;
+template class HouseholderLLLReduction<Z_NR<double>, FP_NR<long double>>;
+template class HouseholderLLLReduction<Z_NR<mpz_t>, FP_NR<long double>>;
+#endif
+
+#ifdef FPLLL_WITH_QD
+template class HouseholderLLLReduction<Z_NR<long>, FP_NR<dd_real>>;
+template class HouseholderLLLReduction<Z_NR<double>, FP_NR<dd_real>>;
+template class HouseholderLLLReduction<Z_NR<mpz_t>, FP_NR<dd_real>>;
+
+template class HouseholderLLLReduction<Z_NR<long>, FP_NR<qd_real>>;
+template class HouseholderLLLReduction<Z_NR<double>, FP_NR<qd_real>>;
+template class HouseholderLLLReduction<Z_NR<mpz_t>, FP_NR<qd_real>>;
+#endif
+
+#ifdef FPLLL_WITH_DPE
+template class HouseholderLLLReduction<Z_NR<long>, FP_NR<dpe_t>>;
+template class HouseholderLLLReduction<Z_NR<double>, FP_NR<dpe_t>>;
+template class HouseholderLLLReduction<Z_NR<mpz_t>, FP_NR<dpe_t>>;
+#endif
+
+template class HouseholderLLLReduction<Z_NR<long>, FP_NR<mpfr_t>>;
+template class HouseholderLLLReduction<Z_NR<double>, FP_NR<mpfr_t>>;
+template class HouseholderLLLReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
+
+FPLLL_END_NAMESPACE
