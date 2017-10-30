@@ -19,6 +19,7 @@
 #define FPLLL_HLLL_H
 
 #include "householder.h"
+#include <cmath>
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -41,7 +42,8 @@ public:
     this->theta = theta;
     this->c     = c;
     p           = (double)FT::get_prec();
-    sr.pow_si(2.0, -(long)((double)m.get_d() * c));
+    double tmp  = pow(2.0, -(double)m.get_d() * c);
+    sr          = tmp;
   }
 
   /**

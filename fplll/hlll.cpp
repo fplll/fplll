@@ -82,7 +82,7 @@ template <class ZT, class FT> void HouseholderLLLReduction<ZT, FT>::size_reducti
     m.add_mul_b_rows(k, x);
     m.norm_square_b_row(ftmp0, k);  // ftmp0 = ||b[k]||^2
     t.mul(sr, t);                   // t = 2^(-cd) * t
-  } while (ftmp0 < t);
+  } while (ftmp0 <= t);
 
   m.update_R_row(k);
 
