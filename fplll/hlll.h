@@ -67,6 +67,9 @@ private:
   void size_reduction(int k);
 };
 
+template <class ZT, class FT>
+bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta);
+
 FPLLL_END_NAMESPACE
 
 #endif /* FPLLL_HLLL_H */
