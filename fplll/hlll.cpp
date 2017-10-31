@@ -35,9 +35,11 @@ template <class ZT, class FT> void HouseholderLLLReduction<ZT, FT>::lll()
 
     size_reduction(k);
 
-    m.norm_square_b_row(s, k);  // s = ||b[k]||^2
-    m.norm_square_R_row(sum, k, k - 1);
-    s.sub(s, sum);  // s = s - sum_{i = 0}^{i < k - 1}R[k][i]^2
+    m.get_R(s, k, k - 1);
+    s.mul(s, s);  // s = R(k, k - 1)^2
+    m.get_R(tmp, k, k);
+    tmp.mul(tmp, tmp);  // tmp = R(k, k)^2
+    s.add(tmp, s);      // s = R(k, k - 1)^2 + R(k, k)^2
     m.get_R(tmp, k - 1, k - 1);
     tmp.mul(tmp, tmp);
     tmp.mul(delta_, tmp);  // tmp = delta_ * R(k - 1, k - 1)^2
@@ -115,7 +117,6 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
   }
   for (int i = 1; i < m.get_d(); i++)
   {
-
     m.norm_square_b_row(ftmp0, i);  // ftmp0 = ||b[i]||^2
     m.norm_square_R_row(ftmp1, i, i - 1);
     ftmp1.sub(ftmp0, ftmp1);  // ftmp1 = ||b[i]||^2 - sum_{i = 0}^{i < i - 1}R[i][i]^2
