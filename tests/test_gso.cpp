@@ -72,6 +72,7 @@ template <class ZT, class FT> bool rs_are_equal(MatGSO<ZT, FT> M1, MatGSOGram<ZT
 
 template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
 {
+  int status = 0;
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, GSO_INT_GRAM);
@@ -94,18 +95,18 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
       Mhouseholder.get_R(rhd, j, j);
       if (abs(mu - rh / rhd) > 0.001)
       {
-        cerr << "Error: " << abs(mu) << " != " << abs(rh / rhd) << endl;
-        return 1;
+        cerr << "Error (mu): " << mu << " != " << rh / rhd << endl;
+        status = 1;
       }
       if (abs(r - rh * rhd) > 0.001)
       {
-        cerr << "Error: " << abs(r) << " != " << abs(rh * rhd) << endl;
-        return 1;
+        cerr << "Error (r): " << r << " != " << rh * rhd << endl;
+        status = 1;
       }
     }
   }
 
-  return 0;
+  return status;
 }
 
 template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
