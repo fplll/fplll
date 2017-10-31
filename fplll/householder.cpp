@@ -95,7 +95,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
         for (k = i + 1; k < n; k++)
         {
           V(i, k) = 0.0;
-          FPLLL_DEBUG_CHECK(R(i, k).is_zero());
+          FPLLL_DEBUG_CHECK(V(i, k).is_zero());
 #ifdef DEBUG
           R(i, k) = 0.0;
           FPLLL_DEBUG_CHECK(R(i, k).is_zero());
