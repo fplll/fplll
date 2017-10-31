@@ -66,16 +66,21 @@ template <class ZT, class FT> void HouseholderLLLReduction<ZT, FT>::size_reducti
       m.get_R(ftmp0, i, i);
 
       t.div(t, ftmp0);  // t = R(k, i) / R(i, i)
+
       t.rnd(t);
       t.neg(t);
+
       x[i].set_f(t);
-      for (int j = 0; j < i; j++)
+      if (x[i] != 0)
       {
-        m.get_R(ftmp1, i, j);
-        ftmp1.mul(t, ftmp1);  // ftmp1 = x[i] * R(i, j)
-        m.get_R(ftmp0, k, j);
-        ftmp0.add(ftmp0, ftmp1);  // ftmp0 = R(k, j) + x[i] * R(i, j)
-        m.set_R(ftmp0, k, j);
+        for (int j = 0; j < i; j++)
+        {
+          m.get_R(ftmp1, i, j);
+          ftmp1.mul(t, ftmp1);  // ftmp1 = x[i] * R(i, j)
+          m.get_R(ftmp0, k, j);
+          ftmp0.add(ftmp0, ftmp1);  // ftmp0 = R(k, j) + x[i] * R(i, j)
+          m.set_R(ftmp0, k, j);
+        }
       }
     }
     m.norm_square_b_row(t, k);  // t = ||b[k]||^2
