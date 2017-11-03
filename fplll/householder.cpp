@@ -97,10 +97,20 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
           V(i, k) = 0.0;
           FPLLL_DEBUG_CHECK(V(i, k).is_zero());
 #ifdef DEBUG
-          R(i, k) = 0.0;
           FPLLL_DEBUG_CHECK(R(i, k).is_zero());
 #endif  // DEBUG
         }
+      }
+    }
+    else
+    {
+      for (k = i; k < n; k++)
+      {
+        V(i, k) = 0.0;
+        FPLLL_DEBUG_CHECK(V(i, k).is_zero());
+#ifdef DEBUG
+        FPLLL_DEBUG_CHECK(R(i, k).is_zero());
+#endif  // DEBUG
       }
     }
     n_known_rows++;
@@ -134,7 +144,6 @@ template class MatHouseholder<Z_NR<mpz_t>, FP_NR<double>>;
 template class MatHouseholder<Z_NR<long>, FP_NR<long double>>;
 template class MatHouseholder<Z_NR<double>, FP_NR<long double>>;
 template class MatHouseholder<Z_NR<mpz_t>, FP_NR<long double>>;
-
 #endif
 
 #ifdef FPLLL_WITH_QD
