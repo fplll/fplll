@@ -91,23 +91,27 @@ int main(int /*argc*/, char ** /*argv*/)
   status |=
       test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_DEFAULT);
 #endif  // FPLLL_WITH_QD
-// status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/dim55_in",
-// HOUSEHOLDER_DEFAULT);
+        // status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/dim55_in",
+        // HOUSEHOLDER_DEFAULT);
 
-#if 0
-  status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_in", HOUSEHOLDER_DEFAULT);
+  status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
+                                         HOUSEHOLDER_DEFAULT);
 #ifdef FPLLL_WITH_LONG_DOUBLE
-  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_in", HOUSEHOLDER_DEFAULT);
+  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
+                                              HOUSEHOLDER_DEFAULT);
 #endif  // FPLLL_WITH_LONG_DOUBLE
 #ifdef FPLLL_WITH_DPE
-  status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_in", HOUSEHOLDER_DEFAULT);
+  status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
+                                        HOUSEHOLDER_DEFAULT);
 #endif  // FPLLL_WITH_DPE
 #ifdef FPLLL_WITH_QD
-  status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_in", HOUSEHOLDER_DEFAULT);
-  status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_in", HOUSEHOLDER_DEFAULT);
+  status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
+                                          HOUSEHOLDER_DEFAULT);
+  status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
+                                          HOUSEHOLDER_DEFAULT);
 #endif  // FPLLL_WITH_QD
-  //status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_in", HOUSEHOLDER_DEFAULT);
-#endif  // 0
+  // status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
+  // HOUSEHOLDER_DEFAULT);
 
   if (status == 0)
   {
