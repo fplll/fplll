@@ -115,6 +115,9 @@ public:
 
   virtual inline FT &get_gram(FT &f, int i, int j);
 
+  // b[i] <-> b[j] (i < j)
+  virtual void row_swap(int i, int j);
+
 private:
   /* Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
    When enable_int_gram=false, initializes bf. */
@@ -134,8 +137,6 @@ private:
 
   virtual void row_addmul_si_2exp(int i, int j, long x, long expo);
   virtual void row_addmul_2exp(int i, int j, const ZT &x, long expo);
-  // b[i] <-> b[j] (i < j)
-  virtual void row_swap(int i, int j);
   // virtual void apply_transform(const Matrix<FT> &transform, int src_base, int target_base);
 };
 
