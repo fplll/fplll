@@ -47,11 +47,11 @@ static void get_basis_min(Z_NR<mpz_t> &basis_min, const ZZ_mat<mpz_t> &b, int fi
 {
   Z_NR<mpz_t> sq_norm;
   int n = b.get_cols();
-  dot_product(basis_min, b[first], b[first], n);
+  b[first].dot_product(basis_min, b[first], n);
 
   for (int i = first + 1; i < last; i++)
   {
-    dot_product(sq_norm, b[i], b[i], n);
+    b[i].dot_product(sq_norm, b[i], n);
     if (sq_norm < basis_min)
       basis_min = sq_norm;
   }

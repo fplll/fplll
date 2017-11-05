@@ -73,31 +73,30 @@ public:
     row.addmul_si_2exp(v.row, x, expo, n, tmp);
   }
 
+  /** Computes the dot product between two rows of a Matrix */
+  inline void dot_product(T &result, const MatrixRow<T> &v0, int n) const
+  {
+    FPLLL_DEBUG_CHECK(n > 0 && n <= this->size() && this->size() == v0.size() &&
+                      (this->is_zero(n) || v0.is_zero(n)));
+    result.mul(this->row[0], v0.row[0]);
+    for (int i = 1; i < n; i++)
+    {
+      result.addmul(this->row[i], v0.row[i]);
+    }
+  }
+
+  /** Computes (inline) the dot product between two rows of a Matrix */
+  inline void dot_product(T &result, const MatrixRow<T> &v0) const
+  {
+    this->dot_product(result, v0, this->size());
+  }
+
   friend class Matrix<T>;
 
 private:
   MatrixRow(const NumVect<T> &row) : row(const_cast<NumVect<T> &>(row)) {}
   NumVect<T> &row;
 };
-/** Computes the dot product between two rows of a Matrix */
-template <class T>
-void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2, int n)
-{
-  FPLLL_DEBUG_CHECK(n > 0 && n <= v1.size() && v1.size() == v2.size() &&
-                    (v1.is_zero(n) || v2.is_zero(n)));
-  result.mul(v1[0], v2[0]);
-  for (int i = 1; i < n; i++)
-  {
-    result.addmul(v1[i], v2[i]);
-  }
-}
-
-/** Computes (inline) the dot product between two rows of a Matrix */
-template <class T>
-inline void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2)
-{
-  dot_product(result, v1, v2, v1.size());
-}
 
 /** Prints a MatrixRow on stream os. */
 template <class T> ostream &operator<<(ostream &os, const MatrixRow<T> &row)
