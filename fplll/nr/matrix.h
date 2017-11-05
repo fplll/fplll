@@ -76,13 +76,7 @@ public:
   /** Computes the dot product between two rows of a Matrix */
   inline void dot_product(T &result, const MatrixRow<T> &v0, int n) const
   {
-    FPLLL_DEBUG_CHECK(n > 0 && n <= this->size() && this->size() == v0.size() &&
-                      (this->is_zero(n) || v0.is_zero(n)));
-    result.mul(this->row[0], v0.row[0]);
-    for (int i = 1; i < n; i++)
-    {
-      result.addmul(this->row[i], v0.row[i]);
-    }
+    fplll::dot_product(result, this->row, v0.row, n);
   }
 
   /** Computes (inline) the dot product between two rows of a Matrix */
