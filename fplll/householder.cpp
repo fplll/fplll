@@ -40,8 +40,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
       R(i, j).set_z(b(i, j));
     }
   }
-  int j_stop = last_j == i ? i - 1 : last_j;
-  for (j = 0; j <= j_stop; j++)
+  for (j = 0; j < i; j++)
   {
     // vj * ri[j..n]^T
     dot_product(ftmp1, V[j], R[i], j, n);
