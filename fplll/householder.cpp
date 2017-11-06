@@ -83,10 +83,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
         for (k = i + 1; k < n; k++)
         {
           V(i, k).mul(R(i, k), ftmp0);
-#ifdef DEBUG
           R(i, k) = 0.0;
           FPLLL_DEBUG_CHECK(R(i, k).is_zero());
-#endif  // DEBUG
         }
         // Here, vi = vi / ftmp0 and ri[i..n] = (||r||, 0, 0, ..., 0)
       }
@@ -96,9 +94,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
         {
           V(i, k) = 0.0;
           FPLLL_DEBUG_CHECK(V(i, k).is_zero());
-#ifdef DEBUG
           FPLLL_DEBUG_CHECK(R(i, k).is_zero());
-#endif  // DEBUG
         }
       }
     }
@@ -108,9 +104,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
       {
         V(i, k) = 0.0;
         FPLLL_DEBUG_CHECK(V(i, k).is_zero());
-#ifdef DEBUG
         FPLLL_DEBUG_CHECK(R(i, k).is_zero());
-#endif  // DEBUG
       }
     }
     n_known_rows++;
