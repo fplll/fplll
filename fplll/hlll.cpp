@@ -27,11 +27,15 @@ template <class ZT, class FT> void HouseholderLLLReduction<ZT, FT>::lll()
   FT s;
   FT tmp;
   FT sum;
-  FT delta_ = delta;  // TODO: not exactly the good value
+  FT delta_           = delta;  // TODO: not exactly the good value
+  bool update_R_row_0 = true;
   while (k < m.get_d())
   {
-    if (k == 1)
+    if (update_R_row_0)
+    {
       m.update_R_row(0);
+      update_R_row_0 = !update_R_row_0;
+    }
 
     size_reduction(k);
 
@@ -48,6 +52,8 @@ template <class ZT, class FT> void HouseholderLLLReduction<ZT, FT>::lll()
       k++;
     else
     {
+      if (k - 1 == 0)
+        update_R_row_0 = !update_R_row_0;
       m.swap(k - 1, k);
       k = max(k - 1, 1);
     }
