@@ -105,6 +105,27 @@ int l2_min_prec(int d, double delta, double eta, double epsilon)
   return compute_min_prec(rho, d, delta, eta, epsilon, MINPREC_L2);
 }
 
+int hlll_min_prec(int d_i, int n_i, double delta, double eta, double theta, double c)
+{
+  FPLLL_CHECK(delta < 1.0 && delta >= 0.25, "delta must be in [1/4, 1).");
+  FPLLL_CHECK(eta - theta > 0.5, "eta - theta must be larger than 0.5.");
+
+  double d = (double)d_i;
+  double n = (double)n_i;
+  double alpha =
+      (theta * eta + std::sqrt((1.0 + theta * theta) * delta - eta * eta)) / (delta - eta * eta);
+  double c0 =
+      max((1.0 + fabs(1.0 - eta - theta) * alpha) / ((eta + theta) * (-1.0 + std::sqrt(3.0 / 2.0))),
+          4.0 * std::sqrt(6.0) / (1.0 + eta) * std::sqrt(1.0 + d * eta * eta)) *
+      n * std::sqrt(d);
+  double c1  = 8.0 * d * (n + 9.0) * c0;
+  double rho = (1.0 + eta + theta) * alpha;
+  double phi = c1 * (1.0 + 1.0 / theta) * pow(rho, d + 1.0);
+  double p0  = log2(d * d * d * phi * pow(alpha, d) / theta) + 16.0 + c * d / 2.0;
+
+  return (int)ceil(p0 + 1.0 - log2(1.0 - delta) - log2(eta - theta - 0.5));
+}
+
 /**
  * Computes the volume of a d-dimensional hypersphere of radius 1.
  */
