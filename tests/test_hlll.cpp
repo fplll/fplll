@@ -28,7 +28,7 @@ using namespace fplll;
 template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A, int flags, int prec = 53)
 {
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A, flags);
-  HLLLReduction<Z_NR<ZT>, FP_NR<FT>> hlll_obj(Mhouseholder, 0.99, 0.52, 0.01);
+  HLLLReduction<Z_NR<ZT>, FP_NR<FT>> hlll_obj(Mhouseholder, 0.99, 0.52, 0.99, 0.01, flags);
   hlll_obj.lll();
   MatHouseholder<Z_NR<ZT>, FP_NR<double>> M(A, flags);
   int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<double>>(M, 0.99, 0.52);

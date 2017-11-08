@@ -33,8 +33,8 @@ public:
    * needed).
    */
   // TODO: what is c?
-  HLLLReduction(MatHouseholder<ZT, FT> &arg_m, double delta, double eta, double theta,
-                double c = 0.1)
+  HLLLReduction(MatHouseholder<ZT, FT> &arg_m, double delta, double eta, double theta, double c,
+                int flags)
       : m(arg_m)
   {
     this->delta = delta;
@@ -43,6 +43,7 @@ public:
     this->c     = c;
     double tmp  = pow(2.0, -(double)m.get_d() * c);
     sr          = tmp;
+    verbose     = flags & LLL_VERBOSE;
   }
 
   /**
@@ -58,9 +59,20 @@ private:
   FT c;
   // Multiplicative coefficient used to check if a vector is size-reduced or not.
   FT sr;
+  // Verbose mode.
+  bool verbose;
 
   void size_reduction(int k);
+
+  inline void print_params();
 };
+
+template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
+{
+  cerr << "Entering HLLL"
+       << "\ndelta = " << delta << "\neta = " << eta << "\ntheta = " << theta << "\nc = " << c
+       << "\nprecision = " << FT::get_prec() << endl;
+}
 
 template <class ZT, class FT>
 bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta);

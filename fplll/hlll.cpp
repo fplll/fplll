@@ -18,23 +18,39 @@
 /* Template source file */
 
 #include "hlll.h"
+#include "util.h"
 
 FPLLL_BEGIN_NAMESPACE
 
 template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 {
-  int k = 1;
+  int k     = 1;
+  int k_max = 0;
   FT s;
   FT tmp;
   FT sum;
   FT delta_           = delta;  // TODO: not exactly the good value
   bool update_R_row_0 = true;
+  int start_time      = cputime();
+
+  if (verbose)
+    print_params();
+
   while (k < m.get_d())
   {
     if (update_R_row_0)
     {
       m.update_R_row(0);
       update_R_row_0 = !update_R_row_0;
+    }
+    if (k > k_max)
+    {
+      if (verbose)
+      {
+        cerr << "Discovering vector " << k << "/" << m.get_d()
+             << " cputime=" << cputime() - start_time << endl;
+      }
+      k_max = k;
     }
 
     size_reduction(k);
