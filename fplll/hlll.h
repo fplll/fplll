@@ -41,7 +41,6 @@ public:
     this->eta   = eta;
     this->theta = theta;
     this->c     = c;
-    p           = (double)FT::get_prec();
     double tmp  = pow(2.0, -(double)m.get_d() * c);
     sr          = tmp;
   }
@@ -57,10 +56,6 @@ private:
   MatHouseholder<ZT, FT> &m;
   // Arbitraty c > 0
   FT c;
-  // Precision of FT
-  FT p;
-  // Precision of FT
-  FT p0;
   // Multiplicative coefficient used to check if a vector is size-reduced or not.
   FT sr;
 
