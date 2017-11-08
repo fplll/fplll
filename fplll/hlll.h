@@ -23,7 +23,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <class ZT, class FT> class HouseholderLLLReduction
+template <class ZT, class FT> class HLLLReduction
 {
 public:
   /**
@@ -33,8 +33,8 @@ public:
    * needed).
    */
   // TODO: what is c?
-  HouseholderLLLReduction(MatHouseholder<ZT, FT> &arg_m, double delta, double eta, double theta,
-                          double c = 0.1)
+  HLLLReduction(MatHouseholder<ZT, FT> &arg_m, double delta, double eta, double theta,
+                double c = 0.1)
       : m(arg_m)
   {
     this->delta = delta;
