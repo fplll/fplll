@@ -344,7 +344,8 @@ template <class T> int NumVect<T>::size_nz() const
   return i;
 }
 
-template <class T> void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2, int n)
+template <class T>
+inline void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2, int n)
 {
   FPLLL_DEBUG_CHECK(n > 0 && n <= v1.size() && v1.size() == v2.size() &&
                     (v1.is_zero(n) || v2.is_zero(n)));
