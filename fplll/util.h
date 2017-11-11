@@ -59,24 +59,6 @@ void vector_matrix_product(NumVect<ZT> &result, const NumVect<ZT> &x, const Matr
       result[j].addmul(x[i], m(i, j));
 }
 
-template <class T>
-void scalar_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2, int n)
-{
-  FPLLL_DEBUG_CHECK(n <= static_cast<int>(v1.size()) && n <= static_cast<int>(v2.size()));
-  T tmp;
-  result.mul(v1[0], v2[0]);
-  for (int i = 1; i < n; i++)
-  {
-    tmp.mul(v1[i], v2[i]);
-    result.add(result, tmp);
-  }
-}
-
-template <class T> inline void sqr_norm(T &result, const MatrixRow<T> &v, int n)
-{
-  scalar_product(result, v, v, n);
-}
-
 const double DEF_GSO_PREC_EPSILON = 0.03;
 
 /**

@@ -43,7 +43,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
   for (j = 0; j < i; j++)
   {
     // vj * ri[j..n]^T
-    dot_product(ftmp1, V[j], R[i], j, n);
+    V[j].dot_product(ftmp1, R[i], j, n);
     //-vj * ri[j..n]^T
     ftmp1.neg(ftmp1);
     for (k = j; k < n; k++)
@@ -59,7 +59,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
     // sigma[i] = sign(r[1])
     sigma[i] = (R(i, i).cmp(0) < 0) ? -1.0 : 1.0;
     // r^T * r
-    dot_product(ftmp1, R[i], R[i], i, n);
+    R[i].dot_product(ftmp1, R[i], i, n);
     if (ftmp1.cmp(0) != 0)
     {
       ftmp2.sqrt(ftmp1);

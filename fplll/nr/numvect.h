@@ -203,6 +203,9 @@ public:
   /** Multiplication of NumVector and a number c. */
   void mul(const NumVect<T> &v, T c) { mul(v, size(), c); }
   /** Incremeanting each coefficient of NumVector by its product with
+      number c, from beg to index n - 1. */
+  void addmul(const NumVect<T> &v, T x, int beg, int n);
+  /** Incremeanting each coefficient of NumVector by its product with
       number c, till index n. */
   void addmul(const NumVect<T> &v, T x, int n);
   /** Incremeanting each coefficient of NumVector by its product with
@@ -267,11 +270,16 @@ template <class T> void NumVect<T>::mul(const NumVect<T> &v, int n, T c)
     data[i].mul(v[i], c);
 }
 
-template <class T> void NumVect<T>::addmul(const NumVect<T> &v, T x, int n)
+template <class T> void NumVect<T>::addmul(const NumVect<T> &v, T x, int beg, int n)
 {
   FPLLL_DEBUG_CHECK(n <= size() && size() == v.size() && v.is_zero(n));
-  for (int i = n - 1; i >= 0; i--)
+  for (int i = n - 1; i >= beg; i--)
     data[i].addmul(v[i], x);
+}
+
+template <class T> void NumVect<T>::addmul(const NumVect<T> &v, T x, int n)
+{
+  this->addmul(v, x, 0, n);
 }
 
 template <class T>
@@ -344,12 +352,15 @@ template <class T> int NumVect<T>::size_nz() const
   return i;
 }
 
-template <class T> void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2, int n)
+template <class T>
+inline void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2, int beg, int n)
 {
+#if 0
   FPLLL_DEBUG_CHECK(n > 0 && n <= v1.size() && v1.size() == v2.size() &&
                     (v1.is_zero(n) || v2.is_zero(n)));
-  result.mul(v1[0], v2[0]);
-  for (int i = 1; i < n; i++)
+#endif  // 0
+  result.mul(v1[beg], v2[beg]);
+  for (int i = beg + 1; i < n; i++)
   {
     result.addmul(v1[i], v2[i]);
   }
@@ -357,7 +368,7 @@ template <class T> void dot_product(T &result, const NumVect<T> &v1, const NumVe
 
 template <class T> inline void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2)
 {
-  dot_product(result, v1, v2, v1.size());
+  dot_product(result, v1, v2, 0, v1.size());
 }
 
 template <class T> inline void squared_norm(T &result, const NumVect<T> &v)

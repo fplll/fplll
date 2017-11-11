@@ -262,11 +262,11 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::norm_square_b_
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
   if (enable_bf)
   {
-    dot_product(f, bf[k], bf[k], 0, n);
+    bf[k].dot_product(f, bf[k], 0, n);
   }
   else
   {
-    dot_product(ztmp0, b[k], b[k], 0, n);
+    b[k].dot_product(ztmp0, b[k], 0, n);
     f.set_z(ztmp0);
   }
 }
@@ -283,7 +283,7 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int end)
   }
   else
   {
-    dot_product(f, R[k], R[k], 0, end);
+    R[k].dot_product(f, R[k], 0, end);
   }
 }
 
