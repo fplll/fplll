@@ -55,6 +55,7 @@ inline void FP_NR<dd_real>::set_mpfr(mpfr_t r, mp_rnd_t rnd) {
   mpfr_sub_d(tf,r,hi,rnd);
 
   data = dd_real(hi,mpfr_get_d (tf, rnd));
+  mpfr_clear(tf);
 }
 
 template<>
