@@ -24,8 +24,7 @@ FPLLL_BEGIN_NAMESPACE
 
 enum MatHouseholderFlags
 {
-  HOUSEHOLDER_DEFAULT = 0,
-  HOUSEHOLDER_BF      = 1
+  HOUSEHOLDER_DEFAULT = 0
 };
 
 /**
@@ -51,19 +50,6 @@ public:
     sigma.resize(d);
     R.resize(d, n);
     V.resize(d, n);
-    enable_bf = flags & HOUSEHOLDER_BF;
-
-    if (enable_bf)
-    {
-      bf.resize(d, n);
-      for (int i = 0; i < d; i++)
-      {
-        for (int j = 0; j < n; j++)
-        {
-          bf(i, j).set_z(b(i, j));
-        }
-      }
-    }
 
 #ifdef DEBUG
     for (int i = 0; i < d; i++)
@@ -108,16 +94,6 @@ public:
   const Matrix<ZT> &get_b() { return b; }
 
   /**
-   * Returns bf[i].
-   */
-  MatrixRow<FT> get_bf(int i);
-
-  /**
-   * Returns the bf matrix
-   */
-  const Matrix<FT> &get_bf() { return bf; }
-
-  /**
    * Apply Householder transformation on row i, from cols 0 to last_j.
    * Restriction: last_j == i - 1 or i.
    */
@@ -152,7 +128,7 @@ public:
   void add_mul_b_rows(int k, ZT *x);
 
   /**
-   * Swap row i and j of b (and bf if enable_bf).
+   * Swap row i and j of b.
    */
   inline void swap(int i, int j);
 
@@ -179,12 +155,7 @@ private:
   Matrix<ZT> &b;
 
   /**
-   * Floating-point representation of the basis.
-   */
-  Matrix<FT> bf;
-
-  /**
-   * bf = R * q_householder.
+   * b = R * q_householder.
    * R is lower triangular and the diagonal coefficient are >= 0.
    */
   Matrix<FT> R;
@@ -199,19 +170,10 @@ private:
    */
   vector<FT> sigma;
 
-  FT ftmp0, ftmp1, ftmp2;
-  ZT ztmp0;
-
   /**
    * R[i] is invalid for i >= n_known_rows.
    */
   int n_known_rows;
-
-  /**
-   * Number of valid columns of the i-th row of R.
-   * Valid only for 0 <= i < n_known_rows
-   */
-  bool enable_bf;
 };
 
 template <class ZT, class FT> inline FT &MatHouseholder<ZT, FT>::get_R(FT &f, int i, int j)
@@ -231,12 +193,6 @@ template <class ZT, class FT> MatrixRow<ZT> MatHouseholder<ZT, FT>::get_b(int i)
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < d);
   return b[i];
-}
-
-template <class ZT, class FT> MatrixRow<FT> MatHouseholder<ZT, FT>::get_bf(int i)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < d);
-  return bf[i];
 }
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::set_R(FT &f, int i, int j)
@@ -260,15 +216,9 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R()
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
-  if (enable_bf)
-  {
-    bf[k].dot_product(f, bf[k], 0, n);
-  }
-  else
-  {
-    b[k].dot_product(ztmp0, b[k], 0, n);
-    f.set_z(ztmp0);
-  }
+  ZT ztmp0;
+  b[k].dot_product(ztmp0, b[k], 0, n);
+  f.set_z(ztmp0);
 }
 
 template <class ZT, class FT>
@@ -302,8 +252,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
   invalidate_row(i);
 
   b.swap_rows(i, j);
-  if (enable_bf)
-    bf.swap_rows(i, j);
 }
 
 FPLLL_END_NAMESPACE
