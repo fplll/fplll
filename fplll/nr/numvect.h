@@ -352,13 +352,14 @@ template <class T> int NumVect<T>::size_nz() const
   return i;
 }
 
+/** Compute the truncated dot product between tow Numvect using coefficients [beg, n).
+ * Constraint: n > beg.
+ */
 template <class T>
 inline void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2, int beg, int n)
 {
-#if 0
-  FPLLL_DEBUG_CHECK(n > 0 && n <= v1.size() && v1.size() == v2.size() &&
-                    (v1.is_zero(n) || v2.is_zero(n)));
-#endif  // 0
+  FPLLL_DEBUG_CHECK(beg >= 0 && n > beg && n <= v1.size() && n <= v2.size());
+  //(v1.is_zero(n) || v2.is_zero(n))); tested previously
   result.mul(v1[beg], v2[beg]);
   for (int i = beg + 1; i < n; i++)
   {
