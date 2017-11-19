@@ -70,6 +70,11 @@ template <class ZT, class FT> bool rs_are_equal(MatGSO<ZT, FT> M1, MatGSOGram<ZT
   return true;
 }
 
+/**
+ * Test if:
+ *   mu(i, j) = R(i, j) / R(j, j)
+ *   r(i, j) = R(i, j) * R(j, j)
+ */
 template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
 {
   int status = 0;
