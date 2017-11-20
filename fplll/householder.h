@@ -97,12 +97,12 @@ public:
    * Apply Householder transformation on row i, from cols 0 to last_j.
    * Restriction: last_j == i - 1 or i.
    */
-  void update_R_row(int i, int last_j);
+  void update_R(int i, int last_j);
 
   /**
    * Apply Householder transformation on row i.
    */
-  void update_R_row(int i);
+  void update_R(int i);
 
   /**
    * Full computation of the matrix R.
@@ -202,15 +202,15 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::set_R(FT &f, i
   R(i, j) = f;
 }
 
-template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R_row(int i)
+template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R(int i)
 {
-  update_R_row(i, i);
+  update_R(i, i);
 }
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R()
 {
   for (int i = 0; i < d; i++)
-    update_R_row(i);
+    update_R(i);
 }
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k)

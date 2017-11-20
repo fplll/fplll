@@ -40,7 +40,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   {
     if (update_R_row_0)
     {
-      m.update_R_row(0);
+      m.update_R(0);
       update_R_row_0 = !update_R_row_0;
     }
     if (k > k_max)
@@ -83,7 +83,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int k)
 
   do
   {
-    m.update_R_row(k, k - 1);
+    m.update_R(k, k - 1);
     for (int i = k - 1; i >= 0; i--)
     {
       m.get_R(t, k, i);
@@ -113,7 +113,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int k)
     t.mul(sr, t);                   // t = 2^(-cd) * t
   } while (ftmp0 <= t);
 
-  m.update_R_row(k);
+  m.update_R(k);
 
   delete[] x;
 }

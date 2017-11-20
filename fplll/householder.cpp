@@ -21,7 +21,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, int last_j)
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int last_j)
 {
   FT ftmp0, ftmp1, ftmp2;
   // Restriction on last_j
@@ -95,7 +95,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
         for (k = i + 1; k < n; k++)
         {
           FPLLL_DEBUG_CHECK(R(i, k).is_zero());
-          FPLLL_DEBUG_CHECK(b(i, k).is_zero());
           V(i, k) = 0.0;
         }
       }
@@ -105,7 +104,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_row(int i, i
       for (k = i; k < n; k++)
       {
         FPLLL_DEBUG_CHECK(R(i, k).is_zero());
-        FPLLL_DEBUG_CHECK(b(i, k).is_zero());
         V(i, k) = 0.0;
       }
     }
