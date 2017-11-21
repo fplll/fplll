@@ -92,6 +92,16 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
 
   for (int i = 0; i < A.get_rows(); i++)
   {
+    Mhouseholder.get_R(rhd, i, i);
+    if (rhd.cmp(0.0) <= 0)
+    {
+      cerr << "R(" << i << ", " << i << ") must be positive." << endl;
+      status = 1;
+    }
+  }
+
+  for (int i = 0; i < A.get_rows(); i++)
+  {
     for (int j = 0; j < i; j++)
     {
       M.get_r(r, i, j);

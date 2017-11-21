@@ -64,7 +64,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
     // ftmp1 = r^T * r
     ftmp1.add(ftmp1, V(i, i));
 
-    if (ftmp1.cmp(0) != 0)
+    if (ftmp1.cmp(0.0) != 0)
     {
       ftmp2.sqrt(ftmp1);
       // s = sigma[i] * ||r|| = sigma[i] * sqrt(r * r^T)
@@ -74,7 +74,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
       V(i, i).neg(V(i, i));
       // vi[1] = (-sum(r[j]^2, j, 2, n-i+1) / (r[1] + s)
       V(i, i).div(V(i, i), ftmp1);
-      if (V(i, i).cmp(0) != 0)
+      if (V(i, i).cmp(0.0) != 0)
       {
         ftmp0.neg(ftmp0);
         ftmp0.mul(ftmp0, V(i, i));
@@ -92,6 +92,9 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
       }
       else
       {
+        if (R(i, i).cmp(0.0) < 0)
+          R(i, i).neg(R(i, i));
+
         for (k = i + 1; k < n; k++)
         {
           FPLLL_DEBUG_CHECK(R(i, k).is_zero());
