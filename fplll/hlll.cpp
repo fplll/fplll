@@ -47,7 +47,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     {
       if (verbose)
       {
-        cerr << "Discovering vector " << k << "/" << m.get_d()
+        cerr << "Discovering vector " << k + 1 << "/" << m.get_d()
              << " cputime=" << cputime() - start_time << endl;
       }
       k_max = k;
