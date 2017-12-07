@@ -267,6 +267,28 @@ template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &
   return status;
 }
 
+template <class ZT> int hlll(Options &o, ZZ_mat<ZT> &b)
+{
+  // Stupid initialization of u and u_inv to be not empty.
+  ZZ_mat<ZT> u(1, 1), u_inv(1, 1);
+  int status, flags = 0;
+  if (o.verbose)
+    flags |= LLL_VERBOSE;
+  if (!o.is_eta_defined)
+    o.eta = HLLL_DEF_ETA;
+
+  status =
+      hlll_reduction(b, o.delta, o.eta, o.theta, o.c, o.method, o.float_type, o.precision, flags);
+
+  cout << b << endl;
+
+  if (status != RED_SUCCESS)
+  {
+    cerr << "Failure: " << get_red_status_str(status) << endl;
+  }
+  return status;
+}
+
 template <class ZT> int run_action(Options &o)
 {
   istream *is;
@@ -306,6 +328,9 @@ template <class ZT> int run_action(Options &o)
   case ACTION_BKZ:
     result = bkz(o, m);
     break;
+  case ACTION_HLLL:
+    result = hlll(o, m);
+    break;
   default:
     ABORT_MSG("unimplemented action");
     break;
@@ -343,6 +368,8 @@ void read_options(int argc, char **argv, Options &o)
         o.action = ACTION_BKZ;
         o.bkz_flags |= BKZ_SLD_RED;
       }
+      else if (strcmp(argv[ac], "hlll") == 0)
+        o.action = ACTION_HLLL;
       else
         ABORT_MSG("parse error in -a switch: lll or svp expected");
     }
@@ -385,7 +412,7 @@ void read_options(int argc, char **argv, Options &o)
     {
       ++ac;
       CHECK(ac < argc, "missing value after -c switch");
-      // o.c=atoi(argv[ac]); // ignored (was the number of columns)
+      o.c = atof(argv[ac]);
     }
     else if (strcmp(argv[ac], "-bkzghbound") == 0)
     {
@@ -404,7 +431,14 @@ void read_options(int argc, char **argv, Options &o)
     {
       ++ac;
       CHECK(ac < argc, "missing value after -e switch");
-      o.eta = atof(argv[ac]);
+      o.eta            = atof(argv[ac]);
+      o.is_eta_defined = true;
+    }
+    else if (strcmp(argv[ac], "-t") == 0 || strcmp(argv[ac], "-theta") == 0)
+    {
+      ++ac;
+      CHECK(ac < argc, "missing value after -t switch");
+      o.theta = atof(argv[ac]);
     }
     else if (strcmp(argv[ac], "-f") == 0)
     {
@@ -519,17 +553,19 @@ void read_options(int argc, char **argv, Options &o)
            << "       sdb = reduce the input matrix using the self dual BKZ variant\n"
            << "       sld = slide reduce the input matrix\n"
            << "       cvp = compute the vector in the input lattice closest to an input vector\n"
+           << "       hlll = H-LLL-reduce the input matrix\n"
            << "  -v\n"
            << "       Enable verbose mode\n"
            << "  -nolll\n"
            << "       Does not apply initial LLL-reduction (for bkz, hkz and svp)\n"
-           << "  -c <size>\n"
-           << "       Was the number of columns (ignored)\n"
+           << "  -c <c>\n"
+           << "       An arbitrary double constant > 0 for H-LLL (default=0.1)\n"
            << "  -r <size>\n"
            << "       Was the number of rows (ignored)\n"
 
            << "  -d <delta> (default=0.99; alias to -delta <delta>)\n"
            << "  -e <eta> (default=0.51; alias to -eta <eta>)\n"
+           << "  -t <theta> (default=0.01; alias to -eta <eta>)\n"
            << "  -l <lovasz>\n"
            << "       If <lovasz> != 0, Lovasz's condition, otherwise, Siegel's condition\n"
            << "  -f [mpfr|dd|qd|dpe|double|longdouble]\n"

@@ -105,6 +105,37 @@ FPLLL_DECLARE_LLL(long)
 FPLLL_DECLARE_LLL(double)
 #endif
 
+// H-LLL
+
+/**
+ * We define H-LLL for each input type instead of using a template,
+ * in order to force the compiler to instantiate the functions.
+ */
+#define FPLLL_DECLARE_HLLL(T)                                                                      \
+  int hlll_reduction(ZZ_mat<T> &b, double delta = LLL_DEF_DELTA, double eta = HLLL_DEF_ETA,        \
+                     double theta = HLLL_DEF_THETA, double c = HLLL_DEF_C,                         \
+                     LLLMethod method = LM_WRAPPER, FloatType float_type = FT_DEFAULT,             \
+                     int precision = 0, int flags = LLL_DEFAULT);                                  \
+  int hlll_reduction(                                                                              \
+      ZZ_mat<T> &b, ZZ_mat<T> &u, double delta = LLL_DEF_DELTA, double eta = HLLL_DEF_ETA,         \
+      double theta = HLLL_DEF_THETA, double c = HLLL_DEF_C, LLLMethod method = LM_WRAPPER,         \
+      FloatType float_type = FT_DEFAULT, int precision = 0, int flags = LLL_DEFAULT);              \
+  int hlll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, ZZ_mat<T> &u_inv, double delta = LLL_DEF_DELTA,   \
+                     double eta = HLLL_DEF_ETA, double theta = HLLL_DEF_THETA,                     \
+                     double c = HLLL_DEF_C, LLLMethod method = LM_WRAPPER,                         \
+                     FloatType float_type = FT_DEFAULT, int precision = 0,                         \
+                     int flags = LLL_DEFAULT);
+
+FPLLL_DECLARE_HLLL(mpz_t)
+
+#ifdef FPLLL_WITH_ZLONG
+FPLLL_DECLARE_HLLL(long)
+#endif
+
+#ifdef FPLLL_WITH_ZDOUBLE
+FPLLL_DECLARE_HLLL(double)
+#endif
+
 FPLLL_END_NAMESPACE
 
 #endif

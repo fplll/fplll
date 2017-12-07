@@ -123,6 +123,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int k)
   m.update_R(k);
 }
 
+// Works only there is no row_expo.
 template <class ZT, class FT>
 bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
 {

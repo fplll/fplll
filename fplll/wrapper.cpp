@@ -16,6 +16,7 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "wrapper.h"
+#include "hlll.h"
 #include "lll.h"
 #include "util.h"
 
@@ -570,6 +571,173 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
   return status;
 }
 
+template <class ZT, class FT>
+int hlll_reduction_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta,
+                      double theta, double c, LLLMethod method, int flags)
+{
+  if (b.get_rows() == 0 || b.get_cols() == 0)
+    return RED_SUCCESS;
+  int householder_flags = HOUSEHOLDER_DEFAULT;
+  if (method == LM_FAST)
+    householder_flags |= HOUSEHOLDER_ROW_EXPO;
+  MatHouseholder<Z_NR<ZT>, FP_NR<FT>> m(b, householder_flags);
+  HLLLReduction<Z_NR<ZT>, FP_NR<FT>> lll_obj(m, delta, eta, theta, c, flags);
+  lll_obj.lll();
+  return RED_SUCCESS;
+}
+
+template <class ZT>
+int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta,
+                     double theta, double c, LLLMethod method, IntType int_type,
+                     FloatType float_type, int precision, int flags)
+{
+  FPLLL_CHECK(method != LM_WRAPPER, "H-LLL wrapper is not implementated.");
+  FPLLL_CHECK(method != LM_HEURISTIC, "H-LLL heuristic is not implementated.");
+
+  /* computes the parameters required for the proved version */
+  int good_prec = hlll_min_prec(b.get_rows(), b.get_cols(), delta, eta, theta, c);
+
+  /* sets the parameters and checks the consistency */
+  int sel_prec = 0;
+  if (method == LM_PROVED)
+  {
+    sel_prec = (precision != 0) ? precision : good_prec;
+  }
+  else
+  {
+    sel_prec = (precision != 0) ? precision : PREC_DOUBLE;
+  }
+
+  FloatType sel_ft = float_type;
+
+  /* if manually input precision */
+  if (precision != 0)
+  {
+    if (sel_ft == FT_DEFAULT)
+    {
+      sel_ft = FT_MPFR;
+    }
+    FPLLL_CHECK(sel_ft == FT_MPFR,
+                "The floating type must be mpfr when the precision is specified");
+  }
+
+  if (sel_ft == FT_DEFAULT)
+  {
+    if (method == LM_FAST)
+      sel_ft = FT_DOUBLE;
+#ifdef FPLLL_WITH_DPE
+    else if (sel_prec <= static_cast<int>(FP_NR<dpe_t>::get_prec()))
+      sel_ft = FT_DPE;
+#endif
+#ifdef FPLLL_WITH_QD
+    else if (sel_prec <= static_cast<int>(FP_NR<dd_real>::get_prec()))
+      sel_ft = FT_DD;
+    else if (sel_prec <= static_cast<int>(FP_NR<qd_real>::get_prec()))
+      sel_ft = FT_QD;
+#endif
+    else
+      sel_ft = FT_MPFR;
+  }
+  else if (method == LM_FAST &&
+           (sel_ft != FT_DOUBLE && sel_ft != FT_LONG_DOUBLE && sel_ft != FT_DD && sel_ft != FT_QD))
+  {
+    FPLLL_ABORT("'double' or 'long double' or 'dd' or 'qd' required for "
+                << LLL_METHOD_STR[method]);
+  }
+
+  if (sel_ft == FT_DOUBLE)
+    sel_prec = FP_NR<double>::get_prec();
+#ifdef FPLLL_WITH_LONG_DOUBLE
+  else if (sel_ft == FT_LONG_DOUBLE)
+    sel_prec = FP_NR<long double>::get_prec();
+#endif
+#ifdef FPLLL_WITH_DPE
+  else if (sel_ft == FT_DPE)
+    sel_prec = FP_NR<dpe_t>::get_prec();
+#endif
+#ifdef FPLLL_WITH_QD
+  else if (sel_ft == FT_DD)
+    sel_prec = FP_NR<dd_real>::get_prec();
+  else if (sel_ft == FT_QD)
+    sel_prec = FP_NR<qd_real>::get_prec();
+#endif
+
+  if (flags & LLL_VERBOSE)
+  {
+    cerr << "Starting H-LLL method '" << LLL_METHOD_STR[method] << "'" << endl
+         << "  integer type '" << INT_TYPE_STR[int_type] << "'" << endl
+         << "  floating point type '" << FLOAT_TYPE_STR[sel_ft] << "'" << endl;
+    if (method != LM_PROVED || int_type != ZT_MPZ || sel_ft == FT_DOUBLE)
+    {
+      cerr << "  The reduction is not guaranteed";
+    }
+    else if (sel_prec < good_prec)
+    {
+      cerr << "  prec < " << good_prec << ", the reduction is not guaranteed";
+    }
+    else
+    {
+      cerr << "  prec >= " << good_prec << ", the reduction is guaranteed";
+    }
+    cerr << endl;
+  }
+
+  // Applies the selected method
+  int status;
+  if (sel_ft == FT_DOUBLE)
+  {
+    status = hlll_reduction_zf<ZT, double>(b, u, u_inv, delta, eta, theta, c, method, flags);
+  }
+#ifdef FPLLL_WITH_LONG_DOUBLE
+  else if (sel_ft == FT_LONG_DOUBLE)
+  {
+    status = hlll_reduction_zf<ZT, long double>(b, u, u_inv, delta, eta, theta, c, method, flags);
+  }
+#endif
+#ifdef FPLLL_WITH_DPE
+  else if (sel_ft == FT_DPE)
+  {
+    status = hlll_reduction_zf<ZT, dpe_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
+  }
+#endif
+#ifdef FPLLL_WITH_QD
+  else if (sel_ft == FT_DD)
+  {
+    unsigned int old_cw;
+    fpu_fix_start(&old_cw);
+    status = hlll_reduction_zf<ZT, dd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
+    fpu_fix_end(&old_cw);
+  }
+  else if (sel_ft == FT_QD)
+  {
+    unsigned int old_cw;
+    fpu_fix_start(&old_cw);
+    status = hlll_reduction_zf<ZT, qd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
+    fpu_fix_end(&old_cw);
+  }
+#endif
+  else if (sel_ft == FT_MPFR)
+  {
+    int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
+    status       = hlll_reduction_zf<ZT, mpfr_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
+    FP_NR<mpfr_t>::set_prec(old_prec);
+  }
+  else
+  {
+    if (0 <= sel_ft && sel_ft <= FT_MPFR)
+    {
+      // it's a valid choice but we don't have support for it
+      FPLLL_ABORT("Compiled without support for LLL reduction with " << FLOAT_TYPE_STR[sel_ft]);
+    }
+    else
+    {
+      FPLLL_ABORT("Floating point type " << sel_ft << "not supported in LLL");
+    }
+  }
+  zeros_first(b, u, u_inv);
+  return status;
+}
+
 /**
  * We define LLL for each input type instead of using a template,
  * in order to force the compiler to instantiate the functions.
@@ -615,6 +783,56 @@ FPLLL_DEFINE_LLL(long, ZT_LONG)
 
 #ifdef FPLLL_WITH_ZDOUBLE
 FPLLL_DEFINE_LLL(double, ZT_DOUBLE)
+#endif
+
+// H-LLL
+
+/**
+ * We define H-LLL for each input type instead of using a template,
+ * in order to force the compiler to instantiate the functions.
+ */
+#define FPLLL_DEFINE_HLLL(T, id_t)                                                                 \
+  int hlll_reduction(ZZ_mat<T> &b, double delta, double eta, double theta, double c,               \
+                     LLLMethod method, FloatType float_type, int precision, int flags)             \
+  {                                                                                                \
+    ZZ_mat<T> empty_mat; /* Empty u -> transform disabled */                                       \
+    return hlll_reduction_z<T>(b, empty_mat, empty_mat, delta, eta, theta, c, method, id_t,        \
+                               float_type, precision, flags);                                      \
+  }                                                                                                \
+                                                                                                   \
+  int hlll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, double delta, double eta, double theta, double c, \
+                     LLLMethod method, FloatType float_type, int precision, int flags)             \
+  {                                                                                                \
+    ZZ_mat<T> empty_mat;                                                                           \
+    if (!u.empty())                                                                                \
+      u.gen_identity(b.get_rows());                                                                \
+    return hlll_reduction_z<T>(b, u, empty_mat, delta, eta, theta, c, method, id_t, float_type,    \
+                               precision, flags);                                                  \
+  }                                                                                                \
+                                                                                                   \
+  int hlll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, ZZ_mat<T> &u_inv, double delta, double eta,       \
+                     double theta, double c, LLLMethod method, FloatType float_type,               \
+                     int precision, int flags)                                                     \
+  {                                                                                                \
+    if (!u.empty())                                                                                \
+      u.gen_identity(b.get_rows());                                                                \
+    if (!u_inv.empty())                                                                            \
+      u_inv.gen_identity(b.get_rows());                                                            \
+    u_inv.transpose();                                                                             \
+    int status = hlll_reduction_z<T>(b, u, u_inv, delta, eta, theta, c, method, id_t, float_type,  \
+                                     precision, flags);                                            \
+    u_inv.transpose();                                                                             \
+    return status;                                                                                 \
+  }
+
+FPLLL_DEFINE_HLLL(mpz_t, ZT_MPZ)
+
+#ifdef FPLLL_WITH_ZLONG
+FPLLL_DEFINE_HLLL(long, ZT_LONG)
+#endif
+
+#ifdef FPLLL_WITH_ZDOUBLE
+FPLLL_DEFINE_HLLL(double, ZT_DOUBLE)
 #endif
 
 FPLLL_END_NAMESPACE

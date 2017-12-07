@@ -140,6 +140,10 @@ const double LLL_DEF_ETA          = 0.51;
 const double LLL_DEF_EPSILON      = 0.01;
 const int SIZE_RED_FAILURE_THRESH = 5;
 
+const double HLLL_DEF_ETA   = 0.52;
+const double HLLL_DEF_THETA = 0.01;
+const double HLLL_DEF_C     = 0.1;
+
 enum RedStatus
 {
   RED_SUCCESS = 0,
@@ -151,7 +155,8 @@ enum RedStatus
   RED_BKZ_FAILURE     = 6,
   RED_BKZ_TIME_LIMIT  = 7,
   RED_BKZ_LOOPS_LIMIT = 8,
-  RED_STATUS_MAX      = 9
+  RED_HLLL_FAILURE    = 9,
+  RED_STATUS_MAX      = 10
 };
 
 const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
@@ -162,7 +167,8 @@ const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
                                                     "error in SVP solver",
                                                     "error in BKZ",
                                                     "time limit exceeded in BKZ",
-                                                    "loops limit exceeded in BKZ"};
+                                                    "loops limit exceeded in BKZ",
+                                                    "error in H-LLL"};
 
 enum LLLMethod
 {

@@ -108,6 +108,8 @@ int l2_min_prec(int d, double delta, double eta, double epsilon)
 int hlll_min_prec(int d_i, int n_i, double delta, double eta, double theta, double c)
 {
   FPLLL_CHECK(delta < 1.0 && delta >= 0.25, "delta must be in [1/4, 1).");
+  FPLLL_CHECK(theta >= 0.0, "theta must be positive.");
+  FPLLL_CHECK(eta >= 0.5, "theta must be larger than or equal to 0.5.");
   FPLLL_CHECK(eta - theta > 0.5, "eta - theta must be larger than 0.5.");
 
   double d = (double)d_i;
