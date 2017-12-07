@@ -29,7 +29,9 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A, int flags, int prec = 
 {
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A, flags);
   HLLLReduction<Z_NR<ZT>, FP_NR<FT>> hlll_obj(Mhouseholder, 0.99, 0.52, 0.99, 0.01, flags);
+
   hlll_obj.lll();
+
   MatHouseholder<Z_NR<ZT>, FP_NR<double>> M(A, flags);
   int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<double>>(M, 0.99, 0.52);
 
@@ -91,8 +93,8 @@ int main(int /*argc*/, char ** /*argv*/)
   status |=
       test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_DEFAULT);
 #endif  // FPLLL_WITH_QD
-        // status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/dim55_in",
-        // HOUSEHOLDER_DEFAULT);
+  status |=
+      test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_DEFAULT);
 
   status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
                                          HOUSEHOLDER_DEFAULT);
@@ -110,8 +112,8 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
                                           HOUSEHOLDER_DEFAULT);
 #endif  // FPLLL_WITH_QD
-  // status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
-  // HOUSEHOLDER_DEFAULT);
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
+                                         HOUSEHOLDER_DEFAULT);
 
   if (status == 0)
   {

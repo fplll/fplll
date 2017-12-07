@@ -24,7 +24,8 @@ FPLLL_BEGIN_NAMESPACE
 
 enum MatHouseholderFlags
 {
-  HOUSEHOLDER_DEFAULT = 0
+  HOUSEHOLDER_DEFAULT  = 0,
+  HOUSEHOLDER_ROW_EXPO = 1
 };
 
 /**
@@ -42,7 +43,8 @@ public:
    * @param b
    *   The matrix on which row operations are performed. It must not be empty.
    */
-  MatHouseholder(Matrix<ZT> &arg_b, int flags) : b(arg_b)
+  MatHouseholder(Matrix<ZT> &arg_b, int flags)
+      : b(arg_b), enable_row_expo(flags & HOUSEHOLDER_ROW_EXPO)
   {
     d            = b.get_rows();
     n            = b.get_cols();
@@ -50,6 +52,10 @@ public:
     sigma.resize(d);
     R.resize(d, n);
     V.resize(d, n);
+    row_expo.resize(d);
+
+    if (!enable_row_expo)
+      fill(row_expo.begin(), row_expo.end(), -1);
 
 #ifdef DEBUG
     for (int i = 0; i < d; i++)
@@ -69,19 +75,23 @@ public:
    *
    * Returns reference to `f`.
    */
-  inline FT &get_R(FT &f, int i, int j);
+  inline void get_R(FT &f, int i, int j, long &expo);
 
   inline void set_R(FT &f, int i, int j);
 
   /**
    * Returns R[i].
    */
-  inline MatrixRow<FT> get_R(int i);
+  inline MatrixRow<FT> get_R(int i, long &expo);
 
   /**
    * Returns the R matrix
    */
-  const Matrix<FT> &get_R() { return R; }
+  const Matrix<FT> &get_R(vector<long> &expo)
+  {
+    expo = row_expo;
+    return R;
+  }
 
   /**
    * Returns b[i].
@@ -115,17 +125,17 @@ public:
   /**
    * Norm square of b[k].
    */
-  inline void norm_square_b_row(FT &f, int k);
+  inline void norm_square_b_row(FT &f, int k, long &expo);
 
   /**
    * Truncated norm square of R[k], with coefficients of R[k][0..end-1].
    */
-  inline void norm_square_R_row(FT &f, int k, int end);
+  inline void norm_square_R_row(FT &f, int k, int end, long &expo);
 
   /**
    * b[k] = b[k] - sum_{i = 0}^{k - 1}(x[i] * b[i])
    */
-  void add_mul_b_rows(int k, ZT *x);
+  void add_mul_b_rows(int k, vector<FT> xf);
 
   /**
    * Swap row i and j of b.
@@ -138,6 +148,7 @@ public:
    */
   inline void invalidate_row(int k);
 
+  inline bool is_enable_row_expo() { return enable_row_expo; }
 private:
   /**
    * Number of rows of b (dimension of the lattice).
@@ -174,18 +185,30 @@ private:
    * R[i] is invalid for i >= n_known_rows.
    */
   int n_known_rows;
+
+  /** Normalization of each row of b by a power of 2. */
+  const bool enable_row_expo;
+
+  /**
+   * When enable_row_expo=true, row_expo[i] is the smallest non-negative integer
+   * such that b(i, j) &lt;= 2^row_expo[i] for all j. Otherwise this array is empty.
+   */
+  vector<long> row_expo;
 };
 
-template <class ZT, class FT> inline FT &MatHouseholder<ZT, FT>::get_R(FT &f, int i, int j)
+template <class ZT, class FT>
+inline void MatHouseholder<ZT, FT>::get_R(FT &f, int i, int j, long &expo)
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < d && j >= 0 && j <= i);
-  f = R(i, j);
-  return f;
+  f    = R(i, j);
+  expo = row_expo[i];
 }
 
-template <class ZT, class FT> inline MatrixRow<FT> MatHouseholder<ZT, FT>::get_R(int i)
+template <class ZT, class FT> inline MatrixRow<FT> MatHouseholder<ZT, FT>::get_R(int i, long &expo)
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < d);
+  expo = row_expo[i];
+
   return R[i];
 }
 
@@ -213,16 +236,23 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R()
     update_R(i);
 }
 
-template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k)
+template <class ZT, class FT>
+inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k, long &expo)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
   ZT ztmp0;
   b[k].dot_product(ztmp0, b[k], 0, n);
-  f.set_z(ztmp0);
+  if (enable_row_expo)
+    ztmp0.get_f_exp(f, expo);
+  else
+  {
+    expo = -1;
+    f.set_z(ztmp0);
+  }
 }
 
 template <class ZT, class FT>
-inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int end)
+inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int end, long &expo)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
   FPLLL_DEBUG_CHECK(0 <= end && end <= k);
@@ -235,6 +265,7 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int end)
   {
     R[k].dot_product(f, R[k], 0, end);
   }
+  expo = 2 * row_expo[k];
 }
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::invalidate_row(int k)

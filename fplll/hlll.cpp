@@ -32,6 +32,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   FT delta_           = delta;  // TODO: not exactly the good value
   bool update_R_row_0 = true;
   int start_time      = cputime();
+  long expo_k1_k1, expo_k_k1, expo_k_k;
 
   if (verbose)
     print_params();
@@ -55,12 +56,12 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
     size_reduction(k);
 
-    m.get_R(s, k, k - 1);
+    m.get_R(s, k, k - 1, expo_k_k1);
     s.mul(s, s);  // s = R(k, k - 1)^2
-    m.get_R(tmp, k, k);
+    m.get_R(tmp, k, k, expo_k_k);
     tmp.mul(tmp, tmp);  // tmp = R(k, k)^2
     s.add(tmp, s);      // s = R(k, k - 1)^2 + R(k, k)^2
-    m.get_R(tmp, k - 1, k - 1);
+    m.get_R(tmp, k - 1, k - 1, expo_k1_k1);
     tmp.mul(tmp, tmp);
     tmp.mul(delta_, tmp);  // tmp = delta_ * R(k - 1, k - 1)^2
 
@@ -78,44 +79,42 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
 template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int k)
 {
-  ZT *x = new ZT[k];
-  FT t, ftmp0, ftmp1;
+  vector<FT> xf(k);
+  FT ftmp0, ftmp1;
+  long expo0, expo1;
 
   do
   {
     m.update_R(k, k - 1);
     for (int i = k - 1; i >= 0; i--)
     {
-      m.get_R(t, k, i);
-      m.get_R(ftmp0, i, i);
+      m.get_R(xf[i], k, i, expo0);  // expo0 = row_expo[k]
+      m.get_R(ftmp0, i, i, expo1);  // expo1 = row_expo[i]
 
-      t.div(t, ftmp0);  // t = R(k, i) / R(i, i)
+      xf[i].div(xf[i], ftmp0);  // x[i] = R(k, i) / R(i, i)
 
-      t.rnd(t);
-      t.neg(t);
+      xf[i].rnd(xf[i]);
+      xf[i].neg(xf[i]);
 
-      x[i].set_f(t);
-      if (x[i] != 0)
+      if (xf[i].cmp(0.0) != 0)
       {
         for (int j = 0; j < i; j++)
         {
-          m.get_R(ftmp1, i, j);
-          ftmp1.mul(t, ftmp1);  // ftmp1 = x[i] * R(i, j)
-          m.get_R(ftmp0, k, j);
-          ftmp0.add(ftmp0, ftmp1);  // ftmp0 = R(k, j) + x[i] * R(i, j)
+          m.get_R(ftmp1, i, j, expo0);  // expo0 = row_expo[i]
+          ftmp1.mul(xf[i], ftmp1);      // ftmp1 = x[i] * R(i, j)
+          m.get_R(ftmp0, k, j, expo0);  // expo0 = row_expo[k]
+          ftmp0.add(ftmp0, ftmp1);      // ftmp0 = R(k, j) + x[i] * R(i, j)
           m.set_R(ftmp0, k, j);
         }
       }
     }
-    m.norm_square_b_row(t, k);  // t = ||b[k]||^2
-    m.add_mul_b_rows(k, x);
-    m.norm_square_b_row(ftmp0, k);  // ftmp0 = ||b[k]||^2
-    t.mul(sr, t);                   // t = 2^(-cd) * t
-  } while (ftmp0 <= t);
+    m.norm_square_b_row(ftmp1, k, expo0);  // ftmp1 = ||b[k]||^2
+    m.add_mul_b_rows(k, xf);
+    m.norm_square_b_row(ftmp0, k, expo1);  // ftmp0 = ||b[k]||^2
+    ftmp1.mul(sr, ftmp1);                  // ftmp1 = 2^(-cd) * ftmp1
+  } while (ftmp0.cmp(ftmp1) <= 0);
 
   m.update_R(k);
-
-  delete[] x;
 }
 
 template <class ZT, class FT>
@@ -125,28 +124,30 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
   FT ftmp1;
   FT delta_ = delta;
   m.update_R();
+  long expo;
+
   for (int i = 0; i < m.get_d(); i++)
   {
     for (int j = 0; j < i; j++)
     {
-      m.get_R(ftmp0, i, j);
-      m.get_R(ftmp1, j, j);
+      m.get_R(ftmp0, i, j, expo);
+      m.get_R(ftmp1, j, j, expo);
       ftmp1.div(ftmp0, ftmp1);
       ftmp1.abs(ftmp1);
-      if (ftmp1 > 0.5)
+      if (ftmp1.cmp(0.5) > 0)
         return false;
     }
   }
   for (int i = 1; i < m.get_d(); i++)
   {
-    m.norm_square_b_row(ftmp0, i);  // ftmp0 = ||b[i]||^2
-    m.norm_square_R_row(ftmp1, i, i - 1);
+    m.norm_square_b_row(ftmp0, i, expo);  // ftmp0 = ||b[i]||^2
+    m.norm_square_R_row(ftmp1, i, i - 1, expo);
     ftmp1.sub(ftmp0, ftmp1);  // ftmp1 = ||b[i]||^2 - sum_{i = 0}^{i < i - 1}R[i][i]^2
-    m.get_R(ftmp0, i - 1, i - 1);
+    m.get_R(ftmp0, i - 1, i - 1, expo);
     ftmp0.mul(ftmp0, ftmp0);
     ftmp0.mul(delta_, ftmp0);  // ftmp0 = delta_ * R(i - 1, i - 1)^2
 
-    if (ftmp0 > ftmp1)
+    if (ftmp0.cmp(ftmp1) > 0)
       return false;
   }
   return true;

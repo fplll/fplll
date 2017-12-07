@@ -89,10 +89,11 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
   FP_NR<FT> rh;
   FP_NR<FT> rhd;
   FP_NR<FT> mu;
+  long expo;
 
   for (int i = 0; i < A.get_rows(); i++)
   {
-    Mhouseholder.get_R(rhd, i, i);
+    Mhouseholder.get_R(rhd, i, i, expo);
     if (rhd.cmp(0.0) <= 0)
     {
       cerr << "R(" << i << ", " << i << ") must be positive." << endl;
@@ -106,8 +107,8 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
     {
       M.get_r(r, i, j);
       M.get_mu(mu, i, j);
-      Mhouseholder.get_R(rh, i, j);
-      Mhouseholder.get_R(rhd, j, j);
+      Mhouseholder.get_R(rh, i, j, expo);
+      Mhouseholder.get_R(rhd, j, j, expo);
       if (abs(mu - rh / rhd) > 0.001)
       {
         cerr << "Error (mu): " << mu << " != " << rh / rhd << endl;

@@ -116,19 +116,15 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
   }
 }
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::add_mul_b_rows(int k, ZT *x)
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::add_mul_b_rows(int k, vector<FT> xf)
 {
   FPLLL_DEBUG_CHECK(k > 0 && k < d);
 
   ZT ztmp0;
-  for (int j = 0; j < n; j++)
+  for (int i = 0; i < k; i++)
   {
-    ztmp0.mul(x[0], b(0, j));
-    for (int i = 1; i < k; i++)
-    {
-      ztmp0.addmul(x[i], b(i, j));
-    }
-    b(k, j).add(b(k, j), ztmp0);
+    ztmp0.set_f(xf[i]);
+    b[k].addmul(b[i], ztmp0);
   }
   invalidate_row(k);
 }
