@@ -28,12 +28,12 @@ using namespace fplll;
 template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A, int flags, int prec = 53)
 {
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A, flags);
-  HLLLReduction<Z_NR<ZT>, FP_NR<FT>> hlll_obj(Mhouseholder, 0.99, 0.52, 0.99, 0.01, flags);
+  HLLLReduction<Z_NR<ZT>, FP_NR<FT>> hlll_obj(Mhouseholder, 0.99, 0.52, 0.99, 0.01, LLL_DEFAULT);
 
   hlll_obj.lll();
 
-  MatHouseholder<Z_NR<ZT>, FP_NR<double>> M(A, flags);
-  int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<double>>(M, 0.99, 0.52);
+  MatHouseholder<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, HOUSEHOLDER_DEFAULT);
+  int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, 0.99, 0.52);
 
   if (status == 0)
     cerr << "Output of HLLL reduction is not HLLL reduced." << endl;
@@ -78,10 +78,10 @@ int main(int /*argc*/, char ** /*argv*/)
   int status = 0;
 
   status |=
-      test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_DEFAULT);
+      test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_ROW_EXPO);
 #ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/dim55_in",
-                                              HOUSEHOLDER_DEFAULT);
+                                              HOUSEHOLDER_ROW_EXPO);
 #endif  // FPLLL_WITH_LONG_DOUBLE
 #ifdef FPLLL_WITH_DPE
   status |=
@@ -89,18 +89,18 @@ int main(int /*argc*/, char ** /*argv*/)
 #endif  // FPLLL_WITH_DPE
 #ifdef FPLLL_WITH_QD
   status |=
-      test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_DEFAULT);
+      test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_ROW_EXPO);
   status |=
-      test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_DEFAULT);
+      test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_ROW_EXPO);
 #endif  // FPLLL_WITH_QD
   status |=
       test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_DEFAULT);
 
   status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
-                                         HOUSEHOLDER_DEFAULT);
+                                         HOUSEHOLDER_ROW_EXPO);
 #ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
-                                              HOUSEHOLDER_DEFAULT);
+                                              HOUSEHOLDER_ROW_EXPO);
 #endif  // FPLLL_WITH_LONG_DOUBLE
 #ifdef FPLLL_WITH_DPE
   status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
@@ -108,9 +108,9 @@ int main(int /*argc*/, char ** /*argv*/)
 #endif  // FPLLL_WITH_DPE
 #ifdef FPLLL_WITH_QD
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
-                                          HOUSEHOLDER_DEFAULT);
+                                          HOUSEHOLDER_ROW_EXPO);
   status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
-                                          HOUSEHOLDER_DEFAULT);
+                                          HOUSEHOLDER_ROW_EXPO);
 #endif  // FPLLL_WITH_QD
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
                                          HOUSEHOLDER_DEFAULT);

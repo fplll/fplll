@@ -65,6 +65,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     tmp.mul(tmp, tmp);
     tmp.mul(delta_, tmp);  // tmp = delta_ * R(k - 1, k - 1)^2
 
+    if (expo_k1_k1 > -1)
+      s.mul_2si(s, 2 * (expo_k_k - expo_k1_k1));
     if (tmp <= s)
       k++;
     else
@@ -92,8 +94,10 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int k)
       m.get_R(ftmp0, i, i, expo1);  // expo1 = row_expo[i]
 
       xf[i].div(xf[i], ftmp0);  // x[i] = R(k, i) / R(i, i)
-
-      xf[i].rnd(xf[i]);
+      /* If T = mpfr or dpe, enable_row_expo must be false and then, expo0 - expo1 == 0 (required by
+       * rnd_we with this
+       * types) */
+      xf[i].rnd_we(xf[i], expo0 - expo1);
       xf[i].neg(xf[i]);
 
       if (xf[i].cmp(0.0) != 0)
@@ -112,6 +116,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int k)
     m.add_mul_b_rows(k, xf);
     m.norm_square_b_row(ftmp0, k, expo1);  // ftmp0 = ||b[k]||^2
     ftmp1.mul(sr, ftmp1);                  // ftmp1 = 2^(-cd) * ftmp1
+    if (expo1 > -1)
+      ftmp0.mul_2si(ftmp0, expo1 - expo0);
   } while (ftmp0.cmp(ftmp1) <= 0);
 
   m.update_R(k);

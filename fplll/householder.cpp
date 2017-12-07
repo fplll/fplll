@@ -30,9 +30,27 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
   FPLLL_DEBUG_CHECK(i <= n_known_rows);
 
   int j, k;
-  for (j = 0; j < n; j++)
+  if (enable_row_expo)
   {
-    R(i, j).set_z(b(i, j));
+    long max_expo = LONG_MIN;
+    for (int j = 0; j < n; j++)
+    {
+      b(i, j).get_f_exp(R(i, j), tmp_col_expo[j]);
+      max_expo = max(max_expo, tmp_col_expo[j]);
+    }
+    for (int j = 0; j < n; j++)
+    {
+      R(i, j).mul_2si(R(i, j), tmp_col_expo[j] - max_expo);
+    }
+    row_expo[i] = max_expo;
+    FPLLL_DEBUG_CHECK(row_expo[i] >= 0);
+  }
+  else
+  {
+    for (j = 0; j < n; j++)
+    {
+      R(i, j).set_z(b(i, j));
+    }
   }
 
   for (j = 0; j < i; j++)
@@ -97,7 +115,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
 
         for (k = i + 1; k < n; k++)
         {
-          FPLLL_DEBUG_CHECK(R(i, k).is_zero());
+          // if enable_row_expo, R can be not correct at some point of the computation
+          FPLLL_DEBUG_CHECK(enable_row_expo ? 1 : R(i, k).is_zero());
           V(i, k) = 0.0;
         }
       }
@@ -106,7 +125,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
     {
       for (k = i; k < n; k++)
       {
-        FPLLL_DEBUG_CHECK(R(i, k).is_zero());
+        // if enable_row_expo, R can be not correct at some point of the computation
+        FPLLL_DEBUG_CHECK(enable_row_expo ? 1 : R(i, k).is_zero());
         V(i, k) = 0.0;
       }
     }
@@ -119,12 +139,13 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::add_mul_b_rows(int k, vector<FT> xf)
 {
   FPLLL_DEBUG_CHECK(k > 0 && k < d);
+  ZT ztmp0, ztmp1;
+  long expo;
 
-  ZT ztmp0;
   for (int i = 0; i < k; i++)
   {
-    ztmp0.set_f(xf[i]);
-    b[k].addmul(b[i], ztmp0);
+    xf[i].get_z_exp_we(ztmp0, expo, row_expo[k] - row_expo[i]);
+    b[k].addmul_2exp(b[i], ztmp0, expo, n, ztmp1);
   }
   invalidate_row(k);
 }

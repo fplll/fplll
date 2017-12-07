@@ -54,7 +54,9 @@ public:
     V.resize(d, n);
     row_expo.resize(d);
 
-    if (!enable_row_expo)
+    if (enable_row_expo)
+      tmp_col_expo.resize(n);
+    else
       fill(row_expo.begin(), row_expo.end(), -1);
 
 #ifdef DEBUG
@@ -194,6 +196,9 @@ private:
    * such that b(i, j) &lt;= 2^row_expo[i] for all j. Otherwise this array is empty.
    */
   vector<long> row_expo;
+
+  /* Used by update_R. */
+  vector<long> tmp_col_expo;
 };
 
 template <class ZT, class FT>
