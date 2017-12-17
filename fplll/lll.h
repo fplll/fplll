@@ -111,6 +111,10 @@ inline bool LLLReduction<ZT, FT>::size_reduction(int kappa_min, int kappa_end,
 {
   if (kappa_end == -1)
     kappa_end = m.d;
+
+  extend_vect(babai_mu, kappa_end);
+  extend_vect(babai_expo, kappa_end);
+
   for (int k = kappa_min; k < kappa_end; k++)
   {
     if ((k > 0 && !babai(k, k, size_reduction_start)) || !m.update_gso_row(k))
