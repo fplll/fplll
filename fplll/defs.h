@@ -50,8 +50,8 @@
 #endif
 
 #include "fplll_config.h"
-#include <gmp.h>
 #include <mpfr.h>
+#include <mpir.h>
 #ifdef FPLLL_WITH_DPE
 #include "nr/dpe.h"
 #endif
