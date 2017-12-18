@@ -56,18 +56,37 @@ AC_PROG_MAKE_SET
 AX_CXX_COMPILE_STDCXX([11],[noext],[mandatory])
 
 # Checks for libraries.
-AC_ARG_WITH(gmp,
-   AS_HELP_STRING([--with-gmp=@<:@=DIR@:>@], [GMP install directory]), [
-      CPPFLAGS="$CPPFLAGS -I$withval/include"
-      LDFLAGS="$LDFLAGS -L$withval/lib"
-      gmp_lib_path="$withval/lib"
-   ])
+AC_ARG_ENABLE(mpir,
+        AS_HELP_STRING([--enable-mpir],
+         [Enable MPIR instead of GMP]))
 
-AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
-[GNU MP not found, see http://gmplib.org])])
+AS_IF([test "x$enable_mpir" = "xyes"], [
+	AC_ARG_WITH(mpir,
+	   AS_HELP_STRING([--with-mpir=@<:@=DIR@:>@], [MPIR install directory]), [
+	      CPPFLAGS="$CPPFLAGS -I$withval/include"
+	      LDFLAGS="$LDFLAGS -L$withval/lib"
+	      mpir_lib_path="$withval/lib"
+	   ])
+	AC_CHECK_LIB(mpir, __gmpz_init, , [AC_MSG_ERROR(
+	[MPIR not found, see http://mpir.org])])
+	AC_CHECK_LIB(mpir, __gmp_get_memory_functions, , [AC_MSG_ERROR(
+	[MPIR version too old, need >= 1.0.0, see http://mpir.org])])
+        LIBGMP="-lmpir"
+])
 
-AC_CHECK_LIB(gmp, __gmp_get_memory_functions, , [AC_MSG_ERROR(
-[GMP version too old, need >= 4.2.0, see http://gmplib.org])])
+AS_IF([test "x$enable_mpir" != "xyes"], [
+	AC_ARG_WITH(gmp,
+	   AS_HELP_STRING([--with-gmp=@<:@=DIR@:>@], [GMP install directory]), [
+	      CPPFLAGS="$CPPFLAGS -I$withval/include"
+	      LDFLAGS="$LDFLAGS -L$withval/lib"
+	      mpir_lib_path="$withval/lib"
+	   ])
+	AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
+	[GNU MP not found, see http://mpir.org])])
+	AC_CHECK_LIB(gmp, __gmp_get_memory_functions, , [AC_MSG_ERROR(
+	[GMP version too old, need >= 4.2.0, see http://gmplib.org])])
+        LIBGMP="-lgmp"
+])
 
 AC_ARG_WITH(mpfr,
    AS_HELP_STRING([--with-mpfr=@<:@=DIR@:>@], [MPFR install directory]), [

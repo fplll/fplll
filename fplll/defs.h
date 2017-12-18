@@ -50,7 +50,12 @@
 #endif
 
 #include "fplll_config.h"
+#ifdef HAVE_LIBMPIR
+#include <mpir.h>
+#endif
+#ifdef HAVE_LIBGMP
 #include <gmp.h>
+#endif
 #include <mpfr.h>
 #ifdef FPLLL_WITH_DPE
 #include "nr/dpe.h"
