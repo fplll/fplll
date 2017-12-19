@@ -86,14 +86,14 @@ Then, to compile and install type
 
 If GMP, MPFR and/or MPIR are not in the `$LD_LIBRARY_PATH`, you have to point to the directories where the libraries are, with
 
-    ./configure --with-gmp=/path/to/gmp
+    ./configure --with-gmp=path/to/gmp
 
 or
 
-    ./configure --with-mpfr=/path/to/mpfr
+    ./configure --with-mpfr=path/to/mpfr
 
 The same philosophy applies to the (optional) QD library. If you want to use
-mpir instead of gmp, use `--enable-mpir`.
+mpir instead of gmp, use `--enable-mpir` and `--with-mpir=path/to/mpir`.
 
 You can remove the program binaries and object files from the source code directory by typing `make
 clean`. To also remove the files that `./configure` created (so you can compile the package for a
@@ -177,7 +177,6 @@ The options are:
 * `-a cvp` : prints the vector in the lattice closest to the input vector.
 * `-v` : verbose mode. 
 * `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution).
-* `-r` `size`, `-c` `size` : ignored, provided for compatibility with previous versions of fplll.
 
 
 Options for LLL-reduction:
@@ -191,8 +190,8 @@ Options for LLL-reduction:
 * `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
 * `-f dd` : sets the floating-point type to double-double.
 * `-f qd` : sets the floating-point type to quad-double.
-* `-f dpe` : sets the floating-point type to DPE (default if `m=heuristic/heuristicearly`).
-* `-f double` : sets the floating-point type to double (default if `m=fast/fastearly`).
+* `-f dpe` : sets the floating-point type to DPE (default if `m=heuristic`).
+* `-f double` : sets the floating-point type to double (default if `m=fast`).
 * `-f longdouble` : sets the floating-point type to long double.
 
 * `-z mpz` : sets the integer type to mpz, the integer type of GMP (default).
@@ -202,9 +201,7 @@ Options for LLL-reduction:
 
 * `-m wrapper` : uses the wrapper. (default if `z=mpz`).
 * `-m fast` : uses the fast method, works only with `-f double`.
-* `-m fastearly` : uses the fast method with early reduction, works only with `-f double`.
 * `-m heuristic` : uses the heuristic method.
-* `-m heuristicearly` : uses the heuristic method with early reduction.
 * `-m proved` : uses the proved version of the algorithm.
 * `-y` : early reduction.
 
