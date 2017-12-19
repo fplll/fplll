@@ -33,6 +33,8 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
     * [Dependencies](#dependencies)
       * [Required](#required), [Optional](#optional).
     * [Installation](#installation)
+      * [Linux](#linux)
+      * [Windows 10](#windows-10)
     * [Optimization](#optimization)
     * [Check](#check)
   * [How to use](#how-to-use)
@@ -67,6 +69,8 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 
 ## Installation ##
 
+### Linux ###
+
 You should downloaded the source code from github and then run
 
     ./autogen.sh
@@ -97,6 +101,24 @@ different kind of computer), type `make distclean`.  By default, `make install` 
 commands under `/usr/local/bin`, include files under `/usr/local/include`, etc.  You can specify an
 installation directory name other than `/usr/local` by giving `./configure` the option
 `--prefix=dirname`.  Run `./configure --help` for further details.
+
+### Windows 10 ###
+
+Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to **Settings** -> **Update and security** -> **For developers** and enable developer mode. (This may take a while.) Afterwards, open command prompt and run 
+
+	lxrun /install
+
+This will install the WSL, and afterwards this system can be accessed e.g. by opening command prompt and typing `bash`. With this Linux kernel, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
+	
+	sudo apt-get update
+	
+Then run `sudo apt-get install <packages>` for all the (indirectly) required packages, such as `make`, `autoconf`, `libtool`, `gcc`, `g++`, `libgmp-dev`, and `libmpfr-dev`. Finally, download the fplll source code, extract the contents, navigate to this folder in Bash (commonly found under `/mnt/c/<local path>` when stored somewhere on the `C:\` drive), and run:
+	
+	./autogen.sh
+	./configure
+	make 
+
+The same comments as before apply for using e.g. `make install` or `make distclean` instead of `make`.
 
 ## Check ##
 
