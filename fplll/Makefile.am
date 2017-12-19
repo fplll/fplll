@@ -93,7 +93,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	sieve/sampler_basic.cpp
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
-libfplll_la_LIBADD=-lgmp -lmpfr $(LIBQD_LIBADD)
+libfplll_la_LIBADD=$(LIBGMP) -lmpfr $(LIBQD_LIBADD)
 libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REVISION@:@FPLLL_LT_AGE@
 
 libfplllv_la_SOURCES=$(libfplll_la_SOURCES)

@@ -50,7 +50,12 @@
 #endif
 
 #include "fplll_config.h"
+#ifdef HAVE_LIBMPIR
+#include <mpir.h>
+#endif
+#ifdef HAVE_LIBGMP
 #include <gmp.h>
+#endif
 #include <mpfr.h>
 #ifdef FPLLL_WITH_DPE
 #include "nr/dpe.h"
@@ -265,19 +270,25 @@ enum HKZFlags
 #define FPLLL_DEFAULT_STRATEGY ""
 #endif
 
-enum PrunerMethod
-{
-  PRUNER_METHOD_GREEDY   = 0,
-  PRUNER_METHOD_GRADIENT = 1,
-  PRUNER_METHOD_NM       = 2,
-  PRUNER_METHOD_HYBRID   = 3
-};
-
 enum PrunerMetric
 {
   PRUNER_METRIC_PROBABILITY_OF_SHORTEST = 0,
   PRUNER_METRIC_EXPECTED_SOLUTIONS      = 1
 };
+
+enum PrunerFlags
+{
+  PRUNER_CVP =
+      0x1,  // Do not Halve the count of nodes, according to enumeration optimization from symmetry
+  // Descent methods. If several activated, pruner will execute them in the order below.
+  PRUNER_START_FROM_INPUT = 0x2,
+  PRUNER_GRADIENT         = 0x4,  // Activate the gradient descent
+  PRUNER_NELDER_MEAD      = 0x8,
+  // Verbosity
+  PRUNER_VERBOSE = 0x10,
+};
+
+#define PRUNER_ZEALOUS (PRUNER_GRADIENT | PRUNER_NELDER_MEAD)
 
 FPLLL_END_NAMESPACE
 

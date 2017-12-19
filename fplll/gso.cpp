@@ -71,7 +71,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::discover_row()
   {
     for (int j = 0; j <= i; j++)
     {
-      dot_product(g(i, j), b[i], b[j], n_known_cols);
+      b[i].dot_product(g(i, j), b[j], n_known_cols);
     }
   }
   else

@@ -97,8 +97,10 @@ matrix:
     compiler: clang
     env: COMPILER=clang++ CLANGFORMAT=clang-format
     before_install:
+      - brew update
       - brew reinstall gmp
-      - brew install mpfr qd autoconf libtool clang-format
+      - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rm /usr/local/include/c++ ; fi
+      - brew install qd autoconf libtool clang-format
 
 install:
   - export CXX="$COMPILER"
@@ -118,9 +120,9 @@ notifications:
   on_success: change
   on_failure: always
 
-branches:
-  only:
-    - master
+# branches:
+#   only:
+#     - master
 
 deploy:
   provider: releases

@@ -41,7 +41,8 @@ const double eta_dep[10] = {1.,       // 0.5
                             2.1025,   // 0.9
                             2.5117};  // 0.95
 
-Wrapper::Wrapper(IntMatrix &b, IntMatrix &u, IntMatrix &u_inv, double delta, double eta, int flags)
+Wrapper::Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
+                 int flags)
     : status(RED_SUCCESS), b(b), u(u), u_inv(u_inv), delta(delta), eta(eta), use_long(false),
       last_early_red(0)
 {
@@ -106,10 +107,10 @@ int Wrapper::call_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_invZ, LLLMethod
   if (method != LM_PROVED && precision == 0)
     gso_flags |= GSO_OP_FORCE_LONG;
 
-  int old_prec = Float::get_prec();
+  int old_prec = FP_NR<mpfr_t>::get_prec();
   if (precision > 0)
   {
-    Float::set_prec(precision);
+    FP_NR<mpfr_t>::set_prec(precision);
   }
   MatGSO<ZT, FT> m_gso(bz, uz, u_invZ, gso_flags);
   LLLReduction<ZT, FT> lll_obj(m_gso, delta, eta, flags);
@@ -119,7 +120,7 @@ int Wrapper::call_lll(ZZ_mat<Z> &bz, ZZ_mat<Z> &uz, ZZ_mat<Z> &u_invZ, LLLMethod
   last_early_red = max(last_early_red, lll_obj.last_early_red);
   if (precision > 0)
   {
-    Float::set_prec(old_prec);
+    FP_NR<mpfr_t>::set_prec(old_prec);
   }
 
   if (flags & LLL_VERBOSE)
@@ -397,8 +398,8 @@ int lll_reduction_wrapper(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, doubl
 }
 
 template <>
-int lll_reduction_wrapper(IntMatrix &b, IntMatrix &u, IntMatrix &u_inv, double delta, double eta,
-                          FloatType float_type, int precision, int flags)
+int lll_reduction_wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta,
+                          double eta, FloatType float_type, int precision, int flags)
 {
   FPLLL_CHECK(float_type == FT_DEFAULT,
               "The floating point type cannot be specified with the wrapper method");

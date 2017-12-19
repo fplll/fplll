@@ -80,8 +80,8 @@ void BKZReduction<ZT, FT>::rerandomize_block(int min_row, int max_row, int densi
 }
 
 template <class ZT, class FT>
-const Pruning &BKZReduction<ZT, FT>::get_pruning(int kappa, int block_size,
-                                                 const BKZParam &par) const
+const PruningParams &BKZReduction<ZT, FT>::get_pruning(int kappa, int block_size,
+                                                       const BKZParam &par) const
 {
 
   FPLLL_DEBUG_CHECK(param.strategies.size() > block_size);
@@ -321,7 +321,7 @@ bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZPar
       adjust_radius_to_gh_bound(max_dist, max_dist_expo, block_size, root_det, par.gh_factor);
     }
 
-    const Pruning &pruning = get_pruning(kappa, block_size, par);
+    const PruningParams &pruning = get_pruning(kappa, block_size, par);
 
     FPLLL_DEBUG_CHECK(pruning.metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
     evaluator.solutions.clear();
@@ -371,11 +371,8 @@ bool BKZReduction<ZT, FT>::tour(const int loop, int &kappa_max, const BKZParam &
 
   if (par.flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "End of BKZ loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(par.dump_gso_filename, prefix.str());
+    dump_gso(par.dump_gso_filename, true, "End of BKZ loop", loop,
+             (cputime() - cputime_start) * 0.001);
   }
 
   return clean;
@@ -453,11 +450,8 @@ bool BKZReduction<ZT, FT>::sd_tour(const int loop, const BKZParam &par, int min_
 
   if (par.flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "End of SD-BKZ loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(par.dump_gso_filename, prefix.str());
+    dump_gso(par.dump_gso_filename, true, "End of SD-BKZ loop", loop,
+             (cputime() - cputime_start) * 0.001);
   }
 
   return clean;
@@ -508,11 +502,8 @@ bool BKZReduction<ZT, FT>::slide_tour(const int loop, const BKZParam &par, int m
 
   if (par.flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "End of SLD loop " << std::setw(4) << loop;
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(par.dump_gso_filename, prefix.str());
+    dump_gso(par.dump_gso_filename, true, "End of SLD loop", loop,
+             (cputime() - cputime_start) * 0.001);
   }
 
   // we check the potential function to see if we made progress
@@ -539,9 +530,7 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
 
   if (flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "Input";
-    dump_gso(param.dump_gso_filename, prefix.str(), false);
+    dump_gso(param.dump_gso_filename, false, "Input", -1, 0.0);
   }
 
   if (param.block_size < 2)
@@ -671,11 +660,7 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
 
   if (flags & BKZ_DUMP_GSO)
   {
-    std::ostringstream prefix;
-    prefix << "Output ";
-    prefix << " (" << std::fixed << std::setw(9) << std::setprecision(3)
-           << (cputime() - cputime_start) * 0.001 << "s)";
-    dump_gso(param.dump_gso_filename, prefix.str());
+    dump_gso(param.dump_gso_filename, true, "Output", -1, (cputime() - cputime_start) * 0.001);
   }
   return set_status(final_status);
 }
@@ -684,7 +669,7 @@ template <class ZT, class FT>
 void BKZReduction<ZT, FT>::print_tour(const int loop, int min_row, int max_row)
 {
   FT r0;
-  Float fr0;
+  FP_NR<mpfr_t> fr0;
   long expo;
   r0  = m.get_r_exp(min_row, min_row, expo);
   fr0 = r0.get_d();
@@ -732,26 +717,77 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::set_status(int new_stat
   return status == RED_SUCCESS;
 }
 
+// Generate the json file by hand to generate a flexible human-readable file.
+// TODO: think about use io/json.hpp
 template <class ZT, class FT>
-void BKZReduction<ZT, FT>::dump_gso(const std::string &filename, const std::string &prefix,
-                                    bool append)
+void BKZReduction<ZT, FT>::dump_gso(const std::string &filename, bool append,
+                                    const std::string &step, const int loop, const double time)
 {
   ofstream dump;
-  if (append)
-    dump.open(filename.c_str(), std::ios_base::app);
-  else
-    dump.open(filename.c_str());
-  dump << std::setw(4) << prefix << ": ";
+  // Enable exceptions
+  dump.exceptions(ios_base::failbit | ios_base::badbit);
+
+  try
+  {
+    if (append)
+    {
+      dump.open(filename.c_str(), std::ios_base::app);
+    }
+    else
+    {
+      dump.open(filename.c_str());
+      dump << "[" << endl;
+    }
+  }
+  catch (const ios_base::failure &e)
+  {
+    cerr << "Cannot open " << filename << endl;
+    throw;
+  }
+
+  try
+  {
+    dump << string(8, ' ') << "{" << endl;
+    dump << string(16, ' ') << "\"step\": \"" << step << "\"," << endl;
+    dump << string(16, ' ') << "\"loop\": " << loop << "," << endl;
+    dump << string(16, ' ') << "\"time\": " << time << "," << endl;
+  }
+  catch (const ios_base::failure &e)
+  {
+    cerr << "Cannot open " << filename << endl;
+    throw;
+  }
+
   FT f, log_f;
   long expo;
+  stringstream ss;
   for (int i = 0; i < num_rows; i++)
   {
     m.update_gso_row(i);
     f = m.get_r_exp(i, i, expo);
     log_f.log(f, GMP_RNDU);
-    dump << std::setprecision(8) << log_f.get_d() + expo * std::log(2.0) << " ";
+    ss << std::setprecision(8) << log_f.get_d() + expo * std::log(2.0) << ", ";
   }
-  dump << std::endl;
+  string s = ss.str();
+  try
+  {
+    dump << string(16, ' ') << "\"norms\": [" << s.substr(0, s.size() - 2) << "]" << endl;
+    dump << string(8, ' ') << "}";
+    if (step.compare("Output") == 0)
+    {
+      dump << endl << "]";
+    }
+    else
+    {
+      dump << "," << endl;
+    }
+  }
+  catch (const ios_base::failure &e)
+  {
+    cerr << "Cannot open " << filename << endl;
+    throw;
+  }
+
   dump.close();
 }
 
@@ -768,15 +804,14 @@ template <class ZT, class FT> bool BKZAutoAbort<ZT, FT>::test_abort(double scale
 
 // call LLLReduction() and then BKZReduction.
 template <class FT>
-int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_delta, IntMatrix &u,
-                    IntMatrix &u_inv)
+int bkz_reduction_f(ZZ_mat<mpz_t> &b, const BKZParam &param, int sel_ft, double lll_delta,
+                    ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv)
 {
   int gso_flags = 0;
   if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;
   if (sel_ft == FT_DOUBLE || sel_ft == FT_LONG_DOUBLE)
     gso_flags |= GSO_ROW_EXPO;
-
   ZZ_mat<long> bl;
   // we check if we can convert the basis to long integers for performance
   if (convert<long, mpz_t>(bl, b, 10))
@@ -798,21 +833,21 @@ int bkz_reduction_f(IntMatrix &b, const BKZParam &param, int sel_ft, double lll_
   }
   else
   {
-    MatGSO<Integer, FT> m_gso(b, u, u_inv, gso_flags);
-    LLLReduction<Integer, FT> lll_obj(m_gso, lll_delta, LLL_DEF_ETA, LLL_DEFAULT);
-    BKZReduction<Integer, FT> bkz_obj(m_gso, lll_obj, param);
+    MatGSO<Z_NR<mpz_t>, FT> m_gso(b, u, u_inv, gso_flags);
+    LLLReduction<Z_NR<mpz_t>, FT> lll_obj(m_gso, lll_delta, LLL_DEF_ETA, LLL_DEFAULT);
+    BKZReduction<Z_NR<mpz_t>, FT> bkz_obj(m_gso, lll_obj, param);
     bkz_obj.bkz();
     return bkz_obj.status;
   }
 }
 
 // interface called from call_bkz() from main.cpp.
-int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType float_type,
+int bkz_reduction(ZZ_mat<mpz_t> *B, ZZ_mat<mpz_t> *U, const BKZParam &param, FloatType float_type,
                   int precision)
 {
-  IntMatrix empty_mat;
-  IntMatrix &u     = U ? *U : empty_mat;
-  IntMatrix &u_inv = empty_mat;
+  ZZ_mat<mpz_t> empty_mat;
+  ZZ_mat<mpz_t> &u     = U ? *U : empty_mat;
+  ZZ_mat<mpz_t> &u_inv = empty_mat;
   FPLLL_CHECK(B, "B == NULL in bkzReduction");
 
   if (U && (!u.empty()))
@@ -887,7 +922,7 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param, FloatType f
   return status;
 }
 
-int bkz_reduction(IntMatrix &b, int block_size, int flags, FloatType float_type, int precision)
+int bkz_reduction(ZZ_mat<mpz_t> &b, int block_size, int flags, FloatType float_type, int precision)
 {
   vector<Strategy> strategies;
   BKZParam param(block_size, strategies);
@@ -895,8 +930,8 @@ int bkz_reduction(IntMatrix &b, int block_size, int flags, FloatType float_type,
   return bkz_reduction(&b, NULL, param, float_type, precision);
 }
 
-int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags, FloatType float_type,
-                  int precision)
+int bkz_reduction(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, int block_size, int flags,
+                  FloatType float_type, int precision)
 {
   vector<Strategy> strategies;
   BKZParam param(block_size, strategies);
@@ -904,7 +939,7 @@ int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags, FloatTy
   return bkz_reduction(&b, &u, param, float_type, precision);
 }
 
-int hkz_reduction(IntMatrix &b, int flags, FloatType float_type, int precision)
+int hkz_reduction(ZZ_mat<mpz_t> &b, int flags, FloatType float_type, int precision)
 {
   vector<Strategy> strategies;
   BKZParam param(b.get_rows(), strategies);
@@ -917,34 +952,34 @@ int hkz_reduction(IntMatrix &b, int flags, FloatType float_type, int precision)
 
 /** enforce instantiation of complete templates **/
 
-template class BKZReduction<Integer, FP_NR<double>>;
-template class BKZAutoAbort<Integer, FP_NR<double>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<double>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<double>>;
 
 template class BKZReduction<Z_NR<long>, FP_NR<double>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<double>>;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class BKZReduction<Integer, FP_NR<long double>>;
-template class BKZAutoAbort<Integer, FP_NR<long double>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<long double>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<long double>>;
 
 template class BKZReduction<Z_NR<long>, FP_NR<long double>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<long double>>;
 #endif
 
 #ifdef FPLLL_WITH_DPE
-template class BKZReduction<Integer, FP_NR<dpe_t>>;
-template class BKZAutoAbort<Integer, FP_NR<dpe_t>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<dpe_t>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<dpe_t>>;
 
 template class BKZReduction<Z_NR<long>, FP_NR<dpe_t>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<dpe_t>>;
 #endif
 
 #ifdef FPLLL_WITH_QD
-template class BKZReduction<Integer, FP_NR<dd_real>>;
-template class BKZAutoAbort<Integer, FP_NR<dd_real>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<dd_real>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<dd_real>>;
 
-template class BKZReduction<Integer, FP_NR<qd_real>>;
-template class BKZAutoAbort<Integer, FP_NR<qd_real>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<qd_real>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<qd_real>>;
 
 template class BKZReduction<Z_NR<long>, FP_NR<dd_real>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<dd_real>>;
@@ -953,8 +988,8 @@ template class BKZReduction<Z_NR<long>, FP_NR<qd_real>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<qd_real>>;
 #endif
 
-template class BKZReduction<Integer, FP_NR<mpfr_t>>;
-template class BKZAutoAbort<Integer, FP_NR<mpfr_t>>;
+template class BKZReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
+template class BKZAutoAbort<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
 
 template class BKZReduction<Z_NR<long>, FP_NR<mpfr_t>>;
 template class BKZAutoAbort<Z_NR<long>, FP_NR<mpfr_t>>;

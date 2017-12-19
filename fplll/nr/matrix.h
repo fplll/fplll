@@ -73,30 +73,24 @@ public:
     row.addmul_si_2exp(v.row, x, expo, n, tmp);
   }
 
+  /** Computes the dot product between two rows of a Matrix */
+  inline void dot_product(T &result, const MatrixRow<T> &v0, int n) const
+  {
+    fplll::dot_product(result, this->row, v0.row, n);
+  }
+
+  /** Computes (inline) the dot product between two rows of a Matrix */
+  inline void dot_product(T &result, const MatrixRow<T> &v0) const
+  {
+    this->dot_product(result, v0, this->size());
+  }
+
   friend class Matrix<T>;
 
 private:
   MatrixRow(const NumVect<T> &row) : row(const_cast<NumVect<T> &>(row)) {}
   NumVect<T> &row;
 };
-
-template <class T>
-void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2, int n)
-{
-  FPLLL_DEBUG_CHECK(n > 0 && n <= v1.size() && v1.size() == v2.size() &&
-                    (v1.is_zero(n) || v2.is_zero(n)));
-  result.mul(v1[0], v2[0]);
-  for (int i = 1; i < n; i++)
-  {
-    result.addmul(v1[i], v2[i]);
-  }
-}
-
-template <class T>
-inline void dot_product(T &result, const MatrixRow<T> &v1, const MatrixRow<T> &v2)
-{
-  dot_product(result, v1, v2, v1.size());
-}
 
 /** Prints a MatrixRow on stream os. */
 template <class T> ostream &operator<<(ostream &os, const MatrixRow<T> &row)
@@ -203,7 +197,7 @@ public:
   void print(ostream &os, int nrows = -1, int ncols = -1) const;
   /** Reads this matrix from a stream. */
   void read(istream &is);
-
+  /** Change the output format style of Matrix */
   static int set_print_mode(int new_print_mode)
   {
     int old_mode = print_mode;
@@ -250,23 +244,25 @@ public:
       initialized with the default constructor of Z_NR&lt;T&gt;. */
   ZZ_mat(int rows, int cols) : Matrix<T>(rows, cols) {}
 
-  // generators
+  /** Generate a zero matrix */
   void gen_zero(int d, int n)
   {
     resize(d, n);
     for (int i = 0; i < d; i++)
       matrix[i].fill(0);
   }
-
+  /** Generate an identity matrix */
   void gen_identity(int d)
   {
     gen_zero(d, d);
     for (int i     = 0; i < d; i++)
       matrix[i][i] = 1;
   }
-
+  /** Generate an augmented matrix of random coefficients for the first column */
   void gen_intrel(int bits);
+  /** Generate a matrix with coefficients of the first row and the diagonal */
   void gen_simdioph(int bits, int bits2);
+  /** Generate a random matrix of uniform distribution. */
   void gen_uniform(int bits);
 
   /** Construct a matrix `[[I,H],[0,qI]]` where `H` is constructed from rotations of a vector ``h``.
@@ -342,9 +338,6 @@ public:
       initialized with the default constructor of FP_NR&lt;T&gt;. */
   FP_mat(int rows, int cols) : Matrix<T>(rows, cols) {}
 };
-
-typedef ZZ_mat<IntegerT> IntMatrix;
-typedef FP_mat<FloatT> FloatMatrix;
 
 FPLLL_END_NAMESPACE
 

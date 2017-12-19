@@ -283,7 +283,9 @@ public:
    *    flag specifying if the shape should be appended to the file (or if the file
    *    should be overwritten)
    * **/
-  void dump_gso(const std::string &filename, const std::string &prefix, bool append = true);
+
+  void dump_gso(const std::string &filename, bool append, const std::string &step, const int loop,
+                const double time);
 
   /**
    * Status of reduction (see defs.h)
@@ -301,7 +303,7 @@ private:
 
   bool set_status(int new_status);
 
-  const Pruning &get_pruning(int kappa, int block_size, const BKZParam &par) const;
+  const PruningParams &get_pruning(int kappa, int block_size, const BKZParam &par) const;
 
   // handles the general case of inserting a vector into the (dual) basis, i.e.
   // when none of the coefficients are \pm 1
@@ -316,7 +318,6 @@ private:
 
   const BKZParam &param;
   int num_rows;
-
   MatGSO<ZT, FT> &m;
   LLLReduction<ZT, FT> &lll_obj;
   // evaluator passed to the enumeration object to handle solutions found
@@ -353,7 +354,7 @@ private:
  * @return
  *    the status of the reduction (see defs.h for more information on the status)
  */
-int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param,
+int bkz_reduction(ZZ_mat<mpz_t> *B, ZZ_mat<mpz_t> *U, const BKZParam &param,
                   FloatType float_type = FT_DEFAULT, int precision = 0);
 
 /**
@@ -376,7 +377,7 @@ int bkz_reduction(IntMatrix *B, IntMatrix *U, const BKZParam &param,
  * @return
  *    the status of the reduction (see defs.h for more information on the status)
  */
-int bkz_reduction(IntMatrix &b, int block_size, int flags = BKZ_DEFAULT,
+int bkz_reduction(ZZ_mat<mpz_t> &b, int block_size, int flags = BKZ_DEFAULT,
                   FloatType float_type = FT_DEFAULT, int precision = 0);
 
 /**
@@ -401,7 +402,7 @@ int bkz_reduction(IntMatrix &b, int block_size, int flags = BKZ_DEFAULT,
  * @return
  *    the status of the reduction (see defs.h for more information on the status)
  */
-int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags = BKZ_DEFAULT,
+int bkz_reduction(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, int block_size, int flags = BKZ_DEFAULT,
                   FloatType float_type = FT_DEFAULT, int precision = 0);
 
 /**
@@ -422,7 +423,7 @@ int bkz_reduction(IntMatrix &b, IntMatrix &u, int block_size, int flags = BKZ_DE
  * @return
  *    the status of the reduction (see defs.h for more information on the status)
  */
-int hkz_reduction(IntMatrix &b, int flags = HKZ_DEFAULT, FloatType float_type = FT_DEFAULT,
+int hkz_reduction(ZZ_mat<mpz_t> &b, int flags = HKZ_DEFAULT, FloatType float_type = FT_DEFAULT,
                   int precision = 0);
 
 FPLLL_END_NAMESPACE

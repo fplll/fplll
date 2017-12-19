@@ -54,24 +54,11 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 
 ### Required ###
 
-- GNU MP 4.2.0 or higher [http://gmplib.org/](http://gmplib.org/)
+- GNU MP 4.2.0 or higher [http://gmplib.org/](http://gmplib.org/) or MPIR 1.0.0 or higher [http://mpir.org](http://mpir.org)
 - MPFR 2.3.0 or higher, COMPLETE INSTALLATION [http://www.mpfr.org/](http://www.mpfr.org/)
 - autotools 2.61 or higher
 - g++ 4.9.3 or higher
 
-If GMP and/or MPFR include and lib files are not in the default directories `/usr/include` and
-`/usr/lib`, you have to set the environment variables `CFLAGS` and `LDFLAGS` for instance through the
-configure command line
-
-    ./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude" LDFLAGS="-L/mpfrlib -L/gmplib"
-
-or
-
-    ./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude $CPPFLAGD" LDFLAGS="-L/mpfrlib -L/gmplib $LDFLAGS"
-
-if these variables already exist in your environment. This should be modified soon for using
-standard `--with-gmp` and `--with-mpfr` package specifications. The same philosophy applies to the
-(optional) QD library.
 
 ### Optional ###
 - QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install
@@ -92,6 +79,17 @@ Then, to compile and install type
 	./configure
 	make
 	make install			# (as root)
+
+If GMP, MPFR and/or MPIR are not in the `$LD_LIBRARY_PATH`, you have to point to the directories where the libraries are, with
+
+    ./configure --with-gmp=/path/to/gmp
+
+or
+
+    ./configure --with-mpfr=/path/to/mpfr
+
+The same philosophy applies to the (optional) QD library. If you want to use
+mpir instead of gmp, use `--enable-mpir`.
 
 You can remove the program binaries and object files from the source code directory by typing `make
 clean`. To also remove the files that `./configure` created (so you can compile the package for a

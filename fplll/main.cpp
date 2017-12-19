@@ -20,7 +20,7 @@
 
 template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
 {
-  // Stupid intialization of u and u_inv to be not empty.
+  // Stupid initialization of u and u_inv to be not empty.
   ZZ_mat<ZT> u(1, 1), u_inv(1, 1);
   const char *format = o.output_format ? o.output_format : "b";
   int status, flags = 0;
@@ -76,7 +76,7 @@ template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
 
 /* BKZ reduction */
 
-void read_pruning_vector(const char *file_name, Pruning &pr, int n)
+void read_pruning_vector(const char *file_name, PruningParams &pr, int n)
 {
   double x;
   FILE *file = fopen(file_name, "r");
@@ -104,7 +104,7 @@ void read_pruning_vector(const char *file_name, Pruning &pr, int n)
 
 template <class ZT> int bkz(Options &o, ZZ_mat<ZT> &b) { ABORT_MSG("mpz required for BKZ"); }
 
-template <> int bkz(Options &o, IntMatrix &b)
+template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
 {
   CHECK(o.block_size > 0, "Option -b is missing");
   vector<Strategy> strategies;
@@ -114,8 +114,8 @@ template <> int bkz(Options &o, IntMatrix &b)
   }
 
   BKZParam param(o.block_size, strategies);
-  // Stupid intialization of u to be not empty.
-  IntMatrix u(1, 1);
+  // Stupid initialization of u to be not empty.
+  ZZ_mat<mpz_t> u(1, 1);
   const char *format = o.output_format ? o.output_format : "b";
   int status;
 
@@ -197,10 +197,10 @@ template <class ZT> int svpcvp(Options &o, ZZ_mat<ZT> &b, const vector<Z_NR<ZT>>
 template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &target)
 {
   const char *format = o.output_format ? o.output_format : "s";
-  IntVect sol_coord;    // In the LLL-reduced basis
-  IntVect sol_coord_2;  // In the initial basis
-  IntVect solution;
-  IntMatrix u;
+  vector<Z_NR<mpz_t>> sol_coord;    // In the LLL-reduced basis
+  vector<Z_NR<mpz_t>> sol_coord_2;  // In the initial basis
+  vector<Z_NR<mpz_t>> solution;
+  ZZ_mat<mpz_t> u;
   bool with_coord     = strchr(format, 'c') != NULL;
   bool with_coord_std = strchr(format, 's') != NULL;
   int flags           = SVP_DEFAULT | (o.verbose ? SVP_VERBOSE : 0);
@@ -510,8 +510,7 @@ void read_options(int argc, char **argv, Options &o)
            << "  -v\n"
            << "       Enable verbose mode\n"
            << "  -nolll\n"
-           << "       Does not apply intial LLL-reduction (for bkz, hkz and svp)\n"
-
+           << "       Does not apply initial LLL-reduction (for bkz, hkz and svp)\n"
            << "  -d <delta> (default=0.99; alias to -delta <delta>)\n"
            << "  -e <eta> (default=0.51; alias to -eta <eta>)\n"
            << "  -l <lovasz>\n"
@@ -547,7 +546,7 @@ void read_options(int argc, char **argv, Options &o)
            << "  -of [b|c|s|t|u|v]\n"
            << "        Output formats.\n"
 
-           << "Please refer to https://github.com/fplll/fplll/README.md for more informations.\n";
+           << "Please refer to https://github.com/fplll/fplll/README.md for more information.\n";
       exit(0);
     }
     else if (strcmp(argv[ac], "--version") == 0)
@@ -579,7 +578,7 @@ int main(int argc, char **argv)
   int result;
   Options o;
   read_options(argc, argv, o);
-  IntMatrix::set_print_mode(MAT_PRINT_REGULAR);
+  ZZ_mat<mpz_t>::set_print_mode(MAT_PRINT_REGULAR);
   switch (o.int_type)
   {
   case ZT_MPZ:
