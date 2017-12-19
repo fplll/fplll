@@ -202,6 +202,28 @@ template <class T> void Matrix<T>::read(istream &is)
   }
 }
 
+template <class T> ostream &Matrix<T>::print_comma(ostream &os) const
+{
+  os << '[';
+  for (int i = 0; i < r - 1; i++)
+  {
+    os << '[';
+    for (int j = 0; j < c - 1; j++)
+    {
+      os << matrix[i][j] << ", ";
+    }
+    os << matrix[i][c - 1] << "],\n";
+  }
+  os << '[';
+  for (int j = 0; j < c - 1; j++)
+  {
+    os << matrix[r - 1][j] << ", ";
+  }
+  os << matrix[r - 1][c - 1] << "]]\n";
+
+  return os;
+}
+
 /* ZZ_mat */
 
 template <class ZT> inline void ZZ_mat<ZT>::gen_intrel(int bits)
