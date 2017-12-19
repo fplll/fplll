@@ -89,7 +89,7 @@ or
     ./configure --with-mpfr=path/to/mpfr
 
 The same philosophy applies to the (optional) QD library. If you want to use
-mpir instead of gmp, use `--enable-mpir` and `--with-mpir=path/to/mpir".
+mpir instead of gmp, use `--enable-mpir` and `--with-mpir=path/to/mpir`.
 
 You can remove the program binaries and object files from the source code directory by typing `make
 clean`. To also remove the files that `./configure` created (so you can compile the package for a
