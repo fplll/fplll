@@ -108,11 +108,11 @@ Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to 
 
 	lxrun /install
 
-This will install the WSL, and afterwards this system can be accessed e.g. by opening command prompt and typing `bash`. With this Linux kernel, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
+This will install the WSL, and afterwards this system can be accessed e.g. by opening command prompt and typing `bash`. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
 	
 	sudo apt-get update
 	
-Then run `sudo apt-get install <packages>` for all the (indirectly) required packages, such as `make`, `autoconf`, `libtool`, `gcc`, `g++`, `libgmp-dev`, and `libmpfr-dev`. Finally, download the fplll source code, extract the contents, navigate to this folder in Bash (commonly found under `/mnt/c/<local path>` when stored somewhere on the `C:\` drive), and run:
+Then run `sudo apt-get install <packages>` for the (indirectly) required packages, such as `make`, `autoconf`, `libtool`, `gcc`, `g++`, `libgmp-dev`, and `libmpfr-dev`. Finally, download the fplll source code, extract the contents, navigate to this folder in Bash (commonly found under `/mnt/c/<local path>` when stored somewhere on the `C:\` drive), and run:
 	
 	./autogen.sh
 	./configure
