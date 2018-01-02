@@ -5,6 +5,8 @@
 #ifndef FPLLL_NR_FP_MPFR_H
 #define FPLLL_NR_FP_MPFR_H
 
+#include "../fplll_config.h"
+
 FPLLL_BEGIN_NAMESPACE
 
 /* MPFR specialization */
@@ -249,7 +251,11 @@ inline void FP_NR<mpfr_t>::sqrt(const FP_NR<mpfr_t>& a, mp_rnd_t rnd) {
 
 template<>
 inline void FP_NR<mpfr_t>::root(const FP_NR<mpfr_t>& a, unsigned int k, mp_rnd_t rnd) {
+#ifdef MPFR_4
+  mpfr_rootn_ui(data, a.data, k, rnd);
+#else // MPFR_4
   mpfr_root(data, a.data, k, rnd);
+#endif // MPFR_4
 }
 
 template<>
