@@ -32,7 +32,4 @@
 #undef HAVE_LIBGMP
 #undef HAVE_LIBMPIR
 
-/* Use mpfr_rootn_ui instead of mpfr_root if MPFR version is >= 4.0.0 */
-#undef MPFR_4
-
 #endif //FPLLL_CONFIG__H
