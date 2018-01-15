@@ -28,27 +28,28 @@ FPLLL_BEGIN_NAMESPACE
  * with delta=LLL_DEF_DELTA and eta=LLL_DEF_ETA.
  * The result is guaranteed if method = SVPM_PROVED.
  */
-int shortest_vector(IntMatrix &b, IntVect &sol_coord, SVPMethod method = SVPM_PROVED,
-                    int flags = SVP_DEFAULT);
+int shortest_vector(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
+                    SVPMethod method = SVPM_PROVED, int flags = SVP_DEFAULT);
 
-int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, const vector<double> &pruning,
-                            int flags = SVP_DEFAULT);
-
-int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &subsol_coord,
-                            vector<double> &subsol_dist, const vector<double> &pruning,
-                            int flags = SVP_DEFAULT);
-
-int shortest_vector_pruning(IntMatrix &b, IntVect &sol_coord, vector<IntVect> &auxsol_coord,
-                            vector<double> &auxsol_dist, const int max_aux_sols,
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
                             const vector<double> &pruning, int flags = SVP_DEFAULT);
+
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
+                            vector<vector<Z_NR<mpz_t>>> &subsol_coord, vector<double> &subsol_dist,
+                            const vector<double> &pruning, int flags = SVP_DEFAULT);
+
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
+                            vector<vector<Z_NR<mpz_t>>> &auxsol_coord, vector<double> &auxsol_dist,
+                            const int max_aux_sols, const vector<double> &pruning,
+                            int flags = SVP_DEFAULT);
 /**
  * Computes a closest vector of a lattice to a target.
  * The vectors must be linearly independant and the basis must be LLL-reduced
  * with delta=LLL_DEF_DELTA and eta=LLL_DEF_ETA.
  * The result is guaranteed if method = CVPM_PROVED.
  */
-int closest_vector(IntMatrix &b, const IntVect &int_target, vector<Integer> &sol_coord,
-                   int method = CVPM_FAST, int flags = CVP_DEFAULT);
+int closest_vector(ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &int_target,
+                   vector<Z_NR<mpz_t>> &sol_coord, int method = CVPM_FAST, int flags = CVP_DEFAULT);
 
 FPLLL_END_NAMESPACE
 

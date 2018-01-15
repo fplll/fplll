@@ -1,16 +1,18 @@
+
 #include "bkz_param.h"
 #include "io/json.hpp"
-#include "pruner.h"
+#include "nr/nr.h"
 #include <cstdio>
+
 using json = nlohmann::json;
 
 FPLLL_BEGIN_NAMESPACE
 
-Pruning Pruning::LinearPruning(int block_size, int level)
+PruningParams PruningParams::LinearPruningParams(int block_size, int level)
 {
 
-  Pruning pruning   = Pruning();
-  int start_descent = block_size - level;
+  PruningParams pruning = PruningParams();
+  int start_descent     = block_size - level;
 
   if (start_descent > block_size)
     start_descent = block_size;
@@ -27,9 +29,9 @@ Pruning Pruning::LinearPruning(int block_size, int level)
   {
     pruning.coefficients[start_descent + k] = ((double)(block_size - k - 1)) / block_size;
   }
-  pruning.radius_factor = 1.0;
-  pruning.metric        = PRUNER_METRIC_PROBABILITY_OF_SHORTEST;
-  pruning.expectation   = fplll::svp_probability<FP_NR<double>>(pruning.coefficients).get_d();
+  pruning.gh_factor   = 1.0;
+  pruning.metric      = PRUNER_METRIC_PROBABILITY_OF_SHORTEST;
+  pruning.expectation = fplll::svp_probability<FP_NR<double>>(pruning.coefficients).get_d();
 
   return pruning;
 }
@@ -57,7 +59,7 @@ const std::string &default_strategy()
   return ret;
 }
 
-const Pruning &Strategy::get_pruning(double radius, double gh) const
+const PruningParams &Strategy::get_pruning(double radius, double gh) const
 {
   double gh_factor    = radius / gh;
   double closest_dist = pow(2, 80);
@@ -65,9 +67,9 @@ const Pruning &Strategy::get_pruning(double radius, double gh) const
 
   for (auto it = pruning_parameters.begin(); it != pruning_parameters.end(); ++it)
   {
-    if (fabs(it->radius_factor - gh_factor) < closest_dist)
+    if (fabs(it->gh_factor - gh_factor) < closest_dist)
     {
-      closest_dist = fabs(it->radius_factor - gh_factor);
+      closest_dist = fabs(it->gh_factor - gh_factor);
       best         = it;
     }
   }
@@ -124,8 +126,8 @@ vector<Strategy> load_strategies_json(const std::string &filename)
            p_it != j_strat["pruning_parameters"].end(); ++p_it)
       {
         const json &j_prun = *p_it;
-        Pruning pruning;
-        pruning.radius_factor = j_prun[0];
+        PruningParams pruning;
+        pruning.gh_factor = j_prun[0];
 
         for (auto c_it = j_prun[1].begin(); c_it != j_prun[1].end(); ++c_it)
         {
@@ -148,7 +150,7 @@ vector<Strategy> load_strategies_json(const std::string &filename)
   for (auto it = strategies.begin(); it != strategies.end(); ++it)
   {
     if (it->pruning_parameters.size() == 0)
-      it->pruning_parameters.emplace_back(Pruning());
+      it->pruning_parameters.emplace_back(PruningParams());
   }
 
   return strategies;

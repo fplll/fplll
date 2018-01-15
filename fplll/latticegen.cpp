@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
   int d          = atoi(argv[iArg + 1]);
   iArg += 2;
 
-  IntMatrix m;
+  ZZ_mat<mpz_t> m;
 
   // initialization+filling of the matrix
   switch (genMethod)

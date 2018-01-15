@@ -249,7 +249,11 @@ inline void FP_NR<mpfr_t>::sqrt(const FP_NR<mpfr_t>& a, mp_rnd_t rnd) {
 
 template<>
 inline void FP_NR<mpfr_t>::root(const FP_NR<mpfr_t>& a, unsigned int k, mp_rnd_t rnd) {
+#if MPFR_VERSION_MAJOR >= 4
+  mpfr_rootn_ui(data, a.data, k, rnd);
+#else // MPFR_VERSION_MAJOR >= 4
   mpfr_root(data, a.data, k, rnd);
+#endif // MPFR_VERSION_MAJOR >= 4
 }
 
 template<>
@@ -283,6 +287,14 @@ template<>
 inline void FP_NR<mpfr_t>::swap(FP_NR<mpfr_t>& a) {
   mpfr_swap(data, a.data);
 }
+
+/* the hypot function for Givens rotations */
+template<>
+inline void FP_NR<mpfr_t>::hypot(const FP_NR<mpfr_t>& a, const FP_NR<mpfr_t>& b, mp_rnd_t rnd) {
+  mpfr_hypot(data, a.data, b.data, rnd);
+}
+
+
 
 
 /* operators FP_NR<mpfr_t> */

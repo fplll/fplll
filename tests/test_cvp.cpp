@@ -15,42 +15,13 @@
 
 #include <cstring>
 #include <fplll.h>
+#include <test_utils.h>
 
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."
 #endif
 using namespace std;
 using namespace fplll;
-
-/**
-   @brief Read matrix from `input_filename`.
-
-   @param A
-   @param input_filename
-   @return
-*/
-
-template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> A;
-  delete is;
-}
-
-/**
-   @brief Read vector from `input_filename` into `b`.
-
-   @param b                vector
-   @param input_filename   filename
-   @return
-*/
-
-template <class ZT> void read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> b;
-  delete is;
-}
 
 /**
    @brief Test if CVP function returns correct vector.
@@ -60,11 +31,12 @@ template <class ZT> void read_vector(vector<Z_NR<ZT>> &b, const char *input_file
    @return
 */
 
-template <class ZT> int test_cvp(ZZ_mat<ZT> &A, IntVect &target, IntVect &b, const int method)
+template <class ZT>
+int test_cvp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &target, vector<Z_NR<mpz_t>> &b, const int method)
 {
-  IntVect sol_coord;  // In the LLL-reduced basis
-  IntVect solution;
-  IntMatrix u;
+  vector<Z_NR<mpz_t>> sol_coord;  // In the LLL-reduced basis
+  vector<Z_NR<mpz_t>> solution;
+  ZZ_mat<mpz_t> u;
 
   // cerr << "A " << endl << A << endl;
   int status =
@@ -116,15 +88,17 @@ int test_filename(const char *input_filename_lattice, const char *input_filename
                   const char *output_filename, const int method = CVPM_FAST)
 {
   ZZ_mat<ZT> A;
-  read_matrix(A, input_filename_lattice);
+  int status = 0;
+  status |= read_matrix(A, input_filename_lattice);
 
-  IntVect t;
-  read_vector(t, input_filename_target);
+  vector<Z_NR<mpz_t>> t;
+  status |= read_vector(t, input_filename_target);
 
-  IntVect b;
-  read_vector(b, output_filename);
+  vector<Z_NR<mpz_t>> b;
+  status |= read_vector(b, output_filename);
 
-  return test_cvp<ZT>(A, t, b, method);
+  status |= test_cvp<ZT>(A, t, b, method);
+  return status;
 }
 
 /**

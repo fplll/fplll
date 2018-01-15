@@ -71,7 +71,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::discover_row()
   {
     for (int j = 0; j <= i; j++)
     {
-      dot_product(g(i, j), b[i], b[j], n_known_cols);
+      b[i].dot_product(g(i, j), b[j], n_known_cols);
     }
   }
   else
@@ -94,7 +94,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_add(int i, int j)
   if (enable_int_gram)
   {
     // g(i, i) += 2 * g(i, j) + g(j, j)
-    ztmp1.mul_2si(g(i, j), 1);
+    ztmp1.mul_2si(sym_g(i, j), 1);
     ztmp1.add(ztmp1, g(j, j));
     g(i, i).add(g(i, i), ztmp1);
 
@@ -117,7 +117,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_sub(int i, int j)
   if (enable_int_gram)
   {
     // g(i, i) += g(j, j) - 2 * g(i, j)
-    ztmp1.mul_2si(g(i, j), 1);
+    ztmp1.mul_2si(sym_g(i, j), 1);
     ztmp1.sub(g(j, j), ztmp1);
     g(i, i).add(g(i, i), ztmp1);
 
@@ -141,7 +141,7 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::row_addmul_si(int i, int j, l
   {
     /* g(i, i) += 2 * x * g(i, j) +  x^2 * g(j, j)
       (must be done before updating g(i, j)) */
-    ztmp1.mul_si(g(i, j), x);
+    ztmp1.mul_si(sym_g(i, j), x);
     ztmp1.mul_2si(ztmp1, 1);
     g(i, i).add(g(i, i), ztmp1);
     ztmp1.mul_si(g(j, j), x);
@@ -174,7 +174,7 @@ void MatGSO<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
   {
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
       (must be done before updating g(i, j)) */
-    ztmp1.mul_si(g(i, j), x);
+    ztmp1.mul_si(sym_g(i, j), x);
     ztmp1.mul_2si(ztmp1, expo + 1);
     g(i, i).add(g(i, i), ztmp1);
     ztmp1.mul_si(g(j, j), x);
@@ -213,7 +213,7 @@ void MatGSO<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
   {
     /* g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
       (must be done before updating g(i, j)) */
-    ztmp1.mul(g(i, j), x);
+    ztmp1.mul(sym_g(i, j), x);
     ztmp1.mul_2si(ztmp1, expo + 1);
     g(i, i).add(g(i, i), ztmp1);
     ztmp1.mul(g(j, j), x);
@@ -233,7 +233,6 @@ void MatGSO<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
   }
 }
 
-// in row_addmul_we we must have i > j
 template <class ZT, class FT>
 void MatGSO<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_add)
 {

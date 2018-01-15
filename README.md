@@ -33,6 +33,8 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
     * [Dependencies](#dependencies)
       * [Required](#required), [Optional](#optional).
     * [Installation](#installation)
+      * [Linux](#linux)
+      * [Windows 10](#windows-10)
     * [Optimization](#optimization)
     * [Check](#check)
   * [How to use](#how-to-use)
@@ -54,24 +56,11 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 
 ### Required ###
 
-- GNU MP 4.2.0 or higher [http://gmplib.org/](http://gmplib.org/)
+- GNU MP 4.2.0 or higher [http://gmplib.org/](http://gmplib.org/) or MPIR 1.0.0 or higher [http://mpir.org](http://mpir.org)
 - MPFR 2.3.0 or higher, COMPLETE INSTALLATION [http://www.mpfr.org/](http://www.mpfr.org/)
 - autotools 2.61 or higher
 - g++ 4.9.3 or higher
 
-If GMP and/or MPFR include and lib files are not in the default directories `/usr/include` and
-`/usr/lib`, you have to set the environment variables `CFLAGS` and `LDFLAGS` for instance through the
-configure command line
-
-    ./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude" LDFLAGS="-L/mpfrlib -L/gmplib"
-
-or
-
-    ./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude $CPPFLAGD" LDFLAGS="-L/mpfrlib -L/gmplib $LDFLAGS"
-
-if these variables already exist in your environment. This should be modified soon for using
-standard `--with-gmp` and `--with-mpfr` package specifications. The same philosophy applies to the
-(optional) QD library.
 
 ### Optional ###
 - QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install
@@ -79,6 +68,8 @@ standard `--with-gmp` and `--with-mpfr` package specifications. The same philoso
   [http://crd-legacy.lbl.gov/~dhbailey/mpdist/](http://crd-legacy.lbl.gov/~dhbailey/mpdist/)
 
 ## Installation ##
+
+### Linux ###
 
 You should downloaded the source code from github and then run
 
@@ -93,12 +84,41 @@ Then, to compile and install type
 	make
 	make install			# (as root)
 
+If GMP, MPFR and/or MPIR are not in the `$LD_LIBRARY_PATH`, you have to point to the directories where the libraries are, with
+
+    ./configure --with-gmp=path/to/gmp
+
+or
+
+    ./configure --with-mpfr=path/to/mpfr
+
+The same philosophy applies to the (optional) QD library. If you want to use
+mpir instead of gmp, use `--enable-mpir` and `--with-mpir=path/to/mpir`.
+
 You can remove the program binaries and object files from the source code directory by typing `make
 clean`. To also remove the files that `./configure` created (so you can compile the package for a
 different kind of computer), type `make distclean`.  By default, `make install` installs the package
 commands under `/usr/local/bin`, include files under `/usr/local/include`, etc.  You can specify an
 installation directory name other than `/usr/local` by giving `./configure` the option
 `--prefix=dirname`.  Run `./configure --help` for further details.
+
+### Windows 10 ###
+
+Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to **Settings** -> **Update and security** -> **For developers** and enable developer mode. (This may take a while.) Afterwards, open command prompt and run 
+
+	lxrun /install
+
+This will install the WSL, and afterwards this system can be accessed e.g. by opening command prompt and typing `bash`. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
+	
+	sudo apt-get update
+	
+Then run `sudo apt-get install <packages>` for the (indirectly) required packages, such as `make`, `autoconf`, `libtool`, `gcc`, `g++`, `libgmp-dev`, and `libmpfr-dev`. Finally, download the fplll source code, extract the contents, navigate to this folder in Bash (commonly found under `/mnt/c/<local path>` when stored somewhere on the `C:\` drive), and run:
+	
+	./autogen.sh
+	./configure
+	make 
+
+The same comments as before apply for using e.g. `make install` or `make distclean` instead of `make`.
 
 ## Check ##
 
@@ -153,10 +173,10 @@ The options are:
 * `-a hkz` : HKZ-reduction.
 * `-a svp` : prints a shortest non-zero vector of the lattice.
 * `-a sdb` : self dual variant of BKZ-reduction.
-* `-a sld` : Slide reduction.
+* `-a sld` : slide reduction.
+* `-a cvp` : prints the vector in the lattice closest to the input vector.
 * `-v` : verbose mode. 
 * `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution).
-* `-r` `size`, `-c` `size` : ignored, provided for compatibility with previous versions of fplll.
 
 
 Options for LLL-reduction:
@@ -170,20 +190,20 @@ Options for LLL-reduction:
 * `-p precision` : precision of the floating-point arithmetic, works only with `-f mpfr`.
 * `-f dd` : sets the floating-point type to double-double.
 * `-f qd` : sets the floating-point type to quad-double.
-* `-f dpe` : sets the floating-point type to DPE (default if `m=heuristic/heuristicearly`).
-* `-f double` : sets the floating-point type to double (default if `m=fast/fastearly`).
+* `-f dpe` : sets the floating-point type to DPE (default if `m=heuristic`).
+* `-f double` : sets the floating-point type to double (default if `m=fast`).
 * `-f longdouble` : sets the floating-point type to long double.
 
-* `-z int` : sets the integer type to int.
 * `-z mpz` : sets the integer type to mpz, the integer type of GMP (default).
+* `-z int` : sets the integer type to int.
+* `-z long` : as `-z int`.
 * `-z double` : sets the integer type to double.
 
 * `-m wrapper` : uses the wrapper. (default if `z=mpz`).
 * `-m fast` : uses the fast method, works only with `-f double`.
-* `-m fastearly` : uses the fast method with early reduction, works only with `-f double`.
 * `-m heuristic` : uses the heuristic method.
-* `-m heuristicearly` : uses the heuristic method with early reduction.
 * `-m proved` : uses the proved version of the algorithm.
+* `-y` : early reduction.
 
 With the wrapper or the proved version, it is guaranteed that the basis is LLL-reduced with δ'=2×δ-1
 and η'=2×η-1/2. For instance, with the default options, it is guaranteed that the basis is
@@ -192,24 +212,35 @@ and η'=2×η-1/2. For instance, with the default options, it is guaranteed that
 
 Options for BKZ-reduction:
 
-* `-b block_size` :            Block size, mandatory, between 2 and the number of vectors.
+* `-b block_size` :            block size, mandatory, between 2 and the number of vectors.
 
-* `-f float_type` :            Same as LLL (`-p` is required if `float_type=mpfr`).
-* `-p precision` :             Precision of the floating-point arithmetic with `-f mpfr`.
+* `-f float_type` :            same as LLL (`-p` is required if `float_type=mpfr`).
+* `-p precision` :             precision of the floating-point arithmetic with `-f mpfr`.
 
-* `-bkzmaxloops loops` :       Maximum number of full loop iterations.
-* `-bkzmaxtime time` :         Stops after `time` seconds (up to completion of the current loop iteration).
-* `-bkzautoabort` :            Stops when the average slope of the log ||b_i*||'s does not decrease fast enough.
+* `-bkzmaxloops loops` :       maximum number of full loop iterations.
+* `-bkzmaxtime time` :         stops after `time` seconds (up to completion of the current loop iteration).
+* `-bkzautoabort` :            stops when the average slope of the log ||b_i*||'s does not decrease fast enough.
 
 Without any of the last three options, BKZ runs until no block has been updated for a full loop iteration.
 
-* `-s filename.json` :         Use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.
+* `-s filename.json` :         use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.
 
-* `-bkzghbound factor` :       Multiplies the Gaussian heuristic by factor (of float type) to set the enumeration radius of the SVP calls.
-* `-bkzboundedlll` :	       Restricts the LLL call before considering a block to vector indices within that block.
+* `-bkzghbound factor` :       multiplies the Gaussian heuristic by `factor` (of float type) to set the enumeration radius of the SVP calls.
+* `-bkzboundedlll` :	       restricts the LLL call before considering a block to vector indices within that block.
 
-* `-bkzdumgso file_name` :     Dumps the log ||b_i*|| 's in specified file.
+* `-bkzdumgso file_name` :     dumps the log ||b_i*|| 's in specified file.
 
+Output formats:
+
+* `-of  ` : prints new line (if `-a [lll|bkz]`)
+* `-of b` : prints the basis (if `-a [lll|bkz]`, this value by default)
+* `-of c` : prints the closest vector (if `-a cvp`, this value by default)
+* `-of s` : prints the closest vector (if `-a svp`, this value by default)
+* `-of t` : prints status (if `-a [lll|bkz|cvp|svp]`)
+* `-of u` : prints unimodular matrix (if `-a [lll|bkz]`)
+* `-of v` : prints inverse of u (if `-a lll`)
+
+A combination of these option is allowed (e.g., `-of but`).
 
 ## llldiff ##
 
@@ -283,6 +314,12 @@ This library does not currently use multiple cores and running multiple threads 
 
    ```
    ./latticegen r 30 3000 | ./fplll -a svp
+   ```
+
+5. Solving CVP
+
+   ```
+   echo "[[17 42 4][50 75 108][11 47 33]][100 101 102]" | ./fplll -a cvp
    ```
 
 # Alternative interfaces #

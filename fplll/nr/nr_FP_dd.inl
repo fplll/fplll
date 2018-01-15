@@ -43,9 +43,19 @@ inline void FP_NR<dd_real>::get_mpfr(mpfr_t r, mp_rnd_t rnd) const {
   mpfr_add_d (r, r, data._hi(), rnd);
 }
 
-template<>
+
+template<> 
 inline void FP_NR<dd_real>::set_mpfr(mpfr_t r, mp_rnd_t rnd) {
-  data = mpfr_get_ld (r, rnd);
+  
+  double hi;
+  hi = mpfr_get_d (r, rnd);
+  
+  mpfr_t tf;
+  mpfr_init(tf);
+  mpfr_sub_d(tf,r,hi,rnd);
+
+  data = dd_real(hi,mpfr_get_d (tf, rnd));
+  mpfr_clear(tf);
 }
 
 template<>
@@ -195,7 +205,7 @@ inline void FP_NR<dd_real>::mul_2si(const FP_NR<dd_real>& b, long c) {
 }
 
 template<>
-inline void FP_NR<dd_real>::div(const FP_NR<dd_real>& a, const FP_NR<dd_real>& b, mp_rnd_t rnd) {
+inline void FP_NR<dd_real>::div(const FP_NR<dd_real>& a, const FP_NR<dd_real>& b, mp_rnd_t /*rnd*/) {
   data = a.data / b.data;
 }
 
@@ -274,6 +284,29 @@ inline void FP_NR<dd_real>::swap(FP_NR<dd_real>& a) {
   a.data = data;
   data = t;
 }
+
+/*  implemented hypot, since it 
+    it is not implemented for
+    double-double
+*/
+template<>
+inline void FP_NR<dd_real>::hypot(const FP_NR<dd_real>& a, const FP_NR<dd_real>& b, mp_rnd_t /*rnd*/) {
+  // Maybe decrease temporary 
+  // variables with one, by
+  // putting the absolute value of a
+  // into this.data
+
+    dd_real abs_a = ::abs(a.data);
+    dd_real abs_b = ::abs(b.data);
+    
+    if (abs_a > abs_b) {
+        data = abs_a* ::sqrt(1.0 + (::pow(abs_b/abs_a,2)));
+    } else {
+        data =  abs_b* ::sqrt(1.0 + (::pow(abs_a/abs_b,2)));   
+    }
+    
+}
+
 
 FPLLL_END_NAMESPACE
 

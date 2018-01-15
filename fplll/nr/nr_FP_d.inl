@@ -16,7 +16,7 @@ FPLLL_BEGIN_NAMESPACE
 
 /* constructor */
 template<>
-inline FP_NR<double>::FP_NR() {}
+inline FP_NR<double>::FP_NR(): data(0.0) {}
 
 template<> 
 inline FP_NR<double>::FP_NR(const FP_NR<double>& f) {data = f.data;}
@@ -272,6 +272,12 @@ inline void FP_NR<double>::set_nan() {
 template<>
 inline void FP_NR<double>::swap(FP_NR<double>& a) {
   std::swap(data, a.data);
+}
+
+/* hypot function for Givens */
+template<>
+inline void FP_NR<double>::hypot(const FP_NR<double>& a, const FP_NR<double>& b, mp_rnd_t /*rnd*/) {
+  data = ::hypot(a.data,b.data);
 }
 
 

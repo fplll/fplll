@@ -19,6 +19,7 @@
 #include <gso_interface.h>
 #include <nr/matrix.h>
 //#include <random>
+#include <test_utils.h>
 
 using namespace std;
 using namespace fplll;
@@ -68,16 +69,6 @@ template <class ZT, class FT> bool rs_are_equal(MatGSO<ZT, FT> M1, MatGSOGram<ZT
   return true;
 }
 
-template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
-{
-  ifstream is(input_filename);
-  if (!is)
-  {
-    cerr << "Could not open file!" << endl;
-  }  // throw std::runtime_error("could not open input file");
-  is >> A;
-}
-
 template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
 {
   // TEST A
@@ -101,14 +92,18 @@ template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
 
-  MatGSO<Z_NR<ZT>, FP_NR<FT>> Mbuf(A, U, UT, 1);
+  MatGSO<Z_NR<ZT>, FP_NR<FT>> Mbuf(A, U, UT, GSO_INT_GRAM);
   Mbuf.update_gso();
   Matrix<Z_NR<ZT>> G = Mbuf.get_g_matrix();
 
-  MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 0);
+  MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, GSO_DEFAULT);
   M.update_gso();
   MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(G, U, UT, 1);
   M2.update_gso();
+
+  ZZ_mat<ZT> A1(A);
+  MatGSO<Z_NR<ZT>, FP_NR<FT>> M3(A1, U, UT, GSO_INT_GRAM);
+  M3.update_gso();
 
   FP_NR<FT> err  = .001;
   bool retvalue1 = rs_are_equal(M, M2, err);
@@ -122,29 +117,46 @@ template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
     int j = rand() % r;
     M.move_row(k, j);
     M2.move_row(k, j);
+    M3.move_row(k, j);
   }
   M.update_gso();
   M2.update_gso();
+  M3.update_gso();
   bool retvalue2 = rs_are_equal(M, M2, err);
 
+  M.row_op_begin(0, r);
+  M2.row_op_begin(0, r);
+  M3.row_op_begin(0, r);
   for (int i = 0; i < rand() % 10 + 1; i++)
   {
     int k = rand() % r;
     int j = rand() % r;
     M.row_add(k, j);
     M2.row_add(k, j);
+    M3.row_add(k, j);
   }
+  M.row_op_end(0, r);
+  M2.row_op_end(0, r);
+  M3.row_op_end(0, r);
+
   M.update_gso();
   M2.update_gso();
+  M3.update_gso();
   bool retvalue3 = rs_are_equal(M, M2, err);
+  bool retvalue4 = rs_are_equal(M3, M2, err);
 
-  return (!retvalue1) * 1 + (!retvalue2) * 2 + (!retvalue3) * 4;
+  return (!retvalue1) * 1 + (!retvalue2) * 2 + (!retvalue3) * 4 + (!retvalue4) * 8;
 }
 
 template <class ZT, class FT> int test_filename(const char *input_filename)
 {
   ZZ_mat<ZT> A;
-  read_matrix(A, input_filename);
+  int status = read_matrix(A, input_filename);
+  // if status == 1, read_matrix fails.
+  if (status == 1)
+  {
+    return 1;
+  }
   int retvalue = test_ggso<ZT, FT>(A);
   if (retvalue & 1)
   {

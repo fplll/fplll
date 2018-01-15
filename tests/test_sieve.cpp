@@ -1,6 +1,7 @@
 #include <../fplll/sieve/sieve_main.h> /* standalone bin */
 #include <cstring>
 #include <fplll.h>
+#include <test_utils.h>
 
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."
@@ -10,41 +11,13 @@ using namespace std;
 using namespace fplll;
 
 /**
-   @brief Read matrix from `input_filename`.
-
-   @param A
-   @param input_filename
-   @return
-*/
-template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> A;
-  delete is;
-}
-
-/**
-   @brief Read vector from `input_filename` into `b`.
-
-   @param b                vector
-   @param input_filename   filename
-   @return
-*/
-template <class ZT> void read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
-{
-  istream *is = new ifstream(input_filename);
-  *is >> b;
-  delete is;
-}
-
-/**
    @brief Test sieve by checking if function returns correct vector.
 
    @param A              input lattice
    @param b              shortest vector
    @return
 */
-template <class ZT> int test_sieve_alg(ZZ_mat<ZT> &A, IntVect &b, int alg)
+template <class ZT> int test_sieve_alg(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b, int alg)
 {
   GaussSieve<ZT, FP_NR<double>> gsieve(A, alg, 0, 0);
   Z_NR<ZT> goal_norm;
@@ -66,7 +39,7 @@ template <class ZT> int test_sieve_alg(ZZ_mat<ZT> &A, IntVect &b, int alg)
   return 0;
 }
 
-template <class ZT> int test_sieve(ZZ_mat<ZT> &A, IntVect &b)
+template <class ZT> int test_sieve(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
 {
   int r = 0;
   r |= test_sieve_alg<ZT>(A, b, 2);
@@ -84,10 +57,12 @@ template <class ZT> int test_sieve(ZZ_mat<ZT> &A, IntVect &b)
 template <class ZT> int test_filename(const char *input_filename, const char *output_filename)
 {
   ZZ_mat<ZT> A;
-  read_matrix(A, input_filename);
-  IntVect b;
-  read_vector(b, output_filename);
-  return test_sieve<ZT>(A, b);
+  int status = 0;
+  status |= read_matrix(A, input_filename);
+  vector<Z_NR<mpz_t>> b;
+  status |= read_vector(b, output_filename);
+  status |= test_sieve<ZT>(A, b);
+  return status;
 }
 
 /*

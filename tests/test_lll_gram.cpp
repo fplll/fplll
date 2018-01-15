@@ -19,6 +19,7 @@
 #include <gso_gram.h>
 #include <gso_interface.h>
 #include <lll.h>
+#include <test_utils.h>
 
 using namespace std;
 using namespace fplll;
@@ -44,16 +45,6 @@ bool have_equal_grammatrix(MatGSO<Z_NR<ZT>, FP_NR<FT>> M1, MatGSOGram<Z_NR<ZT>, 
     }
   }
   return true;
-}
-
-template <class ZT> void read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
-{
-  ifstream is(input_filename);
-  if (!is)
-  {
-    cerr << "Could not open file!" << endl;
-  }  // throw std::runtime_error("could not open input file");
-  is >> A;
 }
 
 template <class ZT, class FT> int is_already_reduced(ZZ_mat<ZT> &A, Matrix<Z_NR<ZT>> &G)
@@ -171,8 +162,10 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
 template <class ZT, class FT> int test_filename(const char *input_filename)
 {
   ZZ_mat<ZT> A;
-  read_matrix(A, input_filename);
-  return test_lll<ZT, FT>(A);
+  int status = 0;
+  status |= read_matrix(A, input_filename);
+  status |= test_lll<ZT, FT>(A);
+  return status;
 }
 
 /**

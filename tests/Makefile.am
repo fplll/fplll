@@ -7,8 +7,9 @@ CLEANFILES = *.gcov .libs/*.gcda .libs/*.gcno *.gcno *.gcda
 
 include_fpllldir=$(includedir)/fplll
 
-EXTRA_DIST=lattices/dim55_in \
-    lattices/example2_in \
+EXTRA_DIST=test_utils.h \
+	lattices/dim55_in \
+	lattices/example2_in \
 	lattices/example_in \
 	lattices/example_svp_in \
 	lattices/example_svp_out \
@@ -38,8 +39,8 @@ AM_LDFLAGS = -L$(STAGEDIR) -Wl,-rpath,$(STAGEDIR) -lfplll -no-install $(LIBQD_LI
 
 TESTS = test_nr test_lll test_cvp test_svp test_bkz test_pruner test_sieve test_gso test_lll_gram
 
-test_pruner_LDADD=-lgmp -lmpfr $(LIBQD_LIBADD)
-test_sieve_LDADD=-lgmp -lmpfr $(LIBQD_LIBADD)
+test_pruner_LDADD=$(LIBGMP) -lmpfr $(LIBQD_LIBADD)
+test_sieve_LDADD=$(LIBGMP) -lmpfr $(LIBQD_LIBADD)
 
 test_nr_SOURCES = test_nr.cpp
 test_lll_SOURCES = test_lll.cpp

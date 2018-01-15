@@ -33,7 +33,7 @@ inline void EnumerationBase::enumerate_recursive(
   ++nodes;
 
   alpha[kk] = alphak;
-  if (findsubsols && newdist < subsoldists[kk])
+  if (findsubsols && newdist < subsoldists[kk] && newdist != 0.0)
   {
     subsoldists[kk] = newdist;
     process_subsolution(kk, newdist);
@@ -181,6 +181,7 @@ template <bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBa
   if (k >= k_end)
     return;
 
+  center_partsum_begin[0] = 0;
   for (int i = 0; i < k_end; ++i)
   {
     center_partsum_begin[i + 1] = k_end - 1;
@@ -208,7 +209,7 @@ template <bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBa
     {
       ++nodes;
       alpha[k] = alphak;
-      if (findsubsols && newdist < subsoldists[k])
+      if (findsubsols && newdist < subsoldists[k] && newdist != 0.0)
       {
         subsoldists[k] = newdist;
         process_subsolution(k, newdist);
