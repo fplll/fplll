@@ -33,7 +33,6 @@ bool have_equal_grammatrix(MatGSO<Z_NR<ZT>, FP_NR<FT>> M1, MatGSOGram<Z_NR<ZT>, 
 {
   Matrix<Z_NR<ZT>> g1 = M1.get_g_matrix();
   Matrix<Z_NR<ZT>> g2 = M2.get_g_matrix();
-
   for (int i = 0; i < g1.get_rows(); i++)
   {
     for (int j = 0; j < g1.get_cols(); j++)
@@ -198,7 +197,6 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, double>(50, 20);
   status |= test_int_rel<mpz_t, double>(40, 10);
-  status |= test_int_rel<mpz_t, double>(200, 100);
 
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example2_in");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
@@ -208,7 +206,6 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, mpfr_t>(50, 20);
   status |= test_int_rel<mpz_t, mpfr_t>(40, 10);
-  status |= test_int_rel<mpz_t, mpfr_t>(200, 100);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example2_in");
@@ -223,8 +220,7 @@ int main(int /*argc*/, char ** /*argv*/)
       test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, long double>(50, 20);
   status |= test_int_rel<mpz_t, long double>(40, 10);
-// status |= test_int_rel<mpz_t, long double>(200, 100);
-// *
+
 #endif
 #ifdef FPLLL_WITH_QD
   status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example2_in");
@@ -235,7 +231,6 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, dd_real>(50, 20);
   status |= test_int_rel<mpz_t, dd_real>(40, 10);
-  // status |= test_int_rel<mpz_t, dd_real>(200, 100);
 
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example2_in");
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
@@ -245,7 +240,7 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, qd_real>(50, 20);
   status |= test_int_rel<mpz_t, qd_real>(40, 10);
-// status |= test_int_rel<mpz_t, qd_real>(200, 100);
+
 #endif
 #ifdef FPLLL_WITH_DPE
   status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example2_in");
@@ -256,8 +251,7 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, dpe_t>(50, 20);
   status |= test_int_rel<mpz_t, dpe_t>(40, 10);
-// status |= test_int_rel<mpz_t, dpe_t>(200, 100);
-//*
+
 #endif
 
   if (status == 0)
