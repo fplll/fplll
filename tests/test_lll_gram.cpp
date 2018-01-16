@@ -28,7 +28,6 @@ using namespace fplll;
 #define TESTDATADIR ".."
 #endif
 
-
 template <class ZT, class FT> int is_already_reduced(ZZ_mat<ZT> &A, Matrix<Z_NR<ZT>> &G)
 {
   ZZ_mat<ZT> U;
@@ -46,7 +45,6 @@ template <class ZT, class FT> int is_already_reduced(ZZ_mat<ZT> &A, Matrix<Z_NR<
   return (is_reduced || is_greduced);
 }
 
-
 /**
    @brief Tests whether LLL applied on A is equivalent to LLLGram applied on G = A*A^T
 
@@ -61,21 +59,22 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   ZZ_mat<ZT> UT;
 
   // _______________________________________________
-  // -----------------------------------------------  
+  // -----------------------------------------------
   // Create the Gram matrix G of the basis A
 
   ZZ_mat<ZT> G;
   int r = A.r;
   int c = A.c;
-  G.resize(r,r);
-  for(int i = 0; i < r; i++) {
-  for(int j = 0; j < r; j++) {
-    A[i].dot_product(G(i,j),A[j],c);
-  }
+  G.resize(r, r);
+  for (int i = 0; i < r; i++)
+  {
+    for (int j = 0; j < r; j++)
+    {
+      A[i].dot_product(G(i, j), A[j], c);
+    }
   }
   // ------------------------------------------------
   // ************************************************
-
 
   // _______________________________________________
   // -----------------------------------------------
@@ -88,7 +87,6 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   Mgram.update_gso();
   // ------------------------------------------------
   // ************************************************
-
 
   // _________________________________________________
   // -------------------------------------------------
@@ -114,7 +112,6 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   // ------------------------------------------------
   // ************************************************
 
-
   // _________________________________________________
   // -------------------------------------------------
   // Check whether M and Mgram are really reduced after LLL reduction
@@ -136,41 +133,43 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   // ------------------------------------------------
   // ************************************************
 
-
-  // 
+  //
   // After this reduction, A (the input matrix) and G (gram matrix)
   // are LLL-reduced accordingly. Therefore we should check whether
   // A *A^T = G
-  // 
-
+  //
 
   // _______________________________________________
-  // -----------------------------------------------  
+  // -----------------------------------------------
   // Create the Gram matrix G_reduced of the basis A_reduced
 
   ZZ_mat<ZT> G_reduced;
-  G_reduced.resize(r,r);
-  for(int i = 0; i < r; i++) {
-  for(int j = 0; j < r; j++) {
-    (M.b)[i].dot_product(G_reduced(i,j),(M.b)[j],c);
-  }
+  G_reduced.resize(r, r);
+  for (int i = 0; i < r; i++)
+  {
+    for (int j = 0; j < r; j++)
+    {
+      (M.b)[i].dot_product(G_reduced(i, j), (M.b)[j], c);
+    }
   }
   // ------------------------------------------------
   // ************************************************
 
-
   // _______________________________________________
-  // -----------------------------------------------  
+  // -----------------------------------------------
   // Test whether G_reduced = G
-  for(int i = 0; i < r; i++) {
-  for(int j = 0; j < i; j++) {
-    if (G(i,j) != G_reduced(i,j)) { 
-       cerr << "The gram-representation and the basis-representation of the same lattice have an unequal gram matrix.\n";
-       return 1; 
-     }
+  for (int i = 0; i < r; i++)
+  {
+    for (int j = 0; j < i; j++)
+    {
+      if (G(i, j) != G_reduced(i, j))
+      {
+        cerr << "The gram-representation and the basis-representation of the same lattice have an "
+                "unequal gram matrix.\n";
+        return 1;
+      }
+    }
   }
-  }
-
 
   // Return 0 on success.
   return 0;
