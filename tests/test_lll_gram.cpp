@@ -28,31 +28,12 @@ using namespace fplll;
 #define TESTDATADIR ".."
 #endif
 
-template <class ZT, class FT>
-bool have_equal_grammatrix(MatGSO<Z_NR<ZT>, FP_NR<FT>> M1, MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2)
-{
-  Matrix<Z_NR<ZT>> g1 = M1.get_g_matrix();
-  Matrix<Z_NR<ZT>> g2 = M2.get_g_matrix();
-  for (int i = 0; i < g1.get_rows(); i++)
-  {
-    for (int j = 0; j < g1.get_cols(); j++)
-    {
-      if (g1[i][j] != g2[i][j])
-      {
-        return false;
-      }
-    }
-  }
-  return true;
-}
 
 template <class ZT, class FT> int is_already_reduced(ZZ_mat<ZT> &A, Matrix<Z_NR<ZT>> &G)
 {
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
 
-  // MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 0);
-  // changed this to flag = 1
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 1);
   MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(G, U, UT, 1);
 
@@ -65,12 +46,12 @@ template <class ZT, class FT> int is_already_reduced(ZZ_mat<ZT> &A, Matrix<Z_NR<
   return (is_reduced || is_greduced);
 }
 
+
 /**
-   @brief Test LLL reduction.
+   @brief Tests whether LLL applied on A is equivalent to LLLGram applied on G = A*A^T
 
-   @param A                test matrix
-
-   @return zero on success.
+   @param A basis matrix of a lattice
+   @return zero on success
 */
 
 template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
@@ -79,43 +60,62 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
 
-  // -----------------------------------------------
-  // Create the gram matrix G of the basis matrix A.
-  MatGSO<Z_NR<ZT>, FP_NR<FT>> Mbuf(A, U, UT, 1);
-  Mbuf.update_gso();
-  Matrix<Z_NR<ZT>> G = Mbuf.get_g_matrix();
-  // ------------------------------------------------
+  // _______________________________________________
+  // -----------------------------------------------  
+  // Create the Gram matrix G of the basis A
 
+  ZZ_mat<ZT> G;
+  int r = A.r;
+  int c = A.c;
+  G.resize(r,r);
+  for(int i = 0; i < r; i++) {
+  for(int j = 0; j < r; j++) {
+    A[i].dot_product(G(i,j),A[j],c);
+  }
+  }
   // ------------------------------------------------
-  // Create a MatGSO-object (basis gso) for A
-  // and a MatGSOGram-object (gram gso) for G.
-  // changed flag to 1 here
+  // ************************************************
+
+
+  // _______________________________________________
+  // -----------------------------------------------
+  // Create a MatGSO-object M (basis gso) for A
+  // and a MatGSOGram-object Mgram (gram gso) for G.
+
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 1);
   M.update_gso();
   MatGSOGram<Z_NR<ZT>, FP_NR<FT>> Mgram(G, U, UT, 1);
   Mgram.update_gso();
-  // -------------------------------------------------
+  // ------------------------------------------------
+  // ************************************************
 
-  // --------------------------------------------------
+
+  // _________________________________________________
+  // -------------------------------------------------
   // Test whether A and G are not already LLL-reduced.
   if (is_already_reduced<ZT, FT>(A, G))
   {
     cerr << "The matrices are already LLL-reduced";
     return 1;
   }
-  // ---------------------------------------------------
+  // ------------------------------------------------
+  // ************************************************
 
-  // -----------------------------------------------------
+  // _________________________________________________
+  // -------------------------------------------------
   // Make two LLLObjects. One of the basis MatGSO-object M
   // one of the gram MatGSOGram-object Mgram.
   LLLReduction<Z_NR<ZT>, FP_NR<FT>> LLLObj(M, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
   LLLReduction<Z_NR<ZT>, FP_NR<FT>> LLLObjgram(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
 
-  // LLL reduce both objects.
+  // and LLL reduce both objects
   LLLObj.lll();
   LLLObjgram.lll();
-  // ---------------------------------------------------------
+  // ------------------------------------------------
+  // ************************************************
 
+
+  // _________________________________________________
   // -------------------------------------------------
   // Check whether M and Mgram are really reduced after LLL reduction
   int is_reduced  = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
@@ -133,29 +133,47 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
     }
     return 1;
   }
-  // ----------------------------------------------------------
+  // ------------------------------------------------
+  // ************************************************
 
-  // ----------------------------------------------------------
-  // Create the MatGSO object M2, which creates the Gram matrix
-  // of the LLL-reduced basis M.b of M.
-  MatGSO<Z_NR<ZT>, FP_NR<FT>> M2(M.b, U, UT, 1);
-  M2.update_gso();
-  // ----------------------------------------------------------
 
-  // ----------------------------------------------------------
-  // Test whether M2.g and Mgram.g are equal.
-  bool retvalue1 = have_equal_grammatrix(M2, Mgram);
-  // ----------------------------------------------------------
+  // 
+  // After this reduction, A (the input matrix) and G (gram matrix)
+  // are LLL-reduced accordingly. Therefore we should check whether
+  // A *A^T = G
+  // 
 
-  if (retvalue1)
-  {
-    return 0;
+
+  // _______________________________________________
+  // -----------------------------------------------  
+  // Create the Gram matrix G_reduced of the basis A_reduced
+
+  ZZ_mat<ZT> G_reduced;
+  G_reduced.resize(r,r);
+  for(int i = 0; i < r; i++) {
+  for(int j = 0; j < r; j++) {
+    (M.b)[i].dot_product(G_reduced(i,j),(M.b)[j],c);
   }
-  else
-  {
-    cerr << "Unequal gram matrix\n";
-    return 1;
   }
+  // ------------------------------------------------
+  // ************************************************
+
+
+  // _______________________________________________
+  // -----------------------------------------------  
+  // Test whether G_reduced = G
+  for(int i = 0; i < r; i++) {
+  for(int j = 0; j < i; j++) {
+    if (G(i,j) != G_reduced(i,j)) { 
+       cerr << "The gram-representation and the basis-representation of the same lattice have an unequal gram matrix.\n";
+       return 1; 
+     }
+  }
+  }
+
+
+  // Return 0 on success.
+  return 0;
 }
 
 template <class ZT, class FT> int test_filename(const char *input_filename)
