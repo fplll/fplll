@@ -249,13 +249,13 @@ inline void Z_NR<mpz_t>::swap(Z_NR<mpz_t>& a) {
 template<>
 inline void Z_NR<mpz_t>::randb(int bits) {
   mpz_urandomb(data, RandGen::get_gmp_state(), bits);
-  if (bits > 32){ 
-    unsigned long int tmp = mpz_get_ui(data);  
+  if (bits > 32){
+    unsigned long int tmp = mpz_get_ui(data);
     gmp_randseed_ui(RandGen::gmp_state, tmp*tmp);
     }
 }
 
-template<> 
+template<>
 inline void Z_NR<mpz_t>::randb_si(int bits)  {
   randb(bits);
   if (RandGenInt::get_bit() < 0)
@@ -279,6 +279,39 @@ inline void Z_NR<mpz_t>::nextprime(const Z_NR<mpz_t>& nbr) {
   mpz_nextprime(data, nbr.data);
 }
 
+/** specialized number theoretical functions */
+
+/* Set data to the d = gcd(a,b) */
+template<>
+inline void Z_NR<mpz_t>::gcd(const Z_NR<mpz_t>& a, const Z_NR<mpz_t>& b) {
+  mpz_gcd(data, a.data, b.data);
+}
+/* Computes x,y and set data to d = gcd(a,b) = x.a + y.b */
+template<>
+inline void Z_NR<mpz_t>::xgcd(Z_NR<mpz_t>& x, Z_NR<mpz_t>& y,
+                              const Z_NR<mpz_t>& a, const Z_NR<mpz_t>& b) {
+  mpz_gcdext(data, x.data, y.data, a.data, b.data);
+}
+/* Set data to the d = lcm(a,b) */
+template<>
+inline void Z_NR<mpz_t>::lcm(const Z_NR<mpz_t>& a, const Z_NR<mpz_t>& b) {
+  mpz_lcm(data, a.data, b.data);
+}
+/* Set data to the d = a^-1 mod b) */
+template<>
+inline void Z_NR<mpz_t>::invert(const Z_NR<mpz_t>& a, const Z_NR<mpz_t>& b) {
+  mpz_invert(data, a.data, b.data);
+}
+/* Set data = a/b where a%b = 0 */
+template<>
+inline void Z_NR<mpz_t>::divexact(const Z_NR<mpz_t>& a, const Z_NR<mpz_t>& b) {
+  mpz_divexact(data, a.data, b.data);
+}
+/* rounds q down towards -inf, and r will have the same sign as d. */
+template<>
+inline void Z_NR<mpz_t>::fdiv_q(const Z_NR<mpz_t>& a, const Z_NR<mpz_t>& b) {
+  mpz_fdiv_q(data, a.data, b.data);
+}
 
 /* operators Z_NR<mpz_t> */
 template<>
@@ -315,7 +348,7 @@ inline istream& operator>>(istream& is, Z_NR<mpz_t>& x) {
   if (is.eof())
     is.clear();
   else
-    is.putback(c); 
+    is.putback(c);
 
   if (mpz_set_str(x.get_data(), s.c_str(), 10)) {
     is.setstate(ios::failbit);

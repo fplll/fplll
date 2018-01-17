@@ -24,6 +24,7 @@
 
 #include "bkz.h"
 #include "bkz_param.h"
+#include "hnf.h"
 #include "pruner.h"
 #include "svpcvp.h"
 #include "util.h"

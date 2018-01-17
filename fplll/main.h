@@ -39,7 +39,8 @@ enum Action
   ACTION_HKZ,
   ACTION_BKZ,
   ACTION_SVP,
-  ACTION_CVP
+  ACTION_CVP,
+  ACTION_HNF
 };
 
 struct Options

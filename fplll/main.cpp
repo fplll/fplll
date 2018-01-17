@@ -1,6 +1,7 @@
 /* Copyright (C) 2005-2008 Damien Stehle.
    Copyright (C) 2007 David Cade.
    Copyright (C) 2008-2011 Xavier Pujol.
+   Copyright (C) 2018 Arnaud Sipasseuth (just the hnf part)
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -86,8 +87,8 @@ void read_pruning_vector(const char *file_name, PruningParams &pr, int n)
   for (int i = 0; i <= n && fscanf(file, "%lf", &x) == 1; i++)
   {
     pr.coefficients.push_back(x);
-    CHECK(x > 0 && x <= 1, "Number " << x << " in file '" << file_name
-                                     << "' is not in the interval (0,1]");
+    CHECK(x > 0 && x <= 1,
+          "Number " << x << " in file '" << file_name << "' is not in the interval (0,1]");
     if (i == 0)
     {
       CHECK(x == 1, "The first number in file '" << file_name << "' should be 1");
@@ -267,6 +268,40 @@ template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &
   return status;
 }
 
+/* Computation of the HNF */
+
+template <class ZT> int hnf(Options &o, ZZ_mat<ZT> &b) { ABORT_MSG("mpz required for HNF"); }
+
+template <> int hnf(Options &o, ZZ_mat<mpz_t> &b)
+{
+  int status = hnf_xgcd_reduction(b);
+
+  /* print the result */
+  const char *format = o.output_format ? o.output_format : "b";
+  for (int i = 0; format[i]; i++)
+  {
+    switch (format[i])
+    {
+    case 'b':
+      cout << b << endl;
+      break;
+    case 'u':
+      // cout << u << endl;
+      cout << "transformation matrix not yet implemented sorry" << endl;
+      break;
+    case 't':
+      cout << status << endl;
+      break;
+    case ' ':
+      cout << endl;
+      break;
+    }
+  }
+
+  /* returns the reduction status */
+  return status;
+}
+
 template <class ZT> int run_action(Options &o)
 {
   istream *is;
@@ -306,6 +341,9 @@ template <class ZT> int run_action(Options &o)
   case ACTION_BKZ:
     result = bkz(o, m);
     break;
+  case ACTION_HNF:
+    result = hnf(o, m);
+    break;
   default:
     ABORT_MSG("unimplemented action");
     break;
@@ -343,8 +381,12 @@ void read_options(int argc, char **argv, Options &o)
         o.action = ACTION_BKZ;
         o.bkz_flags |= BKZ_SLD_RED;
       }
+      else if (strcmp(argv[ac], "hnf") == 0)
+      {
+        o.action = ACTION_HNF;
+      }
       else
-        ABORT_MSG("parse error in -a switch: lll or svp expected");
+        ABORT_MSG("parse error in -a switch: lll, svp or other function expected");
     }
     else if (strcmp(argv[ac], "-b") == 0)
     {
@@ -503,6 +545,7 @@ void read_options(int argc, char **argv, Options &o)
            << "       lll = LLL-reduce the input matrix (default)\n"
            << "       bkz = BKZ-reduce the input matrix\n"
            << "       hkz = HKZ-reduce the input matrix\n"
+           << "       hnf = compute the HNF of the input matrix (in development)\n"
            << "       svp = compute a shortest non-zero vector of the lattice\n"
            << "       sdb = reduce the input matrix using the self dual BKZ variant\n"
            << "       sld = slide reduce the input matrix\n"
