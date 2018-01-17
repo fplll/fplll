@@ -11,7 +11,17 @@ FPLLL_BEGIN_NAMESPACE
 
 class RandGen {
 public:
-  static void init() {
+ /**    
+	@brief Create a random generator (using gmp):
+
+	@param init             Initialize State for a default algorithm (Mersenne Twister) 
+	@param init_with_seed   Set an initial seed value into state. The seed is provided by the user  
+        @param init_with_time   Set an initial seed value into state taken from the clock
+        @param init_with_time2  As previous, but it applies a function to the time provided by the clock
+	@param get_initialized  If an initial seed was set into state, returns True, otherwise it returns False 
+	@param get_gmp_state    Returns the current state of the generator 
+ */
+    static void init() {
     initialized = true;
     gmp_randinit_default(gmp_state);
   }
@@ -45,6 +55,13 @@ private:
 
 class RandGenInt {
 public:
+ /**    
+	@brief Create a Random Generator
+
+        @param init  Initialize a random number generator. It does not return somethinng     
+        @param get   Returns a pseudo-random integral number in the range between 0 and RAND_MAX (RAND_MAX is at least  32767)
+        @get_bit   Returns a random bit 
+ */
   static void init() {
     initialized = true;
     srand(time(NULL));
