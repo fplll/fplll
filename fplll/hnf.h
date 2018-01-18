@@ -13,12 +13,25 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
+/**
+  * WARNING : all HNFs here are considered lower triangular. Not upper.
+  */
+
 #ifndef FPLLL_HNF_H
 #define FPLLL_HNF_H
 
 #include "nr/matrix.h"
 
 FPLLL_BEGIN_NAMESPACE
+
+/**
+   @brief Test the HNF form of B.
+
+   @param A
+   @return zero on success.
+*/
+
+int is_hnf_reduced(const ZZ_mat<mpz_t> &B);
 
 /**
  * @brief Tests a couple matrix vector
@@ -30,7 +43,7 @@ FPLLL_BEGIN_NAMESPACE
  *    vector for the membership test
  */
 
-int in_hnf(const ZZ_mat<mpz_t> &B, const vector<mpz_t> &v);
+int in_hnf(const ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &v);
 
 /**
  * @brief Tests a couple matrix matrix
@@ -49,12 +62,20 @@ int in_hnf(const ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A);
  *
  * @param B
  *    basis of the lattice to be reduced
- * @param U
- *    transformation matrix (don't pass a parameter to ignore this option)
  */
 
-// template <class ZT> int hnf_xgcd_reduction(ZZ_mat<ZT> &B, ZZ_mat<ZT> &U);
 int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B);
+
+/**
+ * @brief Performs hnf reduction using the selected algorithm
+ *
+ * @param B
+ *    basis of the lattice to be reduced
+ * @param method
+ *    reduction method
+ */
+
+int hnf(ZZ_mat<mpz_t> &B, HNFMethod method);
 
 FPLLL_END_NAMESPACE
 

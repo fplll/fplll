@@ -1,4 +1,4 @@
-/* Copyright (C) 2018 Arnaud Sipasseuth.
+/* Copyright (C) 2018 Arnaud Sipasseuth. (inspiration from FLINT (2017 version))
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -13,21 +13,65 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
-/* Template source file */
+/* source file */
+/* to be templated one day if the need arises */
 
 #include "hnf.h"
 #include "util.h"
 
 FPLLL_BEGIN_NAMESPACE
 
-int in_hnf(ZZ_mat<mpz_t> &B, const vector<mpz_t> &w){
+int is_hnf_reduced(ZZ_mat<mpz_t> &B){
 
-  vector<mpz_t> v = w;
+  /* matrix bounds */
+  int r = B.get_rows(), c = B.get_cols();
+  /* matrix indexes (k = pivot)*/
+  int i, j, k;
+  /* the limit "l" depends of matrix dimensions */
+  int l = (c - r) * (c > r);
+
+  /* main loop, decreases from last column to the limit */
+  for (j = c - 1, k = r - 1; j >= l; j--, k--)
+  {
+    // checks if everything above diagonal zero
+    for (i = k - 1; i >=0 ; i--) {
+      if (B[i][j] != 0) {return 1;}
+    }
+    // checks if diagonal is non-negative
+    if (B[k][j] < 0) {
+      return 1;
+    }
+    // if "diagonal" entry is zero, we have to "shift" the diagonal position
+    else if (B[k][j] == 0)
+    {
+      // pivot row position doesn't change, increment to compensate
+      k++;
+      // lower the limit as we skipped one column without increasing row
+      if (l > 0) {l--;}
+    }
+    else
+    {
+      // checks if everything below is positive and below the diagonal
+      for (i = k + 1; i < r ; i++) {
+        if ( (B[i][j] > B[k][j]) || (B[i][j] < 0) ) {
+          return 1;
+        }
+      }
+    }
+  }
+
+  return 0;
+}
+
+int in_hnf(ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &w){
+
+  vector<Z_NR<mpz_t>> v = w;
+  Z_NR<mpz_t> q;
 
   /* matrix bounds */
   int r = B.get_rows(), c = B.get_cols();
   /* test if the vector size is correct */
-  if (v.size() != c) {
+  if ((int)v.size() != c) {
     cerr << "in_hnf error : matrix-vector sizes do not match\n";
     return -1;
   }
@@ -59,7 +103,9 @@ int in_hnf(ZZ_mat<mpz_t> &B, const vector<mpz_t> &w){
     {
       // checks if everything below is positive and below the diagonal
       for (i = k + 1; i < r ; i++) {
-        if ( (B[i][j] < B[k][j]) && (B[i][j] > 0) ) {return 1;}
+        if ( (B[i][j] > B[k][j]) || (B[i][j] < 0) ) {
+          return 1;
+        }
       }
       // reduces the vector by the row pivot vector for membership test
       q.fdiv_q(v[j], B[k][j]);
@@ -71,8 +117,77 @@ int in_hnf(ZZ_mat<mpz_t> &B, const vector<mpz_t> &w){
   }
 
   // membership test : the vector after reduction should be a zero one.
-  for ( j = 0; i < c; i++) {
-    if (v[i] != 0) {return -1;}
+  for ( j = 0; j < c; j++) {
+    if (v[j] != 0) {return -1;}
+  }
+
+  return 0;
+}
+
+int in_hnf(ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A){
+
+  ZZ_mat<mpz_t> tmp = A;
+  Z_NR<mpz_t> q;
+
+  /* matrix bounds */
+  int r = B.get_rows(), c = B.get_cols();
+  /* test if the vector size is correct */
+  if ( (A.get_cols() != c) || (A.get_rows() != r) ) {
+    cerr << "in_hnf error : matrix-matrix sizes do not match\n";
+    return -1;
+  }
+  /* matrix indexes (k = pivot)*/
+  int i, j, j2, k;
+  /* the limit "l" depends of matrix dimensions */
+  int l = (c - r) * (c > r);
+
+  /* main loop, decreases from last column to the limit */
+  for (j = c - 1, k = r - 1; j >= l; j--, k--)
+  {
+    // checks if everything above diagonal zero
+    for (i = k - 1; i >=0 ; i--) {
+      if (B[i][j] != 0) {
+        // cout << "fail here" << endl;
+        return 1;
+      }
+    }
+    // checks if diagonal is non-negative
+    if (B[k][j] < 0) {
+      return 1;
+    }
+    // if "diagonal" entry is zero, we have to "shift" the diagonal position
+    else if (B[k][j] == 0)
+    {
+      // pivot row position doesn't change, increment to compensate
+      k++;
+      // lower the limit as we skipped one column without increasing row
+      if (l > 0) {l--;}
+    }
+    else
+    {
+      // checks if everything below is positive and below the diagonal
+      for (i = k + 1; i < r ; i++) {
+        if ( (B[i][j] > B[k][j]) || (B[i][j] < 0) ) {
+          return 1;
+        }
+      }
+      // reduces the matrix tmp by the row pivot vector of A for membership test
+      for (i = 0; i < r ; i++)
+      {
+        q.fdiv_q(tmp[i][j], B[k][j]);
+        for (j2 = j; j2 >= 0; j2--)
+        {
+          tmp[i][j2].submul(q, B[k][j2]);
+        }
+      }
+    }
+  }
+
+  // membership test : the matrix after reduction should be a zero one.
+  for ( i = 0; i < r; i++) {
+    for ( j = 0; j < c; j++) {
+      if (tmp[i][j] != 0) {return -1;}
+    }
   }
 
   return 0;
@@ -88,7 +203,10 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B)
   Z_NR<mpz_t> r1d, r2d, b, u, v, d, q;
 
   /* initializes the transformation matrix */
+  ZZ_mat<mpz_t> U;
+  U = B;
   // U.gen_identity(B.get_rows());
+
 
   /* the limit "l" depends of matrix dimensions */
   int l = (c - r) * (c > r);
@@ -155,6 +273,17 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B)
 
   /* should always return 0 (can be changed in the future) */
   return 0;
+}
+
+int hnf(ZZ_mat<mpz_t> &B, HNFMethod method){
+  if (method != HM_XGCD) {
+    cerr << "HNF method not implemented yet\n";
+    return -1;
+  }
+  else
+  {
+    return hnf_xgcd_reduction(B);
+  }
 }
 
 FPLLL_END_NAMESPACE
