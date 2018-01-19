@@ -17,7 +17,7 @@
 #include <../fplll/hnf.cpp>
 
 #include <cstring>
-// #include <fplll.h>
+#include <fplll.h>
 #include <test_utils.h>
 
 using namespace std;
@@ -38,16 +38,18 @@ using namespace fplll;
 
 int test_filename(const char *input_filename, HNFMethod method)
 {
-  ZZ_mat<mpz_t> A,tmp;
+  ZZ_mat<mpz_t> A, tmp;
 
   // have the status
   int status = 0;
 
   // read the matrix
   status |= read_matrix(A, input_filename);
-  if (status) {cerr << "problem when reading matrix\n";}
+  if (status)
+  {
+    cerr << "problem when reading matrix\n";
+  }
   tmp = A;
-  cerr << "original matrix :\n" << tmp << endl;
 
   // zero on success
   if (!is_hnf_reduced(A))
@@ -56,17 +58,17 @@ int test_filename(const char *input_filename, HNFMethod method)
     return 1;
   }
 
-  // test if reduction was correct : zero on success
-  status = in_hnf(A, tmp);
-
-  cerr << "final matrix :\n" << A << endl;
+  status = hnf(A, method);
 
   if (status != RED_SUCCESS)
   {
     cerr << "Output of HNF reduction is not HNF reduced with method " << HNF_METHOD_STR[method]
-         // << " : test with matrix returned " << get_red_status_str(status) << endl;
-         << " : test with matrix returned " << status << endl;
+         // << " test with matrix returned " << get_red_status_str(status) << endl;
+         << " test with matrix returned " << get_red_status_str(status) << endl;
   }
+
+  // test if reduction was correct : zero on success
+  status = in_hnf(A, tmp);
 
   return status;
 }

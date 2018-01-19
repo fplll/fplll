@@ -263,6 +263,13 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_uniform(int bits)
       matrix[i][j].randb(bits);
 }
 
+template <class ZT> inline void ZZ_mat<ZT>::gen_uniform2(int bits)
+{
+  for (int i = 0; i < r; i++)
+    for (int j = 0; j < c; j++)
+      matrix[i][j].randb(bits);
+}
+
 template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits)
 {
   // [A00 A01]

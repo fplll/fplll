@@ -77,6 +77,15 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B);
 
 int hnf(ZZ_mat<mpz_t> &B, HNFMethod method);
 
+/**
+ * @brief performs HNF reduction, autoselect the best method (in development)
+ *
+ * @param B
+ *    basis of the lattice to be reduced*
+ */
+
+int hnf_autoselect(ZZ_mat<mpz_t> &B);
+
 FPLLL_END_NAMESPACE
 
 #endif /* FPLLL_HNF_H */

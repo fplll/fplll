@@ -274,7 +274,7 @@ template <class ZT> int hnf(Options &o, ZZ_mat<ZT> &b) { ABORT_MSG("mpz required
 
 template <> int hnf(Options &o, ZZ_mat<mpz_t> &b)
 {
-  int status = hnf_xgcd_reduction(b);
+  int status = hnf_autoselect(b);
 
   /* print the result */
   const char *format = o.output_format ? o.output_format : "b";

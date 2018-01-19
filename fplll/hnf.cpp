@@ -21,7 +21,8 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-int is_hnf_reduced(ZZ_mat<mpz_t> &B){
+int is_hnf_reduced(ZZ_mat<mpz_t> &B)
+{
 
   /* matrix bounds */
   int r = B.get_rows(), c = B.get_cols();
@@ -34,11 +35,16 @@ int is_hnf_reduced(ZZ_mat<mpz_t> &B){
   for (j = c - 1, k = r - 1; j >= l; j--, k--)
   {
     // checks if everything above diagonal zero
-    for (i = k - 1; i >=0 ; i--) {
-      if (B[i][j] != 0) {return 1;}
+    for (i = k - 1; i >= 0; i--)
+    {
+      if (B[i][j] != 0)
+      {
+        return 1;
+      }
     }
     // checks if diagonal is non-negative
-    if (B[k][j] < 0) {
+    if (B[k][j] < 0)
+    {
       return 1;
     }
     // if "diagonal" entry is zero, we have to "shift" the diagonal position
@@ -47,13 +53,18 @@ int is_hnf_reduced(ZZ_mat<mpz_t> &B){
       // pivot row position doesn't change, increment to compensate
       k++;
       // lower the limit as we skipped one column without increasing row
-      if (l > 0) {l--;}
+      if (l > 0)
+      {
+        l--;
+      }
     }
     else
     {
       // checks if everything below is positive and below the diagonal
-      for (i = k + 1; i < r ; i++) {
-        if ( (B[i][j] > B[k][j]) || (B[i][j] < 0) ) {
+      for (i = k + 1; i < r; i++)
+      {
+        if ((B[i][j] > B[k][j]) || (B[i][j] < 0))
+        {
           return 1;
         }
       }
@@ -63,7 +74,8 @@ int is_hnf_reduced(ZZ_mat<mpz_t> &B){
   return 0;
 }
 
-int in_hnf(ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &w){
+int in_hnf(ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &w)
+{
 
   vector<Z_NR<mpz_t>> v = w;
   Z_NR<mpz_t> q;
@@ -71,7 +83,8 @@ int in_hnf(ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &w){
   /* matrix bounds */
   int r = B.get_rows(), c = B.get_cols();
   /* test if the vector size is correct */
-  if ((int)v.size() != c) {
+  if ((int)v.size() != c)
+  {
     cerr << "in_hnf error : matrix-vector sizes do not match\n";
     return -1;
   }
@@ -84,11 +97,16 @@ int in_hnf(ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &w){
   for (j = c - 1, k = r - 1; j >= l; j--, k--)
   {
     // checks if everything above diagonal zero
-    for (i = k - 1; i >=0 ; i--) {
-      if (B[i][j] != 0) {return 1;}
+    for (i = k - 1; i >= 0; i--)
+    {
+      if (B[i][j] != 0)
+      {
+        return 1;
+      }
     }
     // checks if diagonal is non-negative
-    if (B[k][j] < 0) {
+    if (B[k][j] < 0)
+    {
       return 1;
     }
     // if "diagonal" entry is zero, we have to "shift" the diagonal position
@@ -97,13 +115,18 @@ int in_hnf(ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &w){
       // pivot row position doesn't change, increment to compensate
       k++;
       // lower the limit as we skipped one column without increasing row
-      if (l > 0) {l--;}
+      if (l > 0)
+      {
+        l--;
+      }
     }
     else
     {
       // checks if everything below is positive and below the diagonal
-      for (i = k + 1; i < r ; i++) {
-        if ( (B[i][j] > B[k][j]) || (B[i][j] < 0) ) {
+      for (i = k + 1; i < r; i++)
+      {
+        if ((B[i][j] > B[k][j]) || (B[i][j] < 0))
+        {
           return 1;
         }
       }
@@ -117,14 +140,19 @@ int in_hnf(ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &w){
   }
 
   // membership test : the vector after reduction should be a zero one.
-  for ( j = 0; j < c; j++) {
-    if (v[j] != 0) {return -1;}
+  for (j = 0; j < c; j++)
+  {
+    if (v[j] != 0)
+    {
+      return -1;
+    }
   }
 
   return 0;
 }
 
-int in_hnf(ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A){
+int in_hnf(ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A)
+{
 
   ZZ_mat<mpz_t> tmp = A;
   Z_NR<mpz_t> q;
@@ -132,7 +160,8 @@ int in_hnf(ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A){
   /* matrix bounds */
   int r = B.get_rows(), c = B.get_cols();
   /* test if the vector size is correct */
-  if ( (A.get_cols() != c) || (A.get_rows() != r) ) {
+  if ((A.get_cols() != c) || (A.get_rows() != r))
+  {
     cerr << "in_hnf error : matrix-matrix sizes do not match\n";
     return -1;
   }
@@ -145,14 +174,17 @@ int in_hnf(ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A){
   for (j = c - 1, k = r - 1; j >= l; j--, k--)
   {
     // checks if everything above diagonal zero
-    for (i = k - 1; i >=0 ; i--) {
-      if (B[i][j] != 0) {
+    for (i = k - 1; i >= 0; i--)
+    {
+      if (B[i][j] != 0)
+      {
         // cout << "fail here" << endl;
         return 1;
       }
     }
     // checks if diagonal is non-negative
-    if (B[k][j] < 0) {
+    if (B[k][j] < 0)
+    {
       return 1;
     }
     // if "diagonal" entry is zero, we have to "shift" the diagonal position
@@ -161,18 +193,23 @@ int in_hnf(ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A){
       // pivot row position doesn't change, increment to compensate
       k++;
       // lower the limit as we skipped one column without increasing row
-      if (l > 0) {l--;}
+      if (l > 0)
+      {
+        l--;
+      }
     }
     else
     {
       // checks if everything below is positive and below the diagonal
-      for (i = k + 1; i < r ; i++) {
-        if ( (B[i][j] > B[k][j]) || (B[i][j] < 0) ) {
+      for (i = k + 1; i < r; i++)
+      {
+        if ((B[i][j] > B[k][j]) || (B[i][j] < 0))
+        {
           return 1;
         }
       }
       // reduces the matrix tmp by the row pivot vector of A for membership test
-      for (i = 0; i < r ; i++)
+      for (i = 0; i < r; i++)
       {
         q.fdiv_q(tmp[i][j], B[k][j]);
         for (j2 = j; j2 >= 0; j2--)
@@ -184,9 +221,14 @@ int in_hnf(ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A){
   }
 
   // membership test : the matrix after reduction should be a zero one.
-  for ( i = 0; i < r; i++) {
-    for ( j = 0; j < c; j++) {
-      if (tmp[i][j] != 0) {return -1;}
+  for (i = 0; i < r; i++)
+  {
+    for (j = 0; j < c; j++)
+    {
+      if (tmp[i][j] != 0)
+      {
+        return -1;
+      }
     }
   }
 
@@ -207,7 +249,6 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B)
   U = B;
   // U.gen_identity(B.get_rows());
 
-
   /* the limit "l" depends of matrix dimensions */
   int l = (c - r) * (c > r);
 
@@ -218,7 +259,10 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B)
     for (i = k - 1; i >= 0; i--)
     {
       /* skip zeroes (if any) */
-      if (B[i + 1][j] == 0) {continue;}
+      if (B[i + 1][j] == 0)
+      {
+        continue;
+      }
 
       /* reduce row i + 1 with row i */
       d.xgcd(u, v, B[i][j], B[i + 1][j]);
@@ -255,12 +299,15 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B)
       // pivot row position doesn't change, increment to compensate
       k++;
       // lower the limit as we skipped one column without increasing row
-      if (l > 0) {l--;}
+      if (l > 0)
+      {
+        l--;
+      }
     }
     else
     {
       /* reduce lower entries of column j with row k */
-      for (i = k + 1; i < r ; i++)
+      for (i = k + 1; i < r; i++)
       {
         q.fdiv_q(B[i][j], B[k][j]);
         for (j2 = j; j2 >= 0; j2--)
@@ -274,8 +321,11 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B)
   return 0;
 }
 
-int hnf(ZZ_mat<mpz_t> &B, HNFMethod method){
-  if (method != HM_XGCD) {
+int hnf(ZZ_mat<mpz_t> &B, HNFMethod method)
+{
+  // rest in development
+  if (method != HM_XGCD)
+  {
     cerr << "HNF method not implemented yet\n";
     return -1;
   }
@@ -283,6 +333,13 @@ int hnf(ZZ_mat<mpz_t> &B, HNFMethod method){
   {
     return hnf_xgcd_reduction(B);
   }
+}
+
+int hnf_autoselect(ZZ_mat<mpz_t> &B)
+{
+  // rest in development
+  // cerr << "warning : xgcd is not suitable for high determinant or big matrices\n";
+  return hnf(B, HM_XGCD);
 }
 
 FPLLL_END_NAMESPACE

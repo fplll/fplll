@@ -27,6 +27,7 @@ void print_help()
        << " r <d> <b> : gen_intrel" << endl
        << " s <d> <b> <b2> : gen_simdioph" << endl
        << " u <d> <b> : gen_uniform" << endl
+       << " U <d> <d2> <b> : gen_uniform2" << endl
        << " n <d> <b> <c> : gen_ntrulike" << endl
        << " N <d> <b> <c> : gen_ntrulike2" << endl
        << " q <d> <k> <b> <c>: gen_qary" << endl
@@ -120,6 +121,16 @@ int main(int argc, char *argv[])
     int b = atoi(argv[iArg]);
     m.resize(d, d);
     m.gen_uniform(b);
+    break;
+  }
+  case 'U':
+  {
+    if (argc - iArg < 2)
+      fatal_error("method 'U' requires 3 arguments");
+    int d2 = atoi(argv[iArg]);
+    int b  = atoi(argv[iArg + 1]);
+    m.resize(d, d2);
+    m.gen_uniform2(b);
     break;
   }
   case 'n':

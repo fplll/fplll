@@ -264,6 +264,8 @@ public:
   void gen_simdioph(int bits, int bits2);
   /** Generate a random matrix of uniform distribution. */
   void gen_uniform(int bits);
+  /** Generate a random matrix of uniform distribution (non-square flexible). */
+  void gen_uniform2(int bits);
 
   /** Construct a matrix `[[I,H],[0,qI]]` where `H` is constructed from rotations of a vector ``h``.
 
