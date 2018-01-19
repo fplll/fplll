@@ -271,7 +271,6 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B)
     }
   }
 
-  /* should always return 0 (can be changed in the future) */
   return 0;
 }
 

@@ -1,0 +1,204 @@
+Entering BKZ:
+block size:  10, flags: 0x0021, max_loops:   0, max_time: 0.0, autoAbort: (1.0000,  5), 
+
+Block [1-   1] BKZ-10 reduced for the first time
+Block [1-   2] BKZ-10 reduced for the first time
+Block [1-   3] BKZ-10 reduced for the first time
+End of BKZ loop    0, time =     0.004s, r_0 = 8.36e12, slope = -0.079931, log2(nodes) = 10.788718
+End of BKZ loop    1, time =     0.007s, r_0 = 5.74e12, slope = -0.073255, log2(nodes) = 11.838022
+Block [1-  41] BKZ-10 reduced for the first time
+Block [1-  42] BKZ-10 reduced for the first time
+Block [1-  43] BKZ-10 reduced for the first time
+Block [1-  44] BKZ-10 reduced for the first time
+Block [1-  45] BKZ-10 reduced for the first time
+Block [1-  46] BKZ-10 reduced for the first time
+Block [1-  47] BKZ-10 reduced for the first time
+Block [1-  48] BKZ-10 reduced for the first time
+Block [1-  49] BKZ-10 reduced for the first time
+End of BKZ loop    2, time =     0.010s, r_0 = 5.74e12, slope = -0.068861, log2(nodes) = 12.454556
+End of BKZ loop    3, time =     0.013s, r_0 = 5.74e12, slope = -0.065759, log2(nodes) = 12.914198
+End of BKZ loop    4, time =     0.016s, r_0 = 5.31e12, slope = -0.064377, log2(nodes) = 13.305064
+End of BKZ loop    5, time =     0.019s, r_0 = 5.31e12, slope = -0.063773, log2(nodes) = 13.610564
+End of BKZ loop    6, time =     0.022s, r_0 = 5.31e12, slope = -0.062144, log2(nodes) = 13.837332
+End of BKZ loop    7, time =     0.025s, r_0 = 5.31e12, slope = -0.061439, log2(nodes) = 14.026178
+End of BKZ loop    8, time =     0.027s, r_0 = 4.85e12, slope = -0.061184, log2(nodes) = 14.196756
+End of BKZ loop    9, time =     0.029s, r_0 = 4.18e12, slope = -0.061123, log2(nodes) = 14.338179
+End of BKZ loop   10, time =     0.031s, r_0 = 4.18e12, slope = -0.061123, log2(nodes) = 14.464992
+End of BKZ: success
+Entering SD-BKZ:
+block size:  10, flags: 0x0121, max_loops:   0, max_time: 0.0, autoAbort: (1.0000,  5), 
+
+End of SD-BKZ loop    0, time =     0.005s, r_0 = 6.58e12, slope = -0.071730, log2(nodes) = 11.924813
+End of SD-BKZ loop    1, time =     0.010s, r_0 = 5.91e12, slope = -0.065244, log2(nodes) = 12.865927
+End of SD-BKZ loop    2, time =     0.015s, r_0 = 5.20e12, slope = -0.062262, log2(nodes) = 13.466714
+End of SD-BKZ loop    3, time =     0.019s, r_0 = 5.20e12, slope = -0.061245, log2(nodes) = 13.896900
+End of SD-BKZ loop    4, time =     0.024s, r_0 = 5.20e12, slope = -0.059375, log2(nodes) = 14.200669
+End of SD-BKZ loop    5, time =     0.027s, r_0 = 5.20e12, slope = -0.058321, log2(nodes) = 14.438857
+End of SD-BKZ loop    6, time =     0.031s, r_0 = 5.05e12, slope = -0.057316, log2(nodes) = 14.646277
+End of SD-BKZ loop    7, time =     0.035s, r_0 = 5.05e12, slope = -0.057211, log2(nodes) = 14.837086
+End of SD-BKZ loop    8, time =     0.039s, r_0 = 4.28e12, slope = -0.056741, log2(nodes) = 15.004308
+End of SD-BKZ loop    9, time =     0.043s, r_0 = 4.28e12, slope = -0.056813, log2(nodes) = 15.149310
+End of SD-BKZ loop   10, time =     0.047s, r_0 = 4.28e12, slope = -0.056182, log2(nodes) = 15.288542
+End of SD-BKZ loop   11, time =     0.051s, r_0 = 3.55e12, slope = -0.055344, log2(nodes) = 15.418479
+End of SD-BKZ loop   12, time =     0.055s, r_0 = 3.55e12, slope = -0.055051, log2(nodes) = 15.525551
+End of SD-BKZ loop   13, time =     0.059s, r_0 = 3.55e12, slope = -0.055026, log2(nodes) = 15.627420
+End of SD-BKZ loop   14, time =     0.063s, r_0 = 3.55e12, slope = -0.055026, log2(nodes) = 15.720592
+End of SD-BKZ loop   15, time =     0.067s, r_0 = 3.55e12, slope = -0.055026, log2(nodes) = 15.808109
+End of SD-BKZ loop   16, time =     0.071s, r_0 = 3.55e12, slope = -0.055026, log2(nodes) = 15.890621
+End of SD-BKZ loop   17, time =     0.075s, r_0 = 3.55e12, slope = -0.055026, log2(nodes) = 15.968667
+End of SD-BKZ loop   18, time =     0.079s, r_0 = 3.55e12, slope = -0.055026, log2(nodes) = 16.042707
+End of SD-BKZ loop   19, time =     0.083s, r_0 = 3.55e12, slope = -0.055026, log2(nodes) = 16.113132
+End of SD-BKZ: success
+Entering SLD:
+block size:  10, flags: 0x0201, max_loops:   0, max_time: 0.0, autoAbort: (     -,  -), 
+
+End of SLD loop    0, time =     0.006s, r_0 = 5.40e12, slope = -0.070472, log2(nodes) = 11.356452
+End of SLD loop    1, time =     0.008s, r_0 = 5.40e12, slope = -0.069408, log2(nodes) = 11.770251
+End of SLD loop    2, time =     0.009s, r_0 = 5.26e12, slope = -0.067881, log2(nodes) = 12.093418
+End of SLD loop    3, time =     0.011s, r_0 = 5.26e12, slope = -0.067242, log2(nodes) = 12.330637
+End of SLD loop    4, time =     0.012s, r_0 = 5.26e12, slope = -0.066813, log2(nodes) = 12.497353
+End of SLD loop    5, time =     0.012s, r_0 = 5.15e12, slope = -0.065846, log2(nodes) = 12.637983
+End of SLD loop    6, time =     0.012s, r_0 = 5.15e12, slope = -0.064642, log2(nodes) = 12.867472
+End of SLD loop    7, time =     0.012s, r_0 = 5.15e12, slope = -0.064642, log2(nodes) = 12.950374
+End of SLD: success
+Entering BKZ:
+block size:  15, flags: 0x0021, max_loops:   0, max_time: 0.0, autoAbort: (1.0000,  5), 
+
+Block [1-   1] BKZ-15 reduced for the first time
+Block [1-   2] BKZ-15 reduced for the first time
+End of BKZ loop    0, time =     0.144s, r_0 = 4.78e12, slope = -0.071130, log2(nodes) = 13.324602
+End of BKZ loop    1, time =     0.257s, r_0 = 4.78e12, slope = -0.062462, log2(nodes) = 14.140750
+End of BKZ loop    2, time =     0.343s, r_0 = 4.68e12, slope = -0.059860, log2(nodes) = 14.680195
+Block [1-   3] BKZ-15 reduced for the first time
+Block [1-  36] BKZ-15 reduced for the first time
+Block [1-  37] BKZ-15 reduced for the first time
+End of BKZ loop    3, time =     0.416s, r_0 = 4.68e12, slope = -0.058280, log2(nodes) = 15.078651
+End of BKZ loop    4, time =     0.481s, r_0 = 4.68e12, slope = -0.057648, log2(nodes) = 15.358926
+End of BKZ loop    5, time =     0.541s, r_0 = 4.68e12, slope = -0.056730, log2(nodes) = 15.574239
+Block [1-  38] BKZ-15 reduced for the first time
+Block [1-  39] BKZ-15 reduced for the first time
+Block [1-  40] BKZ-15 reduced for the first time
+Block [1-  41] BKZ-15 reduced for the first time
+Block [1-  42] BKZ-15 reduced for the first time
+Block [1-  43] BKZ-15 reduced for the first time
+Block [1-  44] BKZ-15 reduced for the first time
+Block [1-  45] BKZ-15 reduced for the first time
+Block [1-  46] BKZ-15 reduced for the first time
+Block [1-  47] BKZ-15 reduced for the first time
+Block [1-  48] BKZ-15 reduced for the first time
+Block [1-  49] BKZ-15 reduced for the first time
+End of BKZ loop    6, time =     0.561s, r_0 = 4.61e12, slope = -0.056630, log2(nodes) = 15.754287
+End of BKZ loop    7, time =     0.570s, r_0 = 4.61e12, slope = -0.056630, log2(nodes) = 15.913006
+End of BKZ: success
+Entering SD-BKZ:
+block size:  15, flags: 0x0121, max_loops:   0, max_time: 0.0, autoAbort: (1.0000,  5), 
+
+End of SD-BKZ loop    0, time =     0.247s, r_0 = 5.26e12, slope = -0.065448, log2(nodes) = 13.911766
+End of SD-BKZ loop    1, time =     0.385s, r_0 = 5.26e12, slope = -0.062902, log2(nodes) = 14.958190
+End of SD-BKZ loop    2, time =     0.567s, r_0 = 4.38e12, slope = -0.059924, log2(nodes) = 15.538522
+End of SD-BKZ loop    3, time =     0.731s, r_0 = 4.38e12, slope = -0.056621, log2(nodes) = 15.899876
+End of SD-BKZ loop    4, time =     0.858s, r_0 = 4.38e12, slope = -0.056282, log2(nodes) = 16.179831
+End of SD-BKZ loop    5, time =     0.956s, r_0 = 4.38e12, slope = -0.055893, log2(nodes) = 16.407500
+End of SD-BKZ loop    6, time =     1.052s, r_0 = 4.29e12, slope = -0.055909, log2(nodes) = 16.602264
+End of SD-BKZ loop    7, time =     1.159s, r_0 = 4.29e12, slope = -0.055623, log2(nodes) = 16.770122
+End of SD-BKZ loop    8, time =     1.284s, r_0 = 4.29e12, slope = -0.055897, log2(nodes) = 16.924360
+End of SD-BKZ loop    9, time =     1.452s, r_0 = 4.29e12, slope = -0.055352, log2(nodes) = 17.068096
+End of SD-BKZ loop   10, time =     1.506s, r_0 = 4.29e12, slope = -0.055287, log2(nodes) = 17.185214
+End of SD-BKZ loop   11, time =     1.564s, r_0 = 4.29e12, slope = -0.055268, log2(nodes) = 17.289875
+End of SD-BKZ loop   12, time =     1.617s, r_0 = 4.29e12, slope = -0.055268, log2(nodes) = 17.387159
+End of SD-BKZ loop   13, time =     1.671s, r_0 = 4.29e12, slope = -0.055268, log2(nodes) = 17.478296
+End of SD-BKZ loop   14, time =     1.725s, r_0 = 4.29e12, slope = -0.055268, log2(nodes) = 17.564015
+End of SD-BKZ loop   15, time =     1.778s, r_0 = 4.29e12, slope = -0.055268, log2(nodes) = 17.644927
+End of SD-BKZ loop   16, time =     1.828s, r_0 = 4.29e12, slope = -0.055268, log2(nodes) = 17.721540
+End of SD-BKZ: success
+Entering SLD:
+block size:  15, flags: 0x0201, max_loops:   0, max_time: 0.0, autoAbort: (     -,  -), 
+
+End of SLD loop    0, time =     0.104s, r_0 = 5.65e12, slope = -0.069939, log2(nodes) = 12.062046
+End of SLD loop    1, time =     0.192s, r_0 = 5.65e12, slope = -0.065441, log2(nodes) = 12.681019
+End of SLD loop    2, time =     0.258s, r_0 = 4.00e12, slope = -0.062868, log2(nodes) = 13.129122
+End of SLD loop    3, time =     0.301s, r_0 = 4.00e12, slope = -0.062785, log2(nodes) = 13.361670
+End of SLD loop    4, time =     0.328s, r_0 = 4.00e12, slope = -0.062676, log2(nodes) = 13.575303
+End of SLD loop    5, time =     0.362s, r_0 = 4.00e12, slope = -0.062178, log2(nodes) = 13.766218
+End of SLD loop    6, time =     0.392s, r_0 = 4.00e12, slope = -0.061932, log2(nodes) = 13.914572
+End of SLD loop    7, time =     0.428s, r_0 = 4.00e12, slope = -0.061563, log2(nodes) = 14.060189
+End of SLD loop    8, time =     0.457s, r_0 = 4.00e12, slope = -0.061196, log2(nodes) = 14.183015
+End of SLD loop    9, time =     0.481s, r_0 = 4.00e12, slope = -0.060730, log2(nodes) = 14.294764
+End of SLD loop   10, time =     0.485s, r_0 = 4.00e12, slope = -0.060730, log2(nodes) = 14.366664
+End of SLD: success
+Entering BKZ:
+block size:  10, flags: 0x0021, max_loops:   0, max_time: 0.0, autoAbort: (1.0000,  5), 
+
+Block [1-   1] BKZ-10 reduced for the first time
+Block [1-  21] BKZ-10 reduced for the first time
+Block [1-  22] BKZ-10 reduced for the first time
+Block [1-  23] BKZ-10 reduced for the first time
+Block [1-  24] BKZ-10 reduced for the first time
+Block [1-  25] BKZ-10 reduced for the first time
+Block [1-  26] BKZ-10 reduced for the first time
+Block [1-  27] BKZ-10 reduced for the first time
+Block [1-  28] BKZ-10 reduced for the first time
+Block [1-  29] BKZ-10 reduced for the first time
+End of BKZ loop    0, time =     0.003s, r_0 = 3.57e40, slope = -0.064299, log2(nodes) = 10.253847
+End of BKZ loop    1, time =     0.003s, r_0 = 3.21e40, slope = -0.057706, log2(nodes) = 11.205793
+End of BKZ loop    2, time =     0.004s, r_0 = 3.21e40, slope = -0.056888, log2(nodes) = 11.701306
+End of BKZ loop    3, time =     0.005s, r_0 = 3.21e40, slope = -0.056888, log2(nodes) = 12.051889
+End of BKZ: success
+Entering SD-BKZ:
+block size:  10, flags: 0x0121, max_loops:   0, max_time: 0.0, autoAbort: (1.0000,  5), 
+
+End of SD-BKZ loop    0, time =     0.004s, r_0 = 3.90e40, slope = -0.064279, log2(nodes) = 10.108524
+End of SD-BKZ loop    1, time =     0.007s, r_0 = 3.90e40, slope = -0.056859, log2(nodes) = 11.070792
+End of SD-BKZ loop    2, time =     0.009s, r_0 = 3.70e40, slope = -0.054791, log2(nodes) = 11.540128
+End of SD-BKZ loop    3, time =     0.010s, r_0 = 3.20e40, slope = -0.053790, log2(nodes) = 11.869594
+End of SD-BKZ loop    4, time =     0.012s, r_0 = 3.20e40, slope = -0.053790, log2(nodes) = 12.111462
+End of SD-BKZ: success
+Entering SLD:
+block size:  10, flags: 0x0201, max_loops:   0, max_time: 0.0, autoAbort: (     -,  -), 
+
+End of SLD loop    0, time =     0.002s, r_0 = 3.31e40, slope = -0.072450, log2(nodes) =  9.228819
+End of SLD loop    1, time =     0.002s, r_0 = 3.31e40, slope = -0.072450, log2(nodes) =  9.495855
+End of SLD: success
+Entering BKZ:
+block size:  10, flags: 0x0021, max_loops:   0, max_time: 0.0, autoAbort: (1.0000,  5), 
+
+Block [1-   1] BKZ-10 reduced for the first time
+Block [1-   2] BKZ-10 reduced for the first time
+Block [1-   3] BKZ-10 reduced for the first time
+End of BKZ loop    0, time =     0.016s, r_0 = 3.72e40, slope = -0.062548, log2(nodes) =  9.857981
+Block [1-  21] BKZ-10 reduced for the first time
+Block [1-  22] BKZ-10 reduced for the first time
+Block [1-  23] BKZ-10 reduced for the first time
+Block [1-  24] BKZ-10 reduced for the first time
+Block [1-  25] BKZ-10 reduced for the first time
+End of BKZ loop    1, time =     0.027s, r_0 = 3.10e40, slope = -0.055983, log2(nodes) = 10.732167
+Block [1-  26] BKZ-10 reduced for the first time
+Block [1-  27] BKZ-10 reduced for the first time
+Block [1-  28] BKZ-10 reduced for the first time
+Block [1-  29] BKZ-10 reduced for the first time
+End of BKZ loop    2, time =     0.031s, r_0 = 3.10e40, slope = -0.055706, log2(nodes) = 11.324181
+End of BKZ loop    3, time =     0.033s, r_0 = 3.10e40, slope = -0.055706, log2(nodes) = 11.741467
+End of BKZ: success
+Entering SD-BKZ:
+block size:  10, flags: 0x0121, max_loops:   0, max_time: 0.0, autoAbort: (1.0000,  5), 
+
+End of SD-BKZ loop    0, time =     0.021s, r_0 = 2.91e40, slope = -0.061206, log2(nodes) = 10.918863
+End of SD-BKZ loop    1, time =     0.037s, r_0 = 2.91e40, slope = -0.057271, log2(nodes) = 11.858758
+End of SD-BKZ loop    2, time =     0.051s, r_0 = 2.91e40, slope = -0.057271, log2(nodes) = 12.406205
+End of SD-BKZ loop    3, time =     0.066s, r_0 = 2.91e40, slope = -0.057271, log2(nodes) = 12.802112
+End of SD-BKZ loop    4, time =     0.080s, r_0 = 2.91e40, slope = -0.057271, log2(nodes) = 13.112440
+End of SD-BKZ loop    5, time =     0.094s, r_0 = 2.91e40, slope = -0.057271, log2(nodes) = 13.367688
+End of SD-BKZ loop    6, time =     0.108s, r_0 = 2.91e40, slope = -0.057271, log2(nodes) = 13.584493
+End of SD-BKZ: success
+Entering SLD:
+block size:  10, flags: 0x0201, max_loops:   0, max_time: 0.0, autoAbort: (     -,  -), 
+
+End of SLD loop    0, time =     0.004s, r_0 = 3.42e40, slope = -0.067358, log2(nodes) =  8.308339
+End of SLD loop    1, time =     0.011s, r_0 = 3.42e40, slope = -0.064844, log2(nodes) =  9.330917
+End of SLD loop    2, time =     0.013s, r_0 = 3.42e40, slope = -0.064844, log2(nodes) =  9.815383
+End of SLD: success
+Warning: SD Variant of BKZ requires explicit termination condition. Turning auto abort on!
+Warning: SD Variant of BKZ requires explicit termination condition. Turning auto abort on!
+Warning: SD Variant of BKZ requires explicit termination condition. Turning auto abort on!
+All tests passed.
+PASS test_bkz (exit status: 0)
