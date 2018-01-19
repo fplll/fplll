@@ -156,7 +156,8 @@ enum RedStatus
   RED_BKZ_FAILURE     = 6,
   RED_BKZ_TIME_LIMIT  = 7,
   RED_BKZ_LOOPS_LIMIT = 8,
-  RED_STATUS_MAX      = 9
+  RED_HNF_FAILURE     = 9,
+  RED_STATUS_MAX      = 10
 };
 
 const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
@@ -167,6 +168,7 @@ const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
                                                     "error in SVP solver",
                                                     "error in BKZ",
                                                     "time limit exceeded in BKZ",
+                                                    "error in HNF",
                                                     "loops limit exceeded in BKZ"};
 
 enum LLLMethod
@@ -178,6 +180,15 @@ enum LLLMethod
 };
 
 const char *const LLL_METHOD_STR[6] = {"wrapper", "proved", "heuristic", "fast"};
+
+enum HNFMethod
+{
+  HM_CLASSIC     = 0,
+  HM_XGCD        = 1,
+  HM_PERNETSTEIN = 2
+};
+
+const char *const HNF_METHOD_STR[6] = {"classic", "xgcd", "pernet-stein"};
 
 enum IntType
 {
