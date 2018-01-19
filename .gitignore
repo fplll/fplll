@@ -68,3 +68,4 @@ doc/html/
 /tests/test_cvp
 /tests/test_gso
 /tests/test_lll_gram
+/tests/test_hnf
