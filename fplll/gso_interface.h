@@ -40,7 +40,8 @@ enum MatGSOInterfaceFlags
    @param root_det         root determinant of lattice
    @param gh_factor        factor by which to multiple bound
 
-   @return new bound if `gh_factor * GH` is shorter than `max_dist`, otherwise `max_dist` is
+   @return new bound if `gh_factor * GH` is shorter than `max_dist`, otherwise
+   `max_dist` is
    unchanged.
 */
 
@@ -49,7 +50,8 @@ void adjust_radius_to_gh_bound(FT &max_dist, long max_dist_expo, int block_size,
                                double gh_factor);
 
 /**
- * MatGSOInterface provides an interface for performing elementary operations on a basis
+ * MatGSOInterface provides an interface for performing elementary operations on
+ * a basis
  * and computing its Gram matrix and its Gram-Schmidt orthogonalization.
  * The Gram-Schmidt coefficients are computed on demand. The object keeps track
  * of which coefficients are valid after each row operation.
@@ -77,7 +79,8 @@ public:
    *   If true, coefficients of the Gram matrix are computed with exact integer
    *   arithmetic (type ZT). Otherwise, they are computed in floating-point
    *   (type FT). Note that when exact arithmetic is used, all coefficients of
-   *   the first n_known_rows are continuously updated, whereas in floating-point,
+   *   the first n_known_rows are continuously updated, whereas in
+   * floating-point,
    *   they are computed only on-demand. This option cannot be enabled if
    *   enable_row_expo=true.
    * @param enable_row_expo
@@ -153,7 +156,8 @@ public:
 
   /**
    * When enable_row_expo=true, row_expo[i] is the smallest non-negative integer
-   * such that b(i, j) &lt;= 2^row_expo[i] for all j. Otherwise this array is empty.
+   * such that b(i, j) &lt;= 2^row_expo[i] for all j. Otherwise this array is
+   * empty.
    */
   vector<long> row_expo;
 
@@ -283,7 +287,8 @@ public:
   inline bool update_gso();
 
   /**
-   * Allows row_addmul(_we) for all rows even if the GSO has never been computed.
+   * Allows row_addmul(_we) for all rows even if the GSO has never been
+   * computed.
    */
   inline void discover_all_rows();
 
@@ -459,7 +464,8 @@ public:
   const bool row_op_force_long;
 
 protected:
-  /** Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
+  /** Allocates matrices and arrays whose size depends on d (all but
+   * tmp_col_expo).
     * When enable_int_gram=false, initializes bf.
     */
   virtual void size_increased() = 0;

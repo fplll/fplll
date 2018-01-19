@@ -347,9 +347,11 @@ bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZPar
     throw std::runtime_error(RED_STATUS_STR[lll_obj.status]);
   }
 
-  // in order to check if we made progress, we compare the new shortest vector to the
+  // in order to check if we made progress, we compare the new shortest vector
+  // to the
   // old one (note that simply checking clean flags is not sufficient since
-  // preprocessing can have changed things but we don't know if it made progress)
+  // preprocessing can have changed things but we don't know if it made
+  // progress)
   long new_first_expo;
   FT new_first = m.get_r_exp(first, first, new_first_expo);
   new_first.mul_2si(new_first, new_first_expo - old_first_expo);
@@ -429,7 +431,8 @@ bool BKZReduction<ZT, FT>::hkz(int &kappa_max, const BKZParam &param, int min_ro
 
   // this line fixes fpylll issue 73 with stalling BKZ instances
   // test basis: tests/lattices/stalling_93_53.txt. Test with command
-  // fplll -a bkz -b 53 -s strategies/default.json -f double tests/lattices/stalling_93_53.txt
+  // fplll -a bkz -b 53 -s strategies/default.json -f double
+  // tests/lattices/stalling_93_53.txt
   lll_obj.size_reduction(max_row - 1, max_row, max_row - 2);
 
   return clean;
@@ -463,7 +466,8 @@ bool BKZReduction<ZT, FT>::slide_tour(const int loop, const BKZParam &par, int m
   int p = (max_row - min_row) / par.block_size;
   if ((max_row - min_row) % par.block_size)
     ++p;
-  bool clean;  // this clean variable is only for the inner loop of slide reduction
+  bool clean;  // this clean variable is only for the inner loop of slide
+               // reduction
   do
   {
     clean = true;
@@ -542,7 +546,8 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
 
   if (sd && !(flags & (BKZ_MAX_LOOPS | BKZ_MAX_TIME | BKZ_AUTO_ABORT)))
   {
-    cerr << "Warning: SD Variant of BKZ requires explicit termination condition. Turning auto "
+    cerr << "Warning: SD Variant of BKZ requires explicit termination "
+            "condition. Turning auto "
             "abort on!"
          << endl;
     flags |= BKZ_AUTO_ABORT;
@@ -637,7 +642,8 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
   {
     try
     {
-      // hkz reduce the blocks (which are otherwise only svp and dual svp reduced)
+      // hkz reduce the blocks (which are otherwise only svp and dual svp
+      // reduced)
       int p = num_rows / param.block_size;
       if (num_rows % param.block_size)
         ++p;

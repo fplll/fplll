@@ -169,7 +169,8 @@ template <class ZT, class FT> int test_filename(const char *input_filename)
 }
 
 /**
-   @brief Construct d × (d+1) integer relations matrix with bit size b and test LLL.
+   @brief Construct d × (d+1) integer relations matrix with bit size b and test
+   LLL.
 
    @param d                dimension
    @param b                bit size

@@ -95,7 +95,8 @@ public:
    *   If true, coefficients of the Gram matrix are computed with exact integer
    *   arithmetic (type ZT). Otherwise, they are computed in floating-point
    *   (type FT). Note that when exact arithmetic is used, all coefficients of
-   *   the first n_known_rows are continuously updated, whereas in floating-point,
+   *   the first n_known_rows are continuously updated, whereas in
+   * floating-point,
    *   they are computed only on-demand. This option cannot be enabled if
    *   enable_row_expo=true.
    * @param enable_row_expo
@@ -182,7 +183,8 @@ public:
   virtual void row_swap(int i, int j);
 
 private:
-  /* Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
+  /* Allocates matrices and arrays whose size depends on d (all but
+   tmp_col_expo).
    When enable_int_gram=false, initializes bf. */
   virtual void size_increased();
 

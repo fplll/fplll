@@ -85,7 +85,8 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
 }
 
 /**
-   @brief Compute the norm of a dual vector (specified by coefficients in the dual basis).
+   @brief Compute the norm of a dual vector (specified by coefficients in the
+   dual basis).
 
    @param A              input lattice
    @param b              coefficients of shortest dual vector

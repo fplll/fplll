@@ -63,7 +63,8 @@ int test_filename(const char *input_filename, HNFMethod method)
   if (status != RED_SUCCESS)
   {
     cerr << "Output of HNF reduction is not HNF reduced with method " << HNF_METHOD_STR[method]
-         // << " test with matrix returned " << get_red_status_str(status) << endl;
+         // << " test with matrix returned " << get_red_status_str(status) <<
+         // endl;
          << " test with matrix returned " << get_red_status_str(status) << endl;
   }
 
@@ -77,13 +78,17 @@ int main(int /*argc*/, char ** /*argv*/)
 {
 
   int status = 0;
-  // status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in", HM_CLASSIC);
+  // status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in",
+  // HM_CLASSIC);
   status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in", HM_XGCD);
-  // status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in", HM_PERNETSTEIN);
+  // status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in",
+  // HM_PERNETSTEIN);
 
-  // status |= test_filename(TESTDATADIR "/tests/lattices/example_out", HM_CLASSIC);
+  // status |= test_filename(TESTDATADIR "/tests/lattices/example_out",
+  // HM_CLASSIC);
   status |= test_filename(TESTDATADIR "/tests/lattices/example_out", HM_XGCD);
-  // status |= test_filename(TESTDATADIR "/tests/lattices/example_out", HM_PERNETSTEIN);
+  // status |= test_filename(TESTDATADIR "/tests/lattices/example_out",
+  // HM_PERNETSTEIN);
 
   if (status == 0)
   {

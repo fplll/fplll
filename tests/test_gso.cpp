@@ -36,7 +36,8 @@ template <class ZT, class FT> Matrix<FT> matrix_relative_difference(Matrix<FT> r
   for (int i = 0; i < r1.get_rows(); i++)
   {
     for (int j = 0; j < i; j++)
-    {  // j < i, because r is lower-triangular, and has only 1 on the diagonal.
+    {  // j < i, because r is lower-triangular, and
+       // has only 1 on the diagonal.
       relativation_factor = abs(r1[i][j]) + abs(r2[i][j]);
       if (relativation_factor.is_zero())
       {
@@ -51,7 +52,8 @@ template <class ZT, class FT> Matrix<FT> matrix_relative_difference(Matrix<FT> r
   return diff_matrix;
 }
 
-// Returns true when the r-matrices of M1 and M2 are entry-wise equal, up to an error 'error'.
+// Returns true when the r-matrices of M1 and M2 are entry-wise equal, up to an
+// error 'error'.
 template <class ZT, class FT> bool rs_are_equal(MatGSO<ZT, FT> M1, MatGSOGram<ZT, FT> M2, FT error)
 {
   Matrix<FT> r1   = M1.get_r_matrix();
@@ -160,9 +162,8 @@ template <class ZT, class FT> int test_filename(const char *input_filename)
   int retvalue = test_ggso<ZT, FT>(A);
   if (retvalue & 1)
   {
-    cerr
-        << input_filename
-        << " shows different GSO-outputs for grammatrix representation and basis representation.\n";
+    cerr << input_filename << " shows different GSO-outputs for grammatrix "
+                              "representation and basis representation.\n";
   }
   if (retvalue & 2)
   {
@@ -185,7 +186,8 @@ template <class ZT, class FT> int test_filename(const char *input_filename)
 }
 
 /**
-   @brief Construct d × (d+1) integer relations matrix with bit size b and test LLL.
+   @brief Construct d × (d+1) integer relations matrix with bit size b and test
+   LLL.
 
    @param d                dimension
    @param b                bit size
@@ -206,9 +208,9 @@ int test_int_rel(int d, int b, FloatType float_type = FT_DEFAULT, int prec = 0)
   int retvalue = test_ggso<ZT, FT>(A);
   if (retvalue >= 1)
   {
-    cerr
-        << "Integer relation matrix with parameters " << d << " and " << b
-        << " shows different GSO-outputs for grammatrix representation and basis representation.\n";
+    cerr << "Integer relation matrix with parameters " << d << " and " << b
+         << " shows different GSO-outputs for grammatrix representation and "
+            "basis representation.\n";
     return 1;
   }
   return 0;

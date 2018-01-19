@@ -1,6 +1,7 @@
 /* Copyright (C) 2008-2011 Xavier Pujol
    (C) 2015 Michael Walter.
-   (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions, subsolutions)
+   (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions,
+   subsolutions)
    (C) 2016 Guillaume Bonnoron. (CVP improvements)
 
    This file is part of fplll. fplll is free software: you
@@ -91,7 +92,8 @@ public:
         return;
       }
     }
-    // if external enumerator is not available, not possible or when it fails then fall through to
+    // if external enumerator is not available, not possible or when it fails
+    // then fall through to
     // fplll enumeration
     if (enumdyn.get() == nullptr)
       enumdyn.reset(new EnumerationDyn<ZT, FT>(_gso, _evaluator, _max_indices));

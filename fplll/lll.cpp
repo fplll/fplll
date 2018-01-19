@@ -134,7 +134,8 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end,
         if (ftmp1 < lovasz_tests[siegel ? kappa : kappa - 1])
           break;
       }
-      // FPLLL_TRACE("Lovasz's condition is not satisfied, kappa=" << kappa << " old_kappa=" <<
+      // FPLLL_TRACE("Lovasz's condition is not satisfied, kappa=" << kappa << "
+      // old_kappa=" <<
       // old_k);
       // Moves the vector
       if (lovasz_tests[kappa] > 0)
@@ -210,7 +211,8 @@ bool LLLReduction<ZT, FT>::babai(int kappa, int size_reduction_end, int size_red
         babai_mu[k].sub(babai_mu[k], ftmp1);
       }
       // Operation on the basis
-      // FPLLL_TRACE("Babai : row[" << kappa << "] += " << mu_m_ant << " * 2^" << babai_expo[j] << "
+      // FPLLL_TRACE("Babai : row[" << kappa << "] += " << mu_m_ant << " * 2^"
+      // << babai_expo[j] << "
       // * row[" << j << "]");
       mu_m_ant.neg(mu_m_ant);
       m.row_addmul_we(kappa, j, mu_m_ant, babai_expo[j]);

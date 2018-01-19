@@ -24,7 +24,8 @@
 FPLLL_BEGIN_NAMESPACE
 
 /**
- * MatGSOGram provides an interface for performing elementary operations on a basis
+ * MatGSOGram provides an interface for performing elementary operations on a
+ * basis
  * and computing its Gram matrix and its Gram-Schmidt orthogonalization.
  * The Gram-Schmidt coefficients are computed on demand. The object keeps track
  * of which coefficients are valid after each row operation.
@@ -97,11 +98,15 @@ public:
   virtual inline void remove_last_rows(int n_removed_rows);
 
   /*
-    virtual inline void dump_mu_d(double *mu, int offset = 0, int block_size = -1);
-    virtual inline void dump_mu_d(vector<double> mu, int offset = 0, int block_size = -1);
+    virtual inline void dump_mu_d(double *mu, int offset = 0, int block_size =
+    -1);
+    virtual inline void dump_mu_d(vector<double> mu, int offset = 0, int
+    block_size = -1);
 
-    virtual inline void dump_r_d(double *r, int offset = 0, int block_size = -1);
-    virtual inline void dump_r_d(vector<double> r, int offset = 0, int block_size = -1);
+    virtual inline void dump_r_d(double *r, int offset = 0, int block_size =
+    -1);
+    virtual inline void dump_r_d(vector<double> r, int offset = 0, int
+    block_size = -1);
   */
   virtual void move_row(int old_r, int new_r);
 
@@ -119,7 +124,8 @@ public:
   virtual void row_swap(int i, int j);
 
 private:
-  /* Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
+  /* Allocates matrices and arrays whose size depends on d (all but
+   tmp_col_expo).
    When enable_int_gram=false, initializes bf. */
   virtual void size_increased();
 
@@ -137,7 +143,8 @@ private:
 
   virtual void row_addmul_si_2exp(int i, int j, long x, long expo);
   virtual void row_addmul_2exp(int i, int j, const ZT &x, long expo);
-  // virtual void apply_transform(const Matrix<FT> &transform, int src_base, int target_base);
+  // virtual void apply_transform(const Matrix<FT> &transform, int src_base, int
+  // target_base);
 };
 
 template <class ZT, class FT> inline long MatGSOGram<ZT, FT>::get_max_exp_of_b()

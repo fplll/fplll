@@ -289,9 +289,10 @@ enum PrunerMetric
 
 enum PrunerFlags
 {
-  PRUNER_CVP =
-      0x1,  // Do not Halve the count of nodes, according to enumeration optimization from symmetry
-  // Descent methods. If several activated, pruner will execute them in the order below.
+  PRUNER_CVP = 0x1,  // Do not Halve the count of nodes, according to enumeration
+                     // optimization from symmetry
+  // Descent methods. If several activated, pruner will execute them in the
+  // order below.
   PRUNER_START_FROM_INPUT = 0x2,
   PRUNER_GRADIENT         = 0x4,  // Activate the gradient descent
   PRUNER_NELDER_MEAD      = 0x8,

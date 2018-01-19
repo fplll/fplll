@@ -76,8 +76,8 @@ bool ErrorBoundedEvaluator::get_max_error_aux(const FP_NR<mpfr_t> &max_dist, boo
                                               FP_NR<mpfr_t> &maxDE)
 {
 
-  FPLLL_CHECK(input_error_defined,
-              "Evaluator: error evaluation failed because the input error is undefined");
+  FPLLL_CHECK(input_error_defined, "Evaluator: error evaluation failed because "
+                                   "the input error is undefined");
 
   FP_NR<mpfr_t> ulp, halfULP, K, tmp1, tmp2;
   FP_NR<mpfr_t> rdiagTilde, minRDiag, maxRDiag, muTilde, maxMu, maxMuTildeX;
@@ -151,8 +151,8 @@ bool ErrorBoundedEvaluator::get_max_error_aux(const FP_NR<mpfr_t> &max_dist, boo
          ==> y~_i *~ y~_i <= dist~ * K / r~_i  */
       tmp1.mul(max_dist, K, GMP_RNDU);
       tmp1.div(tmp1, rdiagTilde, GMP_RNDU);  // >= y~_i *~ y~_i
-                                             /* tmp1 >= y~_i *~ y~_i >= y~_i * y~_i - tmp1 * halfULP
-                                                ==> y~_i <= sqrt(tmp1 * K)   */
+      /* tmp1 >= y~_i *~ y~_i >= y~_i * y~_i - tmp1 * halfULP
+         ==> y~_i <= sqrt(tmp1 * K)   */
       tmp1.mul(tmp1, K, GMP_RNDU);
       maxYTilde.sqrt(tmp1, GMP_RNDU);           // >= y~_i
       maxDY.mul(maxYTilde, halfULP, GMP_RNDU);  // err2: rounding after +
@@ -201,7 +201,7 @@ bool ErrorBoundedEvaluator::get_max_error_aux(const FP_NR<mpfr_t> &max_dist, boo
        Case 2: dist~ <= max_dist
          |dist_i - dist~_i| <= (u~ +~ v~) * halfULP + |(u~ + v~) - (u + v)|
                             <= (u~ +~ v~) * halfULP + K * |(u~ + v~) - (u + v)|
-                            <= max_dist * halfULP + K * |(u~ + v~) - (u + v)|  */
+                            <= max_dist * halfULP + K * |(u~ + v~) - (u + v)| */
     maxDE.add(maxDE, maxDRY2, GMP_RNDU);
     maxDE.mul(maxDE, K, GMP_RNDU);
     maxDE.addmul(max_dist, halfULP, GMP_RNDU);

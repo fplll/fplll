@@ -24,7 +24,8 @@ FPLLL_BEGIN_NAMESPACE
 #define PRUNER_MAX_N 2047
 
 /**
-   Pruning parameters for one radius (expressed as a ratio to the Gaussian heuristic)
+   Pruning parameters for one radius (expressed as a ratio to the Gaussian
+   heuristic)
  */
 
 class PruningParams
@@ -33,10 +34,11 @@ class PruningParams
 public:
   double gh_factor;                  //< radius^2/Gaussian heuristic^2
   std::vector<double> coefficients;  //< pruning coefficients
-  double expectation;                //< either expected success probability or number of solutions
-                                     /**
-                                         metric used for optimisation (success probability or number of solutions)
-                                      */
+  double expectation;                //< either expected success probability or number of
+                                     // solutions
+  /**
+      metric used for optimisation (success probability or number of solutions)
+   */
   PrunerMetric metric;
   std::vector<double> detailed_cost;  //< Expected nodes per level
 
@@ -59,21 +61,30 @@ public:
 /**
    @brief Search for optimal pruning parameters.
 
-   Wrapping function for the Pruner class. The function is templated by a Floating Point Type, which
+   Wrapping function for the Pruner class. The function is templated by a
+   Floating Point Type, which
    are used for internal computations.
 
-   Calling M the metric function (Success proba or expectation of number of results), C the cost
-   function of enumeration, P the preproc_cost, this function tries to provide a pruning vector p
-   essentially minimizing (C(p) + P) / M(p). The pruning vector is expressed as relative (squared)
-   length with respect to the enumeration radius, i.e. the entries of p are in the interval (0,1),
+   Calling M the metric function (Success proba or expectation of number of
+   results), C the cost
+   function of enumeration, P the preproc_cost, this function tries to provide a
+   pruning vector p
+   essentially minimizing (C(p) + P) / M(p). The pruning vector is expressed as
+   relative (squared)
+   length with respect to the enumeration radius, i.e. the entries of p are in
+   the interval (0,1),
    and are always decreasing.
 
-   Small amendents are made to also take account for the desired target value of the metric after
-   repeating several enumeration. In particular the chosen pruning value should not excess the
-   target, and a bit more enumeration may be chosen if it get is to the the desired result without
+   Small amendents are made to also take account for the desired target value of
+   the metric after
+   repeating several enumeration. In particular the chosen pruning value should
+   not excess the
+   target, and a bit more enumeration may be chosen if it get is to the the
+   desired result without
    any retrial.
 
-   The cost C of enumeration under the gaussian heuristic, and depends on gso_r. The function S is
+   The cost C of enumeration under the gaussian heuristic, and depends on gso_r.
+   The function S is
    define by the metric parameter (and depend on gso_r for EXPECTED_SOLUTIONS)
 
    This function provides access to three algorithm to optimize those parameter
@@ -82,39 +93,62 @@ public:
    - gradient decent       (activated by setting flag PRUNER_GRADIENT)
    - Nelder-Mead Algorithm (activated by setting flag PRUNER_NELDER_MEAD)
 
-   If several algortihm are activated, they will all be ran, using the output of the previous as
+   If several algortihm are activated, they will all be ran, using the output of
+   the previous as
    there starting point.
 
-   Greedy shoud be very fast, and essentially tries to produce pruning parameters generating a flat
-   enumeration tree. It is meant to quickly provide pruning parameters, say up to block 40. It is
-   also used as a decent starting point for the gradient descent to be quicker. It can be argued
-   that this strategy is a factor O(n) away from optimal, probably less in practice.
+   Greedy shoud be very fast, and essentially tries to produce pruning
+   parameters generating a flat
+   enumeration tree. It is meant to quickly provide pruning parameters, say up
+   to block 40. It is
+   also used as a decent starting point for the gradient descent to be quicker.
+   It can be argued
+   that this strategy is a factor O(n) away from optimal, probably less in
+   practice.
 
-   The gradient descent is rather standard. The gradient is computed numerically, and then several
-   steps are made keeping the same direction until a local minima in this direction is found (the
-   rational is that computing the gradient is 2n times more expensive than test a point). It is to
-   be expected that this method suffers from convergence and numerical instability especially due
-   to numerical differentiation. It remains rather fast and seems to properly handle basis up to
-   dimension LLL reduced-basis up to dim ~70, and more if the basis is strongly reduced.
+   The gradient descent is rather standard. The gradient is computed
+   numerically, and then several
+   steps are made keeping the same direction until a local minima in this
+   direction is found (the
+   rational is that computing the gradient is 2n times more expensive than test
+   a point). It is to
+   be expected that this method suffers from convergence and numerical
+   instability especially due
+   to numerical differentiation. It remains rather fast and seems to properly
+   handle basis up to
+   dimension LLL reduced-basis up to dim ~70, and more if the basis is strongly
+   reduced.
 
-   The Nelder-Mead algorithm is a descent algorithm praised for its robustness. It's pretty cool,
-   you should really read about it: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method . In
-   brief, it maintains a simplex of points and each step consist in improving the worst of them by
-   reflexion expansion or contraction, or shrinking the all simplex if the above failed. This
-   method is somehow aware not only of the gradient, but also the curvature of the optimized
-   function. Thanks to contraction and expansion, it can slowly "pass through the eye of a needle,"
+   The Nelder-Mead algorithm is a descent algorithm praised for its robustness.
+   It's pretty cool,
+   you should really read about it:
+   https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method . In
+   brief, it maintains a simplex of points and each step consist in improving
+   the worst of them by
+   reflexion expansion or contraction, or shrinking the all simplex if the above
+   failed. This
+   method is somehow aware not only of the gradient, but also the curvature of
+   the optimized
+   function. Thanks to contraction and expansion, it can slowly "pass through
+   the eye of a needle,"
    and re-accelerate the descent after that.
 
-   Maybe you don't care so much of all this... I'm just procratinating low-level documentation.
+   Maybe you don't care so much of all this... I'm just procratinating low-level
+   documentation.
 
-   @param pruning Output of the function. Also used as an input if PRUNER_START_FROM_INPUT is on.
+   @param pruning Output of the function. Also used as an input if
+   PRUNER_START_FROM_INPUT is on.
    @param enumeration_radius radius of the desired enumeration
-   @param preproc_cost cost of preprocessing (i.e. additive cost for a retrying an enumeration)
+   @param preproc_cost cost of preprocessing (i.e. additive cost for a retrying
+   an enumeration)
    @param gso_r vector of Gram-Schmidt length (squared) of the enumerated block
-   @param target desired target success probability/expected solutions after all retrial.
-   @param metric metric is to be optimized : PRUNER_METRIC_PROBABILITY_OF_SHORTEST or
+   @param target desired target success probability/expected solutions after all
+   retrial.
+   @param metric metric is to be optimized :
+   PRUNER_METRIC_PROBABILITY_OF_SHORTEST or
    PRUNER_METRIC_EXPECTED_SOLUTIONS
-   @param flags complementary parameters : PRUNER_CVP  PRUNER_START_FROM_INPUT  PRUNER_GRADIENT
+   @param flags complementary parameters : PRUNER_CVP  PRUNER_START_FROM_INPUT
+   PRUNER_GRADIENT
    PRUNER_NELDER_MEAD  PRUNER_VERBOSE
 
    @return Return value is done by reference on parameter pruning.
@@ -133,17 +167,24 @@ void prune(/*(input)output*/ PruningParams &pruning,
 
    Wrapping function for the Pruner class.
 
-   Same as prune(), but averaging cost over several bases (without slowing down the search)
+   Same as prune(), but averaging cost over several bases (without slowing down
+   the search)
 
-   @param pruning Output of the function. Also used as an input if PRUNER_START_FROM_INPUT is on.
+   @param pruning Output of the function. Also used as an input if
+   PRUNER_START_FROM_INPUT is on.
    @param enumeration_radius radius of the desired enumeration
-   @param preproc_cost cost of preprocessing (i.e. additive cost for a retrying an enumeration)
-   @param gso_rs vector of vector Gram-Schmidt length (squared) of the enumerated block over
+   @param preproc_cost cost of preprocessing (i.e. additive cost for a retrying
+   an enumeration)
+   @param gso_rs vector of vector Gram-Schmidt length (squared) of the
+   enumerated block over
    several bases
-   @param target desired target success probability/expected solutions after all retrial.
-   @param metric metric is to be optimized : PRUNER_METRIC_PROBABILITY_OF_SHORTEST or
+   @param target desired target success probability/expected solutions after all
+   retrial.
+   @param metric metric is to be optimized :
+   PRUNER_METRIC_PROBABILITY_OF_SHORTEST or
    PRUNER_METRIC_EXPECTED_SOLUTIONS
-   @param flags complementary parameters : PRUNER_CVP  PRUNER_START_FROM_INPUT  PRUNER_GRADIENT
+   @param flags complementary parameters : PRUNER_CVP  PRUNER_START_FROM_INPUT
+   PRUNER_GRADIENT
    PRUNER_NELDER_MEAD  PRUNER_VERBOSE
 
 */
@@ -156,12 +197,15 @@ void prune(/*output*/ PruningParams &pruning,
            const int flags           = PRUNER_GRADIENT);
 
 /**
-   @brief Probability that a pruned enumeration indeed returns the shortest vector.
+   @brief Probability that a pruned enumeration indeed returns the shortest
+   vector.
 
-   Probability that a pruned enumeration indeed returns the shortest vector. Wrapping function for
+   Probability that a pruned enumeration indeed returns the shortest vector.
+   Wrapping function for
    the Pruner class.
 
-   @param pruning A pruning object. Only uses the coefficient field. (coefficients must start with
+   @param pruning A pruning object. Only uses the coefficient field.
+   (coefficients must start with
    two 1s, be decreasing and in the interval (0,1))
 
    @return probability
@@ -169,9 +213,11 @@ void prune(/*output*/ PruningParams &pruning,
 template <class FT> FT svp_probability(const PruningParams &pruning);
 
 /**
-   @brief Probability that a pruned enumeration indeed returns the shortest vector.
+   @brief Probability that a pruned enumeration indeed returns the shortest
+   vector.
 
-   @param pr A vector of pruning bounds (coefficients must start with two 1s, be decreasing and in
+   @param pr A vector of pruning bounds (coefficients must start with two 1s, be
+   decreasing and in
    the interval (0,1))
 
    @return probability
@@ -179,16 +225,22 @@ template <class FT> FT svp_probability(const PruningParams &pruning);
 template <class FT> FT svp_probability(const vector<double> &pr);
 
 /**
-   @brief Pruner class, to compute and optimize cost and success probability of pruned enumeration.
+   @brief Pruner class, to compute and optimize cost and success probability of
+   pruned enumeration.
 
-   The class is templated by a Floating Point Type, which are used for internal computations.
+   The class is templated by a Floating Point Type, which are used for internal
+   computations.
 
-   This class provides an implementation of the numerically optimized pruning strategy of [Gama
+   This class provides an implementation of the numerically optimized pruning
+   strategy of [Gama
    Nguyen Regev 2010].
 
-   Many details for implementation follows from the thesis [Chen 2013] Some simplifications have
-   been made, for example we restrict ourselves to ``even vector bounds'' i.e., the bound at indices
-   2i and 2i+1 are kept equal, as to allow volume estimation by symbolic integration (see
+   Many details for implementation follows from the thesis [Chen 2013] Some
+   simplifications have
+   been made, for example we restrict ourselves to ``even vector bounds'' i.e.,
+   the bound at indices
+   2i and 2i+1 are kept equal, as to allow volume estimation by symbolic
+   integration (see
    [GNR10,Chen13])
 
    naming conventions:
@@ -198,12 +250,14 @@ template <class FT> FT svp_probability(const vector<double> &pr);
    overflowing partial volumes
    - p is for polynomial
 
-   inside this code, b,pv,and r are in reversed order as to conform with the algorithm description
+   inside this code, b,pv,and r are in reversed order as to conform with the
+   algorithm description
    of [Chen13] reversing the order is handled by the load and save methods.
 
    - n is for the dimension of the basis to prune
    - d is for degrees of polynomials. md is for max_degree
-   - d is floor(n/2 at most). Odd n are dealt with by ignoring the first component
+   - d is floor(n/2 at most). Odd n are dealt with by ignoring the first
+   component
 */
 template <class FT> class Pruner
 {
@@ -230,12 +284,17 @@ public:
     Algorithmic details are given for the wrapping function prune().
 
     @param enumeration_radius radius of the desired enumeration
-    @param preproc_cost cost of preprocessing (i.e. additive cost for a retrying an enumeration)
-    @param gso_r  vector Gram-Schmidt length (squared) of the enumerated block over several bases
-    @param target desired target success probability/expected solutions after all retrial.
-    @param metric metric is to be optimized : PRUNER_METRIC_PROBABILITY_OF_SHORTEST or
+    @param preproc_cost cost of preprocessing (i.e. additive cost for a retrying
+    an enumeration)
+    @param gso_r  vector Gram-Schmidt length (squared) of the enumerated block
+    over several bases
+    @param target desired target success probability/expected solutions after
+    all retrial.
+    @param metric metric is to be optimized :
+    PRUNER_METRIC_PROBABILITY_OF_SHORTEST or
     PRUNER_METRIC_EXPECTED_SOLUTIONS
-    @param flags complementary parameters : PRUNER_CVP  PRUNER_START_FROM_INPUT  PRUNER_GRADIENT
+    @param flags complementary parameters : PRUNER_CVP  PRUNER_START_FROM_INPUT
+    PRUNER_GRADIENT
     PRUNER_NELDER_MEAD  PRUNER_VERBOSE
   */
 
@@ -260,19 +319,25 @@ public:
   }
 
   /**
-     @brief Constructor for Pruner with multiple basis (averaging the cost function over all of
+     @brief Constructor for Pruner with multiple basis (averaging the cost
+     function over all of
      them)
 
      Algorithmic details are given for the wrapping function prune().
 
      @param enumeration_radius radius of the desired enumeration
-     @param preproc_cost cost of preprocessing (i.e. additive cost for a retrying an enumeration)
-     @param gso_rs vector of vector Gram-Schmidt length (squared) of the enumerated block over
+     @param preproc_cost cost of preprocessing (i.e. additive cost for a
+     retrying an enumeration)
+     @param gso_rs vector of vector Gram-Schmidt length (squared) of the
+     enumerated block over
      several bases
-     @param target desired target success probability/expected solutions after all retrial.
-     @param metric metric is to be optimized : PRUNER_METRIC_PROBABILITY_OF_SHORTEST or
+     @param target desired target success probability/expected solutions after
+     all retrial.
+     @param metric metric is to be optimized :
+     PRUNER_METRIC_PROBABILITY_OF_SHORTEST or
      PRUNER_METRIC_EXPECTED_SOLUTIONS
-     @param flags complementary parameters : PRUNER_CVP  PRUNER_START_FROM_INPUT  PRUNER_GRADIENT
+     @param flags complementary parameters : PRUNER_CVP  PRUNER_START_FROM_INPUT
+     PRUNER_GRADIENT
      PRUNER_NELDER_MEAD  PRUNER_VERBOSE
   */
 
@@ -313,9 +378,11 @@ public:
   }
 
   /**
-     @brief Cost of repeating enumeration and preprocessing until reaching target
+     @brief Cost of repeating enumeration and preprocessing until reaching
+     target
 
-     Compute the cost of r enumeration and (r-1) preprocessing, where r is the required number of
+     Compute the cost of r enumeration and (r-1) preprocessing, where r is the
+     required number of
      retrials to reach target.
   */
   double repeated_enum_cost(/*i*/ const vector<double> &pr)
@@ -336,9 +403,11 @@ public:
   }
 
   /**
-     @brief gaussian heuristic for the shortest vector length of the loaded basis.
+     @brief gaussian heuristic for the shortest vector length of the loaded
+     basis.
 
-     @note If multiple loaded then it is the gaussian heuristic of the first one.
+     @note If multiple loaded then it is the gaussian heuristic of the first
+     one.
   */
   FT gaussian_heuristic();
 
@@ -351,47 +420,54 @@ private:
                               /// single_enum_cost() with metric PROBABILITY_OF_SHORTEST if not
   int flags;
   int n;  ///< Dimension of the block to be enumerated
-  int d;  ///< Half dimension: most function only use half dimension, as our Pruner implcitly
-          /// enforce parity
+  int d;  ///< Half dimension: most function only use half dimension, as our
+          /// Pruner implcitly
+  /// enforce parity
   vector<FT> min_pruning_coefficients;
 
   double descent_starting_clock;
-  static bool tabulated_values_imported;  ///< (static) has tabulated constant been imported
+  static bool tabulated_values_imported;  ///< (static) has tabulated constant
+                                          /// been imported
   static FT tabulated_factorial[PRUNER_MAX_N];
   static FT tabulated_ball_vol[PRUNER_MAX_N];
 
-  FT epsilon  = std::pow(2., -7);  ///< Epsilon to use for numerical differentiation
-  FT min_step = std::pow(2., -6);  ///< Minimal step in a given direction
-  FT min_cf_decrease =
-      .995;  //< Maximal ratio of two consectuive cost_factor in the descent before stopping
-  FT step_factor     = std::pow(2, .5);  ///< Increment factor for steps in a given direction
-  FT shell_ratio     = .995;             ///< Shell thickness Ratio when evaluating svp proba
-  FT symmetry_factor = .5;               ///< Account for symmetry in costs: 0.5 for SVP, 1 for CVP.
+  FT epsilon         = std::pow(2., -7);  ///< Epsilon to use for numerical differentiation
+  FT min_step        = std::pow(2., -6);  ///< Minimal step in a given direction
+  FT min_cf_decrease = .995;              //< Maximal ratio of two consectuive cost_factor in
+                                          // the descent before stopping
+  FT step_factor     = std::pow(2, .5);   ///< Increment factor for steps in a given direction
+  FT shell_ratio     = .995;              ///< Shell thickness Ratio when evaluating svp proba
+  FT symmetry_factor = .5;  ///< Account for symmetry in costs: 0.5 for SVP, 1 for CVP.
 
   // Following typedefs are given for readability
   using vec  = vector<FT>;  ///< Vectors of dimension n
   using evec = vector<FT>;  ///< Vectors of dimension d=n/2
-  using poly = vector<FT>;  ///< Polynomials of degree at most d, as vectors of dimension d+1
+  using poly = vector<FT>;  ///< Polynomials of degree at most d, as vectors of
+                            /// dimension d+1
 
   vec r;                    ///< Gram-Schmidt length (squared, and reversed ordered)
   vec ipv;                  ///< Inverse Partial Volumes of projected sublattices (not squared !)
-  FT normalization_factor;  ///< internal renormalization factor to avoid over/underflows
+  FT normalization_factor;  ///< internal renormalization factor to avoid
+                            /// over/underflows
   FT normalized_radius;     ///< renormalized enumeration radius
   int verbosity = 0;
 
-  /** @brief Static of load tabulated constants (done once over all instances). */
+  /** @brief Static of load tabulated constants (done once over all instances).
+   */
   void set_tabulated_consts();
 
   /** @brief load the shape of a basis from vector<double>.
       @param gso_r vector of gso coefficients
-      @param reset_normalization boolean triggering computation of the renormalization factor
+      @param reset_normalization boolean triggering computation of the
+     renormalization factor
     */
   void load_basis_shape(const vector<double> &gso_r, bool reset_normalization = true);
 
   /**
       @brief Load the shapes of many bases from vector<vector<double>>.
 
-      Costs will be averaged over all bases. Normalization is done according to the first basis.
+      Costs will be averaged over all bases. Normalization is done according to
+     the first basis.
 
       @param gso_r vector of vector of gso coefficients
     */
@@ -400,7 +476,8 @@ private:
   /**
      @brief convert pruning coefficient from external to internal format.
 
-     Convert type, reverse the ordering, and only select coefficent at even position
+     Convert type, reverse the ordering, and only select coefficent at even
+     position
 
      @param b Output in internal format
      @param pr Input in external format
@@ -420,7 +497,8 @@ private:
   /**
      @brief Enforce contraints on pruning coefficients
 
-     Enforce that pruning coeffient terminate with a 1, are decreasing, and are not too close to 0
+     Enforce that pruning coeffient terminate with a 1, are decreasing, and are
+     not too close to 0
      (for numerical stability).
 
      @param b input/output
@@ -448,7 +526,8 @@ private:
   inline void integrate_poly(const int ld, /*io*/ poly &p);
 
   /**
-     @brief Compute the relative volume of a cylinder intersection to the unit sphere (of a given
+     @brief Compute the relative volume of a cylinder intersection to the unit
+     sphere (of a given
      subdimension)
      @param rd sub-dimension
      @param b bounds of the cylinder intersection
@@ -460,7 +539,8 @@ private:
   /**
      @brief Compute the cost of a pruned enumeration
      @param b pruning bounds
-     @param detailed_cost (optional) store the details of node per level of the enum tree there
+     @param detailed_cost (optional) store the details of node per level of the
+     enum tree there
      @return cost, in enumeration node
   */
   FT single_enum_cost(/*i*/ const evec &b, vector<double> *detailed_cost = nullptr);
@@ -473,14 +553,16 @@ private:
 
   FT svp_probability(/*i*/ const evec &b);
   /**
-     @brief Compute the expected number of solution of a single of a single enumeration
+     @brief Compute the expected number of solution of a single of a single
+     enumeration
      @param b pruning bounds
      @return expected number of solutions
   */
   FT expected_solutions(/*i*/ const evec &b);
 
   /**
-     @brief links to either svp_probability() or expected_solution() depending on metric
+     @brief links to either svp_probability() or expected_solution() depending
+     on metric
      @param b pruning bounds
      @return expected number of solutions or success probability
   */

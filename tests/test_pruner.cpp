@@ -80,7 +80,9 @@ public:
     print_status(status);
     status += !((b[d - 1] >= 1.) && (b[d - 1] <= 1.));
     print_status(status);
-    cerr << "Checking enforced bounds: Increasing, 1-terminated, keeping b[13] = .5" << endl;
+    cerr << "Checking enforced bounds: Increasing, 1-terminated, keeping b[13] "
+            "= .5"
+         << endl;
     for (int i = 0; i < d - 1; ++i)
     {
       status += !(b[i + 1] >= b[i]);
@@ -284,7 +286,8 @@ template <class FT> int test_unpruned()
   {
     v3[i] *= 20;
   }
-  // 1 basis out of 3 is so large that it essentially induces no cost: new cost should be 2/3 of
+  // 1 basis out of 3 is so large that it essentially induces no cost: new cost
+  // should be 2/3 of
   // the previous
 
   gso_sq_norms_vec.emplace_back(v3);

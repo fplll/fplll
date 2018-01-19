@@ -1,6 +1,7 @@
 /* Copyright (C) 2008-2011 Xavier Pujol
    (C) 2015 Michael Walter.
-   (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions, subsolutions)
+   (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions,
+   subsolutions)
    (C) 2016 Guillaume Bonnoron. (CVP improvements)
 
    This file is part of fplll. fplll is free software: you
@@ -44,8 +45,9 @@ inline void EnumerationBase::enumerate_recursive(
     if (newdist > 0.0 || !is_svp)
       process_solution(newdist);
   }
-  else if (enable_reset &&
-           kk < reset_depth)  // in CVP, below the max GS vector, we reset the partial distance
+  else if (enable_reset && kk < reset_depth)  // in CVP, below the max GS
+                                              // vector, we reset the partial
+                                              // distance
   {
     reset(newdist, kk);
     return;
@@ -222,8 +224,8 @@ template <bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBa
         finished = !next_pos_up();
         continue;
       }
-      if (enable_reset &&
-          k < reset_depth)  // in CVP, below the max GS vector, we reset the partial distance
+      if (enable_reset && k < reset_depth)  // in CVP, below the max GS vector,
+                                            // we reset the partial distance
       {
         reset(newdist, k);
         finished = !next_pos_up();

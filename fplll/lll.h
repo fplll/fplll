@@ -47,7 +47,8 @@ public:
      @param kappa_min minimal index to go back to
      @param kappa_start index to start processing at
      @param kappa_end end index (exclusive)
-     @param size_reduction_start only perform size reductions using vectors starting at this index
+     @param size_reduction_start only perform size reductions using vectors
+     starting at this index
      @return success or failure (due to numerical instability)
   */
 
@@ -57,11 +58,13 @@ public:
   /**
      @brief Size reduction.
 
-     Perform size reduction for all vectors between `kappa_start` and `kappa_end`.
+     Perform size reduction for all vectors between `kappa_start` and
+     `kappa_end`.
 
      @param kappa_min start index
      @param kappa_end end index (exclusive)
-     @param size_reduction_start only perform size reductions using vectors starting at this index
+     @param size_reduction_start only perform size reductions using vectors
+     starting at this index
      @return success or failure (due to numerical instability)
   */
 
@@ -78,8 +81,10 @@ private:
      @brief Size reduction.
 
      @param kappa index to size reduce
-     @param size_reduction_end only perform size reductions using vectors up to this index
-     @param size_reduction_start only perform size reductions using vectors starting at this index
+     @param size_reduction_end only perform size reductions using vectors up to
+     this index
+     @param size_reduction_start only perform size reductions using vectors
+     starting at this index
      @return
   */
 

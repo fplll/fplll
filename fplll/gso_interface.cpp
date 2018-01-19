@@ -95,12 +95,15 @@ template <class ZT, class FT> long MatGSOInterface<ZT, FT>::get_max_mu_exp(int i
   }
   return max_expo;
 }
-// This function *can* be included in the interface; it has no base-class specific functions.
-// If this function is going to be included, it must be removed from gso.* and gsogram.*
+// This function *can* be included in the interface; it has no base-class
+// specific functions.
+// If this function is going to be included, it must be removed from gso.* and
+// gsogram.*
 // and also added to gso_interface.h as non-virtual.
 /*
 template <class ZT, class FT>
-void MatGSOInterface<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_add)
+void MatGSOInterface<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long
+expo_add)
 {
   FPLLL_DEBUG_CHECK(j >= 0 && i < n_known_rows && j < n_source_rows);
   long expo;
@@ -130,7 +133,8 @@ void MatGSOInterface<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo
 template <class ZT, class FT> bool MatGSOInterface<ZT, FT>::update_gso_row(int i, int last_j)
 {
   // FPLLL_TRACE_IN("Updating GSO up to (" << i << ", " << last_j << ")");
-  // FPLLL_TRACE("n_known_rows=" << n_known_rows << " n_source_rows=" << n_source_rows);
+  // FPLLL_TRACE("n_known_rows=" << n_known_rows << " n_source_rows=" <<
+  // n_source_rows);
   if (i >= n_known_rows)
   {
     discover_row();

@@ -156,7 +156,8 @@ template <class FT> FT Pruner<FT>::gaussian_heuristic()
 }
 
 template <class FT>
-void Pruner<FT>::load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr)
+void Pruner<FT>::load_coefficients(/*o*/ evec &b,
+                                   /*i*/ const vector<double> &pr)
 {
   for (int i = 0; i < d; ++i)
   {
@@ -164,13 +165,14 @@ void Pruner<FT>::load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr
   }
   if (enforce(b))
   {
-    throw std::runtime_error(
-        "Ill formed pruning coefficients (must be decreasing, starting with two 1.0)");
+    throw std::runtime_error("Ill formed pruning coefficients (must be "
+                             "decreasing, starting with two 1.0)");
   }
 }
 
 template <class FT>
-void Pruner<FT>::save_coefficients(/*o*/ vector<double> &pr, /*i*/ const evec &b)
+void Pruner<FT>::save_coefficients(/*o*/ vector<double> &pr,
+                                   /*i*/ const evec &b)
 {
   pr.resize(n);
   for (int i = 0; i < d; ++i)
@@ -406,10 +408,12 @@ template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const evec &b
 }
 
 template <class FT>
-void Pruner<FT>::repeated_enum_cost_gradient(/*i*/ const evec &b, /*o*/ evec &res)
+void Pruner<FT>::repeated_enum_cost_gradient(/*i*/ const evec &b,
+                                             /*o*/ evec &res)
 {
   evec b_plus_db(d);
-  res[d - 1] = 0.0;  // Force null gradient on the last coordinate : don't touch this coeff
+  res[d - 1] = 0.0;  // Force null gradient on the last coordinate : don't touch
+                     // this coeff
   for (int i = 0; i < d - 1; ++i)
   {
     b_plus_db = b;
@@ -504,7 +508,8 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ evec &b)
 
 template <class FT> void Pruner<FT>::greedy(evec &b)
 {
-  // Do not call enforce in this function, as min_pruning_bounds may not have been set
+  // Do not call enforce in this function, as min_pruning_bounds may not have
+  // been set
   // Indeed, the min_pruning_bound should now based on greedy.
   if (!shape_loaded)
   {

@@ -338,7 +338,8 @@ int hnf(ZZ_mat<mpz_t> &B, HNFMethod method)
 int hnf_autoselect(ZZ_mat<mpz_t> &B)
 {
   // rest in development
-  // cerr << "warning : xgcd is not suitable for high determinant or big matrices\n";
+  // cerr << "warning : xgcd is not suitable for high determinant or big
+  // matrices\n";
   return hnf(B, HM_XGCD);
 }
 

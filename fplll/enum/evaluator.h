@@ -37,14 +37,19 @@ enum EvaluatorStrategy
    * Possible values are:
    *
    * EVALSTRATEGY_BEST_N_SOLUTIONS
-   *   Starting with the max_sols-th solution, every time a new solution is found
-   *   the enumeration bound is updated to the length of the longest solution. If
+   *   Starting with the max_sols-th solution, every time a new solution is
+   * found
+   *   the enumeration bound is updated to the length of the longest solution.
+   * If
    *   more than max_sols were found, the longest is dropped.
    * EVALSTRATEGY_OPPORTUNISTIC_N_SOLUTIONS
-   *   Every time a solution is found, update the enumeration distance to the length
-   *   of the solution. If more than max_sols were found, the longest is dropped.
+   *   Every time a solution is found, update the enumeration distance to the
+   * length
+   *   of the solution. If more than max_sols were found, the longest is
+   * dropped.
    * EVALSTRATEGY_FIRST_N_SOLUTIONS
-   *   The enumeration bound is not updated. As soon as max_sols are found, enumeration
+   *   The enumeration bound is not updated. As soon as max_sols are found,
+   * enumeration
    *   stops.
   */
   EVALSTRATEGY_BEST_N_SOLUTIONS          = 0,
@@ -53,7 +58,8 @@ enum EvaluatorStrategy
 };
 
 /**
- * Evaluator stores the solutions found by enumerate, and updates the enumeration bound
+ * Evaluator stores the solutions found by enumerate, and updates the
+ * enumeration bound
  * It thus provides an interface to the enumerator,
  * as well as a basic interface to return solutions.
  * Specializations will implement specific behaviour and additional interfaces.
@@ -115,7 +121,8 @@ protected:
     return tmp.get_d(GMP_RNDU);
   }
 
-  /** processes solution into multimap and adjusts max_dist according to strategy */
+  /** processes solution into multimap and adjusts max_dist according to
+   * strategy */
   void process_sol(const FT &dist, const vector<FT> &coord, enumf &max_dist)
   {
     ++sol_count;
@@ -125,7 +132,8 @@ protected:
     case EVALSTRATEGY_BEST_N_SOLUTIONS:
       if (solutions.size() < max_sols)
         return;
-      // remove the longest solution, and use the new longest dist to update max_dist
+      // remove the longest solution, and use the new longest dist to update
+      // max_dist
       if (solutions.size() > max_sols)
         solutions.erase(solutions.begin());
       max_dist = calc_enum_bound(solutions.begin()->first);
@@ -232,7 +240,8 @@ public:
   input_error_defined=true and fill max_dr_diag and max_dm_u */
   bool input_error_defined;
   vector<FP_NR<mpfr_t>> max_dr_diag, max_dm_u;  // Error bounds on input parameters
-  //  FP_NR<mpfr_t> last_partial_dist;          // Approx. squared norm of the last solution
+  //  FP_NR<mpfr_t> last_partial_dist;          // Approx. squared norm of the
+  //  last solution
 
   void init_delta_def(int prec, double rho, bool withRoundingToEnumf);
 

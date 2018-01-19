@@ -42,7 +42,9 @@ void print_version()
   cout << "latticegen (fplll) " << VERSION << endl
        << "Copyright 2005-2011 Damien Stehle, David Cade, Xavier Pujol." << endl
        << "fplll is free software. You can redistribute it and/or modify" << endl
-       << "it under the terms of the GNU Lesser General Public License as published by" << endl
+       << "it under the terms of the GNU Lesser General Public License as "
+          "published by"
+       << endl
        << "the Free Software Foundation, either version 2.1 of the License, or" << endl
        << "(at your option) any later version." << endl;
 }
