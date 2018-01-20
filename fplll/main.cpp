@@ -87,8 +87,8 @@ void read_pruning_vector(const char *file_name, PruningParams &pr, int n)
   for (int i = 0; i <= n && fscanf(file, "%lf", &x) == 1; i++)
   {
     pr.coefficients.push_back(x);
-    CHECK(x > 0 && x <= 1,
-          "Number " << x << " in file '" << file_name << "' is not in the interval (0,1]");
+    CHECK(x > 0 && x <= 1, "Number " << x << " in file '" << file_name
+                                     << "' is not in the interval (0,1]");
     if (i == 0)
     {
       CHECK(x == 1, "The first number in file '" << file_name << "' should be 1");
