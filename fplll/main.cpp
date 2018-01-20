@@ -51,13 +51,31 @@ template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
     switch (format[i])
     {
     case 'b':
-      cout << b << endl;
+      if (format[i + 1] == 'k')
+      {
+        b.print_comma(cout);
+        i++;
+      }
+      else
+        cout << b << endl;
       break;
     case 'u':
-      cout << u << endl;
+      if (format[i + 1] == 'k')
+      {
+        u.print_comma(cout);
+        i++;
+      }
+      else
+        cout << u << endl;
       break;
     case 'v':
-      cout << u_inv << endl;
+      if (format[i + 1] == 'k')
+      {
+        u_inv.print_comma(cout);
+        i++;
+      }
+      else
+        cout << u_inv << endl;
       break;
     case 't':
       cout << status << endl;
@@ -140,10 +158,22 @@ template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
     switch (format[i])
     {
     case 'b':
-      cout << b << endl;
+      if (format[i + 1] == 'k')
+      {
+        b.print_comma(cout);
+        i++;
+      }
+      else
+        cout << b << endl;
       break;
     case 'u':
-      cout << u << endl;
+      if (format[i + 1] == 'k')
+      {
+        u.print_comma(cout);
+        i++;
+      }
+      else
+        cout << u << endl;
       break;
     case 't':
       cout << status << endl;
@@ -168,11 +198,24 @@ template <class ZT> int hkz(Options &o, ZZ_mat<ZT> &b) { ABORT_MSG("mpz required
 
 template <> int hkz(Options &o, ZZ_mat<mpz_t> &b)
 {
-  int flags = 0;
+  const char *format = o.output_format ? o.output_format : "b";
+  int flags          = 0;
   if (o.verbose)
     flags |= HKZ_VERBOSE;
   int status = hkz_reduction(b, flags, o.float_type, o.precision);
-  cout << b << endl;
+  for (int i = 0; format[i]; i++)
+  {
+    if (format[i] == 'b')
+    {
+      if (format[i + 1] == 'k')
+      {
+        b.print_comma(cout);
+        i++;
+      }
+      else
+        cout << b << endl;
+    }
+  }
   if (status != RED_SUCCESS)
   {
     cerr << "Failure: " << get_red_status_str(status) << endl;
@@ -542,8 +585,7 @@ void read_options(int argc, char **argv, Options &o)
            << "        Restricts the LLL call\n"
            << "  -bkzdumpgso <file_name>\n"
            << "        Dumps the log of the Gram-Schmidt vectors in specified file\n"
-
-           << "  -of [b|c|s|t|u|v]\n"
+           << "  -of [b|c|s|t|u|v|bk|uk|vk]\n"
            << "        Output formats.\n"
 
            << "Please refer to https://github.com/fplll/fplll/README.md for more information.\n";
