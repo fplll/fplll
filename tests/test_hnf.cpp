@@ -17,7 +17,7 @@
 #include <../fplll/hnf.cpp>
 
 #include <cstring>
-#include <fplll.h>
+// #include <fplll.h>
 #include <test_utils.h>
 
 using namespace std;
@@ -74,6 +74,40 @@ int test_filename(const char *input_filename, HNFMethod method)
   return status;
 }
 
+/**
+   @brief Test HNF for a random d x (d+1) matrix with bit size b.
+
+   @param d                dimension
+   @param b                bit size
+   @param method           HNF method to test
+
+   @return zero on success
+*/
+
+int test_uniform(int d, int b, HNFMethod method)
+{
+  ZZ_mat<mpz_t> A, tmp;
+  A.resize(d, d + 1);
+  A.gen_uniform2(b);
+
+  tmp = A;
+
+  int status = hnf(A, method);
+
+  if (status != RED_SUCCESS)
+  {
+    cerr << "Output of HNF reduction is not HNF reduced with method " << HNF_METHOD_STR[method]
+         // << " test with matrix returned " << get_red_status_str(status) <<
+         // endl;
+         << " test with matrix returned " << get_red_status_str(status) << endl;
+  }
+
+  // test if reduction was correct : zero on success
+  status = in_hnf(A, tmp);
+
+  return status;
+}
+
 int main(int /*argc*/, char ** /*argv*/)
 {
 
@@ -84,10 +118,18 @@ int main(int /*argc*/, char ** /*argv*/)
   // status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in",
   // HM_PERNETSTEIN);
 
-  // status |= test_filename(TESTDATADIR "/tests/lattices/example_out",
+  // status |= test_uniform(15, 10, HM_CLASSIC);
+  status |= test_uniform(15, 10, HM_XGCD);
+  // status |= test_uniform(15, 10, HM_PERNETSTEIN);
+
+  // status |= test_uniform(20, 5, HM_CLASSIC);
+  status |= test_uniform(20, 5, HM_XGCD);
+  // status |= test_uniform(20, 5, HM_PERNETSTEIN);
+
+  // status |= test_filename(TESTDATADIR "/tests/lattices/example2_in",
   // HM_CLASSIC);
-  status |= test_filename(TESTDATADIR "/tests/lattices/example_out", HM_XGCD);
-  // status |= test_filename(TESTDATADIR "/tests/lattices/example_out",
+  status |= test_filename(TESTDATADIR "/tests/lattices/example2_in", HM_XGCD);
+  // status |= test_filename(TESTDATADIR "/tests/lattices/example2_in",
   // HM_PERNETSTEIN);
 
   if (status == 0)
