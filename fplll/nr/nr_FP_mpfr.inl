@@ -249,7 +249,11 @@ inline void FP_NR<mpfr_t>::sqrt(const FP_NR<mpfr_t>& a, mp_rnd_t rnd) {
 
 template<>
 inline void FP_NR<mpfr_t>::root(const FP_NR<mpfr_t>& a, unsigned int k, mp_rnd_t rnd) {
+#if MPFR_VERSION_MAJOR >= 4
+  mpfr_rootn_ui(data, a.data, k, rnd);
+#else // MPFR_VERSION_MAJOR >= 4
   mpfr_root(data, a.data, k, rnd);
+#endif // MPFR_VERSION_MAJOR >= 4
 }
 
 template<>

@@ -28,4 +28,8 @@
 /* Recursive enumeration enabled */
 #undef FPLLL_WITH_RECURSIVE_ENUM
 
+/* Switch between GMP and MPIR */
+#undef HAVE_LIBGMP
+#undef HAVE_LIBMPIR
+
 #endif //FPLLL_CONFIG__H
