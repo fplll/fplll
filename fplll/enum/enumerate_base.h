@@ -1,7 +1,6 @@
 /* Copyright (C) 2008-2011 Xavier Pujol
    (C) 2015 Michael Walter.
-   (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions,
-   subsolutions)
+   (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions, subsolutions)
    (C) 2016 Guillaume Bonnoron. (CVP improvements)
 
    This file is part of fplll. fplll is free software: you
@@ -95,8 +94,7 @@ protected:
   {
   };
 
-  /* need templated function argument for support of integer specialization for
-   * kk==-1 */
+  /* need templated function argument for support of integer specialization for kk==-1 */
   template <int kk, int kk_start, bool dualenum, bool findsubsols, bool enable_reset>
   inline void enumerate_recursive(opts<kk, kk_start, dualenum, findsubsols, enable_reset>)
       ENUM_ALWAYS_INLINE;
@@ -110,10 +108,8 @@ protected:
   void enumerate_recursive_wrapper()
   {
     // kk < maxdim-1:
-    // kk < kk_end                         (see enumerate_loop(),
-    // enumerate_base.cpp)
-    // kk_end = d - subtree.size() <= d    (see prepare_enumeration(),
-    // enumerate.cpp)
+    // kk < kk_end                         (see enumerate_loop(), enumerate_base.cpp)
+    // kk_end = d - subtree.size() <= d    (see prepare_enumeration(), enumerate.cpp)
     // d < maxdim                          (see enumerate(), enumerate.cpp)
     enumerate_recursive(
         opts<(kk < (maxdim - 1) ? kk : -1), 0, dualenum, findsubsols, enable_reset>());

@@ -80,8 +80,7 @@ bool Enumerator::enum_next(const FP_NR<mpfr_t> &max_sqr_length)
       sub_tree.resize(d - k);
       for (size_t j = 0; j < sub_tree.size(); j++)
         sub_tree[j] = enumxt(x[j + k].get_d());
-      // FPLLL_TRACE("  SubTree approx_size=" << volume << " coord=" <<
-      // sub_tree);
+      // FPLLL_TRACE("  SubTree approx_size=" << volume << " coord=" << sub_tree);
       notFound = false;
     }
     else

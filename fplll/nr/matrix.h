@@ -260,8 +260,7 @@ public:
     for (int i     = 0; i < d; i++)
       matrix[i][i] = 1;
   }
-  /** Generate an augmented matrix of random coefficients for the first column
-   */
+  /** Generate an augmented matrix of random coefficients for the first column */
   void gen_intrel(int bits);
   /** Generate a matrix with coefficients of the first row and the diagonal */
   void gen_simdioph(int bits, int bits2);
@@ -270,11 +269,10 @@ public:
   /** Generate a random matrix of uniform distribution (non-square flexible). */
   void gen_uniform2(int bits);
 
-  /** Construct a matrix `[[I,H],[0,qI]]` where `H` is constructed from
-  rotations of a vector ``h``.
+  /** Construct a matrix `[[I,H],[0,qI]]` where `H` is constructed from rotations of a vector
+    ``h``.
 
-     @note The constructed matrix will not come with a guarantee of unusually
-  short vectors.
+     @note The constructed matrix will not come with a guarantee of unusually short vectors.
   **/
 
   void gen_ntrulike(int bits);
@@ -291,8 +289,7 @@ public:
   void gen_ntrulike2(int bits);
   void gen_ntrulike2_withq(int q);
 
-  /** Construct a matrix ``[[I,H],[0,Iq]]`` where ``H`` is uniform mod q, of
-   * dimensions (n-k) x k.
+  /** Construct a matrix ``[[I,H],[0,Iq]]`` where ``H`` is uniform mod q, of dimensions (n-k) x k.
   */
 
   void gen_qary(int k, Z_NR<ZT> &q);
@@ -328,13 +325,10 @@ and random sub-diagonal coefficients.
 };
 
 /**
- * Converts integer matrices. Conversion is coing through get_si(), so ONLY use
- * for
- * small numbers that fit into longs. More specifically, Afrom is converted to
- * Ato
+ * Converts integer matrices. Conversion is coing through get_si(), so ONLY use for
+ * small numbers that fit into longs. More specifically, Afrom is converted to Ato
  * (and true is returned) if all numbers in Afrom fit into
- * numeric_limits<long>::digits - buffer bits. Otherwise, conversion is aborted
- * and
+ * numeric_limits<long>::digits - buffer bits. Otherwise, conversion is aborted and
  * false is returned.
  */
 template <class ZTto, class ZTfrom>

@@ -63,8 +63,7 @@ const double DEF_GSO_PREC_EPSILON = 0.03;
 
 /**
  * Returns the minimum precision required to ensure that error bounds on the
- * GSO are valid. Computes rho such that for all 0 &lt;= i &lt; d and 0 &lt;= j
- * &lt;= i:
+ * GSO are valid. Computes rho such that for all 0 &lt;= i &lt; d and 0 &lt;= j &lt;= i:
  *
  *   |r~_i - r_i| / r_i     <= d * rho ^ (i + 1) * 2 ^ (2 - prec)
  *

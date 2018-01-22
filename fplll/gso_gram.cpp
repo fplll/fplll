@@ -25,8 +25,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::discover_row()
 {
 
   FPLLL_DEBUG_CHECK(n_known_rows < d);
-  /* Early reduction (cols_locked=true) is not allowed when
-     enable_int_gram=true,
+  /* Early reduction (cols_locked=true) is not allowed when enable_int_gram=true,
      since n_known_cols might be too small to compute all the g(i,j). */
   FPLLL_DEBUG_CHECK(!(cols_locked && enable_int_gram));
   int i = n_known_rows;

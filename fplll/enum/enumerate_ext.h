@@ -36,8 +36,7 @@ FPLLL_BEGIN_NAMESPACE
  * You have to pass a pointer to an array 'enumf rdiag[mudim]'
  * and an array 'enumf pruning[mudim]'.
  * Note: for dual SVP you also get mu and rdiag as is,
- * so the external library must make the respective changes to Mu and Rdiag
- * itself.
+ * so the external library must make the respective changes to Mu and Rdiag itself.
  */
 typedef void(extenum_cb_set_config)(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag,
                                     enumf *pruning);
@@ -45,8 +44,7 @@ typedef void(extenum_cb_set_config)(enumf *mu, size_t mudim, bool mutranspose, e
 /**
  * Callback function given to external enumeration library.
  *
- * Pass a new solution and its length to Evaluator, it returns the new
- * enumeration bound.
+ * Pass a new solution and its length to Evaluator, it returns the new enumeration bound.
  */
 typedef enumf(extenum_cb_process_sol)(enumf dist, enumf *sol);
 
@@ -62,11 +60,9 @@ typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
  *
  * @param dim         enumeration dimension
  * @param cbfunc      given callback function to get mu, rdiag, pruning
- * @param cbsol       given callback function to pass solution and its length to
- * Evaluator,
+ * @param cbsol       given callback function to pass solution and its length to Evaluator,
  *                    it returns new enumeration bound
- * @param cbsubsol    given callback function to pass subsolution and its length
- * to Evaluator
+ * @param cbsubsol    given callback function to pass subsolution and its length to Evaluator
  * @param dual        do dual SVP enumeration
  * @param findsubsols find subsolutions and pass them to Evaluator
  * @return number of nodes visited.

@@ -1,7 +1,6 @@
 /* Copyright (C) 2008-2011 Xavier Pujol
    (C) 2015 Michael Walter.
-   (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions,
-   subsolutions)
+   (C) 2016 Marc Stevens. (generic improvements, auxiliary solutions, subsolutions)
    (C) 2016 Guillaume Bonnoron. (CVP improvements)
 
    This file is part of fplll. fplll is free software: you
@@ -44,8 +43,7 @@ void EnumerationDyn<ZT, FT>::reset(enumf cur_dist, int cur_depth)
     FT sol_dist2 = new_evaluator.begin()->first;
     sol_dist2.mul_2si(sol_dist2, -new_evaluator.normExp);
     enumf sol_dist = sol_dist2.get_d();
-    // FPLLL_TRACE("Recovering sub-solution at level: " << cur_depth <<"
-    // soldist: " << sol_dist);
+    // FPLLL_TRACE("Recovering sub-solution at level: " << cur_depth <<" soldist: " << sol_dist);
 
     if (sol_dist + cur_dist < partdistbounds[0])
     {
@@ -97,8 +95,7 @@ void EnumerationDyn<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long f
     fr      = _gso.get_r_exp(i + first, i + first, rexpo);
     normexp = max(normexp, rexpo + fr.exponent());
   }
-  // normalization is multiplication by 2^(-normexp). in case of dual, we are
-  // normalizing
+  // normalization is multiplication by 2^(-normexp). in case of dual, we are normalizing
   // the inverse of r, so we negate the normalizing exponent
   if (dual)
   {

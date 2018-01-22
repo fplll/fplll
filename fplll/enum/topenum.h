@@ -30,7 +30,6 @@ public:
              double max_volume = ENUM_MAX_VOLUME, int min_level = ENUM_MIN_LEVEL);
   bool enum_next(const FP_NR<mpfr_t> &max_sqr_length);
   inline const vector<enumxt> &get_sub_tree() { return sub_tree; }
-
 private:
   const Matrix<FP_NR<mpfr_t>> &mu;
   const Matrix<FP_NR<mpfr_t>> &r;
