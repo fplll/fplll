@@ -28,32 +28,11 @@ using namespace fplll;
 #define TESTDATADIR ".."
 #endif
 
-template <class ZT, class FT>
-bool have_equal_grammatrix(MatGSO<Z_NR<ZT>, FP_NR<FT>> M1, MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2)
-{
-  Matrix<Z_NR<ZT>> g1 = M1.get_g_matrix();
-  Matrix<Z_NR<ZT>> g2 = M2.get_g_matrix();
-
-  for (int i = 0; i < g1.get_rows(); i++)
-  {
-    for (int j = 0; j < g1.get_cols(); j++)
-    {
-      if (g1[i][j] != g2[i][j])
-      {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
 template <class ZT, class FT> int is_already_reduced(ZZ_mat<ZT> &A, Matrix<Z_NR<ZT>> &G)
 {
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
 
-  // MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 0);
-  // changed this to flag = 1
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 1);
   MatGSOGram<Z_NR<ZT>, FP_NR<FT>> M2(G, U, UT, 1);
 
@@ -67,11 +46,10 @@ template <class ZT, class FT> int is_already_reduced(ZZ_mat<ZT> &A, Matrix<Z_NR<
 }
 
 /**
-   @brief Test LLL reduction.
+   @brief Tests whether LLL applied on A is equivalent to LLLGram applied on G = A*A^T
 
-   @param A                test matrix
-
-   @return zero on success.
+   @param A basis matrix of a lattice
+   @return zero on success
 */
 
 template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
@@ -80,43 +58,61 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
 
+  // _______________________________________________
   // -----------------------------------------------
-  // Create the gram matrix G of the basis matrix A.
-  MatGSO<Z_NR<ZT>, FP_NR<FT>> Mbuf(A, U, UT, 1);
-  Mbuf.update_gso();
-  Matrix<Z_NR<ZT>> G = Mbuf.get_g_matrix();
-  // ------------------------------------------------
+  // Create the Gram matrix G of the basis A
 
+  ZZ_mat<ZT> G;
+  int r = A.r;
+  int c = A.c;
+  G.resize(r, r);
+  for (int i = 0; i < r; i++)
+  {
+    for (int j = 0; j < r; j++)
+    {
+      A[i].dot_product(G(i, j), A[j], c);
+    }
+  }
   // ------------------------------------------------
-  // Create a MatGSO-object (basis gso) for A
-  // and a MatGSOGram-object (gram gso) for G.
-  // changed flag to 1 here
+  // ************************************************
+
+  // _______________________________________________
+  // -----------------------------------------------
+  // Create a MatGSO-object M (basis gso) for A
+  // and a MatGSOGram-object Mgram (gram gso) for G.
+
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 1);
   M.update_gso();
   MatGSOGram<Z_NR<ZT>, FP_NR<FT>> Mgram(G, U, UT, 1);
   Mgram.update_gso();
-  // -------------------------------------------------
+  // ------------------------------------------------
+  // ************************************************
 
-  // --------------------------------------------------
+  // _________________________________________________
+  // -------------------------------------------------
   // Test whether A and G are not already LLL-reduced.
   if (is_already_reduced<ZT, FT>(A, G))
   {
     cerr << "The matrices are already LLL-reduced";
     return 1;
   }
-  // ---------------------------------------------------
+  // ------------------------------------------------
+  // ************************************************
 
-  // -----------------------------------------------------
+  // _________________________________________________
+  // -------------------------------------------------
   // Make two LLLObjects. One of the basis MatGSO-object M
   // one of the gram MatGSOGram-object Mgram.
   LLLReduction<Z_NR<ZT>, FP_NR<FT>> LLLObj(M, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
   LLLReduction<Z_NR<ZT>, FP_NR<FT>> LLLObjgram(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
 
-  // LLL reduce both objects.
+  // and LLL reduce both objects
   LLLObj.lll();
   LLLObjgram.lll();
-  // ---------------------------------------------------------
+  // ------------------------------------------------
+  // ************************************************
 
+  // _________________________________________________
   // -------------------------------------------------
   // Check whether M and Mgram are really reduced after LLL reduction
   int is_reduced  = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
@@ -134,29 +130,49 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
     }
     return 1;
   }
-  // ----------------------------------------------------------
+  // ------------------------------------------------
+  // ************************************************
 
-  // ----------------------------------------------------------
-  // Create the MatGSO object M2, which creates the Gram matrix
-  // of the LLL-reduced basis M.b of M.
-  MatGSO<Z_NR<ZT>, FP_NR<FT>> M2(M.b, U, UT, 1);
-  M2.update_gso();
-  // ----------------------------------------------------------
+  //
+  // After this reduction, A (the input matrix) and G (gram matrix)
+  // are LLL-reduced accordingly. Therefore we should check whether
+  // A *A^T = G
+  //
 
-  // ----------------------------------------------------------
-  // Test whether M2.g and Mgram.g are equal.
-  bool retvalue1 = have_equal_grammatrix(M2, Mgram);
-  // ----------------------------------------------------------
+  // _______________________________________________
+  // -----------------------------------------------
+  // Create the Gram matrix G_reduced of the basis A_reduced
 
-  if (retvalue1)
+  ZZ_mat<ZT> G_reduced;
+  G_reduced.resize(r, r);
+  for (int i = 0; i < r; i++)
   {
-    return 0;
+    for (int j = 0; j < r; j++)
+    {
+      (M.b)[i].dot_product(G_reduced(i, j), (M.b)[j], c);
+    }
   }
-  else
+  // ------------------------------------------------
+  // ************************************************
+
+  // _______________________________________________
+  // -----------------------------------------------
+  // Test whether G_reduced = G
+  for (int i = 0; i < r; i++)
   {
-    cerr << "Unequal gram matrix\n";
-    return 1;
+    for (int j = 0; j < i; j++)
+    {
+      if (G(i, j) != G_reduced(i, j))
+      {
+        cerr << "The gram-representation and the basis-representation of the same lattice have an "
+                "unequal gram matrix.\n";
+        return 1;
+      }
+    }
   }
+
+  // Return 0 on success.
+  return 0;
 }
 
 template <class ZT, class FT> int test_filename(const char *input_filename)
@@ -198,7 +214,6 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, double>(50, 20);
   status |= test_int_rel<mpz_t, double>(40, 10);
-  status |= test_int_rel<mpz_t, double>(200, 100);
 
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example2_in");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
@@ -208,7 +223,6 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, mpfr_t>(50, 20);
   status |= test_int_rel<mpz_t, mpfr_t>(40, 10);
-  status |= test_int_rel<mpz_t, mpfr_t>(200, 100);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example2_in");
@@ -223,8 +237,7 @@ int main(int /*argc*/, char ** /*argv*/)
       test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, long double>(50, 20);
   status |= test_int_rel<mpz_t, long double>(40, 10);
-// status |= test_int_rel<mpz_t, long double>(200, 100);
-// *
+
 #endif
 #ifdef FPLLL_WITH_QD
   status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example2_in");
@@ -235,7 +248,6 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, dd_real>(50, 20);
   status |= test_int_rel<mpz_t, dd_real>(40, 10);
-  // status |= test_int_rel<mpz_t, dd_real>(200, 100);
 
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example2_in");
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
@@ -245,7 +257,7 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, qd_real>(50, 20);
   status |= test_int_rel<mpz_t, qd_real>(40, 10);
-// status |= test_int_rel<mpz_t, qd_real>(200, 100);
+
 #endif
 #ifdef FPLLL_WITH_DPE
   status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example2_in");
@@ -256,8 +268,7 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, dpe_t>(50, 20);
   status |= test_int_rel<mpz_t, dpe_t>(40, 10);
-// status |= test_int_rel<mpz_t, dpe_t>(200, 100);
-//*
+
 #endif
 
   if (status == 0)
