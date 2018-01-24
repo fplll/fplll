@@ -275,18 +275,12 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_simdioph(int bits, int bits2)
 
 template <class ZT> inline void ZZ_mat<ZT>::gen_uniform(int bits)
 {
-  if (c != r)
-  {
-    FPLLL_ABORT("gen_uniform called on an ill-formed matrix");
-    return;
-  }
-  for (int i = 0; i < r; i++)
-    for (int j = 0; j < c; j++)
-      matrix[i][j].randb(bits);
-}
-
-template <class ZT> inline void ZZ_mat<ZT>::gen_uniform2(int bits)
-{
+  /* to recover if the old code actually needed this */
+  // if (c != r)
+  // {
+  //   FPLLL_ABORT("gen_uniform called on an ill-formed matrix");
+  //   return;
+  // }
   for (int i = 0; i < r; i++)
     for (int j = 0; j < c; j++)
       matrix[i][j].randb(bits);

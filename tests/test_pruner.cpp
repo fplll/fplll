@@ -286,8 +286,7 @@ template <class FT> int test_unpruned()
   {
     v3[i] *= 20;
   }
-  // 1 basis out of 3 is so large that it essentially induces no cost: new cost
-  // should be 2/3 of
+  // 1 basis out of 3 is so large that it essentially induces no cost: new cost should be 2/3 of
   // the previous
 
   gso_sq_norms_vec.emplace_back(v3);

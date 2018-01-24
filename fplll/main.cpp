@@ -1,7 +1,7 @@
 /* Copyright (C) 2005-2008 Damien Stehle.
    Copyright (C) 2007 David Cade.
    Copyright (C) 2008-2011 Xavier Pujol.
-   Copyright (C) 2018 Arnaud Sipasseuth (just the hnf part)
+   Copyright (C) 2018 Arnaud Sipasseuth (HNF)
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -584,35 +584,29 @@ void read_options(int argc, char **argv, Options &o)
       cout << "Usage: " << argv[0] << " [options] [file]\n"
 
            << "List of options:\n"
-           << "  -a [lll|bkz|hkz|svp|sdb|sld|cvp]\n"
+           << "  -a [lll|bkz|hkz|hnf|svp|sdb|sld|cvp]\n"
            << "       lll = LLL-reduce the input matrix (default)\n"
            << "       bkz = BKZ-reduce the input matrix\n"
            << "       hkz = HKZ-reduce the input matrix\n"
-           << "       hnf = compute the HNF of the input matrix (in "
-              "development)\n"
+           << "       hnf = compute the HNF of the input matrix (in development)\n"
            << "       svp = compute a shortest non-zero vector of the lattice\n"
-           << "       sdb = reduce the input matrix using the self dual BKZ "
-              "variant\n"
+           << "       sdb = reduce the input matrix using the self dual BKZ variant\n"
            << "       sld = slide reduce the input matrix\n"
-           << "       cvp = compute the vector in the input lattice closest to "
-              "an input vector\n"
+           << "       cvp = compute the vector in the input lattice closest to an input vector\n"
            << "  -v\n"
            << "       Enable verbose mode\n"
            << "  -nolll\n"
-           << "       Does not apply initial LLL-reduction (for bkz, hkz and "
-              "svp)\n"
+           << "       Does not apply initial LLL-reduction (for bkz, hkz and svp)\n"
            << "  -d <delta> (default=0.99; alias to -delta <delta>)\n"
            << "  -e <eta> (default=0.51; alias to -eta <eta>)\n"
            << "  -l <lovasz>\n"
-           << "       If <lovasz> != 0, Lovasz's condition, otherwise, "
-              "Siegel's condition\n"
+           << "       If <lovasz> != 0, Lovasz's condition, otherwise, Siegel's condition\n"
            << "  -f [mpfr|dd|qd|dpe|double|longdouble]\n"
            << "       Floating-point type in LLL\n"
            << "  -p <precision>\n"
            << "       Floating-point precision (only with -f mpfr)\n"
            << "  -z [mpz|int|long|double]\n"
-           << "       Integer type in LLL (default: mpz; long is an alias to "
-              "int)\n"
+           << "       Integer type in LLL (default: mpz; long is an alias to int)\n"
            << "  -m [wrapper|fast|heuristic|proved]\n"
            << "       LLL version (default: wrapper)\n"
            << "  -y\n"
@@ -625,13 +619,11 @@ void read_options(int argc, char **argv, Options &o)
            << "  -bkzmaxtime <time>\n"
            << "        Stops after <time> seconds\n"
            << "  -bkzautoabort\n"
-           << "        Stops when the average slope does not decrease fast "
-              "enough\n"
+           << "        Stops when the average slope does not decrease fast enough\n"
            << "  -s <filename.json>\n"
            << "        Load BKZ strategies from filename\n"
            << "  -bkzghbound <factor>\n"
-           << "        Multiplies the Gaussian heuristic by <factor> (of float "
-              "type)\n"
+           << "        Multiplies the Gaussian heuristic by <factor> (of float type)\n"
            << "  -bkzboundedlll\n"
            << "        Restricts the LLL call\n"
            << "  -bkzdumpgso <file_name>\n"
@@ -639,8 +631,7 @@ void read_options(int argc, char **argv, Options &o)
            << "  -of [b|c|s|t|u|v|bk|uk|vk]\n"
            << "        Output formats.\n"
 
-           << "Please refer to https://github.com/fplll/fplll/README.md for "
-              "more information.\n";
+           << "Please refer to https://github.com/fplll/fplll/README.md for more information.\n";
       exit(0);
     }
     else if (strcmp(argv[ac], "--version") == 0)
@@ -648,12 +639,8 @@ void read_options(int argc, char **argv, Options &o)
       cout << "fplll " << VERSION << endl
            << "Copyright 2005-2012 Damien Stehle, David Cade, Xavier Pujol." << endl
            << "fplll is free software. You can redistribute it and/or modify" << endl
-           << "it under the terms of the GNU Lesser General Public License as "
-              "published by"
-           << endl
-           << "the Free Software Foundation, either version 2.1 of the "
-              "License, or"
-           << endl
+           << "it under the terms of the GNU Lesser General Public License as published by" << endl
+           << "the Free Software Foundation, either version 2.1 of the License, or" << endl
            << "(at your option) any later version." << endl;
       exit(0);
     }

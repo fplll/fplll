@@ -43,7 +43,7 @@ int is_hnf_reduced(const ZZ_mat<mpz_t> &B);
  *    vector for the membership test
  */
 
-int in_hnf(const ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &v);
+int in_lattice_given_hnf(const ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &v);
 
 /**
  * @brief Tests a couple matrix matrix
@@ -55,7 +55,7 @@ int in_hnf(const ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &v);
  *    basis of the lattice to be tested
  */
 
-int in_hnf(const ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A);
+int in_lattice_given_hnf(const ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A);
 
 /**
  * @brief Performs hnf reduction using the multiple pgcd algorithm
@@ -65,6 +65,15 @@ int in_hnf(const ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A);
  */
 
 int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B);
+
+/**
+ * @brief Performs hnf reduction using the classical absolute value algorithm
+ *
+ * @param B
+ *    basis of the lattice to be reduced
+ */
+
+int hnf_classical_reduction(ZZ_mat<mpz_t> &B);
 
 /**
  * @brief Performs hnf reduction using the selected algorithm

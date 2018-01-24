@@ -269,8 +269,7 @@ public:
   /** Generate a random matrix of uniform distribution (non-square flexible). */
   void gen_uniform2(int bits);
 
-  /** Construct a matrix `[[I,H],[0,qI]]` where `H` is constructed from rotations of a vector
-    ``h``.
+  /** Construct a matrix `[[I,H],[0,qI]]` where `H` is constructed from rotations of a vector ``h``.
 
      @note The constructed matrix will not come with a guarantee of unusually short vectors.
   **/

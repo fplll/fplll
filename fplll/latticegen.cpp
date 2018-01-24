@@ -26,8 +26,7 @@ void print_help()
        << "Options : " << endl
        << " r <d> <b> : gen_intrel" << endl
        << " s <d> <b> <b2> : gen_simdioph" << endl
-       << " u <d> <b> : gen_uniform" << endl
-       << " U <d> <d2> <b> : gen_uniform2" << endl
+       << " u <d> <b> (or u <d> <d2> <b>) : gen_uniform" << endl
        << " n <d> <b> <c> : gen_ntrulike" << endl
        << " N <d> <b> <c> : gen_ntrulike2" << endl
        << " q <d> <k> <b> <c>: gen_qary" << endl
@@ -42,9 +41,7 @@ void print_version()
   cout << "latticegen (fplll) " << VERSION << endl
        << "Copyright 2005-2011 Damien Stehle, David Cade, Xavier Pujol." << endl
        << "fplll is free software. You can redistribute it and/or modify" << endl
-       << "it under the terms of the GNU Lesser General Public License as "
-          "published by"
-       << endl
+       << "it under the terms of the GNU Lesser General Public License as published by" << endl
        << "the Free Software Foundation, either version 2.1 of the License, or" << endl
        << "(at your option) any later version." << endl;
 }
@@ -119,20 +116,20 @@ int main(int argc, char *argv[])
   case 'u':
   {
     if (argc - iArg < 1)
-      fatal_error("method 'u' requires 2 arguments");
-    int b = atoi(argv[iArg]);
-    m.resize(d, d);
-    m.gen_uniform(b);
-    break;
-  }
-  case 'U':
-  {
-    if (argc - iArg < 2)
-      fatal_error("method 'U' requires 3 arguments");
-    int d2 = atoi(argv[iArg]);
-    int b  = atoi(argv[iArg + 1]);
+      fatal_error("method 'u' requires at least 2 arguments");
+    int b, d2;
+    if (argc - iArg == 1)
+    {
+      b  = atoi(argv[iArg]);
+      d2 = d;
+    }
+    else
+    {
+      d2 = atoi(argv[iArg]);
+      b  = atoi(argv[iArg + 1]);
+    }
     m.resize(d, d2);
-    m.gen_uniform2(b);
+    m.gen_uniform(b);
     break;
   }
   case 'n':

@@ -171,8 +171,7 @@ int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_
 }
 
 /**
-   @brief Test BKZ_DUMP_GSO for a matrix d × (d+1) integer relations matrix with
-   bit size b (copied
+   @brief Test BKZ_DUMP_GSO for a matrix d × (d+1) integer relations matrix with bit size b (copied
    from test_int_rel)
 
    @param d                dimension

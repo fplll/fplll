@@ -168,8 +168,8 @@ const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
                                                     "error in SVP solver",
                                                     "error in BKZ",
                                                     "time limit exceeded in BKZ",
-                                                    "error in HNF",
-                                                    "loops limit exceeded in BKZ"};
+                                                    "loops limit exceeded in BKZ",
+                                                    "error in HNF"};
 
 enum LLLMethod
 {

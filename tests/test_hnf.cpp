@@ -69,7 +69,7 @@ int test_filename(const char *input_filename, HNFMethod method)
   }
 
   // test if reduction was correct : zero on success
-  status = in_hnf(A, tmp);
+  status = in_lattice_given_hnf(A, tmp);
 
   return status;
 }
@@ -103,7 +103,7 @@ int test_uniform(int d, int b, HNFMethod method)
   }
 
   // test if reduction was correct : zero on success
-  status = in_hnf(A, tmp);
+  status = in_lattice_given_hnf(A, tmp);
 
   return status;
 }
