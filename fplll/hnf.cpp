@@ -62,36 +62,35 @@
     }                                                                                              \
   }
 
+/* clang-format off */
 // HNF checking macro to check if B is a HNF, and add an instruction if the pivot is correct
 #define _HNF_CHECK_(B, INSTRUCTION_AT_PIVOT)                                                       \
   {                                                                                                \
-    _DIAGONAL_INDEX_LOOP_(B, /* checks if everything above diagonal is zero */                     \
-                          for (i = k - 1; i >= 0; i--) {                                           \
-                            if (B[i][j] != 0)                                                      \
-                            {                                                                      \
-                              return 1;                                                            \
-                            }                                                                      \
-                          }, /* neg : diagonal shouldn't be negative */                            \
-                          {                                                                        \
-                            return 1;                                                              \
-                          }, /* zero : pivot row position doesn't change, increment to compensate  \
-                                */ /* lower the limit as well, we skipped one column without       \
-                                      increasing row */                                            \
-                          {                                                                        \
-                            k++;                                                                   \
-                            if (l > 0)                                                             \
-                            {                                                                      \
-                              l--;                                                                 \
-                            }                                                                      \
-                          }, /* pos : checks if everything below is also positive and lower than   \
-                                the pivot */ /* leave a potential extra instruction */             \
-                          for (i = k + 1; i < r; i++) {                                            \
-                            if ((B[i][j] > B[k][j]) || (B[i][j] < 0))                              \
-                            {                                                                      \
-                              return 1;                                                            \
-                            }                                                                      \
-                          } {INSTRUCTION_AT_PIVOT})                                                \
+    _DIAGONAL_INDEX_LOOP_(B                                                                        \
+      ,                                                                                            \
+      /* checks if everything above diagonal is zero */                                            \
+      for (i = k - 1; i >= 0; i--) {                                                               \
+        if (B[i][j] != 0) { return 1;}                                                             \
+      }                                                                                            \
+      ,                                                                                            \
+      /* neg : diagonal shouldn't be negative */                                                   \
+      { return 1; }                                                                                \
+      ,                                                                                            \
+      /* zero : pivot row position doesn't change, increment to compensate */                      \
+      /* lower the limit as well, we skipped one column without increasing row */                  \
+      { k++; if (l > 0) { l--; } }                                                                 \
+      ,                                                                                            \
+      /* pos : checks if everything below is also positive and lower than the pivot */             \
+      /* leave a potential extra instruction */                                                    \
+      for (i = k + 1; i < r; i++) {                                                                \
+        if ((B[i][j] > B[k][j]) || (B[i][j] < 0)) { return 1; }                                    \
+      }                                                                                            \
+      /* leave a potential extra instruction */                                                    \
+      {INSTRUCTION_AT_PIVOT}                                                                       \
+    )                                                                                              \
   }
+
+/* clang-format on */
 
 // HNF computation macro, reduce lower coefficients of column j by the pivot in row k
 #define _REDUCE_LOWER_(B, i, j2)                                                                   \
@@ -111,10 +110,9 @@ FPLLL_BEGIN_NAMESPACE
 int is_hnf_reduced(ZZ_mat<mpz_t> &B)
 {
   /* matrix bounds */
-  int r = B.get_rows(),
-      c = B.get_cols();      /* matrix indexes (k = pivot)*/
-  int i, j, k;               /* the limit "l" depends of matrix dimensions */
-  int l = (c - r) * (c > r); /* main loop, decreases from last column to the limit */
+  int r = B.get_rows(), c = B.get_cols(); /* matrix indexes (k = pivot)*/
+  int i, j, k;                            /* the limit "l" depends of matrix dimensions */
+  int l = (c - r) * (c > r);              /* main loop, decreases from last column to the limit */
   _HNF_CHECK_(B, {});
   return 0;
 }
@@ -122,10 +120,9 @@ int is_hnf_reduced(ZZ_mat<mpz_t> &B)
 int in_lattice_given_hnf(ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &w)
 {
   /* matrix bounds */
-  int r = B.get_rows(),
-      c = B.get_cols();      /* matrix indexes (k = pivot)*/
-  int i, j, j2, k;           /* the limit "l" depends of matrix dimensions */
-  int l = (c - r) * (c > r); /* main loop, decreases from last column to the limit */
+  int r = B.get_rows(), c = B.get_cols(); /* matrix indexes (k = pivot)*/
+  int i, j, j2, k;                        /* the limit "l" depends of matrix dimensions */
+  int l = (c - r) * (c > r);              /* main loop, decreases from last column to the limit */
 
   vector<Z_NR<mpz_t>> v = w;
   Z_NR<mpz_t> q;
@@ -136,14 +133,16 @@ int in_lattice_given_hnf(ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &w)
     cerr << "in_hnf error : matrix-vector sizes do not match\n";
     return -1;
   }
-
-  _HNF_CHECK_(B, { /* reduces the vector by the row pivot vector for membership test */
-                   q.fdiv_q(v[j], B[k][j]);
-                   for (j2 = j; j2 >= 0; j2--)
-                   {
-                     v[j2].submul(q, B[k][j2]);
-                   }
-  });
+  /* clang-format off */
+  _HNF_CHECK_(B,
+    /* reduces the vector by the row pivot vector for membership test */
+    q.fdiv_q(v[j], B[k][j]);
+    for (j2 = j; j2 >= 0; j2--)
+      {
+        v[j2].submul(q, B[k][j2]);
+      }
+  );
+  /* clang-format on */
 
   // membership test : the vector after reduction should be a zero one.
   for (j = 0; j < c; j++)
@@ -164,10 +163,9 @@ int in_lattice_given_hnf(ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A)
   Z_NR<mpz_t> q;
 
   /* matrix bounds */
-  int r = B.get_rows(),
-      c = B.get_cols();      /* matrix indexes (k = pivot)*/
-  int i, j, j2, k;           /* the limit "l" depends of matrix dimensions */
-  int l = (c - r) * (c > r); /* main loop, decreases from last column to the limit */
+  int r = B.get_rows(), c = B.get_cols(); /* matrix indexes (k = pivot)*/
+  int i, j, j2, k;                        /* the limit "l" depends of matrix dimensions */
+  int l = (c - r) * (c > r);              /* main loop, decreases from last column to the limit */
 
   /* test if the matrix size is correct */
   if ((A.get_cols() != B.get_cols()) || (A.get_rows() != B.get_rows()))
@@ -176,18 +174,18 @@ int in_lattice_given_hnf(ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A)
     return -1;
   }
 
-  _HNF_CHECK_(B, { /* reduces the matrix tmp by the row pivot vector of A for membership test */
-                   for (i = 0; i < r; i++)
-                   {
-                     q.fdiv_q(tmp[i][j], B[k][j]);
-                     for (j2 = j; j2 >= 0; j2--)
-                     {
-                       tmp[i][j2].submul(q, B[k][j2]);
-                     }
-                   }
-                   cout << "HNF reduction for pivot " << k << endl << B << endl;
-                   cout << "tmp reduction for pivot " << k << endl << tmp << endl;
-  });
+  _HNF_CHECK_(B,
+              /* reduces the matrix tmp by the row pivot vector of A for membership test */
+              for (i = 0; i < r; i++) {
+                q.fdiv_q(tmp[i][j], B[k][j]);
+                for (j2 = j; j2 >= 0; j2--)
+                {
+                  tmp[i][j2].submul(q, B[k][j2]);
+                }
+              }
+              // cout << "HNF reduction for pivot " << k << endl << B << endl;
+              // cout << "tmp reduction for pivot " << k << endl << tmp << endl;
+              );
 
   // membership test : the matrix after reduction should be a zero one.
   for (i = 0; i < r; i++)
@@ -219,39 +217,41 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B)
   // U = B;
   // U.gen_identity(B.get_rows());
 
-  _DIAGONAL_INDEX_LOOP_(
-      B, /* pre-check : iterates above the pivot to construct it */
-      for (i = k - 1; i >= 0;
-           i--) { /* skip zeroes (if any) */
-                  if (B[i + 1][j] == 0)
-                  {
-                    continue;
-                  } /* reduce row i + 1 with row i */
-                  d.xgcd(u, v, B[i][j], B[i + 1][j]);
-                  r2d.divexact(B[i + 1][j], d);
-                  r1d.divexact(
-                      B[i][j],
-                      d); /* only compute relevant values (rest should be guaranteed zero) */
-                  for (j2 = j; j2 >= 0; j2--)
-                  { /* precompute values */
-                    b.mul(u, B[i][j2]);
-                    b.addmul(v, B[i + 1][j2]); /* new vector i-1 value */
-                    B[i + 1][j2].mul(r1d, B[i + 1][j2]);
-                    B[i + 1][j2].submul(r2d, B[i][j2]); /* new vector i value */
-                    B[i][j2] = b;
-                  }
-      } /* swap first row with the pivot row */
-      B.swap_rows(0, k);
-      , /* neg : change sign of the row vector if the diagonal entry is negative */
-      for (j2 = j; j2 >= 0; j2--) { B[k][j2].neg(B[k][j2]); }, /* zero : modify pivot position */
-      {
-        k++;
-        if (l > 0)
-        {
-          l--;
-        }
-      }, /* pos : reduce lower entries of column j with row k */
-      _REDUCE_LOWER_(B, i, j2))
+  /* clang-format off */
+  _DIAGONAL_INDEX_LOOP_(B,
+    /* pre-check : iterates above the pivot to construct it */
+    for (i = k - 1; i >= 0; i--) {
+      /* skip zeroes (if any) */
+      if (B[i + 1][j] == 0) { continue; }
+      /* reduce row i + 1 with row i */
+      d.xgcd(u, v, B[i][j], B[i + 1][j]);
+      r2d.divexact(B[i + 1][j], d);
+      r1d.divexact(B[i][j], d);
+      /* only compute relevant values (rest should be guaranteed zero) */
+      for (j2 = j; j2 >= 0; j2--) {
+        /* precompute values */
+        b.mul(u, B[i][j2]);
+        b.addmul(v, B[i + 1][j2]);
+        /* new vector i-1 value */
+        B[i + 1][j2].mul(r1d, B[i + 1][j2]);
+        B[i + 1][j2].submul(r2d, B[i][j2]);
+        /* new vector i value */
+        B[i][j2] = b;
+      }
+    }
+    /* swap first row with the pivot row */
+    B.swap_rows(0, k);
+    ,
+    /* neg : change sign of the row vector if the diagonal entry is negative */
+    for (j2 = j; j2 >= 0; j2--) { B[k][j2].neg(B[k][j2]); }
+    ,
+    /* zero : modify pivot position */
+    { k++; if (l > 0) { l--; } }
+    ,
+    /* pos : reduce lower entries of column j with row k */
+    _REDUCE_LOWER_(B, i, j2)
+  )
+  /* clang-format on */
 
   // return in_lattice_given_hnf(B,U);
   return 0;
@@ -267,7 +267,7 @@ int hnf_classical_reduction(ZZ_mat<mpz_t> &B)
   int l = (c - r) * (c > r);
 
   /* ZT integers for operations */
-  Z_NR<mpz_t> min, q;
+  Z_NR<mpz_t> q;
   /* value to check whether or not a column is already reduced */
   int reduced;
 
@@ -276,44 +276,55 @@ int hnf_classical_reduction(ZZ_mat<mpz_t> &B)
   // U = B;
   // U.gen_identity(B.get_rows());
 
-  _DIAGONAL_INDEX_LOOP_(
-      B, /* pre-check : iterates above the pivot to construct it */ /* check if the column j is
-                                                                       already reduced above*/
-      for (i = k - 1, reduced = 1; (i >= 0) && reduced; i--) {
-        reduced = (B[i][j] == 0);
-      } if (!reduced) { /* have to find the row with the minimum non-zero absolute value*/
-                        for (i_min = k, i = k - 1; i >= 0; i--)
-                        {
-                          if (mpz_cmpabs(B[i_min][j].get_data(), B[i][j].get_data()) > 0 &&
-                              B[i][j] != 0)
-                          {
-                            i_min = i;
-                          }
-                        } /* use the minimum row as pivot, make it positive and reduce the rest */
-                        B.swap_rows(i_min, k);
-                        for (i = k - 1, reduced = 1; (i >= 0); i--)
-                        {
-                          q.fdiv_q(B[i][j], B[k][j]);
-                          for (j2 = j; j2 >= 0; j2--)
-                          {
-                            B[i][j2].submul(q, B[k][j2]);
-                          }
-                        } /* have to check again if we're finished before going on with the checks*/
-                        j++;
-                        k++;
-                        continue;
-      }, /* neg : change sign of the row vector if the diagonal entry is negative, then reduce */
-      for (j2 = j; j2 >= 0; j2--) {
-        B[k][j2].neg(B[k][j2]);
-      } _REDUCE_LOWER_(B, i, j2), /* zero : modify pivot position */
+  /* clang-format off */
+  _DIAGONAL_INDEX_LOOP_(B,
+    /* pre-check : iterates above the pivot to construct it */
+    /* check if the column j is already reduced above*/
+    for (i = k , reduced = 1; (i > 0) && reduced; )
       {
-        k++;
-        if (l > 0)
+        i--;
+        reduced = (B[i][j] == 0);
+      }
+    if (!reduced) {
+      /* the first non-zero leading coefficient is either at k or i */
+      if ( B[k][j] != 0 && mpz_cmpabs(B[i][j].get_data(), B[k][j].get_data()) > 0)
         {
-          l--;
+          i_min = k;
+        } else {
+          i_min = i;
         }
-      }, /* pos : reduce lower entries of column j with row k */
-      _REDUCE_LOWER_(B, i, j2))
+      /* have to find the row with the minimum non-zero absolute value */
+      for (i = i - 1 ; i >= 0; i--) {
+        if (B[i][j] != 0 && mpz_cmpabs(B[i_min][j].get_data(), B[i][j].get_data()) > 0)
+          { i_min = i; }
+      }
+      /* use the minimum row as pivot, reduce the rest above */
+      B.swap_rows(i_min, k);
+      for (i = k - 1, reduced = 1; (i >= 0); i--)
+      {
+        q.fdiv_q(B[i][j], B[k][j]);
+        for (j2 = j; j2 >= 0; j2--)
+        {
+          B[i][j2].submul(q, B[k][j2]);
+        }
+      }
+      /* have to check again if we're finished before going on with the checks*/
+      j++; k++; continue;
+    }
+    ,
+    /* neg : change sign of the row vector if the diagonal entry is negative, then reduce */
+    for (j2 = j; j2 >= 0; j2--) {
+      B[k][j2].neg(B[k][j2]);
+    }
+    _REDUCE_LOWER_(B, i, j2)
+    ,
+    /* zero : modify pivot position */
+    { k++; if (l > 0) { l--; } }
+    ,
+    /* pos : reduce lower entries of column j with row k */
+    _REDUCE_LOWER_(B, i, j2)
+  )
+  /* clang-format on */
 
   // return in_lattice_given_hnf(B,U);
   return 0;
@@ -342,6 +353,7 @@ int hnf_autoselect(ZZ_mat<mpz_t> &B)
   // rest in development
   // cerr << "warning : xgcd is not suitable for high determinant or big
   // matrices\n";
+  // return hnf(B, HM_XGCD);
   return hnf(B, HM_CLASSIC);
 }
 
