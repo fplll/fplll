@@ -183,12 +183,14 @@ const char *const LLL_METHOD_STR[6] = {"wrapper", "proved", "heuristic", "fast"}
 
 enum HNFMethod
 {
-  HM_CLASSIC     = 0,
-  HM_XGCD        = 1,
-  HM_PERNETSTEIN = 2
+  HM_AUTO        = 0,
+  HM_CLASSIC     = 1,
+  HM_XGCD        = 2,
+  HM_MODULO      = 3,
+  HM_PERNETSTEIN = 4
 };
 
-const char *const HNF_METHOD_STR[6] = {"classic", "xgcd", "pernet-stein"};
+const char *const HNF_METHOD_STR[6] = {"autoselect", "classic", "xgcd", "modular", "pernet-stein"};
 
 enum IntType
 {

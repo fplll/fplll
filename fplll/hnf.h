@@ -76,6 +76,18 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B);
 int hnf_classical_reduction(ZZ_mat<mpz_t> &B);
 
 /**
+ * @brief Performs hnf reduction using the modulo determinant algorithm
+ *    works only if the biggest square bottom-right matrix has a non-zero determinant
+ *
+ * @param B
+ *    basis of the lattice to be reduced
+ * @param D
+ *    multiple of the determinant of the biggest square bottom-right matrix
+ */
+
+int hnf_modular_reduction(ZZ_mat<mpz_t> &B, const Z_NR<mpz_t> D);
+
+/**
  * @brief Performs hnf reduction using the selected algorithm
  *
  * @param B

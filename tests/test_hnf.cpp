@@ -112,17 +112,16 @@ int main(int /*argc*/, char ** /*argv*/)
 {
 
   int status = 0;
-  // status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in",
-  // HM_CLASSIC);
+  status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in", HM_CLASSIC);
   status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in", HM_XGCD);
   // status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in",
   // HM_PERNETSTEIN);
 
-  // status |= test_uniform(15, 10, HM_CLASSIC);
+  status |= test_uniform(15, 10, HM_CLASSIC);
   status |= test_uniform(15, 10, HM_XGCD);
   // status |= test_uniform(15, 10, HM_PERNETSTEIN);
 
-  // status |= test_uniform(20, 5, HM_CLASSIC);
+  status |= test_uniform(20, 5, HM_CLASSIC);
   status |= test_uniform(20, 5, HM_XGCD);
   // status |= test_uniform(20, 5, HM_PERNETSTEIN);
 

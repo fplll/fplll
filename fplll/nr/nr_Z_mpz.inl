@@ -312,6 +312,16 @@ template<>
 inline void Z_NR<mpz_t>::fdiv_q(const Z_NR<mpz_t>& a, const Z_NR<mpz_t>& b) {
   mpz_fdiv_q(data, a.data, b.data);
 }
+/* same with 2^b being the divisor */
+template<>
+inline void Z_NR<mpz_t>::fdiv_q_2exp(const Z_NR<mpz_t>& a, unsigned long b) {
+  mpz_fdiv_q_2exp(data, a.data, (mp_bitcnt_t)b);
+}
+/* mod as gmp does */
+template<>
+inline void Z_NR<mpz_t>::mod(const Z_NR<mpz_t>& a, const Z_NR<mpz_t>& b) {
+  mpz_mod(data, a.data, b.data);
+}
 
 /* operators Z_NR<mpz_t> */
 template<>

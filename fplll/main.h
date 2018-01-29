@@ -46,10 +46,10 @@ enum Action
 struct Options
 {
   Options()
-      : action(ACTION_LLL), method(LM_WRAPPER), int_type(ZT_MPZ), float_type(FT_DEFAULT),
-        delta(LLL_DEF_DELTA), eta(LLL_DEF_ETA), precision(0), early_red(false), siegel(false),
-        no_lll(false), block_size(0), bkz_gh_factor(1.1), verbose(false), input_file(NULL),
-        output_format(NULL)
+      : action(ACTION_LLL), method(LM_WRAPPER), hnf_method(HM_AUTO), int_type(ZT_MPZ),
+        float_type(FT_DEFAULT), delta(LLL_DEF_DELTA), eta(LLL_DEF_ETA), precision(0),
+        early_red(false), siegel(false), no_lll(false), block_size(0), bkz_gh_factor(1.1),
+        verbose(false), input_file(NULL), output_format(NULL)
   {
     bkz_flags     = 0;
     bkz_max_loops = 0;
@@ -57,6 +57,7 @@ struct Options
   }
   Action action;
   LLLMethod method;
+  HNFMethod hnf_method;
   IntType int_type;
   FloatType float_type;
   double delta;
@@ -73,6 +74,8 @@ struct Options
   string bkz_dump_gso_filename;
   double bkz_gh_factor;
   string bkz_strategy_file;
+
+  string integer_string;
 
   bool verbose;
   const char *input_file;

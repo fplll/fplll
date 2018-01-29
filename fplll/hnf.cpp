@@ -174,18 +174,21 @@ int in_lattice_given_hnf(ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A)
     return -1;
   }
 
+  /* clang-format off */
   _HNF_CHECK_(B,
-              /* reduces the matrix tmp by the row pivot vector of A for membership test */
-              for (i = 0; i < r; i++) {
-                q.fdiv_q(tmp[i][j], B[k][j]);
-                for (j2 = j; j2 >= 0; j2--)
-                {
-                  tmp[i][j2].submul(q, B[k][j2]);
-                }
-              }
-              // cout << "HNF reduction for pivot " << k << endl << B << endl;
-              // cout << "tmp reduction for pivot " << k << endl << tmp << endl;
-              );
+    /* reduces the matrix tmp by the row pivot vector of A for membership test */
+    for (i = 0; i < r; i++)
+      {
+       q.fdiv_q(tmp[i][j], B[k][j]);
+       for (j2 = j; j2 >= 0; j2--)
+         {
+           tmp[i][j2].submul(q, B[k][j2]);
+         }
+      }
+      // cout << "HNF reduction for pivot " << k << endl << B << endl;
+      // cout << "tmp reduction for pivot " << k << endl << tmp << endl;
+  );
+  /* clang-format on */
 
   // membership test : the matrix after reduction should be a zero one.
   for (i = 0; i < r; i++)
@@ -330,10 +333,110 @@ int hnf_classical_reduction(ZZ_mat<mpz_t> &B)
   return 0;
 }
 
+int hnf_modular_reduction(ZZ_mat<mpz_t> &B, const Z_NR<mpz_t> D)
+{
+  /* matrix indexes (k = pivot)*/
+  int i, j, k;
+  /* matrix bounds */
+  int r = B.get_rows(), c = B.get_cols();
+  if (r < c)
+  {
+    cerr << "modular method requires at least as many rows as columns" << '\n';
+    return -1;
+  }
+
+  /* ZT integers for operations */
+  Z_NR<mpz_t> R = D, R2, d, u, v, r1d, r2d, b, q;
+
+  /* initializes the transformation matrix */
+  // ZZ_mat<mpz_t> U;
+  // U = B;
+  // U.gen_identity(B.get_rows());
+
+  for (k = c - 1; k >= 0; k--)
+  {
+    /* Set a bound to not cross (about half the determinant, to minimize entry sizes) */
+    R2.fdiv_q_2exp(R, 1);
+
+    /* if the result is zero on the diagonal, the det remainder value is reached */
+    if (B[k][k] == 0)
+    {
+      B[k][k] = R;
+    }
+    /* iterates above the pivot to construct it */
+    for (i = k - 1; i >= 0; i--)
+    {
+      /* skip zeroes (if any) */
+      if (B[i][k] == 0)
+      {
+        continue;
+      }
+      /* reduce row i with pivot k mod R */
+      d.xgcd(u, v, B[k][k], B[i][k]);
+      r1d.divexact(B[k][k], d);
+      r2d.divexact(B[i][k], d);
+      /* only compute relevant values (rest should be guaranteed zero) */
+      for (j = k; j >= 0; j--)
+      {
+        /* precompute values */
+        b.mul(u, B[k][j]);
+        b.addmul(v, B[i][j]);
+        /* new vector i value */
+        B[i][j].mul(r1d, B[i][j]);
+        B[i][j].submul(r2d, B[k][j]);
+        B[i][j].mod(B[i][j], R);
+        if (B[i][j] > R2)
+        {
+          B[i][j].sub(B[i][j], R);
+        }
+        /* new pivot vector value */
+        B[k][j].mod(b, R);
+        if (B[k][j] > R2)
+        {
+          B[k][j].sub(B[k][j], R);
+        }
+      }
+    }
+
+    /* refresh pivot values */
+    d.xgcd(u, v, B[k][k], R);
+    for (j = k; j >= 0; j--)
+    {
+      B[k][j].mul(u, B[k][j]);
+      B[k][j].mod(B[k][j], R);
+    }
+
+    /*if the result is zero on the diagonal, it means the determinant remainder value is reached */
+    if (B[k][k] == 0)
+    {
+      B[k][k] = R;
+    }
+
+    /* reduce higher entries of column k with pivot k */
+    for (i = k + 1; i < r; i++)
+    {
+      q.fdiv_q(B[i][k], B[k][k]);
+      for (j = k; j >= 0; j--)
+      {
+        B[i][j].submul(q, B[k][j]);
+      }
+    }
+
+    /* Sets the new determinant remainder */
+    R.divexact(R, d);
+  }
+
+  // return in_lattice_given_hnf(B,U);
+  return 0;
+}
+
 int hnf(ZZ_mat<mpz_t> &B, HNFMethod method)
 {
-  // rest in development
-  if (method == HM_XGCD)
+  if (method == HM_AUTO)
+  {
+    return hnf_autoselect(B);
+  }
+  else if (method == HM_XGCD)
   {
     return hnf_xgcd_reduction(B);
   }
@@ -341,6 +444,7 @@ int hnf(ZZ_mat<mpz_t> &B, HNFMethod method)
   {
     return hnf_classical_reduction(B);
   }
+  // rest in development
   else
   {
     cerr << "HNF method not implemented yet\n";

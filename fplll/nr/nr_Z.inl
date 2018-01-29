@@ -240,6 +240,10 @@ public:
   inline void divexact(const Z_NR<Z>& a, const Z_NR<Z>& b);
   /* rounds q down towards -inf, and r will have the same sign as d. */
   inline void fdiv_q(const Z_NR<Z>& a, const Z_NR<Z>& b);
+  /* same with 2^b being the divisor */
+  inline void fdiv_q_2exp(const Z_NR<Z>& a, unsigned long b);
+  /* mod as gmp does */
+  inline void mod(const Z_NR<Z>& a, const Z_NR<Z>& b);
 
 };
 
