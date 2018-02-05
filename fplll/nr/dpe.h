@@ -708,14 +708,14 @@ DPE_INLINE void dpe_ugly_log(dpe_t x, const dpe_t y)
 DPE_INLINE void dpe_ugly_exp(dpe_t x, const dpe_t y)
 {
   // printf ("## exp is %ld\n", DPE_EXP(y));
-  dpe_set_d(x, exp(((double)DPE_MANT(y)) * pow(2, ((double)DPE_EXP(y)))));
+  dpe_set_d(x, exp(((double)DPE_MANT(y)) * pow(2.0, ((double)DPE_EXP(y)))));
 }
 
 /* More hacks */
 /* x = y^k */
 DPE_INLINE void dpe_pow_si(dpe_t x, const dpe_t y, const unsigned int k)
 {
-  DPE_MANT(x) = pow(DPE_MANT(y), k);
+  DPE_MANT(x) = pow(DPE_MANT(y), (double)k);
   DPE_EXP(x)  = DPE_EXP(y) * k;
   dpe_normalize(x);
 }
