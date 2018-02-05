@@ -27,7 +27,7 @@ GaussSieve<ZT, F>::update_p_3reduce_2reduce(ListPoint<ZT> *p,
     for (lp_it = List.begin(); lp_it != List.end(); ++lp_it)
     {
       v = *lp_it;
-      if (p->norm < v->norm)
+      if ((p->norm) < v->norm)
         break;
       if (half_2reduce(p, v))
       {
@@ -166,7 +166,7 @@ template <class ZT, class F> Z_NR<ZT> GaussSieve<ZT, F>::update_p_3reduce(ListPo
         continue;
       }
       ++lp_it2;
-      if (v1->norm < p->norm)
+      if ((v1->norm) < p->norm)
       {
         vnew2 = new_listpoint<ZT>(nc);
         if (check_3reduce(v1, p, v2, vnew2) != 1)
