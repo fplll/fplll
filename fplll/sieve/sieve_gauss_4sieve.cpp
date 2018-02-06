@@ -15,7 +15,7 @@ void GaussSieve<ZT, F>::update_p_4reduce_aux(ListPoint<ZT> *p,
   for (lp_it = List.begin(); lp_it != List.end(); ++lp_it)
   {
     v = *lp_it;
-    if (p->norm < v->norm)
+    if ((p->norm) < v->norm)
       break;
   }
   lp_it_k = lp_it;
@@ -119,7 +119,7 @@ template <class ZT, class F> Z_NR<ZT> GaussSieve<ZT, F>::update_p_4reduce_3reduc
         continue;
       }
       ++lp_it2;
-      if (v1->norm < p->norm)
+      if ((v1->norm) < p->norm)
       {
         /*cout << "#   --- here 1 " << endl;
         cout << v1->norm << endl;
@@ -274,7 +274,7 @@ template <class ZT, class F> Z_NR<ZT> GaussSieve<ZT, F>::update_p_4reduce(ListPo
         }
         ++lp_it3;
         /* (v1, p, v2, v3) or (v1, v2, p, v3) */
-        if (v1->norm < p->norm)
+        if ((v1->norm) < p->norm)
         {
           /* (v1, p, v2, v3) */
           if (v2->norm > p->norm)

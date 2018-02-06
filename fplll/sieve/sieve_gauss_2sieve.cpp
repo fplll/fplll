@@ -33,7 +33,7 @@ template <class ZT, class F> Z_NR<ZT> GaussSieve<ZT, F>::update_p_2reduce(ListPo
     for (lp_it = List.begin(); lp_it != List.end(); ++lp_it)
     {
       v = *lp_it;
-      if (p->norm < v->norm)
+      if ((p->norm) < v->norm)
         break;
 
       /* if there is one reduction the vector should re-pass the list */
