@@ -68,7 +68,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_add(int i, int j)
     ztmp1.add(ztmp1, g(j, j));
     g(i, i).add(g(i, i), ztmp1);
 
-    for (int k = 0; k < n_known_rows; k++)
+    for (int k = 0; k < d; k++)
     {
       if (k != i)
         sym_g(i, k).add(sym_g(i, k), sym_g(j, k));
@@ -98,7 +98,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_sub(int i, int j)
     ztmp1.sub(g(j, j), ztmp1);
     g(i, i).add(g(i, i), ztmp1);
 
-    for (int k = 0; k < n_known_rows; k++)
+    for (int k = 0; k < d; k++)
       if (k != i)
         sym_g(i, k).sub(sym_g(i, k), sym_g(j, k));
   }
@@ -132,7 +132,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_addmul_si(int i, int 
     g(i, i).add(g(i, i), ztmp1);
 
     // g(i, k) += g(j, k) * (2^e * x) for k != i
-    for (int k = 0; k < n_known_rows; k++)
+    for (int k = 0; k < d; k++)
     {
       if (k == i)
         continue;
@@ -170,7 +170,7 @@ void MatGSOGram<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
     g(i, i).add(g(i, i), ztmp1);
 
     // g(i, k) += g(j, k) * (2^e * x) for k != i
-    for (int k = 0; k < n_known_rows; k++)
+    for (int k = 0; k < d; k++)
     {
       if (k == i)
         continue;
@@ -214,7 +214,7 @@ void MatGSOGram<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
 
     // g(i, k) += g(j, k) * (2^e * x) for k != i
 
-    for (int k = 0; k < n_known_rows; k++)
+    for (int k = 0; k < d; k++)
     {
       if (k == i)
         continue;
@@ -275,7 +275,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_swap(int i, int j)
       g(i, k).swap(g(j, k));
     for (int k = i + 1; k < j; k++)
       g(k, i).swap(g(j, k));
-    for (int k = j + 1; k < n_known_rows; k++)
+    for (int k = j + 1; k < d; k++)
       g(k, i).swap(g(k, j));
     g(i, i).swap(g(j, j));
   }
@@ -307,7 +307,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int n
       {
         throw std::runtime_error("Error: gptr is equal to the nullpointer.");
       }
-      gptr->rotate_gram_right(new_r, old_r, n_known_rows);
+      gptr->rotate_gram_right(new_r, old_r, d);
     }
     else
     {
@@ -341,7 +341,7 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::move_row(int old_r, int n
           throw std::runtime_error("Error: gptr is equal to the nullpointer.");
         }
         // gptr->rotate_gram_left(old_r, new_r, n_known_rows);
-        gptr->rotate_gram_left(old_r, min(new_r, n_known_rows - 1), n_known_rows);
+        gptr->rotate_gram_left(old_r, min(new_r, n_known_rows - 1), d);
       }
     }
     else

@@ -215,6 +215,10 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_int_rel<mpz_t, double>(50, 20);
   status |= test_int_rel<mpz_t, double>(40, 10);
 
+  status |= test_int_rel<mpz_t, double>(100, 200);
+
+  status |= test_int_rel<mpz_t, double>(200, 100);  
+
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example2_in");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice2");
