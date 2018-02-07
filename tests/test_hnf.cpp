@@ -88,11 +88,11 @@ int test_uniform(int d, int b, HNFMethod method)
 {
   ZZ_mat<mpz_t> A, tmp;
   A.resize(d, d + 1);
-  A.gen_uniform2(b);
+  A.gen_uniform(b);
 
   tmp = A;
 
-  int status = hnf(A, method);
+  int status = hnf_reduction(A, method);
 
   if (status != RED_SUCCESS)
   {

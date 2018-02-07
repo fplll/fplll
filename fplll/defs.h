@@ -187,10 +187,12 @@ enum HNFMethod
   HM_CLASSIC     = 1,
   HM_XGCD        = 2,
   HM_MODULO      = 3,
-  HM_PERNETSTEIN = 4
+  HM_MINORS      = 4,
+  HM_PERNETSTEIN = 5
 };
 
-const char *const HNF_METHOD_STR[6] = {"autoselect", "classic", "xgcd", "modular", "pernet-stein"};
+const char *const HNF_METHOD_STR[6] = {"autoselect", "classic",      "xgcd",
+                                       "modular",    "kannanbachem", "pernet-stein"};
 
 enum IntType
 {

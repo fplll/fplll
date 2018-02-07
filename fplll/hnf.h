@@ -25,6 +25,76 @@
 FPLLL_BEGIN_NAMESPACE
 
 /**
+   * @brief The class performing HNF reduction.
+   *
+   * This class seems very similar to BKZReduction, for API consistency
+**/
+
+/* I'm bad at templating and can't compile with it so for now, without templates*/
+
+class HNFReduction
+{
+  /**
+   * @brief Create a BKZObject
+   *
+   * @param m
+   *    GSO object corresponding to the basis to be reduced
+   * @param lll_obj
+   *    LLL object associated to the same GSO object m
+   * @param param
+   *    parameter object (see bkz_param.h)
+   */
+public:
+  HNFReduction(ZZ_mat<mpz_t> &b, HNFMethod method, Z_NR<mpz_t> &det):
+    b(b),method(method),det(det){};
+  ~HNFReduction() = default;
+
+  /**
+   * Status of reduction (see defs.h)
+   */
+  int status;
+  /**
+   * Rank of the lattice
+   */
+  int rank;
+  /**
+   * Basis of the lattice
+   */
+  ZZ_mat<mpz_t> &b;
+  /**
+   * Method of reduction
+   */
+  HNFMethod method;
+  /**
+   * determinant of the lattice
+   */
+  Z_NR<mpz_t> &det;
+  /**
+   * modify the status of reduction (see defs.h)
+   */
+  void is_reduced();
+  /**
+   * @brief Runs the main loop of hnf reduction.
+   *
+   * @return
+   *    true if the reduction was successful, false otherwise.
+   */
+  void hnf();
+  /**
+   * @brief Compute the row rank of the matrix
+   *
+   */
+  void compute_rank();
+
+
+private:
+  bool set_status(int new_status);
+
+  // Temporary data
+  double cputime_start;
+};
+
+/**
    @brief Test the HNF form of B.
 
    @param A
@@ -76,8 +146,9 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B);
 int hnf_classical_reduction(ZZ_mat<mpz_t> &B);
 
 /**
- * @brief Performs hnf reduction using the modulo determinant algorithm
+ * @brief Performs hnf reduction using the modulo determinant algorithm (Hafner McCurley)
  *    works only if the biggest square bottom-right matrix has a non-zero determinant
+ *    and the number of rows is superior or equal to the number of columns
  *
  * @param B
  *    basis of the lattice to be reduced
@@ -88,7 +159,18 @@ int hnf_classical_reduction(ZZ_mat<mpz_t> &B);
 int hnf_modular_reduction(ZZ_mat<mpz_t> &B, const Z_NR<mpz_t> D);
 
 /**
+ * @brief Performs hnf reduction using the minors algorithm (Kannan Bachem)
+ *    good algorithm for full rank matrices, errors otherwise
+ *
+ * @param B
+ *    basis of the lattice to be reduced
+ */
+
+int hnf_minors_reduction(ZZ_mat<mpz_t> &B);
+
+/**
  * @brief Performs hnf reduction using the selected algorithm
+ *    This only works for full-rank matrices
  *
  * @param B
  *    basis of the lattice to be reduced
@@ -96,13 +178,13 @@ int hnf_modular_reduction(ZZ_mat<mpz_t> &B, const Z_NR<mpz_t> D);
  *    reduction method
  */
 
-int hnf(ZZ_mat<mpz_t> &B, HNFMethod method);
+int hnf_reduction(ZZ_mat<mpz_t> &B, HNFMethod method, Z_NR<mpz_t> &det);
 
 /**
  * @brief performs HNF reduction, autoselect the best method (in development)
  *
  * @param B
- *    basis of the lattice to be reduced*
+ *    basis of the lattice to be reduced
  */
 
 int hnf_autoselect(ZZ_mat<mpz_t> &B);
