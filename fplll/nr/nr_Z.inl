@@ -244,6 +244,8 @@ public:
   inline void fdiv_q_2exp(const Z_NR<Z>& a, unsigned long b);
   /* mod as gmp does */
   inline void mod(const Z_NR<Z>& a, const Z_NR<Z>& b);
+  /* compares absolute values as gmp does */
+  inline int cmpabs(const Z_NR<Z>& a);
 
 };
 

@@ -36,12 +36,10 @@ using namespace fplll;
    @return zero on success
 */
 
-int test_filename(const char *input_filename, HNFMethod method)
+template <class ZT> int test_filename(const char *input_filename, HNFMethod method, Z_NR<ZT> det)
 {
-  ZZ_mat<mpz_t> A, tmp;
-
-  // have the status
   int status = 0;
+  ZZ_mat<ZT> A, tmp;
 
   // read the matrix
   status |= read_matrix(A, input_filename);
@@ -51,27 +49,27 @@ int test_filename(const char *input_filename, HNFMethod method)
   }
   tmp = A;
 
-  // zero on success
-  if (!is_hnf_reduced(A))
+  HNFReduction<ZT> B(A, method, det);
+
+  // one on success
+  if (B.is_reduced())
   {
     cerr << "is_hnf_reduced reports success when it should not" << endl;
     return 1;
   }
 
-  status = hnf(A, method);
+  B.hnf();
 
-  if (status != RED_SUCCESS)
+  if (!B.is_reduced())
   {
     cerr << "Output of HNF reduction is not HNF reduced with method " << HNF_METHOD_STR[method]
          // << " test with matrix returned " << get_red_status_str(status) <<
          // endl;
-         << " test with matrix returned " << get_red_status_str(status) << endl;
+         << " test with matrix returned " << get_red_status_str(B.status) << endl;
   }
 
-  // test if reduction was correct : zero on success
-  status = in_lattice_given_hnf(A, tmp);
-
-  return status;
+  // test if reduction was correct : one on success
+  return B.in_lattice_given_hnf(tmp);
 }
 
 /**
@@ -84,17 +82,23 @@ int test_filename(const char *input_filename, HNFMethod method)
    @return zero on success
 */
 
-int test_uniform(int d, int b, HNFMethod method)
+template <class ZT> int test_uniform(int d, int b, HNFMethod method)
 {
-  ZZ_mat<mpz_t> A, tmp;
+  ZZ_mat<ZT> A, tmp;
   A.resize(d, d + 1);
   A.gen_uniform(b);
 
   tmp = A;
 
-  int status = hnf_reduction(A, method);
+  Z_NR<ZT> det;
+  det = 0;
 
-  if (status != RED_SUCCESS)
+  HNFReduction<ZT> B(A, method, det);
+
+  B.hnf();
+  int status = B.is_reduced();
+
+  if (!status)
   {
     cerr << "Output of HNF reduction is not HNF reduced with method " << HNF_METHOD_STR[method]
          // << " test with matrix returned " << get_red_status_str(status) <<
@@ -102,36 +106,48 @@ int test_uniform(int d, int b, HNFMethod method)
          << " test with matrix returned " << get_red_status_str(status) << endl;
   }
 
-  // test if reduction was correct : zero on success
-  status = in_lattice_given_hnf(A, tmp);
+  // test if reduction was correct : zero on failure
+  status = B.in_lattice_given_hnf(tmp);
+
+  if (!status)
+  {
+    cerr << "Output of HNF reduction is not HNF reduced with method " << HNF_METHOD_STR[method]
+         // << " test with matrix returned " << get_red_status_str(status) <<
+         // endl;
+         << ", basis has changed to a different lattice " << endl;
+  }
 
   return status;
 }
 
+/* TODO : KAT tests */
+
 int main(int /*argc*/, char ** /*argv*/)
 {
+  Z_NR<mpz_t> det;
 
-  int status = 0;
-  status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in", HM_CLASSIC);
-  status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in", HM_XGCD);
-  // status |= test_filename(TESTDATADIR "/tests/lattices/dim55_in",
-  // HM_PERNETSTEIN);
+  int status = 1;
+  status &= test_filename(TESTDATADIR "/tests/lattices/dim55_in", HM_CLASSIC, det);
+  status &= test_filename(TESTDATADIR "/tests/lattices/dim55_in", HM_XGCD, det);
+  status &= test_filename(TESTDATADIR "/tests/lattices/dim55_in", HM_MINORS, det);
+  // status &= test_filename(TESTDATADIR "/tests/lattices/dim55_in", HM_PERNETSTEIN, det);
 
-  status |= test_uniform(15, 10, HM_CLASSIC);
-  status |= test_uniform(15, 10, HM_XGCD);
-  // status |= test_uniform(15, 10, HM_PERNETSTEIN);
+  status &= test_uniform<mpz_t>(15, 10, HM_CLASSIC);
+  status &= test_uniform<mpz_t>(15, 10, HM_XGCD);
+  status &= test_uniform<mpz_t>(15, 10, HM_MINORS);
+  // status &= test_uniform<mpz_t>(15, 10, HM_PERNETSTEIN);
 
-  status |= test_uniform(20, 5, HM_CLASSIC);
-  status |= test_uniform(20, 5, HM_XGCD);
-  // status |= test_uniform(20, 5, HM_PERNETSTEIN);
+  status &= test_uniform<mpz_t>(20, 5, HM_CLASSIC);
+  status &= test_uniform<mpz_t>(20, 5, HM_XGCD);
+  status &= test_uniform<mpz_t>(20, 5, HM_MINORS);
+  // status &= test_uniform<mpz_t>(20, 5, HM_PERNETSTEIN);
 
-  // status |= test_filename(TESTDATADIR "/tests/lattices/example2_in",
-  // HM_CLASSIC);
-  status |= test_filename(TESTDATADIR "/tests/lattices/example2_in", HM_XGCD);
-  // status |= test_filename(TESTDATADIR "/tests/lattices/example2_in",
-  // HM_PERNETSTEIN);
+  status &= test_filename(TESTDATADIR "/tests/lattices/example2_in", HM_CLASSIC, det);
+  status &= test_filename(TESTDATADIR "/tests/lattices/example2_in", HM_XGCD, det);
+  status &= test_filename(TESTDATADIR "/tests/lattices/example2_in", HM_MINORS, det);
+  // status &= test_filename(TESTDATADIR "/tests/lattices/example2_in, HM_PERNETSTEIN, det);
 
-  if (status == 0)
+  if (status)
   {
     cerr << "All tests passed." << endl;
     return 0;

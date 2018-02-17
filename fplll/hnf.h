@@ -32,7 +32,7 @@ FPLLL_BEGIN_NAMESPACE
 
 /* I'm bad at templating and can't compile with it so for now, without templates*/
 
-class HNFReduction
+template <class ZT> class HNFReduction
 {
   /**
    * @brief Create a BKZObject
@@ -45,8 +45,8 @@ class HNFReduction
    *    parameter object (see bkz_param.h)
    */
 public:
-  HNFReduction(ZZ_mat<mpz_t> &b, HNFMethod method, Z_NR<mpz_t> &det):
-    b(b),method(method),det(det){};
+  HNFReduction(ZZ_mat<ZT> &b, HNFMethod method, Z_NR<ZT> &det)
+      : basis(b), method(method), det(det){};
   ~HNFReduction() = default;
 
   /**
@@ -60,7 +60,7 @@ public:
   /**
    * Basis of the lattice
    */
-  ZZ_mat<mpz_t> &b;
+  ZZ_mat<ZT> &basis;
   /**
    * Method of reduction
    */
@@ -68,11 +68,29 @@ public:
   /**
    * determinant of the lattice
    */
-  Z_NR<mpz_t> &det;
+  Z_NR<ZT> &det;
   /**
-   * modify the status of reduction (see defs.h)
+     @brief Test the HNF form of basis.
+
+     @return true on success.
+  */
+  bool is_reduced();
+  /**
+   * @brief Tests a couple matrix vector
+   *    returns true if B is a HNF and if v is in L(B), else 0
+   *
+   * @param w
+   *    vector for the membership test
    */
-  void is_reduced();
+  bool in_lattice_given_hnf(const vector<Z_NR<ZT>> &w);
+  /**
+   * @brief Tests a couple matrix matrix
+   *    returns 1 if B is a HNF and B is in HNF(A), else 0
+   *
+   * @param A
+   *    basis of the lattice to be tested
+   */
+  bool in_lattice_given_hnf(const ZZ_mat<ZT> &A);
   /**
    * @brief Runs the main loop of hnf reduction.
    *
@@ -86,46 +104,10 @@ public:
    */
   void compute_rank();
 
-
 private:
-  bool set_status(int new_status);
-
   // Temporary data
   double cputime_start;
 };
-
-/**
-   @brief Test the HNF form of B.
-
-   @param A
-   @return zero on success.
-*/
-
-int is_hnf_reduced(const ZZ_mat<mpz_t> &B);
-
-/**
- * @brief Tests a couple matrix vector
- *    returns 1 if B is not a HNF or -1 if v is not in L(B), else 0
- *
- * @param B
- *    HNF basis of the lattice to be tested
- * @param v
- *    vector for the membership test
- */
-
-int in_lattice_given_hnf(const ZZ_mat<mpz_t> &B, const vector<Z_NR<mpz_t>> &v);
-
-/**
- * @brief Tests a couple matrix matrix
- *    returns 1 if B is not a HNF or -1 if B is not HNF(A), else 0
- *
- * @param B
- *    HNF basis of the lattice to be tested
- * @param A
- *    basis of the lattice to be tested
- */
-
-int in_lattice_given_hnf(const ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A);
 
 /**
  * @brief Performs hnf reduction using the multiple pgcd algorithm
@@ -134,7 +116,7 @@ int in_lattice_given_hnf(const ZZ_mat<mpz_t> &B, const ZZ_mat<mpz_t> &A);
  *    basis of the lattice to be reduced
  */
 
-int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B);
+template <class ZT> int hnf_xgcd_reduction(ZZ_mat<ZT> &B);
 
 /**
  * @brief Performs hnf reduction using the classical absolute value algorithm
@@ -143,7 +125,7 @@ int hnf_xgcd_reduction(ZZ_mat<mpz_t> &B);
  *    basis of the lattice to be reduced
  */
 
-int hnf_classical_reduction(ZZ_mat<mpz_t> &B);
+template <class ZT> int hnf_classical_reduction(ZZ_mat<ZT> &B);
 
 /**
  * @brief Performs hnf reduction using the modulo determinant algorithm (Hafner McCurley)
@@ -156,7 +138,7 @@ int hnf_classical_reduction(ZZ_mat<mpz_t> &B);
  *    multiple of the determinant of the biggest square bottom-right matrix
  */
 
-int hnf_modular_reduction(ZZ_mat<mpz_t> &B, const Z_NR<mpz_t> D);
+template <class ZT> int hnf_modular_reduction(ZZ_mat<ZT> &B, const Z_NR<ZT> D);
 
 /**
  * @brief Performs hnf reduction using the minors algorithm (Kannan Bachem)
@@ -166,19 +148,18 @@ int hnf_modular_reduction(ZZ_mat<mpz_t> &B, const Z_NR<mpz_t> D);
  *    basis of the lattice to be reduced
  */
 
-int hnf_minors_reduction(ZZ_mat<mpz_t> &B);
+template <class ZT> int hnf_minors_reduction(ZZ_mat<ZT> &B);
 
 /**
- * @brief Performs hnf reduction using the selected algorithm
- *    This only works for full-rank matrices
+ * @brief add a row to a HNF and reduce by the diagonal
  *
  * @param B
- *    basis of the lattice to be reduced
- * @param method
- *    reduction method
+ *    initial HNF basis
+ * @param v
+ *    vector to be added
  */
 
-int hnf_reduction(ZZ_mat<mpz_t> &B, HNFMethod method, Z_NR<mpz_t> &det);
+template <class ZT> void hnf_addrow(ZZ_mat<ZT> &B, const vector<Z_NR<ZT>> &v);
 
 /**
  * @brief performs HNF reduction, autoselect the best method (in development)
@@ -187,7 +168,20 @@ int hnf_reduction(ZZ_mat<mpz_t> &B, HNFMethod method, Z_NR<mpz_t> &det);
  *    basis of the lattice to be reduced
  */
 
-int hnf_autoselect(ZZ_mat<mpz_t> &B);
+template <class ZT> int hnf_autoselect(ZZ_mat<ZT> &B);
+
+/**
+ * @brief Performs hnf reduction using the selected algorithm
+ *
+ * @param B
+ *    basis of the lattice to be reduced
+ * @param method
+ *    reduction method
+ * @param det
+ *    determinant, might be useful
+ */
+
+template <class ZT> int hnf_reduction(ZZ_mat<ZT> &B, HNFMethod method, Z_NR<ZT> &det);
 
 FPLLL_END_NAMESPACE
 

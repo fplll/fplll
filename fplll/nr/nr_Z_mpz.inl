@@ -322,6 +322,11 @@ template<>
 inline void Z_NR<mpz_t>::mod(const Z_NR<mpz_t>& a, const Z_NR<mpz_t>& b) {
   mpz_mod(data, a.data, b.data);
 }
+/* compares absolute values as gmp does */
+template<>
+inline int Z_NR<mpz_t>::cmpabs(const Z_NR<mpz_t>& a) {
+  return mpz_cmpabs(data, a.data);
+}
 
 /* operators Z_NR<mpz_t> */
 template<>
