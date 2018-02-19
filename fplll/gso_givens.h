@@ -21,10 +21,7 @@
 #include "gso_interface.h"
 #include "nr/matrix.h"
 
-
 FPLLL_BEGIN_NAMESPACE
-
-
 
 /**
  * MatGSOGivens provides an interface for performing elementary operations on a basis
@@ -40,12 +37,12 @@ public:
   using MatGSOInterface<ZT, FT>::n_source_rows;
   using MatGSOInterface<ZT, FT>::u;
   using MatGSOInterface<ZT, FT>::enable_transform;
-  //using MatGSOInterface<ZT, FT>::cols_locked;  // maybe scratch.
-  //using MatGSOInterface<ZT, FT>::recomputation_count;
-  //using MatGSOInterface<ZT, FT>::gso_valid_cols;
+  // using MatGSOInterface<ZT, FT>::cols_locked;  // maybe scratch.
+  // using MatGSOInterface<ZT, FT>::recomputation_count;
+  // using MatGSOInterface<ZT, FT>::gso_valid_cols;
   using MatGSOInterface<ZT, FT>::enable_inverse_transform;
   using MatGSOInterface<ZT, FT>::u_inv_t;
-  //using MatGSOInterface<ZT, FT>::sym_g;
+  // using MatGSOInterface<ZT, FT>::sym_g;
   using MatGSOInterface<ZT, FT>::mu;
   using MatGSOInterface<ZT, FT>::r;
   using MatGSOInterface<ZT, FT>::ztmp1;
@@ -54,23 +51,23 @@ public:
   using MatGSOInterface<ZT, FT>::alloc_dim;
   using MatGSOInterface<ZT, FT>::get_mu;
   using MatGSOInterface<ZT, FT>::get_r;
-  //using MatGSOInterface<ZT, FT>::gptr;
-  //using MatGSOInterface<ZT, FT>::invalidate_gso_row;
+  // using MatGSOInterface<ZT, FT>::gptr;
+  // using MatGSOInterface<ZT, FT>::invalidate_gso_row;
   using MatGSOInterface<ZT, FT>::gf;
   using MatGSOInterface<ZT, FT>::bf;
   using MatGSOInterface<ZT, FT>::discover_all_rows;
-  //using MatGSOInterface<ZT, FT>::init_row_size;
+  // using MatGSOInterface<ZT, FT>::init_row_size;
   using MatGSOInterface<ZT, FT>::enable_row_expo;
   using MatGSOInterface<ZT, FT>::row_expo;
-  //using MatGSOInterface<ZT, FT>::n_known_cols;
+  // using MatGSOInterface<ZT, FT>::n_known_cols;
   using MatGSOInterface<ZT, FT>::tmp_col_expo;
 
   using MatGSOInterface<ZT, FT>::remove_last_row;
   using MatGSOInterface<ZT, FT>::print_mu_r_g;
-  //using MatGSOInterface<ZT, FT>::update_gso;
-  //using MatGSOInterface<ZT, FT>::update_gso_row;
+  // using MatGSOInterface<ZT, FT>::update_gso;
+  // using MatGSOInterface<ZT, FT>::update_gso_row;
   using MatGSOInterface<ZT, FT>::row_addmul;
-  //using MatGSOInterface<ZT, FT>::symmetrize_g;
+  // using MatGSOInterface<ZT, FT>::symmetrize_g;
   using MatGSOInterface<ZT, FT>::ftmp1;
   using MatGSOInterface<ZT, FT>::ftmp2;
 
@@ -80,9 +77,6 @@ public:
   using MatGSOInterface<ZT, FT>::row_op_last;
   using MatGSOInterface<ZT, FT>::in_row_op_range;
 #endif
-
-
-
 
   /**
    * Constructor.
@@ -117,12 +111,14 @@ public:
    *   See the documentation of row_addmul.
    */
   MatGSOGivens(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
-      : MatGSOInterface<ZT, FT>(arg_u, arg_uinv_t, flags), b(arg_b), full_lazy(flags & GSO_GIVENS_FULL_LAZY), 
-       move_lazy(flags & (GSO_GIVENS_MOVE_LAZY | GSO_GIVENS_FULL_LAZY)), // also be move-lazy when you are full-lazy
-       always_recompute(flags & GSO_GIVENS_RECOMPUTE_AFTER_SIZERED)
+      : MatGSOInterface<ZT, FT>(arg_u, arg_uinv_t, flags), b(arg_b),
+        full_lazy(flags & GSO_GIVENS_FULL_LAZY),
+        move_lazy(flags & (GSO_GIVENS_MOVE_LAZY |
+                           GSO_GIVENS_FULL_LAZY)),  // also be move-lazy when you are full-lazy
+        always_recompute(flags & GSO_GIVENS_RECOMPUTE_AFTER_SIZERED)
 
   {
-    //FPLLL_DEBUG_CHECK(!(enable_int_gram && enable_row_expo));
+    // FPLLL_DEBUG_CHECK(!(enable_int_gram && enable_row_expo));
     //
     if (enable_row_expo)
     {
@@ -139,8 +135,7 @@ public:
     size_increased();
     lazy_row_start = d;
 
-    //initialize_l_givens_matrix();
-
+// initialize_l_givens_matrix();
 
 #ifdef DEBUG
     row_op_first = row_op_last = -1;
@@ -148,8 +143,6 @@ public:
   }
 
 public:
-
-
   bool is_currently_lazy = false;
   int lazy_row_start;
 
@@ -158,29 +151,25 @@ public:
    */
 
   Matrix<ZT> &b;
-  bool full_lazy;  
+  bool full_lazy;
   bool move_lazy;
 
-  bool always_recompute;  
-
-
+  bool always_recompute;
 
   Matrix<FT> l_givens;
-  //Matrix<FT> r_givens;
-  //Matrix<FT> mu_givens;
+  // Matrix<FT> r_givens;
+  // Matrix<FT> mu_givens;
 
   Matrix<FT> ops_c;
   Matrix<FT> ops_s;
 
+  // long int ops_counter;
 
+  // irtual inline const FT &get_l_exp(int i, int j, long &expo) final;
+  // virtual inline const FT &get_l_exp(int i, int j) final;
+  virtual inline FT &get_l(FT &f, int i, int j) final;
 
-  //long int ops_counter;
-
-  //irtual inline const FT &get_l_exp(int i, int j, long &expo) final;
-  //virtual inline const FT &get_l_exp(int i, int j) final;
-  virtual inline  FT &get_l(FT &f, int i, int j) final;
-
-  virtual inline  Matrix<ZT> &get_basis() final;
+  // virtual inline  Matrix<ZT> &get_basis() final;
 
   virtual inline long get_max_exp_of_b();
   virtual inline bool b_row_is_zero(int i);
@@ -195,19 +184,16 @@ public:
 
   virtual void row_op_end(int first, int last) final;
 
-
-    void add_operation(FT c, FT s , int row, int col);
-    //void recompute_givens_operations(MatGSOGivens<ZT,FT> &m, int start_row, int end_row);
-    //void empty(int row);
-
-
+  void add_operation(FT c, FT s, int row, int col);
+  // void recompute_givens_operations(MatGSOGivens<ZT,FT> &m, int start_row, int end_row);
+  // void empty(int row);
 
   // For givens rotations
   void copy_b_to_l_givens(int row);
   void apply_givens_operations(int row);
-  //void apply_givens_operations(int row_start, int row_end);
+  // void apply_givens_operations(int row_start, int row_end);
 
-  //void triangularize(int row_start, int row_end);
+  // void triangularize(int row_start, int row_end);
 
   void givens_row(int row);
   void givens_row(int row, int rightmost_nonzero_entry);
@@ -219,21 +205,19 @@ public:
   void full_column_givens_rotation(int row, int col);
   void full_column_givens_row(int row, int rightmost_nonzero_entry);
   void recompute_givens_matrix(int last_row);
-    void recompute_givens_matrix(int start_row, int last_row);
- // void normalize_givens_row(int row);
-//  void initialize_l_givens_matrix();
-//  void givens_rotation(int col_i, int col_j, int row_k);
-//  void givens_row_reduction(int row_k, int rightmost_nonzero_entry );
+  void recompute_givens_matrix(int start_row, int last_row);
+  // void normalize_givens_row(int row);
+  //  void initialize_l_givens_matrix();
+  //  void givens_rotation(int col_i, int col_j, int row_k);
+  //  void givens_row_reduction(int row_k, int rightmost_nonzero_entry );
 
-//void compute_mu_and_r_columns(int starting_column, int last_column);
+  // void compute_mu_and_r_columns(int starting_column, int last_column);
 
+  // void numerical_accuracy();
 
+  // virtual void recompute_givens_matrix();
 
-  //void numerical_accuracy();
-
-  //virtual void recompute_givens_matrix();
-
-  //inline void compute_mu_and_r_column(int column);
+  // inline void compute_mu_and_r_column(int column);
 
   /**
    * Updates r(i, j) and mu(i, j) if needed for all j in [0, last_j].
@@ -247,7 +231,7 @@ public:
 
   virtual inline bool update_gso_row(int i) final;
 
-  virtual inline bool update_gso() final ;
+  virtual inline bool update_gso() final;
 
   virtual inline bool is_givens();
 
@@ -287,9 +271,6 @@ public:
   virtual void row_swap(int i, int j);
 
 private:
-
-
-
   /* Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
    When enable_int_gram=false, initializes bf. */
   virtual void size_increased();
@@ -308,13 +289,11 @@ private:
   // b[i] <- b[i] + (2^expo * x) * b[j] (i > j)
   virtual void row_addmul_si_2exp(int i, int j, long x, long expo);
   virtual void row_addmul_2exp(int i, int j, const ZT &x, long expo);
-
 };
-template <class ZT, class FT> inline  Matrix<ZT> &MatGSOGivens<ZT, FT>::get_basis() {
-  return b;  
-}
-/*template <class ZT, class FT> inline void MatGSOGivens<ZT, FT>::compute_mu_and_r_column(int column) {
-	compute_mu_and_r_columns(column,column);
+template <class ZT, class FT> inline Matrix<ZT> &MatGSOGivens<ZT, FT>::get_basis() { return b; }
+/*template <class ZT, class FT> inline void MatGSOGivens<ZT, FT>::compute_mu_and_r_column(int
+column) {
+        compute_mu_and_r_columns(column,column);
 }
 */
 template <class ZT, class FT> inline long MatGSOGivens<ZT, FT>::get_max_exp_of_b()
@@ -326,9 +305,15 @@ template <class ZT, class FT> inline bool MatGSOGivens<ZT, FT>::b_row_is_zero(in
 {
   return b[i].is_zero();
 }
-template <class ZT, class FT> inline int MatGSOGivens<ZT, FT>::get_cols_of_b() { return b.get_cols(); }
+template <class ZT, class FT> inline int MatGSOGivens<ZT, FT>::get_cols_of_b()
+{
+  return b.get_cols();
+}
 
-template <class ZT, class FT> inline int MatGSOGivens<ZT, FT>::get_rows_of_b() { return b.get_rows(); }
+template <class ZT, class FT> inline int MatGSOGivens<ZT, FT>::get_rows_of_b()
+{
+  return b.get_rows();
+}
 
 template <class ZT, class FT> inline void MatGSOGivens<ZT, FT>::negate_row_of_b(int i)
 {
@@ -338,12 +323,11 @@ template <class ZT, class FT> inline void MatGSOGivens<ZT, FT>::negate_row_of_b(
     b[i][j].neg(b[i][j]);
     // TODO Here some Givens-thing?
   }
-  
 }
 
 template <class ZT, class FT> inline FT &MatGSOGivens<ZT, FT>::get_l(FT &f, int i, int j)
 {
-  f = l_givens(i,j);
+  f = l_givens(i, j);
   return f;
 }
 
@@ -372,24 +356,20 @@ template <class ZT, class FT> inline FT &MatGSOGivens<ZT, FT>::get_gram(FT &f, i
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j <= i && j < n_source_rows &&
                     !in_row_op_range(i));
 
-    // TODO this was lazy before.
-    update_bf(i);
-    if (i != j) 
-    {
-      update_bf(j);
-    }
-    bf[i].dot_product(gf(i, j), bf[j], b.get_cols());
-    
-    f = gf(i, j);
+  // TODO this was lazy before.
+  update_bf(i);
+  if (i != j)
+  {
+    update_bf(j);
+  }
+  bf[i].dot_product(gf(i, j), bf[j], b.get_cols());
+
+  f = gf(i, j);
 
   return f;
 }
 
-
-template <class ZT, class FT> inline bool MatGSOGivens<ZT,FT>::is_givens(){
-  return true;
-}
-
+template <class ZT, class FT> inline bool MatGSOGivens<ZT, FT>::is_givens() { return true; }
 
 template <class ZT, class FT> inline void MatGSOGivens<ZT, FT>::create_rows(int n_new_rows)
 {
@@ -405,8 +385,6 @@ template <class ZT, class FT> inline void MatGSOGivens<ZT, FT>::create_rows(int 
     }
   }
 
-
-
   if (enable_transform)
   {
     u.set_rows(d);
@@ -414,7 +392,7 @@ template <class ZT, class FT> inline void MatGSOGivens<ZT, FT>::create_rows(int 
       for (int j = 0; j < u.get_cols(); j++)
         u[i][j]  = 0;
   }
-  size_increased();   // Givens matrix will be appended here
+  size_increased();  // Givens matrix will be appended here
   if (n_known_rows == old_d)
     discover_all_rows();
 }
@@ -427,12 +405,12 @@ template <class ZT, class FT> inline bool MatGSOGivens<ZT, FT>::update_gso_row(i
 template <class ZT, class FT> inline bool MatGSOGivens<ZT, FT>::update_gso()
 {
 
-    for (int i = 0; i < d; i++)
-    {
-      if (!update_gso_row(i))
-        return false;
-    }
-  
+  for (int i = 0; i < d; i++)
+  {
+    if (!update_gso_row(i))
+      return false;
+  }
+
   return true;
 }
 
@@ -452,10 +430,9 @@ template <class ZT, class FT> inline void MatGSOGivens<ZT, FT>::remove_last_rows
 
 template <class ZT, class FT> inline void MatGSOGivens<ZT, FT>::set_r(int i, int j, FT &f)
 {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 );
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0);
   r(i, j) = f;
 }
-
 
 FPLLL_END_NAMESPACE
 

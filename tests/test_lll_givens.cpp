@@ -16,9 +16,9 @@
 #include <cstring>
 #include <fplll.h>
 #include <gso.h>
+#include <gso_givens.h>
 #include <gso_gram.h>
 #include <gso_interface.h>
-#include <gso_givens.h>
 #include <lll.h>
 #include <test_utils.h>
 
@@ -36,9 +36,6 @@ template <class ZT, class FT> int is_already_reduced(ZZ_mat<ZT> &A)
 
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 0);
   MatGSOGivens<Z_NR<ZT>, FP_NR<FT>> M2(A, U, UT, 0);
-
-
-
 
   int is_reduced  = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
   int is_greduced = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(M2, LLL_DEF_DELTA, LLL_DEF_ETA);
@@ -74,7 +71,7 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   {
     for (int j = 0; j < c; j++)
     {
-      A2(i,j) = A(i,j);
+      A2(i, j) = A(i, j);
     }
   }
   // ------------------------------------------------
@@ -85,11 +82,10 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   // Create a MatGSO-object M (basis gso) for A
   // and a MatGSOGram-object Mgram (gram gso) for G.
 
-  
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, 0);
-  //M.update_gso();
+  // M.update_gso();
   MatGSOGivens<Z_NR<ZT>, FP_NR<FT>> MGivens(A2, U, UT, GSO_GIVENS_FULL_LAZY);
-  //MGivens.update_gso();
+  // MGivens.update_gso();
 
   // ------------------------------------------------
   // ************************************************
@@ -103,7 +99,6 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
     return 1;
   }
 
-
   // ------------------------------------------------
   // ************************************************
 
@@ -114,11 +109,9 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   LLLReduction<Z_NR<ZT>, FP_NR<FT>> LLLObj(M, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_VERBOSE);
   LLLReduction<Z_NR<ZT>, FP_NR<FT>> LLLObjgram(MGivens, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_VERBOSE);
 
-
   // and LLL reduce both objects
   LLLObj.lll();
   LLLObjgram.lll();
-
 
   cerr << "OK, LL reduction with dimension " << MGivens.d << " ok.";
   // ------------------------------------------------
@@ -127,8 +120,7 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   // _________________________________________________
   // -------------------------------------------------
   // Check whether M and MGivens are really reduced after LLL reduction
-  int is_reduced  = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
-
+  int is_reduced = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(M, LLL_DEF_DELTA, LLL_DEF_ETA);
 
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M2(MGivens.b, U, UT, 1);
   int is_greduced = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(M2, LLL_DEF_DELTA, LLL_DEF_ETA);
@@ -148,7 +140,6 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   // ------------------------------------------------
   // ************************************************
 
-
   // Test whether G_reduced = G
   for (int i = 0; i < r; i++)
   {
@@ -156,17 +147,15 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
     {
       if (M.b(i, j) != MGivens.b(i, j))
       {
-        cerr << "Warning: the reductions are different at place (" << i << "," << j << ")" << endl << endl;
+        cerr << "Warning: the reductions are different at place (" << i << "," << j << ")" << endl
+             << endl;
         cerr << M.b[i] << endl << endl;
         cerr << MGivens.b[i] << endl << endl;
-
 
         return 0;
       }
     }
   }
-  
-
 
   // Return 0 on success.
   return 0;
@@ -212,7 +201,7 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_int_rel<mpz_t, double>(50, 20);
   status |= test_int_rel<mpz_t, double>(40, 10);
 
-  //status |= test_int_rel<mpz_t, double>(250,20);
+  // status |= test_int_rel<mpz_t, double>(250,20);
 
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example2_in");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice");
@@ -222,7 +211,6 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice5");
   status |= test_int_rel<mpz_t, mpfr_t>(50, 20);
   status |= test_int_rel<mpz_t, mpfr_t>(40, 10);
-  
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example2_in");

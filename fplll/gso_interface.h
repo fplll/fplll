@@ -24,18 +24,22 @@ FPLLL_BEGIN_NAMESPACE
 
 enum MatGSOInterfaceFlags
 {
-  GSO_DEFAULT       = 0,
-  GSO_INT_GRAM      = 1,
-  GSO_ROW_EXPO      = 2,
-  GSO_OP_FORCE_LONG = 4,
-  GSO_GIVENS_MOVE_LAZY = 8,  	// Does not recompute after `row_swap` or `move_row`
-  GSO_GIVENS_FULL_LAZY = 16, 	// Does not recompute at all. Numerically unstable.
-  GSO_GIVENS_RECOMPUTE_AFTER_SIZERED = 32  // This is the *least* lazy approach. Recomputes after every size reduction.
+  GSO_DEFAULT          = 0,
+  GSO_INT_GRAM         = 1,
+  GSO_ROW_EXPO         = 2,
+  GSO_OP_FORCE_LONG    = 4,
+  GSO_GIVENS_MOVE_LAZY = 8,   // Does not recompute after `row_swap` or `move_row`
+  GSO_GIVENS_FULL_LAZY = 16,  // Does not recompute at all. Numerically unstable.
+  GSO_GIVENS_RECOMPUTE_AFTER_SIZERED =
+      32  // This is the *least* lazy approach. Recomputes after every size reduction.
 
   // Givens GSO is standard lazy after size reductions [doesn't recompute from the basis].
-  // If GSO_GIVENS_MOVE_LAZY is on, it is also lazy after `row_swap` and `move_row`. Reasonable numerically unstable, relatively fast.
-  // If GSO_GIVENS_FULL_LAZY is on, it doesn't do recomputations from the basis at all. This is numerically very unstable. Very fast.
-  // If GSO_GIVENS_RECOMPUTE_AFTER_SIZERED is on, it does recompute after size reductions. This is most stable, but very slow.
+  // If GSO_GIVENS_MOVE_LAZY is on, it is also lazy after `row_swap` and `move_row`. Reasonable
+  // numerically unstable, relatively fast.
+  // If GSO_GIVENS_FULL_LAZY is on, it doesn't do recomputations from the basis at all. This is
+  // numerically very unstable. Very fast.
+  // If GSO_GIVENS_RECOMPUTE_AFTER_SIZERED is on, it does recompute after size reductions. This is
+  // most stable, but very slow.
 };
 
 /**
