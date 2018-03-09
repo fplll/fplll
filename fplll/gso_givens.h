@@ -290,7 +290,7 @@ private:
   virtual void row_addmul_si_2exp(int i, int j, long x, long expo);
   virtual void row_addmul_2exp(int i, int j, const ZT &x, long expo);
 };
-//template <class ZT, class FT> inline Matrix<ZT> &MatGSOGivens<ZT, FT>::get_basis() { return b; }
+// template <class ZT, class FT> inline Matrix<ZT> &MatGSOGivens<ZT, FT>::get_basis() { return b; }
 /*template <class ZT, class FT> inline void MatGSOGivens<ZT, FT>::compute_mu_and_r_column(int
 column) {
         compute_mu_and_r_columns(column,column);
