@@ -390,8 +390,8 @@ int lll_reduction_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
 }
 
 template <class ZT>
-int lll_reduction_wrapper(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta,
-                          FloatType float_type, int precision, int flags)
+int lll_reduction_wrapper(ZZ_mat<ZT> &, ZZ_mat<ZT> &, ZZ_mat<ZT> &, double, double, FloatType, int,
+                          int)
 {
   FPLLL_ABORT("The wrapper method works only with integer type mpz");
   return RED_LLL_FAILURE;
