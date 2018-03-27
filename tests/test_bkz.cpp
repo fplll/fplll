@@ -183,7 +183,7 @@ int test_bkz_param_pruning(ZZ_mat<ZT> &A, const int block_size, int flags = BKZ_
    @return zero on success.
  */
 template <class ZT>
-int test_int_rel_bkz_dump_gso(int d, int b, const int block_size, FloatType float_type = FT_DEFAULT,
+int test_int_rel_bkz_dump_gso(int d, int b, const int block_size,
                               int flags = BKZ_DEFAULT | BKZ_DUMP_GSO)
 {
   ZZ_mat<ZT> A, B;
@@ -375,7 +375,7 @@ int main(int /*argc*/, char ** /*argv*/)
       test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_in", 10, FT_DOUBLE, BKZ_SLD_RED);
 
   // Test BKZ_DUMP_GSO
-  status |= test_int_rel_bkz_dump_gso<mpz_t>(50, 1000, 15, FT_MPFR, BKZ_DEFAULT | BKZ_DUMP_GSO);
+  status |= test_int_rel_bkz_dump_gso<mpz_t>(50, 1000, 15, BKZ_DEFAULT | BKZ_DUMP_GSO);
 
   if (status == 0)
   {

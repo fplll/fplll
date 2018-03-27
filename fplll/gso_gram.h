@@ -69,9 +69,13 @@ public:
   using MatGSOInterface<ZT, FT>::in_row_op_range;
 #endif
 
-  MatGSOGram(Matrix<ZT> &arg_g, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
-      : MatGSOInterface<ZT, FT>(arg_u, arg_uinv_t, GSO_INT_GRAM)
+  MatGSOGram(Matrix<ZT> &arg_g, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags = GSO_INT_GRAM)
+      : MatGSOInterface<ZT, FT>(arg_u, arg_uinv_t, flags)
   {
+    if (flags != GSO_INT_GRAM)
+    {
+      throw std::invalid_argument("flags must be equal to GSO_INT_GRAM");
+    }
     gptr = &arg_g;
     if (gptr == nullptr)
     {

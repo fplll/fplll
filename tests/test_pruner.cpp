@@ -509,7 +509,7 @@ template <class FT> int test_auto_prune(size_t n)
   return status;
 }
 
-int main(int argc, char *argv[])
+int main()
 {
   int status = 0;
 #ifdef FPLLL_WITH_QD

@@ -338,13 +338,13 @@ inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<long>& a, long& expo, long expo_ad
 #ifdef FPLLL_WITH_ZDOUBLE
 /** get_z_exp_we (from dd_real to Z_NR<double>) */
 template<> template<>
-inline void FP_NR<dd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long expo_add) const {
+inline void FP_NR<dd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long) const {
   expo = 0;
   a = get_si();
 }
 /** get_z_exp_we (from qd_real to Z_NR<double>) */
 template<> template<>
-inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long expo_add) const {
+inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long) const {
   expo = 0;
   a = get_si();
 }

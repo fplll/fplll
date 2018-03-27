@@ -197,8 +197,7 @@ template <class ZT, class FT> int test_filename(const char *input_filename)
    @return zero on success
 */
 
-template <class ZT, class FT>
-int test_int_rel(int d, int b, FloatType float_type = FT_DEFAULT, int prec = 0)
+template <class ZT, class FT> int test_int_rel(int d, int b)
 {
   ZZ_mat<ZT> A;
   A.resize(d, d + 1);
