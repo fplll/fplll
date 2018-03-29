@@ -73,54 +73,57 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   }
 }
 
-template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int k)
+template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kappa)
 {
-  vector<FT> xf(k);
+  vector<FT> xf(kappa);
   FT ftmp0, ftmp1;
-  long expo0, expo1;
+  long expo0 = -1;
+  long expo1 = -1;
   int min_index;
 
   do
   {
     min_index = 0;
-    m.update_R(k, k);
-    for (int i = k - 1; i >= 0; i--)
+    m.update_R(kappa, kappa);
+
+    for (int i = kappa - 1; i >= 0; i--)
     {
-      m.get_R(xf[i], k, i, expo0);  // expo0 = row_expo[k]
-      m.get_R(ftmp0, i, i, expo1);  // expo1 = row_expo[i]
+      m.get_R(ftmp1, kappa, i, expo0);  // expo0 = row_expo[kappa]
+      m.get_R(ftmp0, i, i, expo1);      // expo1 = row_expo[i]
 
-      xf[i].div(xf[i], ftmp0);  // x[i] = R(k, i) / R(i, i)
+      ftmp1.div(ftmp1, ftmp0);  // x[i] = R(kappa, i) / R(i, i)
       /* If T = mpfr or dpe, enable_row_expo must be false and then, expo0 - expo1 == 0 (required by
-       * rnd_we with this
-       * types) */
-      xf[i].rnd_we(xf[i], expo0 - expo1);
-      xf[i].neg(xf[i]);
+       * rnd_we with this types) */
+      ftmp1.rnd_we(ftmp1, expo0 - expo1);
+      xf[i].neg(ftmp1);
 
-      if (xf[i].cmp(0.0) != 0)
+      if (ftmp1.cmp(0.0) != 0)
       {
         for (int j = 0; j < i; j++)
         {
-          m.get_R(ftmp1, i, j, expo0);  // expo0 = row_expo[i]
-          ftmp1.mul(xf[i], ftmp1);      // ftmp1 = x[i] * R(i, j)
-          m.get_R(ftmp0, k, j, expo0);  // expo0 = row_expo[k]
-          ftmp0.add(ftmp0, ftmp1);      // ftmp0 = R(k, j) + x[i] * R(i, j)
-          m.set_R(ftmp0, k, j);
+          m.get_R(ftmp1, i, j, expo0);      // expo0 = row_expo[i]
+          ftmp1.mul(xf[i], ftmp1);          // ftmp1 = x[i] * R(i, j)
+          m.get_R(ftmp0, kappa, j, expo0);  // expo0 = row_expo[kappa]
+          ftmp0.add(ftmp0, ftmp1);          // ftmp0 = R(kappa, j) + x[i] * R(i, j)
+          m.set_R(ftmp0, kappa, j);
         }
         min_index = max(min_index, i + 1);
       }
     }
-    m.norm_square_b_row(ftmp1, k, expo0);  // ftmp1 = ||b[k]||^2
-    m.add_mul_b_rows(k, xf);
-    m.norm_square_b_row(ftmp0, k, expo1);  // ftmp0 = ||b[k]||^2
-    ftmp1.mul(sr, ftmp1);                  // ftmp1 = 2^(-cd) * ftmp1
+
+    m.norm_square_b_row(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
+    m.addmul_b_rows(kappa, xf);
+    m.norm_square_b_row(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
+    ftmp1.mul(sr, ftmp1);                      // ftmp1 = 2^(-cd) * ftmp1
+
     if (expo1 > -1)
       ftmp0.mul_2si(ftmp0, expo1 - expo0);
   } while (ftmp0.cmp(ftmp1) <= 0);
 
   if (min_index == 0)
-    m.update_R_last(k);
+    m.update_R_last(kappa);
   else
-    m.update_R(k);
+    m.update_R(kappa);
 }
 
 // Works only there is no row_expo.

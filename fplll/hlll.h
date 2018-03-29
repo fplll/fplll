@@ -62,7 +62,14 @@ private:
   // Verbose mode.
   bool verbose;
 
-  void size_reduction(int k);
+  /**
+     @brief Size reduction.
+
+     Perform size reduction of vector kappa.
+
+     @param kappa index of the vector
+  */
+  void size_reduction(int kappa = 0);
 
   inline void print_params();
 };

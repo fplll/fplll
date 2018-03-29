@@ -138,7 +138,7 @@ public:
   /**
    * b[k] = b[k] - sum_{i = 0}^{k - 1}(x[i] * b[i])
    */
-  void add_mul_b_rows(int k, vector<FT> xf);
+  void addmul_b_rows(int k, vector<FT> xf);
 
   /**
    * Swap row i and j of b.
@@ -200,6 +200,13 @@ private:
 
   /* Used by update_R. */
   vector<long> tmp_col_expo;
+
+  void row_add(int i, int j);
+  void row_sub(int i, int j);
+  void row_addmul_si(int i, int j, long x);
+  void row_addmul_si_2exp(int i, int j, long x, long expo);
+  void row_addmul_2exp(int i, int j, const ZT &x, long expo);
+  void row_addmul_we(int i, int j, const FT &x, long expo_add);
 };
 
 template <class ZT, class FT>

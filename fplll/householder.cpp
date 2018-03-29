@@ -155,18 +155,69 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
     update_R_last(i);
 }
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::add_mul_b_rows(int k, vector<FT> xf)
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_rows(int k, vector<FT> xf)
 {
   FPLLL_DEBUG_CHECK(k > 0 && k < d);
-  ZT ztmp0, ztmp1;
-  long expo;
 
   for (int i = 0; i < k; i++)
-  {
-    xf[i].get_z_exp_we(ztmp0, expo, row_expo[k] - row_expo[i]);
-    b[k].addmul_2exp(b[i], ztmp0, expo, n, ztmp1);
-  }
+    row_addmul_we(k, i, xf[i], row_expo[k] - row_expo[i]);
+
   invalidate_row(k);
+}
+
+/* Taken from fplll/gso.cpp (commit 3d0d962)*/
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_add(int i, int j)
+{
+  b[i].add(b[j], n);
+}
+
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_sub(int i, int j)
+{
+  b[i].sub(b[j], n);
+}
+
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_addmul_si(int i, int j, long x)
+{
+  b[i].addmul_si(b[j], x, n);
+}
+
+template <class ZT, class FT>
+void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
+{
+  ZT ztmp0;
+  b[i].addmul_si_2exp(b[j], x, expo, n, ztmp0);
+}
+
+template <class ZT, class FT>
+void MatHouseholder<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
+{
+  ZT ztmp0;
+  b[i].addmul_2exp(b[j], x, expo, n, ztmp0);
+}
+
+template <class ZT, class FT>
+void MatHouseholder<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_add)
+{
+  FPLLL_DEBUG_CHECK(j >= 0 && j < i);
+
+  ZT ztmp0;
+  long expo;
+  long lx = x.get_si_exp_we(expo, expo_add);
+
+  if (expo == 0)
+  {
+    if (lx == 1)
+      row_add(i, j);
+    else if (lx == -1)
+      row_sub(i, j);
+    else if (lx != 0)
+      row_addmul_si(i, j, lx);
+  }
+  else
+  {
+    x.get_z_exp_we(ztmp0, expo, expo_add);
+    row_addmul_2exp(i, j, ztmp0, expo);
+  }
 }
 
 template class MatHouseholder<Z_NR<long>, FP_NR<double>>;
