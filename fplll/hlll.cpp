@@ -78,10 +78,12 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int k)
   vector<FT> xf(k);
   FT ftmp0, ftmp1;
   long expo0, expo1;
+  int min_index;
 
   do
   {
-    m.update_R(k, k - 1);
+    min_index = 0;
+    m.update_R(k, k);
     for (int i = k - 1; i >= 0; i--)
     {
       m.get_R(xf[i], k, i, expo0);  // expo0 = row_expo[k]
@@ -104,6 +106,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int k)
           ftmp0.add(ftmp0, ftmp1);      // ftmp0 = R(k, j) + x[i] * R(i, j)
           m.set_R(ftmp0, k, j);
         }
+        min_index = max(min_index, i + 1);
       }
     }
     m.norm_square_b_row(ftmp1, k, expo0);  // ftmp1 = ||b[k]||^2
@@ -114,7 +117,10 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int k)
       ftmp0.mul_2si(ftmp0, expo1 - expo0);
   } while (ftmp0.cmp(ftmp1) <= 0);
 
-  m.update_R(k);
+  if (min_index == 0)
+    m.update_R_last(k);
+  else
+    m.update_R(k);
 }
 
 // Works only there is no row_expo.
