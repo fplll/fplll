@@ -291,10 +291,8 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int end, lon
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::invalidate_row(int k)
 {
-#ifdef DEBUG
   if (k < n_known_rows)
     n_known_rows = k;
-#endif  // DEBUG
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
