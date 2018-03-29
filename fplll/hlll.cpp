@@ -29,21 +29,17 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   FT s;
   FT tmp;
   FT sum;
-  FT delta_           = delta;  // TODO: not exactly the good value
-  bool update_R_row_0 = true;
-  int start_time      = cputime();
+  FT delta_      = delta;  // TODO: not exactly the good value
+  int start_time = cputime();
   long expo_k1_k1, expo_k_k1, expo_k_k;
+
+  m.update_R(0);
 
   if (verbose)
     print_params();
 
   while (k < m.get_d())
   {
-    if (update_R_row_0)
-    {
-      m.update_R(0);
-      update_R_row_0 = !update_R_row_0;
-    }
     if (k > k_max)
     {
       if (verbose)
@@ -71,8 +67,6 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
       k++;
     else
     {
-      if (k - 1 == 0)
-        update_R_row_0 = !update_R_row_0;
       m.swap(k - 1, k);
       k = max(k - 1, 1);
     }

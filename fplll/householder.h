@@ -288,6 +288,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
   invalidate_row(i);
 
   b.swap_rows(i, j);
+  if (i == 0)
+    update_R(0);
 }
 
 FPLLL_END_NAMESPACE
