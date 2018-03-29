@@ -95,64 +95,75 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int last_j)
 {
+  // To update row i, we need to know n_known_rows rows
   FPLLL_DEBUG_CHECK(i <= n_known_rows);
-  FT ftmp0, ftmp1;
-  FPLLL_DEBUG_CHECK(last_j <= i + 1);
-
-  int j, k;
-  int j_stop = last_j == i + 1 ? i : last_j;
-
-  if (enable_row_expo)
+  if (i == n_known_rows)
   {
-    long max_expo = LONG_MIN;
+    FT ftmp0, ftmp1;
+    FPLLL_DEBUG_CHECK(last_j <= i + 1);
 
-    for (j = 0; j < n; j++)
+    n_known_cols = max(n_known_cols, init_row_size[i]);
+    FPLLL_DEBUG_CHECK(last_j <= n_known_cols);
+
+    int j, k;
+    int j_stop = last_j == i + 1 ? i : last_j;
+
+    if (enable_row_expo)
     {
-      b(i, j).get_f_exp(R(i, j), tmp_col_expo[j]);
-      max_expo = max(max_expo, tmp_col_expo[j]);
-    }
+      long max_expo = LONG_MIN;
 
-    for (j = 0; j < n; j++)
-      R(i, j).mul_2si(R(i, j), tmp_col_expo[j] - max_expo);
-
-    row_expo[i] = max_expo;
-    FPLLL_DEBUG_CHECK(row_expo[i] >= 0);
-  }
-  else
-  {
-    for (j = 0; j < n; j++)
-      R(i, j).set_z(b(i, j));
-  }
-
-  if (j_stop - 1 >= 0)
-  {
-    for (j = 0; j < j_stop - 1; j++)
-    {
-      // vj * ri[j..n]^T
-      V[j].dot_product(ftmp1, R[i], j, n);
-
-      //-vj * ri[j..n]^T
-      ftmp1.neg(ftmp1);
-      for (k = j; k < n; k++)
+      for (j = 0; j < n_known_cols; j++)
       {
-        // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
-        R(i, k).addmul(V(j, k), ftmp1);
+        b(i, j).get_f_exp(R(i, j), tmp_col_expo[j]);
+        max_expo = max(max_expo, tmp_col_expo[j]);
       }
-      // ri[j] = sigma[j] * ri[j]
-      R(i, j).mul(sigma[j], R(i, j));
+
+      for (j = 0; j < n_known_cols; j++)
+        R(i, j).mul_2si(R(i, j), tmp_col_expo[j] - max_expo);
+      for (j = n_known_cols; j < n; j++)
+        R(i, j) = 0.0;
+
+      row_expo[i] = max_expo;
+      FPLLL_DEBUG_CHECK(row_expo[i] >= 0);
+    }
+    else
+    {
+      for (j = 0; j < n_known_cols; j++)
+        R(i, j).set_z(b(i, j));
+      for (j = n_known_cols; j < n; j++)
+        R(i, j) = 0.0;
     }
 
-    V[j_stop - 1].dot_product(ftmp1, R[i], j_stop - 1, n);
-    ftmp1.neg(ftmp1);
-    R(i, j_stop - 1).addmul(V(j_stop - 1, j_stop - 1), ftmp1);
-    R(i, j_stop - 1).mul(sigma[j_stop - 1], R(i, j_stop - 1));
+    if (j_stop - 1 >= 0)
+    {
+      for (j = 0; j < j_stop - 1; j++)
+      {
+        // vj * ri[j..n]^T
+        V[j].dot_product(ftmp1, R[i], j, n);
 
-    for (k = j_stop; k < n; k++)
-      R(i, k).addmul(V(j_stop - 1, k), ftmp1);
+        //-vj * ri[j..n]^T
+        ftmp1.neg(ftmp1);
+        for (k = j; k < n; k++)
+        {
+          // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
+          R(i, k).addmul(V(j, k), ftmp1);
+        }
+        // ri[j] = sigma[j] * ri[j]
+        R(i, j).mul(sigma[j], R(i, j));
+      }
+
+      V[j_stop - 1].dot_product(ftmp1, R[i], j_stop - 1, n);
+      ftmp1.neg(ftmp1);
+      R(i, j_stop - 1).addmul(V(j_stop - 1, j_stop - 1), ftmp1);
+      R(i, j_stop - 1).mul(sigma[j_stop - 1], R(i, j_stop - 1));
+
+      for (k = j_stop; k < n; k++)
+        R(i, k).addmul(V(j_stop - 1, k), ftmp1);
+    }
+
+    if (last_j == i + 1)
+      update_R_last(i);
   }
-
-  if (last_j == i + 1)
-    update_R_last(i);
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_rows(int k, vector<FT> xf)
@@ -168,37 +179,37 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_rows(int k, 
 /* Taken from fplll/gso.cpp (commit 3d0d962)*/
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_add(int i, int j)
 {
-  b[i].add(b[j], n);
+  b[i].add(b[j], n_known_cols);
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_sub(int i, int j)
 {
-  b[i].sub(b[j], n);
+  b[i].sub(b[j], n_known_cols);
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_addmul_si(int i, int j, long x)
 {
-  b[i].addmul_si(b[j], x, n);
+  b[i].addmul_si(b[j], x, n_known_cols);
 }
 
 template <class ZT, class FT>
 void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
 {
   ZT ztmp0;
-  b[i].addmul_si_2exp(b[j], x, expo, n, ztmp0);
+  b[i].addmul_si_2exp(b[j], x, expo, n_known_cols, ztmp0);
 }
 
 template <class ZT, class FT>
 void MatHouseholder<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
 {
   ZT ztmp0;
-  b[i].addmul_2exp(b[j], x, expo, n, ztmp0);
+  b[i].addmul_2exp(b[j], x, expo, n_known_cols, ztmp0);
 }
 
 template <class ZT, class FT>
 void MatHouseholder<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_add)
 {
-  FPLLL_DEBUG_CHECK(j >= 0 && j < i);
+  FPLLL_DEBUG_CHECK(j >= 0 && i == n_known_rows && j < i);
 
   ZT ztmp0;
   long expo;

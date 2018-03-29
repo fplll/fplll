@@ -49,10 +49,14 @@ public:
     d            = b.get_rows();
     n            = b.get_cols();
     n_known_rows = 0;
+    n_known_cols = 0;
     sigma.resize(d);
     R.resize(d, n);
     V.resize(d, n);
     row_expo.resize(d);
+    init_row_size.resize(d);
+    for (int i         = 0; i < d; i++)
+      init_row_size[i] = max(b[i].size_nz(), 1);
 
     if (enable_row_expo)
       tmp_col_expo.resize(n);
@@ -201,6 +205,10 @@ private:
   /* Used by update_R. */
   vector<long> tmp_col_expo;
 
+  // init_row_size[i] = (last non-zero column in the i-th row of b) + 1
+  vector<int> init_row_size;
+  int n_known_cols;
+
   void row_add(int i, int j);
   void row_sub(int i, int j);
   void row_addmul_si(int i, int j, long x);
@@ -254,7 +262,7 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k, long &expo)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
   ZT ztmp0;
-  b[k].dot_product(ztmp0, b[k], 0, n);
+  b[k].dot_product(ztmp0, b[k], 0, n_known_cols);
   if (enable_row_expo)
     ztmp0.get_f_exp(f, expo);
   else
