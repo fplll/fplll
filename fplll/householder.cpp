@@ -134,6 +134,15 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
         R(i, j) = 0.0;
     }
 
+    // Copy R[i] in bf[i] (while we copy b[i] in R[i])
+    if (enable_bf)
+    {
+      for (j = 0; j < n_known_cols; j++)
+        bf(i, j) = R(i, j);
+      for (j = n_known_cols; j < n; j++)
+        bf(i, j) = 0.0;
+    }
+
     if (j_stop - 1 >= 0)
     {
       for (j = 0; j < j_stop - 1; j++)
@@ -171,7 +180,12 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_rows(int k, 
   FPLLL_DEBUG_CHECK(k > 0 && k < d);
 
   for (int i = 0; i < k; i++)
+  {
     row_addmul_we(k, i, xf[i], row_expo[k] - row_expo[i]);
+
+    if (enable_bf)
+      bf[k].addmul(bf[i], xf[i], n_known_cols);
+  }
 
   invalidate_row(k);
 }

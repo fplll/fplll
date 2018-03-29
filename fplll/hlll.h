@@ -82,7 +82,8 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
        << "theta = " << theta << endl
        << "c = " << c << endl
        << "precision = " << FT::get_prec() << endl
-       << "row_expo = " << static_cast<int>(m.is_enable_row_expo()) << endl;
+       << "row_expo = " << static_cast<int>(m.is_enable_row_expo()) << endl
+       << "enable_bf = " << static_cast<int>(m.is_enable_bf()) << endl;
 }
 
 template <class ZT, class FT>

@@ -25,7 +25,8 @@ FPLLL_BEGIN_NAMESPACE
 enum MatHouseholderFlags
 {
   HOUSEHOLDER_DEFAULT  = 0,
-  HOUSEHOLDER_ROW_EXPO = 1
+  HOUSEHOLDER_ROW_EXPO = 1,
+  HOUSEHOLDER_BF       = 2
 };
 
 /**
@@ -44,7 +45,7 @@ public:
    *   The matrix on which row operations are performed. It must not be empty.
    */
   MatHouseholder(Matrix<ZT> &arg_b, int flags)
-      : b(arg_b), enable_row_expo(flags & HOUSEHOLDER_ROW_EXPO)
+      : b(arg_b), enable_row_expo(flags & HOUSEHOLDER_ROW_EXPO), enable_bf(flags & HOUSEHOLDER_BF)
   {
     d            = b.get_rows();
     n            = b.get_cols();
@@ -53,6 +54,8 @@ public:
     sigma.resize(d);
     R.resize(d, n);
     V.resize(d, n);
+    if (enable_bf)
+      bf.resize(d, n);
     row_expo.resize(d);
     init_row_size.resize(d);
     for (int i         = 0; i < d; i++)
@@ -156,6 +159,7 @@ public:
   inline void invalidate_row(int k);
 
   inline bool is_enable_row_expo() { return enable_row_expo; }
+  inline bool is_enable_bf() { return enable_bf; }
 private:
   /**
    * Number of rows of b (dimension of the lattice).
@@ -215,6 +219,13 @@ private:
   void row_addmul_si_2exp(int i, int j, long x, long expo);
   void row_addmul_2exp(int i, int j, const ZT &x, long expo);
   void row_addmul_we(int i, int j, const FT &x, long expo_add);
+
+  /**
+   * Basis of the lattice (floatting point)
+   */
+  Matrix<FT> bf;
+
+  const bool enable_bf;
 };
 
 template <class ZT, class FT>
@@ -261,14 +272,29 @@ template <class ZT, class FT>
 inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k, long &expo)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
-  ZT ztmp0;
-  b[k].dot_product(ztmp0, b[k], 0, n_known_cols);
   if (enable_row_expo)
-    ztmp0.get_f_exp(f, expo);
+    if (enable_bf)
+    {
+      bf[k].dot_product(f, bf[k], 0, n_known_cols);
+      expo = 2 * row_expo[k];
+    }
+    else
+    {
+      ZT ztmp0;
+      b[k].dot_product(ztmp0, b[k], 0, n_known_cols);
+      ztmp0.get_f_exp(f, expo);
+    }
   else
   {
     expo = -1;
-    f.set_z(ztmp0);
+    if (enable_bf)
+      bf[k].dot_product(f, bf[k], 0, n_known_cols);
+    else
+    {
+      ZT ztmp0;
+      b[k].dot_product(ztmp0, b[k], 0, n_known_cols);
+      f.set_z(ztmp0);
+    }
   }
 }
 
@@ -302,6 +328,15 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
   invalidate_row(i);
 
   b.swap_rows(i, j);
+  if (enable_bf)
+    bf.swap_rows(i, j);
+  R.swap_rows(i, j);
+  V.swap_rows(i, j);
+  iter_swap(sigma.begin() + i, sigma.begin() + j);
+  if (enable_row_expo)
+    iter_swap(row_expo.begin() + i, row_expo.begin() + j);
+  iter_swap(init_row_size.begin() + i, init_row_size.begin() + j);
+
   if (i == 0)
     update_R(0);
 }
