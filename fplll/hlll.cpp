@@ -81,11 +81,13 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   long expo1 = -1;
   // for all i > max_index, xf[i] == 0.
   int max_index;
+  bool reduce = true;
+
+  m.update_R(kappa, kappa);
 
   do
   {
     max_index = -1;
-    m.update_R(kappa, kappa);
 
     for (int i = kappa - 1; i >= 0; i--)
     {
@@ -119,7 +121,15 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
 
     if (expo1 > -1)
       ftmp0.mul_2si(ftmp0, expo1 - expo0);
-  } while (ftmp0.cmp(ftmp1) <= 0);
+
+    if (ftmp0.cmp(ftmp1) <= 0)
+    {
+      m.update_R(kappa, kappa);
+    }
+    else
+      reduce = false;
+
+  } while (reduce);
 
   if (max_index == -1)
     m.update_R_last(kappa);
