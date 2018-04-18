@@ -250,7 +250,7 @@ template<>
 inline void Z_NR<mpz_t>::randb(int bits) {
   mpz_urandomb(data, RandGen::get_gmp_state(), bits);
   if (bits > 32){ 
-    unsigned long int tmp = mpz_get_ui(data);  
+    unsigned long long tmp = static_cast<unsigned long long>(mpz_get_ui(data)  & ~((1ULL)<<31));
     gmp_randseed_ui(RandGen::gmp_state, tmp*tmp);
     }
 }

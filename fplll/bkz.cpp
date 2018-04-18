@@ -80,7 +80,7 @@ void BKZReduction<ZT, FT>::rerandomize_block(int min_row, int max_row, int densi
 }
 
 template <class ZT, class FT>
-const PruningParams &BKZReduction<ZT, FT>::get_pruning(int kappa, int block_size,
+const PruningParams &BKZReduction<ZT, FT>::get_pruning(int kappa, unsigned int block_size,
                                                        const BKZParam &par) const
 {
 
@@ -98,7 +98,8 @@ const PruningParams &BKZReduction<ZT, FT>::get_pruning(int kappa, int block_size
 }
 
 template <class ZT, class FT>
-bool BKZReduction<ZT, FT>::svp_preprocessing(int kappa, int block_size, const BKZParam &param)
+bool BKZReduction<ZT, FT>::svp_preprocessing(int kappa, unsigned int block_size,
+                                             const BKZParam &param)
 {
   bool clean = true;
 

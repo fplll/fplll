@@ -268,15 +268,14 @@ bool FastErrorBoundedEvaluator::get_max_error(FP_NR<mpfr_t> &max_error,
   return true;
 }
 
-bool ExactErrorBoundedEvaluator::get_max_error(FP_NR<mpfr_t> &max_error,
-                                               const FP_NR<mpfr_t> &last_partial_dist)
+bool ExactErrorBoundedEvaluator::get_max_error(FP_NR<mpfr_t> &max_error, const FP_NR<mpfr_t> &)
 {
   max_error = 0.0;
   return true;
 }
 
-void ExactErrorBoundedEvaluator::eval_sol(const vector<FP_NR<mpfr_t>> &new_sol_coord,
-                                          const enumf &new_partial_dist, enumf &max_dist)
+void ExactErrorBoundedEvaluator::eval_sol(const vector<FP_NR<mpfr_t>> &new_sol_coord, const enumf &,
+                                          enumf &max_dist)
 {
   int n = matrix.get_cols();
   Z_NR<mpz_t> new_sol_dist, coord;
@@ -315,7 +314,7 @@ void ExactErrorBoundedEvaluator::eval_sol(const vector<FP_NR<mpfr_t>> &new_sol_c
 
 void ExactErrorBoundedEvaluator::eval_sub_sol(int offset,
                                               const vector<FP_NR<mpfr_t>> &new_sub_sol_coord,
-                                              const enumf &sub_dist)
+                                              const enumf &)
 {
   Z_NR<mpz_t> minusone;
   minusone = -1;

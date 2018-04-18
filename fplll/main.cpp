@@ -51,13 +51,31 @@ template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
     switch (format[i])
     {
     case 'b':
-      cout << b << endl;
+      if (format[i + 1] == 'k')
+      {
+        b.print_comma(cout);
+        i++;
+      }
+      else
+        cout << b << endl;
       break;
     case 'u':
-      cout << u << endl;
+      if (format[i + 1] == 'k')
+      {
+        u.print_comma(cout);
+        i++;
+      }
+      else
+        cout << u << endl;
       break;
     case 'v':
-      cout << u_inv << endl;
+      if (format[i + 1] == 'k')
+      {
+        u_inv.print_comma(cout);
+        i++;
+      }
+      else
+        cout << u_inv << endl;
       break;
     case 't':
       cout << status << endl;
@@ -102,7 +120,7 @@ void read_pruning_vector(const char *file_name, PruningParams &pr, int n)
         "File '" << file_name << "' should contain exactly " << n << " numbers");
 }
 
-template <class ZT> int bkz(Options &o, ZZ_mat<ZT> &b) { ABORT_MSG("mpz required for BKZ"); }
+template <class ZT> int bkz(Options &, ZZ_mat<ZT> &) { ABORT_MSG("mpz required for BKZ"); }
 
 template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
 {
@@ -140,10 +158,22 @@ template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
     switch (format[i])
     {
     case 'b':
-      cout << b << endl;
+      if (format[i + 1] == 'k')
+      {
+        b.print_comma(cout);
+        i++;
+      }
+      else
+        cout << b << endl;
       break;
     case 'u':
-      cout << u << endl;
+      if (format[i + 1] == 'k')
+      {
+        u.print_comma(cout);
+        i++;
+      }
+      else
+        cout << u << endl;
       break;
     case 't':
       cout << status << endl;
@@ -164,15 +194,28 @@ template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
    Note: since we only force |mu_i,j| <= eta with eta > 0.5, the solution
    is not unique even for a generic matrix */
 
-template <class ZT> int hkz(Options &o, ZZ_mat<ZT> &b) { ABORT_MSG("mpz required for HKZ"); }
+template <class ZT> int hkz(Options &, ZZ_mat<ZT> &) { ABORT_MSG("mpz required for HKZ"); }
 
 template <> int hkz(Options &o, ZZ_mat<mpz_t> &b)
 {
-  int flags = 0;
+  const char *format = o.output_format ? o.output_format : "b";
+  int flags          = 0;
   if (o.verbose)
     flags |= HKZ_VERBOSE;
   int status = hkz_reduction(b, flags, o.float_type, o.precision);
-  cout << b << endl;
+  for (int i = 0; format[i]; i++)
+  {
+    if (format[i] == 'b')
+    {
+      if (format[i + 1] == 'k')
+      {
+        b.print_comma(cout);
+        i++;
+      }
+      else
+        cout << b << endl;
+    }
+  }
   if (status != RED_SUCCESS)
   {
     cerr << "Failure: " << get_red_status_str(status) << endl;
@@ -182,7 +225,7 @@ template <> int hkz(Options &o, ZZ_mat<mpz_t> &b)
 
 /* Shortest vector problem and closest vector problem */
 
-template <class ZT> int svpcvp(Options &o, ZZ_mat<ZT> &b, const vector<Z_NR<ZT>> &target)
+template <class ZT> int svpcvp(Options &, ZZ_mat<ZT> &, const vector<Z_NR<ZT>> &target)
 {
   if (target.empty())
   {
@@ -408,7 +451,7 @@ void read_options(int argc, char **argv, Options &o)
       o.bkz_dump_gso_filename = argv[ac];
       o.bkz_flags |= BKZ_DUMP_GSO;
     }
-    else if (strcmp(argv[ac], "-c") == 0)
+    else if (strcmp(argv[ac], "-c") == 0 || strcmp(argv[ac], "-r") == 0)
     {
       ++ac;
       CHECK(ac < argc, "missing value after -c switch");
@@ -483,15 +526,11 @@ void read_options(int argc, char **argv, Options &o)
         o.method = LM_HEURISTIC;
       else if (strcmp("fast", argv[ac]) == 0)
         o.method = LM_FAST;
-      else if (strcmp("fastearly", argv[ac]) == 0)
+      else if (strcmp("fastearly", argv[ac]) == 0 || strcmp("heuristicearly", argv[ac]) == 0)
       {
-        o.method    = LM_FAST;
-        o.early_red = true;
-      }
-      else if (strcmp("heuristicearly", argv[ac]) == 0)
-      {
-        o.method    = LM_HEURISTIC;
-        o.early_red = true;
+        string m = string(argv[ac]);
+        // m.substr(0, m.size() - 4) remove early from the string
+        ABORT_MSG("use '-m " << m.substr(0, m.size() - 5) << " -y' instead of " << argv[ac]);
       }
       else
         ABORT_MSG("parse error in -m switch : proved, heuristic, fast, "
@@ -512,12 +551,6 @@ void read_options(int argc, char **argv, Options &o)
       ++ac;
       CHECK(ac < argc, "missing value after -p switch");
       o.precision = atoi(argv[ac]);
-    }
-    else if (strcmp(argv[ac], "-r") == 0)
-    {
-      ++ac;
-      CHECK(ac < argc, "missing value after -r switch");
-      // o.r = atoi(argv[ac]); // ignored (was the number of rows)
     }
     else if (strcmp(argv[ac], "-v") == 0)
     {
@@ -574,7 +607,7 @@ void read_options(int argc, char **argv, Options &o)
            << "       Floating-point precision (only with -f mpfr)\n"
            << "  -z [mpz|int|long|double]\n"
            << "       Integer type in LLL (default: mpz; long is an alias to int)\n"
-           << "  -m [wrapper|fast|fastearly|heuristic|heuristicearly|proved]\n"
+           << "  -m [wrapper|fast|heuristic|proved]\n"
            << "       LLL version (default: wrapper)\n"
            << "  -y\n"
            << "       Enable early reduction\n"
@@ -595,8 +628,7 @@ void read_options(int argc, char **argv, Options &o)
            << "        Restricts the LLL call\n"
            << "  -bkzdumpgso <file_name>\n"
            << "        Dumps the log of the Gram-Schmidt vectors in specified file\n"
-
-           << "  -of [bcstuv]\n"
+           << "  -of [b|c|s|t|u|v|bk|uk|vk]\n"
            << "        Output formats.\n"
 
            << "Please refer to https://github.com/fplll/fplll/README.md for more information.\n";

@@ -115,7 +115,7 @@ public:
    *@returns
    *    false if it modified the basis, true otherwise
    */
-  bool svp_preprocessing(int kappa, int block_size, const BKZParam &param);
+  bool svp_preprocessing(int kappa, unsigned int block_size, const BKZParam &param);
 
   /**
    * @brief Inserts given (dual) vector into the basis
@@ -303,7 +303,7 @@ private:
 
   bool set_status(int new_status);
 
-  const PruningParams &get_pruning(int kappa, int block_size, const BKZParam &par) const;
+  const PruningParams &get_pruning(int kappa, unsigned int block_size, const BKZParam &par) const;
 
   // handles the general case of inserting a vector into the (dual) basis, i.e.
   // when none of the coefficients are \pm 1

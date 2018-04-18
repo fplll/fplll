@@ -199,6 +199,8 @@ public:
   void print(ostream &os, int nrows = -1, int ncols = -1) const;
   /** Reads this matrix from a stream. */
   void read(istream &is);
+  /** Print the matrix, sage format style */
+  ostream &print_comma(ostream &os) const;
   /** Change the output format style of Matrix */
   static int set_print_mode(int new_print_mode)
   {
