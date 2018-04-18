@@ -61,6 +61,15 @@ public:
     for (int i         = 0; i < d; i++)
       init_row_size[i] = max(b[i].size_nz(), 1);
 
+    R_history.resize(d);
+    for (int i = 0; i < d; i++)
+    {
+      R_history[i].resize(n);
+      for (int j = 0; j < n; j++)
+        R_history[i][j].resize(n);
+    }
+    updated_R = false;
+
     if (enable_row_expo)
       tmp_col_expo.resize(n);
     else
@@ -160,6 +169,8 @@ public:
 
   inline bool is_enable_row_expo() { return enable_row_expo; }
   inline bool is_enable_bf() { return enable_bf; }
+
+  inline void set_updated_R_false() { updated_R = false; }
 private:
   /**
    * Number of rows of b (dimension of the lattice).
@@ -226,6 +237,15 @@ private:
   Matrix<FT> bf;
 
   const bool enable_bf;
+
+  /*
+   * R_history stores the history of the computation of R
+   * Example: R[i][j][k] is the index k of R[i] when the coefficient j was known
+   */
+  vector<vector<vector<FT>>> R_history;
+
+  // If updated_R, R[n_known_rows][0] to R[n_known_rows][n_known_rows - 1] is valid
+  bool updated_R;
 };
 
 template <class ZT, class FT>
@@ -336,9 +356,18 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
   if (enable_row_expo)
     iter_swap(row_expo.begin() + i, row_expo.begin() + j);
   iter_swap(init_row_size.begin() + i, init_row_size.begin() + j);
+  iter_swap(R_history.begin() + i, R_history.begin() + j);
 
   if (i == 0)
     update_R(0);
+  else
+  {
+    // Recover R
+    for (int k = 0; k < n; k++)
+      R(i, k) = R_history[i][i - 1][k];
+
+    updated_R = true;
+  }
 }
 
 FPLLL_END_NAMESPACE

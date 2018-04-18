@@ -97,7 +97,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
 {
   // To update row i, we need to know n_known_rows rows
   FPLLL_DEBUG_CHECK(i <= n_known_rows);
-  if (i == n_known_rows)
+  if (i == n_known_rows && !updated_R)
   {
     FT ftmp0, ftmp1;
     FPLLL_DEBUG_CHECK(last_j <= i + 1);
@@ -159,6 +159,10 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
         }
         // ri[j] = sigma[j] * ri[j]
         R(i, j).mul(sigma[j], R(i, j));
+
+        // Copy R into R_history
+        for (int k           = 0; k < n; k++)
+          R_history[i][j][k] = R(i, k);
       }
 
       V[j_stop - 1].dot_product(ftmp1, R[i], j_stop - 1, n);
@@ -168,6 +172,10 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
 
       for (k = j_stop; k < n; k++)
         R(i, k).addmul(V(j_stop - 1, k), ftmp1);
+
+      // Copy R into R_history
+      for (k                    = 0; k < n; k++)
+        R_history[i][j_stop][k] = R(i, k);
     }
 
     if (last_j == i + 1)
