@@ -363,7 +363,9 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
   else
   {
     // Recover R
-    for (int k = 0; k < n; k++)
+    for (int k = 0; k < i - 1; k++)
+      R(i, k) = R_history[i][k][k];
+    for (int k = i - 1; k < n; k++)
       R(i, k) = R_history[i][i - 1][k];
 
     updated_R = true;

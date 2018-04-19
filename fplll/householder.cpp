@@ -161,7 +161,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
         R(i, j).mul(sigma[j], R(i, j));
 
         // Copy R into R_history
-        for (int k           = 0; k < n; k++)
+        for (int k           = j; k < n; k++)
           R_history[i][j][k] = R(i, k);
       }
 
@@ -174,7 +174,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
         R(i, k).addmul(V(j_stop - 1, k), ftmp1);
 
       // Copy R into R_history
-      for (k                    = 0; k < n; k++)
+      for (k                    = j_stop; k < n; k++)
         R_history[i][j_stop][k] = R(i, k);
     }
 

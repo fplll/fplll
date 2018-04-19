@@ -29,7 +29,10 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   FT s;
   FT tmp;
   FT sum;
-  FT delta_      = delta;  // TODO: not exactly the good value
+  /* TODO: not exactly the good value
+   * delta_ in (delta + 2^(-p + p0), 1 - 2^(-p + p0))
+   */
+  FT delta_      = delta;
   int start_time = cputime();
   long expo_k1_k1, expo_k_k1, expo_k_k;
 
@@ -57,12 +60,14 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     m.get_R(tmp, k, k, expo_k_k);
     tmp.mul(tmp, tmp);  // tmp = R(k, k)^2
     s.add(tmp, s);      // s = R(k, k - 1)^2 + R(k, k)^2
+    // Here, s = R(k, k - 1)^2 + R(k, k)^2 = ||b_k||^2 - sum_{i in [0, k-2)} R(k, i)^2
     m.get_R(tmp, k - 1, k - 1, expo_k1_k1);
     tmp.mul(tmp, tmp);
     tmp.mul(delta_, tmp);  // tmp = delta_ * R(k - 1, k - 1)^2
 
     if (expo_k1_k1 > -1)
       s.mul_2si(s, 2 * (expo_k_k - expo_k1_k1));
+
     if (tmp <= s)
       k++;
     else
@@ -84,13 +89,15 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   bool reduce = true;
 
   m.update_R(kappa, kappa);
+  // cout << "root: R[" << kappa << "] = " << m.get_R(kappa, expo0) << endl;
 
-  // Most likely, at this step, the next update_R(kappa, kappa) must modify some coefficients since
-  // b will most likely
-  // be changed. If b is not modified during the size reduction, there will be only a call to
-  // update_R_last(kappa),
-  // which automatically must set updated_R to false.
-  // TODO: find a best place to use this function.
+  /* Most likely, at this step, the next update_R(kappa, kappa) must modify some coefficients since
+   * b will most likely
+   * be changed. If b is not modified during the size reduction, there will be only a call to
+   * update_R_last(kappa),
+   * which automatically must set updated_R to false.
+   * TODO: find a best place to use this function.
+   */
   m.set_updated_R_false();
 
   do
