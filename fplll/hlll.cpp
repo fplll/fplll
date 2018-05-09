@@ -129,18 +129,27 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       }
     }
 
-    m.norm_square_b_row(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
-    m.addmul_b_rows(kappa, xf);
-    m.norm_square_b_row(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
-    ftmp1.mul(sr, ftmp1);                      // ftmp1 = 2^(-cd) * ftmp1
-
-    if (expo1 > -1)
-      ftmp0.mul_2si(ftmp0, expo1 - expo0);
-
-    if (ftmp0.cmp(ftmp1) <= 0)
-      m.update_R(kappa, kappa);
-    else
+    if (max_index == -1)
+    {
+      // If max_index == -1, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
+      // 1 > 2^(-cd)=sr since cd > 0. Then, reduce = false.
       reduce = false;
+    }
+    else
+    {
+      m.norm_square_b_row(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
+      m.addmul_b_rows(kappa, xf);
+      m.norm_square_b_row(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
+      ftmp1.mul(sr, ftmp1);                      // ftmp1 = 2^(-cd) * ftmp1 = sr * ftmp1
+
+      if (expo1 > -1)
+        ftmp0.mul_2si(ftmp0, expo1 - expo0);
+
+      if (ftmp0.cmp(ftmp1) <= 0)
+        m.update_R(kappa, kappa);
+      else
+        reduce = false;
+    }
 
   } while (reduce);
 
