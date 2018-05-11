@@ -64,6 +64,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
         R(i, k) = 0.0;
       }
       // Here, vi = vi / ftmp0 and ri[i..n] = (||r||, 0, 0, ..., 0)
+
+      R_inverse_diag[i].div(1.0, ftmp2);
     }
     else
     {
@@ -77,6 +79,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
         R(i, k) = 0.0;
         V(i, k) = 0.0;
       }
+
+      R_inverse_diag[i].div(1.0, R(i, i));
     }
   }
   else
@@ -88,6 +92,10 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
       R(i, k) = 0.0;
       V(i, k) = 0.0;
     }
+
+    // Result is inf.
+    // TODO: set inf instead of doing the computation.
+    R_inverse_diag[i].div(1.0, 0.0);
   }
 
   n_known_rows++;

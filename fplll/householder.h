@@ -69,6 +69,7 @@ public:
         R_history[i][j].resize(n);
     }
     updated_R = false;
+    R_inverse_diag.resize(d);
 
     if (enable_row_expo)
       tmp_col_expo.resize(n);
@@ -171,6 +172,8 @@ public:
   inline bool is_enable_bf() { return enable_bf; }
 
   inline void set_updated_R_false() { updated_R = false; }
+
+  inline FT get_R_inverse_diag(int i) { return R_inverse_diag[i]; }
 private:
   /**
    * Number of rows of b (dimension of the lattice).
@@ -246,6 +249,9 @@ private:
 
   // If updated_R, R[n_known_rows][0] to R[n_known_rows][n_known_rows - 1] is valid
   bool updated_R;
+
+  // Stores at index i the inverse of R(i, i)
+  vector<FT> R_inverse_diag;
 };
 
 template <class ZT, class FT>

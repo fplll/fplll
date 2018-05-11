@@ -108,7 +108,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       m.get_R(ftmp1, kappa, i, expo0);  // expo0 = row_expo[kappa]
       m.get_R(ftmp0, i, i, expo1);      // expo1 = row_expo[i]
 
-      ftmp1.div(ftmp1, ftmp0);  // x[i] = R(kappa, i) / R(i, i)
+      ftmp1.mul(ftmp1, m.get_R_inverse_diag(i));  // x[i] = R(kappa, i) / R(i, i)
       /* If T = mpfr or dpe, enable_row_expo must be false and then, expo0 - expo1 == 0 (required by
        * rnd_we with this types) */
       ftmp1.rnd_we(ftmp1, expo0 - expo1);
