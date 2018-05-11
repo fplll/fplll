@@ -85,8 +85,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   long expo0 = -1;
   long expo1 = -1;
   // for all i > max_index, xf[i] == 0.
-  int max_index;
-  bool reduce = true;
+  int max_index = -1;
 
   m.update_R(kappa, kappa);
   // cout << "root: R[" << kappa << "] = " << m.get_R(kappa, expo0) << endl;
@@ -132,8 +131,9 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
     if (max_index == -1)
     {
       // If max_index == -1, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
-      // 1 > 2^(-cd)=sr since cd > 0. Then, reduce = false.
-      reduce = false;
+      // 1 > 2^(-cd)=sr since cd > 0. Then, compute the last coefficient of R and stop.
+      m.update_R_last(kappa);
+      return;
     }
     else
     {
@@ -146,17 +146,18 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
         ftmp0.mul_2si(ftmp0, expo1 - expo0);
 
       if (ftmp0.cmp(ftmp1) <= 0)
+      {
+        // Continue to try to reduce b(kappa).
         m.update_R(kappa, kappa);
+      }
       else
-        reduce = false;
+      {
+        // Compute the last coefficients of R and stop.
+        m.update_R(kappa);
+        return;
+      }
     }
-
-  } while (reduce);
-
-  if (max_index == -1)
-    m.update_R_last(kappa);
-  else
-    m.update_R(kappa);
+  } while (true);
 }
 
 // Works only there is no row_expo.
