@@ -580,8 +580,8 @@ int hlll_reduction_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double de
   int householder_flags = HOUSEHOLDER_DEFAULT;
   if (method == LM_FAST)
   {
-    // householder_flags |= HOUSEHOLDER_ROW_EXPO | HOUSEHOLDER_BF;
-    householder_flags |= HOUSEHOLDER_ROW_EXPO;
+    householder_flags |= HOUSEHOLDER_ROW_EXPO | HOUSEHOLDER_BF;
+    // householder_flags |= HOUSEHOLDER_ROW_EXPO;
   }
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> m(b, householder_flags);
   HLLLReduction<Z_NR<ZT>, FP_NR<FT>> lll_obj(m, delta, eta, theta, c, flags);
