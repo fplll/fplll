@@ -100,7 +100,7 @@ matrix:
       - brew update
       - brew reinstall gmp
       - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rm /usr/local/include/c++ ; fi
-      - brew install qd autoconf libtool clang-format
+      - brew install autoconf libtool clang-format
 
 install:
   - export CXX="$COMPILER"
