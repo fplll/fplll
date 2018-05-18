@@ -37,7 +37,7 @@ var searchData=
   ['row_5fop_5fbegin',['row_op_begin',['../classMatGSOInterface.html#aa9ee03a35158adc9fc460a865d9c1004',1,'MatGSOInterface']]],
   ['row_5fop_5fend',['row_op_end',['../classMatGSOInterface.html#a5b49f8e5b63d2912df7b96a7fa8dd268',1,'MatGSOInterface']]],
   ['row_5fsub',['row_sub',['../classMatGSO.html#ae9cdbe7627dc6551012b2b36747f248e',1,'MatGSO::row_sub()'],['../classMatGSOGram.html#afa65db326e0088bc0f43f1eadecb2069',1,'MatGSOGram::row_sub()'],['../classMatGSOInterface.html#ae121def028fbfe8446e9a5c950f912e4',1,'MatGSOInterface::row_sub()']]],
-  ['row_5fswap',['row_swap',['../classMatGSO.html#aca8cdf5cef760e2d3cb51b8c8bc2c499',1,'MatGSO::row_swap()'],['../classMatGSOInterface.html#aa40ca0a394dfd8930b6612b4ae258dd9',1,'MatGSOInterface::row_swap()']]],
+  ['row_5fswap',['row_swap',['../classMatGSO.html#aca8cdf5cef760e2d3cb51b8c8bc2c499',1,'MatGSO::row_swap()'],['../classMatGSOGram.html#a3247ca17b52605e3b7f4e8e886789516',1,'MatGSOGram::row_swap()'],['../classMatGSOInterface.html#aa40ca0a394dfd8930b6612b4ae258dd9',1,'MatGSOInterface::row_swap()']]],
   ['rs_5fare_5fequal',['rs_are_equal',['../test__gso_8cpp.html#a71de35b1a49d40e4e91b04a04112a447',1,'test_gso.cpp']]],
   ['run_5faction',['run_action',['../main_8cpp.html#adaf4d14b19878b36f8c0ad5fdbab2b88',1,'main.cpp']]]
 ];

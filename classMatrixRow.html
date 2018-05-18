@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.2.0</a>
+                    <a class="navbar-brand">fplll 5.2.1</a>
                 </div>
             </div>
         </nav>
@@ -125,6 +125,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a5f527c97ffc62a851a0ec6246c0329fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac27a996da586b7860049cda0607abcf6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatrixRow.html#ac27a996da586b7860049cda0607abcf6">addmul_si_2exp</a> (const <a class="el" href="classMatrixRow.html">MatrixRow</a>&lt; T &gt; &amp;v, long x, long expo, int n, T &amp;tmp)</td></tr>
 <tr class="separator:ac27a996da586b7860049cda0607abcf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d71d0b98203ecb2a4ff14517bf6b881"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatrixRow.html#a5d71d0b98203ecb2a4ff14517bf6b881">dot_product</a> (T &amp;result, const <a class="el" href="classMatrixRow.html">MatrixRow</a>&lt; T &gt; &amp;v0, int n) const</td></tr>
+<tr class="separator:a5d71d0b98203ecb2a4ff14517bf6b881"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a112bf10417ca6f70ebb828200a413440"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatrixRow.html#a112bf10417ca6f70ebb828200a413440">dot_product</a> (T &amp;result, const <a class="el" href="classMatrixRow.html">MatrixRow</a>&lt; T &gt; &amp;v0) const</td></tr>
+<tr class="separator:a112bf10417ca6f70ebb828200a413440"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -576,6 +580,90 @@ template&lt;class T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5d71d0b98203ecb2a4ff14517bf6b881"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d71d0b98203ecb2a4ff14517bf6b881">&#9670;&nbsp;</a></span>dot_product() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classMatrixRow.html">MatrixRow</a>&lt; T &gt;::dot_product </td>
+          <td>(</td>
+          <td class="paramtype">T &amp;&#160;</td>
+          <td class="paramname"><em>result</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classMatrixRow.html">MatrixRow</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Computes the dot product between two rows of a <a class="el" href="classMatrix.html">Matrix</a> </p>
+
+</div>
+</div>
+<a id="a112bf10417ca6f70ebb828200a413440"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a112bf10417ca6f70ebb828200a413440">&#9670;&nbsp;</a></span>dot_product() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classMatrixRow.html">MatrixRow</a>&lt; T &gt;::dot_product </td>
+          <td>(</td>
+          <td class="paramtype">T &amp;&#160;</td>
+          <td class="paramname"><em>result</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classMatrixRow.html">MatrixRow</a>&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>v0</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Computes (inline) the dot product between two rows of a <a class="el" href="classMatrix.html">Matrix</a> </p>
 
 </div>
 </div>

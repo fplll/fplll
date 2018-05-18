@@ -1,8 +1,7 @@
 var searchData=
 [
   ['half_5f2reduce',['half_2reduce',['../sieve__gauss__str_8h.html#a9b77152473658d6201e458e5304b792a',1,'sieve_gauss_str.h']]],
-  ['have_5fequal_5fgrammatrix',['have_equal_grammatrix',['../test__lll__gram_8cpp.html#a89bfdb55da9294f676633769ff979201',1,'test_lll_gram.cpp']]],
-  ['hkz',['hkz',['../classBKZReduction.html#a82366ca09350688356767c8601c951fc',1,'BKZReduction::hkz()'],['../main_8cpp.html#ac743a4af2adfe7b9c5a77c13ace0e634',1,'hkz(Options &amp;o, ZZ_mat&lt; ZT &gt; &amp;b):&#160;main.cpp'],['../main_8cpp.html#af9c89684e6246ca31fd2c7eebf8e5666',1,'hkz(Options &amp;o, ZZ_mat&lt; mpz_t &gt; &amp;b):&#160;main.cpp']]],
+  ['hkz',['hkz',['../classBKZReduction.html#a82366ca09350688356767c8601c951fc',1,'BKZReduction::hkz()'],['../main_8cpp.html#a86cfcb31133b30ad22bbdd8e431419ea',1,'hkz(Options &amp;, ZZ_mat&lt; ZT &gt; &amp;):&#160;main.cpp'],['../main_8cpp.html#af9c89684e6246ca31fd2c7eebf8e5666',1,'hkz(Options &amp;o, ZZ_mat&lt; mpz_t &gt; &amp;b):&#160;main.cpp']]],
   ['hkz_5fdefault',['HKZ_DEFAULT',['../defs_8h.html#aa64cacebdbeb24061018e33a9dd1cfb5a672e6dd725231810701f0dcc916313b4',1,'defs.h']]],
   ['hkz_5freduction',['hkz_reduction',['../bkz_8cpp.html#a595c2586bd4137de5d2b90eb63cfb8c5',1,'hkz_reduction(ZZ_mat&lt; mpz_t &gt; &amp;b, int flags, FloatType float_type, int precision):&#160;bkz.cpp'],['../bkz_8h.html#af53fbb4f558d7dd73835f8e1d832d019',1,'hkz_reduction(ZZ_mat&lt; mpz_t &gt; &amp;b, int flags=HKZ_DEFAULT, FloatType float_type=FT_DEFAULT, int precision=0):&#160;bkz.cpp']]],
   ['hkz_5fverbose',['HKZ_VERBOSE',['../defs_8h.html#aa64cacebdbeb24061018e33a9dd1cfb5ace6f9aa24278f52931b08c44c848029b',1,'defs.h']]],

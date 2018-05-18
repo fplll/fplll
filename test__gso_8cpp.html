@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.2.0</a>
+                    <a class="navbar-brand">fplll 5.2.1</a>
                 </div>
             </div>
         </nav>
@@ -91,7 +91,7 @@ $(function() {
 <code>#include &lt;<a class="el" href="gso__gram_8h_source.html">gso_gram.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="gso__interface_8h_source.html">gso_interface.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="matrix_8h_source.html">nr/matrix.h</a>&gt;</code><br />
-<code>#include &lt;<a class="el" href="test__utils_8h_source.html">../tests/test_utils.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="test__utils_8h_source.html">test_utils.h</a>&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
@@ -112,10 +112,10 @@ Functions</h2></td></tr>
 <tr class="memitem:aa4ad81874d2b356585d1cb3a9977f51f"><td class="memTemplParams" colspan="2">template&lt;class ZT , class FT &gt; </td></tr>
 <tr class="memitem:aa4ad81874d2b356585d1cb3a9977f51f"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__gso_8cpp.html#aa4ad81874d2b356585d1cb3a9977f51f">test_filename</a> (const char *input_filename)</td></tr>
 <tr class="separator:aa4ad81874d2b356585d1cb3a9977f51f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa57eec8d5a177e2813dc3fb2567072a8"><td class="memTemplParams" colspan="2">template&lt;class ZT , class FT &gt; </td></tr>
-<tr class="memitem:aa57eec8d5a177e2813dc3fb2567072a8"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__gso_8cpp.html#aa57eec8d5a177e2813dc3fb2567072a8">test_int_rel</a> (int d, int b, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> float_type=<a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08ad9ebca53c82a7c8c161584806f09eb2b">FT_DEFAULT</a>, int prec=0)</td></tr>
-<tr class="memdesc:aa57eec8d5a177e2813dc3fb2567072a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct d × (d+1) integer relations matrix with bit size b and test LLL.  <a href="#aa57eec8d5a177e2813dc3fb2567072a8">More...</a><br /></td></tr>
-<tr class="separator:aa57eec8d5a177e2813dc3fb2567072a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a633523fe5b618b4a02bd45ccf3bc24cc"><td class="memTemplParams" colspan="2">template&lt;class ZT , class FT &gt; </td></tr>
+<tr class="memitem:a633523fe5b618b4a02bd45ccf3bc24cc"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__gso_8cpp.html#a633523fe5b618b4a02bd45ccf3bc24cc">test_int_rel</a> (int d, int b)</td></tr>
+<tr class="memdesc:a633523fe5b618b4a02bd45ccf3bc24cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct d × (d+1) integer relations matrix with bit size b and test LLL.  <a href="#a633523fe5b618b4a02bd45ccf3bc24cc">More...</a><br /></td></tr>
+<tr class="separator:a633523fe5b618b4a02bd45ccf3bc24cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c3f6775325c30275d11c6abee2db6a0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__gso_8cpp.html#a2c3f6775325c30275d11c6abee2db6a0">main</a> (int, char **)</td></tr>
 <tr class="separator:a2c3f6775325c30275d11c6abee2db6a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -269,8 +269,8 @@ template&lt;class ZT , class FT &gt; </div>
 
 </div>
 </div>
-<a id="aa57eec8d5a177e2813dc3fb2567072a8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa57eec8d5a177e2813dc3fb2567072a8">&#9670;&nbsp;</a></span>test_int_rel()</h2>
+<a id="a633523fe5b618b4a02bd45ccf3bc24cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a633523fe5b618b4a02bd45ccf3bc24cc">&#9670;&nbsp;</a></span>test_int_rel()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -287,19 +287,7 @@ template&lt;class ZT , class FT &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>b</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a>&#160;</td>
-          <td class="paramname"><em>float_type</em> = <code><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08ad9ebca53c82a7c8c161584806f09eb2b">FT_DEFAULT</a></code>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>prec</em> = <code>0</code>&#160;</td>
+          <td class="paramname"><em>b</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

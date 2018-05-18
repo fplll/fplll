@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.2.0</a>
+                    <a class="navbar-brand">fplll 5.2.1</a>
                 </div>
             </div>
         </nav>
@@ -147,7 +147,7 @@ $ git fetch upstream master
 <h2>Documentation</h2>
 <p>fplll uses <a href="http://www.stack.nl/~dimitri/doxygen/">doxygen</a> with a <a href="https://github.com/Velron/doxygen-bootstrapped">bootstrap theme</a> to generate API documentation. To produce API documentation run </p><pre class="fragment">$ doxygen Doxyfile
 </pre><p>Our documentation is served at <a href="https://fplll.github.io/fplll/">https://fplll.github.io/fplll/</a> using <a href="https://pages.github.com">GitHub pages</a>. To update the documentation, check out the <code>gh-pages</code> branch and update the html files in there. Doxygen writes its outputs to <code>doc/html</code>, you can arrange it that this directory holds the <code>gh-pages</code> branch of the fplll repository: </p><pre class="fragment">$ cd doc
-$ git clone -b gh-pages git@github.com::&lt;my-github-name&gt;/fplll.git html
+$ git clone -b gh-pages git@github.com:&lt;my-github-name&gt;/fplll.git html
 $ cd ..
 </pre><p>Now, whenever you run <code>doxygen</code> it will write its outputs to a directory which holds the right branch. If you push it to your remote, you can then check it at <a href="http://my-github-name.github.io/fplll">http://my-github-name.github.io/fplll</a>.</p>
 <p>Before generating documentation with Doxygen to push to <a href="https://fplll.github.io/fplll/">https://fplll.github.io/fplll/</a> please run <code>make maintainer-clean</code> in the fplll root directory. This removes <code>config.h</code> and <code>fplll_config.h</code>, i.e. it prevents your local, machine-specific configuration to be pushed as part of the official API documentation. In any case, it is recommended to review the changes in the <code>gh-pages</code> branch before committing and pushing. </p>

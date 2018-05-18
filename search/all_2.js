@@ -6,7 +6,7 @@ var searchData=
   ['back',['back',['../classNumVect.html#ac8549b7178c301dca14382054b712073',1,'NumVect::back()'],['../classNumVect.html#ae2026ebc882287031bd8eb15f6e0859d',1,'NumVect::back() const']]],
   ['begin',['begin',['../classEvaluator.html#a9f6b08797a0d7dde27f8d36a15899e3f',1,'Evaluator::begin() const'],['../classEvaluator.html#a5c746fad6ac8b9e02a62d3d720e2b156',1,'Evaluator::begin()'],['../classNumVect.html#a8f71df5f7af8fba71b41993af174ec20',1,'NumVect::begin()']]],
   ['bf',['bf',['../classMatGSOInterface.html#a230a34d0cfc0a49276e376fd343a4263',1,'MatGSOInterface']]],
-  ['bkz',['bkz',['../classBKZReduction.html#a0b0fc808b95ca09e13010885c9a95fe3',1,'BKZReduction::bkz()'],['../main_8cpp.html#acfd5788decde30161059f5b4a0498a72',1,'bkz(Options &amp;o, ZZ_mat&lt; ZT &gt; &amp;b):&#160;main.cpp'],['../main_8cpp.html#ad1fb69a22a82987e8b4b776a578be063',1,'bkz(Options &amp;o, ZZ_mat&lt; mpz_t &gt; &amp;b):&#160;main.cpp']]],
+  ['bkz',['bkz',['../classBKZReduction.html#a0b0fc808b95ca09e13010885c9a95fe3',1,'BKZReduction::bkz()'],['../main_8cpp.html#adba4d3a1667bff13057c2c9010202647',1,'bkz(Options &amp;, ZZ_mat&lt; ZT &gt; &amp;):&#160;main.cpp'],['../main_8cpp.html#ad1fb69a22a82987e8b4b776a578be063',1,'bkz(Options &amp;o, ZZ_mat&lt; mpz_t &gt; &amp;b):&#160;main.cpp']]],
   ['bkz_2ecpp',['bkz.cpp',['../bkz_8cpp.html',1,'']]],
   ['bkz_2eh',['bkz.h',['../bkz_8h.html',1,'']]],
   ['bkz_5fauto_5fabort',['BKZ_AUTO_ABORT',['../defs_8h.html#a421c505152986d864de8d1c65ffc9d50af2da5773fa99d3f9a7861e8d163dc48a',1,'defs.h']]],

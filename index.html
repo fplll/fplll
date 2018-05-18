@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.2.0</a>
+                    <a class="navbar-brand">fplll 5.2.1</a>
                 </div>
             </div>
         </nav>
@@ -105,7 +105,11 @@ $(function() {
 <li><a href="#required">Required</a>, <a href="#optional">Optional</a>.</li>
 </ul>
 </li>
-<li><a href="#installation">Installation</a></li>
+<li><a href="#installation">Installation</a><ul>
+<li><a href="#linux">Linux</a></li>
+<li><a href="#windows-10">Windows 10</a></li>
+</ul>
+</li>
 <li><a href="#optimization">Optimization</a></li>
 <li><a href="#check">Check</a></li>
 </ul>
@@ -130,25 +134,33 @@ $(function() {
 <h2>Dependencies</h2>
 <h3>Required</h3>
 <ul>
-<li>GNU MP 4.2.0 or higher <a href="http://gmplib.org/">http://gmplib.org/</a></li>
+<li>GNU MP 4.2.0 or higher <a href="http://gmplib.org/">http://gmplib.org/</a> or MPIR 1.0.0 or higher <a href="http://mpir.org">http://mpir.org</a></li>
 <li>MPFR 2.3.0 or higher, COMPLETE INSTALLATION <a href="http://www.mpfr.org/">http://www.mpfr.org/</a></li>
 <li>autotools 2.61 or higher</li>
 <li>g++ 4.9.3 or higher</li>
 </ul>
-<p>If GMP and/or MPFR include and lib files are not in the default directories <code>/usr/include</code> and <code>/usr/lib</code>, you have to set the environment variables <code>CFLAGS</code> and <code>LDFLAGS</code> for instance through the configure command line </p><pre class="fragment">./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude" LDFLAGS="-L/mpfrlib -L/gmplib"
-</pre><p>or </p><pre class="fragment">./configure CPPFLAGS="-I/mpfrinclude -I/gmpinclude $CPPFLAGD" LDFLAGS="-L/mpfrlib -L/gmplib $LDFLAGS"
-</pre><p>if these variables already exist in your environment. This should be modified soon for using standard <code>--with-gmp</code> and <code>--with-mpfr</code> package specifications. The same philosophy applies to the (optional) QD library.</p>
 <h3>Optional</h3>
 <ul>
 <li>QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install the shared library (e.g. <code>./configure --enable-shared=yes</code>). <a href="http://crd-legacy.lbl.gov/~dhbailey/mpdist/">http://crd-legacy.lbl.gov/~dhbailey/mpdist/</a></li>
 </ul>
 <h2>Installation</h2>
+<h3>Linux</h3>
 <p>You should downloaded the source code from github and then run </p><pre class="fragment">./autogen.sh
 </pre><p>which generates the <code>./configure</code> script used to configure fplll by calling the appropriate autotools command.</p>
 <p>Then, to compile and install type </p><pre class="fragment">./configure
 make
 make install            # (as root)
-</pre><p>You can remove the program binaries and object files from the source code directory by typing <code>make clean</code>. To also remove the files that <code>./configure</code> created (so you can compile the package for a different kind of computer), type <code>make distclean</code>. By default, <code>make install</code> installs the package commands under <code>/usr/local/bin</code>, include files under <code>/usr/local/include</code>, etc. You can specify an installation directory name other than <code>/usr/local</code> by giving <code>./configure</code> the option <code>--prefix=dirname</code>. Run <code>./configure --help</code> for further details.</p>
+</pre><p>If GMP, MPFR and/or MPIR are not in the <code>$LD_LIBRARY_PATH</code>, you have to point to the directories where the libraries are, with </p><pre class="fragment">./configure --with-gmp=path/to/gmp
+</pre><p>or </p><pre class="fragment">./configure --with-mpfr=path/to/mpfr
+</pre><p>The same philosophy applies to the (optional) QD library. If you want to use mpir instead of gmp, use <code>--enable-mpir</code> and <code>--with-mpir=path/to/mpir</code>.</p>
+<p>You can remove the program binaries and object files from the source code directory by typing <code>make clean</code>. To also remove the files that <code>./configure</code> created (so you can compile the package for a different kind of computer), type <code>make distclean</code>. By default, <code>make install</code> installs the package commands under <code>/usr/local/bin</code>, include files under <code>/usr/local/include</code>, etc. You can specify an installation directory name other than <code>/usr/local</code> by giving <code>./configure</code> the option <code>--prefix=dirname</code>. Run <code>./configure --help</code> for further details.</p>
+<h3>Windows 10</h3>
+<p>Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to <b>Settings</b> -&gt; <b>Update and security</b> -&gt; <b>For developers</b> and enable developer mode. (This may take a while.) Afterwards, open command prompt and run </p><pre class="fragment">lxrun /install
+</pre><p>This will install the WSL, and afterwards this system can be accessed e.g. by opening command prompt and typing <code>bash</code>. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run: </p><pre class="fragment">sudo apt-get update
+</pre><p>Then run <code>sudo apt-get install &lt;packages&gt;</code> for the (indirectly) required packages, such as <code>make</code>, <code>autoconf</code>, <code>libtool</code>, <code>gcc</code>, <code>g++</code>, <code>libgmp-dev</code>, and <code>libmpfr-dev</code>. Finally, download the fplll source code, extract the contents, navigate to this folder in Bash (commonly found under <code>/mnt/c/&lt;local path&gt;</code> when stored somewhere on the <code>C:\</code> drive), and run: </p><pre class="fragment">./autogen.sh
+./configure
+make 
+</pre><p>The same comments as before apply for using e.g. <code>make install</code> or <code>make distclean</code> instead of <code>make</code>.</p>
 <h2>Check</h2>
 <p>Type </p><pre class="fragment">make check
 </pre><h2>Optimization</h2>
@@ -184,7 +196,6 @@ make install            # (as root)
 <li><code>-a cvp</code> : prints the vector in the lattice closest to the input vector.</li>
 <li><code>-v</code> : verbose mode.</li>
 <li><code>-nolll</code> : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution).</li>
-<li><code>-r</code> <code>size</code>, <code>-c</code> <code>size</code> : ignored, provided for compatibility with previous versions of fplll.</li>
 </ul>
 <p><a class="el" href="structOptions.html">Options</a> for LLL-reduction:</p>
 <ul>
@@ -195,8 +206,8 @@ make install            # (as root)
 <li><code>-p precision</code> : precision of the floating-point arithmetic, works only with <code>-f mpfr</code>.</li>
 <li><code>-f dd</code> : sets the floating-point type to double-double.</li>
 <li><code>-f qd</code> : sets the floating-point type to quad-double.</li>
-<li><code>-f dpe</code> : sets the floating-point type to DPE (default if <code>m=heuristic/heuristicearly</code>).</li>
-<li><code>-f double</code> : sets the floating-point type to double (default if <code>m=fast/fastearly</code>).</li>
+<li><code>-f dpe</code> : sets the floating-point type to DPE (default if <code>m=heuristic</code>).</li>
+<li><code>-f double</code> : sets the floating-point type to double (default if <code>m=fast</code>).</li>
 <li><code>-f longdouble</code> : sets the floating-point type to long double.</li>
 <li><code>-z mpz</code> : sets the integer type to mpz, the integer type of GMP (default).</li>
 <li><code>-z int</code> : sets the integer type to int.</li>
@@ -204,9 +215,7 @@ make install            # (as root)
 <li><code>-z double</code> : sets the integer type to double.</li>
 <li><code>-m wrapper</code> : uses the wrapper. (default if <code>z=mpz</code>).</li>
 <li><code>-m fast</code> : uses the fast method, works only with <code>-f double</code>.</li>
-<li><code>-m fastearly</code> : uses the fast method with early reduction, works only with <code>-f double</code>.</li>
 <li><code>-m heuristic</code> : uses the heuristic method.</li>
-<li><code>-m heuristicearly</code> : uses the heuristic method with early reduction.</li>
 <li><code>-m proved</code> : uses the proved version of the algorithm.</li>
 <li><code>-y</code> : early reduction.</li>
 </ul>
@@ -231,13 +240,16 @@ make install            # (as root)
 <ul>
 <li><code>-of</code> : prints new line (if <code>-a [lll|bkz]</code>)</li>
 <li><code>-of b</code> : prints the basis (if <code>-a [lll|bkz]</code>, this value by default)</li>
+<li><code>-of bk</code> : prints the basis (if <code>-a [lll|bkz]</code>, format compatible with sage)</li>
 <li><code>-of c</code> : prints the closest vector (if <code>-a cvp</code>, this value by default)</li>
 <li><code>-of s</code> : prints the closest vector (if <code>-a svp</code>, this value by default)</li>
 <li><code>-of t</code> : prints status (if <code>-a [lll|bkz|cvp|svp]</code>)</li>
 <li><code>-of u</code> : prints unimodular matrix (if <code>-a [lll|bkz]</code>)</li>
+<li><code>-of uk</code> : prints unimodular matrix (if <code>-a [lll|bkz]</code>, format compatible with sage)</li>
 <li><code>-of v</code> : prints inverse of u (if <code>-a lll</code>)</li>
+<li><code>-of vk</code> : prints inverse of u (if <code>-a lll</code>, format compatible with sage)</li>
 </ul>
-<p>A combination of these option is allowed (e.g., <code>-of but</code>).</p>
+<p>A combination of these option is allowed (e.g., <code>-of bkut</code>).</p>
 <h2>llldiff</h2>
 <p><code>llldiff</code> compares two bases (b1,...,bd) and (c1,...c_d'): they are considered equal iff d=d' and for any i, bi = +- ci. Concretely, if basis B is in file 'B.txt' and if basis C is in file 'C.txt' (in the fplll format), then one may run <code>cat B.txt C.txt | ./llldiff</code>.</p>
 <h2>latsieve</h2>
