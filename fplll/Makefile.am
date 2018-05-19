@@ -36,7 +36,7 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	bkz_param.h \
 	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h \
 	sieve/sieve_gauss.h sieve/sieve_common.h sieve/sieve_gauss_str.h sieve/sampler_basic.h \
-	pruner.h
+	pruner/pruner.h
 
 bin_PROGRAMS=fplll latticegen latsieve
 check_PROGRAMS=llldiff
@@ -81,7 +81,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	bkz.cpp bkz.h \
 	bkz_param.cpp bkz_param.h \
 	gso_interface.cpp gso_interface.h gso_gram.cpp gso_gram.h gso.cpp gso.h \
-	pruner.cpp pruner.h \
+	pruner/pruner.cpp pruner/pruner.h \
 	sieve/sieve_gauss.cpp \
 	sieve/sieve_gauss.h  \
 	sieve/sieve_common.h\

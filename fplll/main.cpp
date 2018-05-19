@@ -310,6 +310,38 @@ template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &
   return status;
 }
 
+template <class ZT> int prune(Options &, ZZ_mat<ZT> &) { ABORT_MSG("mpz required for pruner"); }
+
+template <> int prune(Options &o, ZZ_mat<mpz_t> &b)
+{
+  vector<Strategy> strategies;
+  BKZParam param(o.block_size, strategies);
+  int status;
+  param.delta = o.delta;
+  param.flags = o.bkz_flags;
+  if (o.no_lll)
+    param.flags |= BKZ_NO_LLL;
+  if (o.bkz_flags & BKZ_GH_BND)
+    param.gh_factor = o.bkz_gh_factor;
+  if (o.prune_start)
+    param.prune_start = o.prune_start;
+  if (o.prune_end)
+    param.prune_end = o.prune_end;
+  if (o.prune_pre_nodes)
+    param.prune_pre_nodes = o.prune_pre_nodes;
+  if (o.prune_min_prob)
+    param.prune_min_prob = o.prune_min_prob;
+  // flag and bkz_reduction
+  param.flags |= BKZ_PRUNE_ONLY;
+  status = bkz_reduction(&b, NULL, param, o.float_type, o.precision);
+
+  if (status != RED_SUCCESS)
+  {
+    cerr << "Failure: " << get_red_status_str(status) << endl;
+  }
+  return status;
+}
+
 template <class ZT> int run_action(Options &o)
 {
   istream *is;
@@ -349,6 +381,9 @@ template <class ZT> int run_action(Options &o)
   case ACTION_BKZ:
     result = bkz(o, m);
     break;
+  case ACTION_PRU:
+    result = prune(o, m);
+    break;
   default:
     ABORT_MSG("unimplemented action");
     break;
@@ -386,6 +421,8 @@ void read_options(int argc, char **argv, Options &o)
         o.action = ACTION_BKZ;
         o.bkz_flags |= BKZ_SLD_RED;
       }
+      else if (strcmp(argv[ac], "pru") == 0)
+        o.action = ACTION_PRU;
       else
         ABORT_MSG("parse error in -a switch: lll or svp expected");
     }
@@ -394,6 +431,30 @@ void read_options(int argc, char **argv, Options &o)
       ++ac;
       CHECK(ac < argc, "missing value after -b switch");
       o.block_size = atoi(argv[ac]);
+    }
+    else if (strcmp(argv[ac], "-prustart") == 0)
+    {
+      ++ac;
+      CHECK(ac < argc, "missing value after -prustart switch");
+      o.prune_start = atoi(argv[ac]);
+    }
+    else if (strcmp(argv[ac], "-pruend") == 0)
+    {
+      ++ac;
+      CHECK(ac < argc, "missing value after -pruend switch");
+      o.prune_end = atoi(argv[ac]);
+    }
+    else if (strcmp(argv[ac], "-pruprenodes") == 0)
+    {
+      ++ac;
+      CHECK(ac < argc, "missing value after '-pruprenodes'");
+      o.prune_pre_nodes = atof(argv[ac]);
+    }
+    else if (strcmp(argv[ac], "-pruminprob") == 0)
+    {
+      ++ac;
+      CHECK(ac < argc, "missing value after '-pruminprob'");
+      o.prune_min_prob = atof(argv[ac]);
     }
     else if (strcmp(argv[ac], "-bkzboundedlll") == 0)
     {
