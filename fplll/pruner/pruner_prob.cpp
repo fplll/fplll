@@ -1,3 +1,5 @@
+#include "fplll.h"
+
 FPLLL_BEGIN_NAMESPACE
 
 template <class FT> inline FT Pruner<FT>::svp_probability_evec(/*i*/ const evec &b)

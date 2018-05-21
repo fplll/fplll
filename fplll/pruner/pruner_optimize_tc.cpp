@@ -1,3 +1,5 @@
+#include "fplll.h"
+
 FPLLL_BEGIN_NAMESPACE
 
 #define BALANCE_HEURISTIC_PRUNER_OPTIMIZE
