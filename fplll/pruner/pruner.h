@@ -361,26 +361,105 @@ public:
   }
 
   /**
-     Run the optimization process, successively using the algorithm activated
+     @brief run the optimization process using half coefficients
 
-     @brief run the optimization process
+     Run the optimization process, successively using the algorithm activated
+     using using half coefficients.
   */
   void optimize_coefficients_evec(/*io*/ vector<double> &pr);
+
+  /**
+     @brief run the optimization process using full coefficients
+
+     Run the optimization process, successively using the algorithm activated
+     using using full coefficients.
+
+  */
   void optimize_coefficients_full(/*io*/ vector<double> &pr);
+
+  /**
+     @brief tune the pruning parameter to reduce single enumeration time
+
+     Optimization process to the pruning parameters to reduce single enumeration
+     time with the hope that it also reduces the overall enumeration time.
+  */
   void optimize_coefficients_tune_cost(/*io*/ vector<double> &pr);
+
+  /**
+     @brief tune the pruning parameter to increase succ. probability
+
+     Optimization process to the pruning parameters to increase succ.
+     probability with the restriction that the single enumeration time does
+     not increase significantly.
+  */
   void optimize_coefficients_tune_prob(/*io*/ vector<double> &pr);
+
+  /**
+     @brief tune the pruning parameter to increase succ. probability
+
+     Optimization process to the pruning parameters to increase succ.
+     probability with the restriction that the single enumeration time does
+     not increase significantly.
+  */
   void optimize_coefficients_smooth(/*io*/ vector<double> &pr);
+
+  /**
+     @brief main interface to optimize the overall enumeraiton time
+
+     Main interface to optimize the overall enumeraiton time where the
+     target unciton is: single_enumeration_cost divided by succ. probability
+     or expected solutions.
+  */
   void optimize_coefficients_cost(/*io*/ vector<double> &pr);
 
+  /**
+     @brief main interface to optimize the single enumeraiton time fixing succ. prob.
+
+     Main interface to optimize the single enumeration time with the constraint
+     that the succ. prob (or expected solutions) is fixed.
+  */
   void optimize_coefficients_prob(/*io*/ vector<double> &pr);
+
+  /**
+     @brief auxiliary function in optimizing the single enumeraiton time fixing succ. prob.
+
+     Auxiliary function to optimize the single enumeration time with the constraint
+     that the succ. prob (or expected solutions) is fixed. It is used if the given
+     targeted probaility is smaller than the one computed using pruning parameters.
+     Then one increases the succ. probability by increasing the pruning parameters.
+  */
   void optimize_coefficients_prob_incr(/*io*/ vector<double> &pr);
+
+  /**
+     @brief auxiliary function in optimizing the single enumeraiton time fixing succ. prob.
+
+     Auxiliary function to optimize the single enumeration time with the constraint
+     that the succ. prob (or expected solutions) is fixed. It is used if the given
+     targeted probaility is larger than the one computed using pruning parameters.
+     THen one decrease the succ. probability by increasing the pruning parameters.
+  */
   void optimize_coefficients_prob_decr(/*io*/ vector<double> &pr);
+
+  /**
+     @brief auxiliary function in optimizing the single enumeraiton time fixing succ. prob.
+
+     Heuristic tuning procedure which seems to be useful.
+  */
   void optimize_coefficients_prob_tune(/*io*/ vector<double> &pr);
 
+  /**
+     @brief Main interface to optimize pruning coefficients
+
+     Main interface to optimize pruning coefficients. It will invoke either
+      -- optimize_coefficients_cost() or
+      -- optimize_coefficients_prob()
+      depending on the given goal.
+  */
   void optimize_coefficients(/*io*/ vector<double> &pr);
 
-  /** @brief Compute the cost of a single enumeration */
-
+  /**
+      @brief Compute the cost of a single enumeration
+  */
   double single_enum_cost(/*i*/ const vector<double> &pr, vector<double> *detailed_cost = nullptr,
                           const bool flag = 0)
   {
