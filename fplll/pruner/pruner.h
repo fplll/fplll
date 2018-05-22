@@ -642,6 +642,13 @@ private:
      @param b pruning bounds
      @param detailed_cost (optional) store the details of node per level of the enum tree there
      @return cost, in enumeration node
+
+     Function single_enum_cost() is the main interface to compute single enumeration cost.
+     Function single_enum_cost_lower() is an auxiliary function to compute the
+               lower bound of single enumation cost.
+     Function single_enum_cost_upper() is an auxiliary function to compute the
+               upper bound of single enumation cost.
+     Function single_enum_cost_evec() is the underlying backend for the above two.
   */
   FT single_enum_cost(/*i*/ const vec &b, vector<double> *detailed_cost = nullptr,
                       const bool flag = 0);
@@ -656,15 +663,25 @@ private:
      @brief Compute the success probability for SVP/CVP of a single enumeration
      @param b pruning bounds
      @return success probability
+
+     Function svp_probability() is the main interface.
+     Function svp_probability_lower() is an auxiliary function to compute the
+                                      approx. lower bound of succ. probability
+     Function svp_probability_upper() is an auxiliary function to compute the
+                                      upper bound of succ. probability
+     The svp_probability_evec() is the underlying backend for above.
   */
   FT svp_probability(/*i*/ const vec &b);
   FT svp_probability_evec(/*i*/ const evec &b);
   FT svp_probability_lower(/*i*/ const vec &b);
   FT svp_probability_upper(/*i*/ const vec &b);
+
   /**
      @brief Compute the expected number of solution of a single of a single enumeration
      @param b pruning bounds
      @return expected number of solutions
+
+     The naming conventions is the same as those in svp_probability_*()
   */
   FT expected_solutions(/*i*/ const vec &b);
   FT expected_solutions_evec(/*i*/ const evec &b);
