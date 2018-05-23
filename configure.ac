@@ -88,6 +88,8 @@ AS_IF([test "x$enable_mpir" != "xyes"], [
         LIBGMP="-lgmp"
 ])
 
+AC_SUBST(LIBGMP)
+
 AC_ARG_WITH(mpfr,
    AS_HELP_STRING([--with-mpfr=@<:@=DIR@:>@], [MPFR install directory]), [
       CPPFLAGS="$CPPFLAGS -I$withval/include"
