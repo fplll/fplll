@@ -27,12 +27,13 @@ using namespace fplll;
 
 template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A, int flags, int prec = 53)
 {
-  MatHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A, flags);
+  ZZ_mat<ZT> u(0, 0);
+  MatHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A, u, flags);
   HLLLReduction<Z_NR<ZT>, FP_NR<FT>> hlll_obj(Mhouseholder, 0.99, 0.52, 0.99, 0.01, LLL_DEFAULT);
 
   hlll_obj.lll();
 
-  MatHouseholder<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, HOUSEHOLDER_DEFAULT);
+  MatHouseholder<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, u, HOUSEHOLDER_DEFAULT);
   int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, 0.99, 0.52);
 
   if (status == 0)

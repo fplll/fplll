@@ -210,16 +210,22 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_rows(int k, 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_add(int i, int j)
 {
   b[i].add(b[j], n_known_cols);
+  if (enable_transform)
+    u[i].add(u[j]);
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_sub(int i, int j)
 {
   b[i].sub(b[j], n_known_cols);
+  if (enable_transform)
+    u[i].sub(u[j]);
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_addmul_si(int i, int j, long x)
 {
   b[i].addmul_si(b[j], x, n_known_cols);
+  if (enable_transform)
+    u[i].addmul_si(u[j], x);
 }
 
 template <class ZT, class FT>
@@ -227,6 +233,8 @@ void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
 {
   ZT ztmp0;
   b[i].addmul_si_2exp(b[j], x, expo, n_known_cols, ztmp0);
+  if (enable_transform)
+    u[i].addmul_si_2exp(u[j], x, expo, ztmp0);
 }
 
 template <class ZT, class FT>
@@ -234,6 +242,8 @@ void MatHouseholder<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long exp
 {
   ZT ztmp0;
   b[i].addmul_2exp(b[j], x, expo, n_known_cols, ztmp0);
+  if (enable_transform)
+    u[i].addmul_2exp(u[j], x, expo, ztmp0);
 }
 
 template <class ZT, class FT>

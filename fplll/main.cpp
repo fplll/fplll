@@ -321,8 +321,16 @@ template <class ZT> int hlll(Options &o, ZZ_mat<ZT> &b)
   if (!o.is_eta_defined)
     o.eta = HLLL_DEF_ETA;
 
-  status =
-      hlll_reduction(b, o.delta, o.eta, o.theta, o.c, o.method, o.float_type, o.precision, flags);
+  if (strchr(format, 'u') != NULL)
+  {
+    status = hlll_reduction(b, u, o.delta, o.eta, o.theta, o.c, o.method, o.float_type, o.precision,
+                            flags);
+  }
+  else
+  {
+    status =
+        hlll_reduction(b, o.delta, o.eta, o.theta, o.c, o.method, o.float_type, o.precision, flags);
+  }
 
   for (int i = 0; format[i]; i++)
   {
@@ -336,6 +344,15 @@ template <class ZT> int hlll(Options &o, ZZ_mat<ZT> &b)
       }
       else
         cout << b << endl;
+      break;
+    case 'u':
+      if (format[i + 1] == 'k')
+      {
+        u.print_comma(cout);
+        i++;
+      }
+      else
+        cout << u << endl;
       break;
     case ' ':
       cout << endl;

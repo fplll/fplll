@@ -44,8 +44,9 @@ public:
    * @param b
    *   The matrix on which row operations are performed. It must not be empty.
    */
-  MatHouseholder(Matrix<ZT> &arg_b, int flags)
-      : b(arg_b), enable_row_expo(flags & HOUSEHOLDER_ROW_EXPO), enable_bf(flags & HOUSEHOLDER_BF)
+  MatHouseholder(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, int flags)
+      : b(arg_b), enable_row_expo(flags & HOUSEHOLDER_ROW_EXPO), enable_bf(flags & HOUSEHOLDER_BF),
+        enable_transform(arg_u.get_rows() > 0), u(arg_u)
   {
     d            = b.get_rows();
     n            = b.get_cols();
@@ -252,6 +253,11 @@ private:
 
   // Stores at index i the inverse of R(i, i)
   vector<FT> R_inverse_diag;
+
+  // Compute the unimodular matrix u
+  const bool enable_transform;
+
+  Matrix<ZT> &u;  // Transform
 };
 
 template <class ZT, class FT>
@@ -363,6 +369,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
     iter_swap(row_expo.begin() + i, row_expo.begin() + j);
   iter_swap(init_row_size.begin() + i, init_row_size.begin() + j);
   iter_swap(R_history.begin() + i, R_history.begin() + j);
+  if (enable_transform)
+    u.swap_rows(i, j);
 
   if (i == 0)
     update_R(0);
