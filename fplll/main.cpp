@@ -314,6 +314,7 @@ template <class ZT> int hlll(Options &o, ZZ_mat<ZT> &b)
 {
   // Stupid initialization of u and u_inv to be not empty.
   ZZ_mat<ZT> u(1, 1), u_inv(1, 1);
+  const char *format = o.output_format ? o.output_format : "b";
   int status, flags = 0;
   if (o.verbose)
     flags |= LLL_VERBOSE;
@@ -323,7 +324,24 @@ template <class ZT> int hlll(Options &o, ZZ_mat<ZT> &b)
   status =
       hlll_reduction(b, o.delta, o.eta, o.theta, o.c, o.method, o.float_type, o.precision, flags);
 
-  cout << b << endl;
+  for (int i = 0; format[i]; i++)
+  {
+    switch (format[i])
+    {
+    case 'b':
+      if (format[i + 1] == 'k')
+      {
+        b.print_comma(cout);
+        i++;
+      }
+      else
+        cout << b << endl;
+      break;
+    case ' ':
+      cout << endl;
+      break;
+    }
+  }
 
   if (status != RED_SUCCESS)
   {
