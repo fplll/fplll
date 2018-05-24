@@ -70,7 +70,7 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   {
     for (int j = 0; j < r; j++)
     {
-      A[i].dot_product(G(i, j), A[j], c);
+      A[i].dot_product(G(i, j), A[j], 0, c);
     }
   }
   // ------------------------------------------------
@@ -149,7 +149,7 @@ template <class ZT, class FT> int test_lll(ZZ_mat<ZT> &A)
   {
     for (int j = 0; j < r; j++)
     {
-      (M.b)[i].dot_product(G_reduced(i, j), (M.b)[j], c);
+      (M.b)[i].dot_product(G_reduced(i, j), (M.b)[j], 0, c);
     }
   }
   // ------------------------------------------------
