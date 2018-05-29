@@ -161,7 +161,7 @@ public:
   /**
    * Swap row i and j of b.
    */
-  inline void swap(int i, int j);
+  void swap(int i, int j);
 
   /**
    * Invalidate row k to row n_known_rows - 1.
@@ -351,39 +351,6 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::invalidate_row
 {
   if (k < n_known_rows)
     n_known_rows = k;
-}
-
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
-{
-  FPLLL_DEBUG_CHECK(0 <= i && i < j && j < d);
-
-  invalidate_row(i);
-
-  b.swap_rows(i, j);
-  if (enable_bf)
-    bf.swap_rows(i, j);
-  R.swap_rows(i, j);
-  V.swap_rows(i, j);
-  iter_swap(sigma.begin() + i, sigma.begin() + j);
-  if (enable_row_expo)
-    iter_swap(row_expo.begin() + i, row_expo.begin() + j);
-  iter_swap(init_row_size.begin() + i, init_row_size.begin() + j);
-  iter_swap(R_history.begin() + i, R_history.begin() + j);
-  if (enable_transform)
-    u.swap_rows(i, j);
-
-  if (i == 0)
-    update_R(0);
-  else
-  {
-    // Recover R
-    for (int k = 0; k < i - 1; k++)
-      R(i, k) = R_history[i][k][k];
-    for (int k = i - 1; k < n; k++)
-      R(i, k) = R_history[i][i - 1][k];
-
-    updated_R = true;
-  }
 }
 
 FPLLL_END_NAMESPACE
