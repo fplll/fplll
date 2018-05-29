@@ -44,9 +44,10 @@ public:
    * @param b
    *   The matrix on which row operations are performed. It must not be empty.
    */
-  MatHouseholder(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, int flags)
+  MatHouseholder(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
       : b(arg_b), enable_row_expo(flags & HOUSEHOLDER_ROW_EXPO), enable_bf(flags & HOUSEHOLDER_BF),
-        enable_transform(arg_u.get_rows() > 0), u(arg_u)
+        enable_transform(arg_u.get_rows() > 0), u(arg_u),
+        enable_inverse_transform(arg_uinv_t.get_rows() > 0), u_inv_t(arg_uinv_t)
   {
     d            = b.get_rows();
     n            = b.get_cols();
@@ -258,6 +259,15 @@ private:
   const bool enable_transform;
 
   Matrix<ZT> &u;  // Transform
+
+  /**
+   * Computation of the inverse transform matrix (transposed).
+   * This works only if enable_transform=true.
+   * This matrix has very large coefficients, computing it is slow.
+   */
+  const bool enable_inverse_transform;
+
+  Matrix<ZT> &u_inv_t;  // Transposed inverse transform
 };
 
 template <class ZT, class FT>

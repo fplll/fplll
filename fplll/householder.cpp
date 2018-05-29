@@ -208,7 +208,11 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
   iter_swap(init_row_size.begin() + i, init_row_size.begin() + j);
   iter_swap(R_history.begin() + i, R_history.begin() + j);
   if (enable_transform)
+  {
     u.swap_rows(i, j);
+    if (enable_inverse_transform)
+      u_inv_t.swap_rows(i, j);
+  }
 
   if (i == 0)
     update_R(0);
@@ -244,21 +248,33 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_add(int i, int j)
 {
   b[i].add(b[j], n_known_cols);
   if (enable_transform)
+  {
     u[i].add(u[j]);
+    if (enable_inverse_transform)
+      u_inv_t[j].sub(u_inv_t[i]);
+  }
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_sub(int i, int j)
 {
   b[i].sub(b[j], n_known_cols);
   if (enable_transform)
+  {
     u[i].sub(u[j]);
+    if (enable_inverse_transform)
+      u_inv_t[j].add(u_inv_t[i]);
+  }
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_addmul_si(int i, int j, long x)
 {
   b[i].addmul_si(b[j], x, n_known_cols);
   if (enable_transform)
+  {
     u[i].addmul_si(u[j], x);
+    if (enable_inverse_transform)
+      u_inv_t[j].addmul_si(u_inv_t[i], -x);
+  }
 }
 
 template <class ZT, class FT>
@@ -267,7 +283,11 @@ void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
   ZT ztmp0;
   b[i].addmul_si_2exp(b[j], x, expo, n_known_cols, ztmp0);
   if (enable_transform)
+  {
     u[i].addmul_si_2exp(u[j], x, expo, ztmp0);
+    if (enable_inverse_transform)
+      u_inv_t[j].addmul_si_2exp(u_inv_t[i], -x, expo, ztmp0);
+  }
 }
 
 template <class ZT, class FT>
@@ -276,7 +296,15 @@ void MatHouseholder<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long exp
   ZT ztmp0;
   b[i].addmul_2exp(b[j], x, expo, n_known_cols, ztmp0);
   if (enable_transform)
+  {
     u[i].addmul_2exp(u[j], x, expo, ztmp0);
+    if (enable_inverse_transform)
+    {
+      ZT minus_x;
+      minus_x.neg(x);
+      u_inv_t[j].addmul_2exp(u_inv_t[i], minus_x, expo, ztmp0);
+    }
+  }
 }
 
 template <class ZT, class FT>
