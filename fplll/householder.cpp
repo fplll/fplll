@@ -213,19 +213,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
     if (enable_inverse_transform)
       u_inv_t.swap_rows(i, j);
   }
-
-  if (i == 0)
-    update_R(0);
-  else
-  {
-    // Recover R
-    for (int k = 0; k < i - 1; k++)
-      R(i, k) = R_history[i][k][k];
-    for (int k = i - 1; k < n; k++)
-      R(i, k) = R_history[i][i - 1][k];
-
-    updated_R = true;
-  }
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_rows(int k, vector<FT> xf)

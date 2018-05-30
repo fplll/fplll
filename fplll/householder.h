@@ -176,6 +176,12 @@ public:
   inline void set_updated_R_false() { updated_R = false; }
 
   inline FT get_R_inverse_diag(int i) { return R_inverse_diag[i]; }
+
+  /*
+   * Recover R[i] from the precomputed values of R stored in R_history
+   */
+  inline void recover_R(int i);
+
 private:
   /**
    * Number of rows of b (dimension of the lattice).
@@ -361,6 +367,16 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::invalidate_row
 {
   if (k < n_known_rows)
     n_known_rows = k;
+}
+
+template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::recover_R(int i)
+{
+  for (int k = 0; k < i - 1; k++)
+    R(i, k) = R_history[i][k][k];
+  for (int k = i - 1; k < n; k++)
+    R(i, k) = R_history[i][i - 1][k];
+
+  updated_R = true;
 }
 
 FPLLL_END_NAMESPACE

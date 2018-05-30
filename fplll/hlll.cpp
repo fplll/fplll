@@ -73,6 +73,12 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     else
     {
       m.swap(k - 1, k);
+
+      if (k - 1 == 0)
+        m.update_R(0);
+      else
+        m.recover_R(k - 1);
+
       k = max(k - 1, 1);
     }
   }
