@@ -44,6 +44,7 @@ public:
     double tmp  = pow(2.0, -(double)m.get_d() * c);
     sr          = tmp;
     verbose     = flags & LLL_VERBOSE;
+    dR.resize(m.get_d());
   }
 
   /**
@@ -72,6 +73,12 @@ private:
   void size_reduction(int kappa = 0);
 
   inline void print_params();
+
+  // Precompute delta_ * R(k, k)^2
+  vector<FT> dR;
+
+  // Compute dR[k]
+  inline void compute_dR(int k, FT delta_);
 };
 
 template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
@@ -84,6 +91,14 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
        << "precision = " << FT::get_prec() << endl
        << "row_expo = " << static_cast<int>(m.is_enable_row_expo()) << endl
        << "enable_bf = " << static_cast<int>(m.is_enable_bf()) << endl;
+}
+
+template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::compute_dR(int k, FT delta_)
+{
+  long expo;
+  m.get_R(dR[k], k, k, expo);
+  dR[k].mul(dR[k], dR[k]);
+  dR[k].mul(delta_, dR[k]);  // dR[k] = delta_ * R(k, k)^2
 }
 
 template <class ZT, class FT>

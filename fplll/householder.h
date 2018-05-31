@@ -182,6 +182,7 @@ public:
    */
   inline void recover_R(int i);
 
+  inline long get_row_expo(int i) { return row_expo[i]; }
 private:
   /**
    * Number of rows of b (dimension of the lattice).

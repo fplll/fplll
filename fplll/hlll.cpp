@@ -37,6 +37,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   long expo_k1_k1, expo_k_k1, expo_k_k;
 
   m.update_R(0);
+  compute_dR(0, delta_);
 
   if (verbose)
     print_params();
@@ -61,21 +62,25 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     tmp.mul(tmp, tmp);  // tmp = R(k, k)^2
     s.add(tmp, s);      // s = R(k, k - 1)^2 + R(k, k)^2
     // Here, s = R(k, k - 1)^2 + R(k, k)^2 = ||b_k||^2 - sum_{i in [0, k-2)} R(k, i)^2
-    m.get_R(tmp, k - 1, k - 1, expo_k1_k1);
-    tmp.mul(tmp, tmp);
-    tmp.mul(delta_, tmp);  // tmp = delta_ * R(k - 1, k - 1)^2
+    expo_k1_k1 = m.get_row_expo(k - 1);
 
     if (expo_k1_k1 > -1)
       s.mul_2si(s, 2 * (expo_k_k - expo_k1_k1));
 
-    if (tmp <= s)
+    if (dR[k - 1] <= s)
+    {
+      compute_dR(k, delta_);
       k++;
+    }
     else
     {
       m.swap(k - 1, k);
 
       if (k - 1 == 0)
+      {
         m.update_R(0);
+        compute_dR(0, delta_);
+      }
       else
         m.recover_R(k - 1);
 
