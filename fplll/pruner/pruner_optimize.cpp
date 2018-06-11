@@ -130,8 +130,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob(/*io*/ vector<do
   optimize_coefficients_smooth(pr);
   optimize_coefficients_prob_tune(pr);
   
-//#ifdef DEBUG_PRUNER_OPTIMIZE
-  #if 1
+#ifdef DEBUG_PRUNER_OPTIMIZE
   load_coefficients(b, pr);
   prob = measure_metric(b);
   cost = repeated_enum_cost(b);
@@ -140,7 +139,6 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob(/*io*/ vector<do
   cerr << "# [Stage fo] single_enum_cost = " << single_enum_cost(b) << endl;
   cerr << "# [Stage fo] succ_probability = " << prob << endl;  
 #endif
-  cout << b << endl;
   
   save_coefficients(pr, b);  
 }

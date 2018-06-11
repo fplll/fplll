@@ -49,35 +49,45 @@ template <class FT> int run_pruner_f (ZZ_mat<mpz_t> &b, const PruningParams &par
   if (prune_pre_nodes <= 1)
     prune_pre_nodes = 1;
   int block_size   = end - start;
-  ZZ_mat<long> bl;
 
-
-  ZZ_mat<mpz_t> empty_mat;
-  MatGSO<Z_NR<mpz_t>, FT> m_gso(b, empty_mat, empty_mat, gso_flags);
-  m_gso.update_gso();
-
-  
   PruningParams pruning;
-
-  // set radius
-  long max_dist_expo;
-  FT max_dist = m_gso.get_r_exp(start, start, max_dist_expo);
-  if ((param.flags & BKZ_GH_BND) && block_size > 30)
-  {
-    FT root_det = m_gso.get_root_det(start, end);
-    adjust_radius_to_gh_bound(max_dist, max_dist_expo, block_size, root_det, param.gh_factor);
-    max_dist *= 1.1;
-  }
-  double radius_d = max_dist.get_d() * pow(2, max_dist_expo);
-
-  // get r vector
   vector<double> r;
-  for (int i = start; i < end; ++i)
+  FT root_det, max_dist;
+  long max_dist_expo;
+  
+  // we check if we can convert the basis to long integers for
+  // performance
+  ZZ_mat<long> bl;
+  if (convert<long, mpz_t>(bl, b, 10))
   {
-    FT x;
-    m_gso.get_r(x, i, i);
-    r.push_back(x.get_d());
+    ZZ_mat<long> empty_mat;
+    MatGSO<Z_NR<long>, FT> m_gso(bl, empty_mat, empty_mat, gso_flags);
+    m_gso.update_gso();
+    max_dist = m_gso.get_r_exp(start, start, max_dist_expo);
+    root_det = m_gso.get_root_det(start, end);
+    for (int i = start; i < end; ++i)
+    {
+      FT x;
+      m_gso.get_r(x, i, i);
+      r.push_back(x.get_d());
+    }
   }
+  else {
+    ZZ_mat<mpz_t> empty_mat;
+    MatGSO<Z_NR<mpz_t>, FT> m_gso(b, empty_mat, empty_mat, gso_flags);
+    m_gso.update_gso();
+    max_dist = m_gso.get_r_exp(start, start, max_dist_expo);
+    root_det = m_gso.get_root_det(start, end);
+    for (int i = start; i < end; ++i)
+    {
+      FT x;
+      m_gso.get_r(x, i, i);
+      r.push_back(x.get_d());
+    }
+  }
+
+  adjust_radius_to_gh_bound(max_dist, max_dist_expo, block_size, root_det, param.gh_factor);
+  double radius_d = max_dist.get_d() * pow(2, max_dist_expo);
 
   cerr << "# Start Pruning" << endl;
   cerr << "# enumeration Radius: " << radius_d << endl;
@@ -86,16 +96,16 @@ template <class FT> int run_pruner_f (ZZ_mat<mpz_t> &b, const PruningParams &par
   cerr << "# input GSO: " << r << endl;
   prune<FT>(pruning, radius_d, prune_pre_nodes, r, prune_min_prob,
             PRUNER_METRIC_EXPECTED_SOLUTIONS, PRUNER_ZEALOUS|PRUNER_OPTIMIZE_FULL);
-  cerr << "# optimization done." << endl;
-  cerr << "# pruning coeff " << endl << pruning.coefficients << endl;
+  cerr << "# optimized pruning coeff: " << endl << pruning.coefficients << endl;
   double cost = 0.;
-  cerr << "# cost per level" << endl;
+  //  cerr << "# cost per level" << endl;
   for (int i = 0; i < block_size; ++i) {
-    cerr << pruning.detailed_cost[i] << " ";
+    //cerr << pruning.detailed_cost[i] << " ";
     cost += pruning.detailed_cost[i];
   }
-  cerr << endl << "# single_enum_cost " << cost << endl;
-  cerr << "# succ. prob " << pruning.expectation << endl;
+  cerr << "# single_enum_cost   = " << cost << endl;
+  cerr << "#       succ. prob   = " << pruning.expectation << endl;
+  cerr << "# repeated_enum_cost = " << cost/pruning.expectation << endl;  
   return 0;
 }
 

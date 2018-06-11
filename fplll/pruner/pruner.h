@@ -39,20 +39,10 @@ public:
   std::vector<double> coefficients;  //< pruning coefficients
   double expectation;                //< either expected success probability or number of solutions
                                      /**
-                                         metric used for optimisation (success probability or number of solutions)
-                                      */
+                                        metric used for optimisation (success probability or number of solutions)
+                                     */
   PrunerMetric metric;
   std::vector<double> detailed_cost;  //< Expected nodes per level
-
-
-  //, int prune_start = 0,
-  //int prune_end = 0, double prune_pre_nodes = 1e8, int prune_min_prob = -1
-  // prune_start(prune_start),
-  //prune_end(prune_end
-
-  // if pruning only
-  //if (param.flags & BKZ_PRUNE_ONLY)
-  //return bkz_prune_f<FT>(b, param, sel_ft, lll_delta, u, u_inv);
 
   /**
      The default constructor means no pruning.
@@ -294,7 +284,6 @@ public:
     @param flags complementary parameters : PRUNER_CVP  PRUNER_START_FROM_INPUT  PRUNER_GRADIENT
     PRUNER_NELDER_MEAD  PRUNER_VERBOSE
   */
-
   Pruner(const FT enumeration_radius, const FT preproc_cost, const vector<double> &gso_r,
          const FT input_target     = 0.9,
          const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
@@ -408,7 +397,7 @@ public:
   }
 
   /**
-     @brief run the optimization process using half coefficients
+     @brief run the optimization process using 'even' coefficients (half of the coefficients)
 
      Run the optimization process, successively using the algorithm activated
      using using half coefficients.
@@ -416,7 +405,7 @@ public:
   void optimize_coefficients_evec(/*io*/ vector<double> &pr);
 
   /**
-     @brief run the optimization process using full coefficients
+     @brief run the optimization process using all the coefficients
 
      Run the optimization process, successively using the algorithm activated
      using using full coefficients.
@@ -442,11 +431,11 @@ public:
   void optimize_coefficients_tune_prob(/*io*/ vector<double> &pr);
 
   /**
-     @brief tune the pruning parameter to increase succ. probability
+     @brief tune the pruning parameter to make the curve a more smooth.
 
-     Optimization process to the pruning parameters to increase succ.
-     probability with the restriction that the single enumeration time does
-     not increase significantly.
+     Optimization process to the pruning parameters to make the curve
+     more smooth if the input has a large gap between consecutive 
+     pruning parameters.
   */
   void optimize_coefficients_smooth(/*io*/ vector<double> &pr);
 
@@ -505,10 +494,14 @@ public:
   /**
      @brief Main interface to optimize pruning coefficients
 
-     Main interface to optimize pruning coefficients. It will invoke either
-      -- optimize_coefficients_cost() or
-      -- optimize_coefficients_prob()
-      depending on the given goal.
+     Main interface to optimize pruning coefficients. It will invoke either:
+     optimize_coefficients_cost() or
+     optimize_coefficients_prob()
+     depending on the input "target". If the input_target is negative (e.g. -1),
+     it calls the first function where the goal is to optimize the 
+     single_enum_cost() divided by the succ. probability. If the input_target
+     is > 0, it calls the second function where the goal is to optimize the
+     single_enum_cost() while fixing the succ. probability == input_target.
   */
   void optimize_coefficients(/*io*/ vector<double> &pr);
 
@@ -664,7 +657,14 @@ private:
   */
   void load_full_coefficients(/*o*/ vec &fb, /*i*/ const vector<double> &pr);
 
+  /**
+     @brief auxiliary function to print the coefficients.
+  */
   void print_coefficients(/*i*/ const vector<double> &pr);
+
+  /**
+     @brief auxiliary function to print the coefficients.
+  */
   void print_coefficients(/*i*/ const evec &pr);
 
   /**
@@ -782,7 +782,6 @@ private:
      @param b pruning bounds
      @return cost
   */
-
   FT repeated_enum_cost(/*i*/ const evec &b, const bool flag = 0);
 
   /**
@@ -803,18 +802,13 @@ private:
      pruning coeffients during the descent and avoid numerical stability issues.
   */
   void greedy(evec &b);
-  // void greedy_full(evec &b);
 
   /**
      @brief Perform one step of the gradient descent, in place
      @param b input/output
   */
   int gradient_descent_step(/*io*/ vec &b);
-
   int gradient_descent(/*io*/ vec &b);
-
-  int optimize_coefficients_prob_descent(/*io*/ vec &b);
-  int optimize_coefficients_prob_descent_step(/*io*/ vec &b);
 
   /**
      @brief Runs nelder-mead algorithm

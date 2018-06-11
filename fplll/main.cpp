@@ -328,8 +328,7 @@ template <> int prune(Options &o, ZZ_mat<mpz_t> &b)
   if (o.prune_min_prob)
     pruning.prune_min_prob = o.prune_min_prob;
   
-  // flag and bkz_reduction
-  //status = bkz_reduction(&b, NULL, param, o.float_type, o.precision);
+  status = run_pruner(b, pruning, o.float_type, o.precision);
   if (status != RED_SUCCESS)
   {
     cerr << "Failure: " << get_red_status_str(status) << endl;
