@@ -804,6 +804,13 @@ private:
      @param b input/output
   */
   int gradient_descent_step(/*io*/ vec &b);
+
+
+  /**
+     @brief Perform several steps of the gradient descent, in place
+            It calls the gradient_descent_step() for several times.
+     @param b input/output
+  */
   int gradient_descent(/*io*/ vec &b);
 
   /**
