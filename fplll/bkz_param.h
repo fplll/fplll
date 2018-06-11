@@ -113,7 +113,7 @@ public:
            int auto_abort_max_no_dec      = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
            double gh_factor               = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
            double min_success_probability = BKZ_DEF_MIN_SUCCESS_PROBABILITY,
-           int rerandomization_density = BKZ_DEF_RERANDOMIZATION_DENSITY)
+           int rerandomization_density    = BKZ_DEF_RERANDOMIZATION_DENSITY)
       : block_size(block_size), strategies(strategies), delta(delta), flags(flags),
         max_loops(max_loops), max_time(max_time), auto_abort_scale(auto_abort_scale),
         auto_abort_max_no_dec(auto_abort_max_no_dec), gh_factor(gh_factor),

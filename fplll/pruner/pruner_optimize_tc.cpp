@@ -43,17 +43,20 @@ template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<do
     // min_pruning_coefficiens is small enough. Otherwise, reduce
     // it further. This is important since otherwise one may never
     // achieve the target probability.
-    if (!opt_overall) {
+    if (!opt_overall)
+    {
       vector<double> pr(n);
       save_coefficients(pr, min_pruning_coefficients);
-      if (measure_metric(min_pruning_coefficients) > target) {
-        fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);        optimize_coefficients_prob_decr(pr);
+      if (measure_metric(min_pruning_coefficients) > target)
+      {
+        fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
+        optimize_coefficients_prob_decr(pr);
       }
       load_coefficients(min_pruning_coefficients, pr);
     }
     preproc_cost *= 10;
   }
-  
+
   // 2. gradient method // modify this to becomes an independent method!!!!
   if (flags & PRUNER_GRADIENT)
   {
@@ -70,7 +73,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<do
     cerr << "# [Descent]    all_enum_cost  = " << repeated_enum_cost(b) << endl;
 #endif
   };
-  
+
   if (flags & PRUNER_NELDER_MEAD)
   {
     if (verbosity)
@@ -90,7 +93,6 @@ template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<do
   };
   save_coefficients(pr, b);
 }
-
 
 /**
  *  optimize without constrains b_i = b_{i+1} for even i.
@@ -142,7 +144,6 @@ template <class FT> void Pruner<FT>::optimize_coefficients_full(/*io*/ vector<do
 
   save_coefficients(pr, b);
 }
-
 
 /**
  * Tweaking of pruning coefficients in neighborhood: try to reduce enum
@@ -243,7 +244,6 @@ template <class FT> void Pruner<FT>::optimize_coefficients_tune_cost(/*io*/ vect
 
   save_coefficients(pr, b);
 }
-
 
 /**
  * Tuning of pruning coefficients: try to increase prob by increasing
@@ -349,7 +349,6 @@ void Pruner<FT>::optimize_coefficients_tune_prob(
   save_coefficients(pr, b);
 }
 
-
 /**
  * try to smooth the curve
  */
@@ -382,7 +381,6 @@ void Pruner<FT>::optimize_coefficients_smooth(
   save_coefficients(pr, b);
 }
 
-
 /**
  * Optimize b with the greedy method
  */
@@ -401,7 +399,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   fill(b.begin(), b.end(), 1.);
   evec new_b(d);
   FT nodes;
-  
+
   for (int j = 1; j < 2 * d - 1; j += 2)
   {
     int i = j / 2;
@@ -413,7 +411,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
         1. / (3. * n) +
         4 * j * (n - j) / (n * n * n);  // Make the tree width as a parabola, with maximum at n/2
     nodes = 1. + 1e10 * preproc_cost;
-    
+
     while ((nodes > goal_factor * preproc_cost) & (b[i] > .001))
     {
       b[i] *= .98;
@@ -429,7 +427,6 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
     }
   }
 }
-
 
 /**
  * Optimize b with the gradient descent
@@ -465,7 +462,6 @@ template <class FT> int Pruner<FT>::gradient_descent(/*io*/ vec &b)
   min_step = old_min_step;
   return 0;
 }
-
 
 /**
  * One gradient descent step
@@ -525,9 +521,9 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ vec &b)
     {
       new_b[i] = new_b[i] + step * gradient[i];
     }
-    
+
     enforce(new_b);
-    
+
     new_cf = repeated_enum_cost(new_b);
 
     if (new_cf >= cf)
@@ -543,14 +539,13 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ vec &b)
   {
     cerr << "  Gradient descent step ends after " << j << " mini-steps at cf=" << cf << endl;
   }
-  
+
   if (cf > old_cf * min_cf_decrease)
   {
     return 0;
   }
   return j;
 }
-
 
 /**
  * Optimize b with Nelder-Mead method. Following the notation of
@@ -564,8 +559,8 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ vec &b)
 
 template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ vec &b)
 {
-  int dn    = b.size();
-  int l     = dn + 1;
+  int dn = b.size();
+  int l  = dn + 1;
   evec tmp_constructor(dn);
   vector<evec> bs(l);  // The simplexe (d+1) vector of dim d
   FT *fs = new FT[l];  // Values of f at the simplex vertices

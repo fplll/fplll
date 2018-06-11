@@ -17,8 +17,8 @@
 #define FPLLL_PRUNER_H
 
 #include "defs.h"
-#include <vector>
 #include "lll.h"
+#include <vector>
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -31,9 +31,9 @@ class PruningParams
 {
 
 public:
-  int prune_start;                    // Prune start and end
+  int prune_start;  // Prune start and end
   int prune_end;
-  double prune_pre_nodes;             // Preprocessing nodes and target. prob
+  double prune_pre_nodes;  // Preprocessing nodes and target. prob
   double prune_min_prob;
   double gh_factor;                  //< radius^2/Gaussian heuristic^2
   std::vector<double> coefficients;  //< pruning coefficients
@@ -58,7 +58,6 @@ public:
   static PruningParams LinearPruningParams(int block_size, int level);
 };
 
-
 /**
  * @brief Performs pruning using PruningParams object with specific float type FT.
  *
@@ -69,10 +68,8 @@ public:
  * @return
  *    the status of the pruning
  */
-template <class FT> int run_pruner_f (ZZ_mat<mpz_t> &B, const PruningParams &param,
-                                      int sel_ft);
+template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &B, const PruningParams &param, int sel_ft);
 
-                
 /**
  * @brief Performs pruning using PruningParams object.
  *
@@ -88,9 +85,8 @@ template <class FT> int run_pruner_f (ZZ_mat<mpz_t> &B, const PruningParams &par
  * @return
  *    the status of the prunign
  */
-int run_pruner (ZZ_mat<mpz_t> &B, const PruningParams &param,
-                FloatType float_type = FT_DEFAULT, int precision = 0);
-                
+int run_pruner(ZZ_mat<mpz_t> &B, const PruningParams &param, FloatType float_type = FT_DEFAULT,
+               int precision = 0);
 
 /**
    @brief Search for optimal pruning parameters.
@@ -434,7 +430,7 @@ public:
      @brief tune the pruning parameter to make the curve a more smooth.
 
      Optimization process to the pruning parameters to make the curve
-     more smooth if the input has a large gap between consecutive 
+     more smooth if the input has a large gap between consecutive
      pruning parameters.
   */
   void optimize_coefficients_smooth(/*io*/ vector<double> &pr);
@@ -460,12 +456,12 @@ public:
      @brief auxiliary function in optimizing the single enumeraiton time
      fixing the succ. prob.
 
-     Auxiliary function to optimize the single enumeration time with the 
+     Auxiliary function to optimize the single enumeration time with the
      constraint that the succ. prob (or expected solutions) is fixed. It
      is used if the given targeted probaility is larger than the one
      computed using pruning parameters. Then one increases the succ.
      probability by increasing the pruning parameters. Note since the
-     radius is fixed as input, it may not be possible to achieve the 
+     radius is fixed as input, it may not be possible to achieve the
      given targeted probability even if all coefficients are (1, ..., 1).
      In such case, it will try to increase the succ. prob as much as
      it can and possibly return (1, ..., 1).
@@ -476,7 +472,7 @@ public:
      @brief auxiliary function in optimizing the single enumeraiton time
      fixing the succ. prob.
 
-     Auxiliary function to optimize the single enumeration time with the 
+     Auxiliary function to optimize the single enumeration time with the
      constraint that the succ. prob (or expected solutions) is fixed. It
      is used if the given targeted probaility is smaller than the one
      computed using pruning parameters. Then one decreases the succ.
@@ -498,7 +494,7 @@ public:
      optimize_coefficients_cost() or
      optimize_coefficients_prob()
      depending on the input "target". If the input_target is negative (e.g. -1),
-     it calls the first function where the goal is to optimize the 
+     it calls the first function where the goal is to optimize the
      single_enum_cost() divided by the succ. probability. If the input_target
      is > 0, it calls the second function where the goal is to optimize the
      single_enum_cost() while fixing the succ. probability == input_target.
@@ -529,9 +525,9 @@ public:
      (1) if target == -1, we will optimize the single_enum_cost/prob.
 
      (2) if target != -1 (target must also be given),  we will optimize
-     the single_enum_cost while fixing the input target prob. In such case, 
+     the single_enum_cost while fixing the input target prob. In such case,
      the repeated_enum_cost() actually returns single_enum_cost() since it
-     is used in the optimization procedure. 
+     is used in the optimization procedure.
 
      Note one should set the radius with care since if the radius is too
      small, perhaps with all 1's the pruning coefficients are not able
@@ -680,7 +676,7 @@ private:
   /**
      @brief Enforce contraints on pruning coefficients
 
-     Enforce that pruning coeffient terminate with a 1, are decreasing, and 
+     Enforce that pruning coeffient terminate with a 1, are decreasing, and
      are not too close to 0 (for numerical stability).
 
      @param b input/output

@@ -327,7 +327,7 @@ template <> int prune(Options &o, ZZ_mat<mpz_t> &b)
     pruning.prune_pre_nodes = o.prune_pre_nodes;
   if (o.prune_min_prob)
     pruning.prune_min_prob = o.prune_min_prob;
-  
+
   status = run_pruner(b, pruning, o.float_type, o.precision);
   if (status != RED_SUCCESS)
   {

@@ -14,9 +14,9 @@
   along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "pruner.h"
-#include "fplll.h"
 #include "ballvol.const"
 #include "factorial.const"
+#include "fplll.h"
 
 // add components
 #include "pruner_cost.cpp"
@@ -29,7 +29,7 @@
 FPLLL_BEGIN_NAMESPACE
 
 // call pruner (note the float type is determined now)
-template <class FT> int run_pruner_f (ZZ_mat<mpz_t> &b, const PruningParams &param, int sel_ft)
+template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &b, const PruningParams &param, int sel_ft)
 {
   int gso_flags = 0;
   if (b.get_rows() == 0 || b.get_cols() == 0)
@@ -48,13 +48,13 @@ template <class FT> int run_pruner_f (ZZ_mat<mpz_t> &b, const PruningParams &par
   double prune_min_prob  = param.prune_min_prob;
   if (prune_pre_nodes <= 1)
     prune_pre_nodes = 1;
-  int block_size   = end - start;
+  int block_size    = end - start;
 
   PruningParams pruning;
   vector<double> r;
   FT root_det, max_dist;
   long max_dist_expo;
-  
+
   // we check if we can convert the basis to long integers for
   // performance
   ZZ_mat<long> bl;
@@ -72,7 +72,8 @@ template <class FT> int run_pruner_f (ZZ_mat<mpz_t> &b, const PruningParams &par
       r.push_back(x.get_d());
     }
   }
-  else {
+  else
+  {
     ZZ_mat<mpz_t> empty_mat;
     MatGSO<Z_NR<mpz_t>, FT> m_gso(b, empty_mat, empty_mat, gso_flags);
     m_gso.update_gso();
@@ -94,26 +95,26 @@ template <class FT> int run_pruner_f (ZZ_mat<mpz_t> &b, const PruningParams &par
   cerr << "# preprocessing (num. nodes): " << prune_pre_nodes << endl;
   cerr << "# targeted min. prob: " << prune_min_prob << endl;
   cerr << "# input GSO: " << r << endl;
-  prune<FT>(pruning, radius_d, prune_pre_nodes, r, prune_min_prob,
-            PRUNER_METRIC_EXPECTED_SOLUTIONS, PRUNER_ZEALOUS|PRUNER_OPTIMIZE_FULL);
+  prune<FT>(pruning, radius_d, prune_pre_nodes, r, prune_min_prob, PRUNER_METRIC_EXPECTED_SOLUTIONS,
+            PRUNER_ZEALOUS | PRUNER_OPTIMIZE_FULL);
   cerr << "# optimized pruning coeff: " << endl << pruning.coefficients << endl;
   double cost = 0.;
   //  cerr << "# cost per level" << endl;
-  for (int i = 0; i < block_size; ++i) {
-    //cerr << pruning.detailed_cost[i] << " ";
+  for (int i = 0; i < block_size; ++i)
+  {
+    // cerr << pruning.detailed_cost[i] << " ";
     cost += pruning.detailed_cost[i];
   }
   cerr << "# single_enum_cost   = " << cost << endl;
   cerr << "#       succ. prob   = " << pruning.expectation << endl;
-  cerr << "# repeated_enum_cost = " << cost/pruning.expectation << endl;  
+  cerr << "# repeated_enum_cost = " << cost / pruning.expectation << endl;
   return 0;
 }
 
 // interface function called from main.cpp
-int run_pruner (ZZ_mat<mpz_t> &B, const PruningParams &param,
-                FloatType float_type, int precision)
+int run_pruner(ZZ_mat<mpz_t> &B, const PruningParams &param, FloatType float_type, int precision)
 {
-  //FPLLL_CHECK(B, "B == NULL in run_pruner()");
+  // FPLLL_CHECK(B, "B == NULL in run_pruner()");
   FloatType sel_ft = (float_type != FT_DEFAULT) ? float_type : FT_DOUBLE;
   FPLLL_CHECK(!(sel_ft == FT_MPFR && precision == 0),
               "Missing precision for run_pruner() with floating point type mpfr");
@@ -154,7 +155,8 @@ int run_pruner (ZZ_mat<mpz_t> &B, const PruningParams &param,
   }
   else
   {
-    if (0 <= sel_ft && sel_ft <= FT_MPFR) {
+    if (0 <= sel_ft && sel_ft <= FT_MPFR)
+    {
       FPLLL_ABORT("Compiled without support for run_pruner() with " << FLOAT_TYPE_STR[sel_ft]);
     }
     else
