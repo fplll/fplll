@@ -393,7 +393,9 @@ public:
   }
 
   /**
-     @brief run the optimization process using 'even' coefficients (half of the coefficients)
+     @brief run the optimization process using 'even' coefficients. Note
+     the optimization only applies to the pruning coefficients indexed 
+     by (0, 2, 4, ... n). It thus uses half of the coefficients.
 
      Run the optimization process, successively using the algorithm activated
      using using half coefficients.
@@ -401,7 +403,7 @@ public:
   void optimize_coefficients_evec(/*io*/ vector<double> &pr);
 
   /**
-     @brief run the optimization process using all the coefficients
+     @brief run the optimization process using all the coefficients.
 
      Run the optimization process, successively using the algorithm activated
      using using full coefficients.
