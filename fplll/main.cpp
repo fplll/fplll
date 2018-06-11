@@ -314,27 +314,22 @@ template <class ZT> int prune(Options &, ZZ_mat<ZT> &) { ABORT_MSG("mpz required
 
 template <> int prune(Options &o, ZZ_mat<mpz_t> &b)
 {
-  vector<Strategy> strategies;
-  BKZParam param(o.block_size, strategies);
-  int status;
-  param.delta = o.delta;
-  param.flags = o.bkz_flags;
-  if (o.no_lll)
-    param.flags |= BKZ_NO_LLL;
-  if (o.bkz_flags & BKZ_GH_BND)
-    param.gh_factor = o.bkz_gh_factor;
-  if (o.prune_start)
-    param.prune_start = o.prune_start;
-  if (o.prune_end)
-    param.prune_end = o.prune_end;
-  if (o.prune_pre_nodes)
-    param.prune_pre_nodes = o.prune_pre_nodes;
-  if (o.prune_min_prob)
-    param.prune_min_prob = o.prune_min_prob;
-  // flag and bkz_reduction
-  param.flags |= BKZ_PRUNE_ONLY;
-  status = bkz_reduction(&b, NULL, param, o.float_type, o.precision);
 
+  PruningParams pruning;
+  int status;
+  if (o.bkz_flags & BKZ_GH_BND)
+    pruning.gh_factor = o.bkz_gh_factor;
+  if (o.prune_start)
+    pruning.prune_start = o.prune_start;
+  if (o.prune_end)
+    pruning.prune_end = o.prune_end;
+  if (o.prune_pre_nodes)
+    pruning.prune_pre_nodes = o.prune_pre_nodes;
+  if (o.prune_min_prob)
+    pruning.prune_min_prob = o.prune_min_prob;
+  
+  // flag and bkz_reduction
+  //status = bkz_reduction(&b, NULL, param, o.float_type, o.precision);
   if (status != RED_SUCCESS)
   {
     cerr << "Failure: " << get_red_status_str(status) << endl;

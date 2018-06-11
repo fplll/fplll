@@ -5,14 +5,16 @@ FPLLL_BEGIN_NAMESPACE
 #define OPTIMIZE_PROB_MINSTEP 1e-4
 #define OPTIMIZE_PROB_MAXSTEP 1e4
 
+
 template <class FT> void Pruner<FT>::optimize_coefficients_prob_incr(/*io*/ vector<double> &pr)
 {
+  int dn    = pr.size();  
   int tours;
   double normalized;
   FT old_c0, old_c1, old_prob, old_cfs;
-  vec b(n), old_b(n), old_b2(n);
-  vector<double> detailed_cost(n);
-  vector<double> weight(n);
+  vec b(dn), old_b(dn), old_b2(dn);
+  vector<double> detailed_cost(dn);
+  vector<double> weight(dn);
   bool not_changed;
 
   load_coefficients(b, pr);
@@ -31,10 +33,10 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob_incr(/*io*/ vect
 
     old_cfs    = single_enum_cost(b, &(detailed_cost));
     normalized = 0.0;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < dn; i++)
     {
       weight[i] = 0.0;
-      for (int j = i; j < n; j++)
+      for (int j = i; j < dn; j++)
       {
         weight[i] = weight[i] + detailed_cost[j];
       }
@@ -43,11 +45,11 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob_incr(/*io*/ vect
         weight[i] = OPTIMIZE_PROB_MINSTEP;
       normalized += weight[i];
     }
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < dn; i++)
     {
       weight[i] = weight[i] / normalized;
     }
-    for (int i = n - 1; i >= 0; --i)
+    for (int i = dn - 1; i >= 0; --i)
     {
       old_b[i] = b[i];
       b[i]     = b[i] + weight[i];
@@ -58,7 +60,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob_incr(/*io*/ vect
     enforce(b);
 
     not_changed = true;
-    for (int i = n - 1; i >= 0; --i)
+    for (int i = dn - 1; i >= 0; --i)
     {
       if (b[i] != old_b[i])
         not_changed = false;
@@ -70,18 +72,19 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob_incr(/*io*/ vect
   save_coefficients(pr, b);
 }
 
+
 template <class FT> void Pruner<FT>::optimize_coefficients_prob_decr(/*io*/ vector<double> &pr)
 {
+  int dn    = pr.size();
   int tours;
   double normalized;
   FT old_c0, old_c1, old_prob, old_cfs;
-  vec b(n), old_b(n), old_b2(n);
-  vector<double> detailed_cost(n);
-  vector<double> weight(n);
+  vec b(dn), old_b(dn), old_b2(dn);
+  vector<double> detailed_cost(dn);
+  vector<double> weight(dn);
   bool not_changed;
 
   load_coefficients(b, pr);
-
   // decr b until achieve target
   tours = 0;
   while (1)
@@ -96,10 +99,10 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob_decr(/*io*/ vect
 
     old_cfs    = single_enum_cost(b, &(detailed_cost));
     normalized = 0.0;
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < dn; i++)
     {
       weight[i] = 0.0;
-      for (int j = i; j < n; j++)
+      for (int j = i; j < dn; j++)
       {
         weight[i] = weight[i] + detailed_cost[j];
       }
@@ -108,41 +111,44 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob_decr(/*io*/ vect
         weight[i] = OPTIMIZE_PROB_MINSTEP;
       normalized += weight[i];
     }
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < dn; i++)
     {
       weight[i] = weight[i] / normalized;
+      //cout << weight[i] << " ";
     }
 
-    for (int i = n - 1; i >= 0; --i)
+    for (int i = dn - 1; i >= 0; --i)
     {
       old_b[i] = b[i];
       b[i]     = b[i] - weight[i];
       if (b[i] < OPTIMIZE_PROB_MINSTEP)
         b[i] = OPTIMIZE_PROB_MINSTEP;
     }
-
+    
     enforce(b);
-
+    
     not_changed = true;
-    for (int i = n - 1; i >= 0; --i)
+    for (int i = dn - 1; i >= 0; --i)
     {
       if (b[i] != old_b[i])
         not_changed = false;
     }
-    if (not_changed)
+    if (not_changed) {
       break;
+    }
   }
-
   save_coefficients(pr, b);
 }
 
+
 template <class FT> void Pruner<FT>::optimize_coefficients_prob_tune(/*io*/ vector<double> &pr)
 {
+  int dn    = pr.size();  
   int tours;
   FT prob, ratio;
-  vec b(n), old_b(n), old_b2(n);
-  vector<double> detailed_cost(n);
-  vector<double> weight(n);
+  vec b(dn), old_b(dn), old_b2(dn);
+  vector<double> detailed_cost(dn);
+  vector<double> weight(dn);
   bool not_changed;
 
   load_coefficients(b, pr);
@@ -163,7 +169,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob_tune(/*io*/ vect
     // tune
     if (ratio < 1)
     {
-      for (int i = n - 1; i >= 0; --i)
+      for (int i = dn - 1; i >= 0; --i)
       {
         old_b[i] = b[i];
         b[i]     = b[i] + OPTIMIZE_PROB_MINSTEP;
@@ -173,7 +179,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob_tune(/*io*/ vect
     }
     else
     {
-      for (int i = n - 1; i >= 0; --i)
+      for (int i = dn - 1; i >= 0; --i)
       {
         old_b[i] = b[i];
         b[i]     = b[i] - OPTIMIZE_PROB_MINSTEP;
@@ -185,7 +191,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob_tune(/*io*/ vect
     enforce(b);
 
     not_changed = true;
-    for (int i = n - 1; i >= 0; --i)
+    for (int i = dn - 1; i >= 0; --i)
     {
       if (b[i] != old_b[i])
         not_changed = false;

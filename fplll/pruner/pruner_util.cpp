@@ -129,11 +129,13 @@ template <class FT> void Pruner<FT>::load_coefficients(/*o*/ vec &b, /*i*/ const
   {
     b[i] = pr[n - c * i - 1];
   }
+  /*
   if (enforce(b))
   {
     throw std::runtime_error(
         "Ill formed pruning coefficients (must be decreasing, starting with two 1.0)");
   }
+  */
 }
 
 FPLLL_END_NAMESPACE

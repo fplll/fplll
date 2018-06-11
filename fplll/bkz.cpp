@@ -803,107 +803,11 @@ template <class ZT, class FT> bool BKZAutoAbort<ZT, FT>::test_abort(double scale
   return no_dec >= maxNoDec;
 }
 
-// call pruner
-template <class FT>
-int bkz_prune_f(ZZ_mat<mpz_t> &b, const BKZParam &param, int sel_ft, double lll_delta,
-                ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv)
-{
-  int gso_flags = 0;
-  if (b.get_rows() == 0 || b.get_cols() == 0)
-    return RED_SUCCESS;
-  if (sel_ft == FT_DOUBLE || sel_ft == FT_LONG_DOUBLE)
-    gso_flags |= GSO_ROW_EXPO;
-
-  // some checks
-  int start = param.prune_start;
-  int end   = param.prune_end;
-  if (start < 0 || start >= b.get_rows() - 1)
-    start = 0;
-  if (end <= start || end >= b.get_rows())
-    end                  = b.get_rows();
-  double prune_pre_nodes = param.prune_pre_nodes;
-  double prune_min_prob  = param.prune_min_prob;
-  if (prune_pre_nodes <= 1)
-    prune_pre_nodes = 1;
-  if (prune_min_prob >= 1)
-    prune_min_prob = 0.99;
-  int block_size   = end - start;
-  ZZ_mat<long> bl;
-
-  // we check if we can convert the basis to long integers for performance
-  if (convert<long, mpz_t>(bl, b, 10))
-  {
-    ZZ_mat<long> ul;
-    convert<long, mpz_t>(ul, u, 0);
-    ZZ_mat<long> ul_inv;
-    convert<long, mpz_t>(ul_inv, u_inv, 0);
-    MatGSO<Z_NR<long>, FT> m_gso(bl, ul, ul_inv, gso_flags);
-    LLLReduction<Z_NR<long>, FT> lll_obj(m_gso, lll_delta, LLL_DEF_ETA, LLL_DEFAULT);
-    BKZReduction<Z_NR<long>, FT> bkz_obj(m_gso, lll_obj, param);
-    m_gso.update_gso();
-
-    PruningParams pruning;
-
-    // set radius
-    long max_dist_expo;
-    FT max_dist = m_gso.get_r_exp(start, start, max_dist_expo);
-    if ((param.flags & BKZ_GH_BND) && block_size > 30)
-    {
-      FT root_det = m_gso.get_root_det(start, end);
-      adjust_radius_to_gh_bound(max_dist, max_dist_expo, block_size, root_det, param.gh_factor);
-      max_dist *= 1.1;
-    }
-    /* start greedy */
-    double radius_d = max_dist.get_d() * pow(2, max_dist_expo);
-
-    // get r vector
-    vector<double> r;
-    for (int i = start; i < end; ++i)
-    {
-      FT x;
-      m_gso.get_r(x, i, i);
-      r.push_back(x.get_d());
-    }
-
-    cerr << "# Start Pruning" << endl;
-    cerr << "# enumeration Radius: " << radius_d << endl;
-    cerr << "# preprocessing (num. nodes): " << prune_pre_nodes << endl;
-    cerr << "# targeted min. prob: " << prune_min_prob << endl;
-    cerr << "# input GSO: " << r << endl;
-    prune<FT>(pruning, radius_d, prune_pre_nodes, r, prune_min_prob,
-              PRUNER_METRIC_EXPECTED_SOLUTIONS, PRUNER_ZEALOUS);
-    /*
-    cerr << "# pruning coeff" << pruning.coefficients << endl;
-    double cost = 0.;
-    cerr << "# Predicted cost per Level" << endl;
-    for (int i = 0; i < block_size; ++i) {
-      cerr << pruning.detailed_cost[i] << "\t";
-      cost += pruning.detailed_cost[i];
-    }
-    cerr << endl << "# Predicted Total Cost " << cost << endl;
-    FT prob = 0.0;
-    prob = svp_probability<FT>(pruning.coefficients);
-    cerr << endl << "# Predicted probability " << prob << endl;
-    */
-
-    return 0;
-  }
-  else
-  {
-    cerr << "# Error, not implemented so far." << end;
-    return 1;
-  }
-}
-
 // call LLLReduction() and then BKZReduction.
 template <class FT>
 int bkz_reduction_f(ZZ_mat<mpz_t> &b, const BKZParam &param, int sel_ft, double lll_delta,
                     ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv)
 {
-  // if pruning only
-  if (param.flags & BKZ_PRUNE_ONLY)
-    return bkz_prune_f<FT>(b, param, sel_ft, lll_delta, u, u_inv);
-
   int gso_flags = 0;
   if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;

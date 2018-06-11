@@ -3,9 +3,10 @@
 FPLLL_BEGIN_NAMESPACE
 
 #define BALANCE_HEURISTIC_PRUNER_OPTIMIZE
+//#define DEBUG_PRUNER_OPTIMIZE_TC
 
 /**
- *  optimize: use half coefficients
+ *  optimize with constrains that b_i = b_{i+1} for even i.
  */
 template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<double> &pr)
 {
@@ -17,27 +18,42 @@ template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<do
     load_coefficients(b, pr);
   }
 
-  // 1. greedy method
+  // greedy method
   if (!(flags & PRUNER_START_FROM_INPUT))
   {
     greedy(b);
-#if 0
-    cout << "# [done] greedy method" << endl;
-    cout << b << endl;
-    cout << "# [1st done] Greedy, sing = " << single_enum_cost(b) << endl;
-    cout << "# [1st done] Greedy, prob = " << measure_metric(b) << endl;
-    cout << "# [1st done] Greedy, cost = " << repeated_enum_cost(b) << endl  << endl;
+#ifdef DEBUG_PRUNER_OPTIMIZE_TC
+    cerr << "# [Greedy]" << endl;
+    cerr << b << endl;
+    cerr << "# [Greedy] single_enum_cost  = " << single_enum_cost(b) << endl;
+    cerr << "# [Greedy] succ_probability  = " << measure_metric(b) << endl;
+    cerr << "# [Greedy]    all_enum_cost  = " << repeated_enum_cost(b) << endl;
 #endif
   }
 
-  // greedy method for min pruning coefficients
+  // greedy method for min pruning coefficients.
   if (flags & (PRUNER_GRADIENT | PRUNER_NELDER_MEAD))
   {
     preproc_cost *= .1;
     greedy(min_pruning_coefficients);
+
+    // The aim is to get a lower bound for the pruning parameter
+    // note this lower bound will be used in the enforce()
+    // In the case of fixed input probability, check whether this
+    // min_pruning_coefficiens is small enough. Otherwise, reduce
+    // it further. This is important since otherwise one may never
+    // achieve the target probability.
+    if (!opt_overall) {
+      vector<double> pr(n);
+      save_coefficients(pr, min_pruning_coefficients);
+      if (measure_metric(min_pruning_coefficients) > target) {
+        fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);        optimize_coefficients_prob_decr(pr);
+      }
+      load_coefficients(min_pruning_coefficients, pr);
+    }
     preproc_cost *= 10;
   }
-
+  
   // 2. gradient method // modify this to becomes an independent method!!!!
   if (flags & PRUNER_GRADIENT)
   {
@@ -46,17 +62,15 @@ template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<do
       cerr << "\nGradient descent start (dim=" << n << ")" << endl;
     }
     gradient_descent(b);
-
-#if 0
-    cout << "# [done] descent method" << endl;
-    cout << b << endl;
-    cout << "# [2nd done] Descent, sing = " << single_enum_cost(b) << endl;
-    cout << "# [2nd done] Descent, prob = " << measure_metric(b) << endl;
-    cout << "# [2nd done] Descent, cost = " << repeated_enum_cost(b) << endl  << endl;
+#ifdef DEBUG_PRUNER_OPTIMIZE_TC
+    cerr << "# [Descent]" << endl;
+    cerr << b << endl;
+    cerr << "# [Descent] single_enum_cost  = " << single_enum_cost(b) << endl;
+    cerr << "# [Descent] succ_probability  = " << measure_metric(b) << endl;
+    cerr << "# [Descent]    all_enum_cost  = " << repeated_enum_cost(b) << endl;
 #endif
   };
-
-#if 0  // do not use Nelder-Mead method for half-coefficients
+  
   if (flags & PRUNER_NELDER_MEAD)
   {
     if (verbosity)
@@ -66,19 +80,20 @@ template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<do
     while (nelder_mead_step(b))
     {
     };
-#if 0    
-    cout << "# [done] Nelder-Mead method" << endl;
-    cout << b << endl;
-    cout << "# [done] Nelder-Mead method, cost = " << repeated_enum_cost(b) << endl << endl;;
+#ifdef DEBUG_PRUNER_OPTIMIZE_TC
+    cerr << "# [Nelder-Mead]" << endl;
+    cerr << b << endl;
+    cerr << "# [Nelder-Mead] single_enum_cost  = " << single_enum_cost(b) << endl;
+    cerr << "# [Nelder-Mead] succ_probability  = " << measure_metric(b) << endl;
+    cerr << "# [Nelder-Mead]    all_enum_cost  = " << repeated_enum_cost(b) << endl;
 #endif
   };
-#endif
-
   save_coefficients(pr, b);
 }
 
+
 /**
- *  optimize: use full coefficients
+ *  optimize without constrains b_i = b_{i+1} for even i.
  */
 template <class FT> void Pruner<FT>::optimize_coefficients_full(/*io*/ vector<double> &pr)
 {
@@ -87,7 +102,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_full(/*io*/ vector<do
   // always load coefficients since this is used after optimize_coefficients_evec
   load_coefficients(b, pr);
 
-  // 1. gradient method
+  // gradient method
   if (flags & PRUNER_GRADIENT)
   {
     if (verbosity)
@@ -96,17 +111,16 @@ template <class FT> void Pruner<FT>::optimize_coefficients_full(/*io*/ vector<do
     }
 
     gradient_descent(b);
-
-#if 0
-    cout << "# [done] descent method" << endl;
-    cout << b << endl;
-    cout << "# [3rd done] Descent, sing = " << single_enum_cost(b) << endl;
-    cout << "# [3rd done] Descent, prob = " << measure_metric(b) << endl ;
-    cout << "# [3rd done] Descent, cost = " << repeated_enum_cost(b) << endl << endl;
+#ifdef DEBUG_PRUNER_OPTIMIZE_TC
+    cerr << "# [Descent]" << endl;
+    cerr << b << endl;
+    cerr << "# [Descent] single_enum_cost  = " << single_enum_cost(b) << endl;
+    cerr << "# [Descent] succ_probability  = " << measure_metric(b) << endl;
+    cerr << "# [Descent]    all_enum_cost  = " << repeated_enum_cost(b) << endl;
 #endif
   };
 
-  // 2. Nelder-Mead method
+  // Nelder-Mead method
   if (flags & PRUNER_NELDER_MEAD)
   {
     if (verbosity)
@@ -117,21 +131,22 @@ template <class FT> void Pruner<FT>::optimize_coefficients_full(/*io*/ vector<do
     {
     };
 
-#if 0    
-    cout << "# [done] Nelder-Mead method" << endl;
-    cout << b << endl;
-    cout << "# [4th done] Nelder-Mead, sing = " << single_enum_cost(b) << endl;
-    cout << "# [4th done] Nelder-Mead, prob = " << measure_metric(b) << endl ;
-    cout << "# [4th done] Nelder-Mead, cost = " << repeated_enum_cost(b) << endl << endl;
+#ifdef DEBUG_PRUNER_OPTIMIZE_TC
+    cerr << "# [Nelder-Mead]" << endl;
+    cerr << b << endl;
+    cerr << "# [Nelder-Mead] single_enum_cost  = " << single_enum_cost(b) << endl;
+    cerr << "# [Nelder-Mead] succ_probability  = " << measure_metric(b) << endl;
+    cerr << "# [Nelder-Mead]    all_enum_cost  = " << repeated_enum_cost(b) << endl;
 #endif
   };
 
   save_coefficients(pr, b);
 }
 
+
 /**
- * Tuning of pruning coefficients: try to reduce enum time (hopefull
- * reduce the overall running time)
+ * Tweaking of pruning coefficients in neighborhood: try to reduce enum
+ * time (hopefull reduce the overall running time)
  */
 template <class FT> void Pruner<FT>::optimize_coefficients_tune_cost(/*io*/ vector<double> &pr)
 {
@@ -206,7 +221,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_tune_cost(/*io*/ vect
     }
     else
     {
-      // cout << " improved from " << old_cf << " to  " << new_cf << endl;
+      // cerr << " improved from " << old_cf << " to  " << new_cf << endl;
       if (slices[ind] < 1024)
         slices[ind]     = slices[ind] * 1.05;
       consecutive_fails = 0;
@@ -219,15 +234,16 @@ template <class FT> void Pruner<FT>::optimize_coefficients_tune_cost(/*io*/ vect
     }
   }
 
-#if 0
-  cout << "# [done] tuning step" << endl;
-  cout << b << endl;
-  cout << "# [done] tuning step, cost = " << repeated_enum_cost(b) << endl;
-  cout << "# [done] tuning step, prob = " << measure_metric(b) << endl << endl;
+#ifdef DEBUG_PRUNER_OPTIMIZE_TC
+  cerr << "# [TuningCost]" << endl;
+  cerr << b << endl;
+  cerr << "# [TuningCost] all_enum_cost    = " << repeated_enum_cost(b) << endl;
+  cerr << "# [TuningCost] succ_probability = " << measure_metric(b) << endl;
 #endif
 
   save_coefficients(pr, b);
 }
+
 
 /**
  * Tuning of pruning coefficients: try to increase prob by increasing
@@ -298,7 +314,7 @@ void Pruner<FT>::optimize_coefficients_tune_prob(
         // new cost
         new_cf = repeated_enum_cost(b);
 
-        // cout << " i = " << i << " old_cf = " << old_cf << " new_cf = " <<
+        // cerr << " i = " << i << " old_cf = " << old_cf << " new_cf = " <<
         // new_cf << endl;
 
         // if not improved -- recover
@@ -323,14 +339,16 @@ void Pruner<FT>::optimize_coefficients_tune_prob(
       break;
   }
 
-#if 0
-  cout << "# [done] tuning step" << endl;
-  cout << b << endl;
-  cout << "# [done] tuning step, cost = " << repeated_enum_cost(b) << endl;
-  cout << "# [done] tuning step, prob = " << measure_metric(b) << endl << endl;
+#ifdef DEBUG_PRUNER_OPTIMIZE_TC
+  cerr << "# [TuningProb]" << endl;
+  cerr << b << endl;
+  cerr << "# [TuningProb] all_enum_cost    = " << repeated_enum_cost(b) << endl;
+  cerr << "# [TuningProb] succ_probability = " << measure_metric(b) << endl;
 #endif
+
   save_coefficients(pr, b);
 }
+
 
 /**
  * try to smooth the curve
@@ -364,9 +382,9 @@ void Pruner<FT>::optimize_coefficients_smooth(
   save_coefficients(pr, b);
 }
 
+
 /**
- * Optimize b with the greedy method -- the input b is half length.
- * target: reduce the enum. cost
+ * Optimize b with the greedy method
  */
 template <class FT> void Pruner<FT>::greedy(evec &b)
 {
@@ -383,7 +401,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   fill(b.begin(), b.end(), 1.);
   evec new_b(d);
   FT nodes;
-
+  
   for (int j = 1; j < 2 * d - 1; j += 2)
   {
     int i = j / 2;
@@ -395,6 +413,7 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
         1. / (3. * n) +
         4 * j * (n - j) / (n * n * n);  // Make the tree width as a parabola, with maximum at n/2
     nodes = 1. + 1e10 * preproc_cost;
+    
     while ((nodes > goal_factor * preproc_cost) & (b[i] > .001))
     {
       b[i] *= .98;
@@ -411,6 +430,10 @@ template <class FT> void Pruner<FT>::greedy(evec &b)
   }
 }
 
+
+/**
+ * Optimize b with the gradient descent
+ */
 template <class FT> int Pruner<FT>::gradient_descent(/*io*/ vec &b)
 {
 
@@ -443,14 +466,17 @@ template <class FT> int Pruner<FT>::gradient_descent(/*io*/ vec &b)
   return 0;
 }
 
+
+/**
+ * One gradient descent step
+ */
 template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ vec &b)
 {
-  verbosity = 0;
-
   int dn    = b.size();
   FT cf     = repeated_enum_cost(b);
   FT old_cf = cf;
   vec new_b(dn);
+  vector<double> pr(dn);
   vec gradient(dn);
   repeated_enum_cost_gradient(b, gradient);
   FT norm = 0.0;
@@ -499,9 +525,9 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ vec &b)
     {
       new_b[i] = new_b[i] + step * gradient[i];
     }
-
+    
     enforce(new_b);
-
+    
     new_cf = repeated_enum_cost(new_b);
 
     if (new_cf >= cf)
@@ -513,13 +539,11 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ vec &b)
     step *= step_factor;
   }
 
-  if (0)
+  if (verbosity)
   {
     cerr << "  Gradient descent step ends after " << j << " mini-steps at cf=" << cf << endl;
-    cerr << "   -- single_enum_cost(b) = " << single_enum_cost(b) << endl;
-    cerr << "   -- svp_probaility(b) = " << measure_metric(b) << endl;
   }
-
+  
   if (cf > old_cf * min_cf_decrease)
   {
     return 0;
@@ -527,9 +551,11 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ vec &b)
   return j;
 }
 
-// Nelder-Mead method. Following the notation of
-// https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
 
+/**
+ * Optimize b with Nelder-Mead method. Following the notation of
+ *    https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
+ */
 #define ND_ALPHA 1
 #define ND_GAMMA 2
 #define ND_RHO 0.5
@@ -538,7 +564,6 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ vec &b)
 
 template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ vec &b)
 {
-  verbosity = 0;
   int dn    = b.size();
   int l     = dn + 1;
   evec tmp_constructor(dn);

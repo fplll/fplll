@@ -91,7 +91,6 @@ public:
           - BKZ_GH_BND        use the Gaussian heuristic to reduce the enumeration bound of possible
           - BKZ_SD_VARIANT    run SD-BKZ
           - BKZ_SLD_RED       run slide reduction
-          - BKZ_PRUNE_ONLY    only run pruner
      @param max_loops
         maximum number of loops (or zero to disable this)
      @param max_time
@@ -114,14 +113,12 @@ public:
            int auto_abort_max_no_dec      = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
            double gh_factor               = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
            double min_success_probability = BKZ_DEF_MIN_SUCCESS_PROBABILITY,
-           int rerandomization_density = BKZ_DEF_RERANDOMIZATION_DENSITY, int prune_start = 0,
-           int prune_end = 0, double prune_pre_nodes = 1e8, int prune_min_prob = -1)
+           int rerandomization_density = BKZ_DEF_RERANDOMIZATION_DENSITY)
       : block_size(block_size), strategies(strategies), delta(delta), flags(flags),
         max_loops(max_loops), max_time(max_time), auto_abort_scale(auto_abort_scale),
         auto_abort_max_no_dec(auto_abort_max_no_dec), gh_factor(gh_factor),
         dump_gso_filename("gso.json"), min_success_probability(min_success_probability),
-        rerandomization_density(rerandomization_density), prune_start(prune_start),
-        prune_end(prune_end)
+        rerandomization_density(rerandomization_density)
   {
 
     // we create dummy strategies
@@ -176,16 +173,6 @@ public:
   /** density of rerandomization operation when using extreme pruning **/
 
   int rerandomization_density;
-
-  /** Prune start and end **/
-
-  int prune_start;
-  int prune_end;
-
-  /** Prune preprocessing nodes and min. prob **/
-
-  double prune_pre_nodes;
-  double prune_min_prob;
 };
 
 /**

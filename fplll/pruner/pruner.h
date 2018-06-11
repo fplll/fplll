@@ -18,6 +18,7 @@
 
 #include "defs.h"
 #include <vector>
+#include "lll.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -30,6 +31,10 @@ class PruningParams
 {
 
 public:
+  int prune_start;                    // Prune start and end
+  int prune_end;
+  double prune_pre_nodes;             // Preprocessing nodes and target. prob
+  double prune_min_prob;
   double gh_factor;                  //< radius^2/Gaussian heuristic^2
   std::vector<double> coefficients;  //< pruning coefficients
   double expectation;                //< either expected success probability or number of solutions
@@ -39,10 +44,19 @@ public:
   PrunerMetric metric;
   std::vector<double> detailed_cost;  //< Expected nodes per level
 
+
+  //, int prune_start = 0,
+  //int prune_end = 0, double prune_pre_nodes = 1e8, int prune_min_prob = -1
+  // prune_start(prune_start),
+  //prune_end(prune_end
+
+  // if pruning only
+  //if (param.flags & BKZ_PRUNE_ONLY)
+  //return bkz_prune_f<FT>(b, param, sel_ft, lll_delta, u, u_inv);
+
   /**
      The default constructor means no pruning.
   */
-
   PruningParams() : gh_factor(1.), expectation(1.), metric(PRUNER_METRIC_PROBABILITY_OF_SHORTEST){};
 
   /** Set all pruning coefficients to 1, except the last <level>
@@ -51,9 +65,42 @@ public:
 
       @param level number of levels in linear descent
   */
-
   static PruningParams LinearPruningParams(int block_size, int level);
 };
+
+
+/**
+ * @brief Performs pruning using PruningParams object with specific float type FT.
+ *
+ * @param B
+ *    basis of the lattice to be reduced
+ * @param param
+ *    parameter object
+ * @return
+ *    the status of the pruning
+ */
+template <class FT> int run_pruner_f (ZZ_mat<mpz_t> &B, const PruningParams &param,
+                                      int sel_ft);
+
+                
+/**
+ * @brief Performs pruning using PruningParams object.
+ *
+ * @param B
+ *    basis of the lattice to be reduced
+ * @param param
+ *    parameter object
+ * @param float_type
+ *    specifies the data type used for GSO computations (see defs.h for options)
+ * @param precision
+ *    specifies the precision if float_type=FT_MPFR (and needs to be > 0 in that case)
+ *    ignored otherwise
+ * @return
+ *    the status of the prunign
+ */
+int run_pruner (ZZ_mat<mpz_t> &B, const PruningParams &param,
+                FloatType float_type = FT_DEFAULT, int precision = 0);
+                
 
 /**
    @brief Search for optimal pruning parameters.
@@ -421,22 +468,30 @@ public:
   void optimize_coefficients_prob(/*io*/ vector<double> &pr);
 
   /**
-     @brief auxiliary function in optimizing the single enumeraiton time fixing succ. prob.
+     @brief auxiliary function in optimizing the single enumeraiton time
+     fixing the succ. prob.
 
-     Auxiliary function to optimize the single enumeration time with the constraint
-     that the succ. prob (or expected solutions) is fixed. It is used if the given
-     targeted probaility is smaller than the one computed using pruning parameters.
-     Then one increases the succ. probability by increasing the pruning parameters.
+     Auxiliary function to optimize the single enumeration time with the 
+     constraint that the succ. prob (or expected solutions) is fixed. It
+     is used if the given targeted probaility is larger than the one
+     computed using pruning parameters. Then one increases the succ.
+     probability by increasing the pruning parameters. Note since the
+     radius is fixed as input, it may not be possible to achieve the 
+     given targeted probability even if all coefficients are (1, ..., 1).
+     In such case, it will try to increase the succ. prob as much as
+     it can and possibly return (1, ..., 1).
   */
   void optimize_coefficients_prob_incr(/*io*/ vector<double> &pr);
 
   /**
-     @brief auxiliary function in optimizing the single enumeraiton time fixing succ. prob.
+     @brief auxiliary function in optimizing the single enumeraiton time
+     fixing the succ. prob.
 
-     Auxiliary function to optimize the single enumeration time with the constraint
-     that the succ. prob (or expected solutions) is fixed. It is used if the given
-     targeted probaility is larger than the one computed using pruning parameters.
-     THen one decrease the succ. probability by increasing the pruning parameters.
+     Auxiliary function to optimize the single enumeration time with the 
+     constraint that the succ. prob (or expected solutions) is fixed. It
+     is used if the given targeted probaility is smaller than the one
+     computed using pruning parameters. Then one decreases the succ.
+     probability by descreasing the pruning parameters.
   */
   void optimize_coefficients_prob_decr(/*io*/ vector<double> &pr);
 
@@ -473,8 +528,34 @@ public:
   /**
      @brief Cost of repeating enumeration and preprocessing until reaching target
 
-     Compute the cost of r enumeration and (r-1) preprocessing, where r is the required number of
-     retrials to reach target.
+     Compute the cost of r enumeration and (r-1) preprocessing, where r is the
+     required number of retrials to reach target.
+
+     There are two modes depending on the target.
+
+     (1) if target == -1, we will optimize the single_enum_cost/prob.
+
+     (2) if target != -1 (target must also be given),  we will optimize
+     the single_enum_cost while fixing the input target prob. In such case, 
+     the repeated_enum_cost() actually returns single_enum_cost() since it
+     is used in the optimization procedure. 
+
+     Note one should set the radius with care since if the radius is too
+     small, perhaps with all 1's the pruning coefficients are not able
+     to support a target expectation/probability. Consider an example
+     in the case of PRUNER_METRIC_EXPECTED_SOLUTIONS:
+
+     (a) If the radius is large enough to support target many solutions,
+     the optimizer will optimize the single_enum_cost while fixing
+     the target.
+
+     (b) if the radius is too small to support target many solutions,
+     it will likely return all 1's in the coefficients (attempt
+     to achieve the target but which is not possible)
+
+     Note the radius is either from the first b_i^* of the block lattice;
+     or set as min(GH * gh_ratio, |b_i^*|). Hence it will not be arbitrarily
+     large.
   */
   double repeated_enum_cost(/*i*/ const vector<double> &pr, const bool flag = 0)
   {
@@ -599,14 +680,13 @@ private:
   /**
      @brief Enforce contraints on pruning coefficients
 
-     Enforce that pruning coeffient terminate with a 1, are decreasing, and are not too close to 0
-     (for numerical stability).
+     Enforce that pruning coeffient terminate with a 1, are decreasing, and 
+     are not too close to 0 (for numerical stability).
 
      @param b input/output
      @param j Keeps index j unchanged when possible
      @return was a constraint violated ?
   */
-
   inline bool enforce(/*io*/ vec &b, /*opt i*/ const int j = 0);
 
   /**
@@ -772,16 +852,14 @@ template <class FT> inline bool Pruner<FT>::enforce(/*io*/ vec &b, /*opt i*/ con
 
     // note min_pruning_coefficients always has length n
     if (b[i] <= min_pruning_coefficients[i / c])
-    {
       b[i] = min_pruning_coefficients[i / c];
-    }
   }
 
   for (int i = j; i < dn - 1; ++i)
   {
     if (b[i + 1] < b[i])
     {
-      status |= (b[i + 1] + .001 < b[i]);
+      status |= (b[i + 1] + .000001 < b[i]);
       b[i + 1] = b[i];
     }
   }
@@ -790,7 +868,7 @@ template <class FT> inline bool Pruner<FT>::enforce(/*io*/ vec &b, /*opt i*/ con
   {
     if (b[i + 1] < b[i])
     {
-      status |= (b[i + 1] + .001 < b[i]);
+      status |= (b[i + 1] + .000001 < b[i]);
       b[i] = b[i + 1];
     }
   }

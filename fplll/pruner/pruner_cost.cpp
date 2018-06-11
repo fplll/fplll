@@ -186,6 +186,7 @@ template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const vec &b,
     {
       throw std::range_error("NaN or inf in repeated_enum_cost (METRIC_EXPECTED_SOLUTION)");
     }
+    // if expected solutions > 1, set trial = 1
     trials = trials < 1.0 ? 1.0 : trials;
     return single_enum_cost(b, nullptr, flag) * trials + preproc_cost * (trials - 1.0);
   }

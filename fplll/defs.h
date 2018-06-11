@@ -253,8 +253,7 @@ enum BKZFlags
   BKZ_DUMP_GSO    = 0x40,
   BKZ_GH_BND      = 0x80,
   BKZ_SD_VARIANT  = 0x100,
-  BKZ_SLD_RED     = 0x200,
-  BKZ_PRUNE_ONLY  = 0x400
+  BKZ_SLD_RED     = 0x200
 };
 
 enum HKZFlags
@@ -287,6 +286,8 @@ enum PrunerFlags
   PRUNER_NELDER_MEAD      = 0x8,
   // Verbosity
   PRUNER_VERBOSE = 0x10,
+  // Optimize w.r.t to all coefficients (by default it optimizes w.r.t half)
+  PRUNER_OPTIMIZE_FULL = 0x20,
 };
 
 #define PRUNER_ZEALOUS (PRUNER_GRADIENT | PRUNER_NELDER_MEAD)
