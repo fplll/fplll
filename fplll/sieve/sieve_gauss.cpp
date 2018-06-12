@@ -292,15 +292,11 @@ template <class ZT, class F> void GaussSieve<ZT, F>::print_final_info()
     cout << "# [info] max(|L|)=" << max_list_size;
     cout << " log2(max|L|)/n=" << log2(max_list_size) / nc << endl;
     cout << "# [info] true max|L| = " << first_size << endl;
-    ;
     cout << "# [info] true log2(max|L|)/n = " << log2(first_size) / nc << endl;
-    cout << "# [info] sv is" << endl;
-  }
-  if (verbose)
-  {
     final_norm.set_z(best_sqr_norm);
     final_norm.sqrt(final_norm, GMP_RNDN);
     cout << "# [info] |sv| = " << final_norm << " (" << best_sqr_norm << ")" << endl;
+    cout << "# [info] shortest vector is " << endl << return_first() << endl;
   }
 }
 
@@ -320,7 +316,13 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::sieve(Z_NR<ZT> target_norm)
     return run_2sieve();
 }
 
-template class GaussSieve<mpz_t, FP_NR<double>>;
 template class GaussSieve<long, FP_NR<double>>;
+template class GaussSieve<mpz_t, FP_NR<double>>;
+#ifdef FPLLL_WITH_QD
+template class GaussSieve<long, FP_NR<dd_real>>;
+template class GaussSieve<mpz_t, FP_NR<dd_real>>;
+#endif
+template class GaussSieve<long, FP_NR<mpfr_t>>;
+template class GaussSieve<mpz_t, FP_NR<mpfr_t>>;
 
 FPLLL_END_NAMESPACE
