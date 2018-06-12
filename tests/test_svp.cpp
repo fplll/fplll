@@ -291,12 +291,10 @@ int test_filename(const char *input_filename, const char *output_filename,
 /**
    @brief Run SVP tests.
 
-   @param argc             ignored
-   @param argv             ignored
    @return
 */
 
-int main(int argc, char *argv[])
+int main()
 {
 
   int status = 0;

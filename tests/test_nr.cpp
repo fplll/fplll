@@ -86,7 +86,7 @@ template <class FT> int test_root()
   return status;
 }
 
-int main(int argc, char *argv[])
+int main()
 {
 
   int status = 0;

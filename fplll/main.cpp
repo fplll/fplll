@@ -120,7 +120,7 @@ void read_pruning_vector(const char *file_name, PruningParams &pr, int n)
         "File '" << file_name << "' should contain exactly " << n << " numbers");
 }
 
-template <class ZT> int bkz(Options &o, ZZ_mat<ZT> &b) { ABORT_MSG("mpz required for BKZ"); }
+template <class ZT> int bkz(Options &, ZZ_mat<ZT> &) { ABORT_MSG("mpz required for BKZ"); }
 
 template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
 {
@@ -194,7 +194,7 @@ template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
    Note: since we only force |mu_i,j| <= eta with eta > 0.5, the solution
    is not unique even for a generic matrix */
 
-template <class ZT> int hkz(Options &o, ZZ_mat<ZT> &b) { ABORT_MSG("mpz required for HKZ"); }
+template <class ZT> int hkz(Options &, ZZ_mat<ZT> &) { ABORT_MSG("mpz required for HKZ"); }
 
 template <> int hkz(Options &o, ZZ_mat<mpz_t> &b)
 {
@@ -225,7 +225,7 @@ template <> int hkz(Options &o, ZZ_mat<mpz_t> &b)
 
 /* Shortest vector problem and closest vector problem */
 
-template <class ZT> int svpcvp(Options &o, ZZ_mat<ZT> &b, const vector<Z_NR<ZT>> &target)
+template <class ZT> int svpcvp(Options &, ZZ_mat<ZT> &, const vector<Z_NR<ZT>> &target)
 {
   if (target.empty())
   {
