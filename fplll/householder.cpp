@@ -312,6 +312,10 @@ void MatHouseholder<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_
     else if (lx != 0)
       row_addmul_si(i, j, lx);
   }
+  else if (row_op_force_long)
+  {
+    row_addmul_si_2exp(i, j, lx, expo);
+  }
   else
   {
     x.get_z_exp_we(ztmp0, expo, expo_add);

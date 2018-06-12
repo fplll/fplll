@@ -24,9 +24,10 @@ FPLLL_BEGIN_NAMESPACE
 
 enum MatHouseholderFlags
 {
-  HOUSEHOLDER_DEFAULT  = 0,
-  HOUSEHOLDER_ROW_EXPO = 1,
-  HOUSEHOLDER_BF       = 2
+  HOUSEHOLDER_DEFAULT       = 0,
+  HOUSEHOLDER_ROW_EXPO      = 1,
+  HOUSEHOLDER_BF            = 2,
+  HOUSEHOLDER_OP_FORCE_LONG = 4
 };
 
 /**
@@ -47,7 +48,8 @@ public:
   MatHouseholder(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
       : b(arg_b), enable_row_expo(flags & HOUSEHOLDER_ROW_EXPO), enable_bf(flags & HOUSEHOLDER_BF),
         enable_transform(arg_u.get_rows() > 0), u(arg_u),
-        enable_inverse_transform(arg_uinv_t.get_rows() > 0), u_inv_t(arg_uinv_t)
+        enable_inverse_transform(arg_uinv_t.get_rows() > 0), u_inv_t(arg_uinv_t),
+        row_op_force_long(flags & HOUSEHOLDER_OP_FORCE_LONG)
   {
     d            = b.get_rows();
     n            = b.get_cols();
@@ -183,6 +185,8 @@ public:
   inline void recover_R(int i);
 
   inline long get_row_expo(int i) { return row_expo[i]; }
+
+  inline bool is_row_op_force_long() { return row_op_force_long; }
 private:
   /**
    * Number of rows of b (dimension of the lattice).
@@ -236,6 +240,15 @@ private:
   vector<int> init_row_size;
   int n_known_cols;
 
+  /**
+   * b[i] := b[i] + x * 2^expo_add * b[j].
+   * After one or several calls to row_addmul_we, row_op_end must be called.
+   * Special cases |x| &lt;= 1 and |x| &lt;= LONG_MAX are optimized.
+   * x should be an integer.
+   * If row_op_force_long=true, x is always converted to (2^expo * long) instead
+   * of (2^expo * ZT), which is faster if ZT=mpz_t but might lead to a loss of
+   * precision (in LLL, more Babai iterations are needed).
+   */
   void row_add(int i, int j);
   void row_sub(int i, int j);
   void row_addmul_si(int i, int j, long x);
@@ -275,6 +288,12 @@ private:
   const bool enable_inverse_transform;
 
   Matrix<ZT> &u_inv_t;  // Transposed inverse transform
+
+  /**
+   * Changes the behaviour of row_addmul(_we).
+   * See the description of row_addmul.
+   */
+  const bool row_op_force_long;
 };
 
 template <class ZT, class FT>

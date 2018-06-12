@@ -90,7 +90,8 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
        << "c = " << c << endl
        << "precision = " << FT::get_prec() << endl
        << "row_expo = " << static_cast<int>(m.is_enable_row_expo()) << endl
-       << "enable_bf = " << static_cast<int>(m.is_enable_bf()) << endl;
+       << "enable_bf = " << static_cast<int>(m.is_enable_bf()) << endl
+       << "long_in_babai = " << static_cast<int>(m.is_row_op_force_long()) << endl;
 }
 
 template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::compute_dR(int k, FT delta_)
