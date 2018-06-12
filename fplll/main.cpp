@@ -318,10 +318,10 @@ template <> int prune(Options &o, ZZ_mat<mpz_t> &b)
   PruningParams pruning;
   int status, prune_start = 0, prune_end = b.get_rows();
   double gh_factor = 1.0, prune_pre_nodes = 1e6, prune_min_prob = -1.0;
-  
+
   if (o.bkz_flags & BKZ_GH_BND)
     gh_factor = o.bkz_gh_factor;
-  
+
   if (o.prune_start)
     prune_start = o.prune_start;
 
@@ -334,10 +334,9 @@ template <> int prune(Options &o, ZZ_mat<mpz_t> &b)
   if (o.prune_min_prob)
     prune_min_prob = o.prune_min_prob;
 
-  status = run_pruner(b, pruning, o.float_type, o.precision,
-                      prune_start, prune_end, prune_pre_nodes,
-                      prune_min_prob, gh_factor);
-  
+  status = run_pruner(b, pruning, o.float_type, o.precision, prune_start, prune_end,
+                      prune_pre_nodes, prune_min_prob, gh_factor);
+
   if (status != RED_SUCCESS)
   {
     cerr << "Failure: " << get_red_status_str(status) << endl;

@@ -29,7 +29,9 @@
 FPLLL_BEGIN_NAMESPACE
 
 // call pruner (note the float type is determined now)
-template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &b, const PruningParams &param, int sel_ft, int prune_start, int prune_end, double prune_pre_nodes, double prune_min_prob, double gh_factor)
+template <class FT>
+int run_pruner_f(ZZ_mat<mpz_t> &b, const PruningParams &param, int sel_ft, int prune_start,
+                 int prune_end, double prune_pre_nodes, double prune_min_prob, double gh_factor)
 {
   int gso_flags = 0;
   if (b.get_rows() == 0 || b.get_cols() == 0)
@@ -43,7 +45,7 @@ template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &b, const PruningParams &para
   if (start < 0 || start >= b.get_rows() - 1)
     start = 0;
   if (end <= start || end >= b.get_rows())
-    end                  = b.get_rows();
+    end = b.get_rows();
   if (prune_pre_nodes <= 1)
     prune_pre_nodes = 1;
   int block_size    = end - start;
@@ -93,7 +95,8 @@ template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &b, const PruningParams &para
   cerr << "# preprocessing (num. nodes): " << prune_pre_nodes << endl;
   cerr << "# targeted min. prob: " << prune_min_prob << endl;
   cerr << "# input GSO: " << r << endl;
-  prune<FT>(pruning, radius_d, prune_pre_nodes, r, prune_min_prob, PRUNER_METRIC_EXPECTED_SOLUTIONS, PRUNER_ZEALOUS | PRUNER_OPTIMIZE_FULL);
+  prune<FT>(pruning, radius_d, prune_pre_nodes, r, prune_min_prob, PRUNER_METRIC_EXPECTED_SOLUTIONS,
+            PRUNER_ZEALOUS | PRUNER_OPTIMIZE_FULL);
   cerr << "# optimized pruning coeff: " << endl << pruning.coefficients << endl;
   double cost = 0.;
   //  cerr << "# cost per level" << endl;
@@ -109,7 +112,9 @@ template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &b, const PruningParams &para
 }
 
 // interface function called from main.cpp
-int run_pruner(ZZ_mat<mpz_t> &B, const PruningParams &param, FloatType float_type, int precision, int prune_start, int prune_end, double prune_pre_nodes, double prune_min_prob, double gh_factor)
+int run_pruner(ZZ_mat<mpz_t> &B, const PruningParams &param, FloatType float_type, int precision,
+               int prune_start, int prune_end, double prune_pre_nodes, double prune_min_prob,
+               double gh_factor)
 {
   // FPLLL_CHECK(B, "B == NULL in run_pruner()");
   FloatType sel_ft = (float_type != FT_DEFAULT) ? float_type : FT_DOUBLE;
@@ -120,46 +125,40 @@ int run_pruner(ZZ_mat<mpz_t> &B, const PruningParams &param, FloatType float_typ
   int status;
   if (sel_ft == FT_DOUBLE)
   {
-    status = run_pruner_f<FP_NR<double>>(B, param, sel_ft, prune_start,
-                                         prune_end, prune_pre_nodes,
+    status = run_pruner_f<FP_NR<double>>(B, param, sel_ft, prune_start, prune_end, prune_pre_nodes,
                                          prune_min_prob, gh_factor);
   }
 #ifdef FPLLL_WITH_LONG_DOUBLE
   else if (sel_ft == FT_LONG_DOUBLE)
   {
-    status = run_pruner_f<FP_NR<long double>>(B, param, sel_ft, prune_start,
-                                              prune_end, prune_pre_nodes,
-                                              prune_min_prob, gh_factor);
+    status = run_pruner_f<FP_NR<long double>>(B, param, sel_ft, prune_start, prune_end,
+                                              prune_pre_nodes, prune_min_prob, gh_factor);
   }
 #endif
 #ifdef FPLLL_WITH_DPE
   else if (sel_ft == FT_DPE)
   {
-    status = run_pruner_f<FP_NR<dpe_t>>(B, param, sel_ft, prune_start,
-                                        prune_end, prune_pre_nodes,
+    status = run_pruner_f<FP_NR<dpe_t>>(B, param, sel_ft, prune_start, prune_end, prune_pre_nodes,
                                         prune_min_prob, gh_factor);
   }
 #endif
 #ifdef FPLLL_WITH_QD
   else if (sel_ft == FT_DD)
   {
-    status = run_pruner_f<FP_NR<dd_real>>(B, param, sel_ft, prune_start,
-                                          prune_end, prune_pre_nodes,
+    status = run_pruner_f<FP_NR<dd_real>>(B, param, sel_ft, prune_start, prune_end, prune_pre_nodes,
                                           prune_min_prob, gh_factor);
   }
   else if (sel_ft == FT_QD)
   {
-    status = run_pruner_f<FP_NR<qd_real>>(B, param, sel_ft, prune_start,
-                                          prune_end, prune_pre_nodes,
+    status = run_pruner_f<FP_NR<qd_real>>(B, param, sel_ft, prune_start, prune_end, prune_pre_nodes,
                                           prune_min_prob, gh_factor);
   }
 #endif
   else if (sel_ft == FT_MPFR)
   {
     int old_prec = FP_NR<mpfr_t>::set_prec(precision);
-    status       = run_pruner_f<FP_NR<mpfr_t>>(B, param, sel_ft, prune_start,
-                                               prune_end, prune_pre_nodes,
-                                               prune_min_prob, gh_factor);
+    status = run_pruner_f<FP_NR<mpfr_t>>(B, param, sel_ft, prune_start, prune_end, prune_pre_nodes,
+                                         prune_min_prob, gh_factor);
     FP_NR<mpfr_t>::set_prec(old_prec);
   }
   else

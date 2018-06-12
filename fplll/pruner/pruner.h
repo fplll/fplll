@@ -31,7 +31,6 @@ class PruningParams
 {
 
 public:
-
   double gh_factor;                  //< radius^2/Gaussian heuristic^2
   std::vector<double> coefficients;  //< pruning coefficients
   double expectation;                //< either expected success probability or number of solutions
@@ -41,7 +40,6 @@ public:
   PrunerMetric metric;
   std::vector<double> detailed_cost;  //< Expected nodes per level
 
-  
   /**
      The default constructor means no pruning.
   */
@@ -74,7 +72,7 @@ public:
  * @param prune_pre_nodes
  *     preprocessing cost in the number of nodes
  * @param prune_min_prob
- *     target probability. If it is -1, it will optimize 
+ *     target probability. If it is -1, it will optimize
  *       single_enum_cost/succ. prob while not fixing the succ. prob.
  *       If it is > 0, it will fix the succ. prob and optimize the
  *       single_enum_cost.
@@ -84,7 +82,10 @@ public:
  * @return
  *    the status of the pruning
  */
-template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &B, const PruningParams &param, int sel_ft, int precision = 0, int prune_start = 0, int prune_end = 1, double prune_pre_nodes = 1e6, double prune_min_prob = -1, double gh_factor = 1.0);
+template <class FT>
+int run_pruner_f(ZZ_mat<mpz_t> &B, const PruningParams &param, int sel_ft, int precision = 0,
+                 int prune_start = 0, int prune_end = 1, double prune_pre_nodes = 1e6,
+                 double prune_min_prob = -1, double gh_factor = 1.0);
 
 /**
  * @brief Performs pruning using PruningParams object.
@@ -105,7 +106,7 @@ template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &B, const PruningParams &para
  * @param prune_pre_nodes
  *     preprocessing cost in the number of nodes
  * @param prune_min_prob
- *     target probability. If it is -1, it will optimize 
+ *     target probability. If it is -1, it will optimize
  *       single_enum_cost/succ. prob while not fixing the succ. prob.
  *       If it is > 0, it will fix the succ. prob and optimize the
  *       single_enum_cost.
@@ -115,8 +116,9 @@ template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &B, const PruningParams &para
  * @return
  *    the status of the prunign
  */
-int run_pruner(ZZ_mat<mpz_t> &B, const PruningParams &param, FloatType float_type = FT_DEFAULT, int precision = 0, int prune_start = 0, int prune_end = 1, double prune_pre_nodes = 1e6, double prune_min_prob = -1, double gh_factor = 1.0);
-
+int run_pruner(ZZ_mat<mpz_t> &B, const PruningParams &param, FloatType float_type = FT_DEFAULT,
+               int precision = 0, int prune_start = 0, int prune_end = 1,
+               double prune_pre_nodes = 1e6, double prune_min_prob = -1, double gh_factor = 1.0);
 
 /**
    @brief Search for optimal pruning parameters.
@@ -424,7 +426,7 @@ public:
 
   /**
      @brief run the optimization process using 'even' coefficients. Note
-     the optimization only applies to the pruning coefficients indexed 
+     the optimization only applies to the pruning coefficients indexed
      by (0, 2, 4, ... n). It thus uses half of the coefficients.
 
      Run the optimization process, successively using the algorithm activated
@@ -836,7 +838,6 @@ private:
      @param b input/output
   */
   int gradient_descent_step(/*io*/ vec &b);
-
 
   /**
      @brief Perform several steps of the gradient descent, in place
