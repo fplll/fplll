@@ -318,8 +318,10 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::sieve(Z_NR<ZT> target_norm)
 
 template class GaussSieve<long, FP_NR<double>>;
 template class GaussSieve<mpz_t, FP_NR<double>>;
+#ifdef FPLLL_WITH_QD
 template class GaussSieve<long, FP_NR<dd_real>>;
 template class GaussSieve<mpz_t, FP_NR<dd_real>>;
+#endif
 template class GaussSieve<long, FP_NR<mpfr_t>>;
 template class GaussSieve<mpz_t, FP_NR<mpfr_t>>;
 

@@ -155,7 +155,9 @@ template <class ZT, class F> NumVect<Z_NR<ZT>> KleinSampler<ZT, F>::sample()
 
 template class KleinSampler<long, FP_NR<double>>;
 template class KleinSampler<mpz_t, FP_NR<double>>;
+#ifdef FPLLL_WITH_QD
 template class KleinSampler<long, FP_NR<dd_real>>;
 template class KleinSampler<mpz_t, FP_NR<dd_real>>;
+#endif
 template class KleinSampler<long, FP_NR<mpfr_t>>;
 template class KleinSampler<mpz_t, FP_NR<mpfr_t>>;
