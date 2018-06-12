@@ -10,6 +10,7 @@
  */
 
 #include "sieve_gauss.h"
+#include "fplll.h"
 #include "sieve_gauss_2sieve.cpp"
 #include "sieve_gauss_3sieve.cpp"
 #include "sieve_gauss_4sieve.cpp"
