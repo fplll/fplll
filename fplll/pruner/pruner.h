@@ -31,19 +31,17 @@ class PruningParams
 {
 
 public:
-  int prune_start;  // Prune start and end
-  int prune_end;
-  double prune_pre_nodes;  // Preprocessing nodes and target. prob
-  double prune_min_prob;
+
   double gh_factor;                  //< radius^2/Gaussian heuristic^2
   std::vector<double> coefficients;  //< pruning coefficients
   double expectation;                //< either expected success probability or number of solutions
                                      /**
-                                        metric used for optimisation (success probability or number of solutions)
-                                     */
+                                         metric used for optimisation (success probability or number of solutions)
+                                      */
   PrunerMetric metric;
   std::vector<double> detailed_cost;  //< Expected nodes per level
 
+  
   /**
      The default constructor means no pruning.
   */
@@ -65,10 +63,28 @@ public:
  *    basis of the lattice to be reduced
  * @param param
  *    parameter object
+ * @param sel_ft
+ *    specifies the float type used for GSO computations
+ * @param precision
+ *    specifies the precision if sel_ft=FT_MPFR (and needs to be > 0 in that case)
+ * @param prune_start
+ *    start index of pruning (first index being 0)
+ * @param prune_end
+ *    (prune_end-1) is end index of pruning
+ * @param prune_pre_nodes
+ *     preprocessing cost in the number of nodes
+ * @param prune_min_prob
+ *     target probability. If it is -1, it will optimize 
+ *       single_enum_cost/succ. prob while not fixing the succ. prob.
+ *       If it is > 0, it will fix the succ. prob and optimize the
+ *       single_enum_cost.
+ * @param gh_factor
+ *      input GH factor to compute the enumeration radius. The computed
+ *        enumeration radius will be min(GH*gh_factor, |b_i*|).
  * @return
  *    the status of the pruning
  */
-template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &B, const PruningParams &param, int sel_ft);
+template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &B, const PruningParams &param, int sel_ft, int precision = 0, int prune_start = 0, int prune_end = 1, double prune_pre_nodes = 1e6, double prune_min_prob = -1, double gh_factor = 1.0);
 
 /**
  * @brief Performs pruning using PruningParams object.
@@ -82,11 +98,25 @@ template <class FT> int run_pruner_f(ZZ_mat<mpz_t> &B, const PruningParams &para
  * @param precision
  *    specifies the precision if float_type=FT_MPFR (and needs to be > 0 in that case)
  *    ignored otherwise
+ * @param prune_start
+ *    start index of pruning (first index being 0)
+ * @param prune_end
+ *    (prune_end-1) is end index of pruning
+ * @param prune_pre_nodes
+ *     preprocessing cost in the number of nodes
+ * @param prune_min_prob
+ *     target probability. If it is -1, it will optimize 
+ *       single_enum_cost/succ. prob while not fixing the succ. prob.
+ *       If it is > 0, it will fix the succ. prob and optimize the
+ *       single_enum_cost.
+ * @param gh_factor
+ *      input GH factor to compute the enumeration radius. The computed
+ *        enumeration radius will be min(GH*gh_factor, |b_i*|).
  * @return
  *    the status of the prunign
  */
-int run_pruner(ZZ_mat<mpz_t> &B, const PruningParams &param, FloatType float_type = FT_DEFAULT,
-               int precision = 0);
+int run_pruner(ZZ_mat<mpz_t> &B, const PruningParams &param, FloatType float_type = FT_DEFAULT, int precision = 0, int prune_start = 0, int prune_end = 1, double prune_pre_nodes = 1e6, double prune_min_prob = -1, double gh_factor = 1.0);
+
 
 /**
    @brief Search for optimal pruning parameters.
