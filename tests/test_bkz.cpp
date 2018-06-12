@@ -325,7 +325,7 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_linear_dep();
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/dim55_in", 10, FT_DEFAULT,
                                  BKZ_DEFAULT | BKZ_AUTO_ABORT);
-#ifdef FPLLL_HAVE_QD
+#ifdef FPLLL_WITH_QD
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/dim55_in", 10, FT_DD,
                                  BKZ_SD_VARIANT | BKZ_AUTO_ABORT);
 #endif
