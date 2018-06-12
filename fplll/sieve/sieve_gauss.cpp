@@ -293,11 +293,11 @@ template <class ZT, class F> void GaussSieve<ZT, F>::print_final_info()
     cout << " log2(max|L|)/n=" << log2(max_list_size) / nc << endl;
     cout << "# [info] true max|L| = " << first_size << endl;
     cout << "# [info] true log2(max|L|)/n = " << log2(first_size) / nc << endl;
+    final_norm.set_z(best_sqr_norm);
+    final_norm.sqrt(final_norm, GMP_RNDN);
+    cout << "# [info] |sv| = " << final_norm << " (" << best_sqr_norm << ")" << endl;
+    cout << "# [info] shortest vector is " << endl << return_first() << endl;
   }
-  cout << "# [info] sv is " << return_first() << endl;
-  final_norm.set_z(best_sqr_norm);
-  final_norm.sqrt(final_norm, GMP_RNDN);
-  cout << "# [info] |sv| = " << final_norm << " (" << best_sqr_norm << ")" << endl;
 }
 
 template <class ZT, class F> NumVect<Z_NR<ZT>> GaussSieve<ZT, F>::return_first()
