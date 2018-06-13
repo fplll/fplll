@@ -24,10 +24,22 @@ FPLLL_BEGIN_NAMESPACE
 
 enum MatGSOInterfaceFlags
 {
-  GSO_DEFAULT       = 0,
-  GSO_INT_GRAM      = 1,
-  GSO_ROW_EXPO      = 2,
-  GSO_OP_FORCE_LONG = 4
+  GSO_DEFAULT          = 0,
+  GSO_INT_GRAM         = 1,
+  GSO_ROW_EXPO         = 2,
+  GSO_OP_FORCE_LONG    = 4,
+  GSO_GIVENS_MOVE_LAZY = 8,   // Does not recompute after `row_swap` or `move_row`
+  GSO_GIVENS_FULL_LAZY = 16,  // Does not recompute at all. Numerically unstable.
+  GSO_GIVENS_RECOMPUTE_AFTER_SIZERED =
+      32  // This is the *least* lazy approach. Recomputes after every size reduction.
+
+  // Givens GSO is standard lazy after size reductions [doesn't recompute from the basis].
+  // If GSO_GIVENS_MOVE_LAZY is on, it is also lazy after `row_swap` and `move_row`. Reasonable
+  // numerically unstable, relatively fast.
+  // If GSO_GIVENS_FULL_LAZY is on, it doesn't do recomputations from the basis at all. This is
+  // numerically very unstable. Very fast.
+  // If GSO_GIVENS_RECOMPUTE_AFTER_SIZERED is on, it does recompute after size reductions. This is
+  // most stable, but very slow.
 };
 
 /**
@@ -166,7 +178,7 @@ public:
    * Must be called after a sequence of row_addmul(_we). This invalidates the
    * i-th line of the GSO.
    */
-  void row_op_end(int first, int last);
+  virtual void row_op_end(int first, int last);
 
   /**
    * Returns Gram matrix coefficients (0 &lt;= i &lt; n_known_rows and
@@ -267,7 +279,7 @@ public:
    * [0, min(last_j, i - 1)] must be valid.
    * If i=n_known_rows, n_known_rows is increased by one.
    */
-  bool update_gso_row(int i, int last_j);
+  virtual bool update_gso_row(int i, int last_j);
 
   /**
    * Updates r(i, j) and mu(i, j) if needed for all j.
@@ -292,7 +304,7 @@ public:
    * are computed by the algorithm. They are set directly to avoid double
    * computation.
    */
-  void set_r(int i, int j, FT &f);
+  virtual void set_r(int i, int j, FT &f);
 
   /**
    * Row old_r becomes row new_r and intermediate rows are shifted.
