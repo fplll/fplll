@@ -96,7 +96,7 @@ int run_pruner_f(ZZ_mat<mpz_t> &b, const PruningParams &param, int sel_ft, int p
   cerr << "# targeted min. prob: " << prune_min_prob << endl;
   cerr << "# input GSO: " << r << endl;
   prune<FT>(pruning, radius_d, prune_pre_nodes, r, prune_min_prob, PRUNER_METRIC_EXPECTED_SOLUTIONS,
-            PRUNER_ZEALOUS | PRUNER_OPTIMIZE_FULL);
+            PRUNER_ZEALOUS | PRUNER_FULL);
   cerr << "# optimized pruning coeff: " << endl << pruning.coefficients << endl;
   double cost = 0.;
   //  cerr << "# cost per level" << endl;

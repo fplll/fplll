@@ -16,8 +16,8 @@
 #ifndef FPLLL_PRUNER_H
 #define FPLLL_PRUNER_H
 
-#include "defs.h"
-#include "lll.h"
+#include "fplll/defs.h"
+#include "fplll/lll.h"
 #include <vector>
 
 FPLLL_BEGIN_NAMESPACE
@@ -188,7 +188,7 @@ template <class FT>
 void prune(/*(input)output*/ PruningParams &pruning,
            /*inputs*/
            const double enumeration_radius, const double preproc_cost, const vector<double> &gso_r,
-           const double input_target = .9,
+           const double target       = .9,
            const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
            const int flags           = PRUNER_GRADIENT);
 
@@ -196,7 +196,7 @@ template <class FT>
 double prune_cost(/*(input)output*/ PruningParams &pruning,
                   /*inputs*/
                   const double enumeration_radius, const double preproc_cost,
-                  const vector<double> &gso_r, const double input_target = .9,
+                  const vector<double> &gso_r, const double target = .9,
                   const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
                   const int flags           = PRUNER_GRADIENT);
 
@@ -223,7 +223,7 @@ template <class FT>
 void prune(/*output*/ PruningParams &pruning,
            /*inputs*/
            double enumeration_radius, const double preproc_cost,
-           const vector<vector<double>> &gso_rs, const double input_target = .9,
+           const vector<vector<double>> &gso_rs, const double target = .9,
            const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
            const int flags           = PRUNER_GRADIENT);
 
@@ -313,10 +313,9 @@ public:
     PRUNER_NELDER_MEAD  PRUNER_VERBOSE
   */
   Pruner(const FT enumeration_radius, const FT preproc_cost, const vector<double> &gso_r,
-         const FT input_target     = 0.9,
-         const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
-         int flags                 = PRUNER_GRADIENT)
-      : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(input_target),
+         const FT target = 0.9, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+         int flags = PRUNER_GRADIENT)
+      : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
         metric(metric), flags(flags)
   {
     verbosity = flags & PRUNER_VERBOSE;
@@ -336,7 +335,7 @@ public:
     // need to fix target if possible
     if (metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
     {
-      // if input_target > 1 or < 0, optimize overall cost, use
+      // if target > 1 or < 0, optimize overall cost, use
       //   0.9 as target in repeated_enum_cost().
       if (target > 1.0 || target < 0.0)
       {
@@ -378,10 +377,9 @@ public:
   */
 
   Pruner(const FT enumeration_radius, const FT preproc_cost, const vector<vector<double>> &gso_rs,
-         const FT input_target     = 0.9,
-         const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
-         int flags                 = PRUNER_GRADIENT)
-      : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(input_target),
+         const FT target = 0.9, const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
+         int flags = PRUNER_GRADIENT)
+      : enumeration_radius(enumeration_radius), preproc_cost(preproc_cost), target(target),
         metric(metric), flags(flags)
   {
     verbosity = flags & PRUNER_VERBOSE;
@@ -399,7 +397,7 @@ public:
     // need to fix target if possible
     if (metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
     {
-      // if input_target > 1 or < 0, optimize overall cost, use
+      // if target > 1 or < 0, optimize overall cost, use
       //   0.99 as target for the computation in repeated_enum_cost().
       if (target > 1.0 || target < 0.0)
       {
@@ -409,7 +407,7 @@ public:
     }
     else if (metric == PRUNER_METRIC_EXPECTED_SOLUTIONS)
     {
-      // if input_target < 0, optimize overall cost, use
+      // if target < 0, optimize overall cost, use
       //   0.99 as target for the computation in repeated_enum_cost().
       if (target < 0.0)
       {
@@ -527,11 +525,11 @@ public:
      Main interface to optimize pruning coefficients. It will invoke either:
      optimize_coefficients_cost() or
      optimize_coefficients_prob()
-     depending on the input "target". If the input_target is negative (e.g. -1),
+     depending on the input "target". If the target is negative (e.g. -1),
      it calls the first function where the goal is to optimize the
-     single_enum_cost() divided by the succ. probability. If the input_target
+     single_enum_cost() divided by the succ. probability. If the target
      is > 0, it calls the second function where the goal is to optimize the
-     single_enum_cost() while fixing the succ. probability == input_target.
+     single_enum_cost() while fixing the succ. probability == target.
   */
   void optimize_coefficients(/*io*/ vector<double> &pr);
 
