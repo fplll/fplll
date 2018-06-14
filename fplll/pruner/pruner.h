@@ -337,18 +337,18 @@ public:
     {
       // if target > 1 or < 0, optimize overall cost, use
       //   0.9 as target in repeated_enum_cost().
-      if (target > 1.0 || target < 0.0)
+      if (this->target > 1.0 || this->target < 0.0)
       {
-        target      = 0.99;
-        opt_overall = true;
+        this->target = 0.99;
+        opt_overall  = true;
       }
     }
     else if (metric == PRUNER_METRIC_EXPECTED_SOLUTIONS)
     {
-      if (target < 0.0)
+      if (this->target < 0.0)
       {
-        target      = 0.99;
-        opt_overall = true;
+        this->target = 0.99;
+        opt_overall  = true;
       }
     }
     else
@@ -399,20 +399,20 @@ public:
     {
       // if target > 1 or < 0, optimize overall cost, use
       //   0.99 as target for the computation in repeated_enum_cost().
-      if (target > 1.0 || target < 0.0)
+      if (this->target > 1.0 || this->target < 0.0)
       {
-        target      = 0.99;
-        opt_overall = true;
+        this->target = 0.99;
+        opt_overall  = true;
       }
     }
     else if (metric == PRUNER_METRIC_EXPECTED_SOLUTIONS)
     {
       // if target < 0, optimize overall cost, use
       //   0.99 as target for the computation in repeated_enum_cost().
-      if (target < 0.0)
+      if (this->target < 0.0)
       {
-        target      = 0.99;
-        opt_overall = true;
+        this->target = 0.99;
+        opt_overall  = true;
       }
     }
     else
