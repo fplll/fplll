@@ -192,14 +192,6 @@ void prune(/*(input)output*/ PruningParams &pruning,
            const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
            const int flags           = PRUNER_GRADIENT);
 
-template <class FT>
-double prune_cost(/*(input)output*/ PruningParams &pruning,
-                  /*inputs*/
-                  const double enumeration_radius, const double preproc_cost,
-                  const vector<double> &gso_r, const double target = .9,
-                  const PrunerMetric metric = PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
-                  const int flags           = PRUNER_GRADIENT);
-
 /**
    @brief Search for optimal Pruning parameters, averaging over several basis
 
@@ -429,6 +421,9 @@ public:
 
      Run the optimization process, successively using the algorithm activated
      using using half coefficients.
+
+     Note the input pr has length n; but only the even indices in the vector
+     will be used in the optimization. In the end, we have pr_i = pr_{i+1}.
   */
   void optimize_coefficients_evec(/*io*/ vector<double> &pr);
 
@@ -438,6 +433,7 @@ public:
      Run the optimization process, successively using the algorithm activated
      using using full coefficients.
 
+     Note the input pr has length n.
   */
   void optimize_coefficients_full(/*io*/ vector<double> &pr);
 
@@ -447,7 +443,7 @@ public:
      Optimization process to the pruning parameters to reduce single enumeration
      time with the hope that it also reduces the overall enumeration time.
   */
-  void optimize_coefficients_tune_cost(/*io*/ vector<double> &pr);
+  void optimize_coefficients_tune_single(/*io*/ vector<double> &pr);
 
   /**
      @brief tune the pruning parameter to increase succ. probability
@@ -471,8 +467,9 @@ public:
      @brief main interface to optimize the overall enumeraiton time
 
      Main interface to optimize the overall enumeraiton time where the
-     target unciton is: single_enumeration_cost divided by succ. probability
-     or expected solutions.
+     target unciton is:
+
+     single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
   */
   void optimize_coefficients_cost(/*io*/ vector<double> &pr);
 
@@ -515,21 +512,31 @@ public:
   /**
      @brief auxiliary function in optimizing the single enumeraiton time fixing succ. prob.
 
-     Heuristic tuning procedure which seems to be useful.
+     Heuristic tuning procedure which seems to be useful. This is used to make the ratio
+     between the succ. prob and the target succ. prob are close. Depending on whether
+     the succ. prob is larger (or smaller), it will try to reduce the pruning coefficients
+     (or increase) to make succ. prob \approx the target succ. prob. Sometimes the succ.
+     prob can not be modified closer to target succ. prob due to the contraints.
+     In such case it exists.
   */
   void optimize_coefficients_prob_tune(/*io*/ vector<double> &pr);
 
   /**
      @brief Main interface to optimize pruning coefficients
 
-     Main interface to optimize pruning coefficients. It will invoke either:
-     optimize_coefficients_cost() or
-     optimize_coefficients_prob()
-     depending on the input "target". If the target is negative (e.g. -1),
-     it calls the first function where the goal is to optimize the
-     single_enum_cost() divided by the succ. probability. If the target
-     is > 0, it calls the second function where the goal is to optimize the
-     single_enum_cost() while fixing the succ. probability == target.
+     Main interface to optimize pruning coefficients.
+     It will in turn invoke either of the two functions:
+      (1)   optimize_coefficients_cost() or
+      (2)   optimize_coefficients_prob()
+     depending on the input "target".
+
+     If the target is negative (e.g. -1), it calls function (1)
+     such that goal is to optimize the
+     single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0).
+
+     If the target is > 0, it calls function (2) such that the
+     goal is to optimize the single_enum_cost(pr) while fixing
+     the succ. probability == target.
   */
   void optimize_coefficients(/*io*/ vector<double> &pr);
 
@@ -550,7 +557,9 @@ public:
      @brief Cost of repeating enumeration and preprocessing until reaching target
 
      Compute the cost of r enumeration and (r-1) preprocessing, where r is the
-     required number of retrials to reach target.
+     required number of retrials to reach target. Note this function does not
+     do optimization. But depending on the optimization goal, it will return
+     cost based on different models/modes.
 
      There are two modes depending on the target.
 
@@ -674,16 +683,6 @@ private:
      @param pr Input in external format
   */
   void load_coefficients(/*o*/ evec &b, /*i*/ const vector<double> &pr);
-
-  /**
-     @brief convert pruning coefficient from external to internal format.
-
-     Convert type, reverse the ordering, and select all coefficents
-
-     @param fb Output in internal format
-     @param pr Input in external format
-  */
-  void load_full_coefficients(/*o*/ vec &fb, /*i*/ const vector<double> &pr);
 
   /**
      @brief auxiliary function to print the coefficients.

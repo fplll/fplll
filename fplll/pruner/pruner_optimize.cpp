@@ -40,7 +40,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost(/*io*/ vector<do
       old_c0 = repeated_enum_cost(b);
 
       // step 2.1 full tuning
-      optimize_coefficients_tune_cost(pr);
+      optimize_coefficients_tune_single(pr);
       optimize_coefficients_tune_prob(pr);
       optimize_coefficients_smooth(pr);
 

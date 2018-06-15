@@ -228,16 +228,6 @@ void prune(/*output*/ PruningParams &pruning,
   pruning.expectation = pruner.measure_metric(pruning.coefficients);
 }
 
-template <class FT>
-double prune_cost(/*output*/ PruningParams &pruning,
-                  /*inputs*/ const double enumeration_radius, const double preproc_cost,
-                  const vector<double> &gso_r, const double target, const PrunerMetric metric,
-                  const int flags)
-{
-  Pruner<FT> pruner(enumeration_radius, preproc_cost, gso_r, target, metric, flags);
-  return pruner.repeated_enum_cost(pruning.coefficients);
-}
-
 /** instantiate functions **/
 /* clang-format off */
 
@@ -245,7 +235,6 @@ double prune_cost(/*output*/ PruningParams &pruning,
 // DOUBLE
 template class Pruner<FP_NR<double>>;
 template void prune<FP_NR<double>>(PruningParams &,const double, const double, const vector<double> &, const double, const PrunerMetric, const int);
-template double prune_cost<FP_NR<double>>(PruningParams &,const double, const double, const vector<double> &, const double, const PrunerMetric, const int);
 template void prune<FP_NR<double>>(PruningParams &,const double, const double, const vector<vector<double>> &, const double, const PrunerMetric, const int);
 template FP_NR<double> svp_probability<FP_NR<double>>(const PruningParams &pruning);
 template FP_NR<double> svp_probability<FP_NR<double>>(const vector<double> &pr);
@@ -255,7 +244,6 @@ template int run_pruner_f<FP_NR<double>> (ZZ_mat<mpz_t> &b, const PruningParams 
 // MPFR
 template class Pruner<FP_NR<mpfr_t>>;
 template void prune<FP_NR<mpfr_t>>(PruningParams &,const double, const double, const vector<double> &, const double, const PrunerMetric, const int);
-template double prune_cost<FP_NR<mpfr_t>>(PruningParams &,const double, const double, const vector<double> &, const double, const PrunerMetric, const int);
 template void prune<FP_NR<mpfr_t>>(PruningParams &,const double, const double, const vector<vector<double>> &, const double, const PrunerMetric, const int);
 template FP_NR<mpfr_t> svp_probability<FP_NR<mpfr_t>>(const PruningParams &pruning);
 template FP_NR<mpfr_t> svp_probability<FP_NR<mpfr_t>>(const vector<double> &pr);
@@ -267,7 +255,6 @@ template int run_pruner_f<FP_NR<mpfr_t>> (ZZ_mat<mpz_t> &b, const PruningParams 
 
 template class Pruner<FP_NR<long double>>;
 template void prune<FP_NR<long double>>(PruningParams &,const double, const double, const vector<double> &, const double, const PrunerMetric, const int);
-template double prune_cost<FP_NR<long double>>(PruningParams &,const double, const double, const vector<double> &, const double, const PrunerMetric, const int);
 template void prune<FP_NR<long double>>(PruningParams &,const double, const double, const vector<vector<double>> &, const double, const PrunerMetric, const int);
 template FP_NR<long double> svp_probability<FP_NR<long double>>(const PruningParams &pruning);
 template FP_NR<long double> svp_probability<FP_NR<long double>>(const vector<double> &pr);
@@ -281,7 +268,6 @@ template int run_pruner_f<FP_NR<long double>> (ZZ_mat<mpz_t> &b, const PruningPa
 // DD
 template class Pruner<FP_NR<dd_real>>;
 template void prune<FP_NR<dd_real>>(PruningParams &,const double, const double, const vector<double> &, const double, const PrunerMetric, const int);
-template double prune_cost<FP_NR<dd_real>>(PruningParams &,const double, const double, const vector<double> &, const double, const PrunerMetric, const int);
 template void prune<FP_NR<dd_real>>(PruningParams &,const double, const double, const vector<vector<double>> &, const double, const PrunerMetric, const int);
 template FP_NR<dd_real> svp_probability<FP_NR<dd_real>>(const PruningParams &pruning);
 template FP_NR<dd_real> svp_probability<FP_NR<dd_real>>(const vector<double> &pr);
@@ -303,7 +289,6 @@ template int run_pruner_f<FP_NR<qd_real>> (ZZ_mat<mpz_t> &b, const PruningParams
 // DPE
 template class Pruner<FP_NR<dpe_t>>;
 template void prune<FP_NR<dpe_t>>(PruningParams &,const double, const double, const vector<double> &, const double, const PrunerMetric, const int);
-template double prune_cost<FP_NR<dpe_t>>(PruningParams &,const double, const double, const vector<double> &, const double, const PrunerMetric, const int);
 template void prune<FP_NR<dpe_t>>(PruningParams &,const double, const double, const vector<vector<double>> &, const double, const PrunerMetric, const int);
 template FP_NR<dpe_t> svp_probability<FP_NR<dpe_t>>(const PruningParams &pruning);
 template FP_NR<dpe_t> svp_probability<FP_NR<dpe_t>>(const vector<double> &pr);
