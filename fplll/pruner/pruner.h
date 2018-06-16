@@ -543,55 +543,27 @@ public:
   /**
       @brief Compute the cost of a single enumeration
   */
-  double single_enum_cost(/*i*/ const vector<double> &pr, vector<double> *detailed_cost = nullptr,
-                          const bool flag = 0)
+  double single_enum_cost(/*i*/ const vector<double> &pr, vector<double> *detailed_cost = nullptr)
   {
     // cout << "# pr is --> " << pr[0] << endl;
     evec b(d);
     load_coefficients(b, pr);
 
-    return single_enum_cost(b, detailed_cost, flag).get_d();
+    return single_enum_cost(b, detailed_cost).get_d();
   }
 
   /**
-     @brief Cost of repeating enumeration and preprocessing until reaching target
-
-     Compute the cost of r enumeration and (r-1) preprocessing, where r is the
-     required number of retrials to reach target. Note this function does not
-     do optimization. But depending on the optimization goal, it will return
-     cost based on different models/modes.
-
-     There are two modes depending on the target.
-
-     (1) if target == -1, we will optimize the single_enum_cost/prob.
-
-     (2) if target != -1 (target must also be given),  we will optimize
-     the single_enum_cost while fixing the input target prob. In such case,
-     the repeated_enum_cost() actually returns single_enum_cost() since it
-     is used in the optimization procedure.
-
-     Note one should set the radius with care since if the radius is too
-     small, perhaps with all 1's the pruning coefficients are not able
-     to support a target expectation/probability. Consider an example
-     in the case of PRUNER_METRIC_EXPECTED_SOLUTIONS:
-
-     (a) If the radius is large enough to support target many solutions,
-     the optimizer will optimize the single_enum_cost while fixing
-     the target.
-
-     (b) if the radius is too small to support target many solutions,
-     it will likely return all 1's in the coefficients (attempt
-     to achieve the target but which is not possible)
-
-     Note the radius is either from the first b_i^* of the block lattice;
-     or set as min(GH * gh_ratio, |b_i^*|). Hence it will not be arbitrarily
-     large.
+     Compute the cost of r enumeration and (r-1) preprocessing,
+     where r is the required number of retrials to reach target/target_solution
+     @brief cost of repeating enumeration and preprocessing
+     @param b pruning bounds
+     @return cost
   */
-  double repeated_enum_cost(/*i*/ const vector<double> &pr, const bool flag = 0)
+  double repeated_enum_cost(/*i*/ const vector<double> &pr)
   {
     vec b(n);
     load_coefficients(b, pr);
-    return repeated_enum_cost(b, flag).get_d();
+    return repeated_enum_cost(b).get_d();
   }
 
   /**
@@ -742,7 +714,6 @@ private:
      @note Implicitly renormalized as if b[rd-1] = 1
   */
   inline FT relative_volume(/*i*/ const int rd, const evec &b);
-  inline FT relative_volume(/*i*/ const int rd, const evec &b, const bool flag);
 
   /**
      @brief Compute the cost of a pruned enumeration
@@ -757,14 +728,10 @@ private:
                upper bound of single enumation cost.
      Function single_enum_cost_evec() is the underlying backend for the above two.
   */
-  FT single_enum_cost(/*i*/ const vec &b, vector<double> *detailed_cost = nullptr,
-                      const bool flag = 0);
-  FT single_enum_cost_evec(/*i*/ const evec &b, vector<double> *detailed_cost = nullptr,
-                           const bool flag = 0);
-  FT single_enum_cost_lower(/*i*/ const vec &b, vector<double> *detailed_cost = nullptr,
-                            const bool flag = 0);
-  FT single_enum_cost_upper(/*i*/ const vec &b, vector<double> *detailed_cost = nullptr,
-                            const bool flag = 0);
+  FT single_enum_cost(/*i*/ const vec &b, vector<double> *detailed_cost = nullptr);
+  FT single_enum_cost_evec(/*i*/ const evec &b, vector<double> *detailed_cost = nullptr);
+  FT single_enum_cost_lower(/*i*/ const vec &b, vector<double> *detailed_cost = nullptr);
+  FT single_enum_cost_upper(/*i*/ const vec &b, vector<double> *detailed_cost = nullptr);
 
   /**
      @brief Compute the success probability for SVP/CVP of a single enumeration
@@ -803,24 +770,59 @@ private:
   FT measure_metric(/*i*/ const vec &b);
 
   /**
+     @brief Compute the target function to be optimized. This could be the
+     cost of repeating enumeration and preprocessing until reaching target
+     or the cost of a single enumeration.
+
+     Note this function does not do optimization. Depending on the
+     optimization goal, it will return the cost based on different
+     models/modes. There are two modes depending on the target.
+
+     (1) if target == -1, it will compute the cost of r * single_enum_cost()
+         plus (r-1) * preprocessing where r is the expected number of
+         trials.
+
+     (2) if target != -1 (target must also be given), it will compute
+         the cost of a single_enum_cost(). Note in such case the input
+         target prob is fixed. Whether we could achieve this input
+         target prob will be determined in the optimization procedure.
+         See also below.
+
+     Note one should set the radius with care, since if the radius is too
+     small, perhaps with all 1's the pruning coefficients are not able
+     to support a target expectation/probability. Consider an example
+     if using PRUNER_METRIC_EXPECTED_SOLUTIONS:
+
+     (a) If the radius is large enough to support target many solutions,
+     the optimizer will optimize the single_enum_cost while fixing
+     the target.
+
+     (b) if the radius is too small to support target many solutions,
+     it will likely return all 1's in the coefficients (attempt
+     to achieve the target but which is not possible)
+
+     Note the radius is either from the first b_i^* of the block lattice;
+     or set as min(GH * gh_ratio, |b_i^*|). Hence it will not be arbitrarily
+     large.
+  */
+  FT target_function(/*i*/ const evec &b);
+
+  /**
+     @brief Compute the gradient cost of the target function to be optimized
+     @param b pruning bounds
+     @param res reference for output
+     @return cost
+  */
+  void target_function_gradient(/*i*/ const vec &b, /*o*/ vec &res);
+
+  /**
      Compute the cost of r enumeration and (r-1) preprocessing,
      where r is the required number of retrials to reach target/target_solution
      @brief cost of repeating enumeration and preprocessing
      @param b pruning bounds
      @return cost
   */
-  FT repeated_enum_cost(/*i*/ const evec &b, const bool flag = 0);
-
-  /**
-     Compute the gradient cost of r enumeration and (r-1) preprocessing,
-     where r is the required number of retrials to reach target/target_solution
-     @brief gradient of the cost of repeating enumeration and preprocessing
-     @param b pruning bounds
-     @param res reference for output
-     @return cost
-  */
-  void repeated_enum_cost_gradient(/*i*/ const vec &b, /*o*/ vec &res);
-  void single_enum_cost_gradient(/*i*/ const vec &b, /*o*/ vec &res);
+  FT repeated_enum_cost(/*i*/ const evec &b);
 
   /**
      @brief gradient of the cost of repeating enumeration and preprocessing

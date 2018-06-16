@@ -172,7 +172,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_tune_single(/*io*/ ve
   {
 
     // old cost
-    old_cf = repeated_enum_cost(b);
+    old_cf = target_function(b);
 
     // find bottleneck index
     old_cfs = single_enum_cost(b, &(detailed_cost));
@@ -210,7 +210,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_tune_single(/*io*/ ve
     }
 
     // new cost
-    new_cf = repeated_enum_cost(b);
+    new_cf = target_function(b);
 
     // if not improved -- recover
     if (new_cf >= (old_cf * improved_ratio))
@@ -262,7 +262,7 @@ void Pruner<FT>::optimize_coefficients_tune_prob(
   load_coefficients(b, pr);
 
   // initial cost
-  old_cf0 = repeated_enum_cost(b);
+  old_cf0 = target_function(b);
 
   tours = 0;
   while (1)
@@ -271,7 +271,7 @@ void Pruner<FT>::optimize_coefficients_tune_prob(
     tours++;
 
     // old cost
-    old_cf = repeated_enum_cost(b);
+    old_cf = target_function(b);
     // find bottleneck index
     old_cfs     = single_enum_cost(b, &(detailed_cost));
     current_max = 0.0;
@@ -305,14 +305,14 @@ void Pruner<FT>::optimize_coefficients_tune_prob(
       while (1)
       {
         // old cost
-        old_cf = repeated_enum_cost(b);
+        old_cf = target_function(b);
 
         // try increase
         old_b    = b[i - 1];
         b[i - 1] = b[i - 1] + (b[i] - b[i - 1]) / slices[i - 1];
 
         // new cost
-        new_cf = repeated_enum_cost(b);
+        new_cf = target_function(b);
 
         // cerr << " i = " << i << " old_cf = " << old_cf << " new_cf = " <<
         // new_cf << endl;
@@ -334,7 +334,7 @@ void Pruner<FT>::optimize_coefficients_tune_prob(
       }
     }
 
-    new_cf = repeated_enum_cost(b);
+    new_cf = target_function(b);
     if (new_cf > (old_cf0 * 1.1) || tours > 4)
       break;
   }
@@ -469,12 +469,12 @@ template <class FT> int Pruner<FT>::gradient_descent(/*io*/ vec &b)
 template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ vec &b)
 {
   int dn    = b.size();
-  FT cf     = repeated_enum_cost(b);
+  FT cf     = target_function(b);
   FT old_cf = cf;
   vec new_b(dn);
   vector<double> pr(dn);
   vec gradient(dn);
-  repeated_enum_cost_gradient(b, gradient);
+  target_function_gradient(b, gradient);
   FT norm = 0.0;
 
   // normalize the gradient
@@ -524,7 +524,7 @@ template <class FT> int Pruner<FT>::gradient_descent_step(/*io*/ vec &b)
 
     enforce(new_b);
 
-    new_cf = repeated_enum_cost(new_b);
+    new_cf = target_function(new_b);
 
     if (new_cf >= cf)
     {
@@ -573,7 +573,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ vec &b)
       bs[i][i] += (bs[i][i] < .5) ? ND_INIT_WIDTH : -ND_INIT_WIDTH;
     }
     enforce(bs[i]);
-    fs[i] = repeated_enum_cost(bs[i]);  // initialize the value
+    fs[i] = target_function(bs[i]);  // initialize the value
   }
 
   FT init_cf = fs[l - 1];
@@ -673,7 +673,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ vec &b)
     for (int i = 0; i < dn; ++i)
       br[i]    = bo[i] + ND_ALPHA * (bo[i] - bs[maxi][i]);
     enforce(br);
-    fr = repeated_enum_cost(br);
+    fr = target_function(br);
     if (verbosity)
     {
       cerr << "fr " << fr << endl;
@@ -701,7 +701,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ vec &b)
       for (int i = 0; i < dn; ++i)
         be[i]    = bo[i] + ND_GAMMA * (br[i] - bo[i]);
       enforce(be);
-      fe = repeated_enum_cost(be);
+      fe = target_function(be);
       if (verbosity)
       {
         cerr << "fe " << fe << endl;
@@ -742,7 +742,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ vec &b)
     for (int i = 0; i < dn; ++i)
       bc[i]    = bo[i] + ND_RHO * (bs[maxi][i] - bo[i]);
     enforce(bc);
-    fc = repeated_enum_cost(bc);
+    fc = target_function(bc);
     if (verbosity)
     {
       cerr << "fc " << fc << endl;
@@ -772,7 +772,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ vec &b)
         bs[j][i] = bs[mini][i] + ND_SIGMA * (bs[j][i] - bs[mini][i]);
       }
       enforce(bs[j]);
-      fs[j] = repeated_enum_cost(bs[j]);  // initialize the value
+      fs[j] = target_function(bs[j]);  // initialize the value
     }
   }
 

@@ -7,7 +7,7 @@ FPLLL_BEGIN_NAMESPACE
  */
 template <class FT>
 inline FT Pruner<FT>::single_enum_cost_evec(/*i*/ const evec &b,
-                                            /*o*/ vector<double> *detailed_cost, const bool flag)
+                                            /*o*/ vector<double> *detailed_cost)
 {
   if (!shape_loaded)
   {
@@ -40,9 +40,6 @@ inline FT Pruner<FT>::single_enum_cost_evec(/*i*/ const evec &b,
   total                    = 0.0;
   FT normalized_radius_pow = normalized_radius;
 
-  if (flag)
-    cout << "# detailed cost [";
-
   for (int i = 0; i < 2 * d; ++i)
   {
     FT tmp;
@@ -59,15 +56,9 @@ inline FT Pruner<FT>::single_enum_cost_evec(/*i*/ const evec &b,
       (*detailed_cost)[2 * d - (i + 1)] = tmp.get_d();
     }
 
-    if (flag)
-      cout << " " << tmp;
-
     total += tmp;
     normalized_radius_pow *= normalized_radius;
   }
-  if (flag)
-    cout << " ] " << endl;
-
   if (!total.is_finite())
   {
     throw std::range_error("NaN or inf in single_enum_cost");
@@ -79,52 +70,49 @@ inline FT Pruner<FT>::single_enum_cost_evec(/*i*/ const evec &b,
  * lower bound of single enumation cost
  */
 template <class FT>
-inline FT Pruner<FT>::single_enum_cost_lower(/*i*/ const vec &b, vector<double> *detailed_cost,
-                                             const bool flag)
+inline FT Pruner<FT>::single_enum_cost_lower(/*i*/ const vec &b, vector<double> *detailed_cost)
 {
   evec b_lower(d);
   for (int i = 0; i < d; ++i)
   {
     b_lower[i] = b[2 * i];
   }
-  return single_enum_cost_evec(b_lower, detailed_cost, flag);
+  return single_enum_cost_evec(b_lower, detailed_cost);
 }
 
 /**
  * upper bound of single enumation cost
  */
 template <class FT>
-inline FT Pruner<FT>::single_enum_cost_upper(/*i*/ const vec &b, vector<double> *detailed_cost,
-                                             const bool flag)
+inline FT Pruner<FT>::single_enum_cost_upper(/*i*/ const vec &b, vector<double> *detailed_cost)
 {
   evec b_upper(d);
   for (int i = 0; i < d; ++i)
   {
     b_upper[i] = b[2 * i + 1];
   }
-  return single_enum_cost_evec(b_upper, detailed_cost, flag);
+  return single_enum_cost_evec(b_upper, detailed_cost);
 }
 
 /**
  * single enumation cost
  */
 template <class FT>
-inline FT Pruner<FT>::single_enum_cost(/*i*/ const vec &b, vector<double> *detailed_cost,
-                                       const bool flag)
+inline FT Pruner<FT>::single_enum_cost(/*i*/ const vec &b, vector<double> *detailed_cost)
 {
   if (b.size() == (unsigned int)d)
   {
-    return single_enum_cost_evec(b, detailed_cost, flag);
+    return single_enum_cost_evec(b, detailed_cost);
   }
   else
   {
-    FT cl = single_enum_cost_lower(b, detailed_cost, flag);
-    FT cu = single_enum_cost_upper(b, detailed_cost, flag);
+    FT cl = single_enum_cost_lower(b, detailed_cost);
+    FT cu = single_enum_cost_upper(b, detailed_cost);
     return (cl + cu) / 2.0;
   }
 }
 
-template <class FT> void Pruner<FT>::repeated_enum_cost_gradient(/*i*/ const vec &b, /*o*/ vec &res)
+template <class FT> void Pruner<FT>::target_function_gradient(/*i*/ const vec &b, /*o*/ vec &res)
 {
 
   int dn = b.size();
@@ -135,37 +123,48 @@ template <class FT> void Pruner<FT>::repeated_enum_cost_gradient(/*i*/ const vec
     b_plus_db = b;
     b_plus_db[i] *= (1.0 - epsilon);
     enforce(b_plus_db, i);
-    FT X = repeated_enum_cost(b_plus_db);
+    FT X = target_function(b_plus_db);
 
     b_plus_db = b;
     b_plus_db[i] *= (1.0 + epsilon);
     enforce(b_plus_db, i);
-    FT Y   = repeated_enum_cost(b_plus_db);
+    FT Y   = target_function(b_plus_db);
     res[i] = (log(X) - log(Y)) / epsilon;
   }
 }
 
-template <class FT> void Pruner<FT>::single_enum_cost_gradient(/*i*/ const vec &b, /*o*/ vec &res)
+template <class FT> inline FT Pruner<FT>::target_function(/*i*/ const vec &b)
 {
-  int dn = b.size();
-  vec b_plus_db(dn);
-  res[dn - 1] = 0.0;  // Force null gradient on the last coordinate : don't touch this coeff
-  for (int i = 0; i < dn - 1; ++i)
+  if (metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
   {
-    b_plus_db = b;
-    b_plus_db[i] *= (1.0 - epsilon);
-    enforce(b_plus_db, i);
-    FT X = single_enum_cost(b_plus_db);
-
-    b_plus_db = b;
-    b_plus_db[i] *= (1.0 + epsilon);
-    enforce(b_plus_db, i);
-    FT Y   = single_enum_cost(b_plus_db);
-    res[i] = (log(X) - log(Y)) / epsilon;
+    FT probability = svp_probability(b);
+    FT trials      = log(1.0 - target) / log(1.0 - probability);
+    if (!trials.is_finite())
+    {
+      throw std::range_error("NaN or inf in target_function (METRIC_PROBABILITY_OF_SHORTEST)");
+    }
+    trials = trials < 1.0 ? 1.0 : trials;
+    return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
+  }
+  else if (metric == PRUNER_METRIC_EXPECTED_SOLUTIONS)
+  {
+    FT expected = expected_solutions(b);
+    FT trials   = target / expected;
+    if (!trials.is_finite())
+    {
+      throw std::range_error("NaN or inf in target_function (METRIC_EXPECTED_SOLUTION)");
+    }
+    // if expected solutions > 1, set trial = 1
+    trials = trials < 1.0 ? 1.0 : trials;
+    return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
+  }
+  else
+  {
+    throw std::invalid_argument("Pruner was set to an unknown metric");
   }
 }
 
-template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const vec &b, const bool flag)
+template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const vec &b)
 {
   if (metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
   {
@@ -181,14 +180,14 @@ template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const vec &b,
   else if (metric == PRUNER_METRIC_EXPECTED_SOLUTIONS)
   {
     FT expected = expected_solutions(b);
-    FT trials   = target / expected;
+    FT trials   = 1.0 / expected;
     if (!trials.is_finite())
     {
       throw std::range_error("NaN or inf in repeated_enum_cost (METRIC_EXPECTED_SOLUTION)");
     }
     // if expected solutions > 1, set trial = 1
     trials = trials < 1.0 ? 1.0 : trials;
-    return single_enum_cost(b, nullptr, flag) * trials + preproc_cost * (trials - 1.0);
+    return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
   }
   else
   {

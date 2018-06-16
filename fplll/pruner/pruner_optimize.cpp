@@ -15,7 +15,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost(/*io*/ vector<do
   optimize_coefficients_evec(pr);
 
   load_coefficients(b, pr);
-  old_c0 = repeated_enum_cost(b);
+  old_c0 = target_function(b);
   min_c  = old_c0;
 
 #ifdef DEBUG_PRUNER_OPTIMIZE
@@ -37,7 +37,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost(/*io*/ vector<do
 
       // initial cost
       load_coefficients(b, pr);
-      old_c0 = repeated_enum_cost(b);
+      old_c0 = target_function(b);
 
       // step 2.1 full tuning
       optimize_coefficients_tune_single(pr);
@@ -46,7 +46,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost(/*io*/ vector<do
 
       // update best after tuning
       load_coefficients(b, pr);
-      old_c1 = repeated_enum_cost(b);
+      old_c1 = target_function(b);
       if (old_c1 < min_c)
       {
         min_c  = old_c1;
@@ -66,7 +66,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost(/*io*/ vector<do
       optimize_coefficients_full(pr);
 
       load_coefficients(b, pr);
-      new_c = repeated_enum_cost(b);
+      new_c = target_function(b);
       if (new_c < min_c)
       {
         min_c  = new_c;
@@ -97,7 +97,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost(/*io*/ vector<do
 template <class FT> void Pruner<FT>::optimize_coefficients_prob(/*io*/ vector<double> &pr)
 {
   vec b(n), best_b(n);
-  FT prob, cost;
+  FT prob;
 
   // step 1 call global optimization (without fixing succ. prob)
   optimize_coefficients_evec(pr);
@@ -106,12 +106,10 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob(/*io*/ vector<do
 
 #ifdef DEBUG_PRUNER_OPTIMIZE
   load_coefficients(b, pr);
-  prob = measure_metric(b);
-  cost = repeated_enum_cost(b);
   cerr << "# [Stage ho] half-optimization done." << endl;
-  cerr << "# [Stage ho]    all_enum_cost = " << cost << endl;
+  cerr << "# [Stage ho]    all_enum_cost = " << repeated_enum_cost(b) << endl;
   cerr << "# [Stage fo] single_enum_cost = " << single_enum_cost(b) << endl;
-  cerr << "# [Stage ho] succ_probability = " << prob << endl;
+  cerr << "# [Stage ho] succ_probability = " << measure_metric(b) << endl;
   cerr << b << endl;
 
 #endif
@@ -133,12 +131,10 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob(/*io*/ vector<do
 
 #ifdef DEBUG_PRUNER_OPTIMIZE
   load_coefficients(b, pr);
-  prob = measure_metric(b);
-  cost = repeated_enum_cost(b);
   cerr << "# [Stage fo] full-optimization done." << endl;
-  cerr << "# [Stage fo]    all_enum_cost = " << cost << endl;
+  cerr << "# [Stage fo]    all_enum_cost = " << repeated_enum_cost(b) << endl;
   cerr << "# [Stage fo] single_enum_cost = " << single_enum_cost(b) << endl;
-  cerr << "# [Stage fo] succ_probability = " << prob << endl;
+  cerr << "# [Stage fo] succ_probability = " << measure_metric(b) << endl;
 #endif
 
   save_coefficients(pr, b);
