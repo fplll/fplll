@@ -868,8 +868,8 @@ private:
      Heuristic adjust procedure which seems to be useful to achieve the
      target succ. probability (or expected number of solutions).
      This function is used in the end to make sure the ratio between
-     the succ. prob form current pruning coefficient and the target 
-     succ. prob are sufficiently close. Depending on whether the 
+     the succ. prob form current pruning coefficient and the target
+     succ. prob are sufficiently close. Depending on whether the
      succ. prob is larger (or smaller), it will try to reduce the
      pruning coefficients (or increase) in small scale to make succ. prob
      \approx the target succ. prob. Sometimes the succ. prob can not be
