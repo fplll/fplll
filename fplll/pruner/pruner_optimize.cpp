@@ -94,7 +94,8 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost_vary_prob(/*io*/
   }
 }
 
-template <class FT> void Pruner<FT>::optimize_coefficients_cost_fixed_prob()(/*io*/ vector<double> &pr)
+template <class FT>
+void Pruner<FT>::optimize_coefficients_cost_fixed_prob(/*io*/ vector<double> &pr)
 {
   vec b(n), best_b(n);
   FT prob;
@@ -151,7 +152,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients(/*io*/ vector<double>
   }
   else
   {
-    optimize_coefficients_cost_fixed_prob(pr);    
+    optimize_coefficients_cost_fixed_prob(pr);
   }
 }
 
