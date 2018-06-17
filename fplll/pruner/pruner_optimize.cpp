@@ -5,7 +5,7 @@ FPLLL_BEGIN_NAMESPACE
 //#define DEBUG_PRUNER_OPTIMIZE
 #define NUM_OPTIMIZATION_TOURS 3
 
-template <class FT> void Pruner<FT>::optimize_coefficients_cost(/*io*/ vector<double> &pr)
+template <class FT> void Pruner<FT>::optimize_coefficients_cost_vary_prob(/*io*/ vector<double> &pr)
 {
 
   FT old_c0, old_c1, new_c, min_c;
@@ -94,7 +94,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost(/*io*/ vector<do
   }
 }
 
-template <class FT> void Pruner<FT>::optimize_coefficients_prob(/*io*/ vector<double> &pr)
+template <class FT> void Pruner<FT>::optimize_coefficients_cost_fixed_prob()(/*io*/ vector<double> &pr)
 {
   vec b(n), best_b(n);
   FT prob;
@@ -147,11 +147,11 @@ template <class FT> void Pruner<FT>::optimize_coefficients(/*io*/ vector<double>
 {
   if (opt_overall)
   {
-    optimize_coefficients_cost(pr);
+    optimize_coefficients_cost_vary_prob(pr);
   }
   else
   {
-    optimize_coefficients_prob(pr);
+    optimize_coefficients_cost_fixed_prob(pr);    
   }
 }
 

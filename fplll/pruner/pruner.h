@@ -419,8 +419,8 @@ public:
 
      Main interface to optimize pruning coefficients.
      It will in turn invoke either of the two functions:
-      (1)   optimize_coefficients_cost() or
-      (2)   optimize_coefficients_prob()
+      (1)   optimize_coefficients_cost_vary_prob() or
+      (2)   optimize_coefficients_cost_fixed_prob()
      depending on the input "target".
 
      If the target is negative (e.g. -1), it calls function (1)
@@ -442,7 +442,7 @@ public:
 
      single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
   */
-  void optimize_coefficients_cost(/*io*/ vector<double> &pr);
+  void optimize_coefficients_cost_vary_prob(/*io*/ vector<double> &pr);
 
   /**
      @brief main interface to optimize the pruning coefficients with
@@ -453,7 +453,7 @@ public:
      constraint such that the succ. prob (or expected solutions) is
      fixed (and given) from input to the Pruner constructor.
   */
-  void optimize_coefficients_prob(/*io*/ vector<double> &pr);
+  void optimize_coefficients_cost_fixed_prob(/*io*/ vector<double> &pr);
 
   /**
      @brief run the optimization process using 'even' coefficients. Note
