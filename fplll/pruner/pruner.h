@@ -865,13 +865,16 @@ private:
      time fixing succ. prob. This is used to make sure the probability
      is ''sufficiently'' close to the target (if possible).
 
-     Heuristic adjust procedure which seems to be useful. This is used to
-     make the ratio between the succ. prob and the target succ. prob are
-     sufficiently close. Depending on whether the succ. prob is larger
-     (or smaller), it will try to reduce the pruning coefficients
-     (or increase) to make succ. prob \approx the target succ. prob.
-     Sometimes the succ. prob can not be modified closer to target
-     succ. prob due to the contraints (in such case it just returns).
+     Heuristic adjust procedure which seems to be useful to achieve the
+     target succ. probability (or expected number of solutions).
+     This function is used in the end to make sure the ratio between
+     the succ. prob form current pruning coefficient and the target 
+     succ. prob are sufficiently close. Depending on whether the 
+     succ. prob is larger (or smaller), it will try to reduce the
+     pruning coefficients (or increase) in small scale to make succ. prob
+     \approx the target succ. prob. Sometimes the succ. prob can not be
+     modified closer to target succ. prob due to the contraints (in such
+     case it just returns).
   */
   void optimize_coefficients_local_adjust_prob(/*io*/ vector<double> &pr);
 };
