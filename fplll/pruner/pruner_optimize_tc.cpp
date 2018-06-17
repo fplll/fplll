@@ -149,7 +149,8 @@ template <class FT> void Pruner<FT>::optimize_coefficients_full(/*io*/ vector<do
  * Tweaking of pruning coefficients in neighborhood: try to reduce enum
  * time (hopefull reduce the overall running time)
  */
-template <class FT> void Pruner<FT>::optimize_coefficients_local_tune_single_enum(/*io*/ vector<double> &pr)
+template <class FT>
+void Pruner<FT>::optimize_coefficients_local_tune_single_enum(/*io*/ vector<double> &pr)
 {
   int maxi, lasti, consecutive_fails;
   double improved_ratio, current_max = 0.0;
