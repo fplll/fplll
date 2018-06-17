@@ -50,7 +50,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<do
       if (measure_metric(min_pruning_coefficients) > target)
       {
         fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
-        optimize_coefficients_prob_decr(pr);
+        optimize_coefficients_decr_prob(pr);
       }
       load_coefficients(min_pruning_coefficients, pr);
     }
@@ -149,7 +149,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_full(/*io*/ vector<do
  * Tweaking of pruning coefficients in neighborhood: try to reduce enum
  * time (hopefull reduce the overall running time)
  */
-template <class FT> void Pruner<FT>::optimize_coefficients_tune_single(/*io*/ vector<double> &pr)
+template <class FT> void Pruner<FT>::optimize_coefficients_local_tune_single_enum(/*io*/ vector<double> &pr)
 {
   int maxi, lasti, consecutive_fails;
   double improved_ratio, current_max = 0.0;
@@ -250,8 +250,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_tune_single(/*io*/ ve
  * those coefficients b[i] inversely-weighted by their level cost.
  */
 template <class FT>
-void Pruner<FT>::optimize_coefficients_tune_prob(
-    /*io*/ vector<double> &pr)
+void Pruner<FT>::optimize_coefficients_local_tune_succ_prob(/*io*/ vector<double> &pr)
 {
   int trials, tours, maxi, ind;
   FT old_cf, old_cf0, old_cfs, new_cf, old_b;
@@ -350,11 +349,11 @@ void Pruner<FT>::optimize_coefficients_tune_prob(
 }
 
 /**
- * try to smooth the curve
+ * try to smooth the curve if there are obvious discountinuties between
+ * consecutive indices
  */
 template <class FT>
-void Pruner<FT>::optimize_coefficients_smooth(
-    /*io*/ vector<double> &pr)
+void Pruner<FT>::optimize_coefficients_local_tune_smooth(/*io*/ vector<double> &pr)
 {
   vec b(n);
   FT lr, rr;

@@ -5,7 +5,7 @@ FPLLL_BEGIN_NAMESPACE
 #define OPTIMIZE_PROB_MINSTEP 1e-4
 #define OPTIMIZE_PROB_MAXSTEP 1e4
 
-template <class FT> void Pruner<FT>::optimize_coefficients_prob_incr(/*io*/ vector<double> &pr)
+template <class FT> void Pruner<FT>::optimize_coefficients_incr_prob(/*io*/ vector<double> &pr)
 {
   int dn = pr.size();
   int tours;
@@ -71,7 +71,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob_incr(/*io*/ vect
   save_coefficients(pr, b);
 }
 
-template <class FT> void Pruner<FT>::optimize_coefficients_prob_decr(/*io*/ vector<double> &pr)
+template <class FT> void Pruner<FT>::optimize_coefficients_decr_prob(/*io*/ vector<double> &pr)
 {
   int dn = pr.size();
   int tours;
@@ -139,7 +139,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob_decr(/*io*/ vect
   save_coefficients(pr, b);
 }
 
-template <class FT> void Pruner<FT>::optimize_coefficients_prob_tune(/*io*/ vector<double> &pr)
+template <class FT> void Pruner<FT>::optimize_coefficients_tune_prob(/*io*/ vector<double> &pr)
 {
   int dn = pr.size();
   int tours;

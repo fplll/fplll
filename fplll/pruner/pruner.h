@@ -415,113 +415,6 @@ public:
   }
 
   /**
-     @brief run the optimization process using 'even' coefficients. Note
-     the optimization only applies to the pruning coefficients indexed
-     by (0, 2, 4, ... n). It thus uses half of the coefficients.
-
-     Run the optimization process, successively using the algorithm activated
-     using using half coefficients.
-
-     Note the input pr has length n; but only the even indices in the vector
-     will be used in the optimization. In the end, we have pr_i = pr_{i+1}.
-  */
-  void optimize_coefficients_evec(/*io*/ vector<double> &pr);
-
-  /**
-     @brief run the optimization process using all the coefficients.
-
-     Run the optimization process, successively using the algorithm activated
-     using using full coefficients.
-
-     Note the input pr has length n.
-  */
-  void optimize_coefficients_full(/*io*/ vector<double> &pr);
-
-  /**
-     @brief tune the pruning parameter to reduce single enumeration time
-
-     Optimization process to the pruning parameters to reduce single enumeration
-     time with the hope that it also reduces the overall enumeration time.
-  */
-  void optimize_coefficients_tune_single(/*io*/ vector<double> &pr);
-
-  /**
-     @brief tune the pruning parameter to increase succ. probability
-
-     Optimization process to the pruning parameters to increase succ.
-     probability with the restriction that the single enumeration time does
-     not increase significantly.
-  */
-  void optimize_coefficients_tune_prob(/*io*/ vector<double> &pr);
-
-  /**
-     @brief tune the pruning parameter to make the curve a more smooth.
-
-     Optimization process to the pruning parameters to make the curve
-     more smooth if the input has a large gap between consecutive
-     pruning parameters.
-  */
-  void optimize_coefficients_smooth(/*io*/ vector<double> &pr);
-
-  /**
-     @brief main interface to optimize the overall enumeraiton time
-
-     Main interface to optimize the overall enumeraiton time where the
-     target unciton is:
-
-     single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
-  */
-  void optimize_coefficients_cost(/*io*/ vector<double> &pr);
-
-  /**
-     @brief main interface to optimize the single enumeraiton time fixing succ. prob.
-
-     Main interface to optimize the single enumeration time with the constraint
-     that the succ. prob (or expected solutions) is fixed.
-  */
-  void optimize_coefficients_prob(/*io*/ vector<double> &pr);
-
-  /**
-     @brief auxiliary function in optimizing the single enumeraiton time
-     fixing the succ. prob.
-
-     Auxiliary function to optimize the single enumeration time with the
-     constraint that the succ. prob (or expected solutions) is fixed. It
-     is used if the given targeted probaility is larger than the one
-     computed using pruning parameters. Then one increases the succ.
-     probability by increasing the pruning parameters. Note since the
-     radius is fixed as input, it may not be possible to achieve the
-     given targeted probability even if all coefficients are (1, ..., 1).
-     In such case, it will try to increase the succ. prob as much as
-     it can and possibly return (1, ..., 1).
-  */
-  void optimize_coefficients_prob_incr(/*io*/ vector<double> &pr);
-
-  /**
-     @brief auxiliary function in optimizing the single enumeraiton time
-     fixing the succ. prob.
-
-     Auxiliary function to optimize the single enumeration time with the
-     constraint that the succ. prob (or expected solutions) is fixed. It
-     is used if the given targeted probaility is smaller than the one
-     computed using pruning parameters. Then one decreases the succ.
-     probability by descreasing the pruning parameters.
-  */
-  void optimize_coefficients_prob_decr(/*io*/ vector<double> &pr);
-
-  /**
-     @brief auxiliary function in optimizing the single enumeraiton time fixing succ. prob.
-
-     Heuristic tuning procedure which seems to be useful. This is used to make the ratio
-     between the succ. prob and the target succ. prob are close. Depending on whether
-     the succ. prob is larger (or smaller), it will try to reduce the pruning coefficients
-     (or increase) to make succ. prob \approx the target succ. prob. Sometimes the succ.
-     prob can not be modified closer to target succ. prob due to the contraints.
-     In such case it exists.
-  */
-  void optimize_coefficients_prob_tune(/*io*/ vector<double> &pr);
-
-  /**
      @brief Main interface to optimize pruning coefficients
 
      Main interface to optimize pruning coefficients.
@@ -539,6 +432,56 @@ public:
      the succ. probability == target.
   */
   void optimize_coefficients(/*io*/ vector<double> &pr);
+  
+  /**
+     @brief main interface to optimize the pruning coefficients with
+     respect to the overall enumeraiton time.
+
+     Main interface to optimize the overall enumeraiton time where the
+     target function is:
+
+     single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
+  */
+  void optimize_coefficients_cost(/*io*/ vector<double> &pr);
+
+  /**
+     @brief main interface to optimize the pruning coefficients with 
+     repeect to the single enumeraiton time while fixing the succ. prob
+     or expected number of solutions.
+
+     Main interface to optimize the single enumeration time with the
+     constraint such that the succ. prob (or expected solutions) is
+     fixed (and given) from input to the Pruner constructor.
+  */
+  void optimize_coefficients_prob(/*io*/ vector<double> &pr);
+
+  /**
+     @brief run the optimization process using 'even' coefficients. Note
+     the optimization only applies to the pruning coefficients indexed
+     by (0, 2, 4, ... n). It thus uses half of the coefficients.
+
+     Run the optimization process, successively using the algorithm activated
+     using using half coefficients: the input pr has length n; but only the
+     even indices in the vector will be used in the optimization. 
+     In the end, we have pr_i = pr_{i+1}.
+     Note it only optimize the overall enumeraiton time where the
+     target function is:
+     single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
+  */
+  void optimize_coefficients_evec(/*io*/ vector<double> &pr);
+
+  /**
+     @brief run the optimization process using all the coefficients.
+
+     Run the optimization process, successively using the algorithm activated
+     using using full coefficients. That is, we don't have the 
+     constraint pr_i = pr_{i+1} anymore in this function.
+     Note it only optimize the overall enumeraiton time where the
+     target function is:
+     single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
+
+  */
+  void optimize_coefficients_full(/*io*/ vector<double> &pr);
 
   /**
       @brief Compute the cost of a single enumeration
@@ -851,6 +794,87 @@ private:
      @note As recommended on Wikipedia, the algorithm is re-ran several time
   */
   int nelder_mead_step(/*io*/ evec &b);
+
+  /**
+     @brief tune the pruning parameter to reduce single enumeration time.
+     The purpose is to reduce the single enumeration time while not
+     decreasing the succ. probability too much. 
+     
+     Optimization process to the pruning parameters to reduce single enumeration
+     time with the hope that it also reduces the overall enumeration time. Local
+     implies the code will hopefully only do small changes to the pruning
+     coefficients.
+  */
+  void optimize_coefficients_local_tune_single_enum(/*io*/ vector<double> &pr);
+
+  /**
+     @brief tune the pruning parameter to increase succ. probability.
+     The purpose is to increase the succ. probability while not incresing
+     the single enumeration time too much.
+
+     Optimization process to the pruning parameters to increase succ.
+     probability with the restriction that the single enumeration time does
+     not increase significantly.
+  */
+  void optimize_coefficients_local_tune_succ_prob(/*io*/ vector<double> &pr);
+
+  /**
+     @brief tune the pruning parameter to make the curve of the pruning
+     parameter more smooth.
+
+     Optimization process to the pruning parameters to make the curve
+     more smooth if the input has obvious discountinuties on consecutive
+     pruning parameters.
+  */
+  void optimize_coefficients_local_tune_smooth(/*io*/ vector<double> &pr);
+
+  /**
+     @brief auxiliary function in optimizing the single enumeraiton time
+     fixing the succ. prob. The purpose is to increase the probability
+     to be close to the target (as much as it can). This is used 
+     to make sure the probability is ''somewhat'' close to the target.
+
+     Auxiliary function to optimize the single enumeration time with the
+     constraint that the succ. prob (or expected solutions) is fixed. It
+     is used if the given targeted probaility is larger than the one
+     computed using pruning parameters. Then one increases the succ.
+     probability by increasing the pruning parameters. Note since the
+     radius is fixed as input, it may not be possible to achieve the
+     given targeted probability even if all coefficients are (1, ..., 1).
+     In such case, it will try to increase the succ. prob as much as
+     it can and possibly return (1, ..., 1).
+  */
+  void optimize_coefficients_incr_prob(/*io*/ vector<double> &pr);
+
+  /**
+     @brief auxiliary function in optimizing the single enumeraiton time
+     fixing the succ. prob. The purpose is to decrease the probability
+     to be close to the target. This is used to make sure the
+     probability is ''somewhat'' close to the target.
+
+     Auxiliary function to optimize the single enumeration time with the
+     constraint that the succ. prob (or expected solutions) is fixed. It
+     is used if the given targeted probaility is smaller than the one
+     computed using pruning parameters. Then one decreases the succ.
+     probability by descreasing the pruning parameters.
+  */
+  void optimize_coefficients_decr_prob(/*io*/ vector<double> &pr);
+
+  /**
+     @brief auxiliary function in optimizing the single enumeraiton 
+     time fixing succ. prob. This is used to make sure the probability
+     is ''sufficiently'' close to the target (if possible).
+
+     Heuristic tuning procedure which seems to be useful. This is used to 
+     make the ratio between the succ. prob and the target succ. prob are
+     sufficiently close. Depending on whether the succ. prob is larger 
+     (or smaller), it will try to reduce the pruning coefficients 
+     (or increase) to make succ. prob \approx the target succ. prob. 
+     Sometimes the succ. prob can not be modified closer to target 
+     succ. prob due to the contraints (in such case it just returns).
+  */
+  void optimize_coefficients_tune_prob(/*io*/ vector<double> &pr);
+  
 };
 
 template <class FT>

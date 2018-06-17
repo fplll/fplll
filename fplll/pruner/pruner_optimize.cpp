@@ -40,9 +40,9 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost(/*io*/ vector<do
       old_c0 = target_function(b);
 
       // step 2.1 full tuning
-      optimize_coefficients_tune_single(pr);
-      optimize_coefficients_tune_prob(pr);
-      optimize_coefficients_smooth(pr);
+      optimize_coefficients_local_tune_single_enum(pr);
+      optimize_coefficients_local_tune_succ_prob(pr);
+      optimize_coefficients_local_tune_smooth(pr);
 
       // update best after tuning
       load_coefficients(b, pr);
@@ -101,7 +101,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob(/*io*/ vector<do
 
   // step 1 call global optimization (without fixing succ. prob)
   optimize_coefficients_evec(pr);
-  optimize_coefficients_smooth(pr);
+  optimize_coefficients_local_tune_smooth(pr);
   optimize_coefficients_full(pr);
 
 #ifdef DEBUG_PRUNER_OPTIMIZE
@@ -115,19 +115,19 @@ template <class FT> void Pruner<FT>::optimize_coefficients_prob(/*io*/ vector<do
 #endif
 
   // step 2 achieve target succ. prob
-  optimize_coefficients_smooth(pr);
+  optimize_coefficients_local_tune_smooth(pr);
   load_coefficients(b, pr);
   prob = measure_metric(b);
   if (prob <= target)
-    optimize_coefficients_prob_incr(pr);
+    optimize_coefficients_incr_prob(pr);
   else
   {
-    optimize_coefficients_prob_decr(pr);
+    optimize_coefficients_decr_prob(pr);
   }
 
   // step 3: some local tweaking
-  optimize_coefficients_smooth(pr);
-  optimize_coefficients_prob_tune(pr);
+  optimize_coefficients_local_tune_smooth(pr);
+  optimize_coefficients_tune_prob(pr);
 
 #ifdef DEBUG_PRUNER_OPTIMIZE
   load_coefficients(b, pr);
