@@ -139,7 +139,8 @@ template <class FT> void Pruner<FT>::optimize_coefficients_decr_prob(/*io*/ vect
   save_coefficients(pr, b);
 }
 
-template <class FT> void Pruner<FT>::optimize_coefficients_tune_prob(/*io*/ vector<double> &pr)
+template <class FT>
+void Pruner<FT>::optimize_coefficients_local_adjust_prob(/*io*/ vector<double> &pr)
 {
   int dn = pr.size();
   int tours;

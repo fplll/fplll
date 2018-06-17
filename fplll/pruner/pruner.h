@@ -796,7 +796,7 @@ private:
   int nelder_mead_step(/*io*/ evec &b);
 
   /**
-     @brief tune the pruning parameter to reduce single enumeration time.
+     @brief adjust the pruning parameter to reduce single enumeration time.
      The purpose is to reduce the single enumeration time while not
      decreasing the succ. probability too much.
 
@@ -805,10 +805,10 @@ private:
      implies the code will hopefully only do small changes to the pruning
      coefficients.
   */
-  void optimize_coefficients_local_tune_single_enum(/*io*/ vector<double> &pr);
+  void optimize_coefficients_local_adjust_decr_single(/*io*/ vector<double> &pr);
 
   /**
-     @brief tune the pruning parameter to increase succ. probability.
+     @brief adjust the pruning parameter to increase succ. probability.
      The purpose is to increase the succ. probability while not incresing
      the single enumeration time too much.
 
@@ -816,17 +816,17 @@ private:
      probability with the restriction that the single enumeration time does
      not increase significantly.
   */
-  void optimize_coefficients_local_tune_succ_prob(/*io*/ vector<double> &pr);
+  void optimize_coefficients_local_adjust_incr_prob(/*io*/ vector<double> &pr);
 
   /**
-     @brief tune the pruning parameter to make the curve of the pruning
+     @brief adjust the pruning parameter to make the curve of the pruning
      parameter more smooth.
 
      Optimization process to the pruning parameters to make the curve
      more smooth if the input has obvious discountinuties on consecutive
      pruning parameters.
   */
-  void optimize_coefficients_local_tune_smooth(/*io*/ vector<double> &pr);
+  void optimize_coefficients_local_adjust_smooth(/*io*/ vector<double> &pr);
 
   /**
      @brief auxiliary function in optimizing the single enumeraiton time
@@ -865,7 +865,7 @@ private:
      time fixing succ. prob. This is used to make sure the probability
      is ''sufficiently'' close to the target (if possible).
 
-     Heuristic tuning procedure which seems to be useful. This is used to
+     Heuristic adjust procedure which seems to be useful. This is used to
      make the ratio between the succ. prob and the target succ. prob are
      sufficiently close. Depending on whether the succ. prob is larger
      (or smaller), it will try to reduce the pruning coefficients
@@ -873,7 +873,7 @@ private:
      Sometimes the succ. prob can not be modified closer to target
      succ. prob due to the contraints (in such case it just returns).
   */
-  void optimize_coefficients_tune_prob(/*io*/ vector<double> &pr);
+  void optimize_coefficients_local_adjust_prob(/*io*/ vector<double> &pr);
 };
 
 template <class FT>
