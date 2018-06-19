@@ -1,4 +1,5 @@
 /* Copyright (C) 2015-2017 Martin Albrecht, Leo Ducas.
+   Copyright (C) 2018 Shi Bai
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
