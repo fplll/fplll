@@ -30,8 +30,8 @@ FPLLL_BEGIN_NAMESPACE
 
 // call pruner (note the float type is determined now)
 template <class FT>
-int run_pruner_f(ZZ_mat<mpz_t> &b, int sel_ft, int prune_start,
-                 int prune_end, double prune_pre_nodes, double prune_min_prob, double gh_factor)
+int run_pruner_f(ZZ_mat<mpz_t> &b, int sel_ft, int prune_start, int prune_end,
+                 double prune_pre_nodes, double prune_min_prob, double gh_factor)
 {
   int gso_flags = 0;
   if (b.get_rows() == 0 || b.get_cols() == 0)
@@ -112,9 +112,8 @@ int run_pruner_f(ZZ_mat<mpz_t> &b, int sel_ft, int prune_start,
 }
 
 // interface function called from main.cpp
-int run_pruner(ZZ_mat<mpz_t> &B, FloatType float_type, int precision,
-               int prune_start, int prune_end, double prune_pre_nodes, double prune_min_prob,
-               double gh_factor)
+int run_pruner(ZZ_mat<mpz_t> &B, FloatType float_type, int precision, int prune_start,
+               int prune_end, double prune_pre_nodes, double prune_min_prob, double gh_factor)
 {
   // FPLLL_CHECK(B, "B == NULL in run_pruner()");
   FloatType sel_ft = (float_type != FT_DEFAULT) ? float_type : FT_DOUBLE;
@@ -131,8 +130,8 @@ int run_pruner(ZZ_mat<mpz_t> &B, FloatType float_type, int precision,
 #ifdef FPLLL_WITH_LONG_DOUBLE
   else if (sel_ft == FT_LONG_DOUBLE)
   {
-    status = run_pruner_f<FP_NR<long double>>(B, sel_ft, prune_start, prune_end,
-                                              prune_pre_nodes, prune_min_prob, gh_factor);
+    status = run_pruner_f<FP_NR<long double>>(B, sel_ft, prune_start, prune_end, prune_pre_nodes,
+                                              prune_min_prob, gh_factor);
   }
 #endif
 #ifdef FPLLL_WITH_DPE
@@ -157,7 +156,7 @@ int run_pruner(ZZ_mat<mpz_t> &B, FloatType float_type, int precision,
   else if (sel_ft == FT_MPFR)
   {
     int old_prec = FP_NR<mpfr_t>::set_prec(precision);
-    status = run_pruner_f<FP_NR<mpfr_t>>(B, sel_ft, prune_start, prune_end, prune_pre_nodes,
+    status       = run_pruner_f<FP_NR<mpfr_t>>(B, sel_ft, prune_start, prune_end, prune_pre_nodes,
                                          prune_min_prob, gh_factor);
     FP_NR<mpfr_t>::set_prec(old_prec);
   }

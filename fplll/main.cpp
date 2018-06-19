@@ -104,8 +104,8 @@ void read_pruning_vector(const char *file_name, PruningParams &pr, int n)
   for (int i = 0; i <= n && fscanf(file, "%lf", &x) == 1; i++)
   {
     pr.coefficients.push_back(x);
-    CHECK(x > 0 && x <= 1, "Number " << x << " in file '" << file_name
-                                     << "' is not in the interval (0,1]");
+    CHECK(x > 0 && x <= 1,
+          "Number " << x << " in file '" << file_name << "' is not in the interval (0,1]");
     if (i == 0)
     {
       CHECK(x == 1, "The first number in file '" << file_name << "' should be 1");
@@ -333,8 +333,8 @@ template <> int prune(Options &o, ZZ_mat<mpz_t> &b)
   if (o.prune_min_prob)
     prune_min_prob = o.prune_min_prob;
 
-  status = run_pruner(b, o.float_type, o.precision, prune_start, prune_end,
-                      prune_pre_nodes, prune_min_prob, gh_factor);
+  status = run_pruner(b, o.float_type, o.precision, prune_start, prune_end, prune_pre_nodes,
+                      prune_min_prob, gh_factor);
 
   if (status != RED_SUCCESS)
   {

@@ -82,9 +82,9 @@ public:
  *    the status of the pruning
  */
 template <class FT>
-int run_pruner_f(ZZ_mat<mpz_t> &B, int sel_ft, int precision = 0,
-                 int prune_start = 0, int prune_end = 1, double prune_pre_nodes = 1e6,
-                 double prune_min_prob = -1, double gh_factor = 1.0);
+int run_pruner_f(ZZ_mat<mpz_t> &B, int sel_ft, int precision = 0, int prune_start = 0,
+                 int prune_end = 1, double prune_pre_nodes = 1e6, double prune_min_prob = -1,
+                 double gh_factor = 1.0);
 
 /**
  * @brief Run pruner on B.
@@ -113,9 +113,9 @@ int run_pruner_f(ZZ_mat<mpz_t> &B, int sel_ft, int precision = 0,
  * @return
  *    the status of the pruning
  */
-int run_pruner(ZZ_mat<mpz_t> &B, FloatType float_type = FT_DEFAULT,
-               int precision = 0, int prune_start = 0, int prune_end = 1,
-               double prune_pre_nodes = 1e6, double prune_min_prob = -1, double gh_factor = 1.0);
+int run_pruner(ZZ_mat<mpz_t> &B, FloatType float_type = FT_DEFAULT, int precision = 0,
+               int prune_start = 0, int prune_end = 1, double prune_pre_nodes = 1e6,
+               double prune_min_prob = -1, double gh_factor = 1.0);
 
 /**
    @brief Search for optimal pruning parameters.
