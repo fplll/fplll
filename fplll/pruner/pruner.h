@@ -115,7 +115,7 @@ int run_pruner_f(ZZ_mat<mpz_t> &B, const PruningParams &param, int sel_ft, int p
  *      input GH factor to compute the enumeration radius. The computed
  *        enumeration radius will be min(GH*gh_factor, |b_i*|).
  * @return
- *    the status of the prunign
+ *    the status of the pruning
  */
 int run_pruner(ZZ_mat<mpz_t> &B, const PruningParams &param, FloatType float_type = FT_DEFAULT,
                int precision = 0, int prune_start = 0, int prune_end = 1,
