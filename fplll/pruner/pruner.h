@@ -56,12 +56,10 @@ public:
 };
 
 /**
- * @brief Performs pruning using PruningParams object with specific float type FT.
+ * @brief Run pruner on B.
  *
  * @param B
  *    basis of the lattice to be reduced
- * @param param
- *    parameter object
  * @param sel_ft
  *    specifies the float type used for GSO computations
  * @param precision
@@ -84,17 +82,15 @@ public:
  *    the status of the pruning
  */
 template <class FT>
-int run_pruner_f(ZZ_mat<mpz_t> &B, const PruningParams &param, int sel_ft, int precision = 0,
+int run_pruner_f(ZZ_mat<mpz_t> &B, int sel_ft, int precision = 0,
                  int prune_start = 0, int prune_end = 1, double prune_pre_nodes = 1e6,
                  double prune_min_prob = -1, double gh_factor = 1.0);
 
 /**
- * @brief Performs pruning using PruningParams object.
+ * @brief Run pruner on B.
  *
  * @param B
  *    basis of the lattice to be reduced
- * @param param
- *    parameter object
  * @param float_type
  *    specifies the data type used for GSO computations (see defs.h for options)
  * @param precision
@@ -117,7 +113,7 @@ int run_pruner_f(ZZ_mat<mpz_t> &B, const PruningParams &param, int sel_ft, int p
  * @return
  *    the status of the pruning
  */
-int run_pruner(ZZ_mat<mpz_t> &B, const PruningParams &param, FloatType float_type = FT_DEFAULT,
+int run_pruner(ZZ_mat<mpz_t> &B, FloatType float_type = FT_DEFAULT,
                int precision = 0, int prune_start = 0, int prune_end = 1,
                double prune_pre_nodes = 1e6, double prune_min_prob = -1, double gh_factor = 1.0);
 
