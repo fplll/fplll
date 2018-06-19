@@ -324,23 +324,30 @@ public:
     fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
     set_tabulated_consts();
 
+    // optimize overall cost, use
+    if (flags & PRUNER_SINGLE)
+    {
+      opt_single = true;
+    }
+
     // need to fix target if possible
     if (metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
     {
-      // if target > 1 or < 0, optimize overall cost, use
-      //   0.9 as target in repeated_enum_cost().
+      // check if the target is reasonable; otherwise set it to 0.99.
+      // note the target may affect the cost in target_function().
       if (this->target > 1.0 || this->target < 0.0)
       {
         this->target = 0.99;
-        opt_overall  = true;
       }
     }
     else if (metric == PRUNER_METRIC_EXPECTED_SOLUTIONS)
     {
+      // check if the target is reasonable; otherwise set it to 0.99.
+      // note the target is allowed to be larger than 1 in this case.
+      // Also the target may affect the cost in target_function().
       if (this->target < 0.0)
       {
         this->target = 0.99;
-        opt_overall  = true;
       }
     }
     else
@@ -386,25 +393,31 @@ public:
     bftmp.resize(n);
     fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
     set_tabulated_consts();
+
+    // optimize overall cost, use
+    if (flags & PRUNER_SINGLE)
+    {
+      opt_single = true;
+    }
+
     // need to fix target if possible
     if (metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
     {
-      // if target > 1 or < 0, optimize overall cost, use
-      //   0.99 as target for the computation in repeated_enum_cost().
+      // check if the target is reasonable; otherwise set it to 0.99.
+      // note the target may affect the cost in target_function().
       if (this->target > 1.0 || this->target < 0.0)
       {
         this->target = 0.99;
-        opt_overall  = true;
       }
     }
     else if (metric == PRUNER_METRIC_EXPECTED_SOLUTIONS)
     {
-      // if target < 0, optimize overall cost, use
-      //   0.99 as target for the computation in repeated_enum_cost().
+      // check if the target is reasonable; otherwise set it to 0.99.
+      // note the target is allowed to be larger than 1 in this case.
+      // Also the target may affect the cost in target_function().
       if (this->target < 0.0)
       {
         this->target = 0.99;
-        opt_overall  = true;
       }
     }
     else
@@ -538,7 +551,7 @@ private:
   int d;  ///< Half dimension: most function only use half dimension, as our Pruner implcitly
           /// enforce parity
   vector<FT> min_pruning_coefficients;
-  bool opt_overall = false;
+  bool opt_single = false;
 
   double descent_starting_clock;
   static bool tabulated_values_imported;  ///< (static) has tabulated constant been imported

@@ -287,7 +287,9 @@ enum PrunerFlags
   // Verbosity
   PRUNER_VERBOSE = 0x10,
   // Optimize w.r.t to all coefficients (by default it optimizes w.r.t half)
-  PRUNER_FULL = 0x20
+  PRUNER_FULL = 0x20,
+  // Optimize goal set to single enumeration cost while fixing the probability ~ target
+  PRUNER_SINGLE = 0x40
 };
 
 #define PRUNER_ZEALOUS (PRUNER_GRADIENT | PRUNER_NELDER_MEAD)

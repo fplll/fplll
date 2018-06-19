@@ -43,7 +43,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<do
     // min_pruning_coefficiens is small enough. Otherwise, reduce
     // it further. This is important since otherwise one may never
     // achieve the target probability.
-    if (!opt_overall)
+    if (!opt_single)
     {
       vector<double> pr(n);
       save_coefficients(pr, min_pruning_coefficients);

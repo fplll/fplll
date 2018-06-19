@@ -112,7 +112,6 @@ void Pruner<FT>::optimize_coefficients_cost_fixed_prob(/*io*/ vector<double> &pr
   cerr << "# [Stage fo] single_enum_cost = " << single_enum_cost(b) << endl;
   cerr << "# [Stage ho] succ_probability = " << measure_metric(b) << endl;
   cerr << b << endl;
-
 #endif
 
   // step 2 achieve target succ. prob
@@ -136,9 +135,8 @@ void Pruner<FT>::optimize_coefficients_cost_fixed_prob(/*io*/ vector<double> &pr
   cerr << "# [Stage fo]    all_enum_cost = " << repeated_enum_cost(b) << endl;
   cerr << "# [Stage fo] single_enum_cost = " << single_enum_cost(b) << endl;
   cerr << "# [Stage fo] succ_probability = " << measure_metric(b) << endl;
+  cerr << b << endl;
 #endif
-
-  save_coefficients(pr, b);
 }
 
 /**
@@ -146,13 +144,13 @@ void Pruner<FT>::optimize_coefficients_cost_fixed_prob(/*io*/ vector<double> &pr
  */
 template <class FT> void Pruner<FT>::optimize_coefficients(/*io*/ vector<double> &pr)
 {
-  if (opt_overall)
+  if (opt_single)
   {
-    optimize_coefficients_cost_vary_prob(pr);
+    optimize_coefficients_cost_fixed_prob(pr);
   }
   else
   {
-    optimize_coefficients_cost_fixed_prob(pr);
+    optimize_coefficients_cost_vary_prob(pr);
   }
 }
 
