@@ -103,10 +103,13 @@ int run_pruner_f(ZZ_mat<mpz_t> &B, int sel_ft, int precision = 0, int prune_star
  * @param prune_pre_nodes
  *     preprocessing cost in the number of nodes
  * @param prune_min_prob
- *     target probability. If it is -1, it will optimize
- *       single_enum_cost/succ. prob while not fixing the succ. prob.
- *       If it is > 0, it will fix the succ. prob and optimize the
- *       single_enum_cost.
+ *     target probability or expected number of solutions (depending on the metric
+ *     which could be either PRUNER_METRIC_PROBABILITY_OF_SHORTEST or
+ *     PRUNER_METRIC_EXPECTED_SOLUTIONS.
+ *     If PRUNER_SINGLE is enabled, the optimization will try to minimize the
+ *     single_enum_cost() while achieving the prune_min_prob;
+ *     If PRUNER_SINGLE is disabled (default), the optimization will try to minimize
+ *     single_enum_cost() * trials + preproc_cost * (trials - 1.0).
  * @param gh_factor
  *      input GH factor to compute the enumeration radius. The computed
  *        enumeration radius will be min(GH*gh_factor, |b_i*|).
@@ -332,9 +335,10 @@ public:
     {
       // check if the target is reasonable; otherwise set it to 0.99.
       // note the target may affect the cost in target_function().
-      if (this->target > 1.0 || this->target < 0.0)
+      if (this->target >= 1.0 || this->target <= 0.0)
       {
-        this->target = 0.99;
+        throw std::invalid_argument("Invalid value for target with metric "
+                                    "PRUNER_METRIC_PROBABILITY_OF_SHORTEST (need 0 < target < 1).");
       }
     }
     else if (metric == PRUNER_METRIC_EXPECTED_SOLUTIONS)
@@ -342,9 +346,10 @@ public:
       // check if the target is reasonable; otherwise set it to 0.99.
       // note the target is allowed to be larger than 1 in this case.
       // Also the target may affect the cost in target_function().
-      if (this->target < 0.0)
+      if (this->target <= 0.0)
       {
-        this->target = 0.99;
+        throw std::invalid_argument("Invalid value for target with metric "
+                                    "PRUNER_METRIC_EXPECTED_SOLUTIONS (need 0 < target).");
       }
     }
     else
@@ -402,9 +407,10 @@ public:
     {
       // check if the target is reasonable; otherwise set it to 0.99.
       // note the target may affect the cost in target_function().
-      if (this->target > 1.0 || this->target < 0.0)
+      if (this->target >= 1.0 || this->target <= 0.0)
       {
-        this->target = 0.99;
+        throw std::invalid_argument("Invalid value for target with metric "
+                                    "PRUNER_METRIC_PROBABILITY_OF_SHORTEST (0 < target < 1).");
       }
     }
     else if (metric == PRUNER_METRIC_EXPECTED_SOLUTIONS)
@@ -412,9 +418,10 @@ public:
       // check if the target is reasonable; otherwise set it to 0.99.
       // note the target is allowed to be larger than 1 in this case.
       // Also the target may affect the cost in target_function().
-      if (this->target < 0.0)
+      if (this->target <= 0.0)
       {
-        this->target = 0.99;
+        throw std::invalid_argument(
+            "Invalid value for target with metric PRUNER_METRIC_EXPECTED_SOLUTIONS (0 < target).");
       }
     }
     else
@@ -433,35 +440,58 @@ public:
       (2)   optimize_coefficients_cost_fixed_prob()
      depending on the input "target".
 
-     If the target is negative (e.g. -1), it calls function (1)
-     such that goal is to optimize the
+     If the flag PRUNER_SINGLE is disabled (default),
+     it calls function (1) so that goal is to optimize the
      single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0).
 
-     If the target is > 0, it calls function (2) such that the
-     goal is to optimize the single_enum_cost(pr) while fixing
+     If the flag PRUNER_SINGLE is enabled in `flags`,
+     it calls function (2) such that the goal is to optimize
+     the single_enum_cost(pr) while fixing
      the succ. probability == target.
   */
   void optimize_coefficients(/*io*/ vector<double> &pr);
 
   /**
-     @brief main interface to optimize the pruning coefficients with
-     respect to the overall enumeraiton time.
+     @brief the first main interface to optimize the pruning
+     coefficients with respect to the overall enumeraiton time.
 
      Main interface to optimize the overall enumeraiton time where the
      target function is:
-
      single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
+
+     Hierarchy of calls:
+     This function first invokes optimize_coefficients_evec() which
+     optimizes using only even-position vectors for speed. Then
+     it calls several local tuning functions
+     optimize_coefficients_local_adjust_*()
+     to adjust the parameters in small scales.
+     Finally it does an optimization using full vectors using
+     optimize_coefficients_full().  This procedure is repeated for
+     several rounds until no further improvements can be achieved.
   */
   void optimize_coefficients_cost_vary_prob(/*io*/ vector<double> &pr);
 
   /**
      @brief main interface to optimize the pruning coefficients with
      repeect to the single enumeraiton time while fixing the succ. prob
-     or expected number of solutions.
+     or expected number of solutions. The method is heuristic!
 
      Main interface to optimize the single enumeration time with the
      constraint such that the succ. prob (or expected solutions) is
      fixed (and given) from input to the Pruner constructor.
+
+     Hierarchy of calls:
+     This function first invokes optimize_coefficients_evec()
+     and then optimize_coefficients_full() to optimize the overall
+     enumeration cost. Then it tries to adjust the pruning parameters
+     to achieve the target succ. probability (or expected number of
+     solutions) by calling either optimize_coefficients_incr_prob()
+     or optimize_coefficients_decr_prob(). Finally, it does some
+     local optimization by calling
+     optimize_coefficients_local_adjust_smooth() which aims to smooth
+     the discountinuities in the curve and then
+     optimize_coefficients_local_adjust_prob() which aims to
+     fine-adjust the succ. probability to be close enough to the target.
   */
   void optimize_coefficients_cost_fixed_prob(/*io*/ vector<double> &pr);
 
@@ -477,6 +507,9 @@ public:
      Note it only optimize the overall enumeraiton time where the
      target function is:
      single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
+
+     This may be used in both optimize_coefficients_cost_fixed_prob() and
+     optimize_coefficients_cost_vary_prob().
   */
   void optimize_coefficients_evec(/*io*/ vector<double> &pr);
 
@@ -490,6 +523,8 @@ public:
      target function is:
      single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
 
+     This is used in both optimize_coefficients_cost_fixed_prob() and
+     optimize_coefficients_cost_vary_prob().
   */
   void optimize_coefficients_full(/*io*/ vector<double> &pr);
 
@@ -731,11 +766,12 @@ private:
      optimization goal, it will return the cost based on different
      models/modes. There are two modes depending on the target.
 
-     (1) if target == -1, it will compute the cost of r * single_enum_cost()
+     (1) if the flag PRUNER_SINGLE is disabled in `flags` (default),
+         this function will compute the cost of r * single_enum_cost()
          plus (r-1) * preprocessing where r is the expected number of
          trials.
 
-     (2) if target != -1 (target must also be given), it will compute
+     (2) if the flag PRUNER_SINGLE is enabled, this function computes
          the cost of a single_enum_cost(). Note in such case the input
          target prob is fixed. Whether we could achieve this input
          target prob will be determined in the optimization procedure.
