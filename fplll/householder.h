@@ -380,7 +380,10 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int end, lon
   {
     R[k].dot_product(f, R[k], 0, end);
   }
-  expo = 2 * row_expo[k];
+  if (enable_row_expo)
+    expo = 2 * row_expo[k];
+  else
+    expo = -1;
 }
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::invalidate_row(int k)

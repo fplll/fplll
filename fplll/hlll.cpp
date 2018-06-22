@@ -99,7 +99,6 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   int max_index = -1;
 
   m.update_R(kappa, kappa);
-  // cout << "root: R[" << kappa << "] = " << m.get_R(kappa, expo0) << endl;
 
   /* Most likely, at this step, the next update_R(kappa, kappa) must modify some coefficients since
    * b will most likely
@@ -171,7 +170,6 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   } while (true);
 }
 
-// Works only there is no row_expo.
 template <class ZT, class FT>
 bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
 {
@@ -179,28 +177,41 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
   FT ftmp1;
   FT delta_ = delta;
   m.update_R();
-  long expo;
+  long expo0 = -1;
+  long expo1 = -1;
 
   for (int i = 0; i < m.get_d(); i++)
   {
     for (int j = 0; j < i; j++)
     {
-      m.get_R(ftmp0, i, j, expo);
-      m.get_R(ftmp1, j, j, expo);
+      m.get_R(ftmp0, i, j, expo0);
+      m.get_R(ftmp1, j, j, expo1);
       ftmp1.div(ftmp0, ftmp1);
       ftmp1.abs(ftmp1);
+
+      if (expo0 > -1)
+        ftmp1.mul_2si(ftmp1, expo0 - expo1);
+
       if (ftmp1.cmp(0.5) > 0)
         return false;
     }
   }
+
   for (int i = 1; i < m.get_d(); i++)
   {
-    m.norm_square_b_row(ftmp0, i, expo);  // ftmp0 = ||b[i]||^2
-    m.norm_square_R_row(ftmp1, i, i - 1, expo);
+    m.norm_square_b_row(ftmp0, i, expo0);  // ftmp0 = ||b[i]||^2
+    m.norm_square_R_row(ftmp1, i, i - 1, expo1);
+
+    if (expo0 > -1)
+      ftmp0.mul_2si(ftmp0, expo0 - expo1);
+
     ftmp1.sub(ftmp0, ftmp1);  // ftmp1 = ||b[i]||^2 - sum_{i = 0}^{i < i - 1}R[i][i]^2
-    m.get_R(ftmp0, i - 1, i - 1, expo);
+    m.get_R(ftmp0, i - 1, i - 1, expo0);
     ftmp0.mul(ftmp0, ftmp0);
     ftmp0.mul(delta_, ftmp0);  // ftmp0 = delta_ * R(i - 1, i - 1)^2
+
+    if (expo0 > -1)
+      ftmp1.mul_2si(ftmp1, expo1 - expo0);
 
     if (ftmp0.cmp(ftmp1) > 0)
       return false;
