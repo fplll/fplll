@@ -432,95 +432,78 @@ public:
   }
 
   /**
-     @brief Main interface to optimize pruning coefficients
+     @brief Main interface for optimizing pruning coefficients.
 
-     Main interface to optimize pruning coefficients.
-     It will in turn invoke either of the two functions:
-      (1)   optimize_coefficients_cost_vary_prob() or
-      (2)   optimize_coefficients_cost_fixed_prob()
+     It will invoke either of the two functions:
+
+     1. `optimize_coefficients_cost_vary_prob()` or
+     2. `optimize_coefficients_cost_fixed_prob()`
+
      depending on the input flags.
 
-     If the flag PRUNER_SINGLE is disabled (default),
-     it calls function (1) so that goal is to optimize the
-     single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0).
+     If the flag PRUNER_SINGLE is disabled (default), it calls function (1) so that goal is to
+     optimize the cost computed as`single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`
 
-     If the flag PRUNER_SINGLE is enabled in `flags`,
-     it calls function (2) such that the goal is to optimize
-     the single_enum_cost(pr) while fixing
-     the succ. probability == target.
+     If the flag PRUNER_SINGLE is enabled in `flags`, it calls function (2) such that the goal is to
+     optimize the single_enum_cost(pr) while fixing the metric (number of solutions or success
+     probability) to the target.
   */
   void optimize_coefficients(/*io*/ vector<double> &pr);
 
   /**
-     @brief the first main interface to optimize the pruning
-     coefficients with respect to the overall enumeraiton time.
+     @brief Main interface for optimizing the pruning coefficients with respect to the overall
+     enumeraiton time.
 
-     Main interface to optimize the overall enumeraiton time where the
-     target function is:
+     Main interface to optimize the overall enumeration time where the target function is:
      single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
 
-     Hierarchy of calls:
-     This function first invokes optimize_coefficients_evec() which
-     optimizes using only even-position vectors for speed. Then
-     it calls several local tuning functions
-     optimize_coefficients_local_adjust_*()
-     to adjust the parameters in small scales.
-     Finally it does an optimization using full vectors using
-     optimize_coefficients_full().  This procedure is repeated for
-     several rounds until no further improvements can be achieved.
+     Hierarchy of calls: This function first invokes optimize_coefficients_evec() which optimizes
+     using only even-position vectors for speed. Then it calls several local tuning functions
+     optimize_coefficients_local_adjust_*() to adjust the parameters in small scales. Finally it
+     does an optimization using full vectors using optimize_coefficients_full(). This procedure is
+     repeated for several rounds until no further improvements can be achieved.
   */
   void optimize_coefficients_cost_vary_prob(/*io*/ vector<double> &pr);
 
   /**
-     @brief main interface to optimize the pruning coefficients with
-     repeect to the single enumeraiton time while fixing the succ. prob
-     or expected number of solutions. The method is heuristic!
+     @brief Main interface to optimize the pruning coefficients with repeect to the single enumeration.
 
-     Main interface to optimize the single enumeration time with the
-     constraint such that the succ. prob (or expected solutions) is
-     fixed (and given) from input to the Pruner constructor.
+     Main interface to optimize the single enumeration time with the constraint such that the succ.
+     prob (or expected solutions) is fixed (and given) from input to the Pruner constructor.
 
-     Hierarchy of calls:
-     This function first invokes optimize_coefficients_evec()
-     and then optimize_coefficients_full() to optimize the overall
-     enumeration cost. Then it tries to adjust the pruning parameters
-     to achieve the target succ. probability (or expected number of
-     solutions) by calling either optimize_coefficients_incr_prob()
-     or optimize_coefficients_decr_prob(). Finally, it does some
-     local optimization by calling
-     optimize_coefficients_local_adjust_smooth() which aims to smooth
-     the discountinuities in the curve and then
-     optimize_coefficients_local_adjust_prob() which aims to
-     fine-adjust the succ. probability to be close enough to the target.
+     Hierarchy of calls: This function first invokes optimize_coefficients_evec() and then
+     optimize_coefficients_full() to optimize the overall enumeration cost. Then it tries to adjust
+     the pruning parameters to achieve the target succ. probability (or expected number of
+     solutions) by calling either optimize_coefficients_incr_prob() or
+     optimize_coefficients_decr_prob(). Finally, it does some local optimization by calling
+     optimize_coefficients_local_adjust_smooth() which aims to smooth the discountinuities in the
+     curve and then optimize_coefficients_local_adjust_prob() which aims to fine-adjust the succ.
+     probability to be close enough to the target.
   */
   void optimize_coefficients_cost_fixed_prob(/*io*/ vector<double> &pr);
 
   /**
-     @brief run the optimization process using 'even' coefficients. Note
-     the optimization only applies to the pruning coefficients indexed
-     by (0, 2, 4, ... n). It thus uses half of the coefficients.
+     @brief Run the optimization process using 'even' coefficients.
 
-     Run the optimization process, successively using the algorithm activated
-     using using half coefficients: the input pr has length n; but only the
-     even indices in the vector will be used in the optimization.
-     In the end, we have pr_i = pr_{i+1}.
-     Note it only optimize the overall enumeraiton time where the
-     target function is:
-     single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
+     Run the optimization process, successively using the algorithm activated using using half
+     coefficients: the input pr has length n; but only the even indices in the vector will be used
+     in the optimization. In the end, we have pr_i = pr_{i+1}.
 
-     This may be used in both optimize_coefficients_cost_fixed_prob() and
-     optimize_coefficients_cost_vary_prob().
+     Note that this function only optimizes the overall enumeraiton time where the target function is:
+     `single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`
+
+     This may be used in both `optimize_coefficients_cost_fixed_prob()` and
+     `optimize_coefficients_cost_vary_prob()`.
   */
   void optimize_coefficients_evec(/*io*/ vector<double> &pr);
 
   /**
-     @brief run the optimization process using all the coefficients.
+     @brief Run the optimization process using all the coefficients.
 
-     Run the optimization process, successively using the algorithm activated
-     using using full coefficients. That is, we don't have the
-     constraint pr_i = pr_{i+1} anymore in this function.
-     Note it only optimize the overall enumeraiton time where the
-     target function is:
+     Run the optimization process, successively using the algorithm activated using using full
+     coefficients. That is, we do not have the constraint pr_i = pr_{i+1} in this function.
+
+     Note it only optimize the overall enumeraiton time where the target function is:
      single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
 
      This is used in both optimize_coefficients_cost_fixed_prob() and
