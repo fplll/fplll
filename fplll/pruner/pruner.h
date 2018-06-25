@@ -438,7 +438,7 @@ public:
      It will in turn invoke either of the two functions:
       (1)   optimize_coefficients_cost_vary_prob() or
       (2)   optimize_coefficients_cost_fixed_prob()
-     depending on the input "target".
+     depending on the input flags.
 
      If the flag PRUNER_SINGLE is disabled (default),
      it calls function (1) so that goal is to optimize the
@@ -555,7 +555,7 @@ public:
   }
 
   /**
-     @brief Compute the success proba of a single enumeration
+     @brief Return either SVP probability or expected number of solution depending on metric
   */
   double measure_metric(/*i*/ const vector<double> &pr)
   {
