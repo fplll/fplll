@@ -245,6 +245,9 @@ Output formats:
 
 A combination of these option is allowed (e.g., `-of bkut`).
 
+Only for `-a hlll`:
+* `-V` : verify if basis is reduced
+
 ## llldiff ##
 
 `llldiff` compares two bases (b1,...,bd) and (c1,...c_d'): they are considered

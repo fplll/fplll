@@ -115,16 +115,17 @@ FPLLL_DECLARE_LLL(double)
   int hlll_reduction(ZZ_mat<T> &b, double delta = LLL_DEF_DELTA, double eta = HLLL_DEF_ETA,        \
                      double theta = HLLL_DEF_THETA, double c = HLLL_DEF_C,                         \
                      LLLMethod method = LM_WRAPPER, FloatType float_type = FT_DEFAULT,             \
-                     int precision = 0, int flags = LLL_DEFAULT);                                  \
-  int hlll_reduction(                                                                              \
-      ZZ_mat<T> &b, ZZ_mat<T> &u, double delta = LLL_DEF_DELTA, double eta = HLLL_DEF_ETA,         \
-      double theta = HLLL_DEF_THETA, double c = HLLL_DEF_C, LLLMethod method = LM_WRAPPER,         \
-      FloatType float_type = FT_DEFAULT, int precision = 0, int flags = LLL_DEFAULT);              \
+                     int precision = 0, int flags = LLL_DEFAULT, bool is_reduced = false);         \
+  int hlll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, double delta = LLL_DEF_DELTA,                     \
+                     double eta = HLLL_DEF_ETA, double theta = HLLL_DEF_THETA,                     \
+                     double c = HLLL_DEF_C, LLLMethod method = LM_WRAPPER,                         \
+                     FloatType float_type = FT_DEFAULT, int precision = 0,                         \
+                     int flags = LLL_DEFAULT, bool is_reduced = false);                            \
   int hlll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, ZZ_mat<T> &u_inv, double delta = LLL_DEF_DELTA,   \
                      double eta = HLLL_DEF_ETA, double theta = HLLL_DEF_THETA,                     \
                      double c = HLLL_DEF_C, LLLMethod method = LM_WRAPPER,                         \
                      FloatType float_type = FT_DEFAULT, int precision = 0,                         \
-                     int flags = LLL_DEFAULT);
+                     int flags = LLL_DEFAULT, bool is_reduced = false);
 
 FPLLL_DECLARE_HLLL(mpz_t)
 
