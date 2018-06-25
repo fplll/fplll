@@ -26,7 +26,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
   FT ftmp0, ftmp1, ftmp2;
 
   // sigma[i] = sign(r[1])
-  sigma[i] = (R(i, i).cmp(0) < 0) ? -1.0 : 1.0;
+  sigma[i] = (R(i, i).cmp(0.0) < 0) ? -1.0 : 1.0;
   // V(i, i) is used as a temporary variable. In the following, V(i, i) is always modified.
   if (i + 1 == n)
     V(i, i) = 0.0;
@@ -188,6 +188,119 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
 
     if (last_j == i + 1)
       update_R_last(i);
+  }
+}
+
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::compute_R_naively()
+{
+  FT ftmp0, ftmp1, s;
+  int i, j;
+
+  // Set B in R.
+  for (i = 0; i < d; i++)
+  {
+    if (enable_row_expo)
+    {
+      long max_expo = LONG_MIN;
+
+      for (j = 0; j < n; j++)
+      {
+        b(i, j).get_f_exp(R(i, j), tmp_col_expo[j]);
+        max_expo = max(max_expo, tmp_col_expo[j]);
+      }
+
+      for (j = 0; j < n; j++)
+        R(i, j).mul_2si(R(i, j), tmp_col_expo[j] - max_expo);
+
+      row_expo[i] = max_expo;
+      FPLLL_DEBUG_CHECK(row_expo[i] >= 0);
+    }
+    else
+    {
+      for (j = 0; j < n; j++)
+        R(i, j).set_z(b(i, j));
+    }
+  }
+
+  for (i = 0; i < d; i++)
+  {
+    for (j = 0; j < i; j++)
+    {
+      // vj * ri[j..n]^T
+      V[j].dot_product(ftmp1, R[i], j, n);
+
+      //-vj * ri[j..n]^T
+      ftmp1.neg(ftmp1);
+      for (int k = j; k < n; k++)
+      {
+        // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
+        R(i, k).addmul(V(j, k), ftmp1);
+      }
+      // ri[j] = sigma[j] * ri[j]
+      R(i, j).mul(sigma[j], R(i, j));
+    }
+
+    // Copy R[i][i..n] in V
+    for (j = i; j < n; j++)
+    {
+      V(i, j) = R(i, j);
+    }
+    // sigma[i] = sign(r[1])
+    sigma[i] = (R(i, i).cmp(0.0) < 0) ? -1.0 : 1.0;
+    R[i].dot_product(s, R[i], i, n);
+    s.sqrt(s);
+    s.mul(s, sigma[i]);
+    ftmp0.add(R(i, i), s);
+    if (ftmp0.cmp(0.0) != 0)
+    {
+      if (i + 1 == n)
+        ftmp1 = 0.0;
+      else
+        R[i].dot_product(ftmp1, R[i], i + 1, n);
+      if (ftmp1.cmp(0.0) != 0)
+      {
+        ftmp1.neg(ftmp1);
+        V(i, i).div(ftmp1, ftmp0);
+        s.neg(s);
+        ftmp0.mul(s, V(i, i));
+        ftmp0.sqrt(ftmp0);
+        for (j = i + 1; j < n; j++)
+        {
+          V(i, j).div(V(i, j), ftmp0);
+        }
+        V(i, i).div(V(i, i), ftmp0);
+        for (j = i + 1; j < n; j++)
+        {
+          R(i, j) = 0.0;
+        }
+        R(i, i).abs(s);
+      }
+      else
+      {
+        if (R(i, i).cmp(0.0) < 0)
+          R(i, i).neg(R(i, i));
+
+        for (int k = i + 1; k < n; k++)
+        {
+          // if enable_row_expo, R can be not correct at some point of the computation
+          FPLLL_DEBUG_CHECK(enable_row_expo ? 1 : R(i, k).is_zero());
+          R(i, k) = 0.0;
+          V(i, k) = 0.0;
+        }
+      }
+    }
+    else
+    {
+      for (int k = i; k < n; k++)
+      {
+        // if enable_row_expo, R can be not correct at some point of the computation
+        FPLLL_DEBUG_CHECK(enable_row_expo ? 1 : R(i, k).is_zero());
+        R(i, k) = 0.0;
+        V(i, k) = 0.0;
+      }
+    }
+
+    n_known_rows++;
   }
 }
 

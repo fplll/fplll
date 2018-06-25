@@ -176,7 +176,13 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
   FT ftmp0;
   FT ftmp1;
   FT delta_ = delta;
-  m.update_R();
+
+  m.compute_R_naively();
+  /* Compute_R_naively do not modify n_known_cols, but n_known_cols must be equal to n to compute
+   * correctly
+   * norm_square_b_row. */
+  m.set_n_known_cols_max();
+
   long expo0 = -1;
   long expo1 = -1;
 

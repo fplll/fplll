@@ -187,6 +187,12 @@ public:
   inline long get_row_expo(int i) { return row_expo[i]; }
 
   inline bool is_row_op_force_long() { return row_op_force_long; }
+
+  void compute_R_naively();
+
+  inline void restart_computation_R() { n_known_rows = 0; }
+
+  inline void set_n_known_cols_max() { n_known_cols = n; }
 private:
   /**
    * Number of rows of b (dimension of the lattice).
