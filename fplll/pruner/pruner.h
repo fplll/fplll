@@ -466,7 +466,8 @@ public:
   void optimize_coefficients_cost_vary_prob(/*io*/ vector<double> &pr);
 
   /**
-     @brief Main interface to optimize the pruning coefficients with repeect to the single enumeration.
+     @brief Main interface to optimize the pruning coefficients with repeect to the single
+     enumeration.
 
      Main interface to optimize the single enumeration time with the constraint such that the succ.
      prob (or expected solutions) is fixed (and given) from input to the Pruner constructor.
@@ -489,8 +490,8 @@ public:
      coefficients: the input pr has length n; but only the even indices in the vector will be used
      in the optimization. In the end, we have pr_i = pr_{i+1}.
 
-     Note that this function only optimizes the overall enumeraiton time where the target function is:
-     `single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`
+     Note that this function only optimizes the overall enumeraiton time where the target function
+     is: `single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`
 
      This may be used in both `optimize_coefficients_cost_fixed_prob()` and
      `optimize_coefficients_cost_vary_prob()`.
