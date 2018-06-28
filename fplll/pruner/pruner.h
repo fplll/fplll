@@ -504,7 +504,7 @@ public:
      coefficients: the input pr has length n; but only the even indices in the vector will be used
      in the optimization. In the end, we have pr_i = pr_{i+1}.
 
-     Note that this function only optimizes the overall enumeraiton time where the target function
+     Note that this function only optimizes the overall enumeration time where the target function
      is: `single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`
 
      This may be used in both `optimize_coefficients_cost_fixed_prob()` and
@@ -518,10 +518,10 @@ public:
      Run the optimization process, successively using the algorithm activated using using full
      coefficients. That is, we do not have the constraint pr_i = pr_{i+1} in this function.
 
-     Note it only optimize the overall enumeraiton time where the target function is:
-     single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
+     Note that this function only optimizes the overall enumeration time where the target function
+     is: single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
 
-     This is used in both optimize_coefficients_cost_fixed_prob() and
+     This is used in both optimize_coefficients_cost_fixed_prob() (as a first step) and
      optimize_coefficients_cost_vary_prob().
   */
   void optimize_coefficients_full(/*io*/ vector<double> &pr);
