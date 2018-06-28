@@ -452,34 +452,48 @@ public:
 
   /**
      @brief Main interface for optimizing the pruning coefficients with respect to the overall
-     enumeraiton time.
+     enumeration time.
 
      Main interface to optimize the overall enumeration time where the target function is:
      single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
 
-     Hierarchy of calls: This function first invokes optimize_coefficients_evec() which optimizes
-     using only even-position vectors for speed. Then it calls several local tuning functions
-     optimize_coefficients_local_adjust_*() to adjust the parameters in small scales. Finally it
-     does an optimization using full vectors using optimize_coefficients_full(). This procedure is
-     repeated for several rounds until no further improvements can be achieved.
+     Hierarchy of calls if PRUNER_FULL is set:
+
+     - This function first invokes optimize_coefficients_evec() which optimizes using only
+     even-position vectors for speed.
+
+     - Then it calls several local tuning functions optimize_coefficients_local_adjust_*() to adjust
+     the parameters in small scales.
+
+     - Finally it does an optimization using full vectors using optimize_coefficients_full(). This
+     procedure is repeated for several rounds until no further improvements can be achieved.
+
+
+     If PRUNER_FULL is not set, this function simply calls optimize_coefficients_evec.
   */
   void optimize_coefficients_cost_vary_prob(/*io*/ vector<double> &pr);
 
   /**
-     @brief Main interface to optimize the pruning coefficients with repeect to the single
+     @brief Main interface to optimize the pruning coefficients with respect to the single
      enumeration.
 
      Main interface to optimize the single enumeration time with the constraint such that the succ.
      prob (or expected solutions) is fixed (and given) from input to the Pruner constructor.
 
-     Hierarchy of calls: This function first invokes optimize_coefficients_evec() and then
-     optimize_coefficients_full() to optimize the overall enumeration cost. Then it tries to adjust
-     the pruning parameters to achieve the target succ. probability (or expected number of
-     solutions) by calling either optimize_coefficients_incr_prob() or
-     optimize_coefficients_decr_prob(). Finally, it does some local optimization by calling
+     Hierarchy of calls if PRUNER_FULL is set:
+
+     - This function first invokes optimize_coefficients_evec() and then
+     optimize_coefficients_full() to optimize the overall enumeration cost.
+
+     - Then it tries to adjust the pruning parameters to achieve the target succ. probability (or
+     expected number of solutions) by calling either optimize_coefficients_incr_prob() or
+     optimize_coefficients_decr_prob().
+
+     - Finally, it does some local optimization by calling
      optimize_coefficients_local_adjust_smooth() which aims to smooth the discountinuities in the
      curve and then optimize_coefficients_local_adjust_prob() which aims to fine-adjust the succ.
      probability to be close enough to the target.
+
   */
   void optimize_coefficients_cost_fixed_prob(/*io*/ vector<double> &pr);
 
