@@ -95,8 +95,9 @@ int run_pruner_f(ZZ_mat<mpz_t> &b, int sel_ft, int prune_start, int prune_end,
   cerr << "# preprocessing (num. nodes): " << prune_pre_nodes << endl;
   cerr << "# targeted min. prob: " << prune_min_prob << endl;
   cerr << "# input GSO: " << r << endl;
+  // example: use flags PRUNER_ZEALOUS  and PRUNER_SINGLE
   prune<FT>(pruning, radius_d, prune_pre_nodes, r, prune_min_prob, PRUNER_METRIC_EXPECTED_SOLUTIONS,
-            PRUNER_ZEALOUS | PRUNER_FULL | PRUNER_SINGLE);
+            PRUNER_ZEALOUS | PRUNER_SINGLE);
   cerr << "# optimized pruning coeff: " << endl << pruning.coefficients << endl;
   double cost = 0.;
   //  cerr << "# cost per level" << endl;

@@ -328,6 +328,9 @@ public:
     if (flags & PRUNER_SINGLE)
     {
       opt_single = true;
+      if (flags & PRUNER_HALF) {
+        throw std::invalid_argument("Error: flags PRUNER_HALF and PRUNER_SINGLE are mutually exclusive.");
+      }
     }
 
     // need to fix target if possible
@@ -400,6 +403,9 @@ public:
     if (flags & PRUNER_SINGLE)
     {
       opt_single = true;
+      if (flags & PRUNER_HALF) {
+        throw std::invalid_argument("Error: flags PRUNER_HALF and PRUNER_SINGLE are mutually exclusive.");
+      }
     }
 
     // need to fix target if possible
@@ -457,7 +463,7 @@ public:
      Main interface to optimize the overall enumeration time where the target function is:
      single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
 
-     Hierarchy of calls if PRUNER_FULL is set:
+     Hierarchy of calls if PRUNER_HALF is not set (default):
 
      - This function first invokes optimize_coefficients_evec() which optimizes using only
      even-position vectors for speed.
@@ -469,7 +475,8 @@ public:
      procedure is repeated for several rounds until no further improvements can be achieved.
 
 
-     If PRUNER_FULL is not set, this function simply calls optimize_coefficients_evec.
+     If PRUNER_HALF is set, this function simply calls optimize_coefficients_evec.
+     Note that if PRUNER_HALF is set, one can not use PRUNER_SINGLE.
   */
   void optimize_coefficients_cost_vary_prob(/*io*/ vector<double> &pr);
 
@@ -480,7 +487,7 @@ public:
      Main interface to optimize the single enumeration time with the constraint such that the succ.
      prob (or expected solutions) is fixed (and given) from input to the Pruner constructor.
 
-     Hierarchy of calls if PRUNER_FULL is set:
+     Hierarchy of calls if PRUNER_HALF is not set (default):
 
      - This function first invokes optimize_coefficients_evec() and then
      optimize_coefficients_full() to optimize the overall enumeration cost.

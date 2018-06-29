@@ -286,9 +286,10 @@ enum PrunerFlags
   PRUNER_NELDER_MEAD      = 0x8,
   // Verbosity
   PRUNER_VERBOSE = 0x10,
-  // Optimize w.r.t to all coefficients (by default it optimizes w.r.t half)
-  PRUNER_FULL = 0x20,
-  // Optimize goal set to single enumeration cost while fixing the probability ~ target
+  // Optimize w.r.t to half of the coefficients (those of even indices)
+  // (by default this is not enabled)
+  PRUNER_HALF = 0x20,
+  // Optimize goal set to single enumeration cost while fixing the probability ~ target. Note that flags PRUNER_HALF and PRUNER_SINGLE are mutually exclusive.
   PRUNER_SINGLE = 0x40
 };
 

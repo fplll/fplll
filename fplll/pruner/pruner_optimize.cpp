@@ -28,7 +28,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost_vary_prob(/*io*/
 #endif
 
   // step 2 use full coefficients if enabled
-  if (flags & PRUNER_FULL)
+  if (!(flags & PRUNER_HALF))
   {
     int tours = 0;
     while (1)
