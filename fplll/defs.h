@@ -289,7 +289,8 @@ enum PrunerFlags
   // Optimize w.r.t to half of the coefficients (those of even indices)
   // (by default this is not enabled)
   PRUNER_HALF = 0x20,
-  // Optimize goal set to single enumeration cost while fixing the probability ~ target. Note that flags PRUNER_HALF and PRUNER_SINGLE are mutually exclusive.
+  // Optimize goal set to single enumeration cost while fixing the probability ~ target. Note that
+  // flags PRUNER_HALF and PRUNER_SINGLE are mutually exclusive.
   PRUNER_SINGLE = 0x40
 };
 

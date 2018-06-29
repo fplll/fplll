@@ -328,8 +328,10 @@ public:
     if (flags & PRUNER_SINGLE)
     {
       opt_single = true;
-      if (flags & PRUNER_HALF) {
-        throw std::invalid_argument("Error: flags PRUNER_HALF and PRUNER_SINGLE are mutually exclusive.");
+      if (flags & PRUNER_HALF)
+      {
+        throw std::invalid_argument(
+            "Error: flags PRUNER_HALF and PRUNER_SINGLE are mutually exclusive.");
       }
     }
 
@@ -403,8 +405,10 @@ public:
     if (flags & PRUNER_SINGLE)
     {
       opt_single = true;
-      if (flags & PRUNER_HALF) {
-        throw std::invalid_argument("Error: flags PRUNER_HALF and PRUNER_SINGLE are mutually exclusive.");
+      if (flags & PRUNER_HALF)
+      {
+        throw std::invalid_argument(
+            "Error: flags PRUNER_HALF and PRUNER_SINGLE are mutually exclusive.");
       }
     }
 
