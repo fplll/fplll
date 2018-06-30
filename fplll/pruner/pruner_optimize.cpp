@@ -2,7 +2,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-#define DEBUG_PRUNER_OPTIMIZE
+//#define DEBUG_PRUNER_OPTIMIZE
 #define NUM_OPTIMIZATION_TOURS 3
 
 template <class FT> void Pruner<FT>::optimize_coefficients_cost_vary_prob(/*io*/ vector<double> &pr)
