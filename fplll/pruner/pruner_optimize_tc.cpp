@@ -6,9 +6,9 @@ FPLLL_BEGIN_NAMESPACE
 //#define DEBUG_PRUNER_OPTIMIZE_TC
 
 /**
- *  optimize with constrains that b_i = b_{i+1} for even i.
+ *  preparation work to have some raw pruning coefficients
  */
-template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<double> &pr)
+template <class FT> void Pruner<FT>::optimize_coefficients_preparation(/*io*/ vector<double> &pr)
 {
   evec b(d);
 
@@ -45,19 +45,38 @@ template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<do
     // achieve the target probability.
     if (!opt_single)
     {
-      vector<double> pr(n);
-      save_coefficients(pr, min_pruning_coefficients);
+      vector<double> pr_min(n);
+      save_coefficients(pr_min, min_pruning_coefficients);
       if (measure_metric(min_pruning_coefficients) > target)
       {
         fill(min_pruning_coefficients.begin(), min_pruning_coefficients.end(), 0.);
-        optimize_coefficients_decr_prob(pr);
+        optimize_coefficients_decr_prob(pr_min);
       }
-      load_coefficients(min_pruning_coefficients, pr);
+      load_coefficients(min_pruning_coefficients, pr_min);
     }
     preproc_cost *= 10;
   }
+  save_coefficients(pr, b);
+}
 
-  // 2. gradient method // modify this to becomes an independent method!!!!
+/**
+ *  preparation and call optimization with constrains that b_i = b_{i+1} for even i.
+ */
+template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<double> &pr)
+{
+  optimize_coefficients_preparation(pr);
+  optimize_coefficients_evec_core(pr);
+}
+
+/**
+ *  optimize with constrains that b_i = b_{i+1} for even i.
+ */
+template <class FT> void Pruner<FT>::optimize_coefficients_evec_core(/*io*/ vector<double> &pr)
+{
+  evec b(d);
+  load_coefficients(b, pr);
+
+  // gradient method (default flag enables PRUNER_GRADIENT)
   if (flags & PRUNER_GRADIENT)
   {
     if (verbosity)
@@ -74,6 +93,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<do
 #endif
   };
 
+  // gradient method
   if (flags & PRUNER_NELDER_MEAD)
   {
     if (verbosity)
@@ -95,9 +115,20 @@ template <class FT> void Pruner<FT>::optimize_coefficients_evec(/*io*/ vector<do
 }
 
 /**
- *  optimize without constrains b_i = b_{i+1} for even i.
+ *  Optimize without constrains b_i = b_{i+1} for even i.
+ *  Note that this function assumes the pr already contains some valid
+ *  pruning coefficients.
  */
 template <class FT> void Pruner<FT>::optimize_coefficients_full(/*io*/ vector<double> &pr)
+{
+  optimize_coefficients_preparation(pr);
+  optimize_coefficients_full_core(pr);
+}
+
+/**
+ *  optimize without constrains b_i = b_{i+1} for even i.
+ */
+template <class FT> void Pruner<FT>::optimize_coefficients_full_core(/*io*/ vector<double> &pr)
 {
   vec b(n);
 

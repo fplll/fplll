@@ -141,7 +141,8 @@ template <class FT> inline FT Pruner<FT>::target_function(/*i*/ const vec &b)
     FT trials      = log(1.0 - target) / log(1.0 - probability);
     if (!trials.is_finite())
     {
-      throw std::range_error("NaN or inf in target_function (METRIC_PROBABILITY_OF_SHORTEST)");
+      throw std::range_error("NaN or inf in target_function (METRIC_PROBABILITY_OF_SHORTEST). "
+                             "Hint: using a higher precision sometimes helps.");
     }
     trials = trials < 1.0 ? 1.0 : trials;
     return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
@@ -152,7 +153,8 @@ template <class FT> inline FT Pruner<FT>::target_function(/*i*/ const vec &b)
     FT trials   = target / expected;
     if (!trials.is_finite())
     {
-      throw std::range_error("NaN or inf in target_function (METRIC_EXPECTED_SOLUTION)");
+      throw std::range_error("NaN or inf in target_function (METRIC_EXPECTED_SOLUTION). Hint: "
+                             "using a higher precision sometimes helps.");
     }
     // if expected solutions > 1, set trial = 1
     trials = trials < 1.0 ? 1.0 : trials;
@@ -172,7 +174,8 @@ template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const vec &b)
     FT trials      = log(1.0 - target) / log(1.0 - probability);
     if (!trials.is_finite())
     {
-      throw std::range_error("NaN or inf in repeated_enum_cost (METRIC_PROBABILITY_OF_SHORTEST)");
+      throw std::range_error("NaN or inf in repeated_enum_cost (METRIC_PROBABILITY_OF_SHORTEST). "
+                             "Hint: using a higher precision sometimes helps.");
     }
     trials = trials < 1.0 ? 1.0 : trials;
     return single_enum_cost(b) * trials + preproc_cost * (trials - 1.0);
@@ -183,7 +186,8 @@ template <class FT> inline FT Pruner<FT>::repeated_enum_cost(/*i*/ const vec &b)
     FT trials   = 1.0 / expected;
     if (!trials.is_finite())
     {
-      throw std::range_error("NaN or inf in repeated_enum_cost (METRIC_EXPECTED_SOLUTION)");
+      throw std::range_error("NaN or inf in repeated_enum_cost (METRIC_EXPECTED_SOLUTION).  Hint: "
+                             "using a higher precision sometimes helps.");
     }
     // if expected solutions > 1, set trial = 1
     trials = trials < 1.0 ? 1.0 : trials;

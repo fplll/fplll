@@ -469,13 +469,14 @@ public:
 
      Hierarchy of calls if PRUNER_HALF is not set (default):
 
-     - This function first invokes optimize_coefficients_evec() which optimizes using only
+     - This function first invokes optimize_coefficients_evec_core() which optimizes using only
      even-position vectors for speed.
 
      - Then it calls several local tuning functions optimize_coefficients_local_adjust_*() to adjust
      the parameters in small scales.
 
-     - Finally it does an optimization using full vectors using optimize_coefficients_full(). This
+     - Finally it does an optimization using full vectors using optimize_coefficients_full_core().
+     This
      procedure is repeated for several rounds until no further improvements can be achieved.
 
 
@@ -493,8 +494,8 @@ public:
 
      Hierarchy of calls if PRUNER_HALF is not set (default):
 
-     - This function first invokes optimize_coefficients_evec() and then
-     optimize_coefficients_full() to optimize the overall enumeration cost.
+     - This function first invokes optimize_coefficients_evec_core() and then
+     optimize_coefficients_full_core() to optimize the overall enumeration cost.
 
      - Then it tries to adjust the pruning parameters to achieve the target succ. probability (or
      expected number of solutions) by calling either optimize_coefficients_incr_prob() or
@@ -512,14 +513,18 @@ public:
      @brief Run the optimization process using 'even' coefficients.
 
      Run the optimization process, successively using the algorithm activated using using half
-     coefficients: the input pr has length n; but only the even indices in the vector will be used
-     in the optimization. In the end, we have pr_i = pr_{i+1}.
+     coefficients: the input pr has length n; but only the even indices in the vector will be
+     used in the optimization. In the end, we have pr_i = pr_{i+1}.
 
-     Note that this function only optimizes the overall enumeration time where the target function
-     is: `single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`
+     Note that this function calls `optimize_coefficients_evec_core()`. The difference is that
+     this function `optimize_coefficients_evec()` do not assume pr contains some valid
+     coefficient in prior. If the input pr is empty, it starts with the `greedy()` method and
+     does some preparation work before it invokes `optimize_coefficients_evec_core()`.
 
-     This may be used in both `optimize_coefficients_cost_fixed_prob()` and
-     `optimize_coefficients_cost_vary_prob()`.
+     Note that this function (and `optimize_coefficients_evec_core()`) only optimizes the
+     overall enumeration time where the target function is:
+
+               `single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`
   */
   void optimize_coefficients_evec(/*io*/ vector<double> &pr);
 
@@ -529,11 +534,15 @@ public:
      Run the optimization process, successively using the algorithm activated using using full
      coefficients. That is, we do not have the constraint pr_i = pr_{i+1} in this function.
 
-     Note that this function only optimizes the overall enumeration time where the target function
-     is: single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);
+     Note that this function calls `optimize_coefficients_full_core()`. The difference is that
+     this function `optimize_coefficients_full()` do not assume pr contains some valid
+     coefficient in prior. If the input pr is empty, it starts with the `greedy()` method and
+     does some preparation work before it invokes `optimize_coefficients_full_core()`.
 
-     This is used in both optimize_coefficients_cost_fixed_prob() (as a first step) and
-     optimize_coefficients_cost_vary_prob().
+     Note that this function (and `optimize_coefficients_full_core()`) only optimizes
+     the overall enumeration time where the target function is:
+
+                `single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`
   */
   void optimize_coefficients_full(/*io*/ vector<double> &pr);
 
@@ -644,7 +653,7 @@ private:
   void load_basis_shapes(const vector<vector<double>> &gso_rs);
 
   /**
-     @brief convert pruning coefficient from external to internal format.
+     @brief convert pruning coefficients from external to internal format.
 
      Convert type, reverse the ordering, and only select coefficent at even position
 
@@ -664,7 +673,7 @@ private:
   void print_coefficients(/*i*/ const evec &pr);
 
   /**
-     @brief Convert pruning coefficient from internal to external.
+     @brief Convert pruning coefficients from internal to external.
 
      Convert type, reverse the ordering, and repeat each coefficent twice
 
@@ -823,6 +832,64 @@ private:
   FT repeated_enum_cost(/*i*/ const evec &b);
 
   /**
+     @brief Do some preparation work for the optimization process.
+
+     If the flag PRUNER_START_FROM_INPUT is not enabled, this function
+     tries to find some raw pruning coefficients using the `greedy()`
+     method (as the input pr may be empty).
+
+     If the flag PRUNER_START_FROM_INPUT is enabled, this function will
+     start with the input pruning parameter without using the `greedy()`.
+
+     This function is used in the beginning stage for both
+     `optimize_coefficients_evec()` and `optimize_coefficients_full()`.
+  */
+  void optimize_coefficients_preparation(/*io*/ vector<double> &pr);
+
+  /**
+     @brief Run the optimization process using 'even' coefficients.
+
+     Run the optimization process, successively using the algorithm activated
+     using using half coefficients: the input pr has length n; but only the even
+     indices in the vector will be used in the optimization. In the end, we
+     have pr_i = pr_{i+1}.
+
+     Note that this function only optimizes the overall enumeration time where
+     the target function is:
+
+     `single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`
+
+     This may be used in both `optimize_coefficients_cost_fixed_prob()` and
+     `optimize_coefficients_cost_vary_prob()`.
+
+     Note that to use this function, the input pr must be non-empty.
+     It should already contain valid pruning coefficients. E.g. they
+     could be derived from `optimize_coefficients_preparation()`.
+  */
+  void optimize_coefficients_evec_core(/*io*/ vector<double> &pr);
+
+  /**
+     @brief Run the optimization process using all the coefficients.
+
+     Run the optimization process, successively using the algorithm activated
+     using using full coefficients. That is, we do not have the constraint
+     pr_i = pr_{i+1} in this function.
+
+     Note that this function only optimizes the overall enumeration time
+     where the target function is:
+
+     `single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`
+
+     This is used in both `optimize_coefficients_cost_fixed_prob()` and
+     `optimize_coefficients_cost_vary_prob()`.
+
+     Note that to use this function, the input pr must be non-empty.
+     It should already contain valid pruning coefficients. E.g. they
+     could be derived from `optimize_coefficients_preparation()`.
+  */
+  void optimize_coefficients_full_core(/*io*/ vector<double> &pr);
+
+  /**
      @brief gradient of the cost of repeating enumeration and preprocessing
      @param b reference for output
      @note Greedy (with less cost) is also used as a heuristic to lower bound
@@ -923,7 +990,7 @@ private:
      Heuristic adjust procedure which seems to be useful to achieve the
      target succ. probability (or expected number of solutions).
      This function is used in the end to make sure the ratio between
-     the succ. prob form current pruning coefficient and the target
+     the succ. prob form current pruning coefficients and the target
      succ. prob are sufficiently close. Depending on whether the
      succ. prob is larger (or smaller), it will try to reduce the
      pruning coefficients (or increase) in small scale to make succ. prob

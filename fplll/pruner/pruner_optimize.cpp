@@ -11,8 +11,11 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost_vary_prob(/*io*/
   FT old_c0, old_c1, new_c, min_c;
   vec b(n), best_b(n);
 
-  // step 1 use half coefficients only
-  optimize_coefficients_evec(pr);
+  // step 1 preparation
+  optimize_coefficients_preparation(pr);
+
+  // step 2 optimization use half coefficients only
+  optimize_coefficients_evec_core(pr);
 
   load_coefficients(b, pr);
   best_b = b;
@@ -64,7 +67,7 @@ template <class FT> void Pruner<FT>::optimize_coefficients_cost_vary_prob(/*io*/
 #endif
 
       // step 2.2 full optimization
-      optimize_coefficients_full(pr);
+      optimize_coefficients_full_core(pr);
 
       load_coefficients(b, pr);
       new_c = target_function(b);
@@ -102,9 +105,10 @@ void Pruner<FT>::optimize_coefficients_cost_fixed_prob(/*io*/ vector<double> &pr
   FT prob;
 
   // step 1 call global optimization (without fixing succ. prob)
-  optimize_coefficients_evec(pr);
+  optimize_coefficients_preparation(pr);
+  optimize_coefficients_evec_core(pr);
   optimize_coefficients_local_adjust_smooth(pr);
-  optimize_coefficients_full(pr);
+  optimize_coefficients_full_core(pr);
 
 #ifdef DEBUG_PRUNER_OPTIMIZE
   load_coefficients(b, pr);
