@@ -39,7 +39,8 @@ enum Action
   ACTION_HKZ,
   ACTION_BKZ,
   ACTION_SVP,
-  ACTION_CVP
+  ACTION_CVP,
+  ACTION_PRU
 };
 
 struct Options
@@ -68,6 +69,10 @@ struct Options
   int block_size;
   int bkz_flags;
   int bkz_max_loops;
+  int prune_start;
+  int prune_end;
+  double prune_pre_nodes;
+  double prune_min_prob;
   double bkz_max_time;
   string bkz_dump_gso_filename;
   double bkz_gh_factor;
