@@ -280,6 +280,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::compute_R_naively()
         if (R(i, i).cmp(0.0) < 0)
           R(i, i).neg(R(i, i));
 
+        V(i, i) = 0.0;
         for (int k = i + 1; k < n; k++)
         {
           // if enable_row_expo, R can be not correct at some point of the computation
