@@ -176,11 +176,11 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
   FT ftmp0;
   FT ftmp1;
   FT delta_ = delta;
+  FT eta_   = eta;
 
   m.compute_R_naively();
   /* Compute_R_naively do not modify n_known_cols, but n_known_cols must be equal to n to compute
-   * correctly
-   * norm_square_b_row. */
+   * correctly norm_square_b_row. */
   m.set_n_known_cols_max();
 
   long expo0 = -1;
@@ -198,6 +198,11 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
       if (expo0 > -1)
         ftmp1.mul_2si(ftmp1, expo0 - expo1);
 
+      if (ftmp1.cmp(eta_) > 0)
+        return false;
+
+      // Since eta_ is not involved in the test of the algorithm, this test is probably the one we
+      // want
       if (ftmp1.cmp(0.5) > 0)
         return false;
     }

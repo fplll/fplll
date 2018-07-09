@@ -107,7 +107,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
   FPLLL_DEBUG_CHECK(i <= n_known_rows);
   if (i == n_known_rows && !updated_R)
   {
-    FT ftmp0, ftmp1;
+    FT ftmp0;
     FPLLL_DEBUG_CHECK(last_j <= i + 1);
 
     n_known_cols = max(n_known_cols, init_row_size[i]);
@@ -156,14 +156,14 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
       for (j = 0; j < j_stop - 1; j++)
       {
         // vj * ri[j..n]^T
-        V[j].dot_product(ftmp1, R[i], j, n);
+        V[j].dot_product(ftmp0, R[i], j, n);
 
         //-vj * ri[j..n]^T
-        ftmp1.neg(ftmp1);
+        ftmp0.neg(ftmp0);
         for (k = j; k < n; k++)
         {
           // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
-          R(i, k).addmul(V(j, k), ftmp1);
+          R(i, k).addmul(V(j, k), ftmp0);
         }
         // ri[j] = sigma[j] * ri[j]
         R(i, j).mul(sigma[j], R(i, j));
@@ -173,13 +173,13 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
           R_history[i][j][k] = R(i, k);
       }
 
-      V[j_stop - 1].dot_product(ftmp1, R[i], j_stop - 1, n);
-      ftmp1.neg(ftmp1);
-      R(i, j_stop - 1).addmul(V(j_stop - 1, j_stop - 1), ftmp1);
+      V[j_stop - 1].dot_product(ftmp0, R[i], j_stop - 1, n);
+      ftmp0.neg(ftmp0);
+      R(i, j_stop - 1).addmul(V(j_stop - 1, j_stop - 1), ftmp0);
       R(i, j_stop - 1).mul(sigma[j_stop - 1], R(i, j_stop - 1));
 
       for (k = j_stop; k < n; k++)
-        R(i, k).addmul(V(j_stop - 1, k), ftmp1);
+        R(i, k).addmul(V(j_stop - 1, k), ftmp0);
 
       // Copy R into R_history
       for (k                    = j_stop; k < n; k++)
@@ -283,8 +283,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::compute_R_naively()
         V(i, i) = 0.0;
         for (int k = i + 1; k < n; k++)
         {
-          // if enable_row_expo, R can be not correct at some point of the computation
-          FPLLL_DEBUG_CHECK(enable_row_expo ? 1 : R(i, k).is_zero());
           R(i, k) = 0.0;
           V(i, k) = 0.0;
         }
@@ -294,8 +292,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::compute_R_naively()
     {
       for (int k = i; k < n; k++)
       {
-        // if enable_row_expo, R can be not correct at some point of the computation
-        FPLLL_DEBUG_CHECK(enable_row_expo ? 1 : R(i, k).is_zero());
         R(i, k) = 0.0;
         V(i, k) = 0.0;
       }
