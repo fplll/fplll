@@ -341,7 +341,7 @@ This library does not currently use multiple cores and running multiple threads 
 fplll is currently maintained by:
 
 - Martin Albrecht, <martinralbrecht@googlemail.com>
-- Shi Bai, <shi.bai@gmail.com>
+- Shi Bai, <shih.bai@gmail.com>
 
 ## Contributors ##
 

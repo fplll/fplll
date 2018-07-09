@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 {
   char *input_file_name = NULL;
   char *target_norm_s   = NULL;
-  bool flag_verbose = false, flag_file = false;
+  bool flag_verbose = true, flag_file = false;
   int option, alg, dim = 10, seed = 0, bs = 0;
 
 #if 0

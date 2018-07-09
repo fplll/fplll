@@ -69,3 +69,4 @@ doc/html/
 /tests/test_gso
 /tests/test_lll_gram
 /tests/test_hlll
+/fplll/pruner/*.o

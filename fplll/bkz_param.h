@@ -21,7 +21,7 @@
 */
 
 #include "defs.h"
-#include "pruner.h"
+#include "pruner/pruner.h"
 #include <string>
 #include <vector>
 
