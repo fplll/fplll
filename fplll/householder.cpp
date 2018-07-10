@@ -193,6 +193,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::compute_R_naively()
 {
+  // Set n_known_cols to n, since we do not use the shape of the basis here.
+  n_known_cols = n;
   FT ftmp0, ftmp1, s;
   int i, j;
 
