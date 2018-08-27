@@ -324,17 +324,17 @@ template <class ZT> int hlll(Options &o, ZZ_mat<ZT> &b)
   if (strchr(format, 'v') != NULL)
   {
     status = hlll_reduction(b, u, u_inv, o.delta, o.eta, o.theta, o.c, o.method, o.float_type,
-                            o.precision, flags, o.is_reduced);
+                            o.precision, flags, o.is_reduced, o.no_lll);
   }
   else if (strchr(format, 'u') != NULL)
   {
     status = hlll_reduction(b, u, o.delta, o.eta, o.theta, o.c, o.method, o.float_type, o.precision,
-                            flags, o.is_reduced);
+                            flags, o.is_reduced, o.no_lll);
   }
   else
   {
     status = hlll_reduction(b, o.delta, o.eta, o.theta, o.c, o.method, o.float_type, o.precision,
-                            flags, o.is_reduced);
+                            flags, o.is_reduced, o.no_lll);
   }
 
   for (int i = 0; format[i]; i++)

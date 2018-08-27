@@ -614,7 +614,7 @@ int hlll_reduction_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double de
 template <class ZT>
 int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta,
                      double theta, double c, LLLMethod method, IntType int_type,
-                     FloatType float_type, int precision, int flags, bool is_reduced)
+                     FloatType float_type, int precision, int flags, bool is_reduced, bool nolll)
 {
   FPLLL_CHECK(method != LM_WRAPPER, "H-LLL wrapper is not implementated.");
   FPLLL_CHECK(method != LM_HEURISTIC, "H-LLL heuristic is not implementated.");
@@ -708,117 +708,121 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
   }
 
   // Applies the selected method
-  int status;
-  if (sel_ft == FT_DOUBLE)
+  int status = 0;
+  // If nolll, just verify if the basis is reduced or not
+  if (!nolll)
   {
-    status = hlll_reduction_zf<ZT, double>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-    if (is_reduced)
+    if (sel_ft == FT_DOUBLE)
     {
-      if (is_hlll_reduced_zf<ZT, double>(b, u, u_inv, delta, eta))
-        cerr << "Basis is reduced (checked with double).";
-      else
-        cerr << "Basis is not reduced (checked with double).";
-      cerr << endl;
+      status = hlll_reduction_zf<ZT, double>(b, u, u_inv, delta, eta, theta, c, method, flags);
+
+      if (is_reduced)
+      {
+        if (is_hlll_reduced_zf<ZT, double>(b, u, u_inv, delta, eta))
+          cerr << "Basis is reduced (checked with double).";
+        else
+          cerr << "Basis is not reduced (checked with double).";
+        cerr << endl;
+      }
     }
-  }
 #ifdef FPLLL_WITH_LONG_DOUBLE
-  else if (sel_ft == FT_LONG_DOUBLE)
-  {
-    status = hlll_reduction_zf<ZT, long double>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-    if (is_reduced)
+    else if (sel_ft == FT_LONG_DOUBLE)
     {
-      if (is_hlll_reduced_zf<ZT, long double>(b, u, u_inv, delta, eta))
-        cerr << "Basis is reduced (checked with long double).";
-      else
-        cerr << "Basis is not reduced (checked with long double).";
-      cerr << endl;
+      status = hlll_reduction_zf<ZT, long double>(b, u, u_inv, delta, eta, theta, c, method, flags);
+
+      if (is_reduced)
+      {
+        if (is_hlll_reduced_zf<ZT, long double>(b, u, u_inv, delta, eta))
+          cerr << "Basis is reduced (checked with long double).";
+        else
+          cerr << "Basis is not reduced (checked with long double).";
+        cerr << endl;
+      }
     }
-  }
 #endif
 #ifdef FPLLL_WITH_DPE
-  else if (sel_ft == FT_DPE)
-  {
-    status = hlll_reduction_zf<ZT, dpe_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-    if (is_reduced)
+    else if (sel_ft == FT_DPE)
     {
-      if (is_hlll_reduced_pr<ZT, dpe_t>(b, u, u_inv, delta, eta))
-        cerr << "Basis is reduced (checked with dpe).";
-      else
-        cerr << "Basis is not reduced (checked with dpe).";
-      cerr << endl;
+      status = hlll_reduction_zf<ZT, dpe_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
+
+      if (is_reduced)
+      {
+        if (is_hlll_reduced_pr<ZT, dpe_t>(b, u, u_inv, delta, eta))
+          cerr << "Basis is reduced (checked with dpe).";
+        else
+          cerr << "Basis is not reduced (checked with dpe).";
+        cerr << endl;
+      }
     }
-  }
 #endif
 #ifdef FPLLL_WITH_QD
-  else if (sel_ft == FT_DD)
-  {
-    unsigned int old_cw;
-    fpu_fix_start(&old_cw);
-    status = hlll_reduction_zf<ZT, dd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-    if (is_reduced)
+    else if (sel_ft == FT_DD)
     {
-      if (is_hlll_reduced_zf<ZT, dd_real>(b, u, u_inv, delta, eta))
-        cerr << "Basis is reduced (checked with dd_real).";
-      else
-        cerr << "Basis is not reduced (checked with dd_real).";
-      cerr << endl;
+      unsigned int old_cw;
+      fpu_fix_start(&old_cw);
+      status = hlll_reduction_zf<ZT, dd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
+
+      if (is_reduced)
+      {
+        if (is_hlll_reduced_zf<ZT, dd_real>(b, u, u_inv, delta, eta))
+          cerr << "Basis is reduced (checked with dd_real).";
+        else
+          cerr << "Basis is not reduced (checked with dd_real).";
+        cerr << endl;
+      }
+
+      fpu_fix_end(&old_cw);
     }
-
-    fpu_fix_end(&old_cw);
-  }
-  else if (sel_ft == FT_QD)
-  {
-    unsigned int old_cw;
-    fpu_fix_start(&old_cw);
-    status = hlll_reduction_zf<ZT, qd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-    if (is_reduced)
+    else if (sel_ft == FT_QD)
     {
-      if (is_hlll_reduced_zf<ZT, qd_real>(b, u, u_inv, delta, eta))
-        cerr << "Basis is reduced (checked with qd_real).";
-      else
-        cerr << "Basis is not reduced (checked with qd_real).";
-      cerr << endl;
-    }
+      unsigned int old_cw;
+      fpu_fix_start(&old_cw);
+      status = hlll_reduction_zf<ZT, qd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
 
-    fpu_fix_end(&old_cw);
-  }
+      if (is_reduced)
+      {
+        if (is_hlll_reduced_zf<ZT, qd_real>(b, u, u_inv, delta, eta))
+          cerr << "Basis is reduced (checked with qd_real).";
+        else
+          cerr << "Basis is not reduced (checked with qd_real).";
+        cerr << endl;
+      }
+
+      fpu_fix_end(&old_cw);
+    }
 #endif
-  else if (sel_ft == FT_MPFR)
-  {
-    int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
-    status       = hlll_reduction_zf<ZT, mpfr_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-    if (is_reduced)
+    else if (sel_ft == FT_MPFR)
     {
-      if (is_hlll_reduced_pr<ZT, mpfr_t>(b, u, u_inv, delta, eta))
-        cerr << "Basis is reduced (checked with mpfr).";
-      else
-        cerr << "Basis is not reduced (checked with mpfr).";
-      cerr << endl;
-    }
+      int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
+      status = hlll_reduction_zf<ZT, mpfr_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
 
-    FP_NR<mpfr_t>::set_prec(old_prec);
-  }
-  else
-  {
-    if (0 <= sel_ft && sel_ft <= FT_MPFR)
-    {
-      // it's a valid choice but we don't have support for it
-      FPLLL_ABORT("Compiled without support for LLL reduction with " << FLOAT_TYPE_STR[sel_ft]);
+      if (is_reduced)
+      {
+        if (is_hlll_reduced_pr<ZT, mpfr_t>(b, u, u_inv, delta, eta))
+          cerr << "Basis is reduced (checked with mpfr).";
+        else
+          cerr << "Basis is not reduced (checked with mpfr).";
+        cerr << endl;
+      }
+
+      FP_NR<mpfr_t>::set_prec(old_prec);
     }
     else
     {
-      FPLLL_ABORT("Floating point type " << sel_ft << "not supported in LLL");
+      if (0 <= sel_ft && sel_ft <= FT_MPFR)
+      {
+        // it's a valid choice but we don't have support for it
+        FPLLL_ABORT("Compiled without support for LLL reduction with " << FLOAT_TYPE_STR[sel_ft]);
+      }
+      else
+      {
+        FPLLL_ABORT("Floating point type " << sel_ft << "not supported in LLL");
+      }
     }
+    zeros_first(b, u, u_inv);
   }
-  zeros_first(b, u, u_inv);
 
-  if (is_reduced)
+  if (is_reduced || nolll)
   {
     int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
 
@@ -890,27 +894,27 @@ FPLLL_DEFINE_LLL(double, ZT_DOUBLE)
 #define FPLLL_DEFINE_HLLL(T, id_t)                                                                 \
   int hlll_reduction(ZZ_mat<T> &b, double delta, double eta, double theta, double c,               \
                      LLLMethod method, FloatType float_type, int precision, int flags,             \
-                     bool is_reduced)                                                              \
+                     bool is_reduced, bool nolll)                                                  \
   {                                                                                                \
     ZZ_mat<T> empty_mat; /* Empty u -> transform disabled */                                       \
     return hlll_reduction_z<T>(b, empty_mat, empty_mat, delta, eta, theta, c, method, id_t,        \
-                               float_type, precision, flags, is_reduced);                          \
+                               float_type, precision, flags, is_reduced, nolll);                   \
   }                                                                                                \
                                                                                                    \
   int hlll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, double delta, double eta, double theta, double c, \
                      LLLMethod method, FloatType float_type, int precision, int flags,             \
-                     bool is_reduced)                                                              \
+                     bool is_reduced, bool nolll)                                                  \
   {                                                                                                \
     ZZ_mat<T> empty_mat;                                                                           \
     if (!u.empty())                                                                                \
       u.gen_identity(b.get_rows());                                                                \
     return hlll_reduction_z<T>(b, u, empty_mat, delta, eta, theta, c, method, id_t, float_type,    \
-                               precision, flags, is_reduced);                                      \
+                               precision, flags, is_reduced, nolll);                               \
   }                                                                                                \
                                                                                                    \
   int hlll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, ZZ_mat<T> &u_inv, double delta, double eta,       \
                      double theta, double c, LLLMethod method, FloatType float_type,               \
-                     int precision, int flags, bool is_reduced)                                    \
+                     int precision, int flags, bool is_reduced, bool nolll)                        \
   {                                                                                                \
     if (!u.empty())                                                                                \
       u.gen_identity(b.get_rows());                                                                \
@@ -918,7 +922,7 @@ FPLLL_DEFINE_LLL(double, ZT_DOUBLE)
       u_inv.gen_identity(b.get_rows());                                                            \
     u_inv.transpose();                                                                             \
     int status = hlll_reduction_z<T>(b, u, u_inv, delta, eta, theta, c, method, id_t, float_type,  \
-                                     precision, flags, is_reduced);                                \
+                                     precision, flags, is_reduced, nolll);                         \
     u_inv.transpose();                                                                             \
     return status;                                                                                 \
   }
