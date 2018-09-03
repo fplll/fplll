@@ -51,8 +51,9 @@ public:
         enable_inverse_transform(arg_uinv_t.get_rows() > 0), u_inv_t(arg_uinv_t),
         row_op_force_long(flags & HOUSEHOLDER_OP_FORCE_LONG)
   {
-    d            = b.get_rows();
-    n            = b.get_cols();
+    d = b.get_rows();
+    n = b.get_cols();
+
     n_known_rows = 0;
     n_known_cols = 0;
     sigma.resize(d);
@@ -89,6 +90,13 @@ public:
       }
     }
 #endif  // DEBUG
+
+    sigma_naively.resize(d);
+    R_naively.resize(d, n);
+    V_naively.resize(d, n);
+    row_expo_naively.resize(d);
+    if (!enable_row_expo)
+      fill(row_expo_naively.begin(), row_expo_naively.end(), -1);
   }
 
   ~MatHouseholder() {}
@@ -188,11 +196,6 @@ public:
 
   inline bool is_row_op_force_long() { return row_op_force_long; }
 
-  void compute_R_naively();
-
-  inline void restart_computation_R() { n_known_rows = 0; }
-
-  inline void set_n_known_cols_max() { n_known_cols = n; }
 private:
   /**
    * Number of rows of b (dimension of the lattice).
@@ -300,6 +303,66 @@ private:
    * See the description of row_addmul.
    */
   const bool row_op_force_long;
+
+  /* Objects and methods for the naive computation of the R factor using Householder. */
+
+public:
+  void compute_R_naively();
+
+  inline void get_R_naively(FT &f, int i, int j, long &expo);
+
+  /**
+   * Returns R[i].
+   */
+  inline MatrixRow<FT> get_R_naively(int i, long &expo);
+
+  /**
+   * Returns the R matrix
+   */
+  const Matrix<FT> &get_R_naively(vector<long> &expo)
+  {
+    expo = row_expo_naively;
+    return R_naively;
+  }
+
+  /**
+   * Norm square of b[k].
+   * Use row_expo_naively.
+   */
+  inline void norm_square_b_naively_row(FT &f, int k, long &expo);
+
+  /**
+   * Truncated norm square of R_naively[k], with coefficients of R_naively[k][0..end-1].
+   */
+  inline void norm_square_R_naively_row(FT &f, int k, int end, long &expo);
+
+private:
+  /**
+   * b = R * q_householder.
+   * R is lower triangular and the diagonal coefficient are >= 0.
+   */
+  Matrix<FT> R_naively;
+
+  /**
+   * Vector v following [MSV, ISSAC'09].
+   */
+  Matrix<FT> V_naively;
+
+  /**
+   * Sigma values following [MSV, ISSAC'09].
+   */
+  vector<FT> sigma_naively;
+
+  /**
+   * When enable_row_expo=true, row_expo_naively[i] is the smallest non-negative integer
+   * such that b(i, j) &lt;= 2^row_expo_naively[i] for all j. Otherwise this array is empty.
+   */
+  vector<long> row_expo_naively;
+
+  /**
+   * R[i] is invalid for i >= n_known_rows.
+   */
+  int n_known_rows_naively;
 };
 
 template <class ZT, class FT>
@@ -406,6 +469,74 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::recover_R(int 
     R(i, k) = R_history[i][i - 1][k];
 
   updated_R = true;
+}
+
+/* TODO: refactorize. */
+template <class ZT, class FT>
+inline void MatHouseholder<ZT, FT>::get_R_naively(FT &f, int i, int j, long &expo)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < d && j >= 0 && j <= i);
+  f    = R_naively(i, j);
+  expo = row_expo_naively[i];
+}
+
+template <class ZT, class FT>
+inline MatrixRow<FT> MatHouseholder<ZT, FT>::get_R_naively(int i, long &expo)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < d);
+  expo = row_expo_naively[i];
+
+  return R_naively[i];
+}
+
+template <class ZT, class FT>
+inline void MatHouseholder<ZT, FT>::norm_square_R_naively_row(FT &f, int k, int end, long &expo)
+{
+  FPLLL_DEBUG_CHECK(k >= 0 && k < d);
+  FPLLL_DEBUG_CHECK(0 <= end && end <= k);
+  if (end == 0)
+  {
+    f = 0.0;
+    FPLLL_DEBUG_CHECK(f.is_zero());
+  }
+  else
+  {
+    R_naively[k].dot_product(f, R_naively[k], 0, end);
+  }
+  if (enable_row_expo)
+    expo = 2 * row_expo_naively[k];
+  else
+    expo = -1;
+}
+
+template <class ZT, class FT>
+inline void MatHouseholder<ZT, FT>::norm_square_b_naively_row(FT &f, int k, long &expo)
+{
+  FPLLL_DEBUG_CHECK(k >= 0 && k < d);
+  if (enable_row_expo)
+    if (enable_bf)
+    {
+      bf[k].dot_product(f, bf[k], 0, n);
+      expo = 2 * row_expo_naively[k];
+    }
+    else
+    {
+      ZT ztmp0;
+      b[k].dot_product(ztmp0, b[k], 0, n);
+      ztmp0.get_f_exp(f, expo);
+    }
+  else
+  {
+    expo = -1;
+    if (enable_bf)
+      bf[k].dot_product(f, bf[k], 0, n);
+    else
+    {
+      ZT ztmp0;
+      b[k].dot_product(ztmp0, b[k], 0, n);
+      f.set_z(ztmp0);
+    }
+  }
 }
 
 FPLLL_END_NAMESPACE

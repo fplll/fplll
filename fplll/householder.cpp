@@ -193,12 +193,10 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::compute_R_naively()
 {
-  // Set n_known_cols to n, since we do not use the shape of the basis here.
-  n_known_cols = n;
   FT ftmp0, ftmp1, s;
   int i, j;
 
-  // Set B in R.
+  // Set B in R_naively.
   for (i = 0; i < d; i++)
   {
     if (enable_row_expo)
@@ -207,20 +205,20 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::compute_R_naively()
 
       for (j = 0; j < n; j++)
       {
-        b(i, j).get_f_exp(R(i, j), tmp_col_expo[j]);
+        b(i, j).get_f_exp(R_naively(i, j), tmp_col_expo[j]);
         max_expo = max(max_expo, tmp_col_expo[j]);
       }
 
       for (j = 0; j < n; j++)
-        R(i, j).mul_2si(R(i, j), tmp_col_expo[j] - max_expo);
+        R_naively(i, j).mul_2si(R_naively(i, j), tmp_col_expo[j] - max_expo);
 
-      row_expo[i] = max_expo;
+      row_expo_naively[i] = max_expo;
       FPLLL_DEBUG_CHECK(row_expo[i] >= 0);
     }
     else
     {
       for (j = 0; j < n; j++)
-        R(i, j).set_z(b(i, j));
+        R_naively(i, j).set_z(b(i, j));
     }
   }
 
@@ -229,64 +227,64 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::compute_R_naively()
     for (j = 0; j < i; j++)
     {
       // vj * ri[j..n]^T
-      V[j].dot_product(ftmp1, R[i], j, n);
+      V_naively[j].dot_product(ftmp1, R_naively[i], j, n);
 
       //-vj * ri[j..n]^T
       ftmp1.neg(ftmp1);
       for (int k = j; k < n; k++)
       {
         // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
-        R(i, k).addmul(V(j, k), ftmp1);
+        R_naively(i, k).addmul(V_naively(j, k), ftmp1);
       }
-      // ri[j] = sigma[j] * ri[j]
-      R(i, j).mul(sigma[j], R(i, j));
+      // ri[j] = sigma_naively[j] * ri[j]
+      R_naively(i, j).mul(sigma_naively[j], R_naively(i, j));
     }
 
-    // Copy R[i][i..n] in V
+    // Copy R_naively[i][i..n] in V_naively
     for (j = i; j < n; j++)
     {
-      V(i, j) = R(i, j);
+      V_naively(i, j) = R_naively(i, j);
     }
-    // sigma[i] = sign(r[1])
-    sigma[i] = (R(i, i).cmp(0.0) < 0) ? -1.0 : 1.0;
-    R[i].dot_product(s, R[i], i, n);
+    // sigma_naively[i] = sign(r[1])
+    sigma_naively[i] = (R_naively(i, i).cmp(0.0) < 0) ? -1.0 : 1.0;
+    R_naively[i].dot_product(s, R_naively[i], i, n);
     s.sqrt(s);
-    s.mul(s, sigma[i]);
-    ftmp0.add(R(i, i), s);
+    s.mul(s, sigma_naively[i]);
+    ftmp0.add(R_naively(i, i), s);
     if (ftmp0.cmp(0.0) != 0)
     {
       if (i + 1 == n)
         ftmp1 = 0.0;
       else
-        R[i].dot_product(ftmp1, R[i], i + 1, n);
+        R_naively[i].dot_product(ftmp1, R_naively[i], i + 1, n);
       if (ftmp1.cmp(0.0) != 0)
       {
         ftmp1.neg(ftmp1);
-        V(i, i).div(ftmp1, ftmp0);
+        V_naively(i, i).div(ftmp1, ftmp0);
         s.neg(s);
-        ftmp0.mul(s, V(i, i));
+        ftmp0.mul(s, V_naively(i, i));
         ftmp0.sqrt(ftmp0);
         for (j = i + 1; j < n; j++)
         {
-          V(i, j).div(V(i, j), ftmp0);
+          V_naively(i, j).div(V_naively(i, j), ftmp0);
         }
-        V(i, i).div(V(i, i), ftmp0);
+        V_naively(i, i).div(V_naively(i, i), ftmp0);
         for (j = i + 1; j < n; j++)
         {
-          R(i, j) = 0.0;
+          R_naively(i, j) = 0.0;
         }
-        R(i, i).abs(s);
+        R_naively(i, i).abs(s);
       }
       else
       {
-        if (R(i, i).cmp(0.0) < 0)
-          R(i, i).neg(R(i, i));
+        if (R_naively(i, i).cmp(0.0) < 0)
+          R_naively(i, i).neg(R_naively(i, i));
 
-        V(i, i) = 0.0;
+        V_naively(i, i) = 0.0;
         for (int k = i + 1; k < n; k++)
         {
-          R(i, k) = 0.0;
-          V(i, k) = 0.0;
+          R_naively(i, k) = 0.0;
+          V_naively(i, k) = 0.0;
         }
       }
     }
@@ -294,12 +292,10 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::compute_R_naively()
     {
       for (int k = i; k < n; k++)
       {
-        R(i, k) = 0.0;
-        V(i, k) = 0.0;
+        R_naively(i, k) = 0.0;
+        V_naively(i, k) = 0.0;
       }
     }
-
-    n_known_rows++;
   }
 }
 

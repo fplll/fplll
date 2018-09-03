@@ -187,8 +187,8 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
   {
     for (int j = 0; j < i; j++)
     {
-      m.get_R(ftmp0, i, j, expo0);
-      m.get_R(ftmp1, j, j, expo1);
+      m.get_R_naively(ftmp0, i, j, expo0);
+      m.get_R_naively(ftmp1, j, j, expo1);
       ftmp1.div(ftmp0, ftmp1);
       ftmp1.abs(ftmp1);
 
@@ -207,14 +207,15 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
 
   for (int i = 1; i < m.get_d(); i++)
   {
-    m.norm_square_b_row(ftmp0, i, expo0);  // ftmp0 = ||b[i]||^2
-    m.norm_square_R_row(ftmp1, i, i - 1, expo1);
+    m.norm_square_b_naively_row(ftmp0, i, expo0);  // ftmp0 = ||b[i]||^2
+    m.norm_square_R_naively_row(ftmp1, i, i - 1,
+                                expo1);  // ftmp1 = sum_{i = 0}^{i < i - 1}R[i][i]^2
 
     if (expo0 > -1)
       ftmp0.mul_2si(ftmp0, expo0 - expo1);
 
     ftmp1.sub(ftmp0, ftmp1);  // ftmp1 = ||b[i]||^2 - sum_{i = 0}^{i < i - 1}R[i][i]^2
-    m.get_R(ftmp0, i - 1, i - 1, expo0);
+    m.get_R_naively(ftmp0, i - 1, i - 1, expo0);
     ftmp0.mul(ftmp0, ftmp0);
     ftmp0.mul(delta_, ftmp0);  // ftmp0 = delta_ * R(i - 1, i - 1)^2
 
