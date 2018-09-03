@@ -91,6 +91,7 @@ public:
     }
 #endif  // DEBUG
 
+    n_known_rows_naively = 0;
     sigma_naively.resize(d);
     R_naively.resize(d, n);
     V_naively.resize(d, n);
@@ -308,6 +309,9 @@ private:
 
 public:
   void compute_R_naively();
+
+  /* Apply Householder transformations on row i. */
+  void compute_R_naively(int i);
 
   inline void get_R_naively(FT &f, int i, int j, long &expo);
 
