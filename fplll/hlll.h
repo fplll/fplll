@@ -103,7 +103,7 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::compute_dR(int 
 }
 
 template <class ZT, class FT>
-bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta);
+bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta, int d, bool compute);
 
 FPLLL_END_NAMESPACE
 

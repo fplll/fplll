@@ -170,20 +170,29 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   } while (true);
 }
 
+/* d is to perform the check only for row [0, d[. If d = -1, d = m.get_d(). */
+/* If compute is true and d > -1, apply Householder transpose on row [0, d[. */
 template <class ZT, class FT>
-bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
+bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta, int d, bool compute)
 {
   FT ftmp0;
   FT ftmp1;
   FT delta_ = delta;
   FT eta_   = eta;
 
-  m.compute_R_naively();
+  if (d == -1)
+  {
+    d = m.get_d();
+    m.compute_R_naively();
+  }
+  else if (compute)
+    for (int i = 0; i < d; i++)
+      m.compute_R_naively(i);
 
   long expo0 = -1;
   long expo1 = -1;
 
-  for (int i = 0; i < m.get_d(); i++)
+  for (int i = 0; i < d; i++)
   {
     for (int j = 0; j < i; j++)
     {
@@ -205,7 +214,7 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
     }
   }
 
-  for (int i = 1; i < m.get_d(); i++)
+  for (int i = 1; i < d; i++)
   {
     m.norm_square_b_naively_row(ftmp0, i, expo0);  // ftmp0 = ||b[i]||^2
     m.norm_square_R_naively_row(ftmp1, i, i - 1,
@@ -235,13 +244,13 @@ template class HLLLReduction<Z_NR<double>, FP_NR<double>>;
 template class HLLLReduction<Z_NR<mpz_t>, FP_NR<double>>;
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<double>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<double>> &m,
-                                            double delta, double eta);
+                                            double delta, double eta, int d, bool compute);
 template bool
 is_hlll_reduced<Z_NR<long>, FP_NR<double>>(MatHouseholder<Z_NR<long>, FP_NR<double>> &m,
-                                           double delta, double eta);
+                                           double delta, double eta, int d, bool compute);
 template bool
 is_hlll_reduced<Z_NR<double>, FP_NR<double>>(MatHouseholder<Z_NR<double>, FP_NR<double>> &m,
-                                             double delta, double eta);
+                                             double delta, double eta, int d, bool compute);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class HLLLReduction<Z_NR<long>, FP_NR<long double>>;
@@ -249,12 +258,13 @@ template class HLLLReduction<Z_NR<double>, FP_NR<long double>>;
 template class HLLLReduction<Z_NR<mpz_t>, FP_NR<long double>>;
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<long double>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<long double>> &m,
-                                                 double delta, double eta);
+                                                 double delta, double eta, int d, bool compute);
 template bool
 is_hlll_reduced<Z_NR<long>, FP_NR<long double>>(MatHouseholder<Z_NR<long>, FP_NR<long double>> &m,
-                                                double delta, double eta);
+                                                double delta, double eta, int d, bool compute);
 template bool is_hlll_reduced<Z_NR<double>, FP_NR<long double>>(
-    MatHouseholder<Z_NR<double>, FP_NR<long double>> &m, double delta, double eta);
+    MatHouseholder<Z_NR<double>, FP_NR<long double>> &m, double delta, double eta, int d,
+    bool compute);
 #endif
 
 #ifdef FPLLL_WITH_QD
@@ -267,22 +277,22 @@ template class HLLLReduction<Z_NR<double>, FP_NR<qd_real>>;
 template class HLLLReduction<Z_NR<mpz_t>, FP_NR<qd_real>>;
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<qd_real>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<qd_real>> &m,
-                                             double delta, double eta);
+                                             double delta, double eta, int d, bool compute);
 template bool
 is_hlll_reduced<Z_NR<long>, FP_NR<qd_real>>(MatHouseholder<Z_NR<long>, FP_NR<qd_real>> &m,
-                                            double delta, double eta);
+                                            double delta, double eta, int d, bool compute);
 template bool
 is_hlll_reduced<Z_NR<double>, FP_NR<qd_real>>(MatHouseholder<Z_NR<double>, FP_NR<qd_real>> &m,
-                                              double delta, double eta);
+                                              double delta, double eta, int d, bool compute);
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<dd_real>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<dd_real>> &m,
-                                             double delta, double eta);
+                                             double delta, double eta, int d, bool compute);
 template bool
 is_hlll_reduced<Z_NR<long>, FP_NR<dd_real>>(MatHouseholder<Z_NR<long>, FP_NR<dd_real>> &m,
-                                            double delta, double eta);
+                                            double delta, double eta, int d, bool compute);
 template bool
 is_hlll_reduced<Z_NR<double>, FP_NR<dd_real>>(MatHouseholder<Z_NR<double>, FP_NR<dd_real>> &m,
-                                              double delta, double eta);
+                                              double delta, double eta, int d, bool compute);
 #endif
 
 #ifdef FPLLL_WITH_DPE
@@ -291,12 +301,13 @@ template class HLLLReduction<Z_NR<double>, FP_NR<dpe_t>>;
 template class HLLLReduction<Z_NR<mpz_t>, FP_NR<dpe_t>>;
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<dpe_t>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<dpe_t>> &m,
-                                           double delta, double eta);
+                                           double delta, double eta, int d, bool compute);
 template bool is_hlll_reduced<Z_NR<long>, FP_NR<dpe_t>>(MatHouseholder<Z_NR<long>, FP_NR<dpe_t>> &m,
-                                                        double delta, double eta);
+                                                        double delta, double eta, int d,
+                                                        bool compute);
 template bool
 is_hlll_reduced<Z_NR<double>, FP_NR<dpe_t>>(MatHouseholder<Z_NR<double>, FP_NR<dpe_t>> &m,
-                                            double delta, double eta);
+                                            double delta, double eta, int d, bool compute);
 #endif
 
 template class HLLLReduction<Z_NR<long>, FP_NR<mpfr_t>>;
@@ -304,12 +315,12 @@ template class HLLLReduction<Z_NR<double>, FP_NR<mpfr_t>>;
 template class HLLLReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<mpfr_t>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<mpfr_t>> &m,
-                                            double delta, double eta);
+                                            double delta, double eta, int d, bool compute);
 template bool
 is_hlll_reduced<Z_NR<long>, FP_NR<mpfr_t>>(MatHouseholder<Z_NR<long>, FP_NR<mpfr_t>> &m,
-                                           double delta, double eta);
+                                           double delta, double eta, int d, bool compute);
 template bool
 is_hlll_reduced<Z_NR<double>, FP_NR<mpfr_t>>(MatHouseholder<Z_NR<double>, FP_NR<mpfr_t>> &m,
-                                             double delta, double eta);
+                                             double delta, double eta, int d, bool compute);
 
 FPLLL_END_NAMESPACE

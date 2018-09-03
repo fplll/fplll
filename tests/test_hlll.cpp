@@ -35,7 +35,7 @@ template <class ZT, class FT> int test_hlll(ZZ_mat<ZT> &A, int flags, int prec =
   hlll_obj.lll();
 
   MatHouseholder<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, u, ut, HOUSEHOLDER_DEFAULT);
-  int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, 0.99, 0.52);
+  int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, 0.99, 0.52, -1, true);
 
   if (status == false)
     cerr << "Output of HLLL reduction is not HLLL reduced." << endl;
