@@ -70,6 +70,29 @@ template <class ZT, class FT> bool rs_are_equal(MatGSO<ZT, FT> M1, MatGSOGram<ZT
   return true;
 }
 
+template <class FT> void assert_diag_R(FT rhd, int i, int &status)
+{
+  if (rhd.cmp(0.0) <= 0)
+  {
+    cerr << "R(" << i << ", " << i << ") must be positive." << endl;
+    status = 1;
+  }
+}
+
+template <class FT> void assert_mu_r_householder(FT rh, FT rhd, FT mu, FT r, int &status)
+{
+  if (abs(mu - rh / rhd) > 0.001)
+  {
+    cerr << "Error (mu): " << mu << " != " << rh / rhd << endl;
+    status = 1;
+  }
+  if (abs(r - rh * rhd) > 0.001)
+  {
+    cerr << "Error (r): " << r << " != " << rh * rhd << endl;
+    status = 1;
+  }
+}
+
 /**
  * Test if:
  *   mu(i, j) = R(i, j) / R(j, j)
@@ -84,6 +107,7 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A, U, UT, HOUSEHOLDER_DEFAULT);
   M.update_gso();
   Mhouseholder.update_R();
+  Mhouseholder.compute_R_naively();
 
   FP_NR<FT> r;
   FP_NR<FT> rh;
@@ -94,11 +118,9 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
   for (int i = 0; i < A.get_rows(); i++)
   {
     Mhouseholder.get_R(rhd, i, i, expo);
-    if (rhd.cmp(0.0) <= 0)
-    {
-      cerr << "R(" << i << ", " << i << ") must be positive." << endl;
-      status = 1;
-    }
+    assert_diag_R(rhd, i, status);
+    Mhouseholder.get_R_naively(rhd, i, i, expo);
+    assert_diag_R(rhd, i, status);
   }
 
   for (int i = 0; i < A.get_rows(); i++)
@@ -109,16 +131,10 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
       M.get_mu(mu, i, j);
       Mhouseholder.get_R(rh, i, j, expo);
       Mhouseholder.get_R(rhd, j, j, expo);
-      if (abs(mu - rh / rhd) > 0.001)
-      {
-        cerr << "Error (mu): " << mu << " != " << rh / rhd << endl;
-        status = 1;
-      }
-      if (abs(r - rh * rhd) > 0.001)
-      {
-        cerr << "Error (r): " << r << " != " << rh * rhd << endl;
-        status = 1;
-      }
+      assert_mu_r_householder(rh, rhd, mu, r, status);
+      Mhouseholder.get_R_naively(rh, i, j, expo);
+      Mhouseholder.get_R_naively(rhd, j, j, expo);
+      assert_mu_r_householder(rh, rhd, mu, r, status);
     }
   }
 
