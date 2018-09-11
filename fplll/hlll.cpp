@@ -98,9 +98,9 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   // for all i > max_index, xf[i] == 0.
   int max_index = -1;
 
-  m.update_R(kappa, kappa);
+  m.update_R(kappa, false);
 
-  /* Most likely, at this step, the next update_R(kappa, kappa) must modify some coefficients since
+  /* Most likely, at this step, the next update_R(kappa, false) must modify some coefficients since
    * b will most likely
    * be changed. If b is not modified during the size reduction, there will be only a call to
    * update_R_last(kappa),
@@ -158,7 +158,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       if (ftmp0.cmp(ftmp1) <= 0)
       {
         // Continue to try to reduce b(kappa).
-        m.update_R(kappa, kappa);
+        m.update_R(kappa, false);
       }
       else
       {

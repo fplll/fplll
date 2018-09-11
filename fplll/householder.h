@@ -136,9 +136,10 @@ public:
   const Matrix<ZT> &get_b() { return b; }
 
   /**
-   * Apply Householder transformation on row i, from cols [0, last_j).
+   * Apply Householder transformation on row i, from cols [0, i).
+   * If last_j, apply Householder transformation on row i, from cols [0, i].
    */
-  void update_R(int i, int last_j);
+  void update_R(int i, bool last_j);
 
   /**
    * Apply Householder transformation on row i.
@@ -400,7 +401,7 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::set_R(FT &f, i
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R(int i)
 {
-  update_R(i, i + 1);
+  update_R(i, true);
 }
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R()

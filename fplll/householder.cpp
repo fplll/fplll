@@ -101,7 +101,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
   n_known_rows++;
 }
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int last_j)
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool last_j)
 {
   // To update row i, we need to know n_known_rows rows
   FPLLL_DEBUG_CHECK(i <= n_known_rows);
@@ -114,7 +114,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
     FPLLL_DEBUG_CHECK(last_j <= n_known_cols);
 
     int j, k;
-    int j_stop = last_j == i + 1 ? i : last_j;
 
     if (enable_row_expo)
     {
@@ -151,42 +150,28 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, int l
         bf(i, j) = 0.0;
     }
 
-    if (j_stop - 1 >= 0)
+    for (j = 0; j < i; j++)
     {
-      for (j = 0; j < j_stop - 1; j++)
-      {
-        // vj * ri[j..n]^T
-        V[j].dot_product(ftmp0, R[i], j, n);
+      // vj * ri[j..n]^T
+      // TODO: n_known_cols here?
+      V[j].dot_product(ftmp0, R[i], j, n);
 
-        //-vj * ri[j..n]^T
-        ftmp0.neg(ftmp0);
-        for (k = j; k < n; k++)
-        {
-          // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
-          R(i, k).addmul(V(j, k), ftmp0);
-        }
-        // ri[j] = sigma[j] * ri[j]
-        R(i, j).mul(sigma[j], R(i, j));
-
-        // Copy R into R_history
-        for (int k           = j; k < n; k++)
-          R_history[i][j][k] = R(i, k);
-      }
-
-      V[j_stop - 1].dot_product(ftmp0, R[i], j_stop - 1, n);
+      //-vj * ri[j..n]^T
       ftmp0.neg(ftmp0);
-      R(i, j_stop - 1).addmul(V(j_stop - 1, j_stop - 1), ftmp0);
-      R(i, j_stop - 1).mul(sigma[j_stop - 1], R(i, j_stop - 1));
-
-      for (k = j_stop; k < n; k++)
-        R(i, k).addmul(V(j_stop - 1, k), ftmp0);
+      for (k = j; k < n; k++)
+      {
+        // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
+        R(i, k).addmul(V(j, k), ftmp0);
+      }
+      // ri[j] = sigma[j] * ri[j]
+      R(i, j).mul(sigma[j], R(i, j));
 
       // Copy R into R_history
-      for (k                    = j_stop; k < n; k++)
-        R_history[i][j_stop][k] = R(i, k);
+      for (int k           = j; k < n; k++)
+        R_history[i][j][k] = R(i, k);
     }
 
-    if (last_j == i + 1)
+    if (last_j)
       update_R_last(i);
   }
 }
@@ -221,17 +206,22 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::compute_R_naively(int
       R_naively(i, j).set_z(b(i, j));
   }
 
+  // Copy R_naively[i] in bf[i] (while we copy b[i] in R_naively[i])
+  if (enable_bf)
+    for (j = 0; j < n; j++)
+      bf(i, j) = R_naively(i, j);
+
   for (j = 0; j < i; j++)
   {
     // vj * ri[j..n]^T
-    V_naively[j].dot_product(ftmp1, R_naively[i], j, n);
+    V_naively[j].dot_product(ftmp0, R_naively[i], j, n);
 
     //-vj * ri[j..n]^T
-    ftmp1.neg(ftmp1);
+    ftmp0.neg(ftmp0);
     for (int k = j; k < n; k++)
     {
       // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
-      R_naively(i, k).addmul(V_naively(j, k), ftmp1);
+      R_naively(i, k).addmul(V_naively(j, k), ftmp0);
     }
     // ri[j] = sigma_naively[j] * ri[j]
     R_naively(i, j).mul(sigma_naively[j], R_naively(i, j));
