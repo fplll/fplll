@@ -29,6 +29,12 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   FT s;
   FT tmp;
   FT sum;
+
+#ifdef HOUSEHOLDER_NAIVELY
+  FT dR;
+  long expo_dR;
+#endif  // HOUSEHOLDER_NAIVELY
+
   /* TODO: not exactly the good value
    * delta_ in (delta + 2^(-p + p0), 1 - 2^(-p + p0))
    */
@@ -36,8 +42,12 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   int start_time = cputime();
   long expo_k1_k1, expo_k_k1, expo_k_k;
 
+#ifndef HOUSEHOLDER_NAIVELY
   m.update_R(0);
   compute_dR(0, delta_);
+#else   // HOUSEHOLDER_NAIVELY
+  m.update_R_naively(0);
+#endif  // HOUSEHOLDER_NAIVELY
 
   if (verbose)
     print_params();
@@ -56,20 +66,47 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
     size_reduction(k);
 
+#ifndef HOUSEHOLDER_NAIVELY
     m.get_R(s, k, k - 1, expo_k_k1);
+#else   //  HOUSEHOLDER_NAIVELY
+    m.get_R_naively(s, k, k - 1, expo_k_k1);
+#endif  // HOUSEHOLDER_NAIVELY
+
     s.mul(s, s);  // s = R(k, k - 1)^2
+
+#ifndef HOUSEHOLDER_NAIVELY
     m.get_R(tmp, k, k, expo_k_k);
+#else   //  HOUSEHOLDER_NAIVELY
+    m.get_R_naively(tmp, k, k, expo_k_k);
+#endif  // HOUSEHOLDER_NAIVELY
+
     tmp.mul(tmp, tmp);  // tmp = R(k, k)^2
     s.add(tmp, s);      // s = R(k, k - 1)^2 + R(k, k)^2
-    // Here, s = R(k, k - 1)^2 + R(k, k)^2 = ||b_k||^2 - sum_{i in [0, k-2)} R(k, i)^2
+// Here, s = R(k, k - 1)^2 + R(k, k)^2 = ||b_k||^2 - sum_{i in [0, k-2)} R(k, i)^2
+
+#ifndef HOUSEHOLDER_NAIVELY
     expo_k1_k1 = m.get_row_expo(k - 1);
+#else   //  HOUSEHOLDER_NAIVELY
+    expo_k1_k1 = m.get_row_expo_naively(k - 1);
+#endif  // HOUSEHOLDER_NAIVELY
 
     if (expo_k1_k1 > -1)
       s.mul_2si(s, 2 * (expo_k_k - expo_k1_k1));
 
+#ifndef HOUSEHOLDER_NAIVELY
     if (dR[k - 1] <= s)
+#else   //  HOUSEHOLDER_NAIVELY
+    m.get_R_naively(dR, k - 1, k - 1, expo_dR);
+    dR.mul(dR, dR);
+    dR.mul(delta_, dR);  // dR[k] = delta_ * R(k, k)^2
+
+    if (dR <= s)
+#endif  // HOUSEHOLDER_NAIVELY
+
     {
+#ifndef HOUSEHOLDER_NAIVELY
       compute_dR(k, delta_);
+#endif  // HOUSEHOLDER_NAIVELY
       k++;
     }
     else
@@ -78,8 +115,12 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
       if (k - 1 == 0)
       {
+#ifndef HOUSEHOLDER_NAIVELY
         m.update_R(0);
         compute_dR(0, delta_);
+#else   // HOUSEHOLDER_NAIVELY
+        m.update_R_naively(0);
+#endif  // HOUSEHOLDER_NAIVELY
       }
       else
         m.recover_R(k - 1);
@@ -98,6 +139,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   // for all i > max_index, xf[i] == 0.
   int max_index = -1;
 
+#ifndef HOUSEHOLDER_NAIVELY
   m.update_R(kappa, false);
 
   /* Most likely, at this step, the next update_R(kappa, false) must modify some coefficients since
@@ -108,6 +150,9 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
    * TODO: find a best place to use this function.
    */
   m.set_updated_R_false();
+#else   // HOUSEHOLDER_NAIVELY
+  m.update_R_naively(kappa, false);
+#endif  // HOUSEHOLDER_NAIVELY
 
   do
   {
@@ -115,10 +160,18 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
 
     for (int i = kappa - 1; i >= 0; i--)
     {
+#ifndef HOUSEHOLDER_NAIVELY
       m.get_R(ftmp1, kappa, i, expo0);  // expo0 = row_expo[kappa]
       m.get_R(ftmp0, i, i, expo1);      // expo1 = row_expo[i]
 
       ftmp1.mul(ftmp1, m.get_R_inverse_diag(i));  // x[i] = R(kappa, i) / R(i, i)
+#else                                             // HOUSEHOLDER_NAIVELY
+      m.get_R_naively(ftmp1, kappa, i, expo0);  // expo0 = row_expo[kappa]
+      m.get_R_naively(ftmp0, i, i, expo1);      // expo1 = row_expo[i]
+
+      ftmp1.div(ftmp1, ftmp0);                      // x[i] = R(kappa, i) / R(i, i)
+#endif                                            // HOUSEHOLDER_NAIVELY
+
       /* If T = mpfr or dpe, enable_row_expo must be false and then, expo0 - expo1 == 0 (required by
        * rnd_we with this types) */
       ftmp1.rnd_we(ftmp1, expo0 - expo1);
@@ -128,11 +181,27 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       {
         for (int j = 0; j < i; j++)
         {
-          m.get_R(ftmp1, i, j, expo0);      // expo0 = row_expo[i]
-          ftmp1.mul(xf[i], ftmp1);          // ftmp1 = x[i] * R(i, j)
+#ifndef HOUSEHOLDER_NAIVELY
+          m.get_R(ftmp1, i, j, expo0);  // expo0 = row_expo[i]
+#else  // HOUSEHOLDER_NAIVELY
+          m.get_R_naively(ftmp1, i, j, expo0);      // expo0 = row_expo[i]
+#endif  // HOUSEHOLDER_NAIVELY
+
+          ftmp1.mul(xf[i], ftmp1);  // ftmp1 = x[i] * R(i, j)
+
+#ifndef HOUSEHOLDER_NAIVELY
           m.get_R(ftmp0, kappa, j, expo0);  // expo0 = row_expo[kappa]
-          ftmp0.add(ftmp0, ftmp1);          // ftmp0 = R(kappa, j) + x[i] * R(i, j)
+#else                                       // HOUSEHOLDER_NAIVELY
+          m.get_R_naively(ftmp0, kappa, j, expo0);  // expo0 = row_expo[kappa]
+#endif                                      // HOUSEHOLDER_NAIVELY
+
+          ftmp0.add(ftmp0, ftmp1);  // ftmp0 = R(kappa, j) + x[i] * R(i, j)
+
+#ifndef HOUSEHOLDER_NAIVELY
           m.set_R(ftmp0, kappa, j);
+#else   // HOUSEHOLDER_NAIVELY
+          m.set_R_naively(ftmp0, kappa, j);
+#endif  // HOUSEHOLDER_NAIVELY
         }
         max_index = max(max_index, i);
       }
@@ -140,30 +209,51 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
 
     if (max_index == -1)
     {
-      // If max_index == -1, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
-      // 1 > 2^(-cd)=sr since cd > 0. Then, compute the last coefficient of R and stop.
+// If max_index == -1, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
+// 1 > 2^(-cd)=sr since cd > 0. Then, compute the last coefficient of R and stop.
+#ifndef HOUSEHOLDER_NAIVELY
       m.update_R_last(kappa);
+#else   // HOUSEHOLDER_NAIVELY
+      m.update_R_last_naively(kappa);
+#endif  // HOUSEHOLDER_NAIVELY
+
       return;
     }
     else
     {
+#ifndef HOUSEHOLDER_NAIVELY
       m.norm_square_b_row(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
       m.addmul_b_rows(kappa, xf);
       m.norm_square_b_row(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
-      ftmp1.mul(sr, ftmp1);                      // ftmp1 = 2^(-cd) * ftmp1 = sr * ftmp1
+#else                                            // HOUSEHOLDER_NAIVELY
+      m.norm_square_b_row_naively(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
+      m.addmul_b_rows_naively(kappa, xf);
+      m.norm_square_b_row_naively(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
+#endif                                           // HOUSEHOLDER_NAIVELY
+
+      ftmp1.mul(sr, ftmp1);  // ftmp1 = 2^(-cd) * ftmp1 = sr * ftmp1
 
       if (expo1 > -1)
         ftmp0.mul_2si(ftmp0, expo1 - expo0);
 
       if (ftmp0.cmp(ftmp1) <= 0)
       {
-        // Continue to try to reduce b(kappa).
+// Continue to try to reduce b(kappa).
+#ifndef HOUSEHOLDER_NAIVELY
         m.update_R(kappa, false);
+#else   // HOUSEHOLDER_NAIVELY
+        m.update_R_naively(kappa, false);
+#endif  // HOUSEHOLDER_NAIVELY
       }
       else
       {
-        // Compute the last coefficients of R and stop.
+// Compute the last coefficients of R and stop.
+#ifndef HOUSEHOLDER_NAIVELY
         m.update_R(kappa);
+#else   // HOUSEHOLDER_NAIVELY
+        m.update_R_naively(kappa);
+#endif  // HOUSEHOLDER_NAIVELY
+
         return;
       }
     }
@@ -183,11 +273,11 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta, int d,
   if (d == -1)
   {
     d = m.get_d();
-    m.compute_R_naively();
+    m.update_R_naively();
   }
   else if (compute)
     for (int i = 0; i < d; i++)
-      m.compute_R_naively(i);
+      m.update_R_naively(i);
 
   long expo0 = -1;
   long expo1 = -1;
@@ -216,8 +306,8 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta, int d,
 
   for (int i = 1; i < d; i++)
   {
-    m.norm_square_b_naively_row(ftmp0, i, expo0);  // ftmp0 = ||b[i]||^2
-    m.norm_square_R_naively_row(ftmp1, i, i - 1,
+    m.norm_square_b_row_naively(ftmp0, i, expo0);  // ftmp0 = ||b[i]||^2
+    m.norm_square_R_row_naively(ftmp1, i, i - 1,
                                 expo1);  // ftmp1 = sum_{i = 0}^{i < i - 1}R[i][i]^2
 
     if (expo0 > -1)

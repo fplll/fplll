@@ -107,7 +107,7 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A, U, UT, HOUSEHOLDER_DEFAULT);
   M.update_gso();
   Mhouseholder.update_R();
-  Mhouseholder.compute_R_naively();
+  Mhouseholder.update_R_naively();
 
   FP_NR<FT> r;
   FP_NR<FT> rh;

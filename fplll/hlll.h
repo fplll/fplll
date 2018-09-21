@@ -92,6 +92,10 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
        << "row_expo = " << static_cast<int>(m.is_enable_row_expo()) << endl
        << "enable_bf = " << static_cast<int>(m.is_enable_bf()) << endl
        << "long_in_size_reduction = " << static_cast<int>(m.is_row_op_force_long()) << endl;
+
+#ifdef HOUSEHOLDER_NAIVELY
+  cerr << "householder_naively = 1" << endl;
+#endif  // HOUSEHOLDER_NAIVELY
 }
 
 template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::compute_dR(int k, FT delta_)

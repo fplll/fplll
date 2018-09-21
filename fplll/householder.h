@@ -309,10 +309,14 @@ private:
   /* Objects and methods for the naive computation of the R factor using Householder. */
 
 public:
-  void compute_R_naively();
+  void update_R_naively();
+
+  void update_R_naively(int i);
 
   /* Apply Householder transformations on row i. */
-  void compute_R_naively(int i);
+  void update_R_naively(int i, bool last_j);
+
+  void update_R_last_naively(int i);
 
   inline void get_R_naively(FT &f, int i, int j, long &expo);
 
@@ -334,12 +338,43 @@ public:
    * Norm square of b[k].
    * Use row_expo_naively.
    */
-  inline void norm_square_b_naively_row(FT &f, int k, long &expo);
+  inline void norm_square_b_row_naively(FT &f, int k, long &expo);
 
   /**
    * Truncated norm square of R_naively[k], with coefficients of R_naively[k][0..end-1].
    */
-  inline void norm_square_R_naively_row(FT &f, int k, int end, long &expo);
+  inline void norm_square_R_row_naively(FT &f, int k, int end, long &expo);
+
+  inline long get_row_expo_naively(int i) { return row_expo_naively[i]; }
+
+  inline void set_R_naively(FT &f, int i, int j);
+
+  /**
+   * b[k] = b[k] - sum_{i = 0}^{k - 1}(x[i] * b[i])
+   */
+  void addmul_b_rows_naively(int k, vector<FT> xf);
+
+  /**
+   * b[i] := b[i] + x * 2^expo_add * b[j].
+   * After one or several calls to row_addmul_we, row_op_end must be called.
+   * Special cases |x| &lt;= 1 and |x| &lt;= LONG_MAX are optimized.
+   * x should be an integer.
+   * If row_op_force_long=true, x is always converted to (2^expo * long) instead
+   * of (2^expo * ZT), which is faster if ZT=mpz_t but might lead to a loss of
+   * precision (in LLL, more Babai iterations are needed).
+   */
+  void row_add_naively(int i, int j);
+  void row_sub_naively(int i, int j);
+  void row_addmul_si_naively(int i, int j, long x);
+  void row_addmul_si_2exp_naively(int i, int j, long x, long expo);
+  void row_addmul_2exp_naively(int i, int j, const ZT &x, long expo);
+  void row_addmul_we_naively(int i, int j, const FT &x, long expo_add);
+
+  /**
+   * Invalidate row k to row n_known_rows_naively - 1.
+   * Update n_known_rows_naively to k.
+   */
+  inline void invalidate_row_naively(int k);
 
 private:
   /**
@@ -365,7 +400,7 @@ private:
   vector<long> row_expo_naively;
 
   /**
-   * R[i] is invalid for i >= n_known_rows.
+   * R[i] is invalid for i >= n_known_rows_naively.
    */
   int n_known_rows_naively;
 };
@@ -476,6 +511,17 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::recover_R(int 
   updated_R = true;
 }
 
+template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R_naively(int i)
+{
+  update_R_naively(i, true);
+}
+
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively()
+{
+  for (int i = 0; i < d; i++)
+    update_R_naively(i);
+}
+
 /* TODO: refactorize. */
 template <class ZT, class FT>
 inline void MatHouseholder<ZT, FT>::get_R_naively(FT &f, int i, int j, long &expo)
@@ -495,7 +541,7 @@ inline MatrixRow<FT> MatHouseholder<ZT, FT>::get_R_naively(int i, long &expo)
 }
 
 template <class ZT, class FT>
-inline void MatHouseholder<ZT, FT>::norm_square_R_naively_row(FT &f, int k, int end, long &expo)
+inline void MatHouseholder<ZT, FT>::norm_square_R_row_naively(FT &f, int k, int end, long &expo)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
   FPLLL_DEBUG_CHECK(0 <= end && end <= k);
@@ -515,7 +561,7 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_naively_row(FT &f, int k, int 
 }
 
 template <class ZT, class FT>
-inline void MatHouseholder<ZT, FT>::norm_square_b_naively_row(FT &f, int k, long &expo)
+inline void MatHouseholder<ZT, FT>::norm_square_b_row_naively(FT &f, int k, long &expo)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
   if (enable_row_expo)
@@ -542,6 +588,19 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_naively_row(FT &f, int k, long
       f.set_z(ztmp0);
     }
   }
+}
+
+template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::set_R_naively(FT &f, int i, int j)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < d && i >= j && j >= 0);
+  FPLLL_DEBUG_CHECK(j <= i);
+  R_naively(i, j) = f;
+}
+
+template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::invalidate_row_naively(int k)
+{
+  if (k < n_known_rows_naively)
+    n_known_rows_naively = k;
 }
 
 FPLLL_END_NAMESPACE
