@@ -54,6 +54,18 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
       ftmp0.neg(ftmp0);
       ftmp0.mul(ftmp0, V(i, i));
       ftmp0.sqrt(ftmp0);
+
+#ifndef HOUSEHOLDER_PRECOMPUTE_INVERSE
+      // Here, ftmp0 = 1 / sqrt(-s * vi[1])
+      V(i, i).div(V(i, i), ftmp0);
+      R(i, i) = ftmp2;
+
+      for (int k = i + 1; k < n; k++)
+      {
+        V(i, k).div(R(i, k), ftmp0);
+        R(i, k) = 0.0;
+      }
+#else   // HOUSEHOLDER_PRECOMPUTE_INVERSE
       ftmp0.div(1.0, ftmp0);
       // Here, ftmp0 = 1 / sqrt(-s * vi[1])
       V(i, i).mul(V(i, i), ftmp0);
@@ -63,9 +75,10 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
         V(i, k).mul(R(i, k), ftmp0);
         R(i, k) = 0.0;
       }
-      // Here, vi = vi / ftmp0 and ri[i..n] = (||r||, 0, 0, ..., 0)
 
       R_inverse_diag[i].div(1.0, ftmp2);
+#endif  // HOUSEHOLDER_PRECOMPUTE_INVERSE
+      // Here, vi = vi / ftmp0 and ri[i..n] = (||r||, 0, 0, ..., 0)
     }
     else
     {
@@ -80,7 +93,9 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
         R(i, k) = 0.0;
       }
 
+#ifdef HOUSEHOLDER_PRECOMPUTE_INVERSE
       R_inverse_diag[i].div(1.0, R(i, i));
+#endif  // HOUSEHOLDER_PRECOMPUTE_INVERSE
     }
   }
   else
@@ -93,9 +108,11 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
       R(i, k) = 0.0;
     }
 
+#ifdef HOUSEHOLDER_PRECOMPUTE_INVERSE
     // Result is inf.
     // TODO: set inf instead of doing the computation.
     R_inverse_diag[i].div(1.0, 0.0);
+#endif  // HOUSEHOLDER_PRECOMPUTE_INVERSE
   }
 
   n_known_rows++;

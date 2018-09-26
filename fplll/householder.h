@@ -74,22 +74,15 @@ public:
         R_history[i][j].resize(n);
     }
     updated_R = false;
+
+#ifdef HOUSEHOLDER_PRECOMPUTE_INVERSE
     R_inverse_diag.resize(d);
+#endif  // HOUSEHOLDER_PRECOMPUTE_INVERSE
 
     if (enable_row_expo)
       tmp_col_expo.resize(n);
     else
       fill(row_expo.begin(), row_expo.end(), -1);
-
-#ifdef DEBUG
-    for (int i = 0; i < d; i++)
-    {
-      for (int j = 0; j < n; j++)
-      {
-        V(i, j).set_nan();
-      }
-    }
-#endif  // DEBUG
 
     n_known_rows_naively = 0;
     sigma_naively.resize(d);
@@ -98,6 +91,17 @@ public:
     row_expo_naively.resize(d);
     if (!enable_row_expo)
       fill(row_expo_naively.begin(), row_expo_naively.end(), -1);
+
+#ifdef DEBUG
+    for (int i = 0; i < d; i++)
+    {
+      for (int j = 0; j < n; j++)
+      {
+        V(i, j).set_nan();
+        V_naively(i, j).set_nan();
+      }
+    }
+#endif  // DEBUG
   }
 
   ~MatHouseholder() {}

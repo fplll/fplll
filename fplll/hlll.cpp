@@ -94,13 +94,13 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
       s.mul_2si(s, 2 * (expo_k_k - expo_k1_k1));
 
 #ifndef HOUSEHOLDER_NAIVELY
-    if (dR[k - 1] <= s)
+    if (dR[k - 1].cmp(s) <= 0)
 #else   //  HOUSEHOLDER_NAIVELY
     m.get_R_naively(dR, k - 1, k - 1, expo_dR);
     dR.mul(dR, dR);
     dR.mul(delta_, dR);  // dR[k] = delta_ * R(k, k)^2
 
-    if (dR <= s)
+    if (dR.cmp(s) <= 0)
 #endif  // HOUSEHOLDER_NAIVELY
 
     {
@@ -164,13 +164,17 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       m.get_R(ftmp1, kappa, i, expo0);  // expo0 = row_expo[kappa]
       m.get_R(ftmp0, i, i, expo1);      // expo1 = row_expo[i]
 
+#ifndef HOUSEHOLDER_PRECOMPUTE_INVERSE
+      ftmp1.div(ftmp1, ftmp0);  // x[i] = R(kappa, i) / R(i, i)
+#else                           // HOUSEHOLDER_PRECOMPUTE_INVERSE
       ftmp1.mul(ftmp1, m.get_R_inverse_diag(i));  // x[i] = R(kappa, i) / R(i, i)
-#else                                             // HOUSEHOLDER_NAIVELY
+#endif                          // HOUSEHOLDER_PRECOMPUTE_INVERSE
+#else                           // HOUSEHOLDER_NAIVELY
       m.get_R_naively(ftmp1, kappa, i, expo0);  // expo0 = row_expo[kappa]
       m.get_R_naively(ftmp0, i, i, expo1);      // expo1 = row_expo[i]
 
       ftmp1.div(ftmp1, ftmp0);                      // x[i] = R(kappa, i) / R(i, i)
-#endif                                            // HOUSEHOLDER_NAIVELY
+#endif                          // HOUSEHOLDER_NAIVELY
 
       /* If T = mpfr or dpe, enable_row_expo must be false and then, expo0 - expo1 == 0 (required by
        * rnd_we with this types) */
@@ -207,6 +211,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       }
     }
 
+#ifndef HOUSEHOLDER_PRECOMPUTE_INVERSE
     if (max_index == -1)
     {
 // If max_index == -1, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
@@ -220,6 +225,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       return;
     }
     else
+#endif  // HOUSEHOLDER_PRECOMPUTE_INVERSE
     {
 #ifndef HOUSEHOLDER_NAIVELY
       m.norm_square_b_row(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
