@@ -125,10 +125,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
   if (i == n_known_rows && !updated_R)
   {
     FT ftmp0;
-    FPLLL_DEBUG_CHECK(last_j <= i + 1);
 
     n_known_cols = max(n_known_cols, init_row_size[i]);
-    FPLLL_DEBUG_CHECK(last_j <= n_known_cols);
 
     int j, k;
 
