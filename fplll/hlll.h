@@ -90,7 +90,11 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
        << "c = " << c << endl
        << "precision = " << FT::get_prec() << endl
        << "row_expo = " << static_cast<int>(m.is_enable_row_expo()) << endl
+#ifndef HOUSEHOLDER_NAIVELY
        << "enable_bf = " << static_cast<int>(m.is_enable_bf()) << endl
+#else   // HOUSEHOLDER_NAIVELY
+       << "enable_bf = 0" << endl
+#endif  // HOUSEHOLDER_NAIVELY
        << "long_in_size_reduction = " << static_cast<int>(m.is_row_op_force_long()) << endl;
 
 #ifndef HOUSEHOLDER_NAIVELY

@@ -583,28 +583,17 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row_naively(FT &f, int k, long
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
   if (enable_row_expo)
-    if (enable_bf)
-    {
-      bf[k].dot_product(f, bf[k], 0, n);
-      expo = 2 * row_expo_naively[k];
-    }
-    else
-    {
-      ZT ztmp0;
-      b[k].dot_product(ztmp0, b[k], 0, n);
-      ztmp0.get_f_exp(f, expo);
-    }
+  {
+    ZT ztmp0;
+    b[k].dot_product(ztmp0, b[k], 0, n);
+    ztmp0.get_f_exp(f, expo);
+  }
   else
   {
     expo = -1;
-    if (enable_bf)
-      bf[k].dot_product(f, bf[k], 0, n);
-    else
-    {
-      ZT ztmp0;
-      b[k].dot_product(ztmp0, b[k], 0, n);
-      f.set_z(ztmp0);
-    }
+    ZT ztmp0;
+    b[k].dot_product(ztmp0, b[k], 0, n);
+    f.set_z(ztmp0);
   }
 }
 

@@ -300,11 +300,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively(int 
       R_naively(i, j).set_z(b(i, j));
   }
 
-  // Copy R_naively[i] in bf[i] (while we copy b[i] in R_naively[i])
-  if (enable_bf)
-    for (j = 0; j < n; j++)
-      bf(i, j) = R_naively(i, j);
-
   for (j = 0; j < i; j++)
   {
     // vj * ri[j..n]^T
@@ -374,12 +369,7 @@ void MatHouseholder<ZT, FT>::addmul_b_rows_naively(int k, vector<FT> xf)
   FPLLL_DEBUG_CHECK(k > 0 && k < d);
 
   for (int i = 0; i < k; i++)
-  {
     row_addmul_we_naively(k, i, xf[i], row_expo_naively[k] - row_expo_naively[i]);
-
-    if (enable_bf)
-      bf[k].addmul(bf[i], xf[i], n);
-  }
 
   invalidate_row_naively(k);
 }
