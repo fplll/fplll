@@ -121,11 +121,13 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 #else   // HOUSEHOLDER_NAIVELY
         m.update_R_naively(0);
 #endif  // HOUSEHOLDER_NAIVELY
+        k = 1;
       }
       else
-        m.recover_R(k - 1);
-
-      k = max(k - 1, 1);
+      {
+        k--;
+        m.recover_R(k);
+      }
     }
   }
 }
