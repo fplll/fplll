@@ -189,6 +189,7 @@ public:
   inline bool is_enable_row_expo() { return enable_row_expo; }
   inline bool is_enable_bf() { return enable_bf; }
 
+  inline bool get_updated_R() { return updated_R; }
   inline void set_updated_R_false() { updated_R = false; }
 
   inline FT get_R_inverse_diag(int i) { return R_inverse_diag[i]; }

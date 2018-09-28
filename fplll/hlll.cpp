@@ -43,6 +43,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   long expo_k1_k1, expo_k_k1, expo_k_k;
 
 #ifndef HOUSEHOLDER_NAIVELY
+  m.refresh_R_bf(0);
   m.update_R(0);
   compute_dR(0, delta_);
 #else   // HOUSEHOLDER_NAIVELY
@@ -50,22 +51,21 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 #endif  // HOUSEHOLDER_NAIVELY
 
   if (verbose)
+  {
     print_params();
+    // Discover vector 1
+    cerr << "Discovering vector " << k + 1 << "/" << m.get_d()
+         << " cputime=" << cputime() - start_time << endl;
+  }
 
   while (k < m.get_d())
   {
-    if (k > k_max)
-    {
-      if (verbose)
-      {
-        cerr << "Discovering vector " << k + 1 << "/" << m.get_d()
-             << " cputime=" << cputime() - start_time << endl;
-      }
-      k_max = k;
-    }
-
+    // TODO: try to move this test on part of the code were the test is not necessarily.
+    if (!m.get_updated_R())
+      m.refresh_R_bf(k);
     size_reduction(k);
 
+// s = R(k, k-1)
 #ifndef HOUSEHOLDER_NAIVELY
     m.get_R(s, k, k - 1, expo_k_k1);
 #else   //  HOUSEHOLDER_NAIVELY
@@ -74,6 +74,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
     s.mul(s, s);  // s = R(k, k - 1)^2
 
+// tmp = R(k, k)
 #ifndef HOUSEHOLDER_NAIVELY
     m.get_R(tmp, k, k, expo_k_k);
 #else   //  HOUSEHOLDER_NAIVELY
@@ -84,6 +85,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     s.add(tmp, s);      // s = R(k, k - 1)^2 + R(k, k)^2
 // Here, s = R(k, k - 1)^2 + R(k, k)^2 = ||b_k||^2 - sum_{i in [0, k-2)} R(k, i)^2
 
+// Get expo of row k - 1
 #ifndef HOUSEHOLDER_NAIVELY
     expo_k1_k1 = m.get_row_expo(k - 1);
 #else   //  HOUSEHOLDER_NAIVELY
@@ -93,6 +95,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     if (expo_k1_k1 > -1)
       s.mul_2si(s, 2 * (expo_k_k - expo_k1_k1));
 
+// Test if delta_ * R(k, k)^2 <= s
 #ifndef HOUSEHOLDER_NAIVELY
     if (dR[k - 1].cmp(s) <= 0)
 #else   //  HOUSEHOLDER_NAIVELY
@@ -108,6 +111,16 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
       compute_dR(k, delta_);
 #endif  // HOUSEHOLDER_NAIVELY
       k++;
+
+      if (k > k_max)
+      {
+        if (verbose)
+        {
+          cerr << "Discovering vector " << k + 1 << "/" << m.get_d()
+               << " cputime=" << cputime() - start_time << endl;
+        }
+        k_max = k;
+      }
     }
     else
     {
@@ -115,12 +128,15 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
       if (k - 1 == 0)
       {
+// Update row 0
 #ifndef HOUSEHOLDER_NAIVELY
+        m.refresh_R_bf(0);
         m.update_R(0);
         compute_dR(0, delta_);
 #else   // HOUSEHOLDER_NAIVELY
         m.update_R_naively(0);
 #endif  // HOUSEHOLDER_NAIVELY
+
         k = 1;
       }
       else
@@ -233,11 +249,12 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       m.norm_square_b_row(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
       m.addmul_b_rows(kappa, xf);
       m.norm_square_b_row(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
-#else                                            // HOUSEHOLDER_NAIVELY
+      m.refresh_R_bf(kappa);
+#else   // HOUSEHOLDER_NAIVELY
       m.norm_square_b_row_naively(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
       m.addmul_b_rows_naively(kappa, xf);
       m.norm_square_b_row_naively(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
-#endif                                           // HOUSEHOLDER_NAIVELY
+#endif  // HOUSEHOLDER_NAIVELY
 
       ftmp1.mul(sr, ftmp1);  // ftmp1 = 2^(-cd) * ftmp1 = sr * ftmp1
 
