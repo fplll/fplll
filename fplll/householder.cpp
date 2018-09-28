@@ -122,7 +122,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
 {
   // To update row i, we need to know n_known_rows rows
   FPLLL_DEBUG_CHECK(i <= n_known_rows);
-  if (i == n_known_rows && !updated_R)
+  if (/*i == n_known_rows && =*/!updated_R)
   {
     refresh_R_bf(i);
     FT ftmp0;
