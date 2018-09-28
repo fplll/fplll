@@ -202,6 +202,12 @@ public:
 
   inline bool is_row_op_force_long() { return row_op_force_long; }
 
+  /*
+   * Set bf[i] and R[i] to B[i].
+   */
+  void refresh_R_bf(int i);
+  inline void refresh_R_bf();
+
 private:
   /**
    * Number of rows of b (dimension of the lattice).
@@ -514,6 +520,14 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::recover_R(int 
 
   updated_R = true;
 }
+
+template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::refresh_R_bf()
+{
+  for (int i = 0; i < d; i++)
+    refresh_R_bf(i);
+}
+
+/* Objects and methods for the naive computation of the R factor using Householder. */
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R_naively(int i)
 {

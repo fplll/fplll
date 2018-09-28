@@ -124,46 +124,9 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
   FPLLL_DEBUG_CHECK(i <= n_known_rows);
   if (i == n_known_rows && !updated_R)
   {
+    refresh_R_bf(i);
     FT ftmp0;
-
-    n_known_cols = max(n_known_cols, init_row_size[i]);
-
     int j, k;
-
-    if (enable_row_expo)
-    {
-      long max_expo = LONG_MIN;
-
-      for (j = 0; j < n_known_cols; j++)
-      {
-        b(i, j).get_f_exp(R(i, j), tmp_col_expo[j]);
-        max_expo = max(max_expo, tmp_col_expo[j]);
-      }
-
-      for (j = 0; j < n_known_cols; j++)
-        R(i, j).mul_2si(R(i, j), tmp_col_expo[j] - max_expo);
-      for (j = n_known_cols; j < n; j++)
-        R(i, j) = 0.0;
-
-      row_expo[i] = max_expo;
-      FPLLL_DEBUG_CHECK(row_expo[i] >= 0);
-    }
-    else
-    {
-      for (j = 0; j < n_known_cols; j++)
-        R(i, j).set_z(b(i, j));
-      for (j = n_known_cols; j < n; j++)
-        R(i, j) = 0.0;
-    }
-
-    // Copy R[i] in bf[i] (while we copy b[i] in R[i])
-    if (enable_bf)
-    {
-      for (j = 0; j < n_known_cols; j++)
-        bf(i, j) = R(i, j);
-      for (j = n_known_cols; j < n; j++)
-        bf(i, j) = 0.0;
-    }
 
     for (j = 0; j < i; j++)
     {
@@ -188,6 +151,48 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
 
     if (last_j)
       update_R_last(i);
+  }
+}
+
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
+{
+  int j;
+
+  n_known_cols = max(n_known_cols, init_row_size[i]);
+
+  if (enable_row_expo)
+  {
+    long max_expo = LONG_MIN;
+
+    for (j = 0; j < n_known_cols; j++)
+    {
+      b(i, j).get_f_exp(R(i, j), tmp_col_expo[j]);
+      max_expo = max(max_expo, tmp_col_expo[j]);
+    }
+
+    for (j = 0; j < n_known_cols; j++)
+      R(i, j).mul_2si(R(i, j), tmp_col_expo[j] - max_expo);
+    for (j = n_known_cols; j < n; j++)
+      R(i, j) = 0.0;
+
+    row_expo[i] = max_expo;
+    FPLLL_DEBUG_CHECK(row_expo[i] >= 0);
+  }
+  else
+  {
+    for (j = 0; j < n_known_cols; j++)
+      R(i, j).set_z(b(i, j));
+    for (j = n_known_cols; j < n; j++)
+      R(i, j) = 0.0;
+  }
+
+  // Copy R[i] in bf[i] (while we copy b[i] in R[i])
+  if (enable_bf)
+  {
+    for (j = 0; j < n_known_cols; j++)
+      bf(i, j) = R(i, j);
+    for (j = n_known_cols; j < n; j++)
+      bf(i, j) = 0.0;
   }
 }
 
