@@ -58,11 +58,10 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
          << " cputime=" << cputime() - start_time << endl;
   }
 
-  while (k < m.get_d())
+  m.refresh_R_bf(1);
+
+  while (true)
   {
-    // TODO: try to move this test on part of the code were the test is not necessarily.
-    if (!m.get_updated_R())
-      m.refresh_R_bf(k);
     size_reduction(k);
 
 // s = R(k, k-1)
@@ -112,15 +111,22 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 #endif  // HOUSEHOLDER_NAIVELY
       k++;
 
-      if (k > k_max)
+      if (k < m.get_d())
       {
-        if (verbose)
+        if (k > k_max)
         {
-          cerr << "Discovering vector " << k + 1 << "/" << m.get_d()
-               << " cputime=" << cputime() - start_time << endl;
+          if (verbose)
+          {
+            cerr << "Discovering vector " << k + 1 << "/" << m.get_d()
+                 << " cputime=" << cputime() - start_time << endl;
+          }
+          k_max = k;
         }
-        k_max = k;
+        // TODO: do not need to refresh bf if B[k] was already seen?
+        m.refresh_R_bf(k);
       }
+      else
+        return;
     }
     else
     {
@@ -137,6 +143,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
         m.update_R_naively(0);
 #endif  // HOUSEHOLDER_NAIVELY
 
+        // TODO: do not need to refresh bf?
+        m.refresh_R_bf(1);
         k = 1;
       }
       else
