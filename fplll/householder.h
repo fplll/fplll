@@ -520,7 +520,7 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R_naive
   update_R_naively(i, true);
 }
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively()
+template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R_naively()
 {
   for (int i = 0; i < d; i++)
     update_R_naively(i);
