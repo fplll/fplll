@@ -204,10 +204,15 @@ public:
   inline bool is_row_op_force_long() { return row_op_force_long; }
 
   /*
-   * Set bf[i] and R[i] to B[i].
+   * Set bf[i] and R[i] to b[i].
    */
   void refresh_R_bf(int i);
   inline void refresh_R_bf();
+  /*
+   * Set R[i] to b[i].
+   */
+  void refresh_R(int i);
+  inline void refresh_R();
 
 private:
   /**
@@ -526,6 +531,12 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::refresh_R_bf()
 {
   for (int i = 0; i < d; i++)
     refresh_R_bf(i);
+}
+
+template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::refresh_R()
+{
+  for (int i = 0; i < d; i++)
+    refresh_R(i);
 }
 
 /* Objects and methods for the naive computation of the R factor using Householder. */

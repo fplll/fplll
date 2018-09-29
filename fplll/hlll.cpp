@@ -121,9 +121,10 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
                  << " cputime=" << cputime() - start_time << endl;
           }
           k_max = k;
+          m.refresh_R_bf(k);
         }
-        // TODO: do not need to refresh bf if B[k] was already seen?
-        m.refresh_R_bf(k);
+        else
+          m.refresh_R(k);
       }
       else
         return;
@@ -143,8 +144,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
         m.update_R_naively(0);
 #endif  // HOUSEHOLDER_NAIVELY
 
-        // TODO: do not need to refresh bf?
-        m.refresh_R_bf(1);
+        m.refresh_R(1);
         k = 1;
       }
       else

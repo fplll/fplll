@@ -195,6 +195,40 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
   }
 }
 
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R(int i)
+{
+  int j;
+
+  // Copy bf[i] in R[i] (while we have copied b[i] in bf[i])
+  if (enable_bf)
+  {
+    for (j = 0; j < n_known_cols; j++)
+      R(i, j) = bf(i, j);
+    for (j = n_known_cols; j < n; j++)
+      R(i, j) = 0.0;
+  }
+  else
+  {
+    if (enable_row_expo)
+    {
+      for (j = 0; j < n_known_cols; j++)
+      {
+        b(i, j).get_f_exp(R(i, j), tmp_col_expo[j]);
+        R(i, j).mul_2si(R(i, j), tmp_col_expo[j] - row_expo[i]);
+      }
+      for (j = n_known_cols; j < n; j++)
+        R(i, j) = 0.0;
+    }
+    else
+    {
+      for (j = 0; j < n_known_cols; j++)
+        R(i, j).set_z(b(i, j));
+      for (j = n_known_cols; j < n; j++)
+        R(i, j) = 0.0;
+    }
+  }
+}
+
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last_naively(int i)
 {
   FT ftmp0, ftmp1, s;
