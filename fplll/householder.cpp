@@ -183,6 +183,10 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
       R(i, j).set_z(b(i, j));
     for (j = n_known_cols; j < n; j++)
       R(i, j) = 0.0;
+
+    ZT ztmp0;
+    b[i].dot_product(ztmp0, b[i], 0, n_known_cols);
+    norm_square_b[i].set_z(ztmp0);
   }
 
   // Copy R[i] in bf[i] (while we copy b[i] in R[i])
@@ -192,6 +196,16 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
       bf(i, j) = R(i, j);
     for (j = n_known_cols; j < n; j++)
       bf(i, j) = 0.0;
+
+    bf[i].dot_product(norm_square_b[i], bf[i], 0, n_known_cols);
+    if (enable_row_expo)
+      expo_norm_square_b[i] = 2 * row_expo[i];
+  }
+  else
+  {
+    ZT ztmp0;
+    b[i].dot_product(ztmp0, b[i], 0, n_known_cols);
+    ztmp0.get_f_exp(norm_square_b[i], expo_norm_square_b[i]);
   }
 }
 
@@ -325,7 +339,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively(int 
       R_naively(i, j).mul_2si(R_naively(i, j), tmp_col_expo[j] - max_expo);
 
     row_expo_naively[i] = max_expo;
-    FPLLL_DEBUG_CHECK(row_expo[i] >= 0);
+    FPLLL_DEBUG_CHECK(row_expo_naively[i] >= 0);
   }
   else
   {
@@ -379,6 +393,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
     if (enable_inverse_transform)
       u_inv_t.swap_rows(i, j);
   }
+  iter_swap(norm_square_b.begin() + i, norm_square_b.begin() + j);
+  iter_swap(expo_norm_square_b.begin() + i, expo_norm_square_b.begin() + j);
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_rows(int k, vector<FT> xf)

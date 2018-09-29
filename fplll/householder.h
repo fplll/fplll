@@ -75,6 +75,10 @@ public:
     }
     updated_R = false;
 
+    norm_square_b.resize(d);
+    expo_norm_square_b.resize(d);
+    fill(row_expo.begin(), row_expo.end(), -1);
+
 #ifdef HOUSEHOLDER_PRECOMPUTE_INVERSE
     R_inverse_diag.resize(d);
 #endif  // HOUSEHOLDER_PRECOMPUTE_INVERSE
@@ -205,6 +209,7 @@ public:
 
   /*
    * Set bf[i] and R[i] to b[i].
+   * Precompute square norm of b[i].
    */
   void refresh_R_bf(int i);
   inline void refresh_R_bf();
@@ -213,6 +218,8 @@ public:
    */
   void refresh_R(int i);
   inline void refresh_R();
+
+  inline void get_norm_square_b(FT &f, int i, long &expo);
 
 private:
   /**
@@ -321,6 +328,10 @@ private:
    * See the description of row_addmul.
    */
   const bool row_op_force_long;
+
+  // Store the approximate norm of b[i].
+  vector<FT> norm_square_b;
+  vector<long> expo_norm_square_b;
 
   /* Objects and methods for the naive computation of the R factor using Householder. */
 
@@ -537,6 +548,14 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::refresh_R()
 {
   for (int i = 0; i < d; i++)
     refresh_R(i);
+}
+
+template <class ZT, class FT>
+inline void MatHouseholder<ZT, FT>::get_norm_square_b(FT &f, int i, long &expo)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < d);
+  expo = expo_norm_square_b[i];
+  f    = norm_square_b[i];
 }
 
 /* Objects and methods for the naive computation of the R factor using Householder. */

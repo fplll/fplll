@@ -252,15 +252,17 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
     else
     {
 #ifndef HOUSEHOLDER_NAIVELY
-      m.norm_square_b_row(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
+      // TODO: ftmp1 and expo0?
+      m.get_norm_square_b(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
       m.addmul_b_rows(kappa, xf);
-      m.norm_square_b_row(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
       m.refresh_R_bf(kappa);
-#else   // HOUSEHOLDER_NAIVELY
+      m.get_norm_square_b(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
+#else                                            // HOUSEHOLDER_NAIVELY
+      // TODO: ftmp1 and expo0?
       m.norm_square_b_row_naively(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
       m.addmul_b_rows_naively(kappa, xf);
       m.norm_square_b_row_naively(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
-#endif  // HOUSEHOLDER_NAIVELY
+#endif                                           // HOUSEHOLDER_NAIVELY
 
       ftmp1.mul(sr, ftmp1);  // ftmp1 = 2^(-cd) * ftmp1 = sr * ftmp1
 
