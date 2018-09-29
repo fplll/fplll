@@ -237,7 +237,6 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       }
     }
 
-#ifndef HOUSEHOLDER_PRECOMPUTE_INVERSE
     if (max_index == -1)
     {
 // If max_index == -1, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
@@ -251,7 +250,6 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       return;
     }
     else
-#endif  // HOUSEHOLDER_PRECOMPUTE_INVERSE
     {
 #ifndef HOUSEHOLDER_NAIVELY
       m.norm_square_b_row(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
