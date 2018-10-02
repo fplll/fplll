@@ -5,6 +5,20 @@
 using namespace std;
 using namespace fplll;
 
+#define read_file(X, input_filename) {\
+  ifstream is;\
+  is.exceptions(std::ifstream::failbit | std::ifstream::badbit);\
+  try {\
+    is.open(input_filename);\
+    is >> X;\
+    is.close();\
+  }\
+  catch (const ifstream::failure&) {\
+    status = 1;\
+    cerr << "Error by reading " << input_filename << "." << endl;\
+  }\
+}
+
 /**
    @brief Read matrix from `input_filename`.
 
@@ -15,13 +29,7 @@ using namespace fplll;
 template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 {
   int status = 0;
-  ifstream is(input_filename);
-  if (!is)
-  {
-    status = 1;
-    cerr << "Could not open file " << input_filename << "." << endl;
-  }  // throw std::runtime_error("could not open input file");
-  is >> A;
+  read_file(A, input_filename);
   return status;
 }
 
@@ -36,17 +44,7 @@ template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
 template <class ZT> int read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
 {
   int status = 0;
-  ifstream is;
-  is.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-  try {
-    is.open(input_filename);
-    is >> b;
-    is.close();
-  }
-  catch (ifstream::failure e) {
-    status = 1;
-    cerr << "Error by reading " << input_filename << "." << endl;
-  }
+  read_file(b, input_filename);
   return status;
 }
 
