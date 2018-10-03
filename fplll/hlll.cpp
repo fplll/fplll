@@ -252,24 +252,23 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
     else
     {
 #ifndef HOUSEHOLDER_NAIVELY
-      // TODO: ftmp1 and expo0?
-      m.get_norm_square_b(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
+      m.get_norm_square_b(ftmp0, kappa, expo0);  // ftmp0 = ||b[kappa]||^2 = t
       m.addmul_b_rows(kappa, xf);
       m.refresh_R_bf(kappa);
-      m.get_norm_square_b(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
+      m.get_norm_square_b(ftmp1, kappa, expo1);  // ftmp1 = ||b[kappa]||^2
 #else                                            // HOUSEHOLDER_NAIVELY
-      // TODO: ftmp1 and expo0?
-      m.norm_square_b_row_naively(ftmp1, kappa, expo0);  // ftmp1 = ||b[kappa]||^2
+      m.norm_square_b_row_naively(ftmp0, kappa, expo0);  // ftmp0 = ||b[kappa]||^2 = t
       m.addmul_b_rows_naively(kappa, xf);
-      m.norm_square_b_row_naively(ftmp0, kappa, expo1);  // ftmp0 = ||b[kappa]||^2
+      m.norm_square_b_row_naively(ftmp1, kappa, expo1);  // ftmp1 = ||b[kappa]||^2
 #endif                                           // HOUSEHOLDER_NAIVELY
 
-      ftmp1.mul(sr, ftmp1);  // ftmp1 = 2^(-cd) * ftmp1 = sr * ftmp1
+      ftmp0.mul(sr, ftmp0);  // ftmp0 = 2^(-cd) * ftmp0 = sr * ftmp0
 
       if (expo1 > -1)
-        ftmp0.mul_2si(ftmp0, expo1 - expo0);
+        ftmp0.mul_2si(ftmp0, expo0 - expo1);
 
-      if (ftmp0.cmp(ftmp1) <= 0)
+      // If (||b(kappa)||^2 > 2^(-cd) * t => ftmp1 > ftmp0), stop the loop.
+      if (ftmp1.cmp(ftmp0) <= 0)
       {
 // Continue to try to reduce b(kappa).
 #ifndef HOUSEHOLDER_NAIVELY
