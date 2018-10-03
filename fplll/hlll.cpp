@@ -164,6 +164,17 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   long expo1 = -1;
   // for all i > max_index, xf[i] == 0.
   int max_index = -1;
+  /*
+   * Variables introduced in hplll (https://github.com/gilvillard/hplll)
+   * See commit a6b29d1a23ca34000264e22608ef23a64e3cac9d
+   * It seems that testing only one time the condition on line 7 of Algorithm 3 (incomplete size
+   * reduction) is not
+   * sufficient to ensure that b[kappa] is size-reduced. We then test it two times. If two times in
+   * a row, the condition
+   * is reached, then we consider that b[kappa] is size-reduced.
+   */
+  bool not_stop      = true;
+  bool prev_not_stop = true;
 
 #ifndef HOUSEHOLDER_NAIVELY
   m.update_R(kappa, false);
@@ -264,11 +275,13 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
 
       ftmp0.mul(sr, ftmp0);  // ftmp0 = 2^(-cd) * ftmp0 = sr * ftmp0
 
+      // Why not doing ftmp1.mul_2si(ftmp1, expo1 - expo0); ?
       if (expo1 > -1)
         ftmp0.mul_2si(ftmp0, expo0 - expo1);
 
       // If (||b(kappa)||^2 > 2^(-cd) * t => ftmp1 > ftmp0), stop the loop.
-      if (ftmp1.cmp(ftmp0) <= 0)
+      not_stop = (ftmp1.cmp(ftmp0) <= 0);
+      if (prev_not_stop || not_stop)
       {
 // Continue to try to reduce b(kappa).
 #ifndef HOUSEHOLDER_NAIVELY
@@ -276,6 +289,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
 #else   // HOUSEHOLDER_NAIVELY
         m.update_R_naively(kappa, false);
 #endif  // HOUSEHOLDER_NAIVELY
+
+        prev_not_stop = not_stop;
       }
       else
       {
