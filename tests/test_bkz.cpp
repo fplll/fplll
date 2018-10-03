@@ -274,7 +274,7 @@ int test_filename(const char *input_filename, const int block_size,
 {
   ZZ_mat<ZT> A, B;
   int status = 0;
-  status |= read_matrix(A, input_filename);
+  status |= read_file_process(A, input_filename);
   B = A;
   status |= test_bkz<ZT>(A, block_size, float_type, flags, prec);
   status |= test_bkz_param<ZT>(B, block_size);
