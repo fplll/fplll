@@ -6,48 +6,26 @@ using namespace std;
 using namespace fplll;
 
 /**
-   @brief Read matrix from `input_filename`.
+   @brief Read T from `input_filename`.
 
-   @param A matrix
+   @param X T (T is usually a ZZ_mat<ZT> or a vector<Z_NR<ZT>>
    @param input_filename
    @return zero if the file is correctly read, 1 otherwise.
 */
-template <class ZT> int read_matrix(ZZ_mat<ZT> &A, const char *input_filename)
-{
-  int status = 0;
-  ifstream is(input_filename);
-  if (!is)
-  {
-    status = 1;
-    cerr << "Could not open file " << input_filename << "." << endl;
-  }  // throw std::runtime_error("could not open input file");
-  is >> A;
-  return status;
-}
-
-/**
-   @brief Read vector from `input_filename` into `b`.
-
-   @param b                vector
-   @param input_filename   filename
-   @return zero if the file is correctly read, 1 otherwise.
-*/
-
-template <class ZT> int read_vector(vector<Z_NR<ZT>> &b, const char *input_filename)
-{
+template <class T> int read_file(T &X, const char *input_filename) {
   int status = 0;
   ifstream is;
   is.exceptions(std::ifstream::failbit | std::ifstream::badbit);
   try {
     is.open(input_filename);
-    is >> b;
+    is >> X;
     is.close();
   }
-  catch (ifstream::failure e) {
+  catch (const ifstream::failure&) {
     status = 1;
     cerr << "Error by reading " << input_filename << "." << endl;
   }
+
   return status;
 }
-
 #endif /* TEST_UTILS_H */

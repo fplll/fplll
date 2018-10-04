@@ -266,10 +266,10 @@ int test_filename(const char *input_filename, const char *output_filename,
 {
   ZZ_mat<ZT> A;
   int status = 0;
-  status |= read_matrix(A, input_filename);
+  status |= read_file(A, input_filename);
 
   vector<Z_NR<mpz_t>> b;
-  status |= read_vector(b, output_filename);
+  status |= read_file(b, output_filename);
 
   switch (test)
   {

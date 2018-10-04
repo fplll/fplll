@@ -56,7 +56,7 @@ template <class ZT, class FT> int test_filename(const char *input_filename, int 
 {
   ZZ_mat<ZT> A;
   int status = 0;
-  status |= read_matrix(A, input_filename);
+  status |= read_file(A, input_filename);
   status |= test_hlll<ZT, FT>(A, flags);
   return status;
 }
