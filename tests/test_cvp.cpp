@@ -89,13 +89,13 @@ int test_filename(const char *input_filename_lattice, const char *input_filename
 {
   ZZ_mat<ZT> A;
   int status = 0;
-  status |= read_file_process(A, input_filename_lattice);
+  status |= read_file(A, input_filename_lattice);
 
   vector<Z_NR<mpz_t>> t;
-  status |= read_file_process(t, input_filename_target);
+  status |= read_file(t, input_filename_target);
 
   vector<Z_NR<mpz_t>> b;
-  status |= read_file_process(b, output_filename);
+  status |= read_file(b, output_filename);
 
   status |= test_cvp<ZT>(A, t, b, method);
   return status;

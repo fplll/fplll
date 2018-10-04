@@ -12,7 +12,7 @@ using namespace fplll;
    @param input_filename
    @return zero if the file is correctly read, 1 otherwise.
 */
-template <class T> int read_file_process(T &X, const char *input_filename) {
+template <class T> int read_file(T &X, const char *input_filename) {
   int status = 0;
   ifstream is;
   is.exceptions(std::ifstream::failbit | std::ifstream::badbit);

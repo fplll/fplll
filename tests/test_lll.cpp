@@ -119,7 +119,7 @@ int test_filename(const char *input_filename, LLLMethod method, FloatType float_
 {
   ZZ_mat<ZT> A;
   int status = 0;
-  status |= read_file_process(A, input_filename);
+  status |= read_file(A, input_filename);
   status |= test_lll<ZT>(A, method, float_type, flags, prec);
   return status;
 }

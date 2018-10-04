@@ -58,9 +58,9 @@ template <class ZT> int test_filename(const char *input_filename, const char *ou
 {
   ZZ_mat<ZT> A;
   int status = 0;
-  status |= read_file_process(A, input_filename);
+  status |= read_file(A, input_filename);
   vector<Z_NR<mpz_t>> b;
-  status |= read_file_process(b, output_filename);
+  status |= read_file(b, output_filename);
   status |= test_sieve<ZT>(A, b);
   return status;
 }
