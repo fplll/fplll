@@ -94,7 +94,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     if (expo_k1_k1 > -1)
       s.mul_2si(s, 2 * (expo_k_k - expo_k1_k1));
 
-// Test if delta_ * R(k, k)^2 <= s
+// Test if delta_ * R(k - 1, k - 1)^2 <= s
 #ifndef HOUSEHOLDER_NAIVELY
     if (dR[k - 1].cmp(s) <= 0)
 #else   //  HOUSEHOLDER_NAIVELY
@@ -107,7 +107,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
     {
 #ifndef HOUSEHOLDER_NAIVELY
-      compute_dR(k, delta_);
+      // Here, tmp = R(k, k)^2
+      set_dR(k, tmp, delta_);
 #endif  // HOUSEHOLDER_NAIVELY
       k++;
 
