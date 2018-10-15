@@ -177,6 +177,24 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   bool not_stop      = true;
   bool prev_not_stop = true;
 
+#ifndef HOUSEHOLDER_USE_SIZE_REDUCTION_TEST
+  /*
+   * Variables introduced in hplll (https://github.com/gilvillard/hplll)
+   * See commit a6b29d1a23ca34000264e22608ef23a64e3cac9d
+   * The loop is done while (||bk||^2 <= a * t, where t is the squared norm of bk before size
+   * reduction and a = 2^(-cd).
+   *   The condition is equivalent to -1/2 * log(a) <= 1/2*log(t) - log(||bk||), where 1/2*log(t) is
+   *   the log of the squared norm of bk before size reduction. For c=0.1 and d=300,
+   *   -1/2 * log_2(a) = 15, then the loop continues when the length of bk decreases from more than
+   *   15 bits. For a=0.1, the same thing occurs with less than 2 bits. It experimentally allows to
+   *   size reduce the vectors for dimension >= 260.
+   * TODO: this hard coded value must be theoretically analyzed.
+   */
+  FT approx = 0.1;
+#else   // HOUSEHOLDER_USE_SIZE_REDUCTION_TEST
+  FT approx = sr;
+#endif  // HOUSEHOLDER_USE_SIZE_REDUCTION_TEST
+
 #ifndef HOUSEHOLDER_NAIVELY
   m.update_R(kappa, false);
 
@@ -274,7 +292,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       m.norm_square_b_row_naively(ftmp1, kappa, expo1);  // ftmp1 = ||b[kappa]||^2
 #endif                                           // HOUSEHOLDER_NAIVELY
 
-      ftmp0.mul(sr, ftmp0);  // ftmp0 = 2^(-cd) * ftmp0 = sr * ftmp0
+      ftmp0.mul(approx, ftmp0);  // ftmp0 = approx * ftmp0
 
       // Why not doing ftmp1.mul_2si(ftmp1, expo1 - expo0); ?
       if (expo1 > -1)
