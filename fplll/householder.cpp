@@ -21,6 +21,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
+// TODO: maybe add a variable available on DEBUG to verify in update_R(i, false) was done
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
 {
   FT ftmp0, ftmp1, ftmp2;
@@ -371,9 +372,11 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
 {
   FPLLL_DEBUG_CHECK(0 <= i && i < j && j < d);
 
+  // Invalidate to the min not modified row, that is i
   invalidate_row(i);
 
 #ifdef HOUSEHOLDER_NAIVELY
+  // Invalidate to the min not modified row, that is i
   invalidate_row_naively(i);
 #endif  // HOUSEHOLDER_NAIVELY
 
@@ -409,6 +412,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_rows(int k, 
       bf[k].addmul(bf[i], xf[i], n_known_cols);
   }
 
+  // Invalidate since b has changed, but R is not updated
   invalidate_row(k);
 }
 
@@ -420,6 +424,7 @@ void MatHouseholder<ZT, FT>::addmul_b_rows_naively(int k, vector<FT> xf)
   for (int i = 0; i < k; i++)
     row_addmul_we_naively(k, i, xf[i], row_expo_naively[k] - row_expo_naively[i]);
 
+  // Invalidate since b has changed, but R is not updated
   invalidate_row_naively(k);
 }
 

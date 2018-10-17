@@ -1,7 +1,4 @@
-/* Copyright (C) 2005-2008 Damien Stehle.
-   Copyright (C) 2007 David Cade.
-   Copyright (C) 2011 Xavier Pujol.
-
+/*
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
    General Public License as published by the Free Software Foundation,
@@ -44,6 +41,31 @@ public:
    * needed).
    * @param b
    *   The matrix on which row operations are performed. It must not be empty.
+   * @param enable_row_expo
+   *   If true, each row of b is normalized by a power of 2 before doing
+   *   conversion to floating-point, which hopefully avoids some overflows.
+   *   This option cannot be enabled if enable_int_gram=true and works only
+   *   with FT=double and FT=long double. It is useless and MUST NOT be used
+   *   for FT=dpe or FT=mpfr_t.
+   * @param enable_bf
+   *   Dot product on the basis vector are done on a floatting point version of
+   *   it instead of the integer one. bf is refreshed from b when  refresh_R_bf(int)
+   *   or refresh_R(int) are called.
+   * @param enable_transform
+   *   Compute u
+   * @param u
+   *   If u is not empty, operations on b are also done on u
+   *   (in this case both must have the same number of rows).
+   *   If u is initially the identity matrix, multiplying transform by the
+   *   initial basis gives the current basis.
+   * @param enable_inverse_transform
+   *   Compute u_inv_t
+   * @param u_inv_t
+   *   Inverse transform (should be empty, which disables the computation, or
+   *   initialized with identity matrix). It works only if u is not empty.
+   * @param enable_op_force_long
+   *   Affects the behaviour of row_addmul(_we).
+   *   See the documentation of row_addmul.
    */
   MatHouseholder(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
       : b(arg_b), enable_row_expo(flags & HOUSEHOLDER_ROW_EXPO), enable_bf(flags & HOUSEHOLDER_BF),
@@ -51,21 +73,33 @@ public:
         enable_inverse_transform(arg_uinv_t.get_rows() > 0), u_inv_t(arg_uinv_t),
         row_op_force_long(flags & HOUSEHOLDER_OP_FORCE_LONG)
   {
+    // Get the dimensions of the lattice
     d = b.get_rows();
     n = b.get_cols();
 
+    // Any row are known
     n_known_rows = 0;
     n_known_cols = 0;
+
+    // Initialize sigma and V used to compute R
     sigma.resize(d);
     R.resize(d, n);
+    // TODO: V does not need to be a matrix, since V is a list of vector of different length
     V.resize(d, n);
+
+    // If enable_bf, initialize bf
     if (enable_bf)
       bf.resize(d, n);
+
+    // Initialize row_expo.
     row_expo.resize(d);
+    // Initialize row_size
     init_row_size.resize(d);
-    for (int i         = 0; i < d; i++)
+    for (int i = 0; i < d; i++)
+      // Capture the shape of b
       init_row_size[i] = max(b[i].size_nz(), 1);
 
+    // Initialize R_history and update_R
     R_history.resize(d);
     for (int i = 0; i < d; i++)
     {
@@ -75,19 +109,28 @@ public:
     }
     updated_R = false;
 
+    // Initialize norm_square_b
     norm_square_b.resize(d);
     expo_norm_square_b.resize(d);
+    /* fill row_expo with -1, since if enable_row_expo, it will be filled by real value, and
+     * otherwise, we essentially
+     * (-1) - (-1) */
+    // TODO: usefull?
     fill(row_expo.begin(), row_expo.end(), -1);
 
 #ifdef HOUSEHOLDER_PRECOMPUTE_INVERSE
+    // Initialize R_inverse_diag
     R_inverse_diag.resize(d);
 #endif  // HOUSEHOLDER_PRECOMPUTE_INVERSE
 
     if (enable_row_expo)
+      // Initialize tmp_col_expo
       tmp_col_expo.resize(n);
     else
       fill(row_expo.begin(), row_expo.end(), -1);
 
+    /* Initialize values for naively part of the computation
+     * Used in is_hlll_reduced at least */
     n_known_rows_naively = 0;
     sigma_naively.resize(d);
     R_naively.resize(d, n);
@@ -111,12 +154,15 @@ public:
   ~MatHouseholder() {}
 
   /**
-   * Returns f = R(i, j).
+   * Returns f (* 2^expo if enable_row_expo) = R(i, j).
    *
    * Returns reference to `f`.
    */
   inline void get_R(FT &f, int i, int j, long &expo);
 
+  /**
+   * Sets R(i, j) to f.
+   */
   inline void set_R(FT &f, int i, int j);
 
   /**
@@ -126,6 +172,7 @@ public:
 
   /**
    * Returns the R matrix
+   * expo is set to row_expo
    */
   const Matrix<FT> &get_R(vector<long> &expo)
   {
@@ -144,7 +191,7 @@ public:
   const Matrix<ZT> &get_b() { return b; }
 
   /**
-   * Apply Householder transformation on row i, from cols [0, i).
+   * Apply Householder transformation on row i for columns [0, i).
    * If last_j, apply Householder transformation on row i, from cols [0, i].
    */
   void update_R(int i, bool last_j);
@@ -154,6 +201,9 @@ public:
    */
   void update_R(int i);
 
+  /**
+   * Finalize Householder transformation on row i (especially after update_R(i, false))
+   */
   void update_R_last(int i);
 
   /**
@@ -161,64 +211,102 @@ public:
    */
   inline void update_R();
 
+  /**
+   * Retun the dimensions of the lattice
+   */
   inline int get_d() { return d; }
   inline int get_n() { return n; }
 
   /**
-   * Norm square of b[k].
+   * Compute the squared norm of b[k].
    */
   inline void norm_square_b_row(FT &f, int k, long &expo);
 
   /**
-   * Truncated norm square of R[k], with coefficients of R[k][0..end-1].
+   * Truncated squared norm of R[k], with coefficients of R[k][0..end-1].
    */
   inline void norm_square_R_row(FT &f, int k, int end, long &expo);
 
   /**
-   * b[k] = b[k] - sum_{i = 0}^{k - 1}(x[i] * b[i])
+   * b[k] = b[k] - sum_{i = 0}^{k - 1}(int(xf[i]) * b[i])
+   * bf[k] = bf[k] - sum_{i = 0}^{k - 1}(xf[i] * b[i])
    */
   void addmul_b_rows(int k, vector<FT> xf);
 
   /**
-   * Swap row i and j of b.
+   * Swap row i and j of b, bf, R, V, u and u_inv_t
+   * Swap element i and j in sigma, row_expo, norm_square_b, expo_norm_square_b, init_row_size and
+   * R_history.
    */
   void swap(int i, int j);
 
   /**
-   * Invalidate row k to row n_known_rows - 1.
    * Update n_known_rows to k.
    */
   inline void invalidate_row(int k);
 
+  /**
+   * Return values enable_row_expo and enable_bf
+   */
   inline bool is_enable_row_expo() { return enable_row_expo; }
   inline bool is_enable_bf() { return enable_bf; }
 
+  /**
+   * Return value of updated_R
+   */
   inline bool get_updated_R() { return updated_R; }
+  /**
+   * Set updated_R to false
+   * updated_R is set to true in recover_R
+   */
   inline void set_updated_R_false() { updated_R = false; }
 
+  /**
+   * Get the precomputation of R(i, i)
+   */
   inline FT get_R_inverse_diag(int i) { return R_inverse_diag[i]; }
 
   /*
-   * Recover R[i] from the precomputed values of R stored in R_history
+   * Recover R[i] from the precomputed values of R stored in R_history, i.e., R[i] is correct for
+   * the coefficients [0,
+   * i) and a call to update_R_last(i) will fully compute R[i].
    */
   inline void recover_R(int i);
 
+  /**
+   * Return row_expo[i]
+   */
   inline long get_row_expo(int i) { return row_expo[i]; }
 
+  /**
+   * Returns the value of row_op_force_long
+   */
   inline bool is_row_op_force_long() { return row_op_force_long; }
 
-  /*
+  /**
    * Set bf[i] and R[i] to b[i].
    * Precompute square norm of b[i].
    */
   void refresh_R_bf(int i);
+  /**
+   * Set b and R to b.
+   * Precompute squared norm of all the vectors of b
+   */
   inline void refresh_R_bf();
-  /*
+
+  /**
    * Set R[i] to b[i].
    */
   void refresh_R(int i);
+  /**
+   * Set R to b.
+   */
   inline void refresh_R();
 
+  /**
+   * Set in f the precomputed squared norm of b[i] and in expo the exponent such that ||b[i]||^2 = f
+   * * 2^{expo}
+   */
   inline void get_norm_square_b(FT &f, int i, long &expo);
 
 private:
@@ -238,7 +326,7 @@ private:
   Matrix<ZT> &b;
 
   /**
-   * b = R * q_householder.
+   * b = R * q_householder (q_householder is not computed)
    * R is lower triangular and the diagonal coefficient are >= 0.
    */
   Matrix<FT> R;
@@ -267,37 +355,43 @@ private:
    */
   vector<long> row_expo;
 
-  /* Used by update_R. */
+  /* Used by update_R. Temporary variable. */
   vector<long> tmp_col_expo;
 
   // init_row_size[i] = (last non-zero column in the i-th row of b) + 1
   vector<int> init_row_size;
+  // n_known_cols (last non-zero column of the discovered rows) + 1
   int n_known_cols;
 
   /**
    * b[i] := b[i] + x * 2^expo_add * b[j].
-   * After one or several calls to row_addmul_we, row_op_end must be called.
    * Special cases |x| &lt;= 1 and |x| &lt;= LONG_MAX are optimized.
    * x should be an integer.
    * If row_op_force_long=true, x is always converted to (2^expo * long) instead
    * of (2^expo * ZT), which is faster if ZT=mpz_t but might lead to a loss of
-   * precision (in LLL, more Babai iterations are needed).
+   * precision.
+   */
+  void row_addmul_we(int i, int j, const FT &x, long expo_add);
+  /**
+   * Special cases of row_addmul_we
    */
   void row_add(int i, int j);
   void row_sub(int i, int j);
   void row_addmul_si(int i, int j, long x);
   void row_addmul_si_2exp(int i, int j, long x, long expo);
   void row_addmul_2exp(int i, int j, const ZT &x, long expo);
-  void row_addmul_we(int i, int j, const FT &x, long expo_add);
 
   /**
    * Basis of the lattice (floatting point)
    */
   Matrix<FT> bf;
 
+  /**
+   * Do we compute dot_product of bf instead of b?
+   */
   const bool enable_bf;
 
-  /*
+  /**
    * R_history stores the history of the computation of R
    * Example: R[i][j][k] is the index k of R[i] when the coefficient j was known
    */
@@ -331,20 +425,38 @@ private:
 
   // Store the approximate norm of b[i].
   vector<FT> norm_square_b;
+  // If enable_row_expo, ||b[i]||^2 = norm_square_b[i] * 2^{expo_norm_square_b}
   vector<long> expo_norm_square_b;
 
   /* Objects and methods for the naive computation of the R factor using Householder. */
+  // TODO: outside of is_hlll_reduced, naive operations are not used, since HOUSEHOLDER_NAIVELY is
+  // not tested.
 
 public:
+  /**
+   * Full computation of the matrix R.
+   */
   void update_R_naively();
 
+  /**
+   * Apply Householder transformation on row i.
+   */
   void update_R_naively(int i);
 
-  /* Apply Householder transformations on row i. */
+  /**
+   * Apply Householder transformation on row i for columns [0, i).
+   * If last_j, apply Householder transformation on row i, from cols [0, i].
+   */
   void update_R_naively(int i, bool last_j);
 
+  /**
+   * Finalize Householder transformation on row i (especially after update_R(i, false))
+   */
   void update_R_last_naively(int i);
 
+  /**
+   * Return R_naively(i, j) = f (* 2^expo, if enable_row_expo)
+   */
   inline void get_R_naively(FT &f, int i, int j, long &expo);
 
   /**
@@ -354,6 +466,7 @@ public:
 
   /**
    * Returns the R matrix
+   * expo is set to row_expo_naively
    */
   const Matrix<FT> &get_R_naively(vector<long> &expo)
   {
@@ -362,8 +475,9 @@ public:
   }
 
   /**
-   * Norm square of b[k].
-   * Use row_expo_naively.
+   * Squared norm of b[k].
+   * Use row_expo_naively if enable_row_expo is used.
+   * f * 2^expo = ||b[i]||^2
    */
   inline void norm_square_b_row_naively(FT &f, int k, long &expo);
 
@@ -372,8 +486,14 @@ public:
    */
   inline void norm_square_R_row_naively(FT &f, int k, int end, long &expo);
 
+  /**
+   * Return row_expo_naively[i]
+   */
   inline long get_row_expo_naively(int i) { return row_expo_naively[i]; }
 
+  /**
+   * Set R(i, j) to f
+   */
   inline void set_R_naively(FT &f, int i, int j);
 
   /**
@@ -383,12 +503,11 @@ public:
 
   /**
    * b[i] := b[i] + x * 2^expo_add * b[j].
-   * After one or several calls to row_addmul_we, row_op_end must be called.
    * Special cases |x| &lt;= 1 and |x| &lt;= LONG_MAX are optimized.
    * x should be an integer.
    * If row_op_force_long=true, x is always converted to (2^expo * long) instead
    * of (2^expo * ZT), which is faster if ZT=mpz_t but might lead to a loss of
-   * precision (in LLL, more Babai iterations are needed).
+   * precision.
    */
   void row_add_naively(int i, int j);
   void row_sub_naively(int i, int j);
@@ -398,7 +517,6 @@ public:
   void row_addmul_we_naively(int i, int j, const FT &x, long expo_add);
 
   /**
-   * Invalidate row k to row n_known_rows_naively - 1.
    * Update n_known_rows_naively to k.
    */
   inline void invalidate_row_naively(int k);
@@ -463,6 +581,7 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::set_R(FT &f, i
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R(int i)
 {
+  // last_j = true since we want the full computation of R[i]
   update_R(i, true);
 }
 
@@ -522,6 +641,7 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int end, lon
     expo = -1;
 }
 
+// TODO: test seems to be strange
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::invalidate_row(int k)
 {
   if (k < n_known_rows)
@@ -635,6 +755,7 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::set_R_naively(
   R_naively(i, j) = f;
 }
 
+// TODO: test seems to be strange
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::invalidate_row_naively(int k)
 {
   if (k < n_known_rows_naively)
