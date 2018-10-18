@@ -24,8 +24,6 @@ FPLLL_BEGIN_NAMESPACE
 // TODO: maybe add a variable available on DEBUG to verify in update_R(i, false) was done
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
 {
-  FT ftmp0, ftmp1, ftmp2;
-
   // sigma[i] = sign(r[1])
   sigma[i] = (R(i, i).cmp(0.0) < 0) ? -1.0 : 1.0;
   // V(i, i) is used as a temporary variable. In the following, V(i, i) is always modified.
@@ -125,7 +123,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
   FPLLL_DEBUG_CHECK(i <= n_known_rows);
   if (/*i == n_known_rows && =*/!updated_R)
   {
-    FT ftmp0;
     int j, k;
 
     for (j = 0; j < i; j++)
@@ -185,7 +182,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
     for (j = n_known_cols; j < n; j++)
       R(i, j) = 0.0;
 
-    ZT ztmp0;
     b[i].dot_product(ztmp0, b[i], 0, n_known_cols);
     norm_square_b[i].set_z(ztmp0);
   }
@@ -204,7 +200,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
   }
   else
   {
-    ZT ztmp0;
     b[i].dot_product(ztmp0, b[i], 0, n_known_cols);
     ztmp0.get_f_exp(norm_square_b[i], expo_norm_square_b[i]);
   }
@@ -246,7 +241,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R(int i)
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last_naively(int i)
 {
-  FT ftmp0, ftmp1, s;
+  // Here, ftmp2 is equal to s in [MSV, ISSAC'09].
   int j;
 
   // Copy R_naively[i][i..n] in V_naively
@@ -256,13 +251,13 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last_naively
   }
   // sigma_naively[i] = sign(r[1])
   sigma_naively[i] = (R_naively(i, i).cmp(0.0) < 0) ? -1.0 : 1.0;
-  R_naively[i].dot_product(s, R_naively[i], i, n);
-  s.sqrt(s);
-  s.mul(s, sigma_naively[i]);
-  // Here, s = sigma_naively[i] * ||r||
+  R_naively[i].dot_product(ftmp2, R_naively[i], i, n);
+  ftmp2.sqrt(ftmp2);
+  ftmp2.mul(ftmp2, sigma_naively[i]);
+  // Here, ftmp2 = sigma_naively[i] * ||r||
 
-  // ftmp0 = (r[1] + s)
-  ftmp0.add(R_naively(i, i), s);
+  // ftmp0 = (r[1] + ftmp2)
+  ftmp0.add(R_naively(i, i), ftmp2);
   if (ftmp0.cmp(0.0) != 0)
   {
     if (i + 1 == n)
@@ -274,18 +269,18 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last_naively
       // ftmp1 = (-sum(r[j]^2, j, 2, n-i+1)
       ftmp1.neg(ftmp1);
 
-      // vi[1] = (-sum(r[j]^2, j, 2, n-i+1) / (r[1] + s)
+      // vi[1] = (-sum(r[j]^2, j, 2, n-i+1) / (r[1] + ftmp2)
       V_naively(i, i).div(ftmp1, ftmp0);
 
-      s.neg(s);
-      ftmp0.mul(s, V_naively(i, i));
-      // Here, ftmp0 = -s * vi[1]
+      ftmp2.neg(ftmp2);
+      ftmp0.mul(ftmp2, V_naively(i, i));
+      // Here, ftmp0 = -ftmp2 * vi[1]
 
-      // ftmp0 = sqrt(-s * vi[1])
+      // ftmp0 = sqrt(-ftmp2 * vi[1])
       ftmp0.sqrt(ftmp0);
 
       V_naively(i, i).div(V_naively(i, i), ftmp0);
-      R_naively(i, i).abs(s);
+      R_naively(i, i).abs(ftmp2);
 
       for (j = i + 1; j < n; j++)
       {
@@ -322,7 +317,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively(int 
 {
   FPLLL_DEBUG_CHECK(i <= n_known_rows_naively);
 
-  FT ftmp0;
   int j;
 
   // Set B in R_naively.
@@ -465,7 +459,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_addmul_si(int i, 
 template <class ZT, class FT>
 void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
 {
-  ZT ztmp0;
   b[i].addmul_si_2exp(b[j], x, expo, n_known_cols, ztmp0);
   if (enable_transform)
   {
@@ -478,16 +471,16 @@ void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
 template <class ZT, class FT>
 void MatHouseholder<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
 {
-  ZT ztmp0;
-  b[i].addmul_2exp(b[j], x, expo, n_known_cols, ztmp0);
+  // Cannot use ztmp0 here, since x is ztmp0. Use ztmp1 instead.
+  b[i].addmul_2exp(b[j], x, expo, n_known_cols, ztmp1);
   if (enable_transform)
   {
-    u[i].addmul_2exp(u[j], x, expo, ztmp0);
+    u[i].addmul_2exp(u[j], x, expo, ztmp1);
     if (enable_inverse_transform)
     {
       ZT minus_x;
       minus_x.neg(x);
-      u_inv_t[j].addmul_2exp(u_inv_t[i], minus_x, expo, ztmp0);
+      u_inv_t[j].addmul_2exp(u_inv_t[i], minus_x, expo, ztmp1);
     }
   }
 }
@@ -497,7 +490,6 @@ void MatHouseholder<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_
 {
   FPLLL_DEBUG_CHECK(j >= 0 && i == n_known_rows && j < i);
 
-  ZT ztmp0;
   long expo;
   long lx = x.get_si_exp_we(expo, expo_add);
 
@@ -560,7 +552,6 @@ void MatHouseholder<ZT, FT>::row_addmul_si_naively(int i, int j, long x)
 template <class ZT, class FT>
 void MatHouseholder<ZT, FT>::row_addmul_si_2exp_naively(int i, int j, long x, long expo)
 {
-  ZT ztmp0;
   b[i].addmul_si_2exp(b[j], x, expo, n, ztmp0);
   if (enable_transform)
   {
@@ -573,16 +564,16 @@ void MatHouseholder<ZT, FT>::row_addmul_si_2exp_naively(int i, int j, long x, lo
 template <class ZT, class FT>
 void MatHouseholder<ZT, FT>::row_addmul_2exp_naively(int i, int j, const ZT &x, long expo)
 {
-  ZT ztmp0;
-  b[i].addmul_2exp(b[j], x, expo, n, ztmp0);
+  // Cannot use ztmp0 here, since x is ztmp0. Use ztmp1 instead.
+  b[i].addmul_2exp(b[j], x, expo, n, ztmp1);
   if (enable_transform)
   {
-    u[i].addmul_2exp(u[j], x, expo, ztmp0);
+    u[i].addmul_2exp(u[j], x, expo, ztmp1);
     if (enable_inverse_transform)
     {
       ZT minus_x;
       minus_x.neg(x);
-      u_inv_t[j].addmul_2exp(u_inv_t[i], minus_x, expo, ztmp0);
+      u_inv_t[j].addmul_2exp(u_inv_t[i], minus_x, expo, ztmp1);
     }
   }
 }
@@ -592,7 +583,6 @@ void MatHouseholder<ZT, FT>::row_addmul_we_naively(int i, int j, const FT &x, lo
 {
   FPLLL_DEBUG_CHECK(j >= 0 && i == n_known_rows_naively && j < i);
 
-  ZT ztmp0;
   long expo;
   long lx = x.get_si_exp_we(expo, expo_add);
 

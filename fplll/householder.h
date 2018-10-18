@@ -358,6 +358,10 @@ private:
   /* Used by update_R. Temporary variable. */
   vector<long> tmp_col_expo;
 
+  // Temporary variables
+  FT ftmp0, ftmp1, ftmp2;
+  ZT ztmp0, ztmp1;
+
   // init_row_size[i] = (last non-zero column in the i-th row of b) + 1
   vector<int> init_row_size;
   // n_known_cols (last non-zero column of the discovered rows) + 1
@@ -603,7 +607,6 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k, long &expo)
     }
     else
     {
-      ZT ztmp0;
       b[k].dot_product(ztmp0, b[k], 0, n_known_cols);
       ztmp0.get_f_exp(f, expo);
     }
@@ -614,7 +617,6 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k, long &expo)
       bf[k].dot_product(f, bf[k], 0, n_known_cols);
     else
     {
-      ZT ztmp0;
       b[k].dot_product(ztmp0, b[k], 0, n_known_cols);
       f.set_z(ztmp0);
     }
@@ -735,14 +737,12 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row_naively(FT &f, int k, long
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
   if (enable_row_expo)
   {
-    ZT ztmp0;
     b[k].dot_product(ztmp0, b[k], 0, n);
     ztmp0.get_f_exp(f, expo);
   }
   else
   {
     expo = -1;
-    ZT ztmp0;
     b[k].dot_product(ztmp0, b[k], 0, n);
     f.set_z(ztmp0);
   }
