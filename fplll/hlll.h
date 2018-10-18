@@ -92,18 +92,8 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
        << "c = " << c << endl
        << "precision = " << FT::get_prec() << endl
        << "row_expo = " << static_cast<int>(m.is_enable_row_expo()) << endl
-#ifndef HOUSEHOLDER_NAIVELY
        << "enable_bf = " << static_cast<int>(m.is_enable_bf()) << endl
-#else   // HOUSEHOLDER_NAIVELY
-       << "enable_bf = 0" << endl
-#endif  // HOUSEHOLDER_NAIVELY
        << "long_in_size_reduction = " << static_cast<int>(m.is_row_op_force_long()) << endl;
-
-#ifndef HOUSEHOLDER_NAIVELY
-  cerr << "householder_naively = 0" << endl;
-#else   // HOUSEHOLDER_NAIVELY
-  cerr << "householder_naively = 1" << endl;
-#endif  // HOUSEHOLDER_NAIVELY
 
 #ifndef HOUSEHOLDER_PRECOMPUTE_INVERSE
   cerr << "householder_precompute_inverse = 0" << endl;
@@ -127,7 +117,7 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::set_dR(int k, F
 }
 
 template <class ZT, class FT>
-bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta, int d, bool compute);
+bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta);
 
 FPLLL_END_NAMESPACE
 

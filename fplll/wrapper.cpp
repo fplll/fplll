@@ -579,7 +579,7 @@ bool is_hlll_reduced_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double 
     return RED_SUCCESS;
   int householder_flags = HOUSEHOLDER_DEFAULT | HOUSEHOLDER_ROW_EXPO;
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> m(b, u, u_inv, householder_flags);
-  return is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(m, delta, eta, -1, true);
+  return is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(m, delta, eta);
 }
 
 // For FT == dpe or FT == mpfr
@@ -590,7 +590,7 @@ bool is_hlll_reduced_pr(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double 
     return RED_SUCCESS;
   int householder_flags = HOUSEHOLDER_DEFAULT;
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> m(b, u, u_inv, householder_flags);
-  return is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(m, delta, eta, -1, true);
+  return is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(m, delta, eta);
 }
 
 template <class ZT, class FT>

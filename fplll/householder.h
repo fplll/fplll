@@ -433,8 +433,6 @@ private:
   vector<long> expo_norm_square_b;
 
   /* Objects and methods for the naive computation of the R factor using Householder. */
-  // TODO: outside of is_hlll_reduced, naive operations are not used, since HOUSEHOLDER_NAIVELY is
-  // not tested.
 
 public:
   /**
@@ -448,35 +446,9 @@ public:
   void update_R_naively(int i);
 
   /**
-   * Apply Householder transformation on row i for columns [0, i).
-   * If last_j, apply Householder transformation on row i, from cols [0, i].
-   */
-  void update_R_naively(int i, bool last_j);
-
-  /**
-   * Finalize Householder transformation on row i (especially after update_R(i, false))
-   */
-  void update_R_last_naively(int i);
-
-  /**
    * Return R_naively(i, j) = f (* 2^expo, if enable_row_expo)
    */
   inline void get_R_naively(FT &f, int i, int j, long &expo);
-
-  /**
-   * Returns R[i].
-   */
-  inline MatrixRow<FT> get_R_naively(int i, long &expo);
-
-  /**
-   * Returns the R matrix
-   * expo is set to row_expo_naively
-   */
-  const Matrix<FT> &get_R_naively(vector<long> &expo)
-  {
-    expo = row_expo_naively;
-    return R_naively;
-  }
 
   /**
    * Squared norm of b[k].
@@ -489,41 +461,6 @@ public:
    * Truncated norm square of R_naively[k], with coefficients of R_naively[k][0..end-1].
    */
   inline void norm_square_R_row_naively(FT &f, int k, int end, long &expo);
-
-  /**
-   * Return row_expo_naively[i]
-   */
-  inline long get_row_expo_naively(int i) { return row_expo_naively[i]; }
-
-  /**
-   * Set R(i, j) to f
-   */
-  inline void set_R_naively(FT &f, int i, int j);
-
-  /**
-   * b[k] = b[k] - sum_{i = 0}^{k - 1}(x[i] * b[i])
-   */
-  void addmul_b_rows_naively(int k, vector<FT> xf);
-
-  /**
-   * b[i] := b[i] + x * 2^expo_add * b[j].
-   * Special cases |x| &lt;= 1 and |x| &lt;= LONG_MAX are optimized.
-   * x should be an integer.
-   * If row_op_force_long=true, x is always converted to (2^expo * long) instead
-   * of (2^expo * ZT), which is faster if ZT=mpz_t but might lead to a loss of
-   * precision.
-   */
-  void row_add_naively(int i, int j);
-  void row_sub_naively(int i, int j);
-  void row_addmul_si_naively(int i, int j, long x);
-  void row_addmul_si_2exp_naively(int i, int j, long x, long expo);
-  void row_addmul_2exp_naively(int i, int j, const ZT &x, long expo);
-  void row_addmul_we_naively(int i, int j, const FT &x, long expo_add);
-
-  /**
-   * Update n_known_rows_naively to k.
-   */
-  inline void invalidate_row_naively(int k);
 
 private:
   /**
@@ -682,11 +619,6 @@ inline void MatHouseholder<ZT, FT>::get_norm_square_b(FT &f, int i, long &expo)
 
 /* Objects and methods for the naive computation of the R factor using Householder. */
 
-template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R_naively(int i)
-{
-  update_R_naively(i, true);
-}
-
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R_naively()
 {
   for (int i = 0; i < d; i++)
@@ -700,15 +632,6 @@ inline void MatHouseholder<ZT, FT>::get_R_naively(FT &f, int i, int j, long &exp
   FPLLL_DEBUG_CHECK(i >= 0 && i < d && j >= 0 && j <= i);
   f    = R_naively(i, j);
   expo = row_expo_naively[i];
-}
-
-template <class ZT, class FT>
-inline MatrixRow<FT> MatHouseholder<ZT, FT>::get_R_naively(int i, long &expo)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < d);
-  expo = row_expo_naively[i];
-
-  return R_naively[i];
 }
 
 template <class ZT, class FT>
@@ -746,20 +669,6 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row_naively(FT &f, int k, long
     b[k].dot_product(ztmp0, b[k], 0, n);
     f.set_z(ztmp0);
   }
-}
-
-template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::set_R_naively(FT &f, int i, int j)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < d && i >= j && j >= 0);
-  FPLLL_DEBUG_CHECK(j <= i);
-  R_naively(i, j) = f;
-}
-
-// TODO: test seems to be strange
-template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::invalidate_row_naively(int k)
-{
-  if (k < n_known_rows_naively)
-    n_known_rows_naively = k;
 }
 
 FPLLL_END_NAMESPACE

@@ -239,11 +239,53 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R(int i)
   }
 }
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last_naively(int i)
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively(int i)
 {
-  // Here, ftmp2 is equal to s in [MSV, ISSAC'09].
+  FPLLL_DEBUG_CHECK(i <= n_known_rows_naively);
+
   int j;
 
+  // Set B in R_naively.
+  if (enable_row_expo)
+  {
+    long max_expo = LONG_MIN;
+
+    for (j = 0; j < n; j++)
+    {
+      b(i, j).get_f_exp(R_naively(i, j), tmp_col_expo[j]);
+      max_expo = max(max_expo, tmp_col_expo[j]);
+    }
+
+    for (j = 0; j < n; j++)
+      R_naively(i, j).mul_2si(R_naively(i, j), tmp_col_expo[j] - max_expo);
+
+    row_expo_naively[i] = max_expo;
+    FPLLL_DEBUG_CHECK(row_expo_naively[i] >= 0);
+  }
+  else
+  {
+    for (j = 0; j < n; j++)
+      R_naively(i, j).set_z(b(i, j));
+  }
+
+  for (j = 0; j < i; j++)
+  {
+    // vj * ri[j..n]^T
+    V_naively[j].dot_product(ftmp0, R_naively[i], j, n);
+
+    //-vj * ri[j..n]^T
+    ftmp0.neg(ftmp0);
+    for (int k = j; k < n; k++)
+    {
+      // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
+      R_naively(i, k).addmul(V_naively(j, k), ftmp0);
+    }
+    // ri[j] = sigma_naively[j] * ri[j]
+    R_naively(i, j).mul(sigma_naively[j], R_naively(i, j));
+  }
+
+  // Here, ftmp2 is equal to s in [MSV, ISSAC'09].
+  //
   // Copy R_naively[i][i..n] in V_naively
   for (j = i; j < n; j++)
   {
@@ -313,66 +355,12 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last_naively
   n_known_rows_naively++;
 }
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively(int i, bool last_j)
-{
-  FPLLL_DEBUG_CHECK(i <= n_known_rows_naively);
-
-  int j;
-
-  // Set B in R_naively.
-  if (enable_row_expo)
-  {
-    long max_expo = LONG_MIN;
-
-    for (j = 0; j < n; j++)
-    {
-      b(i, j).get_f_exp(R_naively(i, j), tmp_col_expo[j]);
-      max_expo = max(max_expo, tmp_col_expo[j]);
-    }
-
-    for (j = 0; j < n; j++)
-      R_naively(i, j).mul_2si(R_naively(i, j), tmp_col_expo[j] - max_expo);
-
-    row_expo_naively[i] = max_expo;
-    FPLLL_DEBUG_CHECK(row_expo_naively[i] >= 0);
-  }
-  else
-  {
-    for (j = 0; j < n; j++)
-      R_naively(i, j).set_z(b(i, j));
-  }
-
-  for (j = 0; j < i; j++)
-  {
-    // vj * ri[j..n]^T
-    V_naively[j].dot_product(ftmp0, R_naively[i], j, n);
-
-    //-vj * ri[j..n]^T
-    ftmp0.neg(ftmp0);
-    for (int k = j; k < n; k++)
-    {
-      // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
-      R_naively(i, k).addmul(V_naively(j, k), ftmp0);
-    }
-    // ri[j] = sigma_naively[j] * ri[j]
-    R_naively(i, j).mul(sigma_naively[j], R_naively(i, j));
-  }
-
-  if (last_j)
-    update_R_last_naively(i);
-}
-
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
 {
   FPLLL_DEBUG_CHECK(0 <= i && i < j && j < d);
 
   // Invalidate to the min not modified row, that is i
   invalidate_row(i);
-
-#ifdef HOUSEHOLDER_NAIVELY
-  // Invalidate to the min not modified row, that is i
-  invalidate_row_naively(i);
-#endif  // HOUSEHOLDER_NAIVELY
 
   b.swap_rows(i, j);
   if (enable_bf)
@@ -408,18 +396,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_rows(int k, 
 
   // Invalidate since b has changed, but R is not updated
   invalidate_row(k);
-}
-
-template <class ZT, class FT>
-void MatHouseholder<ZT, FT>::addmul_b_rows_naively(int k, vector<FT> xf)
-{
-  FPLLL_DEBUG_CHECK(k > 0 && k < d);
-
-  for (int i = 0; i < k; i++)
-    row_addmul_we_naively(k, i, xf[i], row_expo_naively[k] - row_expo_naively[i]);
-
-  // Invalidate since b has changed, but R is not updated
-  invalidate_row_naively(k);
 }
 
 /* Taken from fplll/gso.cpp (commit 3d0d962)*/
@@ -510,99 +486,6 @@ void MatHouseholder<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_
   {
     x.get_z_exp_we(ztmp0, expo, expo_add);
     row_addmul_2exp(i, j, ztmp0, expo);
-  }
-}
-
-/* Taken from fplll/gso.cpp (commit 3d0d962) */
-/* Naive version */
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_add_naively(int i, int j)
-{
-  b[i].add(b[j], n);
-  if (enable_transform)
-  {
-    u[i].add(u[j]);
-    if (enable_inverse_transform)
-      u_inv_t[j].sub(u_inv_t[i]);
-  }
-}
-
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_sub_naively(int i, int j)
-{
-  b[i].sub(b[j], n);
-  if (enable_transform)
-  {
-    u[i].sub(u[j]);
-    if (enable_inverse_transform)
-      u_inv_t[j].add(u_inv_t[i]);
-  }
-}
-
-template <class ZT, class FT>
-void MatHouseholder<ZT, FT>::row_addmul_si_naively(int i, int j, long x)
-{
-  b[i].addmul_si(b[j], x, n);
-  if (enable_transform)
-  {
-    u[i].addmul_si(u[j], x);
-    if (enable_inverse_transform)
-      u_inv_t[j].addmul_si(u_inv_t[i], -x);
-  }
-}
-
-template <class ZT, class FT>
-void MatHouseholder<ZT, FT>::row_addmul_si_2exp_naively(int i, int j, long x, long expo)
-{
-  b[i].addmul_si_2exp(b[j], x, expo, n, ztmp0);
-  if (enable_transform)
-  {
-    u[i].addmul_si_2exp(u[j], x, expo, ztmp0);
-    if (enable_inverse_transform)
-      u_inv_t[j].addmul_si_2exp(u_inv_t[i], -x, expo, ztmp0);
-  }
-}
-
-template <class ZT, class FT>
-void MatHouseholder<ZT, FT>::row_addmul_2exp_naively(int i, int j, const ZT &x, long expo)
-{
-  // Cannot use ztmp0 here, since x is ztmp0. Use ztmp1 instead.
-  b[i].addmul_2exp(b[j], x, expo, n, ztmp1);
-  if (enable_transform)
-  {
-    u[i].addmul_2exp(u[j], x, expo, ztmp1);
-    if (enable_inverse_transform)
-    {
-      ZT minus_x;
-      minus_x.neg(x);
-      u_inv_t[j].addmul_2exp(u_inv_t[i], minus_x, expo, ztmp1);
-    }
-  }
-}
-
-template <class ZT, class FT>
-void MatHouseholder<ZT, FT>::row_addmul_we_naively(int i, int j, const FT &x, long expo_add)
-{
-  FPLLL_DEBUG_CHECK(j >= 0 && i == n_known_rows_naively && j < i);
-
-  long expo;
-  long lx = x.get_si_exp_we(expo, expo_add);
-
-  if (expo == 0)
-  {
-    if (lx == 1)
-      row_add_naively(i, j);
-    else if (lx == -1)
-      row_sub_naively(i, j);
-    else if (lx != 0)
-      row_addmul_si_naively(i, j, lx);
-  }
-  else if (row_op_force_long)
-  {
-    row_addmul_si_2exp_naively(i, j, lx, expo);
-  }
-  else
-  {
-    x.get_z_exp_we(ztmp0, expo, expo_add);
-    row_addmul_2exp_naively(i, j, ztmp0, expo);
   }
 }
 
