@@ -1,7 +1,4 @@
-/* Copyright (C) 2005-2008 Damien Stehle.
-   Copyright (C) 2007 David Cade.
-   Copyright (C) 2011 Xavier Pujol.
-
+/*
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
    General Public License as published by the Free Software Foundation,
@@ -26,9 +23,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 {
   int k     = 1;
   int k_max = 0;
-  FT s;
-  FT tmp;
-  FT sum;
+  FT ftmp1;
 
   /* TODO: not exactly the good value
    * delta_ in (delta + 2^(-p + p0), 1 - 2^(-p + p0))
@@ -55,30 +50,30 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   {
     size_reduction(k);
 
-    // s = R(k, k-1)
-    m.get_R(s, k, k - 1, expo_k_k1);
+    // ftmp1 = R(k, k-1)
+    m.get_R(ftmp1, k, k - 1, expo_k_k1);
 
-    s.mul(s, s);  // s = R(k, k - 1)^2
+    ftmp1.mul(ftmp1, ftmp1);  // ftmp1 = R(k, k - 1)^2
 
-    // tmp = R(k, k)
-    m.get_R(tmp, k, k, expo_k_k);
+    // ftmp0 = R(k, k)
+    m.get_R(ftmp0, k, k, expo_k_k);
 
-    tmp.mul(tmp, tmp);  // tmp = R(k, k)^2
-    s.add(tmp, s);      // s = R(k, k - 1)^2 + R(k, k)^2
-    // Here, s = R(k, k - 1)^2 + R(k, k)^2 = ||b_k||^2 - sum_{i in [0, k-2)} R(k, i)^2
+    ftmp0.mul(ftmp0, ftmp0);  // ftmp0 = R(k, k)^2
+    ftmp1.add(ftmp0, ftmp1);  // ftmp1 = R(k, k - 1)^2 + R(k, k)^2
+    // Here, ftmp1 = R(k, k - 1)^2 + R(k, k)^2 = ||b_k||^2 - sum_{i in [0, k-2)} R(k, i)^2
 
     // Get expo of row k - 1
     expo_k1_k1 = m.get_row_expo(k - 1);
 
     if (expo_k1_k1 > -1)
-      s.mul_2si(s, 2 * (expo_k_k - expo_k1_k1));
+      ftmp1.mul_2si(ftmp1, 2 * (expo_k_k - expo_k1_k1));
 
-    // Test if delta_ * R(k - 1, k - 1)^2 <= s
-    if (dR[k - 1].cmp(s) <= 0)
+    // Test if delta_ * R(k - 1, k - 1)^2 <= ftmp1
+    if (dR[k - 1].cmp(ftmp1) <= 0)
 
     {
-      // Here, tmp = R(k, k)^2
-      set_dR(k, tmp, delta_);
+      // Here, ftmp0 = R(k, k)^2
+      set_dR(k, ftmp0, delta_);
       k++;
 
       if (k < m.get_d())
@@ -124,8 +119,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
 template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kappa)
 {
+  // Store the floatting point values of the linear combinations of the vector b[0] to b[kappa-1].
   vector<FT> xf(kappa);
-  FT ftmp0, ftmp1;
   long expo0 = -1;
   long expo1 = -1;
   // for all i > max_index, xf[i] == 0.
@@ -246,20 +241,28 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   } while (true);
 }
 
-/* d is to perform the check only for row [0, d[. If d = -1, d = m.get_d(). */
-/* If compute is true and d > -1, apply Householder transpose on row [0, d[. */
+/*
+ * Verify if the basis b inside m is (delta, eta)-hlll reduced.
+ * Use a different implementation of the Householder transformation to compute R in this test than
+ * the one used to
+ * reduced the basis.
+ */
 template <class ZT, class FT>
 bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
 {
+  // Temporary variables
   FT ftmp0, ftmp1;
+  // FT version of delta and eta
   FT delta_ = delta;
   FT eta_   = eta;
 
+  // Compute the R coefficients of b
   m.update_R_naively();
 
   long expo0 = -1;
   long expo1 = -1;
 
+  // Equivilant to verify that mu(i, j) (= R(i, j) / R(j, j)) is <= to eta_ (or 0.5)
   for (int i = 0; i < m.get_d(); i++)
   {
     for (int j = 0; j < i; j++)
@@ -269,19 +272,24 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
       ftmp1.div(ftmp0, ftmp1);
       ftmp1.abs(ftmp1);
 
+      // If expo0 = -1, expo1 must be equal to -1, which is the case when FT=dpe or FT=mpfr
       if (expo0 > -1)
         ftmp1.mul_2si(ftmp1, expo0 - expo1);
 
+      // ftmp1 = |R(i, j) / R(j, j)|. Test if ftmp1 > eta and ftmp1 > 0.5.
       if (ftmp1.cmp(eta_) > 0)
         return false;
 
-      // Since eta_ is not involved in the test of the algorithm, this test is probably the one we
+      // Since eta_ is not directly involved during the hlll reduction, this test is probably the
+      // one we
       // want
       if (ftmp1.cmp(0.5) > 0)
         return false;
     }
   }
 
+  // At this step, we verify if two consecutive vectors must be swapped during the hlll-reduction or
+  // not
   for (int i = 1; i < m.get_d(); i++)
   {
     m.norm_square_b_row_naively(ftmp0, i, expo0);  // ftmp0 = ||b[i]||^2

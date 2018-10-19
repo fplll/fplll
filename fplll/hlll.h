@@ -1,7 +1,4 @@
-/* Copyright (C) 2005-2008 Damien Stehle.
-   Copyright (C) 2007 David Cade.
-   Copyright (C) 2011 Xavier Pujol.
-
+/*
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
    General Public License as published by the Free Software Foundation,
@@ -41,27 +38,30 @@ public:
     this->eta   = eta;
     this->theta = theta;
     this->c     = c;
-    double tmp  = pow(2.0, -(double)m.get_d() * c);
-    sr          = tmp;
+    sr          = pow(2.0, -(double)m.get_d() * c);
     verbose     = flags & LLL_VERBOSE;
     dR.resize(m.get_d());
   }
 
   /**
-    @brief LLL reduction.
+    @brief Househorder inside LLL reduction.
     */
-
   void lll();
 
 private:
+  // Paramters to (delta, eta, theta) hlll-reduce the basis b in m.
   FT delta, eta, theta;
   MatHouseholder<ZT, FT> &m;
+
   // Arbitraty c > 0
   FT c;
   // Multiplicative coefficient used to check if a vector is size-reduced or not.
   FT sr;
   // Verbose mode.
   bool verbose;
+
+  // Temporary variables
+  FT ftmp0, ftmp1;
 
   /**
      @brief Size reduction.
@@ -70,8 +70,11 @@ private:
 
      @param kappa index of the vector
   */
-  void size_reduction(int kappa = 0);
+  void size_reduction(int kappa);
 
+  /**
+   * In verbose mode, print informations to reproduce the computation (parameters, enable features)
+   */
   inline void print_params();
 
   // Precompute delta_ * R(k, k)^2
@@ -80,6 +83,7 @@ private:
   // Compute dR[k]
   inline void compute_dR(int k, FT delta_);
 
+  // Set the value dr[k] to s*delta_ where s must be equal to R(k, k)^2.
   inline void set_dR(int k, FT s, FT delta_);
 };
 
@@ -110,7 +114,6 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::compute_dR(int 
   dR[k].mul(delta_, dR[k]);  // dR[k] = delta_ * R(k, k)^2
 }
 
-// Use only when R(k, k)^2 is already computed.
 template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::set_dR(int k, FT s, FT delta_)
 {
   dR[k].mul(delta_, s);  // dR[k] = delta_ * s = delta_ * R(k, k)^2
