@@ -824,7 +824,7 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
 
   if (is_reduced || nolll)
   {
-    int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
+    int old_prec = FP_NR<mpfr_t>::set_prec(good_prec);
 
     if (is_hlll_reduced_pr<ZT, mpfr_t>(b, u, u_inv, delta, eta))
       cerr << "Basis is reduced (checked with mpfr).";
