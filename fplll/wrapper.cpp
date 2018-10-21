@@ -713,47 +713,14 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
   if (!nolll)
   {
     if (sel_ft == FT_DOUBLE)
-    {
       status = hlll_reduction_zf<ZT, double>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-      if (is_reduced)
-      {
-        if (is_hlll_reduced_zf<ZT, double>(b, u, u_inv, delta, eta))
-          cerr << "Basis is reduced (checked with double).";
-        else
-          cerr << "Basis is not reduced (checked with double).";
-        cerr << endl;
-      }
-    }
 #ifdef FPLLL_WITH_LONG_DOUBLE
     else if (sel_ft == FT_LONG_DOUBLE)
-    {
       status = hlll_reduction_zf<ZT, long double>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-      if (is_reduced)
-      {
-        if (is_hlll_reduced_zf<ZT, long double>(b, u, u_inv, delta, eta))
-          cerr << "Basis is reduced (checked with long double).";
-        else
-          cerr << "Basis is not reduced (checked with long double).";
-        cerr << endl;
-      }
-    }
 #endif
 #ifdef FPLLL_WITH_DPE
     else if (sel_ft == FT_DPE)
-    {
       status = hlll_reduction_zf<ZT, dpe_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-      if (is_reduced)
-      {
-        if (is_hlll_reduced_pr<ZT, dpe_t>(b, u, u_inv, delta, eta))
-          cerr << "Basis is reduced (checked with dpe).";
-        else
-          cerr << "Basis is not reduced (checked with dpe).";
-        cerr << endl;
-      }
-    }
 #endif
 #ifdef FPLLL_WITH_QD
     else if (sel_ft == FT_DD)
@@ -761,16 +728,6 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
       unsigned int old_cw;
       fpu_fix_start(&old_cw);
       status = hlll_reduction_zf<ZT, dd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-      if (is_reduced)
-      {
-        if (is_hlll_reduced_zf<ZT, dd_real>(b, u, u_inv, delta, eta))
-          cerr << "Basis is reduced (checked with dd_real).";
-        else
-          cerr << "Basis is not reduced (checked with dd_real).";
-        cerr << endl;
-      }
-
       fpu_fix_end(&old_cw);
     }
     else if (sel_ft == FT_QD)
@@ -778,16 +735,6 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
       unsigned int old_cw;
       fpu_fix_start(&old_cw);
       status = hlll_reduction_zf<ZT, qd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-      if (is_reduced)
-      {
-        if (is_hlll_reduced_zf<ZT, qd_real>(b, u, u_inv, delta, eta))
-          cerr << "Basis is reduced (checked with qd_real).";
-        else
-          cerr << "Basis is not reduced (checked with qd_real).";
-        cerr << endl;
-      }
-
       fpu_fix_end(&old_cw);
     }
 #endif
@@ -795,16 +742,6 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
     {
       int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
       status = hlll_reduction_zf<ZT, mpfr_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
-
-      if (is_reduced)
-      {
-        if (is_hlll_reduced_pr<ZT, mpfr_t>(b, u, u_inv, delta, eta))
-          cerr << "Basis is reduced (checked with mpfr).";
-        else
-          cerr << "Basis is not reduced (checked with mpfr).";
-        cerr << endl;
-      }
-
       FP_NR<mpfr_t>::set_prec(old_prec);
     }
     else
