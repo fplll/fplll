@@ -65,8 +65,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     // Get expo of row k - 1
     expo_k1_k1 = m.get_row_expo(k - 1);
 
-    if (expo_k1_k1 > -1)
-      ftmp1.mul_2si(ftmp1, 2 * (expo_k_k - expo_k1_k1));
+    ftmp1.mul_2si(ftmp1, 2 * (expo_k_k - expo_k1_k1));
 
     // Test if delta_ * R(k - 1, k - 1)^2 <= ftmp1
     if (dR[k - 1].cmp(ftmp1) <= 0)
@@ -218,8 +217,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       ftmp0.mul(approx, ftmp0);  // ftmp0 = approx * ftmp0
 
       // Why not doing ftmp1.mul_2si(ftmp1, expo1 - expo0); ?
-      if (expo1 > -1)
-        ftmp0.mul_2si(ftmp0, expo0 - expo1);
+      ftmp0.mul_2si(ftmp0, expo0 - expo1);
 
       // If (||b(kappa)||^2 > 2^(-cd) * t => ftmp1 > ftmp0), stop the loop.
       not_stop = (ftmp1.cmp(ftmp0) <= 0);
@@ -273,8 +271,7 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
       ftmp1.abs(ftmp1);
 
       // If expo0 = -1, expo1 must be equal to -1, which is the case when FT=dpe or FT=mpfr
-      if (expo0 > -1)
-        ftmp1.mul_2si(ftmp1, expo0 - expo1);
+      ftmp1.mul_2si(ftmp1, expo0 - expo1);
 
       // ftmp1 = |R(i, j) / R(j, j)|. Test if ftmp1 > eta and ftmp1 > 0.5.
       if (ftmp1.cmp(eta_) > 0)
@@ -296,16 +293,14 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
     m.norm_square_R_row_naively(ftmp1, i, i - 1,
                                 expo1);  // ftmp1 = sum_{i = 0}^{i < i - 1}R[i][i]^2
 
-    if (expo0 > -1)
-      ftmp0.mul_2si(ftmp0, expo0 - expo1);
+    ftmp0.mul_2si(ftmp0, expo0 - expo1);
 
     ftmp1.sub(ftmp0, ftmp1);  // ftmp1 = ||b[i]||^2 - sum_{i = 0}^{i < i - 1}R[i][i]^2
     m.get_R_naively(ftmp0, i - 1, i - 1, expo0);
     ftmp0.mul(ftmp0, ftmp0);
     ftmp0.mul(delta_, ftmp0);  // ftmp0 = delta_ * R(i - 1, i - 1)^2
 
-    if (expo0 > -1)
-      ftmp1.mul_2si(ftmp1, expo1 - expo0);
+    ftmp1.mul_2si(ftmp1, expo1 - expo0);
 
     if (ftmp0.cmp(ftmp1) > 0)
       return false;
