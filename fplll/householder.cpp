@@ -398,6 +398,15 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_rows(int k, 
   invalidate_row(k);
 }
 
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_R_row(const FT &xf, int k, int i)
+{
+  FPLLL_DEBUG_CHECK(k > 0 && k < d);
+
+  // i since only the i first coefficients of R[i] are used.
+  // TODO: differenciate if xf = -1 or 1 to just use add or sub
+  R[k].addmul(R[i], xf, i);
+}
+
 /* Taken from fplll/gso.cpp (commit 3d0d962)*/
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_add(int i, int j)
 {

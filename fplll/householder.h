@@ -309,6 +309,9 @@ public:
    */
   inline void get_norm_square_b(FT &f, int i, long &expo);
 
+  // R[k] = R[k] + xf * R[i]
+  void addmul_R_row(const FT &xf, int k, int i);
+
 private:
   /**
    * Number of rows of b (dimension of the lattice).

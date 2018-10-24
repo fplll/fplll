@@ -187,14 +187,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
 
       if (ftmp1.cmp(0.0) != 0)
       {
-        for (int j = 0; j < i; j++)
-        {
-          m.get_R(ftmp1, i, j, expo0);      // expo0 = row_expo[i]
-          ftmp1.mul(xf[i], ftmp1);          // ftmp1 = x[i] * R(i, j)
-          m.get_R(ftmp0, kappa, j, expo0);  // expo0 = row_expo[kappa]
-          ftmp0.add(ftmp0, ftmp1);          // ftmp0 = R(kappa, j) + x[i] * R(i, j)
-          m.set_R(ftmp0, kappa, j);
-        }
+        m.addmul_R_row(xf[i], kappa, i);
         max_index = max(max_index, i);
       }
     }
