@@ -289,7 +289,7 @@ public:
    */
   void refresh_R_bf(int i);
   /**
-   * Set b and R to b.
+   * Set bf and R to b.
    * Precompute squared norm of all the vectors of b
    */
   inline void refresh_R_bf();

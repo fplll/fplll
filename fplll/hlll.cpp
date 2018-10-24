@@ -21,10 +21,6 @@ FPLLL_BEGIN_NAMESPACE
 
 template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 {
-  int k     = 1;
-  int k_max = 0;
-  FT ftmp1;
-
   /* TODO: not exactly the good value
    * delta_ in (delta + 2^(-p + p0), 1 - 2^(-p + p0))
    */
@@ -32,22 +28,37 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   int start_time = cputime();
   long expo_k1_k1, expo_k_k1, expo_k_k;
 
+  if (verbose)
+  {
+    // Print the parameters of the computation
+    print_params();
+    // Discover b[0]
+    cerr << "Discovering vector 1/" << m.get_d() << " cputime=" << cputime() - start_time << endl;
+  }
+
+  // Set R[0] and bf[0] to b[0], precompute ||b[0]||^2
   m.refresh_R_bf(0);
+  // Compute R[0]
   m.update_R(0);
+  // Precompute R[0]^2 * delta_
   compute_dR(0, delta_);
+
+  int k = 1;
+  // Remember which was the largest b[k_max] that is tried to be size-reduced
+  int k_max = 1;
 
   if (verbose)
   {
-    print_params();
-    // Discover vector 1
-    cerr << "Discovering vector " << k + 1 << "/" << m.get_d()
-         << " cputime=" << cputime() - start_time << endl;
+    // Discover b[1]
+    cerr << "Discovering vector 2/" << m.get_d() << " cputime=" << cputime() - start_time << endl;
   }
 
+  // Set R[1] and bf[1] to b[1], precompute ||b[1]||^2
   m.refresh_R_bf(1);
 
   while (true)
   {
+    // Size reduce b[k] thanks to b[0] to b[k - 1]
     size_reduction(k);
 
     // ftmp1 = R(k, k-1)
@@ -73,43 +84,60 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     {
       // Here, ftmp0 = R(k, k)^2
       set_dR(k, ftmp0, delta_);
+      // b[k] is size reduced, now, size reduce b[k + 1]
       k++;
 
       if (k < m.get_d())
       {
         if (k > k_max)
         {
+          // First time b[k] is discovered
           if (verbose)
           {
             cerr << "Discovering vector " << k + 1 << "/" << m.get_d()
                  << " cputime=" << cputime() - start_time << endl;
           }
           k_max = k;
+          // Set R[k] and bf[k] to b[k], precompute ||b[k]||^2
           m.refresh_R_bf(k);
         }
         else
+          // Set R[k] to b[k]. Indeed, it is not necessary to refresh bf[k], since b[k] has not
+          // changed. However, it is
+          // mandatory to refresh R[k], since b[0] to b[k - 1] may have changed, and then, it is
+          // necessary to recompute
+          // R[k].
           m.refresh_R(k);
       }
       else
+        // if k == m.get_d(), then b[k] does not exist and the computation is ended
         return;
     }
     else
     {
+      // Swap b[k-1] and b[k] and other usefull variables
       m.swap(k - 1, k);
 
       if (k - 1 == 0)
       {
-        // Update row 0
-        m.refresh_R_bf(0);
+        // Set R[0] to b[0] (bf[0] and other usefull variables were swaped previously)
+        m.refresh_R(0);
+        // Compute R[0]
         m.update_R(0);
+        // Precompute R[0]^2 * delta_
         compute_dR(0, delta_);
 
+        // Set R[1] to b[1] (bf[1] and other usefull variables were swaped previously)
         m.refresh_R(1);
         k = 1;
       }
       else
       {
+        // Size reduce b[k - 1]
         k--;
+        // Since b[k] was not changed, a previous computation of R[k][0..k-1] can be used instead of
+        // recomputing
+        // R[k][0..k-1], which is the only interesting part to begin the size reduction of b[k]
         m.recover_R(k);
       }
     }
@@ -124,14 +152,14 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   long expo1 = -1;
   // for all i > max_index, xf[i] == 0.
   int max_index = -1;
+
   /*
    * Variables introduced in hplll (https://github.com/gilvillard/hplll)
    * See commit a6b29d1a23ca34000264e22608ef23a64e3cac9d
    * It seems that testing only one time the condition on line 7 of Algorithm 3 (incomplete size
-   * reduction) is not
-   * sufficient to ensure that b[kappa] is size-reduced. We then test it two times. If two times in
-   * a row, the condition
-   * is reached, then we consider that b[kappa] is size-reduced.
+   * reduction) is not sufficient to ensure that b[kappa] is size-reduced. We then test it two
+   * times. If two times in a row, the condition is reached, then we consider that b[kappa] is
+   * size-reduced.
    */
   bool not_stop      = true;
   bool prev_not_stop = true;
@@ -157,10 +185,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
   m.update_R(kappa, false);
 
   /* Most likely, at this step, the next update_R(kappa, false) must modify some coefficients since
-   * b will most likely
-   * be changed. If b is not modified during the size reduction, there will be only a call to
-   * update_R_last(kappa),
-   * which automatically must set updated_R to false.
+   * b will most likely be changed. If b is not modified during the size reduction, there will be
+   * only a call to update_R_last(kappa), which automatically must set updated_R to false.
    * TODO: find a best place to use this function.
    */
   m.set_updated_R_false();
@@ -203,7 +229,12 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
     else
     {
       m.get_norm_square_b(ftmp0, kappa, expo0);  // ftmp0 = ||b[kappa]||^2 = t
+      // Apply the reduction of b[kappa]
       m.addmul_b_rows(kappa, xf);
+      // Since b has changed, R must be recomputed (latter in the implementation) and then R[kappa]
+      // and bf[kappa] are set to b[kappa]. The squared norm of b is updated, then, the next call to
+      // get_norm_square_b(..., kappa, ...)
+      // will get the squared norm of the current b.
       m.refresh_R_bf(kappa);
       m.get_norm_square_b(ftmp1, kappa, expo1);  // ftmp1 = ||b[kappa]||^2
 
@@ -217,12 +248,14 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       if (prev_not_stop || not_stop)
       {
         // Continue to try to reduce b(kappa).
+        // Update only R(kappa, 0..kappa-1).
         m.update_R(kappa, false);
 
         prev_not_stop = not_stop;
       }
       else
       {
+        // b[kappa] should be size_reduced.
         // Compute the last coefficients of R and stop.
         m.update_R(kappa);
 

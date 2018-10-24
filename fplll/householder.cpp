@@ -365,8 +365,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
   b.swap_rows(i, j);
   if (enable_bf)
     bf.swap_rows(i, j);
-  R.swap_rows(i, j);
-  V.swap_rows(i, j);
   iter_swap(sigma.begin() + i, sigma.begin() + j);
   if (enable_row_expo)
     iter_swap(row_expo.begin() + i, row_expo.begin() + j);
