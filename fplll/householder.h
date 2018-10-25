@@ -227,8 +227,11 @@ public:
    */
   inline void norm_square_R_row(FT &f, int k, int end, long &expo);
 
-  // b[k] = b[k] + xf * b[i]
-  void addmul_b_row(FT xf, int k, int i);
+  // b[k] = b[k] + ZT(xf) * b[i]
+  // R[k] = R[k] + xf * R[i]
+  // Not necessary to make transformation on bf, since basically, after each size_reduce, we call
+  // refresh_R_bf, which set bf to the correct value from b directly.
+  void size_reduce(const FT &xf, int k, int i);
 
   /**
    * Swap row i and j of b, bf, R, V, u and u_inv_t
@@ -306,9 +309,6 @@ public:
    */
   inline void get_norm_square_b(FT &f, int i, long &expo);
 
-  // R[k] = R[k] + xf * R[i]
-  void addmul_R_row(const FT &xf, int k, int i);
-
 private:
   /**
    * Number of rows of b (dimension of the lattice).
@@ -381,9 +381,9 @@ private:
    */
   void row_add(int i, int j);
   void row_sub(int i, int j);
-  void row_addmul_si(int i, int j, long x);
-  void row_addmul_si_2exp(int i, int j, long x, long expo);
-  void row_addmul_2exp(int i, int j, const ZT &x, long expo);
+  void row_addmul_si(int i, int j, long x, const FT &xf);
+  void row_addmul_si_2exp(int i, int j, long x, long expo, const FT &xf);
+  void row_addmul_2exp(int i, int j, const ZT &x, long expo, const FT &xf);
 
   /**
    * Basis of the lattice (floatting point)

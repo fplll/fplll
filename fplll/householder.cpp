@@ -380,32 +380,23 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
   iter_swap(expo_norm_square_b.begin() + i, expo_norm_square_b.begin() + j);
 }
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_row(FT xf, int k, int i)
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::size_reduce(const FT &xf, int k, int i)
 {
   FPLLL_DEBUG_CHECK(k > 0 && k < d);
 
   row_addmul_we(k, i, xf, row_expo[k] - row_expo[i]);
 
-  if (enable_bf)
-    bf[k].addmul(bf[i], xf, n_known_cols);
-
-  // Invalidate since b has changed, but R is not updated
+  // Invalidate since b has changed, but R is not recomputed. We do operations on R[k], but not the
+  // one to get the correct R[k]: the operations are the one mentionned in line 5 of Algorithm 3
+  // [MSV, ISSAC'09].
   invalidate_row(k);
-}
-
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_R_row(const FT &xf, int k, int i)
-{
-  FPLLL_DEBUG_CHECK(k > 0 && k < d);
-
-  // i since only the i first coefficients of R[i] are used.
-  // TODO: differenciate if xf = -1 or 1 to just use add or sub
-  R[k].addmul(R[i], xf, i);
 }
 
 /* Taken from fplll/gso.cpp (commit 3d0d962)*/
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_add(int i, int j)
 {
   b[i].add(b[j], n_known_cols);
+
   if (enable_transform)
   {
     u[i].add(u[j]);
@@ -417,6 +408,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_add(int i, int j)
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_sub(int i, int j)
 {
   b[i].sub(b[j], n_known_cols);
+
   if (enable_transform)
   {
     u[i].sub(u[j]);
@@ -425,9 +417,11 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_sub(int i, int j)
   }
 }
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_addmul_si(int i, int j, long x)
+template <class ZT, class FT>
+void MatHouseholder<ZT, FT>::row_addmul_si(int i, int j, long x, const FT &xf)
 {
   b[i].addmul_si(b[j], x, n_known_cols);
+
   if (enable_transform)
   {
     u[i].addmul_si(u[j], x);
@@ -437,9 +431,10 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_addmul_si(int i, 
 }
 
 template <class ZT, class FT>
-void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
+void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo, const FT &xf)
 {
   b[i].addmul_si_2exp(b[j], x, expo, n_known_cols, ztmp0);
+
   if (enable_transform)
   {
     u[i].addmul_si_2exp(u[j], x, expo, ztmp0);
@@ -449,10 +444,11 @@ void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
 }
 
 template <class ZT, class FT>
-void MatHouseholder<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
+void MatHouseholder<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo, const FT &xf)
 {
   // Cannot use ztmp0 here, since x is ztmp0. Use ztmp1 instead.
   b[i].addmul_2exp(b[j], x, expo, n_known_cols, ztmp1);
+
   if (enable_transform)
   {
     u[i].addmul_2exp(u[j], x, expo, ztmp1);
@@ -480,17 +476,20 @@ void MatHouseholder<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_
     else if (lx == -1)
       row_sub(i, j);
     else if (lx != 0)
-      row_addmul_si(i, j, lx);
+      row_addmul_si(i, j, lx, x);
   }
   else if (row_op_force_long)
   {
-    row_addmul_si_2exp(i, j, lx, expo);
+    row_addmul_si_2exp(i, j, lx, expo, x);
   }
   else
   {
     x.get_z_exp_we(ztmp0, expo, expo_add);
-    row_addmul_2exp(i, j, ztmp0, expo);
+    row_addmul_2exp(i, j, ztmp0, expo, x);
   }
+
+  // Do not try to specialize this function in add or sub since x respect the row_expo.
+  R[i].addmul(R[j], x, i);
 }
 
 template class MatHouseholder<Z_NR<long>, FP_NR<double>>;

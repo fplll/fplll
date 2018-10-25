@@ -213,8 +213,9 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
 
       if (ftmp1.sgn() != 0)  // Equivalent to test if ftmp1 == 0
       {
-        m.addmul_R_row(ftmp1, kappa, i);
-        m.addmul_b_row(ftmp1, kappa, i);
+        // Reduce b[kappa] and R[kappa] accordingly (Step 5 and Step 6 of Algorithm 3 of [MSV,
+        // ISSAC'09])
+        m.size_reduce(ftmp1, kappa, i);
         // b[kappa] was reduced by -ftmp1 * b[i]
         reduced = true;
       }
