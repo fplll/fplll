@@ -380,17 +380,14 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
   iter_swap(expo_norm_square_b.begin() + i, expo_norm_square_b.begin() + j);
 }
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_rows(int k, vector<FT> xf)
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::addmul_b_row(FT xf, int k, int i)
 {
   FPLLL_DEBUG_CHECK(k > 0 && k < d);
 
-  for (int i = 0; i < k; i++)
-  {
-    row_addmul_we(k, i, xf[i], row_expo[k] - row_expo[i]);
+  row_addmul_we(k, i, xf, row_expo[k] - row_expo[i]);
 
-    if (enable_bf)
-      bf[k].addmul(bf[i], xf[i], n_known_cols);
-  }
+  if (enable_bf)
+    bf[k].addmul(bf[i], xf, n_known_cols);
 
   // Invalidate since b has changed, but R is not updated
   invalidate_row(k);

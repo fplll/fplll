@@ -146,12 +146,10 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
 template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kappa)
 {
-  // Store the floatting point values of the linear combinations of the vector b[0] to b[kappa-1].
-  vector<FT> xf(kappa);
   long expo0 = -1;
   long expo1 = -1;
-  // for all i > max_index, xf[i] == 0.
-  int max_index = -1;
+  // If b[kappa] is reduced by at least one b[i], then reduced will be set to true.
+  bool reduced = false;
 
   /*
    * Variables introduced in hplll (https://github.com/gilvillard/hplll)
@@ -193,7 +191,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
 
   do
   {
-    max_index = -1;
+    // No b[i] reduced b[kappa]
+    reduced = false;
 
     for (int i = kappa - 1; i >= 0; i--)
     {
@@ -209,18 +208,21 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       /* If T = mpfr or dpe, enable_row_expo must be false and then, expo0 - expo1 == 0 (required by
        * rnd_we with this types) */
       ftmp1.rnd_we(ftmp1, expo0 - expo1);
-      xf[i].neg(ftmp1);
+      // ftmp1 is equal to -X[i] in Algorithm 3 of [MSV, ISSAC'09]
+      ftmp1.neg(ftmp1);
 
-      if (ftmp1.cmp(0.0) != 0)
+      if (ftmp1.sgn() != 0)  // Equivalent to test if ftmp1 == 0
       {
-        m.addmul_R_row(xf[i], kappa, i);
-        max_index = max(max_index, i);
+        m.addmul_R_row(ftmp1, kappa, i);
+        m.addmul_b_row(ftmp1, kappa, i);
+        // b[kappa] was reduced by -ftmp1 * b[i]
+        reduced = true;
       }
     }
 
-    if (max_index == -1)
+    if (!reduced)
     {
-      // If max_index == -1, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
+      // If not reduced, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
       // 1 > 2^(-cd)=sr since cd > 0. Then, compute the last coefficient of R and stop.
       m.update_R_last(kappa);
 
@@ -228,13 +230,12 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
     }
     else
     {
+      // At this point, even if b has changed, the precomputed squared norm of b was for b before
+      // the reduction
       m.get_norm_square_b(ftmp0, kappa, expo0);  // ftmp0 = ||b[kappa]||^2 = t
-      // Apply the reduction of b[kappa]
-      m.addmul_b_rows(kappa, xf);
       // Since b has changed, R must be recomputed (latter in the implementation) and then R[kappa]
       // and bf[kappa] are set to b[kappa]. The squared norm of b is updated, then, the next call to
-      // get_norm_square_b(..., kappa, ...)
-      // will get the squared norm of the current b.
+      // get_norm_square_b(..., kappa, ...) will get the squared norm of the current b.
       m.refresh_R_bf(kappa);
       m.get_norm_square_b(ftmp1, kappa, expo1);  // ftmp1 = ||b[kappa]||^2
 

@@ -227,11 +227,8 @@ public:
    */
   inline void norm_square_R_row(FT &f, int k, int end, long &expo);
 
-  /**
-   * b[k] = b[k] - sum_{i = 0}^{k - 1}(int(xf[i]) * b[i])
-   * bf[k] = bf[k] - sum_{i = 0}^{k - 1}(xf[i] * b[i])
-   */
-  void addmul_b_rows(int k, vector<FT> xf);
+  // b[k] = b[k] + xf * b[i]
+  void addmul_b_row(FT xf, int k, int i);
 
   /**
    * Swap row i and j of b, bf, R, V, u and u_inv_t
