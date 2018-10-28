@@ -178,6 +178,7 @@ The options are:
 * `-v` : verbose mode. 
 * `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution).
 
+* `-a hlll` : HLLL-reduction.
 
 Options for LLL-reduction:
 
@@ -247,6 +248,7 @@ A combination of these option is allowed (e.g., `-of bkut`).
 
 Only for `-a hlll`:
 * `-V` : verify if basis is reduced
+* `-c` : constant for HLLL during the size-reduction (only used if `fplll` is compiled with `-DHOUSEHOLDER_USE_SIZE_REDUCTION_TEST`)
 
 ## llldiff ##
 
