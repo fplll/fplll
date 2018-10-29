@@ -231,6 +231,7 @@ public:
   // R[k] = R[k] + xf * R[i]
   // Not necessary to make transformation on bf, since basically, after each size_reduce, we call
   // refresh_R_bf, which set bf to the correct value from b directly.
+  // xf must be non-zero.
   void size_reduce(const FT &xf, int k, int i);
 
   /**
@@ -370,7 +371,8 @@ private:
   /**
    * b[i] := b[i] + x * 2^expo_add * b[j].
    * Special cases |x| &lt;= 1 and |x| &lt;= LONG_MAX are optimized.
-   * x should be an integer.
+   * x should be a non-zero FT. x*2^expo_add must represent an integer (typically coming from
+   * rnd_we).
    * If row_op_force_long=true, x is always converted to (2^expo * long) instead
    * of (2^expo * ZT), which is faster if ZT=mpz_t but might lead to a loss of
    * precision.
@@ -381,9 +383,9 @@ private:
    */
   void row_add(int i, int j);
   void row_sub(int i, int j);
-  void row_addmul_si(int i, int j, long x, const FT &xf);
-  void row_addmul_si_2exp(int i, int j, long x, long expo, const FT &xf);
-  void row_addmul_2exp(int i, int j, const ZT &x, long expo, const FT &xf);
+  void row_addmul_si(int i, int j, long x);
+  void row_addmul_si_2exp(int i, int j, long x, long expo);
+  void row_addmul_2exp(int i, int j, const ZT &x, long expo);
 
   /**
    * Basis of the lattice (floatting point)

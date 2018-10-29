@@ -383,6 +383,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::size_reduce(const FT &xf, int k, int i)
 {
   FPLLL_DEBUG_CHECK(k > 0 && k < d);
+  FPLLL_DEBUG_CHECK(xf.cmp(0.0) != 0);
 
   row_addmul_we(k, i, xf, row_expo[k] - row_expo[i]);
 
@@ -417,8 +418,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_sub(int i, int j)
   }
 }
 
-template <class ZT, class FT>
-void MatHouseholder<ZT, FT>::row_addmul_si(int i, int j, long x, const FT &xf)
+template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_addmul_si(int i, int j, long x)
 {
   b[i].addmul_si(b[j], x, n_known_cols);
 
@@ -431,7 +431,7 @@ void MatHouseholder<ZT, FT>::row_addmul_si(int i, int j, long x, const FT &xf)
 }
 
 template <class ZT, class FT>
-void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo, const FT &xf)
+void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
 {
   b[i].addmul_si_2exp(b[j], x, expo, n_known_cols, ztmp0);
 
@@ -444,7 +444,7 @@ void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo,
 }
 
 template <class ZT, class FT>
-void MatHouseholder<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo, const FT &xf)
+void MatHouseholder<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
 {
   // Cannot use ztmp0 here, since x is ztmp0. Use ztmp1 instead.
   b[i].addmul_2exp(b[j], x, expo, n_known_cols, ztmp1);
@@ -465,6 +465,7 @@ template <class ZT, class FT>
 void MatHouseholder<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_add)
 {
   FPLLL_DEBUG_CHECK(j >= 0 && i == n_known_rows && j < i);
+  FPLLL_DEBUG_CHECK(x.cmp(0.0) != 0);
 
   long expo;
   long lx = x.get_si_exp_we(expo, expo_add);
@@ -476,20 +477,27 @@ void MatHouseholder<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_
     else if (lx == -1)
       row_sub(i, j);
     else if (lx != 0)
-      row_addmul_si(i, j, lx, x);
+      row_addmul_si(i, j, lx);
   }
   else if (row_op_force_long)
   {
-    row_addmul_si_2exp(i, j, lx, expo, x);
+    row_addmul_si_2exp(i, j, lx, expo);
   }
   else
   {
     x.get_z_exp_we(ztmp0, expo, expo_add);
-    row_addmul_2exp(i, j, ztmp0, expo, x);
+    row_addmul_2exp(i, j, ztmp0, expo);
   }
 
-  // Do not try to specialize this function in add or sub since x respect the row_expo.
-  R[i].addmul(R[j], x, i);
+  // TODO: is it possible to combine this specialization with the condition on lx?
+  // Cannot specialize depending on lx, since x contains the contribution of the 2^row_expo[i] and
+  // 2^row_expo[j].
+  if (x.cmp(1.0) == 0.0)
+    R[i].add(R[j], i);
+  else if (x.cmp(-1.0) == 0.0)
+    R[i].sub(R[j], i);
+  else
+    R[i].addmul(R[j], x, i);
 }
 
 template class MatHouseholder<Z_NR<long>, FP_NR<double>>;
