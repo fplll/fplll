@@ -306,8 +306,7 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
         return false;
 
       // Since eta_ is not directly involved during the hlll reduction, this test is probably the
-      // one we
-      // want
+      // one we want.
       if (ftmp1.cmp(0.5) > 0)
         return false;
     }

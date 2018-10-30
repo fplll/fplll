@@ -25,22 +25,42 @@ using namespace fplll;
 #define TESTDATADIR ".."
 #endif
 
+// Return 0 if all goes well, 1 instead
 template <class ZT, class FT> int test_hlll(ZZ_mat<ZT> &A, int flags)
 {
+  // Define empty u and ut.
   ZZ_mat<ZT> u(0, 0);
   ZZ_mat<ZT> ut(0, 0);
+  // Create the MatHouseholder object
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A, u, ut, flags);
+  // Create the HLLLReduction object, on which will be performed the hlll reduction
   HLLLReduction<Z_NR<ZT>, FP_NR<FT>> hlll_obj(Mhouseholder, 0.99, 0.52, 0.99, 0.01, LLL_DEFAULT);
 
+  // The matrix A used to build Mhouseholder is not reduced. If the test return true, then
+  // is_hlll_reduced is badly
+  // implemented
+  int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(Mhouseholder, 0.99, 0.52);
+  if (status == true)
+  {
+    cerr << "is_hlll_reduced reports success when it should not." << endl;
+    return 1;
+  }
+
+  // Perform the hlll reduction
   hlll_obj.lll();
 
+  // Verify if A is hlll reduced thanks to mpfr
   MatHouseholder<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, u, ut, HOUSEHOLDER_DEFAULT);
-  int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, 0.99, 0.52);
 
+  // This times, M must be hlll reduced
+  status = is_hlll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, 0.99, 0.52);
   if (status == false)
+  {
     cerr << "Output of HLLL reduction is not HLLL reduced." << endl;
+    return 1;
+  }
 
-  return (status == false);
+  return 0;
 }
 
 /**
@@ -56,7 +76,9 @@ template <class ZT, class FT> int test_filename(const char *input_filename, int 
 {
   ZZ_mat<ZT> A;
   int status = 0;
+  // Read A from input_filename
   status |= read_file(A, input_filename);
+  // Test hlll reduction on A
   status |= test_hlll<ZT, FT>(A, flags);
   return status;
 }
@@ -78,44 +100,41 @@ int main(int /*argc*/, char ** /*argv*/)
 {
 
   int status = 0;
+  // int flags_fast = HOUSEHOLDER_ROW_EXPO | HOUSEHOLDER_BF | HOUSEHOLDER_OP_FORCE_LONG;
+  int flags_fast   = HOUSEHOLDER_ROW_EXPO;
+  int flags_proved = HOUSEHOLDER_DEFAULT;
 
-  status |=
-      test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_ROW_EXPO);
+  status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/dim55_in", flags_fast);
 #ifdef FPLLL_WITH_LONG_DOUBLE
-  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/dim55_in",
-                                              HOUSEHOLDER_ROW_EXPO);
+  status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/dim55_in", flags_fast);
 #endif  // FPLLL_WITH_LONG_DOUBLE
 #ifdef FPLLL_WITH_DPE
-  status |=
-      test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_DEFAULT);
+  status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/dim55_in", flags_proved);
 #endif  // FPLLL_WITH_DPE
 #ifdef FPLLL_WITH_QD
-  status |=
-      test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_ROW_EXPO);
-  status |=
-      test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_ROW_EXPO);
+  status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/dim55_in", flags_fast);
+  status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/dim55_in", flags_fast);
 #endif  // FPLLL_WITH_QD
-  status |=
-      test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/dim55_in", HOUSEHOLDER_DEFAULT);
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/dim55_in", flags_proved);
 
   status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
-                                         HOUSEHOLDER_ROW_EXPO);
+                                         flags_fast);
 #ifdef FPLLL_WITH_LONG_DOUBLE
   status |= test_filename<mpz_t, long double>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
-                                              HOUSEHOLDER_ROW_EXPO);
+                                              flags_fast);
 #endif  // FPLLL_WITH_LONG_DOUBLE
 #ifdef FPLLL_WITH_DPE
   status |= test_filename<mpz_t, dpe_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
-                                        HOUSEHOLDER_DEFAULT);
+                                        flags_proved);
 #endif  // FPLLL_WITH_DPE
 #ifdef FPLLL_WITH_QD
   status |= test_filename<mpz_t, qd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
-                                          HOUSEHOLDER_ROW_EXPO);
+                                          flags_fast);
   status |= test_filename<mpz_t, dd_real>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
-                                          HOUSEHOLDER_ROW_EXPO);
+                                          flags_fast);
 #endif  // FPLLL_WITH_QD
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/example_cvp_in_lattice4",
-                                         HOUSEHOLDER_DEFAULT);
+                                         flags_proved);
 
   if (status == 0)
   {
