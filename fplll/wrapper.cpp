@@ -571,7 +571,9 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
   return status;
 }
 
+// Verify if b is hlll reduced according to delta and eta
 // For FT != dpe and FT != mpfr
+// This function is not used, but can be used during a testing step.
 template <class ZT, class FT>
 bool is_hlll_reduced_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta)
 {
@@ -582,6 +584,7 @@ bool is_hlll_reduced_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double 
   return is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(m, delta, eta);
 }
 
+// Verify if b is hlll reduced according to delta and eta
 // For FT == dpe or FT == mpfr
 template <class ZT, class FT>
 bool is_hlll_reduced_pr(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta)
