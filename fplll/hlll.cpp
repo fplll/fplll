@@ -78,9 +78,10 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
     ftmp1.mul_2si(ftmp1, 2 * (expo_k_k - expo_k1_k1));
 
+    // FIXME: seems that this test is not as accurate as we can hope. Maybe it is time to use the
+    // theoritecal test instead of this one
     // Test if delta_ * R(k - 1, k - 1)^2 <= ftmp1
     if (dR[k - 1].cmp(ftmp1) <= 0)
-
     {
       // Here, ftmp0 = R(k, k)^2
       set_dR(k, ftmp0, delta_);
@@ -208,6 +209,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
       /* If T = mpfr or dpe, enable_row_expo must be false and then, expo0 - expo1 == 0 (required by
        * rnd_we with this types) */
       ftmp1.rnd_we(ftmp1, expo0 - expo1);
+
       // ftmp1 is equal to -X[i] in Algorithm 3 of [MSV, ISSAC'09]
       ftmp1.neg(ftmp1);
 
@@ -270,8 +272,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
 /*
  * Verify if the basis b inside m is (delta, eta)-hlll reduced.
  * Use a different implementation of the Householder transformation to compute R in this test than
- * the one used to
- * reduced the basis.
+ * the one used to reduced the basis.
  */
 template <class ZT, class FT>
 bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
@@ -314,6 +315,7 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
 
   // At this step, we verify if two consecutive vectors must be swapped during the hlll-reduction or
   // not
+  // FIXME: the way to do the test seems wrong
   for (int i = 1; i < m.get_d(); i++)
   {
     m.norm_square_b_row_naively(ftmp0, i, expo0);  // ftmp0 = ||b[i]||^2
@@ -325,6 +327,9 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
     ftmp1.sub(ftmp0, ftmp1);  // ftmp1 = ||b[i]||^2 - sum_{i = 0}^{i < i - 1}R[i][i]^2
     m.get_R_naively(ftmp0, i - 1, i - 1, expo0);
     ftmp0.mul(ftmp0, ftmp0);
+    // FIXME: since we do R(i - 1, i - 1)^2, do we should multiply expo0 by 2?
+    // Beware: if this is true, this should be carrefuly, since expo0 and expo1 when mpfr or dpe is
+    // equal to -1.
     ftmp0.mul(delta_, ftmp0);  // ftmp0 = delta_ * R(i - 1, i - 1)^2
 
     ftmp1.mul_2si(ftmp1, expo1 - expo0);
