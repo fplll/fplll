@@ -147,8 +147,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
 template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kappa)
 {
-  long expo0 = -1;
-  long expo1 = -1;
+  long expo0 = 0;
+  long expo1 = 0;
   // If b[kappa] is reduced by at least one b[i], then reduced will be set to true.
   bool reduced = false;
 
@@ -286,8 +286,8 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
   // Compute the R coefficients of b
   m.update_R_naively();
 
-  long expo0 = -1;
-  long expo1 = -1;
+  long expo0 = 0;
+  long expo1 = 0;
 
   // Equivilant to verify that mu(i, j) (= R(i, j) / R(j, j)) is <= to eta_ (or 0.5)
   for (int i = 0; i < m.get_d(); i++)
@@ -299,7 +299,7 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
       ftmp1.div(ftmp0, ftmp1);
       ftmp1.abs(ftmp1);
 
-      // If expo0 = -1, expo1 must be equal to -1, which is the case when FT=dpe or FT=mpfr
+      // In case FT=dpe or FT=mpfr, expo0 = expo1 = 0
       ftmp1.mul_2si(ftmp1, expo0 - expo1);
 
       // ftmp1 = |R(i, j) / R(j, j)|. Test if ftmp1 > eta and ftmp1 > 0.5.

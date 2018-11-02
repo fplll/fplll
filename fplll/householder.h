@@ -112,11 +112,9 @@ public:
     // Initialize norm_square_b
     norm_square_b.resize(d);
     expo_norm_square_b.resize(d);
-    /* fill row_expo with -1, since if enable_row_expo, it will be filled by real value, and
-     * otherwise, we essentially
-     * (-1) - (-1) */
-    // TODO: usefull?
-    fill(row_expo.begin(), row_expo.end(), -1);
+    /* fill row_expo with 0, since if enable_row_expo, it will be filled by real value, and
+     * otherwise, we essentially 0 - 0 */
+    fill(row_expo.begin(), row_expo.end(), 0);
 
 #ifdef HOUSEHOLDER_PRECOMPUTE_INVERSE
     // Initialize R_inverse_diag
@@ -126,8 +124,6 @@ public:
     if (enable_row_expo)
       // Initialize tmp_col_expo
       tmp_col_expo.resize(n);
-    else
-      fill(row_expo.begin(), row_expo.end(), -1);
 
     /* Initialize values for naively part of the computation
      * Used in is_hlll_reduced at least */
@@ -136,8 +132,7 @@ public:
     R_naively.resize(d, n);
     V_naively.resize(d, n);
     row_expo_naively.resize(d);
-    if (!enable_row_expo)
-      fill(row_expo_naively.begin(), row_expo_naively.end(), -1);
+    fill(row_expo_naively.begin(), row_expo_naively.end(), 0);
 
 #ifdef DEBUG
     for (int i = 0; i < d; i++)
@@ -551,7 +546,7 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k, long &expo)
     }
   else
   {
-    expo = -1;
+    expo = 0;
     if (enable_bf)
       bf[k].dot_product(f, bf[k], 0, n_known_cols);
     else
@@ -579,7 +574,7 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int end, lon
   if (enable_row_expo)
     expo = 2 * row_expo[k];
   else
-    expo = -1;
+    expo = 0;
 }
 
 // TODO: test seems to be strange
@@ -653,7 +648,7 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row_naively(FT &f, int k, int 
   if (enable_row_expo)
     expo = 2 * row_expo_naively[k];
   else
-    expo = -1;
+    expo = 0;
 }
 
 template <class ZT, class FT>
@@ -667,7 +662,7 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row_naively(FT &f, int k, long
   }
   else
   {
-    expo = -1;
+    expo = 0;
     b[k].dot_product(ztmp0, b[k], 0, n);
     f.set_z(ztmp0);
   }
