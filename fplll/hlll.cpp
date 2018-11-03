@@ -327,9 +327,8 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
     ftmp1.sub(ftmp0, ftmp1);  // ftmp1 = ||b[i]||^2 - sum_{i = 0}^{i < i - 1}R[i][i]^2
     m.get_R_naively(ftmp0, i - 1, i - 1, expo0);
     ftmp0.mul(ftmp0, ftmp0);
-    // FIXME: since we do R(i - 1, i - 1)^2, do we should multiply expo0 by 2?
-    // Beware: if this is true, this should be carrefuly, since expo0 and expo1 when mpfr or dpe is
-    // equal to -1.
+    expo0 = 2 * expo0;
+    // Here, R(i - 1, i - 1)^2 = ftmp0 * 2^expo0
     ftmp0.mul(delta_, ftmp0);  // ftmp0 = delta_ * R(i - 1, i - 1)^2
 
     ftmp1.mul_2si(ftmp1, expo1 - expo0);

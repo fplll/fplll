@@ -568,9 +568,8 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int end, lon
     FPLLL_DEBUG_CHECK(f.is_zero());
   }
   else
-  {
     R[k].dot_product(f, R[k], 0, end);
-  }
+
   if (enable_row_expo)
     expo = 2 * row_expo[k];
   else
@@ -642,9 +641,8 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row_naively(FT &f, int k, int 
     FPLLL_DEBUG_CHECK(f.is_zero());
   }
   else
-  {
     R_naively[k].dot_product(f, R_naively[k], 0, end);
-  }
+
   if (enable_row_expo)
     expo = 2 * row_expo_naively[k];
   else
