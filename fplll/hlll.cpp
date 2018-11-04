@@ -26,7 +26,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
    */
   FT delta_      = delta;
   int start_time = cputime();
-  long expo_k1_k1, expo_k_k1, expo_k_k;
+  long expo0, expo1;
 
   if (verbose)
   {
@@ -61,30 +61,35 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     // Size reduce b[k] thanks to b[0] to b[k - 1]
     size_reduction(k);
 
-    // ftmp1 = R(k, k-1)
-    m.get_R(ftmp1, k, k - 1, expo_k_k1);
+    /* Lovasz test */
+    // This code is taken from is_hlll_reduced
+    // TODO: this section must be improved and investigated, i.e.:
+    //   * use dR[k]
+    //   * since we use only a portion of R[k], do not in size_reduction fully compute R[k]
+    m.norm_square_b_row(ftmp0, k, expo0);         // ftmp0 = ||b[k]||^2
+    m.norm_square_R_row(ftmp1, k, k - 1, expo1);  // ftmp1 = sum_{i = 0}^{i < k - 1}R[k][i]^2
 
-    ftmp1.mul(ftmp1, ftmp1);  // ftmp1 = R(k, k - 1)^2
+    ftmp0.mul_2si(ftmp0, expo0 - expo1);
 
-    // ftmp0 = R(k, k)
-    m.get_R(ftmp0, k, k, expo_k_k);
+    ftmp1.sub(ftmp0, ftmp1);  // ftmp1 = ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2
 
-    ftmp0.mul(ftmp0, ftmp0);  // ftmp0 = R(k, k)^2
-    ftmp1.add(ftmp0, ftmp1);  // ftmp1 = R(k, k - 1)^2 + R(k, k)^2
-    // Here, ftmp1 = R(k, k - 1)^2 + R(k, k)^2 = ||b_k||^2 - sum_{i in [0, k-2)} R(k, i)^2
+    m.get_R(ftmp0, k - 1, k - 1, expo0);
+    ftmp0.mul(ftmp0, ftmp0);
+    ftmp0.mul(delta_, ftmp0);  // ftmp0 = delta_ * R(k - 1, k - 1)^2
+    // These three last operations are probably exactly dR[k-1].
 
-    // Get expo of row k - 1
-    expo_k1_k1 = m.get_row_expo(k - 1);
+    expo0 = 2 * expo0;
+    // Here, R(k - 1, k - 1)^2 = ftmp0 * 2^expo0
 
-    ftmp1.mul_2si(ftmp1, 2 * (expo_k_k - expo_k1_k1));
+    ftmp1.mul_2si(ftmp1, expo1 - expo0);
 
-    // FIXME: seems that this test is not as accurate as we can hope. Maybe it is time to use the
-    // theoritecal test instead of this one
+    /* End of Lovasz test */
+
     // Test if delta_ * R(k - 1, k - 1)^2 <= ftmp1
-    if (dR[k - 1].cmp(ftmp1) <= 0)
+    if (ftmp0.cmp(ftmp1) <= 0)
     {
-      // Here, ftmp0 = R(k, k)^2
-      set_dR(k, ftmp0, delta_);
+      // Compute delta_ * R(k, k)^2
+      compute_dR(k, delta_);
       // b[k] is size reduced, now, size reduce b[k + 1]
       k++;
 
