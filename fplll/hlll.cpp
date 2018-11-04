@@ -64,8 +64,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     /* Lovasz test */
     // This code is taken from is_hlll_reduced
     // TODO: this section must be improved and investigated, i.e.:
-    //   * use dR[k]
-    //   * since we use only a portion of R[k], do not in size_reduction fully compute R[k]
+    //   * probably other improvement to be done
     m.norm_square_b_row(ftmp0, k, expo0);         // ftmp0 = ||b[k]||^2
     m.norm_square_R_row(ftmp1, k, k - 1, expo1);  // ftmp1 = sum_{i = 0}^{i < k - 1}R[k][i]^2
 
@@ -73,21 +72,19 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
 
     ftmp1.sub(ftmp0, ftmp1);  // ftmp1 = ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2
 
-    m.get_R(ftmp0, k - 1, k - 1, expo0);
-    ftmp0.mul(ftmp0, ftmp0);
-    ftmp0.mul(delta_, ftmp0);  // ftmp0 = delta_ * R(k - 1, k - 1)^2
-    // These three last operations are probably exactly dR[k-1].
-
+    expo0 = m.get_row_expo(k - 1);
     expo0 = 2 * expo0;
-    // Here, R(k - 1, k - 1)^2 = ftmp0 * 2^expo0
+    // Here, delta * R(k - 1, k - 1)^2 = dR[k-1] * 2^expo0
 
     ftmp1.mul_2si(ftmp1, expo1 - expo0);
 
     /* End of Lovasz test */
 
     // Test if delta_ * R(k - 1, k - 1)^2 <= ftmp1
-    if (ftmp0.cmp(ftmp1) <= 0)
+    if (dR[k - 1].cmp(ftmp1) <= 0)
     {
+      // Fully compute R[k]
+      m.update_R_last(k);
       // Compute delta_ * R(k, k)^2
       compute_dR(k, delta_);
       // b[k] is size reduced, now, size reduce b[k + 1]
@@ -231,9 +228,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
     if (!reduced)
     {
       // If not reduced, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
-      // 1 > 2^(-cd)=sr since cd > 0. Then, compute the last coefficient of R and stop.
-      m.update_R_last(kappa);
-
+      // 1 > 2^(-cd)=sr since cd > 0.
       return;
     }
     else
@@ -254,22 +249,14 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
 
       // If (||b(kappa)||^2 > 2^(-cd) * t => ftmp1 > ftmp0), stop the loop.
       not_stop = (ftmp1.cmp(ftmp0) <= 0);
+
+      // Update R(kappa, 0..kappa-1).
+      m.update_R(kappa, false);
+
       if (prev_not_stop || not_stop)
-      {
-        // Continue to try to reduce b(kappa).
-        // Update only R(kappa, 0..kappa-1).
-        m.update_R(kappa, false);
-
-        prev_not_stop = not_stop;
-      }
+        prev_not_stop = not_stop;  // Continue to try to reduce b(kappa).
       else
-      {
-        // b[kappa] should be size_reduced.
-        // Compute the last coefficients of R and stop.
-        m.update_R(kappa);
-
-        return;
-      }
+        return;  // b[kappa] should be size_reduced.
     }
   } while (true);
 }
