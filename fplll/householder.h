@@ -534,26 +534,26 @@ template <class ZT, class FT>
 inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k, long &expo)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
-  if (enable_row_expo)
-    if (enable_bf)
-    {
-      bf[k].dot_product(f, bf[k], 0, n_known_cols);
+
+  if (enable_bf)
+  {
+    bf[k].dot_product(f, bf[k], 0, n_known_cols);
+
+    if (enable_row_expo)
       expo = 2 * row_expo[k];
-    }
     else
-    {
-      b[k].dot_product(ztmp0, b[k], 0, n_known_cols);
-      ztmp0.get_f_exp(f, expo);
-    }
+      expo = 0;
+  }
   else
   {
-    expo = 0;
-    if (enable_bf)
-      bf[k].dot_product(f, bf[k], 0, n_known_cols);
+    b[k].dot_product(ztmp0, b[k], 0, n_known_cols);
+
+    if (enable_row_expo)
+      ztmp0.get_f_exp(f, expo);
     else
     {
-      b[k].dot_product(ztmp0, b[k], 0, n_known_cols);
       f.set_z(ztmp0);
+      expo = 0;
     }
   }
 }

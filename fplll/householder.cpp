@@ -191,21 +191,11 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
       bf(i, j) = R(i, j);
     for (j = n_known_cols; j < n; j++)
       bf(i, j) = 0.0;
-
-    bf[i].dot_product(norm_square_b[i], bf[i], 0, n_known_cols);
-
-    if (enable_row_expo)
-      expo_norm_square_b[i] = 2 * row_expo[i];
   }
-  else
-  {
-    b[i].dot_product(ztmp0, b[i], 0, n_known_cols);
 
-    if (enable_row_expo)
-      ztmp0.get_f_exp(norm_square_b[i], expo_norm_square_b[i]);
-    else
-      norm_square_b[i].set_z(ztmp0);
-  }
+  // TODO: maybe not realy efficient (since we will redo some already done comparisions if flags are
+  // enabled) but factorize code.
+  norm_square_b_row(norm_square_b[i], i, expo_norm_square_b[i]);
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R(int i)
