@@ -157,6 +157,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
 
   n_known_cols = max(n_known_cols, init_row_size[i]);
 
+  // TODO: maybe not optimal in term of comparisons (if flags are enabled or not)
   if (enable_row_expo)
   {
     long max_expo = LONG_MIN;
@@ -181,9 +182,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
       R(i, j).set_z(b(i, j));
     for (j = n_known_cols; j < n; j++)
       R(i, j) = 0.0;
-
-    b[i].dot_product(ztmp0, b[i], 0, n_known_cols);
-    norm_square_b[i].set_z(ztmp0);
   }
 
   // Copy R[i] in bf[i] (while we copy b[i] in R[i])
@@ -195,13 +193,18 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
       bf(i, j) = 0.0;
 
     bf[i].dot_product(norm_square_b[i], bf[i], 0, n_known_cols);
+
     if (enable_row_expo)
       expo_norm_square_b[i] = 2 * row_expo[i];
   }
   else
   {
     b[i].dot_product(ztmp0, b[i], 0, n_known_cols);
-    ztmp0.get_f_exp(norm_square_b[i], expo_norm_square_b[i]);
+
+    if (enable_row_expo)
+      ztmp0.get_f_exp(norm_square_b[i], expo_norm_square_b[i]);
+    else
+      norm_square_b[i].set_z(ztmp0);
   }
 }
 
