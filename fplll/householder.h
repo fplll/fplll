@@ -93,6 +93,7 @@ public:
 
     // Initialize row_expo.
     row_expo.resize(d);
+    fill(row_expo.begin(), row_expo.end(), 0);
     // Initialize row_size
     init_row_size.resize(d);
     for (int i = 0; i < d; i++)
@@ -114,7 +115,7 @@ public:
     expo_norm_square_b.resize(d);
     /* fill row_expo with 0, since if enable_row_expo, it will be filled by real value, and
      * otherwise, we essentially 0 - 0 */
-    fill(row_expo.begin(), row_expo.end(), 0);
+    fill(expo_norm_square_b.begin(), expo_norm_square_b.end(), 0);
 
 #ifdef HOUSEHOLDER_PRECOMPUTE_INVERSE
     // Initialize R_inverse_diag

@@ -26,7 +26,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
    */
   FT delta_      = delta;
   int start_time = cputime();
-  long expo0, expo1;
+  long expo0 = 0, expo1 = 0;
 
   if (verbose)
   {
@@ -65,7 +65,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     // This code is taken from is_hlll_reduced
     // TODO: this section must be improved and investigated, i.e.:
     //   * probably other improvement to be done
-    m.norm_square_b_row(ftmp0, k, expo0);         // ftmp0 = ||b[k]||^2
+    m.get_norm_square_b(ftmp0, k, expo0);
     m.norm_square_R_row(ftmp1, k, k - 1, expo1);  // ftmp1 = sum_{i = 0}^{i < k - 1}R[k][i]^2
 
     ftmp0.mul_2si(ftmp0, expo0 - expo1);
@@ -77,7 +77,6 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     // Here, delta * R(k - 1, k - 1)^2 = dR[k-1] * 2^expo0
 
     ftmp1.mul_2si(ftmp1, expo1 - expo0);
-
     /* End of Lovasz test */
 
     // Test if delta_ * R(k - 1, k - 1)^2 <= ftmp1
