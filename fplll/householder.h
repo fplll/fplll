@@ -356,7 +356,7 @@ private:
   vector<long> tmp_col_expo;
 
   // Temporary variables
-  FT ftmp0, ftmp1, ftmp2;
+  FT ftmp0, ftmp1, ftmp2, ftmp3;
   ZT ztmp0, ztmp1;
 
   // init_row_size[i] = (last non-zero column in the i-th row of b) + 1

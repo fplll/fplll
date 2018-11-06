@@ -28,15 +28,15 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
   sigma[i] = (R(i, i).cmp(0.0) < 0) ? -1.0 : 1.0;
   // V(i, i) is used as a temporary variable. In the following, V(i, i) is always modified.
   if (i + 1 == n)
-    V(i, i) = 0.0;
+    ftmp3 = 0.0;
   else
   {
     // r^T * r (with first coefficient ignored)
-    R[i].dot_product(V(i, i), R[i], i + 1, n);
+    R[i].dot_product(ftmp3, R[i], i + 1, n);
   }
   ftmp1.mul(R(i, i), R(i, i));
   // ftmp1 = r^T * r
-  ftmp1.add(ftmp1, V(i, i));
+  ftmp1.add(ftmp1, ftmp3);
 
   if (ftmp1.cmp(0.0) != 0)
   {
@@ -45,34 +45,34 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
     ftmp0.mul(sigma[i], ftmp2);
     ftmp1.add(R(i, i), ftmp0);
     // vi[1] = (-sum(r[j]^2, j, 2, n-i+1)
-    V(i, i).neg(V(i, i));
+    ftmp3.neg(ftmp3);
     // vi[1] = (-sum(r[j]^2, j, 2, n-i+1) / (r[1] + s)
-    V(i, i).div(V(i, i), ftmp1);
-    if (V(i, i).cmp(0.0) != 0)
+    ftmp3.div(ftmp3, ftmp1);
+    // If ftmp3 = 0, then ftmp0 = 0 and then, divide by ftmp0 is not allowed
+    if (ftmp3.cmp(0.0) != 0)
     {
       ftmp0.neg(ftmp0);
-      ftmp0.mul(ftmp0, V(i, i));
+      ftmp0.mul(ftmp0, ftmp3);
       ftmp0.sqrt(ftmp0);
 
 #ifndef HOUSEHOLDER_PRECOMPUTE_INVERSE
-      // Here, ftmp0 = 1 / sqrt(-s * vi[1])
-      V(i, i).div(V(i, i), ftmp0);
+      V(i, i).div(ftmp3, ftmp0);
       R(i, i) = ftmp2;
 
       for (int k = i + 1; k < n; k++)
       {
         V(i, k).div(R(i, k), ftmp0);
-        R(i, k) = 0.0;
+        // R(i, k) = 0.0; // Not neccessary since this value will be not used in HLLL
       }
 #else   // HOUSEHOLDER_PRECOMPUTE_INVERSE
       ftmp0.div(1.0, ftmp0);
       // Here, ftmp0 = 1 / sqrt(-s * vi[1])
-      V(i, i).mul(V(i, i), ftmp0);
+      V(i, i).mul(ftmp3, ftmp0);
       R(i, i) = ftmp2;
       for (int k = i + 1; k < n; k++)
       {
         V(i, k).mul(R(i, k), ftmp0);
-        R(i, k) = 0.0;
+        // R(i, k) = 0.0; // Not neccessary since this value will be not used in HLLL
       }
 
       R_inverse_diag[i].div(1.0, ftmp2);
@@ -81,6 +81,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
     }
     else
     {
+      V(i, i) = 0.0;
       if (R(i, i).cmp(0.0) < 0)
         R(i, i).neg(R(i, i));
 
@@ -89,7 +90,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
         // if enable_row_expo, R can be not correct at some point of the computation
         FPLLL_DEBUG_CHECK(enable_row_expo ? 1 : R(i, k).is_zero());
         V(i, k) = 0.0;
-        R(i, k) = 0.0;
+        // R(i, k) = 0.0; // Not neccessary since this value will be not used in HLLL
       }
 
 #ifdef HOUSEHOLDER_PRECOMPUTE_INVERSE
@@ -99,12 +100,15 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
   }
   else
   {
-    for (int k = i; k < n; k++)
+    R(i, i) = 0.0;
+    V(i, i) = 0.0;
+    // The for loop can for(int k = i; k < n; k++) if the setting of R(i, k) is uncommented.
+    for (int k = i + 1; k < n; k++)
     {
       // if enable_row_expo, R can be not correct at some point of the computation
       FPLLL_DEBUG_CHECK(enable_row_expo ? 1 : R(i, k).is_zero());
       V(i, k) = 0.0;
-      R(i, k) = 0.0;
+      // R(i, k) = 0.0; // Not neccessary since this value will be not used in HLLL
     }
 
 #ifdef HOUSEHOLDER_PRECOMPUTE_INVERSE
@@ -146,6 +150,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
         R_history[i][j][k] = R(i, k);
     }
 
+    // Compute R(i, i), since R(i, 0..i-1) are known
     if (last_j)
       update_R_last(i);
   }
@@ -157,17 +162,18 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
 
   n_known_cols = max(n_known_cols, init_row_size[i]);
 
-  // TODO: maybe not optimal in term of comparisons (if flags are enabled or not)
   if (enable_row_expo)
   {
     long max_expo = LONG_MIN;
 
+    // Copy b(i, j) in R(i, j) and get the maximal exponent of the row
     for (j = 0; j < n_known_cols; j++)
     {
       b(i, j).get_f_exp(R(i, j), tmp_col_expo[j]);
       max_expo = max(max_expo, tmp_col_expo[j]);
     }
 
+    // Renormalize all the R(i, j) with max_expo
     for (j = 0; j < n_known_cols; j++)
       R(i, j).mul_2si(R(i, j), tmp_col_expo[j] - max_expo);
     for (j = n_known_cols; j < n; j++)
@@ -178,13 +184,14 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
   }
   else
   {
+    // Simply copy b[i] in R[i]
     for (j = 0; j < n_known_cols; j++)
       R(i, j).set_z(b(i, j));
     for (j = n_known_cols; j < n; j++)
       R(i, j) = 0.0;
   }
 
-  // Copy R[i] in bf[i] (while we copy b[i] in R[i])
+  // Copy R[i] in bf[i] (while we have copied b[i] in R[i])
   if (enable_bf)
   {
     for (j = 0; j < n_known_cols; j++)
@@ -202,7 +209,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R(int i)
 {
   int j;
 
-  // Copy bf[i] in R[i] (while we have copied b[i] in bf[i])
+  // Copy bf[i] in R[i] (while we have already copied b[i] in bf[i] and b[i] has not changed)
   if (enable_bf)
   {
     for (j = 0; j < n_known_cols; j++)
@@ -212,6 +219,9 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R(int i)
   }
   else
   {
+    // Similar to refresh_R_bf, but here, row_expo is already known (when this function is called,
+    // R[i] was already set
+    // to b[i] at a point; R[i] must be recomputed, but b[i] has not changed.
     if (enable_row_expo)
     {
       for (j = 0; j < n_known_cols; j++)
