@@ -61,30 +61,74 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     // Size reduce b[k] thanks to b[0] to b[k - 1]
     size_reduction(k);
 
-    /* Lovasz test */
-    // This code is taken from is_hlll_reduced
+#ifndef MODIFIED_LOVASZ_TEST
+    // This Lovasz test is the one proposed in [MSV, ISSAC'09]
+    //
+    // Prior, we used another test, which is dR[k-1].cmp(R(k, k - 1)^2 + R(k, k)^2) <= 0, if R(k, k)
+    // is known (which is not the case here at this step of the computation, but can be computed
+    // thanks to sqrt(sum_{i=k}^{i<n}R(k, i)^2) (indices must be checked)). In the prior version,
+    // since R(k, k)^2 was known, we directly used the test. However, the test was probably not as
+    // accurate as what we hope. However, since this formula is used in hplll
+    // (https://github.com/gilvillard/hplll/releases), this can maybe be retested. An example of
+    // matrices that was not HLLL reduced because of a fail in this test can be generated thanks to
+    // latticegen -randseed 122 r 300 30000.
+    // Such a test can be activate by compiling with -DMODIFIED_LOVASZ_TEST
+    //
     // TODO: this section must be improved and investigated, i.e.:
     //   * probably other improvement to be done
-    m.get_norm_square_b(ftmp0, k, expo0);
-    m.norm_square_R_row(ftmp1, k, k - 1, expo1);  // ftmp1 = sum_{i = 0}^{i < k - 1}R[k][i]^2
+    m.get_norm_square_b(ftmp0, k, expo0);  // ||b[k]||^2 = ftmp0 * 2^expo0
+    m.norm_square_R_row(ftmp1, k, 0, k - 1,
+                        expo1);  // sum_{i = 0}^{i < k - 1}R[k][i]^2 = ftmp1 * 2^expo1
 
-    ftmp0.mul_2si(ftmp0, expo0 - expo1);
+    // If enable_bf, expo0 == expo1, then avoid to do ftmp1 * 1 with a possible costly operation.
+    // If not enable_row_expo, this function is also unused, but since do not using enable_row_expo
+    // is mostly for mpfr or dpe to have proved reduced bases, testing is less important.
+    if (m.is_enable_bf() == 0)
+      ftmp0.mul_2si(ftmp0, expo0 - expo1);
 
-    ftmp1.sub(ftmp0, ftmp1);  // ftmp1 = ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2
+    ftmp1.sub(ftmp0, ftmp1);  // ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2 = ftmp1 * 2^expo1
 
     expo0 = m.get_row_expo(k - 1);
-    expo0 = 2 * expo0;
-    // Here, delta * R(k - 1, k - 1)^2 = dR[k-1] * 2^expo0
 
-    ftmp1.mul_2si(ftmp1, expo1 - expo0);
-    /* End of Lovasz test */
+    // Here, delta * R(k - 1, k - 1)^2 = dR[k-1] * 2^(2*expo0). We want to compare
+    //   delta * R(k - 1, k - 1)^2 <= ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2
+    //   dR[k-1] * 2^(2*expo0) <= ftmp1 * 2^expo1
+    //   dR[k-1] <= ftmp1 * 2^(expo1 - 2*expo0)
+    ftmp1.mul_2si(ftmp1, expo1 - 2 * expo0);
+#else   // MODIFIED_LOVASZ_TEST
+    // Modified Lovasz test, following the comment above.
+    // FIXME: probably not maintened.
 
-    // Test if delta_ * R(k - 1, k - 1)^2 <= ftmp1
+    m.norm_square_R_row(ftmp1, k, k, m.get_n(),
+                        expo1);       // sum_{i = k}^{i < n}R[k][i]^2 = ftmp1 * 2^expo1
+    m.get_R(ftmp0, k, k - 1, expo0);  // R(k, k - 1) = ftmp0 * 2^expo0
+    ftmp0.mul(ftmp0, ftmp0);          // R(k, k - 1)^2 = ftmp0 * 2^(2 * expo 0)
+    // If enable_bf, 2 * expo0 == expo1, then avoid to do ftmp0 * 1 with a possible costly
+    // operation.
+    // If not enable_row_expo, this function is also unused, but since do not using enable_row_expo
+    // is mostly for mpfr or dpe to have proved reduced bases, testing is less important.
+    if (m.is_enable_bf() == 0)
+      ftmp0.mul_2si(ftmp0, 2 * expo0 - expo1);  // 2 * expo0 since R(k, k-1)^2 = ftmp0 * (2^expo0)^2
+
+    ftmp1.add(ftmp0, ftmp1);  // sum_{i = k}^{i < n}R[k][i]^2 + R(k, k-1)^2 = ftmp1 * 2^expo1
+
+    expo0 = m.get_row_expo(k - 1);
+
+    // Here, delta * R(k - 1, k - 1)^2 = dR[k-1] * 2^(2*expo0). We want to compare
+    //   delta * R(k - 1, k - 1)^2 <= sum_{i = k}^{i < n}R[k][i]^2 + R(k, k-1)^2
+    //   dR[k-1] * 2^(2*expo0) <= ftmp1 * 2^expo1
+    //   dR[k-1] <= ftmp1 * 2^(expo1 - 2*expo0)
+    ftmp1.mul_2si(ftmp1, expo1 - 2 * expo0);
+#endif  // MODIFIED_LOVASZ_TEST
+
+    // Test if delta * R(k - 1, k - 1)^2 <= ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2 (depending
+    // on the way ftmp1 is computed, this test can be slightly different, but the purpose keeps the
+    // same)
     if (dR[k - 1].cmp(ftmp1) <= 0)
     {
       // Fully compute R[k]
       m.update_R_last(k);
-      // Compute delta_ * R(k, k)^2
+      // Compute delta_ * R(k, k)^2 = dR[k] * 2^(2*row_expo[k])
       compute_dR(k, delta_);
       // b[k] is size reduced, now, size reduce b[k + 1]
       k++;
@@ -105,10 +149,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
         }
         else
           // Set R[k] to b[k]. Indeed, it is not necessary to refresh bf[k], since b[k] has not
-          // changed. However, it is
-          // mandatory to refresh R[k], since b[0] to b[k - 1] may have changed, and then, it is
-          // necessary to recompute
-          // R[k].
+          // changed. However, it is mandatory to refresh R[k], since b[0] to b[k - 1] may have
+          // changed, and then, it is necessary to recompute R[k].
           m.refresh_R(k);
       }
       else
@@ -138,8 +180,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
         // Size reduce b[k - 1]
         k--;
         // Since b[k] was not changed, a previous computation of R[k][0..k-1] can be used instead of
-        // recomputing
-        // R[k][0..k-1], which is the only interesting part to begin the size reduction of b[k]
+        // recomputing R[k][0..k-1], which is the only interesting part to begin the size reduction
+        // of b[k]
         m.recover_R(k);
       }
     }
@@ -198,20 +240,21 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
 
     for (int i = kappa - 1; i >= 0; i--)
     {
-      m.get_R(ftmp1, kappa, i, expo0);  // expo0 = row_expo[kappa]
-      m.get_R(ftmp0, i, i, expo1);      // expo1 = row_expo[i]
+      m.get_R(ftmp1, kappa, i, expo1);  // R(kappa, i) = ftmp1 * 2^expo1
+      m.get_R(ftmp0, i, i, expo0);      // R(i, i) = ftmp0 * 2^expo0
 
 #ifndef HOUSEHOLDER_PRECOMPUTE_INVERSE
-      ftmp1.div(ftmp1, ftmp0);  // x[i] = R(kappa, i) / R(i, i)
+      ftmp1.div(ftmp1, ftmp0);  // R(kappa, i) / R(i, i) = ftmp1 * 2^(expo1 - expo0)
 #else                           // HOUSEHOLDER_PRECOMPUTE_INVERSE
-      ftmp1.mul(ftmp1, m.get_R_inverse_diag(i));  // x[i] = R(kappa, i) / R(i, i)
+      ftmp1.mul(ftmp1,
+                m.get_R_inverse_diag(i));  // R(kappa, i) / R(i, i) = ftmp1 * 2^(expo1 - expo0)
 #endif                          // HOUSEHOLDER_PRECOMPUTE_INVERSE
 
-      /* If T = mpfr or dpe, enable_row_expo must be false and then, expo0 - expo1 == 0 (required by
+      /* If T = mpfr or dpe, enable_row_expo must be false and then, expo1 - expo0 == 0 (required by
        * rnd_we with this types) */
-      ftmp1.rnd_we(ftmp1, expo0 - expo1);
+      ftmp1.rnd_we(ftmp1, expo1 - expo0);  // rnd(R(kappa, i) / R(i, i)) = ftmp1 * 2^(expo1 - expo0)
 
-      // ftmp1 is equal to -X[i] in Algorithm 3 of [MSV, ISSAC'09]
+      // ftmp1 * 2^(expo1 - expo0) is equal to -X[i] in Algorithm 3 of [MSV, ISSAC'09]
       ftmp1.neg(ftmp1);
 
       if (ftmp1.sgn() != 0)  // Equivalent to test if ftmp1 == 0
@@ -234,19 +277,23 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
     {
       // At this point, even if b has changed, the precomputed squared norm of b was for b before
       // the reduction
-      m.get_norm_square_b(ftmp0, kappa, expo0);  // ftmp0 = ||b[kappa]||^2 = t
+      m.get_norm_square_b(ftmp0, kappa, expo0);  // ||b[kappa]||^2 = t = ftmp0 * 2^expo
       // Since b has changed, R must be recomputed (latter in the implementation) and then R[kappa]
       // and bf[kappa] are set to b[kappa]. The squared norm of b is updated, then, the next call to
       // get_norm_square_b(..., kappa, ...) will get the squared norm of the current b.
       m.refresh_R_bf(kappa);
-      m.get_norm_square_b(ftmp1, kappa, expo1);  // ftmp1 = ||b[kappa]||^2
+      m.get_norm_square_b(ftmp1, kappa, expo1);  // ||b[kappa]||^2 = ftmp1 * 2^expo1
 
-      ftmp0.mul(approx, ftmp0);  // ftmp0 = approx * ftmp0
+      ftmp0.mul(approx, ftmp0);  // approx * t = ftmp0 * 2^expo0
 
-      // Why not doing ftmp1.mul_2si(ftmp1, expo1 - expo0); ?
+      // TODO: Why not doing ftmp1.mul_2si(ftmp1, expo1 - expo0); ?
+      // We want to compare
+      //   ||b[k]||^2 > approx * t
+      //   ftmp1 * 2^expo1 > ftmp0 * 2^expo0
+      //   ftmp1 > ftmp0 * 2^(expo0-expo1)
       ftmp0.mul_2si(ftmp0, expo0 - expo1);
 
-      // If (||b(kappa)||^2 > 2^(-cd) * t => ftmp1 > ftmp0), stop the loop.
+      // If (||b(kappa)||^2 > approx * t => ftmp1 > ftmp0), stop the loop.
       not_stop = (ftmp1.cmp(ftmp0) <= 0);
 
       // Update R(kappa, 0..kappa-1).
@@ -285,15 +332,15 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
   {
     for (int j = 0; j < i; j++)
     {
-      m.get_R_naively(ftmp0, i, j, expo0);
-      m.get_R_naively(ftmp1, j, j, expo1);
-      ftmp1.div(ftmp0, ftmp1);
-      ftmp1.abs(ftmp1);
+      m.get_R_naively(ftmp0, i, j, expo0);  // R(i, j) = ftmp0 * 2^expo0
+      m.get_R_naively(ftmp1, j, j, expo1);  // R(j, j) = ftmp1 * 2^expo1
+      ftmp1.div(ftmp0, ftmp1);              // R(i, j) / R(j,j) = ftmp1 * 2^(expo0 - expo1)
+      ftmp1.abs(ftmp1);                     // |R(i, j) / R(j,j)| = |ftmp1| * 2^(expo0 - expo1)
 
       // In case FT=dpe or FT=mpfr, expo0 = expo1 = 0
-      ftmp1.mul_2si(ftmp1, expo0 - expo1);
+      ftmp1.mul_2si(ftmp1, expo0 - expo1);  // |R(i, j) / R(j,j)| = |ftmp1|
 
-      // ftmp1 = |R(i, j) / R(j, j)|. Test if ftmp1 > eta and ftmp1 > 0.5.
+      // Test if ftmp1 > eta and ftmp1 > 0.5.
       if (ftmp1.cmp(eta_) > 0)
         return false;
 
@@ -306,22 +353,25 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
 
   // At this step, we verify if two consecutive vectors must be swapped during the hlll-reduction or
   // not
-  // FIXME: the way to do the test seems wrong
   for (int i = 1; i < m.get_d(); i++)
   {
-    m.norm_square_b_row_naively(ftmp0, i, expo0);  // ftmp0 = ||b[i]||^2
+    m.norm_square_b_row_naively(ftmp0, i, expo0);  // ||b[i]||^2 = ftmp0 * 2^expo0
     m.norm_square_R_row_naively(ftmp1, i, i - 1,
-                                expo1);  // ftmp1 = sum_{i = 0}^{i < i - 1}R[i][i]^2
+                                expo1);  // sum_{k = 0}^{k < i - 1}R[i][k]^2 = ftmp1 * 2^expo1
 
     ftmp0.mul_2si(ftmp0, expo0 - expo1);
 
-    ftmp1.sub(ftmp0, ftmp1);  // ftmp1 = ||b[i]||^2 - sum_{i = 0}^{i < i - 1}R[i][i]^2
-    m.get_R_naively(ftmp0, i - 1, i - 1, expo0);
+    ftmp1.sub(ftmp0, ftmp1);  // ||b[i]||^2 - sum_{i = 0}^{i < i - 1}R[i][i]^2 = ftmp1 * 2^expo1
+    m.get_R_naively(ftmp0, i - 1, i - 1, expo0);  // R(i - 1, i - 1) = ftmp0 * 2^expo0
     ftmp0.mul(ftmp0, ftmp0);
     expo0 = 2 * expo0;
     // Here, R(i - 1, i - 1)^2 = ftmp0 * 2^expo0
     ftmp0.mul(delta_, ftmp0);  // ftmp0 = delta_ * R(i - 1, i - 1)^2
 
+    // Here, delta * R(k - 1, k - 1)^2 = dR[k-1] * 2^(2*expo0). We want to compare
+    //   delta * R(k - 1, k - 1)^2 > ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2
+    //   ftmp0 * 2^expo0 > ftmp1 * 2^expo1
+    //   ftmp0 > ftmp1 * 2^(expo1 - expo0)
     ftmp1.mul_2si(ftmp1, expo1 - expo0);
 
     if (ftmp0.cmp(ftmp1) > 0)

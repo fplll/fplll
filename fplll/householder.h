@@ -219,9 +219,9 @@ public:
   inline void norm_square_b_row(FT &f, int k, long &expo);
 
   /**
-   * Truncated squared norm of R[k], with coefficients of R[k][0..end-1].
+   * Truncated squared norm of R[k], with coefficients of R[k][beg..end-1].
    */
-  inline void norm_square_R_row(FT &f, int k, int end, long &expo);
+  inline void norm_square_R_row(FT &f, int k, int beg, int end, long &expo);
 
   // b[k] = b[k] + ZT(xf) * b[i]
   // R[k] = R[k] + xf * R[i]
@@ -559,17 +559,14 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k, long &expo)
 }
 
 template <class ZT, class FT>
-inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int end, long &expo)
+inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int beg, int end, long &expo)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
-  FPLLL_DEBUG_CHECK(0 <= end && end <= k);
-  if (end == 0)
-  {
+  FPLLL_DEBUG_CHECK(beg <= end && end <= k);
+  if (end == beg)
     f = 0.0;
-    FPLLL_DEBUG_CHECK(f.is_zero());
-  }
   else
-    R[k].dot_product(f, R[k], 0, end);
+    R[k].dot_product(f, R[k], beg, end);
 
   if (enable_row_expo)
     expo = 2 * row_expo[k];
@@ -637,10 +634,7 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row_naively(FT &f, int k, int 
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
   FPLLL_DEBUG_CHECK(0 <= end && end <= k);
   if (end == 0)
-  {
     f = 0.0;
-    FPLLL_DEBUG_CHECK(f.is_zero());
-  }
   else
     R_naively[k].dot_product(f, R_naively[k], 0, end);
 
