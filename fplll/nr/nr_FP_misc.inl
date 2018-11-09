@@ -124,8 +124,9 @@ inline void FP_NR<dd_real>::set_z(const Z_NR<mpz_t>& a, mp_rnd_t /*rnd*/) {
   mpz_init(tz);
   mpz_set_d(tz,hi);
   mpz_sub(tz,a.get_data(),tz);
-   
+
   data = dd_real(hi,mpz_get_d(tz));
+  mpz_clear(tz);
 }
 
 #endif
