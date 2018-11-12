@@ -137,11 +137,10 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
 
       //-vj * ri[j..n]^T
       ftmp0.neg(ftmp0);
+      // TODO: this operation can/must be rewritten in term of a row operation
+      // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
       for (k = j; k < n; k++)
-      {
-        // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
         R(i, k).addmul(V(j, k), ftmp0);
-      }
       // ri[j] = sigma[j] * ri[j]
       R(i, j).mul(sigma[j], R(i, j));
 
