@@ -566,6 +566,8 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::invalidate_row
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::recover_R(int i)
 {
+  FPLLL_DEBUG_CHECK(col_kept[i] == true);
+
   for (int k = 0; k < i - 1; k++)
     R(i, k) = R_history[i][k][k];
   for (int k = i - 1; k < n; k++)
