@@ -49,7 +49,7 @@ public:
    *   for FT=dpe or FT=mpfr_t.
    * @param enable_bf
    *   Dot product on the basis vector are done on a floatting point version of
-   *   it instead of the integer one. bf is refreshed from b when  refresh_R_bf(int)
+   *   it instead of the integer one. bf is refreshed from b when refresh_R_bf(int)
    *   or refresh_R(int) are called.
    * @param enable_transform
    *   Compute u
@@ -87,9 +87,8 @@ public:
     // TODO: V does not need to be a matrix, since V is a list of vector of different length
     V.resize(d, n);
 
-    // If enable_bf, initialize bf
-    if (enable_bf)
-      bf.resize(d, n);
+    // Initialize bf
+    bf.resize(d, n);
 
     // Initialize row_expo.
     row_expo.resize(d);
