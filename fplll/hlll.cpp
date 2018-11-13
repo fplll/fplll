@@ -80,9 +80,9 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     m.norm_square_R_row(ftmp1, k, 0, k - 1,
                         expo1);  // sum_{i = 0}^{i < k - 1}R[k][i]^2 = ftmp1 * 2^expo1
 
-    // TODO: are these mul_2si costly?
-    // If enable_bf, expo0 == expo1, avoid the operation?
-    ftmp0.mul_2si(ftmp0, expo0 - expo1);
+    // If this check is false, we need to reenable
+    // ftmp0.mul_2si(ftmp0, expo0 - expo1);
+    FPLLL_DEBUG_CHECK(expo0 == expo1);
 
     ftmp1.sub(ftmp0, ftmp1);  // ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2 = ftmp1 * 2^expo1
 
@@ -102,9 +102,10 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     m.get_R(ftmp0, k, k - 1, expo0);  // R(k, k - 1) = ftmp0 * 2^expo0
     ftmp0.mul(ftmp0, ftmp0);          // R(k, k - 1)^2 = ftmp0 * 2^(2 * expo 0)
 
-    // TODO:
-    // If enable_bf, 2 * expo0 == expo1, avoid the operation?
-    ftmp0.mul_2si(ftmp0, 2 * expo0 - expo1);  // 2 * expo0 since R(k, k-1)^2 = ftmp0 * (2^expo0)^2
+    // If this check is false, we need to reenable
+    // ftmp0.mul_2si(ftmp0, 2 * expo0 - expo1);  // 2 * expo0 since R(k, k-1)^2 = ftmp0 *
+    // (2^expo0)^2
+    FPLLL_DEBUG_CHECK(2 * expo0 == expo1);
 
     ftmp1.add(ftmp0, ftmp1);  // sum_{i = k}^{i < n}R[k][i]^2 + R(k, k-1)^2 = ftmp1 * 2^expo1
 

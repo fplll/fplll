@@ -99,9 +99,8 @@ template <class ZT, class FT> int test_filename(const char *input_filename, int 
 int main(int /*argc*/, char ** /*argv*/)
 {
 
-  int status = 0;
-  // int flags_fast = HOUSEHOLDER_ROW_EXPO | HOUSEHOLDER_BF | HOUSEHOLDER_OP_FORCE_LONG;
-  int flags_fast   = HOUSEHOLDER_ROW_EXPO;
+  int status       = 0;
+  int flags_fast   = HOUSEHOLDER_ROW_EXPO /* | HOUSEHOLDER_OP_FORCE_LONG */;
   int flags_proved = HOUSEHOLDER_DEFAULT;
 
   status |= test_filename<mpz_t, double>(TESTDATADIR "/tests/lattices/dim55_in", flags_fast);

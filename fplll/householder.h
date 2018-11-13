@@ -21,10 +21,10 @@ FPLLL_BEGIN_NAMESPACE
 
 enum MatHouseholderFlags
 {
-  HOUSEHOLDER_DEFAULT       = 0,
+  HOUSEHOLDER_DEFAULT = 0,
+  // We consider that using ROW_EXPO is mandatory if FT in {double, long double, qd, dd}.
   HOUSEHOLDER_ROW_EXPO      = 1,
-  HOUSEHOLDER_BF            = 2,
-  HOUSEHOLDER_OP_FORCE_LONG = 4
+  HOUSEHOLDER_OP_FORCE_LONG = 2
 };
 
 /**
@@ -47,10 +47,6 @@ public:
    *   This option cannot be enabled if enable_int_gram=true and works only
    *   with FT=double and FT=long double. It is useless and MUST NOT be used
    *   for FT=dpe or FT=mpfr_t.
-   * @param enable_bf
-   *   Dot product on the basis vector are done on a floatting point version of
-   *   it instead of the integer one. bf is refreshed from b when refresh_R_bf(int)
-   *   or refresh_R(int) are called.
    * @param enable_transform
    *   Compute u
    * @param u
@@ -68,7 +64,7 @@ public:
    *   See the documentation of row_addmul.
    */
   MatHouseholder(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
-      : b(arg_b), enable_row_expo(flags & HOUSEHOLDER_ROW_EXPO), enable_bf(flags & HOUSEHOLDER_BF),
+      : b(arg_b), enable_row_expo(flags & HOUSEHOLDER_ROW_EXPO),
         enable_transform(arg_u.get_rows() > 0), u(arg_u),
         enable_inverse_transform(arg_uinv_t.get_rows() > 0), u_inv_t(arg_uinv_t),
         row_op_force_long(flags & HOUSEHOLDER_OP_FORCE_LONG)
@@ -247,10 +243,9 @@ public:
   inline void invalidate_row(int k);
 
   /**
-   * Return values enable_row_expo and enable_bf
+   * Return values enable_row_expo
    */
   inline bool is_enable_row_expo() { return enable_row_expo; }
-  inline bool is_enable_bf() { return enable_bf; }
 
   /**
    * Return value of updated_R
@@ -391,11 +386,6 @@ private:
    * Basis of the lattice (floatting point)
    */
   Matrix<FT> bf;
-
-  /**
-   * Do we compute dot_product of bf instead of b?
-   */
-  const bool enable_bf;
 
   /**
    * R_history stores the history of the computation of R
@@ -543,27 +533,12 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k, long &expo)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
 
-  if (enable_bf)
-  {
-    bf[k].dot_product(f, bf[k], 0, n_known_cols);
+  bf[k].dot_product(f, bf[k], 0, n_known_cols);
 
-    if (enable_row_expo)
-      expo = 2 * row_expo[k];
-    else
-      expo = 0;
-  }
+  if (enable_row_expo)
+    expo = 2 * row_expo[k];
   else
-  {
-    b[k].dot_product(ztmp0, b[k], 0, n_known_cols);
-
-    if (enable_row_expo)
-      ztmp0.get_f_exp(f, expo);
-    else
-    {
-      f.set_z(ztmp0);
-      expo = 0;
-    }
-  }
+    expo = 0;
 }
 
 template <class ZT, class FT>
