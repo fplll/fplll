@@ -177,6 +177,12 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
 {
+  FPLLL_DEBUG_CHECK(col_kept[i] == false);
+
+#ifdef DEBUG
+  col_kept[i] = true;
+#endif  // DEBUG
+
   int j;
 
   n_known_cols = max(n_known_cols, init_row_size[i]);
@@ -223,6 +229,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R(int i)
 {
+  FPLLL_DEBUG_CHECK(col_kept[i] == true);
+
   int j;
 
   // Copy bf[i] in R[i] (while we have already copied b[i] in bf[i] and b[i] has not changed)
@@ -370,12 +378,20 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
   }
   iter_swap(norm_square_b.begin() + i, norm_square_b.begin() + j);
   iter_swap(expo_norm_square_b.begin() + i, expo_norm_square_b.begin() + j);
+
+#ifdef DEBUG
+  iter_swap(col_kept.begin() + i, col_kept.begin() + j);
+#endif  // DEBUG
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::size_reduce(const FT &xf, int k, int i)
 {
   FPLLL_DEBUG_CHECK(k > 0 && k < d);
   FPLLL_DEBUG_CHECK(xf.cmp(0.0) != 0);
+
+#ifdef DEBUG
+  col_kept[k] = false;
+#endif  // DEBUG
 
   row_addmul_we(k, i, xf, row_expo[k] - row_expo[i]);
 

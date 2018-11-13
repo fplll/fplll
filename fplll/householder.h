@@ -125,6 +125,11 @@ public:
       // Initialize tmp_col_expo
       tmp_col_expo.resize(n);
 
+#ifdef DEBUG
+    col_kept.resize(d);
+    fill(col_kept.begin(), col_kept.end(), false);
+#endif  // DEBUG
+
     /* Initialize values for naively part of the computation
      * Used in is_hlll_reduced at least */
     n_known_rows_naively = 0;
@@ -428,6 +433,10 @@ private:
   vector<FT> norm_square_b;
   // If enable_row_expo, ||b[i]||^2 = norm_square_b[i] * 2^{expo_norm_square_b}
   vector<long> expo_norm_square_b;
+
+  // As in hplll. This variable is only used for check with DEBUG.
+  // If col_kept[k] = true, b[k] has not changed since last time we use it.
+  vector<bool> col_kept;
 
   /* Objects and methods for the naive computation of the R factor using Householder. */
 

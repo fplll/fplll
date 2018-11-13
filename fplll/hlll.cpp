@@ -39,7 +39,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   // Set R[0] and bf[0] to b[0], precompute ||b[0]||^2
   m.refresh_R_bf(0);
   // Compute R[0]
-  m.update_R(0);
+  m.update_R_last(0);
   // Precompute R[0]^2 * delta_
   compute_dR(0, delta_);
 
@@ -163,7 +163,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
         // Set R[0] to b[0] (bf[0] and other usefull variables were swaped previously)
         m.refresh_R(0);
         // Compute R[0]
-        m.update_R(0);
+        m.update_R_last(0);
         // Precompute R[0]^2 * delta_
         compute_dR(0, delta_);
 
