@@ -59,7 +59,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   while (true)
   {
     // Size reduce b[k] thanks to b[0] to b[k - 1]
-    size_reduction(k);
+    size_reduction(k, k, 0);
 
 #ifndef MODIFIED_LOVASZ_TEST
     // This Lovasz test is the one proposed in [MSV, ISSAC'09]
@@ -185,8 +185,14 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   }
 }
 
-template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kappa)
+template <class ZT, class FT>
+void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
+                                           int size_reduction_start)
 {
+  FPLLL_DEBUG_CHECK(kappa >= size_reduction_end);
+  FPLLL_DEBUG_CHECK(size_reduction_start < size_reduction_end);
+  FPLLL_DEBUG_CHECK(0 <= size_reduction_start);
+
   long expo0 = 0;
   long expo1 = 0;
   // If b[kappa] is reduced by at least one b[i], then reduced will be set to true.
@@ -235,7 +241,7 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::size_reduction(int kap
     // No b[i] reduced b[kappa]
     reduced = false;
 
-    for (int i = kappa - 1; i >= 0; i--)
+    for (int i = size_reduction_end - 1; i >= size_reduction_start; i--)
     {
       m.get_R(ftmp1, kappa, i, expo1);  // R(kappa, i) = ftmp1 * 2^expo1
       m.get_R(ftmp0, i, i, expo0);      // R(i, i) = ftmp0 * 2^expo0

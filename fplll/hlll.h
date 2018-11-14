@@ -66,11 +66,12 @@ private:
   /**
      @brief Size reduction.
 
-     Perform size reduction of vector kappa.
+     Perform size reduction of b[kappa]. Reduce b[kappa] with
+     b[size_reduction_start..size_reduction_end-1].
 
      @param kappa index of the vector
   */
-  void size_reduction(int kappa);
+  void size_reduction(int kappa, int size_reduction_end, int size_reduction_start = 0);
 
   /**
    * In verbose mode, print informations to reproduce the computation (parameters, enable features)
