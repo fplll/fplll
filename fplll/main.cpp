@@ -324,17 +324,17 @@ template <class ZT> int hlll(Options &o, ZZ_mat<ZT> &b)
   if (strchr(format, 'v') != NULL)
   {
     status = hlll_reduction(b, u, u_inv, o.delta, o.eta, o.theta, o.c, o.method, o.float_type,
-                            o.precision, flags, o.is_reduced, o.no_lll);
+                            o.precision, flags, o.no_lll);
   }
   else if (strchr(format, 'u') != NULL)
   {
     status = hlll_reduction(b, u, o.delta, o.eta, o.theta, o.c, o.method, o.float_type, o.precision,
-                            flags, o.is_reduced, o.no_lll);
+                            flags, o.no_lll);
   }
   else
   {
     status = hlll_reduction(b, o.delta, o.eta, o.theta, o.c, o.method, o.float_type, o.precision,
-                            flags, o.is_reduced, o.no_lll);
+                            flags, o.no_lll);
   }
 
   for (int i = 0; format[i]; i++)
@@ -671,10 +671,6 @@ void read_options(int argc, char **argv, Options &o)
     {
       o.early_red = true;
     }
-    else if (strcmp(argv[ac], "-V") == 0)
-    {
-      o.is_reduced = true;
-    }
     else if (strcmp(argv[ac], "-z") == 0)
     {
       ++ac;
@@ -745,8 +741,6 @@ void read_options(int argc, char **argv, Options &o)
            << "        Dumps the log of the Gram-Schmidt vectors in specified file\n"
            << "  -of [b|c|s|t|u|v|bk|uk|vk]\n"
            << "        Output formats.\n"
-           << "  -V\n"
-           << "        Only with hlll, check if basis is reduced.\n"
 
            << "Please refer to https://github.com/fplll/fplll/README.md for more information.\n";
       exit(0);

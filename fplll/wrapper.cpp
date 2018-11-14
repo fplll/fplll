@@ -617,7 +617,7 @@ int hlll_reduction_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double de
 template <class ZT>
 int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta,
                      double theta, double c, LLLMethod method, IntType int_type,
-                     FloatType float_type, int precision, int flags, bool is_reduced, bool nolll)
+                     FloatType float_type, int precision, int flags, bool nolll)
 {
   FPLLL_CHECK(method != LM_WRAPPER, "H-LLL wrapper is not implementated.");
   FPLLL_CHECK(method != LM_HEURISTIC, "H-LLL heuristic is not implementated.");
@@ -762,7 +762,7 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
     zeros_first(b, u, u_inv);
   }
 
-  if (is_reduced || nolll)
+  if (nolll)
   {
     int old_prec = FP_NR<mpfr_t>::set_prec(good_prec);
 
@@ -833,28 +833,26 @@ FPLLL_DEFINE_LLL(double, ZT_DOUBLE)
  */
 #define FPLLL_DEFINE_HLLL(T, id_t)                                                                 \
   int hlll_reduction(ZZ_mat<T> &b, double delta, double eta, double theta, double c,               \
-                     LLLMethod method, FloatType float_type, int precision, int flags,             \
-                     bool is_reduced, bool nolll)                                                  \
+                     LLLMethod method, FloatType float_type, int precision, int flags, bool nolll) \
   {                                                                                                \
     ZZ_mat<T> empty_mat; /* Empty u -> transform disabled */                                       \
     return hlll_reduction_z<T>(b, empty_mat, empty_mat, delta, eta, theta, c, method, id_t,        \
-                               float_type, precision, flags, is_reduced, nolll);                   \
+                               float_type, precision, flags, nolll);                               \
   }                                                                                                \
                                                                                                    \
   int hlll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, double delta, double eta, double theta, double c, \
-                     LLLMethod method, FloatType float_type, int precision, int flags,             \
-                     bool is_reduced, bool nolll)                                                  \
+                     LLLMethod method, FloatType float_type, int precision, int flags, bool nolll) \
   {                                                                                                \
     ZZ_mat<T> empty_mat;                                                                           \
     if (!u.empty())                                                                                \
       u.gen_identity(b.get_rows());                                                                \
     return hlll_reduction_z<T>(b, u, empty_mat, delta, eta, theta, c, method, id_t, float_type,    \
-                               precision, flags, is_reduced, nolll);                               \
+                               precision, flags, nolll);                                           \
   }                                                                                                \
                                                                                                    \
   int hlll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, ZZ_mat<T> &u_inv, double delta, double eta,       \
                      double theta, double c, LLLMethod method, FloatType float_type,               \
-                     int precision, int flags, bool is_reduced, bool nolll)                        \
+                     int precision, int flags, bool nolll)                                         \
   {                                                                                                \
     if (!u.empty())                                                                                \
       u.gen_identity(b.get_rows());                                                                \
@@ -862,7 +860,7 @@ FPLLL_DEFINE_LLL(double, ZT_DOUBLE)
       u_inv.gen_identity(b.get_rows());                                                            \
     u_inv.transpose();                                                                             \
     int status = hlll_reduction_z<T>(b, u, u_inv, delta, eta, theta, c, method, id_t, float_type,  \
-                                     precision, flags, is_reduced, nolll);                         \
+                                     precision, flags, nolll);                                     \
     u_inv.transpose();                                                                             \
     return status;                                                                                 \
   }
