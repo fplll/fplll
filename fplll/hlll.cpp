@@ -39,8 +39,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   // Set R[0] and bf[0] to b[0], precompute ||b[0]||^2
   m.refresh_R_bf(0);
   // Compute R[0]
-  m.update_R_last(0);
-  // Precompute R[0]^2 * delta_
+  m.update_R_last(0);  // In this case, update_R(0) is exactly equal to update_R_last(0)
+  // Precompute dR[0]: R[0]^2 * delta_ = dR[0] * 2^(2*row_expo[0])
   compute_dR(0, delta_);
 
   int k = 1;
@@ -93,14 +93,19 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     //   dR[k-1] * 2^(2*expo0) <= ftmp1 * 2^expo1
     //   dR[k-1] <= ftmp1 * 2^(expo1 - 2*expo0)
     ftmp1.mul_2si(ftmp1, expo1 - 2 * expo0);
-#else   // MODIFIED_LOVASZ_TEST
+#else  // MODIFIED_LOVASZ_TEST
     // Modified Lovasz test, following the comment above.
     // FIXME: probably not maintened.
 
     m.norm_square_R_row(ftmp1, k, k, m.get_n(),
                         expo1);       // sum_{i = k}^{i < n}R[k][i]^2 = ftmp1 * 2^expo1
+#ifdef DEBUG
     m.get_R(ftmp0, k, k - 1, expo0);  // R(k, k - 1) = ftmp0 * 2^expo0
-    ftmp0.mul(ftmp0, ftmp0);          // R(k, k - 1)^2 = ftmp0 * 2^(2 * expo 0)
+#else   // DEBUG
+    m.get_R(ftmp0, k, k - 1);  // R(k, k - 1) = ftmp0 * 2^expo0
+#endif  // DEBUG
+
+    ftmp0.mul(ftmp0, ftmp0);  // R(k, k - 1)^2 = ftmp0 * 2^(2 * expo 0)
 
     // If this check is false, we need to reenable
     // ftmp0.mul_2si(ftmp0, 2 * expo0 - expo1);  // 2 * expo0 since R(k, k-1)^2 = ftmp0 *
@@ -123,7 +128,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
     // same)
     if (dR[k - 1].cmp(ftmp1) <= 0)
     {
-      // Fully compute R[k]
+      // Fully compute R[k], since all the coefficient except one of R[k] were computed during
+      // size_reduction.
       m.update_R_last(k);
       // Compute delta_ * R(k, k)^2 = dR[k] * 2^(2*row_expo[k])
       compute_dR(k, delta_);
@@ -164,8 +170,8 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
         // Set R[0] to b[0] (bf[0] and other usefull variables were swaped previously)
         m.refresh_R(0);
         // Compute R[0]
-        m.update_R_last(0);
-        // Precompute R[0]^2 * delta_
+        m.update_R_last(0);  // In this case, update_R(0) is exactly equal to update_R_last(0)
+        // Precompute dR[0]: R[0]^2 * delta_ = dR[0] * 2^(2*row_expo[0])
         compute_dR(0, delta_);
 
         // Set R[1] to b[1] (bf[1] and other usefull variables were swaped previously)
@@ -231,8 +237,10 @@ void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
 
   /* Most likely, at this step, the next update_R(kappa, false) must modify some coefficients since
    * b will most likely be changed. If b is not modified during the size reduction, there will be
-   * only a call to update_R_last(kappa), which automatically must set updated_R to false.
-   * TODO: find a best place to use this function.
+   * only a call to update_R_last(kappa), which automatically must set updated_R to false. We set
+   * updated_R to false since it can be equal to true if recover_R was called that allows to avoid
+   * an unuseful recomputation of R[kappa] with update_R.
+   * TODO: maybe find a best place to use this function.
    */
   m.set_updated_R_false();
 
@@ -254,7 +262,7 @@ void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
 #endif                          // HOUSEHOLDER_PRECOMPUTE_INVERSE
 
       /* If T = mpfr or dpe, enable_row_expo must be false and then, expo1 - expo0 == 0 (required by
-       * rnd_we with this types) */
+       * rnd_we with these types) */
       ftmp1.rnd_we(ftmp1, expo1 - expo0);  // rnd(R(kappa, i) / R(i, i)) = ftmp1 * 2^(expo1 - expo0)
 
       // ftmp1 * 2^(expo1 - expo0) is equal to -X[i] in Algorithm 3 of [MSV, ISSAC'09]
@@ -270,12 +278,10 @@ void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
       }
     }
 
+    // If not reduced, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
+    // 1 > 2^(-cd)=sr since cd > 0.
     if (!reduced)
-    {
-      // If not reduced, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
-      // 1 > 2^(-cd)=sr since cd > 0.
       return;
-    }
     else
     {
       // At this point, even if b has changed, the precomputed squared norm of b was for b before
@@ -327,6 +333,7 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
   // Compute the R coefficients of b
   m.update_R_naively();
 
+  // Exponent associated to ftmp0 and ftmp1 (respectively)
   long expo0 = 0;
   long expo1 = 0;
 

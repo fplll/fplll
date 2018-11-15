@@ -152,9 +152,16 @@ public:
   /**
    * Returns f (* 2^expo if enable_row_expo) = R(i, j).
    *
-   * Returns reference to `f`.
+   * Returns reference to `f` and expo.
    */
   inline void get_R(FT &f, int i, int j, long &expo);
+
+  /**
+   * Returns f (* 2^expo if enable_row_expo) = R(i, j).
+   *
+   * Returns reference to `f`.
+   */
+  inline void get_R(FT &f, int i, int j);
 
   /**
    * Sets R(i, j) to f.
@@ -490,9 +497,14 @@ private:
 template <class ZT, class FT>
 inline void MatHouseholder<ZT, FT>::get_R(FT &f, int i, int j, long &expo)
 {
-  FPLLL_DEBUG_CHECK(i >= 0 && i < d && j >= 0 && j <= i);
-  f    = R(i, j);
+  get_R(f, i, j);
   expo = row_expo[i];
+}
+
+template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::get_R(FT &f, int i, int j)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < d && j >= 0 && j <= i);
+  f = R(i, j);
 }
 
 template <class ZT, class FT> inline MatrixRow<FT> MatHouseholder<ZT, FT>::get_R(int i, long &expo)

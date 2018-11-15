@@ -40,23 +40,31 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
 
   if (ftmp1.cmp(0.0) != 0)
   {
+    // ||r||
     ftmp2.sqrt(ftmp1);
     // s = sigma[i] * ||r|| = sigma[i] * sqrt(r * r^T)
     ftmp0.mul(sigma[i], ftmp2);
     ftmp1.add(R(i, i), ftmp0);
-    // vi[1] = (-sum(r[j]^2, j, 2, n-i+1)
+    // ftmp3 = (-sum(r[j]^2, j, 2, n-i+1)
     ftmp3.neg(ftmp3);
-    // vi[1] = (-sum(r[j]^2, j, 2, n-i+1) / (r[1] + s)
+    // ftmp3 = (-sum(r[j]^2, j, 2, n-i+1) / (r[1] + s)
     ftmp3.div(ftmp3, ftmp1);
     // If ftmp3 = 0, then ftmp0 = 0 and then, divide by ftmp0 is not allowed
     if (ftmp3.cmp(0.0) != 0)
     {
+      // ftmp0 = -sigma[i] * ||r||
       ftmp0.neg(ftmp0);
+      // ftmp0 = -sigma[i] * ||r|| * (-sum(r[j]^2, j, 2, n-i+1) / (r[1] + s)
       ftmp0.mul(ftmp0, ftmp3);
+      // ftmp0 = sqrt(-sigma[i] * ||r|| * (-sum(r[j]^2, j, 2, n-i+1) / (r[1] + s))
       ftmp0.sqrt(ftmp0);
 
 #ifndef HOUSEHOLDER_PRECOMPUTE_INVERSE
+      // V(i, i) =
+      // ((-sum(r[j]^2, j, 2, n-i+1) / (r[1] + s)) / sqrt(-sigma[i] * ||r|| * (-sum(r[j]^2, j, 2,
+      // n-i+1) / (r[1] + s))
       V(i, i).div(ftmp3, ftmp0);
+      // R(i, i) = ||r||
       R(i, i) = ftmp2;
 
       for (int k = i + 1; k < n; k++)
@@ -74,6 +82,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
       // Here, ftmp0 = 1 / sqrt(-s * vi[1])
       V(i, i).mul(ftmp3, ftmp0);
       R(i, i) = ftmp2;
+
       for (int k = i + 1; k < n; k++)
       {
         V(i, k).mul(R(i, k), ftmp0);
@@ -177,11 +186,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
 {
+  // Verify that b[i] has change before last time (more or less bf != b)
   FPLLL_DEBUG_CHECK(col_kept[i] == false);
-
-#ifdef DEBUG
-  col_kept[i] = true;
-#endif  // DEBUG
 
   int j;
 
@@ -198,7 +204,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
       max_expo = max(max_expo, tmp_col_expo[j]);
     }
 
-    // bfenormalize all the bf(i, j) with max_expo
+    // Renormalize all the bf(i, j) with max_expo
     for (j = 0; j < n_known_cols; j++)
       bf(i, j).mul_2si(bf(i, j), tmp_col_expo[j] - max_expo);
     for (j = n_known_cols; j < n; j++)
@@ -225,10 +231,16 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
   // TODO: maybe not realy efficient (since we will redo some already done comparisions if flags are
   // enabled) but factorize code.
   norm_square_b_row(norm_square_b[i], i, expo_norm_square_b[i]);
+
+#ifdef DEBUG
+  // bf[i] = b[i] at the end of the function
+  col_kept[i] = true;
+#endif  // DEBUG
 }
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R(int i)
 {
+  // Verify that b[i] has not change before last time (more or less bf = b)
   FPLLL_DEBUG_CHECK(col_kept[i] == true);
 
   int j;
@@ -242,6 +254,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R(int i)
 
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively(int i)
 {
+  // This function try to strictly respect Algorithm 2 of [MSV'09].
   FPLLL_DEBUG_CHECK(i <= n_known_rows_naively);
 
   int j;
@@ -286,7 +299,6 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively(int 
   }
 
   // Here, ftmp2 is equal to s in [MSV, ISSAC'09].
-  //
   // Copy R_naively[i][i..n] in V_naively
   for (j = i; j < n; j++)
   {
@@ -390,6 +402,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::size_reduce(const FT 
   FPLLL_DEBUG_CHECK(xf.cmp(0.0) != 0);
 
 #ifdef DEBUG
+  // b[k] has changed
   col_kept[k] = false;
 #endif  // DEBUG
 
@@ -498,6 +511,7 @@ void MatHouseholder<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_
   // TODO: is it possible to combine this specialization with the condition on lx?
   // Cannot specialize depending on lx, since x contains the contribution of the 2^row_expo[i] and
   // 2^row_expo[j].
+  // TODO: not sure this specialization is usefull.
   if (x.cmp(1.0) == 0.0)
     R[i].add(R[j], i);
   else if (x.cmp(-1.0) == 0.0)

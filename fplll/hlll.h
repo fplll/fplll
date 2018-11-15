@@ -78,7 +78,7 @@ private:
    */
   inline void print_params();
 
-  // Precompute delta_ * R(k, k)^2
+  // Precompute dR[k] * 2^(2*row_expo[k]) = delta_ * R(k, k)^2
   vector<FT> dR;
 
   // Compute dR[k]
@@ -108,15 +108,9 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
 
 template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::compute_dR(int k, FT delta_)
 {
-  long expo;
-  m.get_R(dR[k], k, k, expo);
+  m.get_R(dR[k], k, k);
   dR[k].mul(dR[k], dR[k]);
   dR[k].mul(delta_, dR[k]);  // dR[k] = delta_ * R(k, k)^2
-}
-
-template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::set_dR(int k, FT s, FT delta_)
-{
-  dR[k].mul(delta_, s);  // dR[k] = delta_ * s = delta_ * R(k, k)^2
 }
 
 template <class ZT, class FT>
