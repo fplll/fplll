@@ -41,12 +41,13 @@ public:
     sr          = pow(2.0, -(double)m.get_d() * c);
     verbose     = flags & LLL_VERBOSE;
     dR.resize(m.get_d());
+    status = -1;
   }
 
   /**
     @brief Househorder inside LLL reduction.
     */
-  void lll();
+  bool hlll();
 
 private:
   // Paramters to (delta, eta, theta) hlll-reduce the basis b in m.
@@ -62,6 +63,8 @@ private:
 
   // Temporary variables
   FT ftmp0, ftmp1;
+
+  int status;
 
   /**
      @brief Size reduction.
@@ -86,6 +89,9 @@ private:
 
   // Set the value dr[k] to s*delta_ where s must be equal to R(k, k)^2.
   inline void set_dR(int k, FT s, FT delta_);
+
+  // Set the status of the computation and print message if verbose
+  inline bool set_status(int new_status);
 };
 
 template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
@@ -111,6 +117,19 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::compute_dR(int 
   m.get_R(dR[k], k, k);
   dR[k].mul(dR[k], dR[k]);
   dR[k].mul(delta_, dR[k]);  // dR[k] = delta_ * R(k, k)^2
+}
+
+template <class ZT, class FT> inline bool HLLLReduction<ZT, FT>::set_status(int new_status)
+{
+  status = new_status;
+  if (verbose)
+  {
+    if (status == RED_SUCCESS)
+      cerr << "End of HLLL: success" << endl;
+    else
+      cerr << "End of HLLL: failure: " << RED_STATUS_STR[status] << endl;
+  }
+  return status == RED_SUCCESS;
 }
 
 template <class ZT, class FT>

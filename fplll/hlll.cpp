@@ -19,7 +19,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
+template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
 {
   /* TODO: not exactly the good value
    * delta_ in (delta + 2^(-p + p0), 1 - 2^(-p + p0))
@@ -46,6 +46,13 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
   int k = 1;
   // Remember which was the largest b[k_max] that is tried to be size-reduced
   int k_max = 1;
+
+  int prev_k = -1;
+  vector<FT> prev_R;
+  vector<long> prev_expo;
+  prev_R.resize(m.get_d());
+  prev_expo.resize(m.get_d());
+  // prev_R[0] is never used: m.get_R(prev_R[0], 0, 0, prev_expo[0]);
 
   if (verbose)
   {
@@ -133,6 +140,26 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
       m.update_R_last(k);
       // Compute delta_ * R(k, k)^2 = dR[k] * 2^(2*row_expo[k])
       compute_dR(k, delta_);
+
+      // Heuristic precision check : when R(kappa-1,kappa-1) increases in a 2x2 up and down (see
+      // hplll)
+      if (prev_k == k + 1)
+      {
+        // R(k, k) = ftmp0 * 2^expo0
+        m.get_R(ftmp0, k, k, expo0);
+        ftmp1.mul_2si(prev_R[k], prev_expo[k] - expo0);
+
+        if (ftmp0.cmp(ftmp1) > 0)
+        {
+          // cerr << "Anomaly: the norm increases for kappa = " << k << endl;
+          return set_status(RED_NORM_HLLL_FAILURE);
+        }
+      }
+
+      prev_k = k;
+      // R(k, k) = prev_R[k] * 2^prev_expo[k]
+      m.get_R(prev_R[k], k, k, prev_expo[k]);
+
       // b[k] is size reduced, now, size reduce b[k + 1]
       k++;
 
@@ -158,12 +185,13 @@ template <class ZT, class FT> void HLLLReduction<ZT, FT>::lll()
       }
       else
         // if k == m.get_d(), then b[k] does not exist and the computation is ended
-        return;
+        return set_status(RED_SUCCESS);
     }
     else
     {
       // Swap b[k-1] and b[k] and other usefull variables
       m.swap(k - 1, k);
+      prev_k = k;
 
       if (k - 1 == 0)
       {

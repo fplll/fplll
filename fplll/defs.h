@@ -153,15 +153,16 @@ enum RedStatus
 {
   RED_SUCCESS = 0,
   // Skips value 1
-  RED_GSO_FAILURE     = 2,
-  RED_BABAI_FAILURE   = 3,
-  RED_LLL_FAILURE     = 4,
-  RED_ENUM_FAILURE    = 5,
-  RED_BKZ_FAILURE     = 6,
-  RED_BKZ_TIME_LIMIT  = 7,
-  RED_BKZ_LOOPS_LIMIT = 8,
-  RED_HLLL_FAILURE    = 9,
-  RED_STATUS_MAX      = 10
+  RED_GSO_FAILURE       = 2,
+  RED_BABAI_FAILURE     = 3,
+  RED_LLL_FAILURE       = 4,
+  RED_ENUM_FAILURE      = 5,
+  RED_BKZ_FAILURE       = 6,
+  RED_BKZ_TIME_LIMIT    = 7,
+  RED_BKZ_LOOPS_LIMIT   = 8,
+  RED_HLLL_FAILURE      = 9,
+  RED_NORM_HLLL_FAILURE = 10,
+  RED_STATUS_MAX        = 11
 };
 
 const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
@@ -173,7 +174,8 @@ const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
                                                     "error in BKZ",
                                                     "time limit exceeded in BKZ",
                                                     "loops limit exceeded in BKZ",
-                                                    "error in H-LLL"};
+                                                    "error in H-LLL",
+                                                    "the norm increases"};
 
 enum LLLMethod
 {

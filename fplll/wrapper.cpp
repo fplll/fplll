@@ -579,8 +579,10 @@ bool is_hlll_reduced_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double 
 {
   if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;
+
   int householder_flags = HOUSEHOLDER_DEFAULT | HOUSEHOLDER_ROW_EXPO;
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> m(b, u, u_inv, householder_flags);
+
   return is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(m, delta, eta);
 }
 
@@ -591,8 +593,10 @@ bool is_hlll_reduced_pr(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double 
 {
   if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;
+
   int householder_flags = HOUSEHOLDER_DEFAULT;
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> m(b, u, u_inv, householder_flags);
+
   return is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(m, delta, eta);
 }
 
@@ -609,9 +613,9 @@ int hlll_reduction_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double de
     // householder_flags |= HOUSEHOLDER_ROW_EXPO;
   }
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> m(b, u, u_inv, householder_flags);
-  HLLLReduction<Z_NR<ZT>, FP_NR<FT>> lll_obj(m, delta, eta, theta, c, flags);
-  lll_obj.lll();
-  return RED_SUCCESS;
+  HLLLReduction<Z_NR<ZT>, FP_NR<FT>> hlll_obj(m, delta, eta, theta, c, flags);
+
+  return hlll_obj.hlll();
 }
 
 template <class ZT>
@@ -710,11 +714,12 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
     cerr << endl;
   }
 
-  // Applies the selected method
-  int status = 0;
+  int status = -1;
+
   // If nolll, just verify if the basis is reduced or not
   if (!nolll)
   {
+    // Applies the selected method
     if (sel_ft == FT_DOUBLE)
       status = hlll_reduction_zf<ZT, double>(b, u, u_inv, delta, eta, theta, c, method, flags);
 #ifdef FPLLL_WITH_LONG_DOUBLE
@@ -761,12 +766,13 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
     }
     zeros_first(b, u, u_inv);
   }
-
-  if (nolll)
+  else
   {
     int old_prec = FP_NR<mpfr_t>::set_prec(good_prec);
 
-    if (is_hlll_reduced_pr<ZT, mpfr_t>(b, u, u_inv, delta, eta))
+    status = is_hlll_reduced_pr<ZT, mpfr_t>(b, u, u_inv, delta, eta);
+
+    if (status)
       cerr << "Basis is reduced (checked with mpfr).";
     else
       cerr << "Basis is not reduced (checked with mpfr).";

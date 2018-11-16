@@ -47,7 +47,7 @@ template <class ZT, class FT> int test_hlll(ZZ_mat<ZT> &A, int flags)
   }
 
   // Perform the hlll reduction
-  hlll_obj.lll();
+  hlll_obj.hlll();
 
   // Verify if A is hlll reduced thanks to mpfr
   MatHouseholder<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, u, ut, HOUSEHOLDER_DEFAULT);
