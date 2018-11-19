@@ -49,6 +49,8 @@ public:
     */
   bool hlll();
 
+  // Get the status of the computation
+  inline int get_status() { return status; }
 private:
   // Paramters to (delta, eta, theta) hlll-reduce the basis b in m.
   FT delta, eta, theta;

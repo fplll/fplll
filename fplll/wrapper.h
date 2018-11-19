@@ -32,7 +32,13 @@ public:
   Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
           int flags);
 
+  // Used for HLLL
+  Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
+          double theta, double c, int flags);
+
   bool lll();
+
+  bool hlll();
 
   int status;
 
@@ -80,6 +86,20 @@ private:
   int n;
   int d;
   int last_early_red;
+
+  // HLLL
+  double theta;
+  double c;
+
+  template <class F> bool call_hlll(LLLMethod method, int precision);
+
+  template <class F> bool fast_hlll();
+
+  template <class F> bool proved_hlll(int precision);
+
+  int hlll_proved_loop(int precision);
+
+  bool last_hlll();
 };
 
 #define FPLLL_DECLARE_LLL(T)                                                                       \

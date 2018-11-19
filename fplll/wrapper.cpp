@@ -56,6 +56,20 @@ Wrapper::Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, doubl
   good_prec = l2_min_prec(d, delta, eta, LLL_DEF_EPSILON);
 }
 
+// Constructor for HLLL
+Wrapper::Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
+                 double theta, double c, int flags)
+    : status(RED_SUCCESS), b(b), u(u), u_inv(u_inv), delta(delta), eta(eta), use_long(false),
+      last_early_red(-1), theta(theta), c(c)
+{
+  n           = b.get_cols();
+  d           = b.get_rows();
+  this->flags = flags;
+
+  // Computes the parameters required for the proved version
+  good_prec = hlll_min_prec(d, n, delta, eta, theta, c);
+}
+
 bool Wrapper::little(int kappa, int precision)
 {
   /*one may add here dimension arguments with respect to eta and delta */
@@ -366,6 +380,132 @@ void Wrapper::set_use_long(bool value)
 
 int Wrapper::increase_prec(int precision) { return min(precision * 2, good_prec); }
 
+/* Set of methods for the HLLL wrapper. */
+
+/**
+ * main function to call hlll
+ * Return true if success, false otherwise
+ */
+template <class F> bool Wrapper::call_hlll(LLLMethod method, int precision)
+{
+  typedef FP_NR<F> FT;
+
+  if (flags & LLL_VERBOSE)
+  {
+    cerr << "====== Wrapper: calling " << HLLL_METHOD_STR[method] << "<mpz_t," << num_type_str<F>()
+         << "> method";
+    if (precision > 0)
+    {
+      cerr << " (precision=" << precision << ")";
+    }
+    cerr << " ======" << endl;
+  }
+
+  int householder_flags = 0;
+  if (method == LM_PROVED)
+    householder_flags |= HOUSEHOLDER_DEFAULT;
+  if (method == LM_FAST)
+    householder_flags |= HOUSEHOLDER_ROW_EXPO | HOUSEHOLDER_OP_FORCE_LONG;
+
+  int old_prec = FP_NR<mpfr_t>::get_prec();
+
+  if (precision > 0)
+    FP_NR<mpfr_t>::set_prec(precision);
+
+  MatHouseholder<Z_NR<mpz_t>, FT> m(b, u, u_inv, householder_flags);
+  HLLLReduction<Z_NR<mpz_t>, FT> hlll_obj(m, delta, eta, theta, c, flags);
+  hlll_obj.hlll();
+  int status = hlll_obj.get_status();
+
+  if (precision > 0)
+    FP_NR<mpfr_t>::set_prec(old_prec);
+
+  if (flags & LLL_VERBOSE)
+  {
+    cerr << "====== Wrapper: end of " << HLLL_METHOD_STR[method] << " method ======\n" << endl;
+  }
+
+  if (status == RED_SUCCESS)
+    return true;
+  else
+    return false;
+}
+
+/**
+ * last call to LLL. Need to be proved_lll.
+ */
+bool Wrapper::last_hlll()
+{
+/* <mpfr, FT> */
+#ifdef FPLLL_WITH_DPE
+  if (good_prec <= numeric_limits<double>::digits)
+    return proved_hlll<dpe_t>(good_prec);
+#ifdef FPLLL_WITH_QD
+  else if (good_prec <= PREC_DD)
+    return proved_hlll<dd_real>(good_prec);
+#endif  // FPLLL_WITH_QD
+#endif  // FPLLL_WITH_DPE
+  return proved_hlll<mpfr_t>(good_prec);
+}
+int Wrapper::hlll_proved_loop(int precision)
+{
+  bool status = proved_hlll<mpfr_t>(precision);
+
+  if (status)
+    return 0;  // Success
+  else if (precision < good_prec)
+    return hlll_proved_loop(increase_prec(precision));
+  else
+    return -1;  // This point should never be reached
+}
+
+/**
+ * pass the method to call_hlll()
+ */
+template <class F> bool Wrapper::fast_hlll() { return call_hlll<F>(LM_FAST, 0); }
+
+template <class F> bool Wrapper::proved_hlll(int precision)
+{
+  return call_hlll<F>(LM_PROVED, precision);
+}
+
+bool Wrapper::hlll()
+{
+  if (b.get_rows() == 0 || b.get_cols() == 0)
+    return RED_SUCCESS;
+
+  /* try fast_lll<mpz_t, double> */
+
+  bool hlll_complete = fast_hlll<double>();
+  int last_prec      = numeric_limits<double>::digits;
+
+/* try fast_hlll<mpz_t, long double> */
+#ifdef FPLLL_WITH_LONG_DOUBLE
+  if (!hlll_complete)
+  {
+    hlll_complete = fast_hlll<long double>();
+    last_prec     = numeric_limits<long double>::digits;
+  }
+#endif  // FPLLL_WITH_LONG_DOUBLE
+
+/* try fast_hlll<mpz_t, dd_real> */
+#ifdef FPLLL_WITH_QD
+  if (!hlll_complete)
+  {
+    hlll_complete = fast_hlll<dd_real>();
+    last_prec     = PREC_DD;
+  }
+#endif  // FPLLL_WITH_QD
+
+  /* loop */
+  if (!hlll_complete)
+    hlll_complete = hlll_proved_loop(last_prec);
+
+  hlll_complete = last_hlll();
+
+  return hlll_complete == RED_SUCCESS;
+}
+
 /**
  * LLL with a typical method "proved or heuristic or fast".
  * @proved:     exact gram +   exact rowexp +   exact rowaddmul
@@ -600,6 +740,28 @@ bool is_hlll_reduced_pr(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double 
   return is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(m, delta, eta);
 }
 
+template <class ZT>
+int hlll_reduction_wrapper(ZZ_mat<ZT> &, ZZ_mat<ZT> &, ZZ_mat<ZT> &, double, double, double, double,
+                           FloatType, int, int)
+{
+  FPLLL_ABORT("The wrapper method works only with integer type mpz");
+  return RED_LLL_FAILURE;
+}
+
+template <>
+int hlll_reduction_wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta,
+                           double eta, double theta, double c, FloatType float_type, int precision,
+                           int flags)
+{
+  FPLLL_CHECK(float_type == FT_DEFAULT,
+              "The floating point type cannot be specified with the wrapper method");
+  FPLLL_CHECK(precision == 0, "The precision cannot be specified with the wrapper method");
+  Wrapper wrapper(b, u, u_inv, delta, eta, theta, c, flags);
+  wrapper.hlll();
+  zeros_first(b, u, u_inv);
+  return wrapper.status;
+}
+
 template <class ZT, class FT>
 int hlll_reduction_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta,
                       double theta, double c, LLLMethod method, int flags)
@@ -623,8 +785,11 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
                      double theta, double c, LLLMethod method, IntType int_type,
                      FloatType float_type, int precision, int flags, bool nolll)
 {
-  FPLLL_CHECK(method != LM_WRAPPER, "H-LLL wrapper is not implementated.");
-  FPLLL_CHECK(method != LM_HEURISTIC, "H-LLL heuristic is not implementated.");
+  FPLLL_CHECK(method != LM_HEURISTIC, "HLLL heuristic is not implementated.");
+
+  /* switch to wrapper */
+  if (method == LM_WRAPPER)
+    return hlll_reduction_wrapper(b, u, u_inv, delta, eta, theta, c, float_type, precision, flags);
 
   /* computes the parameters required for the proved version */
   int good_prec = hlll_min_prec(b.get_rows(), b.get_cols(), delta, eta, theta, c);

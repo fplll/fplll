@@ -187,6 +187,8 @@ enum LLLMethod
 
 const char *const LLL_METHOD_STR[6] = {"wrapper", "proved", "heuristic", "fast"};
 
+const char *const HLLL_METHOD_STR[4] = {"wrapper", "proved", "", "fast"};
+
 enum IntType
 {
   ZT_MPZ    = 0,
