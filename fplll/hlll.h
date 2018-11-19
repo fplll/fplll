@@ -135,7 +135,7 @@ template <class ZT, class FT> inline bool HLLLReduction<ZT, FT>::set_status(int 
 }
 
 template <class ZT, class FT>
-bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta);
+bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta, double theta);
 
 FPLLL_END_NAMESPACE
 

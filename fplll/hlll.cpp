@@ -350,13 +350,15 @@ void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
  * the one used to reduced the basis.
  */
 template <class ZT, class FT>
-bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
+bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta, double theta)
 {
+  int i, j;
   // Temporary variables
-  FT ftmp0, ftmp1;
+  FT ftmp0, ftmp1, ftmp2;
   // FT version of delta and eta
   FT delta_ = delta;
   FT eta_   = eta;
+  FT theta_ = theta;
 
   // Compute the R coefficients of b
   m.update_R_naively();
@@ -364,53 +366,63 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta)
   // Exponent associated to ftmp0 and ftmp1 (respectively)
   long expo0 = 0;
   long expo1 = 0;
+  long expo2 = 0;
 
-  // Equivilant to verify that mu(i, j) (= R(i, j) / R(j, j)) is <= to eta_ (or 0.5)
-  for (int i = 0; i < m.get_d(); i++)
+  // Verify if |R(j, i)| <= eta * R(i, i) + theta * R(j, j) (weak size-reduction of Definition 2
+  // [MSV'09].
+  for (j = 0; j < m.get_d(); j++)
   {
-    for (int j = 0; j < i; j++)
+    for (i = 0; i < j; i++)
     {
-      m.get_R_naively(ftmp0, i, j, expo0);  // R(i, j) = ftmp0 * 2^expo0
+      m.get_R_naively(ftmp0, j, i, expo0);  // R(j, i) = ftmp0 * 2^expo0
+      ftmp0.abs(ftmp0);                     // |R(j, i)| = |ftmp0| * 2^expo0
       m.get_R_naively(ftmp1, j, j, expo1);  // R(j, j) = ftmp1 * 2^expo1
-      ftmp1.div(ftmp0, ftmp1);              // R(i, j) / R(j,j) = ftmp1 * 2^(expo0 - expo1)
-      ftmp1.abs(ftmp1);                     // |R(i, j) / R(j,j)| = |ftmp1| * 2^(expo0 - expo1)
+      m.get_R_naively(ftmp2, i, i, expo2);  // R(i, i) = ftmp2 * 2^expo2
 
-      // In case FT=dpe or FT=mpfr, expo0 = expo1 = 0
-      ftmp1.mul_2si(ftmp1, expo0 - expo1);  // |R(i, j) / R(j,j)| = |ftmp1|
+      FPLLL_DEBUG_CHECK(expo0 == expo1);
 
-      // Test if ftmp1 > eta and ftmp1 > 0.5.
-      if (ftmp1.cmp(eta_) > 0)
-        return false;
+      ftmp1.mul(ftmp1, theta_);  // eta_ * R(i, i) = ftmp2 * 2^expo2
+      ftmp2.mul(ftmp2, eta_);    // eta_ * R(i, i) = ftmp2 * 2^expo2
 
-      // Since eta_ is not directly involved during the hlll reduction, this test is probably the
-      // one we want.
-      if (ftmp1.cmp(0.5) > 0)
+      // We want to test if
+      //   |R(j, i)| <= eta * R(i, i) + theta * R(j, j)
+      //   ftmp0 * 2^expo0 <= ftmp1 * 2^expo0 + ftmp2 * 2^expo2, since expo0 == expo1
+      //   ftmp0 <= ftmp1 + ftmp2 * 2^(expo2 - expo0)
+      ftmp2.mul_2si(ftmp2, expo2 - expo0);
+      ftmp1.add(ftmp1, ftmp2);
+
+      if (ftmp0.cmp(ftmp1) > 0)
         return false;
     }
   }
 
   // At this step, we verify if two consecutive vectors must be swapped during the hlll-reduction or
-  // not
-  for (int i = 1; i < m.get_d(); i++)
+  // not (Lovasz's condition)
+  for (i = 1; i < m.get_d(); i++)
   {
-    m.norm_square_b_row_naively(ftmp0, i, expo0);  // ||b[i]||^2 = ftmp0 * 2^expo0
-    m.norm_square_R_row_naively(ftmp1, i, i - 1,
-                                expo1);  // sum_{k = 0}^{k < i - 1}R[i][k]^2 = ftmp1 * 2^expo1
-
-    ftmp0.mul_2si(ftmp0, expo0 - expo1);
-
-    ftmp1.sub(ftmp0, ftmp1);  // ||b[i]||^2 - sum_{i = 0}^{i < i - 1}R[i][i]^2 = ftmp1 * 2^expo1
     m.get_R_naively(ftmp0, i - 1, i - 1, expo0);  // R(i - 1, i - 1) = ftmp0 * 2^expo0
-    ftmp0.mul(ftmp0, ftmp0);
-    expo0 = 2 * expo0;
-    // Here, R(i - 1, i - 1)^2 = ftmp0 * 2^expo0
-    ftmp0.mul(delta_, ftmp0);  // ftmp0 = delta_ * R(i - 1, i - 1)^2
+    m.get_R_naively(ftmp1, i, i - 1, expo1);      // R(i, i - 1) = ftmp1 * 2^expo1
+    m.get_R_naively(ftmp2, i, i, expo2);          // R(i, i) = ftmp2 * 2^expo2
+    FPLLL_DEBUG_CHECK(expo0 == expo1);
 
-    // Here, delta * R(k - 1, k - 1)^2 = dR[k-1] * 2^(2*expo0). We want to compare
-    //   delta * R(k - 1, k - 1)^2 > ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2
-    //   ftmp0 * 2^expo0 > ftmp1 * 2^expo1
-    //   ftmp0 > ftmp1 * 2^(expo1 - expo0)
-    ftmp1.mul_2si(ftmp1, expo1 - expo0);
+    ftmp0.mul(ftmp0, ftmp0);
+    ftmp1.mul(ftmp1, ftmp1);
+    ftmp2.mul(ftmp2, ftmp2);
+    expo0 = 2 * expo0;
+    // expo1 = 2 * expo1; : not necessary, since expo0 == expo1
+    expo2 = 2 * expo2;
+    // Here: R(i - 1, i - 1)^2 = ftmp0 * 2^expo0
+    // Here: R(i, i - 1)^2 = ftmp1 * 2^expo1
+    // Here: R(i, i)^2 = ftmp2 * 2^expo2
+
+    ftmp0.mul(ftmp0, delta);  // delta * R(i - 1, i - 1)^2 = delta * ftmp0 * 2^expo0
+
+    // We want to test if
+    //   delta * R(i - 1, i - 1)^2 <= R(i, i - 1)^2 + R(i, i)^2
+    //   ftmp0 * 2^expo0 <= ftmp1 * 2^expo0 + ftmp2 * 2^expo2
+    //   ftmp0 <= ftmp1 + ftmp2 * 2^(expo2 - expo0)
+    ftmp2.mul_2si(ftmp2, expo2 - expo0);
+    ftmp1.add(ftmp1, ftmp2);
 
     if (ftmp0.cmp(ftmp1) > 0)
       return false;
@@ -425,13 +437,13 @@ template class HLLLReduction<Z_NR<double>, FP_NR<double>>;
 template class HLLLReduction<Z_NR<mpz_t>, FP_NR<double>>;
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<double>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<double>> &m,
-                                            double delta, double eta);
+                                            double delta, double eta, double theta);
 template bool
 is_hlll_reduced<Z_NR<long>, FP_NR<double>>(MatHouseholder<Z_NR<long>, FP_NR<double>> &m,
-                                           double delta, double eta);
+                                           double delta, double eta, double theta);
 template bool
 is_hlll_reduced<Z_NR<double>, FP_NR<double>>(MatHouseholder<Z_NR<double>, FP_NR<double>> &m,
-                                             double delta, double eta);
+                                             double delta, double eta, double theta);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class HLLLReduction<Z_NR<long>, FP_NR<long double>>;
@@ -439,12 +451,12 @@ template class HLLLReduction<Z_NR<double>, FP_NR<long double>>;
 template class HLLLReduction<Z_NR<mpz_t>, FP_NR<long double>>;
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<long double>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<long double>> &m,
-                                                 double delta, double eta);
+                                                 double delta, double eta, double theta);
 template bool
 is_hlll_reduced<Z_NR<long>, FP_NR<long double>>(MatHouseholder<Z_NR<long>, FP_NR<long double>> &m,
-                                                double delta, double eta);
+                                                double delta, double eta, double theta);
 template bool is_hlll_reduced<Z_NR<double>, FP_NR<long double>>(
-    MatHouseholder<Z_NR<double>, FP_NR<long double>> &m, double delta, double eta);
+    MatHouseholder<Z_NR<double>, FP_NR<long double>> &m, double delta, double eta, double theta);
 #endif
 
 #ifdef FPLLL_WITH_QD
@@ -457,22 +469,22 @@ template class HLLLReduction<Z_NR<double>, FP_NR<qd_real>>;
 template class HLLLReduction<Z_NR<mpz_t>, FP_NR<qd_real>>;
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<qd_real>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<qd_real>> &m,
-                                             double delta, double eta);
+                                             double delta, double eta, double theta);
 template bool
 is_hlll_reduced<Z_NR<long>, FP_NR<qd_real>>(MatHouseholder<Z_NR<long>, FP_NR<qd_real>> &m,
-                                            double delta, double eta);
+                                            double delta, double eta, double theta);
 template bool
 is_hlll_reduced<Z_NR<double>, FP_NR<qd_real>>(MatHouseholder<Z_NR<double>, FP_NR<qd_real>> &m,
-                                              double delta, double eta);
+                                              double delta, double eta, double theta);
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<dd_real>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<dd_real>> &m,
-                                             double delta, double eta);
+                                             double delta, double eta, double theta);
 template bool
 is_hlll_reduced<Z_NR<long>, FP_NR<dd_real>>(MatHouseholder<Z_NR<long>, FP_NR<dd_real>> &m,
-                                            double delta, double eta);
+                                            double delta, double eta, double theta);
 template bool
 is_hlll_reduced<Z_NR<double>, FP_NR<dd_real>>(MatHouseholder<Z_NR<double>, FP_NR<dd_real>> &m,
-                                              double delta, double eta);
+                                              double delta, double eta, double theta);
 #endif
 
 #ifdef FPLLL_WITH_DPE
@@ -481,12 +493,12 @@ template class HLLLReduction<Z_NR<double>, FP_NR<dpe_t>>;
 template class HLLLReduction<Z_NR<mpz_t>, FP_NR<dpe_t>>;
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<dpe_t>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<dpe_t>> &m,
-                                           double delta, double eta);
+                                           double delta, double eta, double theta);
 template bool is_hlll_reduced<Z_NR<long>, FP_NR<dpe_t>>(MatHouseholder<Z_NR<long>, FP_NR<dpe_t>> &m,
-                                                        double delta, double eta);
+                                                        double delta, double eta, double theta);
 template bool
 is_hlll_reduced<Z_NR<double>, FP_NR<dpe_t>>(MatHouseholder<Z_NR<double>, FP_NR<dpe_t>> &m,
-                                            double delta, double eta);
+                                            double delta, double eta, double theta);
 #endif
 
 template class HLLLReduction<Z_NR<long>, FP_NR<mpfr_t>>;
@@ -494,12 +506,12 @@ template class HLLLReduction<Z_NR<double>, FP_NR<mpfr_t>>;
 template class HLLLReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
 template bool
 is_hlll_reduced<Z_NR<mpz_t>, FP_NR<mpfr_t>>(MatHouseholder<Z_NR<mpz_t>, FP_NR<mpfr_t>> &m,
-                                            double delta, double eta);
+                                            double delta, double eta, double theta);
 template bool
 is_hlll_reduced<Z_NR<long>, FP_NR<mpfr_t>>(MatHouseholder<Z_NR<long>, FP_NR<mpfr_t>> &m,
-                                           double delta, double eta);
+                                           double delta, double eta, double theta);
 template bool
 is_hlll_reduced<Z_NR<double>, FP_NR<mpfr_t>>(MatHouseholder<Z_NR<double>, FP_NR<mpfr_t>> &m,
-                                             double delta, double eta);
+                                             double delta, double eta, double theta);
 
 FPLLL_END_NAMESPACE

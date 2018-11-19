@@ -39,7 +39,7 @@ template <class ZT, class FT> int test_hlll(ZZ_mat<ZT> &A, int flags)
   // The matrix A used to build Mhouseholder is not reduced. If the test return true, then
   // is_hlll_reduced is badly
   // implemented
-  int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(Mhouseholder, 0.99, 0.52);
+  int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(Mhouseholder, 0.99, 0.52, 0.01);
   if (status == true)
   {
     cerr << "is_hlll_reduced reports success when it should not." << endl;
@@ -53,7 +53,7 @@ template <class ZT, class FT> int test_hlll(ZZ_mat<ZT> &A, int flags)
   MatHouseholder<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, u, ut, HOUSEHOLDER_DEFAULT);
 
   // This times, M must be hlll reduced
-  status = is_hlll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, 0.99, 0.52);
+  status = is_hlll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, 0.99, 0.52, 0.01);
   if (status == false)
   {
     cerr << "Output of HLLL reduction is not HLLL reduced." << endl;
