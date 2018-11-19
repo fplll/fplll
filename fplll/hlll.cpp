@@ -21,10 +21,9 @@ FPLLL_BEGIN_NAMESPACE
 
 template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
 {
-  /* TODO: not exactly the good value
+  /* TODO: we do not use a completely correct value for delta. We must use a value
    * delta_ in (delta + 2^(-p + p0), 1 - 2^(-p + p0))
    */
-  FT delta_      = delta;
   int start_time = cputime();
   long expo0 = 0, expo1 = 0;
   // True if size_reduction does not fail
@@ -42,8 +41,10 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
   m.refresh_R_bf(0);
   // Compute R[0]
   m.update_R_last(0);  // In this case, update_R(0) is exactly equal to update_R_last(0)
-  // Precompute dR[0]: R[0]^2 * delta_ = dR[0] * 2^(2*row_expo[0])
-  compute_dR(0, delta_);
+  // Precompute dR[0]: R[0]^2 * delta = dR[0] * 2^(2*row_expo[0])
+  compute_dR(0);
+  // Precompute eR[0]: R[0] * eta = eR[0] * 2^row_expo[0]
+  compute_eR(0);
 
   int k = 1;
   // Remember which was the largest b[k_max] that is tried to be size-reduced
@@ -143,7 +144,9 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
       // size_reduction.
       m.update_R_last(k);
       // Compute delta_ * R(k, k)^2 = dR[k] * 2^(2*row_expo[k])
-      compute_dR(k, delta_);
+      compute_dR(k);
+      // Compute eta * R(k, k) = eR[k] * 2^row_expo[k]
+      compute_eR(k);
 
       // Heuristic precision check : when R(kappa-1,kappa-1) increases in a 2x2 up and down (see
       // hplll)
@@ -203,8 +206,10 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
         m.refresh_R(0);
         // Compute R[0]
         m.update_R_last(0);  // In this case, update_R(0) is exactly equal to update_R_last(0)
-        // Precompute dR[0]: R[0]^2 * delta_ = dR[0] * 2^(2*row_expo[0])
-        compute_dR(0, delta_);
+        // Precompute dR[0]: R[0]^2 * delta = dR[0] * 2^(2*row_expo[0])
+        compute_dR(0);
+        // Precompute eR[0]: R[0] * eta = eR[0] * 2^row_expo[0]
+        compute_eR(0);
 
         // Set R[1] to b[1] (bf[1] and other usefull variables were swaped previously)
         m.refresh_R(1);
@@ -352,36 +357,32 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
          * TODO: is the following test actually used to detect an hypothetical infinite
          * loop or not?
          */
+
         // TODO: can this test be more concise.
-        long expo0 = 0, expo2 = 0;
+        long expo0 = 0, expo1 = 0, expo2 = 0;
 
-// Since R(kappa, kappa) is the same for all the tests, precompute it one time
-#ifdef DEBUG
-        long expo1 = 0;
-        m.get_R(ftmp1, kappa, kappa, expo1);  // R(kappa, kappa) = ftmp1 * 2^expo1
-#else   // DEBUG
-        m.get_R(ftmp1, kappa, kappa);      // R(kappa, kappa) = ftmp1 * 2^expo1
-#endif  // DEBUG
+        // Since R(kappa, kappa) is not know at this time, compute its value
+        // For now on, R(kappa, kappa) is assumed to be known, even if the value stored
+        // at R(kappa, kappa) is not correct.
+        m.norm_R_row(ftmp1, kappa, kappa, m.get_n(), expo1);  // R(kappa, kappa) = ftmp1 * 2^expo1
 
-        ftmp1.mul(ftmp1, theta);  // theta_ * R(kappa, kappa) = ftmp1 * 2^expo1
+        ftmp1.mul(ftmp1, theta);  // theta * R(kappa, kappa) = ftmp1 * 2^expo1
 
         // Verify the conditions on the weak size-reduction in Definition 2 of [MSV'09]
         for (int i = 0; i < kappa; i++)
         {
           m.get_R(ftmp0, kappa, i, expo0);  // R(kappa, i) = ftmp0 * 2^expo0
           ftmp0.abs(ftmp0);                 // |R(kappa, i)| = |ftmp0| * 2^expo0
-          m.get_R(ftmp2, i, i, expo2);      // R(i, i) = ftmp2 * 2^expo2
+          expo2 = m.get_row_expo(i);        // R(i, i) = eR[i] * 2^expo2
 
           FPLLL_DEBUG_CHECK(expo0 == expo1);
 
-          // TODO: can be precomputed since it is used for many tests
-          ftmp2.mul(ftmp2, eta);  // eta_ * R(i, i) = ftmp2 * 2^expo2
-
           // We want to test if
           //   |R(kappa, i)| <= eta * R(i, i) + theta * R(kappa, kappa)
-          //   ftmp0 * 2^expo0 <= ftmp1 * 2^expo0 + ftmp2 * 2^expo2, since expo0 == expo1
-          //   ftmp0 <= ftmp1 + ftmp2 * 2^(expo2 - expo0)
-          ftmp2.mul_2si(ftmp2, expo2 - expo0);
+          //   ftmp0 * 2^expo0 <= eR[i] * 2^expo2 + ftmp1 * 2^expo0, since expo0 == expo1
+          //   ftmp0 <= eRr[i] * 2^(expo2 - expo0) + ftmp1
+          //   ftmp0 <= ftmp2
+          ftmp2.mul_2si(eR[i], expo2 - expo0);
           ftmp2.add(ftmp1, ftmp2);
 
           if (ftmp0.cmp(ftmp2) > 0)

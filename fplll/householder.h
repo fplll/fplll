@@ -230,6 +230,11 @@ public:
    */
   inline void norm_square_R_row(FT &f, int k, int beg, int end, long &expo);
 
+  /**
+   * Truncated norm of R[k], with coefficients of R[k][beg..end-1].
+   */
+  inline void norm_R_row(FT &f, int k, int beg, int end, long &expo);
+
   // b[k] = b[k] + ZT(xf) * b[i]
   // R[k] = R[k] + xf * R[i]
   // Not necessary to make transformation on bf, since basically, after each size_reduce, we call
@@ -565,6 +570,26 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int beg, int
 
   if (enable_row_expo)
     expo = 2 * row_expo[k];
+  else
+    expo = 0;
+}
+
+// TODO: maybe can merge some part of the code with norm_square_R_row?
+template <class ZT, class FT>
+inline void MatHouseholder<ZT, FT>::norm_R_row(FT &f, int k, int beg, int end, long &expo)
+{
+  FPLLL_DEBUG_CHECK(k >= 0 && k < d);
+  FPLLL_DEBUG_CHECK(beg <= end);
+  if (end == beg)
+    f = 0.0;
+  else
+  {
+    R[k].dot_product(f, R[k], beg, end);
+    f.sqrt(f);
+  }
+
+  if (enable_row_expo)
+    expo = row_expo[k];
   else
     expo = 0;
 }
