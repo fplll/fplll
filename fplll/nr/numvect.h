@@ -198,10 +198,18 @@ public:
   void sub(const NumVect<T> &v, int n);
   /** Subtraction of two NumVector objects. */
   void sub(const NumVect<T> &v) { sub(v, size()); }
+  /** Multiplication of NumVector and a number c, from index b till index n. */
+  void mul(const NumVect<T> &v, int b, int n, T c);
   /** Multiplication of NumVector and a number c, till index n. */
   void mul(const NumVect<T> &v, int n, T c);
   /** Multiplication of NumVector and a number c. */
   void mul(const NumVect<T> &v, T c) { mul(v, size(), c); }
+  /** Division of NumVector and a number c, from index b till index n. */
+  void div(const NumVect<T> &v, int b, int n, T c);
+  /** Division of NumVector and a number c, till index n. */
+  void div(const NumVect<T> &v, int n, T c);
+  /** Division of NumVector and a number c. */
+  void div(const NumVect<T> &v, T c) { div(v, size(), c); }
   /** Incremeanting each coefficient of NumVector by its product with
       number c, from beg to index n - 1. */
   void addmul(const NumVect<T> &v, T x, int beg, int n);
@@ -263,12 +271,23 @@ template <class T> void NumVect<T>::sub(const NumVect<T> &v, int n)
     data[i].sub(data[i], v[i]);
 }
 
-template <class T> void NumVect<T>::mul(const NumVect<T> &v, int n, T c)
+template <class T> void NumVect<T>::mul(const NumVect<T> &v, int b, int n, T c)
 {
   FPLLL_DEBUG_CHECK(n <= size() && size() == v.size() && v.is_zero(n));
-  for (int i = n - 1; i >= 0; i--)
+  for (int i = n - 1; i >= b; i--)
     data[i].mul(v[i], c);
 }
+
+template <class T> void NumVect<T>::mul(const NumVect<T> &v, int n, T c) { mul(v, 0, n, c); }
+
+template <class T> void NumVect<T>::div(const NumVect<T> &v, int b, int n, T c)
+{
+  FPLLL_DEBUG_CHECK(n <= size() && size() == v.size() && v.is_zero(n));
+  for (int i = n - 1; i >= b; i--)
+    data[i].div(v[i], c);
+}
+
+template <class T> void NumVect<T>::div(const NumVect<T> &v, int n, T c) { div(v, 0, n, c); }
 
 template <class T> void NumVect<T>::addmul(const NumVect<T> &v, T x, int beg, int n)
 {

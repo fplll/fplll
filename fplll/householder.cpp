@@ -67,36 +67,27 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
       // R(i, i) = ||r||
       R(i, i) = ftmp2;
 
-      for (int k = i + 1; k < n; k++)
-      {
-        V(i, k).div(R(i, k), ftmp0);
+      V[i].div(R[i], i + 1, n, ftmp0);
 
-// Setting R(i, k) to 0 is not neccessary since this value will be not used in HLLL.
-// However, in DEBUG, we must set to do not break test.
-#ifdef DEBUG
-        R(i, k) = 0.0;
-#endif  // DEBUG
-      }
-#else  // HOUSEHOLDER_PRECOMPUTE_INVERSE
+#else   // HOUSEHOLDER_PRECOMPUTE_INVERSE
       ftmp0.div(1.0, ftmp0);
       // Here, ftmp0 = 1 / sqrt(-s * vi[1])
       V(i, i).mul(ftmp3, ftmp0);
       R(i, i) = ftmp2;
 
-      for (int k = i + 1; k < n; k++)
-      {
-        V(i, k).mul(R(i, k), ftmp0);
-
-// Setting R(i, k) to 0 is not neccessary since this value will be not used in HLLL.
-// However, in DEBUG, we must set to do not break test.
-#ifdef DEBUG
-        R(i, k) = 0.0;
-#endif  // DEBUG
-      }
+      // FIXME: not tested.
+      V[i].mul(R[i], i + 1, n, ftmp0);
 
       R_inverse_diag[i].div(1.0, ftmp2);
 #endif  // HOUSEHOLDER_PRECOMPUTE_INVERSE
-      // Here, vi = vi / ftmp0 and ri[i..n] = (||r||, 0, 0, ..., 0)
+        // Here, vi = vi / ftmp0 and ri[i..n] = (||r||, 0, 0, ..., 0)
+
+#ifdef DEBUG
+      // Setting R(i, k) to 0 is not neccessary since this value will be not used in HLLL.
+      // However, in DEBUG, we must set to do not break test.
+      for (int k = i + 1; k < n; k++)
+        R(i, k) = 0.0;
+#endif  // DEBUG
     }
     else
     {
@@ -166,15 +157,14 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
 
       //-vj * ri[j..n]^T
       ftmp0.neg(ftmp0);
-      // TODO: this operation can/must be rewritten in term of a row operation
       // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
-      for (k = j; k < n; k++)
-        R(i, k).addmul(V(j, k), ftmp0);
+      R[i].addmul(V[j], ftmp0, j, n);
+
       // ri[j] = sigma[j] * ri[j]
       R(i, j).mul(sigma[j], R(i, j));
 
       // Copy R into R_history
-      for (int k           = j; k < n; k++)
+      for (k               = j; k < n; k++)
         R_history[i][j][k] = R(i, k);
     }
 
@@ -289,11 +279,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively(int 
 
     //-vj * ri[j..n]^T
     ftmp0.neg(ftmp0);
-    for (int k = j; k < n; k++)
-    {
-      // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
-      R_naively(i, k).addmul(V_naively(j, k), ftmp0);
-    }
+    // ri[j..n] = ri[j..n] - (vj * ri[j..n]^T) * vj
+    R_naively[i].addmul(V_naively[j], ftmp0, j, n);
     // ri[j] = sigma_naively[j] * ri[j]
     R_naively(i, j).mul(sigma_naively[j], R_naively(i, j));
   }
@@ -301,9 +288,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively(int 
   // Here, ftmp2 is equal to s in [MSV, ISSAC'09].
   // Copy R_naively[i][i..n] in V_naively
   for (j = i; j < n; j++)
-  {
     V_naively(i, j) = R_naively(i, j);
-  }
+
   // sigma_naively[i] = sign(r[1])
   sigma_naively[i] = (R_naively(i, i).cmp(0.0) < 0) ? -1.0 : 1.0;
   R_naively[i].dot_product(ftmp2, R_naively[i], i, n);
@@ -334,14 +320,11 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_naively(int 
       // ftmp0 = sqrt(-ftmp2 * vi[1])
       ftmp0.sqrt(ftmp0);
 
-      V_naively(i, i).div(V_naively(i, i), ftmp0);
-      R_naively(i, i).abs(ftmp2);
+      V_naively[i].div(V_naively[i], i, n, ftmp0);
 
+      R_naively(i, i).abs(ftmp2);
       for (j = i + 1; j < n; j++)
-      {
-        V_naively(i, j).div(V_naively(i, j), ftmp0);
         R_naively(i, j) = 0.0;
-      }
     }
     else
     {
