@@ -27,6 +27,8 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
   FT delta_      = delta;
   int start_time = cputime();
   long expo0 = 0, expo1 = 0;
+  // True if size_reduction does not fail
+  bool status_sr = true;
 
   if (verbose)
   {
@@ -66,7 +68,9 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
   while (true)
   {
     // Size reduce b[k] thanks to b[0] to b[k - 1]
-    size_reduction(k, k, 0);
+    status_sr = size_reduction(k, k, 0);
+    if (!status_sr)
+      return set_status(RED_HLLL_SR_FAILURE);
 
 #ifndef MODIFIED_LOVASZ_TEST
     // This Lovasz test is the one proposed in [MSV, ISSAC'09]
@@ -152,7 +156,7 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
         if (ftmp0.cmp(ftmp1) > 0)
         {
           // cerr << "Anomaly: the norm increases for kappa = " << k << endl;
-          return set_status(RED_NORM_HLLL_FAILURE);
+          return set_status(RED_HLLL_NORM_FAILURE);
         }
       }
 
@@ -220,7 +224,7 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
 }
 
 template <class ZT, class FT>
-void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
+bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
                                            int size_reduction_start)
 {
   FPLLL_DEBUG_CHECK(kappa >= size_reduction_end);
@@ -309,7 +313,7 @@ void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
     // If not reduced, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
     // 1 > 2^(-cd)=sr since cd > 0.
     if (!reduced)
-      return;
+      return true;
     else
     {
       // At this point, even if b has changed, the precomputed squared norm of b was for b before
@@ -339,7 +343,57 @@ void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
       if (prev_not_stop || not_stop)
         prev_not_stop = not_stop;  // Continue to try to reduce b(kappa).
       else
-        return;  // b[kappa] should be size_reduced.
+      {
+        /*
+         * This test is similar to the test of hplll in hsizereduce. It is however not
+         * exactly the same, this one crudely verify the condition of the weak-size
+         * reduction. The one of hplll verify if
+         *   |R(k, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
+         * TODO: is the following test actually used to detect an hypothetical infinite
+         * loop or not?
+         */
+        // TODO: can this test be more concise.
+        long expo0 = 0, expo2 = 0;
+
+// Since R(kappa, kappa) is the same for all the tests, precompute it one time
+#ifdef DEBUG
+        long expo1 = 0;
+        m.get_R(ftmp1, kappa, kappa, expo1);  // R(kappa, kappa) = ftmp1 * 2^expo1
+#else   // DEBUG
+        m.get_R(ftmp1, kappa, kappa);      // R(kappa, kappa) = ftmp1 * 2^expo1
+#endif  // DEBUG
+
+        ftmp1.mul(ftmp1, theta);  // theta_ * R(kappa, kappa) = ftmp1 * 2^expo1
+
+        // Verify the conditions on the weak size-reduction in Definition 2 of [MSV'09]
+        for (int i = 0; i < kappa; i++)
+        {
+          m.get_R(ftmp0, kappa, i, expo0);  // R(kappa, i) = ftmp0 * 2^expo0
+          ftmp0.abs(ftmp0);                 // |R(kappa, i)| = |ftmp0| * 2^expo0
+          m.get_R(ftmp2, i, i, expo2);      // R(i, i) = ftmp2 * 2^expo2
+
+          FPLLL_DEBUG_CHECK(expo0 == expo1);
+
+          // TODO: can be precomputed since it is used for many tests
+          ftmp2.mul(ftmp2, eta);  // eta_ * R(i, i) = ftmp2 * 2^expo2
+
+          // We want to test if
+          //   |R(kappa, i)| <= eta * R(i, i) + theta * R(kappa, kappa)
+          //   ftmp0 * 2^expo0 <= ftmp1 * 2^expo0 + ftmp2 * 2^expo2, since expo0 == expo1
+          //   ftmp0 <= ftmp1 + ftmp2 * 2^(expo2 - expo0)
+          ftmp2.mul_2si(ftmp2, expo2 - expo0);
+          ftmp2.add(ftmp1, ftmp2);
+
+          if (ftmp0.cmp(ftmp2) > 0)
+          {
+            // cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa
+            //      << " and i = " << i << endl;
+            return false;
+          }
+        }
+
+        return true;  // b[kappa] should be size_reduced.
+      }
     }
   } while (true);
 }
@@ -381,7 +435,7 @@ bool is_hlll_reduced(MatHouseholder<ZT, FT> &m, double delta, double eta, double
 
       FPLLL_DEBUG_CHECK(expo0 == expo1);
 
-      ftmp1.mul(ftmp1, theta_);  // eta_ * R(i, i) = ftmp2 * 2^expo2
+      ftmp1.mul(ftmp1, theta_);  // theta_ * R(j, j) = ftmp1 * 2^expo1
       ftmp2.mul(ftmp2, eta_);    // eta_ * R(i, i) = ftmp2 * 2^expo2
 
       // We want to test if

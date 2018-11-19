@@ -161,8 +161,9 @@ enum RedStatus
   RED_BKZ_TIME_LIMIT    = 7,
   RED_BKZ_LOOPS_LIMIT   = 8,
   RED_HLLL_FAILURE      = 9,
-  RED_NORM_HLLL_FAILURE = 10,
-  RED_STATUS_MAX        = 11
+  RED_HLLL_NORM_FAILURE = 10,
+  RED_HLLL_SR_FAILURE   = 11,
+  RED_STATUS_MAX        = 12
 };
 
 const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
@@ -175,7 +176,8 @@ const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
                                                     "time limit exceeded in BKZ",
                                                     "loops limit exceeded in BKZ",
                                                     "error in H-LLL",
-                                                    "the norm increases"};
+                                                    "increase of the norm",
+                                                    "error in weak size reduction"};
 
 enum LLLMethod
 {

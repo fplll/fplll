@@ -64,7 +64,7 @@ private:
   bool verbose;
 
   // Temporary variables
-  FT ftmp0, ftmp1;
+  FT ftmp0, ftmp1, ftmp2;
 
   int status;
 
@@ -76,7 +76,7 @@ private:
 
      @param kappa index of the vector
   */
-  void size_reduction(int kappa, int size_reduction_end, int size_reduction_start = 0);
+  bool size_reduction(int kappa, int size_reduction_end, int size_reduction_start = 0);
 
   /**
    * In verbose mode, print informations to reproduce the computation (parameters, enable features)
