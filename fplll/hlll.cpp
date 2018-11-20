@@ -400,6 +400,7 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
 
           m.get_R(ftmp2, i, i, expo2);  // R(i, i) = ftmp2 * 2^expo2
 
+#if 0
           // We want to test if
           //   |R(kappa, i)| <= (0.00...01 * ||b[kappa]||) + R(i, i)
           //   ftmp1 * 2^expo1 <= ftmp0 * 2^expo1 + ftmp2 * 2^expo2, since expo0 == expo1
@@ -407,6 +408,23 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
 
           ftmp2.mul_2si(ftmp2, expo2 - expo1);
           ftmp2.add(ftmp0, ftmp2);
+
+#else   // 0
+          // We want to test if (theoretically the same test as in hplll)
+          //   |R(kappa, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
+          //   ftmp1 / ftmp2 * 2^(expo1 - expo2) <= ftmp0 / ftmp2 * 2^(expo0 - expo2) + 1
+          //   ftmp1 / ftmp2 <= ftmp0 / ftmp2 + 2^(expo2 - expo1), since expo0 == expo1
+
+          ftmp1.div(ftmp1, ftmp2);
+          // Here, |R(kappa, i)| / R(i, i) = ftmp1 * 2^(expo1 - expo2)
+
+          ftmp2.div(ftmp0, ftmp2);
+          // Here, (0.00...01 * ||b[kappa]||) / R(i, i) = ftmp2 * 2^(expo1 - expo2);
+
+          FT one = 1.0;
+          one.mul_2si(one, expo2 - expo1);
+          ftmp2.add(one, ftmp2);
+#endif  // 0
 
           if (ftmp1.cmp(ftmp2) > 0)
           {
