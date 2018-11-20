@@ -116,6 +116,23 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
 #else   // HOUSEHOLDER_PRECOMPUTE_INVERSE
   cerr << "householder_precompute_inverse = 1" << endl;
 #endif  // HOUSEHOLDER_PRECOMPUTE_INVERSE
+
+#ifndef HOUSEHOLDER_USE_SIZE_REDUCTION_TEST
+  // Condition to break incomplete size reduction: ||b[k]||^2 > 0.1 * t
+  cerr << "householder_use_size_reduction_test = 0" << endl;
+#else   // HOUSEHOLDER_USE_SIZE_REDUCTION_TEST
+  // Condition to break incomplete size reduction: ||b[k]||^2 > sr * t
+  cerr << "householder_use_size_reduction_test = 1" << endl;
+#endif  // HOUSEHOLDER_USE_SIZE_REDUCTION_TEST
+
+#ifndef HOUSEHOLDER_VERIFY_SIZE_REDUCTION
+  cerr << "householder_verify_size_reduction = 0" << endl;
+#else  // HOUSEHOLDER_VERIFY_SIZE_REDUCTION
+  cerr << "householder_verify_size_reduction = 1" << endl;
+#ifdef HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
+  cerr << "householder_verify_size_reduction_hplll = 1" << endl;
+#endif  // HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
+#endif  // HOUSEHOLDER_VERIFY_SIZE_REDUCTION
 }
 
 template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::compute_dR(int k)
