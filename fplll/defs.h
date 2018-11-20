@@ -175,7 +175,7 @@ const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
                                                     "error in BKZ",
                                                     "time limit exceeded in BKZ",
                                                     "loops limit exceeded in BKZ",
-                                                    "error in H-LLL",
+                                                    "error in HLLL",
                                                     "increase of the norm",
                                                     "error in weak size reduction"};
 

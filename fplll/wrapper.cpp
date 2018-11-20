@@ -715,8 +715,8 @@ int lll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delt
 // For FT != dpe and FT != mpfr
 // This function is not used, but can be used during a testing step.
 template <class ZT, class FT>
-bool is_hlll_reduced_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta,
-                        double theta)
+int is_hlll_reduced_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta,
+                       double theta)
 {
   if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;
@@ -730,8 +730,8 @@ bool is_hlll_reduced_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double 
 // Verify if b is hlll reduced according to delta and eta
 // For FT == dpe or FT == mpfr
 template <class ZT, class FT>
-bool is_hlll_reduced_pr(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta,
-                        double theta)
+int is_hlll_reduced_pr(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double delta, double eta,
+                       double theta)
 {
   if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;
@@ -778,8 +778,9 @@ int hlll_reduction_zf(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double de
   }
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> m(b, u, u_inv, householder_flags);
   HLLLReduction<Z_NR<ZT>, FP_NR<FT>> hlll_obj(m, delta, eta, theta, c, flags);
+  hlll_obj.hlll();
 
-  return hlll_obj.hlll();
+  return hlll_obj.get_status();
 }
 
 template <class ZT>
@@ -789,12 +790,43 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
 {
   FPLLL_CHECK(method != LM_HEURISTIC, "HLLL heuristic is not implementated.");
 
+  int status = -1;
+  /* computes the parameters required for the proved version */
+  int good_prec = hlll_min_prec(b.get_rows(), b.get_cols(), delta, eta, theta, c);
+
+  // If nolll, just verify if the basis is reduced or not
+  if (nolll)
+  {
+    if (flags & LLL_VERBOSE)
+    {
+      cerr << "Starting HLLL method 'verification'" << endl
+           << "  integer type '" << INT_TYPE_STR[int_type] << "'" << endl
+           << "  floating point type 'mpfr_t'" << endl;
+      cerr << "  prec >= " << good_prec << ", the verification is guaranteed";
+      cerr << endl;
+    }
+
+    int old_prec = FP_NR<mpfr_t>::set_prec(good_prec);
+
+    status = is_hlll_reduced_pr<ZT, mpfr_t>(b, u, u_inv, delta, eta, theta);
+
+    if (flags & LLL_VERBOSE)
+    {
+      if (status == RED_SUCCESS)
+        cerr << "Basis is reduced";
+      else
+        cerr << "Basis is not reduced";
+      cerr << endl;
+    }
+
+    FP_NR<mpfr_t>::set_prec(old_prec);
+
+    return status;
+  }
+
   /* switch to wrapper */
   if (method == LM_WRAPPER)
     return hlll_reduction_wrapper(b, u, u_inv, delta, eta, theta, c, float_type, precision, flags);
-
-  /* computes the parameters required for the proved version */
-  int good_prec = hlll_min_prec(b.get_rows(), b.get_cols(), delta, eta, theta, c);
 
   /* sets the parameters and checks the consistency */
   int sel_prec = 0;
@@ -863,7 +895,7 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
 
   if (flags & LLL_VERBOSE)
   {
-    cerr << "Starting H-LLL method '" << LLL_METHOD_STR[method] << "'" << endl
+    cerr << "Starting HLLL method '" << LLL_METHOD_STR[method] << "'" << endl
          << "  integer type '" << INT_TYPE_STR[int_type] << "'" << endl
          << "  floating point type '" << FLOAT_TYPE_STR[sel_ft] << "'" << endl;
     if (method != LM_PROVED || int_type != ZT_MPZ || sel_ft == FT_DOUBLE)
@@ -881,72 +913,52 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
     cerr << endl;
   }
 
-  int status = -1;
-
-  // If nolll, just verify if the basis is reduced or not
-  if (!nolll)
-  {
-    // Applies the selected method
-    if (sel_ft == FT_DOUBLE)
-      status = hlll_reduction_zf<ZT, double>(b, u, u_inv, delta, eta, theta, c, method, flags);
+  // Applies the selected method
+  if (sel_ft == FT_DOUBLE)
+    status = hlll_reduction_zf<ZT, double>(b, u, u_inv, delta, eta, theta, c, method, flags);
 #ifdef FPLLL_WITH_LONG_DOUBLE
-    else if (sel_ft == FT_LONG_DOUBLE)
-      status = hlll_reduction_zf<ZT, long double>(b, u, u_inv, delta, eta, theta, c, method, flags);
+  else if (sel_ft == FT_LONG_DOUBLE)
+    status = hlll_reduction_zf<ZT, long double>(b, u, u_inv, delta, eta, theta, c, method, flags);
 #endif
 #ifdef FPLLL_WITH_DPE
-    else if (sel_ft == FT_DPE)
-      status = hlll_reduction_zf<ZT, dpe_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
+  else if (sel_ft == FT_DPE)
+    status = hlll_reduction_zf<ZT, dpe_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
 #endif
 #ifdef FPLLL_WITH_QD
-    else if (sel_ft == FT_DD)
-    {
-      unsigned int old_cw;
-      fpu_fix_start(&old_cw);
-      status = hlll_reduction_zf<ZT, dd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
-      fpu_fix_end(&old_cw);
-    }
-    else if (sel_ft == FT_QD)
-    {
-      unsigned int old_cw;
-      fpu_fix_start(&old_cw);
-      status = hlll_reduction_zf<ZT, qd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
-      fpu_fix_end(&old_cw);
-    }
+  else if (sel_ft == FT_DD)
+  {
+    unsigned int old_cw;
+    fpu_fix_start(&old_cw);
+    status = hlll_reduction_zf<ZT, dd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
+    fpu_fix_end(&old_cw);
+  }
+  else if (sel_ft == FT_QD)
+  {
+    unsigned int old_cw;
+    fpu_fix_start(&old_cw);
+    status = hlll_reduction_zf<ZT, qd_real>(b, u, u_inv, delta, eta, theta, c, method, flags);
+    fpu_fix_end(&old_cw);
+  }
 #endif
-    else if (sel_ft == FT_MPFR)
-    {
-      int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
-      status = hlll_reduction_zf<ZT, mpfr_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
-      FP_NR<mpfr_t>::set_prec(old_prec);
-    }
-    else
-    {
-      if (0 <= sel_ft && sel_ft <= FT_MPFR)
-      {
-        // it's a valid choice but we don't have support for it
-        FPLLL_ABORT("Compiled without support for LLL reduction with " << FLOAT_TYPE_STR[sel_ft]);
-      }
-      else
-      {
-        FPLLL_ABORT("Floating point type " << sel_ft << "not supported in LLL");
-      }
-    }
-    zeros_first(b, u, u_inv);
+  else if (sel_ft == FT_MPFR)
+  {
+    int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
+    status       = hlll_reduction_zf<ZT, mpfr_t>(b, u, u_inv, delta, eta, theta, c, method, flags);
+    FP_NR<mpfr_t>::set_prec(old_prec);
   }
   else
   {
-    int old_prec = FP_NR<mpfr_t>::set_prec(good_prec);
-
-    status = is_hlll_reduced_pr<ZT, mpfr_t>(b, u, u_inv, delta, eta, theta);
-
-    if (status)
-      cerr << "Basis is reduced (checked with mpfr).";
+    if (0 <= sel_ft && sel_ft <= FT_MPFR)
+    {
+      // it's a valid choice but we don't have support for it
+      FPLLL_ABORT("Compiled without support for LLL reduction with " << FLOAT_TYPE_STR[sel_ft]);
+    }
     else
-      cerr << "Basis is not reduced (checked with mpfr).";
-    cerr << endl;
-
-    FP_NR<mpfr_t>::set_prec(old_prec);
+    {
+      FPLLL_ABORT("Floating point type " << sel_ft << "not supported in LLL");
+    }
   }
+  zeros_first(b, u, u_inv);
 
   return status;
 }

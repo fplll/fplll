@@ -40,7 +40,7 @@ template <class ZT, class FT> int test_hlll(ZZ_mat<ZT> &A, int flags)
   // is_hlll_reduced is badly
   // implemented
   int status = is_hlll_reduced<Z_NR<ZT>, FP_NR<FT>>(Mhouseholder, 0.99, 0.52, 0.01);
-  if (status == true)
+  if (status == RED_SUCCESS)
   {
     cerr << "is_hlll_reduced reports success when it should not." << endl;
     return 1;
@@ -54,7 +54,7 @@ template <class ZT, class FT> int test_hlll(ZZ_mat<ZT> &A, int flags)
 
   // This times, M must be hlll reduced
   status = is_hlll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(M, 0.99, 0.52, 0.01);
-  if (status == false)
+  if (status != RED_SUCCESS)
   {
     cerr << "Output of HLLL reduction is not HLLL reduced." << endl;
     return 1;
