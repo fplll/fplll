@@ -235,12 +235,10 @@ public:
    */
   inline void norm_R_row(FT &f, int k, int beg, int end, long &expo);
 
-  // b[k] = b[k] + ZT(xf) * b[i]
-  // R[k] = R[k] + xf * R[i]
+  // Size reduce b[k] with b[size_reduction_start..size_reduction_end-1].
   // Not necessary to make transformation on bf, since basically, after each size_reduce, we call
   // refresh_R_bf, which set bf to the correct value from b directly.
-  // xf must be non-zero.
-  void size_reduce(const FT &xf, int k, int i);
+  bool size_reduce(int k, int size_reduction_end, int size_reduction_start = 0);
 
   /**
    * Swap row i and j of b, bf, R, V, u and u_inv_t

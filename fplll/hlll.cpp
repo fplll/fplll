@@ -238,6 +238,7 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
 
   long expo0 = 0;
   long expo1 = 0;
+
   // If b[kappa] is reduced by at least one b[i], then reduced will be set to true.
   bool reduced = false;
 
@@ -283,37 +284,7 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
 
   do
   {
-    // No b[i] reduced b[kappa]
-    reduced = false;
-
-    for (int i = size_reduction_end - 1; i >= size_reduction_start; i--)
-    {
-      m.get_R(ftmp1, kappa, i, expo1);  // R(kappa, i) = ftmp1 * 2^expo1
-      m.get_R(ftmp0, i, i, expo0);      // R(i, i) = ftmp0 * 2^expo0
-
-#ifndef HOUSEHOLDER_PRECOMPUTE_INVERSE
-      ftmp1.div(ftmp1, ftmp0);  // R(kappa, i) / R(i, i) = ftmp1 * 2^(expo1 - expo0)
-#else                           // HOUSEHOLDER_PRECOMPUTE_INVERSE
-      ftmp1.mul(ftmp1,
-                m.get_R_inverse_diag(i));  // R(kappa, i) / R(i, i) = ftmp1 * 2^(expo1 - expo0)
-#endif                          // HOUSEHOLDER_PRECOMPUTE_INVERSE
-
-      /* If T = mpfr or dpe, enable_row_expo must be false and then, expo1 - expo0 == 0 (required by
-       * rnd_we with these types) */
-      ftmp1.rnd_we(ftmp1, expo1 - expo0);  // rnd(R(kappa, i) / R(i, i)) = ftmp1 * 2^(expo1 - expo0)
-
-      // ftmp1 * 2^(expo1 - expo0) is equal to -X[i] in Algorithm 3 of [MSV, ISSAC'09]
-      ftmp1.neg(ftmp1);
-
-      if (ftmp1.sgn() != 0)  // Equivalent to test if ftmp1 == 0
-      {
-        // Reduce b[kappa] and R[kappa] accordingly (Step 5 and Step 6 of Algorithm 3 of [MSV,
-        // ISSAC'09])
-        m.size_reduce(ftmp1, kappa, i);
-        // b[kappa] was reduced by -ftmp1 * b[i]
-        reduced = true;
-      }
-    }
+    reduced = m.size_reduce(kappa, size_reduction_end, size_reduction_start);
 
     // If not reduced, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
     // 1 > 2^(-cd)=sr since cd > 0.

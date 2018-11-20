@@ -379,22 +379,59 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::swap(int i, int j)
 #endif  // DEBUG
 }
 
-template <class ZT, class FT> void MatHouseholder<ZT, FT>::size_reduce(const FT &xf, int k, int i)
+// Reduce b[k] and R[k] accordingly (Step 3 to Step 6 of Algorithm 3 of [MSV,
+// ISSAC'09])
+template <class ZT, class FT>
+bool MatHouseholder<ZT, FT>::size_reduce(int k, int size_reduction_end, int size_reduction_start)
 {
   FPLLL_DEBUG_CHECK(k > 0 && k < d);
-  FPLLL_DEBUG_CHECK(xf.cmp(0.0) != 0);
 
+  long expo0   = 0;
+  long expo1   = 0;
+  bool reduced = false;
+
+  for (int i = size_reduction_end - 1; i >= size_reduction_start; i--)
+  {
+    get_R(ftmp1, k, i, expo1);  // R(k, i) = ftmp1 * 2^expo1
+    get_R(ftmp0, i, i, expo0);  // R(i, i) = ftmp0 * 2^expo0
+
+#ifndef HOUSEHOLDER_PRECOMPUTE_INVERSE
+    ftmp1.div(ftmp1, ftmp0);  // R(k, i) / R(i, i) = ftmp1 * 2^(expo1 - expo0)
+#else                         // HOUSEHOLDER_PRECOMPUTE_INVERSE
+    ftmp1.mul(ftmp1, R_inverse_diag[i]);  // R(k, i) / R(i, i) = ftmp1 * 2^(expo1 - expo0)
+#endif                        // HOUSEHOLDER_PRECOMPUTE_INVERSE
+
+    /* If T = mpfr or dpe, enable_row_expo must be false and then, expo1 - expo0 == 0 (required by
+     * rnd_we with these types) */
+    ftmp1.rnd_we(ftmp1, expo1 - expo0);  // rnd(R(k, i) / R(i, i)) = ftmp1 * 2^(expo1 - expo0)
+
+    // ftmp1 * 2^(expo1 - expo0) is equal to -X[i] in Algorithm 3 of [MSV, ISSAC'09]
+    ftmp1.neg(ftmp1);
+
+    if (ftmp1.sgn() != 0)  // Equivalent to test if ftmp1 == 0
+    {
+      // b[k] will be reduced by ftmp1 * b[i]
+      row_addmul_we(k, i, ftmp1, row_expo[k] - row_expo[i]);
+
+      reduced = true;
+    }
+  }
+
+  // b[k] was reduced by at least one b[i]
+  if (reduced)
+  {
 #ifdef DEBUG
-  // b[k] has changed
-  col_kept[k] = false;
+    // b[k] has changed
+    col_kept[k] = false;
 #endif  // DEBUG
 
-  row_addmul_we(k, i, xf, row_expo[k] - row_expo[i]);
+    // Invalidate since b has changed, but R is not recomputed. We do operations on R[k], but not
+    // the one to get the correct R[k]: the operations are the one mentionned in line 5 of
+    // Algorithm 3 [MSV, ISSAC'09].
+    invalidate_row(k);
+  }
 
-  // Invalidate since b has changed, but R is not recomputed. We do operations on R[k], but not the
-  // one to get the correct R[k]: the operations are the one mentionned in line 5 of Algorithm 3
-  // [MSV, ISSAC'09].
-  invalidate_row(k);
+  return reduced;
 }
 
 /* Taken from fplll/gso.cpp (commit 3d0d962)*/
