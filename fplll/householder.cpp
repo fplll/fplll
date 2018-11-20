@@ -386,24 +386,21 @@ bool MatHouseholder<ZT, FT>::size_reduce(int k, int size_reduction_end, int size
 {
   FPLLL_DEBUG_CHECK(k > 0 && k < d);
 
-  long expo0   = 0;
-  long expo1   = 0;
   bool reduced = false;
 
   for (int i = size_reduction_end - 1; i >= size_reduction_start; i--)
   {
-    get_R(ftmp1, k, i, expo1);  // R(k, i) = ftmp1 * 2^expo1
-    get_R(ftmp0, i, i, expo0);  // R(i, i) = ftmp0 * 2^expo0
-
+// R(k, i) / R(i, i) = ftmp1 * 2^(row_expo[k] - row_expo[i])
 #ifndef HOUSEHOLDER_PRECOMPUTE_INVERSE
-    ftmp1.div(ftmp1, ftmp0);  // R(k, i) / R(i, i) = ftmp1 * 2^(expo1 - expo0)
-#else                         // HOUSEHOLDER_PRECOMPUTE_INVERSE
-    ftmp1.mul(ftmp1, R_inverse_diag[i]);  // R(k, i) / R(i, i) = ftmp1 * 2^(expo1 - expo0)
-#endif                        // HOUSEHOLDER_PRECOMPUTE_INVERSE
+    ftmp1.div(R(k, i), R(i, i));
+#else   // HOUSEHOLDER_PRECOMPUTE_INVERSE
+    ftmp1.mul(R(k, i), R_inverse_diag[i]);
+#endif  // HOUSEHOLDER_PRECOMPUTE_INVERSE
 
     /* If T = mpfr or dpe, enable_row_expo must be false and then, expo1 - expo0 == 0 (required by
      * rnd_we with these types) */
-    ftmp1.rnd_we(ftmp1, expo1 - expo0);  // rnd(R(k, i) / R(i, i)) = ftmp1 * 2^(expo1 - expo0)
+    // rnd(R(k, i) / R(i, i)) = ftmp1 * 2^(row_expo[k] - row_expo[i])
+    ftmp1.rnd_we(ftmp1, row_expo[k] - row_expo[i]);
 
     // ftmp1 * 2^(expo1 - expo0) is equal to -X[i] in Algorithm 3 of [MSV, ISSAC'09]
     ftmp1.neg(ftmp1);
