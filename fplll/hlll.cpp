@@ -408,7 +408,7 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
           ftmp2.mul_2si(ftmp2, expo2 - expo1);
           ftmp2.add(ftmp0, ftmp2);
 
-          if (ftmp0.cmp(ftmp2) > 0)
+          if (ftmp1.cmp(ftmp2) > 0)
           {
             cerr << "This is probably the first time this test is used." << endl;
 
