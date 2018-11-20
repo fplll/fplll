@@ -349,17 +349,31 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
         prev_not_stop = not_stop;  // Continue to try to reduce b(kappa).
       else
       {
-#ifdef HOUSEHOLDER_VERIFY_SIZE_REDUCTION
+/*
+ * About HOUSEHOLDER_VERIFY_SIZE_REDUCTION.
+ *
+ * A first version of this test was introduced in 2015-04-09 in hplll (see
+ * commit 93da15d1418347714ef5c07ae8860946825772e5). This test to detect not
+ * enough precision during the computation is therefore needed in addition to
+ * the one about the norms (such a test is implemented and send a
+ * RED_HLLL_NORM_FAILURE in this implementation).
+ *
+ * However, for now on, the following test about the weak size reduction was
+ * never used to stop one of our computations, even if hplll, for a same lattice,
+ * stops by reaching this test.
+ *
+ * TODO: is the following test actually used to detect an hypothetical infinite
+ * loop or not?
+ */
 #ifdef HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
         /*
          * This test tries to mimick to the test of hplll in hsizereduce. It tests if
          *   |R(k, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
          * but we test with this one
          *   |R(k, i)| <= 0.00...01 * ||b[kappa]|| + R(i, i)
-         * TODO: is the following test actually used to detect an hypothetical infinite
-         * loop or not?
          */
 
+        // TODO: can this test be more concise.
         long expo0 = 0, expo1 = 0, expo2 = 0;
 
         m.get_norm_square_b(ftmp0, kappa, expo0);  // ||b[kappa]||^2 = ftmp0 * 2^expo0
@@ -396,8 +410,11 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
 
           if (ftmp0.cmp(ftmp2) > 0)
           {
-            // cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa
-            //<< " and i = " << i << endl;
+            cerr << "This is probably the first time this test is used." << endl;
+
+            cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa
+                 << " and i = " << i << endl;
+
             return false;
           }
         }
@@ -407,8 +424,6 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
          * exactly the same, this one crudely verify the condition of the weak-size
          * reduction. The one of hplll verify if
          *   |R(k, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
-         * TODO: is the following test actually used to detect an hypothetical infinite
-         * loop or not?
          */
 
         // TODO: can this test be more concise.
@@ -440,13 +455,15 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
 
           if (ftmp0.cmp(ftmp2) > 0)
           {
-            // cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa
-            //      << " and i = " << i << endl;
+            cerr << "This is probably the first time this test is used." << endl;
+
+            cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa
+                 << " and i = " << i << endl;
+
             return false;
           }
         }
 #endif  // HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
-#endif  // HOUSEHOLDER_VERIFY_SIZE_REDUCTION
 
         return true;  // b[kappa] should be size_reduced.
       }
