@@ -230,6 +230,9 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::lovasz_test(int k)
   return (dR[k - 1].cmp(ftmp1) <= 0);
 }
 
+// TODO: there is maybe a problem. It seems that size_reduction is often (maybe always) stopped
+// because of reduced is false and almost never because the conditions about the norm of b[kappa]
+// are reached. This can be an issue.
 template <class ZT, class FT>
 void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
                                            int size_reduction_start)
