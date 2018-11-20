@@ -25,8 +25,7 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
    * delta_ in (delta + 2^(-p + p0), 1 - 2^(-p + p0))
    */
   int start_time = cputime();
-  long expo0 = 0, expo1 = 0;
-  // True if size_reduction does not fail
+  // True if the corresponding vector is weak size-reduced
   bool status_sr = true;
 
   if (verbose)
@@ -69,76 +68,12 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
   while (true)
   {
     // Size reduce b[k] thanks to b[0] to b[k - 1]
-    status_sr = size_reduction(k, k, 0);
+    size_reduction(k, k, 0);
+    status_sr = verify_size_reduction(k);  // b[kappa] should be size_reduced. Verify it.
     if (!status_sr)
       return set_status(RED_HLLL_SR_FAILURE);
 
-#ifndef MODIFIED_LOVASZ_TEST
-    // This Lovasz test is the one proposed in [MSV, ISSAC'09]
-    //
-    // Prior, we used another test, which is dR[k-1].cmp(R(k, k - 1)^2 + R(k, k)^2) <= 0, if R(k, k)
-    // is known (which is not the case here at this step of the computation, but can be computed
-    // thanks to sqrt(sum_{i=k}^{i<n}R(k, i)^2) (indices must be checked)). In the prior version,
-    // since R(k, k)^2 was known, we directly used the test. However, the test was probably not as
-    // accurate as what we hope. However, since this formula is used in hplll
-    // (https://github.com/gilvillard/hplll/releases), this can maybe be retested. An example of
-    // matrices that was not HLLL reduced because of a fail in this test can be generated thanks to
-    // latticegen -randseed 122 r 300 30000.
-    // Such a test can be activate by compiling with -DMODIFIED_LOVASZ_TEST
-    //
-    // TODO: this section must be improved and investigated, i.e.:
-    //   * probably other improvement to be done
-    m.get_norm_square_b(ftmp0, k, expo0);  // ||b[k]||^2 = ftmp0 * 2^expo0
-    m.norm_square_R_row(ftmp1, k, 0, k - 1,
-                        expo1);  // sum_{i = 0}^{i < k - 1}R[k][i]^2 = ftmp1 * 2^expo1
-
-    // If this check is false, we need to reenable
-    // ftmp0.mul_2si(ftmp0, expo0 - expo1);
-    FPLLL_DEBUG_CHECK(expo0 == expo1);
-
-    ftmp1.sub(ftmp0, ftmp1);  // ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2 = ftmp1 * 2^expo1
-
-    expo0 = m.get_row_expo(k - 1);
-
-    // Here, delta * R(k - 1, k - 1)^2 = dR[k-1] * 2^(2*expo0). We want to compare
-    //   delta * R(k - 1, k - 1)^2 <= ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2
-    //   dR[k-1] * 2^(2*expo0) <= ftmp1 * 2^expo1
-    //   dR[k-1] <= ftmp1 * 2^(expo1 - 2*expo0)
-    ftmp1.mul_2si(ftmp1, expo1 - 2 * expo0);
-#else  // MODIFIED_LOVASZ_TEST
-    // Modified Lovasz test, following the comment above.
-    // FIXME: probably not maintened.
-
-    m.norm_square_R_row(ftmp1, k, k, m.get_n(),
-                        expo1);       // sum_{i = k}^{i < n}R[k][i]^2 = ftmp1 * 2^expo1
-#ifdef DEBUG
-    m.get_R(ftmp0, k, k - 1, expo0);  // R(k, k - 1) = ftmp0 * 2^expo0
-#else   // DEBUG
-    m.get_R(ftmp0, k, k - 1);  // R(k, k - 1) = ftmp0 * 2^expo0
-#endif  // DEBUG
-
-    ftmp0.mul(ftmp0, ftmp0);  // R(k, k - 1)^2 = ftmp0 * 2^(2 * expo 0)
-
-    // If this check is false, we need to reenable
-    // ftmp0.mul_2si(ftmp0, 2 * expo0 - expo1);  // 2 * expo0 since R(k, k-1)^2 = ftmp0 *
-    // (2^expo0)^2
-    FPLLL_DEBUG_CHECK(2 * expo0 == expo1);
-
-    ftmp1.add(ftmp0, ftmp1);  // sum_{i = k}^{i < n}R[k][i]^2 + R(k, k-1)^2 = ftmp1 * 2^expo1
-
-    expo0 = m.get_row_expo(k - 1);
-
-    // Here, delta * R(k - 1, k - 1)^2 = dR[k-1] * 2^(2*expo0). We want to compare
-    //   delta * R(k - 1, k - 1)^2 <= sum_{i = k}^{i < n}R[k][i]^2 + R(k, k-1)^2
-    //   dR[k-1] * 2^(2*expo0) <= ftmp1 * 2^expo1
-    //   dR[k-1] <= ftmp1 * 2^(expo1 - 2*expo0)
-    ftmp1.mul_2si(ftmp1, expo1 - 2 * expo0);
-#endif  // MODIFIED_LOVASZ_TEST
-
-    // Test if delta * R(k - 1, k - 1)^2 <= ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2 (depending
-    // on the way ftmp1 is computed, this test can be slightly different, but the purpose keeps the
-    // same)
-    if (dR[k - 1].cmp(ftmp1) <= 0)
+    if (lovasz_test(k))
     {
       // Fully compute R[k], since all the coefficient except one of R[k] were computed during
       // size_reduction.
@@ -228,16 +163,80 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
   }
 }
 
+template <class ZT, class FT> bool HLLLReduction<ZT, FT>::lovasz_test(int k)
+{
+#ifndef MODIFIED_LOVASZ_TEST
+  // This Lovasz test is the one proposed in [MSV, ISSAC'09]
+  //
+  // Prior, we used another test, which is dR[k-1].cmp(R(k, k - 1)^2 + R(k, k)^2) <= 0, if R(k, k)
+  // is known (which is not the case here at this step of the computation, but can be computed
+  // thanks to sqrt(sum_{i=k}^{i<n}R(k, i)^2) (indices must be checked)). In the prior version,
+  // since R(k, k)^2 was known, we directly used the test. However, the test was probably not as
+  // accurate as what we hope. However, since this formula is used in hplll
+  // (https://github.com/gilvillard/hplll/releases), this can maybe be retested. An example of
+  // matrices that was not HLLL reduced because of a fail in this test can be generated thanks to
+  // latticegen -randseed 122 r 300 30000.
+  // Such a test can be activate by compiling with -DMODIFIED_LOVASZ_TEST
+  //
+  // TODO: this section must be improved and investigated, i.e.:
+  //   * probably other improvement to be done
+  m.get_norm_square_b(ftmp0, k, expo0);  // ||b[k]||^2 = ftmp0 * 2^expo0
+  m.norm_square_R_row(ftmp1, k, 0, k - 1,
+                      expo1);  // sum_{i = 0}^{i < k - 1}R[k][i]^2 = ftmp1 * 2^expo1
+
+  // If this check is false, we need to reenable
+  // ftmp0.mul_2si(ftmp0, expo0 - expo1);
+  FPLLL_DEBUG_CHECK(expo0 == expo1);
+
+  ftmp1.sub(ftmp0, ftmp1);  // ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2 = ftmp1 * 2^expo1
+
+  expo0 = m.get_row_expo(k - 1);
+
+  // Here, delta * R(k - 1, k - 1)^2 = dR[k-1] * 2^(2*expo0). We want to compare
+  //   delta * R(k - 1, k - 1)^2 <= ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2
+  //   dR[k-1] * 2^(2*expo0) <= ftmp1 * 2^expo1
+  //   dR[k-1] <= ftmp1 * 2^(expo1 - 2*expo0)
+  ftmp1.mul_2si(ftmp1, expo1 - 2 * expo0);
+#else  // MODIFIED_LOVASZ_TEST
+  // Modified Lovasz test, following the comment above.
+  // FIXME: probably not maintened.
+
+  m.norm_square_R_row(ftmp1, k, k, m.get_n(),
+                      expo1);       // sum_{i = k}^{i < n}R[k][i]^2 = ftmp1 * 2^expo1
+#ifdef DEBUG
+  m.get_R(ftmp0, k, k - 1, expo0);  // R(k, k - 1) = ftmp0 * 2^expo0
+#else   // DEBUG
+  m.get_R(ftmp0, k, k - 1);  // R(k, k - 1) = ftmp0 * 2^expo0
+#endif  // DEBUG
+
+  ftmp0.mul(ftmp0, ftmp0);  // R(k, k - 1)^2 = ftmp0 * 2^(2 * expo 0)
+
+  // If this check is false, we need to reenable
+  // ftmp0.mul_2si(ftmp0, 2 * expo0 - expo1);  // 2 * expo0 since R(k, k-1)^2 = ftmp0 *
+  // (2^expo0)^2
+  FPLLL_DEBUG_CHECK(2 * expo0 == expo1);
+
+  ftmp1.add(ftmp0, ftmp1);  // sum_{i = k}^{i < n}R[k][i]^2 + R(k, k-1)^2 = ftmp1 * 2^expo1
+
+  expo0 = m.get_row_expo(k - 1);
+
+  // Here, delta * R(k - 1, k - 1)^2 = dR[k-1] * 2^(2*expo0). We want to compare
+  //   delta * R(k - 1, k - 1)^2 <= sum_{i = k}^{i < n}R[k][i]^2 + R(k, k-1)^2
+  //   dR[k-1] * 2^(2*expo0) <= ftmp1 * 2^expo1
+  //   dR[k-1] <= ftmp1 * 2^(expo1 - 2*expo0)
+  ftmp1.mul_2si(ftmp1, expo1 - 2 * expo0);
+#endif  // MODIFIED_LOVASZ_TEST
+
+  return (dR[k - 1].cmp(ftmp1) <= 0);
+}
+
 template <class ZT, class FT>
-bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
+void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
                                            int size_reduction_start)
 {
   FPLLL_DEBUG_CHECK(kappa >= size_reduction_end);
   FPLLL_DEBUG_CHECK(size_reduction_start < size_reduction_end);
   FPLLL_DEBUG_CHECK(0 <= size_reduction_start);
-
-  long expo0 = 0;
-  long expo1 = 0;
 
   // If b[kappa] is reduced by at least one b[i], then reduced will be set to true.
   bool reduced = false;
@@ -289,7 +288,7 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
     // If not reduced, b(kappa) has not changed. Computing ||b[kappa]||^2 is not necessary.
     // 1 > 2^(-cd)=sr since cd > 0.
     if (!reduced)
-      return true;
+      return;
     else
     {
       // At this point, even if b has changed, the precomputed squared norm of b was for b before
@@ -319,7 +318,7 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
       if (prev_not_stop || not_stop)
         prev_not_stop = not_stop;  // Continue to try to reduce b(kappa).
       else
-        return verify_size_reduction(kappa);  // b[kappa] should be size_reduced. Verify it.
+        return;
     }
   } while (true);
 }
@@ -349,7 +348,6 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
    */
 
   // TODO: can this test be more concise.
-  long expo0 = 0, expo1 = 0, expo2 = 0;
 
   m.get_norm_square_b(ftmp0, kappa, expo0);  // ||b[kappa]||^2 = ftmp0 * 2^expo0
 
@@ -419,7 +417,6 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
    */
 
   // TODO: can this test be more concise.
-  long expo0 = 0, expo1 = 0, expo2 = 0;
 
   // Since R(kappa, kappa) is not know at this time, compute its value
   // For now on, R(kappa, kappa) is assumed to be known, even if the value stored

@@ -66,6 +66,7 @@ private:
 
   // Temporary variables
   FT ftmp0, ftmp1, ftmp2;
+  long expo0, expo1, expo2;
 
   int status;
 
@@ -77,7 +78,7 @@ private:
 
      @param kappa index of the vector
   */
-  bool size_reduction(int kappa, int size_reduction_end, int size_reduction_start = 0);
+  void size_reduction(int kappa, int size_reduction_end, int size_reduction_start = 0);
 
   /**
    * In verbose mode, print informations to reproduce the computation (parameters, enable features)
@@ -101,6 +102,11 @@ private:
 
   // Verify if b[k] is is correctry size reduced
   bool verify_size_reduction(int kappa);
+
+  // Test if delta * R(k - 1, k - 1)^2 <= ||b[k]||^2 - sum_{i = 0}^{i < k - 1}R[k][i]^2 (depending
+  // on the way ftmp1 is computed, this test can be slightly different, but the purpose keeps the
+  // same)
+  bool lovasz_test(int k);
 };
 
 template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
