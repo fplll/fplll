@@ -319,10 +319,12 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
       if (prev_not_stop || not_stop)
         prev_not_stop = not_stop;  // Continue to try to reduce b(kappa).
       else
-      {
+        return verify_size_reduction(kappa);  // b[kappa] should be size_reduced. Verify it.
+    }
+  } while (true);
+}
+
 /*
- * About HOUSEHOLDER_VERIFY_SIZE_REDUCTION.
- *
  * A first version of this test was introduced in 2015-04-09 in hplll (see
  * commit 93da15d1418347714ef5c07ae8860946825772e5). This test to detect not
  * enough precision during the computation is therefore needed in addition to
@@ -336,128 +338,126 @@ bool HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
  * TODO: is the following test actually used to detect an hypothetical infinite
  * loop or not?
  */
+template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(int kappa)
+{
 #ifdef HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
-        /*
-         * This test tries to mimick to the test of hplll in hsizereduce. It tests if
-         *   |R(k, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
-         * but we test with this one
-         *   |R(k, i)| <= 0.00...01 * ||b[kappa]|| + R(i, i)
-         */
+  /*
+   * This test tries to mimick to the test of hplll in hsizereduce. It tests if
+   *   |R(k, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
+   * but we test with this one
+   *   |R(k, i)| <= 0.00...01 * ||b[kappa]|| + R(i, i)
+   */
 
-        // TODO: can this test be more concise.
-        long expo0 = 0, expo1 = 0, expo2 = 0;
+  // TODO: can this test be more concise.
+  long expo0 = 0, expo1 = 0, expo2 = 0;
 
-        m.get_norm_square_b(ftmp0, kappa, expo0);  // ||b[kappa]||^2 = ftmp0 * 2^expo0
+  m.get_norm_square_b(ftmp0, kappa, expo0);  // ||b[kappa]||^2 = ftmp0 * 2^expo0
 
-        FPLLL_DEBUG_CHECK(expo0 % 2 == 0);
-        ftmp0.sqrt(ftmp0);
-        expo0 = expo0 / 2;  // ||b[kappa]|| = ftmp0 * 2^expo0
+  FPLLL_DEBUG_CHECK(expo0 % 2 == 0);
+  ftmp0.sqrt(ftmp0);
+  expo0 = expo0 / 2;  // ||b[kappa]|| = ftmp0 * 2^expo0
 
-        ftmp2 = 0.00000000001;
-        ftmp0.mul(ftmp0, ftmp2);  // See hplll, to tune for theta depending on the precision.
-        // 0.00000000001 * ||b[kappa]|| = ftmp0 * 2^expo0
+  ftmp2 = 0.00000000001;
+  ftmp0.mul(ftmp0, ftmp2);  // See hplll, to tune for theta depending on the precision.
+  // 0.00000000001 * ||b[kappa]|| = ftmp0 * 2^expo0
 
-        for (int i = 0; i < kappa; i++)
-        {
+  for (int i = 0; i < kappa; i++)
+  {
 #ifdef DEBUG
-          m.get_R(ftmp1, kappa, i, expo1);  // R(kappa, i) = ftmp1 * 2^expo1
+    m.get_R(ftmp1, kappa, i, expo1);  // R(kappa, i) = ftmp1 * 2^expo1
 #else   // DEBUG
-          m.get_R(ftmp1, kappa, i);  // R(kappa, i) = ftmp1 * 2^expo1
+    m.get_R(ftmp1, kappa, i);  // R(kappa, i) = ftmp1 * 2^expo1
 #endif  // DEBUG
 
-          FPLLL_DEBUG_CHECK(expo0 ==
-                            expo1);  // Since R[kappa] and b[kappa] share the same row_expo.
-          ftmp1.abs(ftmp1);
+    FPLLL_DEBUG_CHECK(expo0 == expo1);  // Since R[kappa] and b[kappa] share the same row_expo.
+    ftmp1.abs(ftmp1);
 
-          m.get_R(ftmp2, i, i, expo2);  // R(i, i) = ftmp2 * 2^expo2
+    m.get_R(ftmp2, i, i, expo2);  // R(i, i) = ftmp2 * 2^expo2
 
 #if 0
-          // We want to test if
-          //   |R(kappa, i)| <= (0.00...01 * ||b[kappa]||) + R(i, i)
-          //   ftmp1 * 2^expo1 <= ftmp0 * 2^expo1 + ftmp2 * 2^expo2, since expo0 == expo1
-          //   ftmp1 <= ftmp0 + ftmp2 * 2^(expo2 - expo1);
+    // We want to test if
+    //   |R(kappa, i)| <= (0.00...01 * ||b[kappa]||) + R(i, i)
+    //   ftmp1 * 2^expo1 <= ftmp0 * 2^expo1 + ftmp2 * 2^expo2, since expo0 == expo1
+    //   ftmp1 <= ftmp0 + ftmp2 * 2^(expo2 - expo1);
 
-          ftmp2.mul_2si(ftmp2, expo2 - expo1);
-          ftmp2.add(ftmp0, ftmp2);
+    ftmp2.mul_2si(ftmp2, expo2 - expo1);
+    ftmp2.add(ftmp0, ftmp2);
 
 #else   // 0
-          // We want to test if (theoretically the same test as in hplll)
-          //   |R(kappa, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
-          //   ftmp1 / ftmp2 * 2^(expo1 - expo2) <= ftmp0 / ftmp2 * 2^(expo0 - expo2) + 1
-          //   ftmp1 / ftmp2 <= ftmp0 / ftmp2 + 2^(expo2 - expo1), since expo0 == expo1
+    // We want to test if (theoretically the same test as in hplll)
+    //   |R(kappa, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
+    //   ftmp1 / ftmp2 * 2^(expo1 - expo2) <= ftmp0 / ftmp2 * 2^(expo0 - expo2) + 1
+    //   ftmp1 / ftmp2 <= ftmp0 / ftmp2 + 2^(expo2 - expo1), since expo0 == expo1
 
-          ftmp1.div(ftmp1, ftmp2);
-          // Here, |R(kappa, i)| / R(i, i) = ftmp1 * 2^(expo1 - expo2)
+    ftmp1.div(ftmp1, ftmp2);
+    // Here, |R(kappa, i)| / R(i, i) = ftmp1 * 2^(expo1 - expo2)
 
-          ftmp2.div(ftmp0, ftmp2);
-          // Here, (0.00...01 * ||b[kappa]||) / R(i, i) = ftmp2 * 2^(expo1 - expo2);
+    ftmp2.div(ftmp0, ftmp2);
+    // Here, (0.00...01 * ||b[kappa]||) / R(i, i) = ftmp2 * 2^(expo1 - expo2);
 
-          FT one = 1.0;
-          one.mul_2si(one, expo2 - expo1);
-          ftmp2.add(one, ftmp2);
+    FT one = 1.0;
+    one.mul_2si(one, expo2 - expo1);
+    ftmp2.add(one, ftmp2);
 #endif  // 0
 
-          if (ftmp1.cmp(ftmp2) > 0)
-          {
-            cerr << "This is probably the first time this test is used." << endl;
+    if (ftmp1.cmp(ftmp2) > 0)
+    {
+      cerr << "This is probably the first time this test is used." << endl;
 
-            cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa
-                 << " and i = " << i << endl;
+      cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa << " and i = " << i
+           << endl;
 
-            return false;
-          }
-        }
+      return false;
+    }
+  }
 #else   // HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
-        /*
-         * This test is similar to the test of hplll in hsizereduce. It is however not
-         * exactly the same, this one crudely verify the condition of the weak-size
-         * reduction. The one of hplll verify if
-         *   |R(k, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
-         */
+  /*
+   * This test is similar to the test of hplll in hsizereduce. It is however not
+   * exactly the same, this one crudely verify the condition of the weak-size
+   * reduction. The one of hplll verify if
+   *   |R(k, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
+   */
 
-        // TODO: can this test be more concise.
-        long expo0 = 0, expo1 = 0, expo2 = 0;
+  // TODO: can this test be more concise.
+  long expo0 = 0, expo1 = 0, expo2 = 0;
 
-        // Since R(kappa, kappa) is not know at this time, compute its value
-        // For now on, R(kappa, kappa) is assumed to be known, even if the value stored
-        // at R(kappa, kappa) is not correct.
-        m.norm_R_row(ftmp1, kappa, kappa, m.get_n(), expo1);  // R(kappa, kappa) = ftmp1 * 2^expo1
+  // Since R(kappa, kappa) is not know at this time, compute its value
+  // For now on, R(kappa, kappa) is assumed to be known, even if the value stored
+  // at R(kappa, kappa) is not correct.
+  m.norm_R_row(ftmp1, kappa, kappa, m.get_n(), expo1);  // R(kappa, kappa) = ftmp1 * 2^expo1
 
-        ftmp1.mul(ftmp1, theta);  // theta * R(kappa, kappa) = ftmp1 * 2^expo1
+  ftmp1.mul(ftmp1, theta);  // theta * R(kappa, kappa) = ftmp1 * 2^expo1
 
-        // Verify the conditions on the weak size-reduction in Definition 2 of [MSV'09]
-        for (int i = 0; i < kappa; i++)
-        {
-          m.get_R(ftmp0, kappa, i, expo0);  // R(kappa, i) = ftmp0 * 2^expo0
-          ftmp0.abs(ftmp0);                 // |R(kappa, i)| = |ftmp0| * 2^expo0
-          expo2 = m.get_row_expo(i);        // R(i, i) = eR[i] * 2^expo2
+  // Verify the conditions on the weak size-reduction in Definition 2 of [MSV'09]
+  for (int i = 0; i < kappa; i++)
+  {
+    m.get_R(ftmp0, kappa, i, expo0);  // R(kappa, i) = ftmp0 * 2^expo0
+    ftmp0.abs(ftmp0);                 // |R(kappa, i)| = |ftmp0| * 2^expo0
+    expo2 = m.get_row_expo(i);        // R(i, i) = eR[i] * 2^expo2
 
-          FPLLL_DEBUG_CHECK(expo0 == expo1);
+    FPLLL_DEBUG_CHECK(expo0 == expo1);
 
-          // We want to test if
-          //   |R(kappa, i)| <= eta * R(i, i) + theta * R(kappa, kappa)
-          //   ftmp0 * 2^expo0 <= eR[i] * 2^expo2 + ftmp1 * 2^expo0, since expo0 == expo1
-          //   ftmp0 <= eRr[i] * 2^(expo2 - expo0) + ftmp1
-          //   ftmp0 <= ftmp2
-          ftmp2.mul_2si(eR[i], expo2 - expo0);
-          ftmp2.add(ftmp1, ftmp2);
+    // We want to test if
+    //   |R(kappa, i)| <= eta * R(i, i) + theta * R(kappa, kappa)
+    //   ftmp0 * 2^expo0 <= eR[i] * 2^expo2 + ftmp1 * 2^expo0, since expo0 == expo1
+    //   ftmp0 <= eRr[i] * 2^(expo2 - expo0) + ftmp1
+    //   ftmp0 <= ftmp2
+    ftmp2.mul_2si(eR[i], expo2 - expo0);
+    ftmp2.add(ftmp1, ftmp2);
 
-          if (ftmp0.cmp(ftmp2) > 0)
-          {
-            cerr << "This is probably the first time this test is used." << endl;
+    if (ftmp0.cmp(ftmp2) > 0)
+    {
+      cerr << "This is probably the first time this test is used." << endl;
 
-            cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa
-                 << " and i = " << i << endl;
+      cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa << " and i = " << i
+           << endl;
 
-            return false;
-          }
-        }
+      return false;
+    }
+  }
 #endif  // HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
 
-        return true;  // b[kappa] should be size_reduced.
-      }
-    }
-  } while (true);
+  return true;
 }
 
 /*

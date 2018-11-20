@@ -98,6 +98,9 @@ private:
 
   // Compute dR[k]
   inline void compute_eR(int k);
+
+  // Verify if b[k] is is correctry size reduced
+  bool verify_size_reduction(int kappa);
 };
 
 template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
