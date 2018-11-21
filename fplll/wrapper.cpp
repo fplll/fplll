@@ -790,23 +790,38 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
 {
   FPLLL_CHECK(method != LM_HEURISTIC, "HLLL heuristic is not implementated.");
 
-  int status = -1;
+  int sel_prec = 0;
+  int status   = -1;
   /* computes the parameters required for the proved version */
   int good_prec = hlll_min_prec(b.get_rows(), b.get_cols(), delta, eta, theta, c);
 
   // If nolll, just verify if the basis is reduced or not
+  /*
+   * FIXME: for an unknow reason, this test can use a lot of RAM. Example:
+   *   latticegen n 613 2048 q | fplll -a hlll | fplll -a hlll -nolll
+   * uses more than 16 GB of RAM. It is advised to use for now the binary
+   * isreduced provided inside hplll
+   *   latticegen n 613 2048 q | fplll -a hlll | isreduced
+   */
   if (nolll)
   {
+    sel_prec = (precision != 0) ? precision : good_prec;
+
     if (flags & LLL_VERBOSE)
     {
       cerr << "Starting HLLL method 'verification'" << endl
            << "  integer type '" << INT_TYPE_STR[int_type] << "'" << endl
            << "  floating point type 'mpfr_t'" << endl;
-      cerr << "  prec >= " << good_prec << ", the verification is guaranteed";
+
+      if (sel_prec < good_prec)
+        cerr << "  prec < " << good_prec << ", the verification is not guaranteed";
+      else
+        cerr << "  prec >= " << good_prec << ", the verification is guaranteed";
+
       cerr << endl;
     }
 
-    int old_prec = FP_NR<mpfr_t>::set_prec(good_prec);
+    int old_prec = FP_NR<mpfr_t>::set_prec(sel_prec);
 
     status = is_hlll_reduced_pr<ZT, mpfr_t>(b, u, u_inv, delta, eta, theta);
 
@@ -829,7 +844,6 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
     return hlll_reduction_wrapper(b, u, u_inv, delta, eta, theta, c, float_type, precision, flags);
 
   /* sets the parameters and checks the consistency */
-  int sel_prec = 0;
   if (method == LM_PROVED)
   {
     sel_prec = (precision != 0) ? precision : good_prec;
