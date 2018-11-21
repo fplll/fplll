@@ -134,7 +134,9 @@ template <class ZT, class FT> inline void HLLLReduction<ZT, FT>::print_params()
   cerr << "householder_use_size_reduction_test = 1" << endl;
 #endif  // HOUSEHOLDER_USE_SIZE_REDUCTION_TEST
 
-#ifdef HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
+#ifndef HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
+  cerr << "householder_verify_size_reduction_hplll = 0" << endl;
+#else   // HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
   cerr << "householder_verify_size_reduction_hplll = 1" << endl;
 #endif  // HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
 }
