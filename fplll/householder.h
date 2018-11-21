@@ -164,11 +164,6 @@ public:
   inline void get_R(FT &f, int i, int j);
 
   /**
-   * Sets R(i, j) to f.
-   */
-  inline void set_R(FT &f, int i, int j);
-
-  /**
    * Returns R[i].
    */
   inline MatrixRow<FT> get_R(int i, long &expo);
@@ -522,13 +517,6 @@ template <class ZT, class FT> MatrixRow<ZT> MatHouseholder<ZT, FT>::get_b(int i)
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < d);
   return b[i];
-}
-
-template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::set_R(FT &f, int i, int j)
-{
-  FPLLL_DEBUG_CHECK(i >= 0 && i < d && i >= j && j >= 0);
-  FPLLL_DEBUG_CHECK(j <= i);
-  R(i, j) = f;
 }
 
 template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R(int i)
