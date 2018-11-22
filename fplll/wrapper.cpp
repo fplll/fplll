@@ -315,7 +315,7 @@ bool Wrapper::lll()
     }
     last_prec = numeric_limits<long double>::digits;
 #else
-    last_prec = numeric_limits<double>::digits;
+    last_prec   = numeric_limits<double>::digits;
 #endif
 
 /* try fast_lll<mpz_t, dd_real> */
@@ -328,7 +328,7 @@ bool Wrapper::lll()
     last_prec = PREC_DD;
 #else
 #ifdef FPLLL_WITH_LONG_DOUBLE
-    last_prec = numeric_limits<long double>::digits;
+    last_prec   = numeric_limits<long double>::digits;
 #else
     last_prec = numeric_limits<double>::digits;
 #endif
@@ -474,10 +474,26 @@ bool Wrapper::hlll()
   if (b.get_rows() == 0 || b.get_cols() == 0)
     return RED_SUCCESS;
 
-  /* try fast_lll<mpz_t, double> */
-
-  bool hlll_complete = fast_hlll<double>();
   int last_prec      = numeric_limits<double>::digits;
+  bool hlll_complete = false;
+
+// TODO: since classical lll is faster than hlll for dim <~ 160, maybe we can
+// use fast_lll<double>() at the beginning of hlll, before calling
+// fast_hlll<double>()
+// Something like the one used in #if 0 should work
+#if 0
+    /* try fast_lll<mpz_t, double> */
+    int kappa        = fast_lll<double>(delta, eta);
+    bool lll_failure = (kappa != 0);
+
+    /* try fast_lll<mpz_t, double> */
+    if (lll_failure)
+      hlll_complete = fast_hlll<double>();
+    else
+      hlll_complete = true;
+#else   // 0
+  hlll_complete = fast_hlll<double>();
+#endif  // 0
 
 /* try fast_hlll<mpz_t, long double> */
 #ifdef FPLLL_WITH_LONG_DOUBLE
