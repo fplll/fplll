@@ -318,8 +318,6 @@ template <class ZT> int hlll(Options &o, ZZ_mat<ZT> &b)
   int status, flags = 0;
   if (o.verbose)
     flags |= LLL_VERBOSE;
-  if (!o.is_eta_defined)
-    o.eta = HLLL_DEF_ETA;
 
   if (strchr(format, 'v') != NULL)
   {
@@ -585,8 +583,7 @@ void read_options(int argc, char **argv, Options &o)
     {
       ++ac;
       CHECK(ac < argc, "missing value after -e switch");
-      o.eta            = atof(argv[ac]);
-      o.is_eta_defined = true;
+      o.eta = atof(argv[ac]);
     }
     else if (strcmp(argv[ac], "-t") == 0 || strcmp(argv[ac], "-theta") == 0)
     {
@@ -697,19 +694,19 @@ void read_options(int argc, char **argv, Options &o)
            << "       sdb = reduce the input matrix using the self dual BKZ variant\n"
            << "       sld = slide reduce the input matrix\n"
            << "       cvp = compute the vector in the input lattice closest to an input vector\n"
-           << "       hlll = H-LLL-reduce the input matrix\n"
+           << "       hlll = HLLL-reduce the input matrix\n"
            << "  -v\n"
            << "       Enable verbose mode\n"
            << "  -nolll\n"
            << "       Does not apply initial LLL-reduction (for bkz, hkz and svp)\n"
            << "  -c <c>\n"
-           << "       An arbitrary double constant > 0 for H-LLL (default=0.1)\n"
+           << "       An arbitrary double constant > 0 for HLLL (default=0.1)\n"
            << "  -r <size>\n"
            << "       Was the number of rows (ignored)\n"
 
            << "  -d <delta> (default=0.99; alias to -delta <delta>)\n"
            << "  -e <eta> (default=0.51; alias to -eta <eta>)\n"
-           << "  -t <theta> (default=0.01; alias to -eta <eta>)\n"
+           << "  -t <theta> (default=0.001; alias to -theta <theta>)\n"
            << "  -l <lovasz>\n"
            << "       If <lovasz> != 0, Lovasz's condition, otherwise, Siegel's condition\n"
            << "  -f [mpfr|dd|qd|dpe|double|longdouble]\n"

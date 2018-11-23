@@ -247,7 +247,8 @@ Output formats:
 A combination of these option is allowed (e.g., `-of bkut`).
 
 Only for `-a hlll`:
-* `-c` : constant for HLLL during the size-reduction (only used if `fplll` is compiled with `-DHOUSEHOLDER_USE_SIZE_REDUCTION_TEST`)
+* `-t theta` : θ (default=0.001). See [[MSV09](#MSV09)] for the definition of (δ,η,θ)-HLLL-reduced bases.
+* `-c c` : constant for HLLL during the size-reduction (only used if `fplll` is compiled with `-DHOUSEHOLDER_USE_SIZE_REDUCTION_TEST`)
 
 ## llldiff ##
 

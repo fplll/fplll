@@ -78,7 +78,7 @@ int gso_min_prec(double &rho, int d, double delta, double eta,
 int l2_min_prec(int d, double delta, double eta, double epsilon);
 
 /**
- * Returns the minimum precision for the proved version of H-LLL.
+ * Returns the minimum precision for the proved version of HLLL.
  */
 int hlll_min_prec(int d_i, int n_i, double delta, double eta, double theta, double c);
 

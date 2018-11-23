@@ -339,6 +339,8 @@ void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
  *
  * TODO: is the following test actually used to detect an hypothetical infinite
  * loop or not?
+ * HYPOTHESIS: this test was used previously when eta=0.52 and theta = 0.01. Since now
+ *   eta=0.51 and theta=0.001, maybe this test will be used.
  */
 template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(int kappa)
 {

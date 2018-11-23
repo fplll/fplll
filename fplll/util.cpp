@@ -105,7 +105,6 @@ int l2_min_prec(int d, double delta, double eta, double epsilon)
   return compute_min_prec(rho, d, delta, eta, epsilon, MINPREC_L2);
 }
 
-// TODO: not sufficient precision, use mpfr with prec 53.
 int hlll_min_prec(int d_i, int n_i, double delta_d, double eta_d, double theta_d, double c_d)
 {
   FPLLL_CHECK(delta_d < 1.0 && delta_d >= 0.25, "delta must be in [1/4, 1).");

@@ -1040,10 +1040,10 @@ FPLLL_DEFINE_LLL(long, ZT_LONG)
 FPLLL_DEFINE_LLL(double, ZT_DOUBLE)
 #endif
 
-// H-LLL
+// HLLL
 
 /**
- * We define H-LLL for each input type instead of using a template,
+ * We define HLLL for each input type instead of using a template,
  * in order to force the compiler to instantiate the functions.
  */
 #define FPLLL_DEFINE_HLLL(T, id_t)                                                                 \

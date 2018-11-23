@@ -145,9 +145,10 @@ const double LLL_DEF_ETA          = 0.51;
 const double LLL_DEF_EPSILON      = 0.01;
 const int SIZE_RED_FAILURE_THRESH = 5;
 
-const double HLLL_DEF_ETA   = 0.52;
-const double HLLL_DEF_THETA = 0.01;
-const double HLLL_DEF_C     = 0.1;
+// Constraint: 1/2 < eta - theta
+const double HLLL_DEF_THETA = 0.001;
+// Constant for the size reduction.
+const double HLLL_DEF_C = 0.1;
 
 enum RedStatus
 {
