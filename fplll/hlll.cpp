@@ -202,11 +202,13 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::lovasz_test(int k)
   // FIXME: probably not maintened.
 
   m.norm_square_R_row(ftmp1, k, k, m.get_n(),
-                      expo1);       // sum_{i = k}^{i < n}R[k][i]^2 = ftmp1 * 2^expo1
+                      expo1);  // sum_{i = k}^{i < n}R[k][i]^2 = ftmp1 * 2^expo1
+// Since we do not necessarily need expo1 (since expo0 and expo1 are correlated), we can
+// avoid to return it.
 #ifdef DEBUG
   m.get_R(ftmp0, k, k - 1, expo0);  // R(k, k - 1) = ftmp0 * 2^expo0
 #else   // DEBUG
-  m.get_R(ftmp0, k, k - 1);  // R(k, k - 1) = ftmp0 * 2^expo0
+  m.get_R(ftmp0, k, k - 1);  // R(k, k - 1) = ftmp0 * 2^(expo1 / 2)
 #endif  // DEBUG
 
   ftmp0.mul(ftmp0, ftmp0);  // R(k, k - 1)^2 = ftmp0 * 2^(2 * expo 0)
@@ -366,10 +368,12 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
 
   for (int i = 0; i < kappa; i++)
   {
+// Since we do not necessarily need expo1 (since expo0 and expo1 are correlated), we can
+// avoid to return it.
 #ifdef DEBUG
     m.get_R(ftmp1, kappa, i, expo1);  // R(kappa, i) = ftmp1 * 2^expo1
 #else   // DEBUG
-    m.get_R(ftmp1, kappa, i);  // R(kappa, i) = ftmp1 * 2^expo1
+    m.get_R(ftmp1, kappa, i);  // R(kappa, i) = ftmp1 * 2^expo0
 #endif  // DEBUG
 
     FPLLL_DEBUG_CHECK(expo0 == expo1);  // Since R[kappa] and b[kappa] share the same row_expo.
