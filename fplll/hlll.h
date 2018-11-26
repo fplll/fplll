@@ -97,7 +97,7 @@ private:
   // Precompute eR[k] * 2^row_expo[k] = eta * R(k, k)
   vector<FT> eR;
 
-  // Compute dR[k]
+  // Compute eR[k]
   inline void compute_eR(int k);
 
   // Verify if b[k] is is correctry size reduced
