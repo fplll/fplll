@@ -22,6 +22,7 @@
 FPLLL_BEGIN_NAMESPACE
 
 // TODO: maybe add a variable available on DEBUG to verify in update_R(i, false) was done
+// This function corresponds more or less to householder_v in hplll.
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
 {
   // sigma[i] = sign(r[1])
@@ -95,6 +96,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
       if (R(i, i).cmp(0.0) < 0)
         R(i, i).neg(R(i, i));
 
+      // TODO: this is a row operation (from i + 1 to n).
       for (int k = i + 1; k < n; k++)
       {
         // if enable_row_expo, R can be not correct at some point of the computation
@@ -118,6 +120,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
     R(i, i) = 0.0;
     V(i, i) = 0.0;
     // The for loop can for(int k = i; k < n; k++) if the setting of R(i, k) is uncommented.
+    // TODO: this is a row operation (from i + 1 to n).
     for (int k = i + 1; k < n; k++)
     {
       // if enable_row_expo, R can be not correct at some point of the computation
@@ -141,6 +144,9 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R_last(int i)
   n_known_rows++;
 }
 
+// This function corresponds more or less to householder_r in hplll.
+// TODO: in hplll, householder_r do not recompute all the coefficients, depending on various
+// strategies. It will help to improve the running time.
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool last_j)
 {
   // To update row i, we need to know n_known_rows rows
@@ -164,6 +170,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
       R(i, j).mul(sigma[j], R(i, j));
 
       // Copy R into R_history
+      // TODO: this is a row operation. Can try to copy R(i, j..n-1) directly in
+      // R_history[i][j](j..n-1).
       for (k               = j; k < n; k++)
         R_history[i][j][k] = R(i, k);
     }
@@ -188,6 +196,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
     long max_expo = LONG_MIN;
 
     // Copy b(i, j) in bf(i, j) and get the maximal exponent of the row
+    // TODO: these are row operations. However, since the types are converted, maybe difficult
+    // to make a row operation here.
     for (j = 0; j < n_known_cols; j++)
     {
       b(i, j).get_f_exp(bf(i, j), tmp_col_expo[j]);
@@ -195,6 +205,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
     }
 
     // Renormalize all the bf(i, j) with max_expo
+    // TODO: these are row operations. However, since the exponent of mul_2si is not constant,
+    // maybe difficult to make a row operation here.
     for (j = 0; j < n_known_cols; j++)
       bf(i, j).mul_2si(bf(i, j), tmp_col_expo[j] - max_expo);
     for (j = n_known_cols; j < n; j++)
@@ -206,6 +218,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
   else
   {
     // Simply copy b[i] in bf[i]
+    // TODO: these are row operations. However, since the types are converted, maybe difficult
+    // to make a row operation here.
     for (j = 0; j < n_known_cols; j++)
       bf(i, j).set_z(b(i, j));
     for (j = n_known_cols; j < n; j++)
@@ -213,6 +227,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R_bf(int i)
   }
 
   // Copy R[i] in bf[i] (while we have copied b[i] in R[i])
+  // TODO: these are row operations.
   for (j = 0; j < n_known_cols; j++)
     R(i, j) = bf(i, j);
   for (j = n_known_cols; j < n; j++)
@@ -236,6 +251,8 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::refresh_R(int i)
   int j;
 
   // Copy bf[i] in R[i] (while we have already copied b[i] in bf[i] and b[i] has not changed)
+  // TODO: these are row operations. However, since the types are converted, maybe difficult
+  // to make a row operation here.
   for (j = 0; j < n_known_cols; j++)
     R(i, j) = bf(i, j);
   for (j = n_known_cols; j < n; j++)
@@ -407,9 +424,10 @@ bool MatHouseholder<ZT, FT>::size_reduce(int k, int size_reduction_end, int size
 
     if (ftmp1.sgn() != 0)  // Equivalent to test if ftmp1 == 0
     {
-      // b[k] will be reduced by ftmp1 * b[i]
+      // b[k] will be reduced by ftmp1 * 2^(row_expo[k] - row_expo[i]) * b[i]
       row_addmul_we(k, i, ftmp1, row_expo[k] - row_expo[i]);
 
+      // b[k] was reduced
       reduced = true;
     }
   }
@@ -432,6 +450,7 @@ bool MatHouseholder<ZT, FT>::size_reduce(int k, int size_reduction_end, int size
 }
 
 /* Taken from fplll/gso.cpp (commit 3d0d962)*/
+// TODO: is it possible to factorize piece of code with fplll/gso.cpp?
 template <class ZT, class FT> void MatHouseholder<ZT, FT>::row_add(int i, int j)
 {
   b[i].add(b[j], n_known_cols);
@@ -484,7 +503,7 @@ void MatHouseholder<ZT, FT>::row_addmul_si_2exp(int i, int j, long x, long expo)
 template <class ZT, class FT>
 void MatHouseholder<ZT, FT>::row_addmul_2exp(int i, int j, const ZT &x, long expo)
 {
-  // Cannot use ztmp0 here, since x is ztmp0. Use ztmp1 instead.
+  // Cannot use ztmp0 here, since x is ztmp0 (see row_addmul_we). Use ztmp1 instead.
   b[i].addmul_2exp(b[j], x, expo, n_known_cols, ztmp1);
 
   if (enable_transform)
@@ -508,6 +527,7 @@ void MatHouseholder<ZT, FT>::row_addmul_we(int i, int j, const FT &x, long expo_
   long expo;
   long lx = x.get_si_exp_we(expo, expo_add);
 
+  // if expo == 0, does not need to use mul_2si like functions
   if (expo == 0)
   {
     if (lx == 1)

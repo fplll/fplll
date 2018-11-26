@@ -591,6 +591,7 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::recover_R(int 
 {
   FPLLL_DEBUG_CHECK(col_kept[i] == true);
 
+  // TODO: these are row operations.
   for (int k = 0; k < i - 1; k++)
     R(i, k) = R_history[i][k][k];
   for (int k = i - 1; k < n; k++)
