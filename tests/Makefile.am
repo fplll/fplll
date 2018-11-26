@@ -10,6 +10,7 @@ include_fpllldir=$(includedir)/fplll
 EXTRA_DIST=test_utils.h \
 	lattices/dim55_in \
 	lattices/example2_in \
+	lattices/example3_in \
 	lattices/example_in \
 	lattices/example_svp_in \
 	lattices/example_svp_out \
