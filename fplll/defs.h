@@ -190,6 +190,8 @@ enum LLLMethod
 
 const char *const LLL_METHOD_STR[6] = {"wrapper", "proved", "heuristic", "fast"};
 
+// LM_HEURISTIC is not (yet) an option for HLLL and cannot be called from the fplll binary, then
+// we leave empty the third string.
 const char *const HLLL_METHOD_STR[4] = {"wrapper", "proved", "", "fast"};
 
 enum IntType
