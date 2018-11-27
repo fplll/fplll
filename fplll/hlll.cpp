@@ -22,7 +22,12 @@ FPLLL_BEGIN_NAMESPACE
 template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
 {
   /* TODO: we do not use a completely correct value for delta. We must use a value
-   * delta_ in (delta + 2^(-p + p0), 1 - 2^(-p + p0))
+   * delta_ in (delta + 2^(-p + p0), 1 - 2^(-p + p0)). This implies that, with the
+   * fast method, we cannot guarantee the HLLL-reduction w.r.t delta.
+   *
+   * A careful analysis about how to set delta may help to obtain this guarantee.
+   * Experimentally, the delta used during the computation must be equal to
+   * (delta + (0.01 or 0.02) to have an basis which is HLLL-reduced w.r.t delta.
    */
   int start_time = cputime();
   // True if the corresponding vector is weak size-reduced
@@ -177,9 +182,7 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::lovasz_test(int k)
   // matrices that was not HLLL reduced because of a fail in this test can be generated thanks to
   // latticegen -randseed 122 r 300 30000.
   // Such a test can be activate by compiling with -DMODIFIED_LOVASZ_TEST
-  //
-  // TODO: this section must be improved and investigated, i.e.:
-  //   * probably other improvement to be done
+
   m.get_norm_square_b(ftmp0, k, expo0);  // ||b[k]||^2 = ftmp0 * 2^expo0
   m.norm_square_R_row(ftmp1, k, 0, k - 1,
                       expo1);  // sum_{i = 0}^{i < k - 1}R[k][i]^2 = ftmp1 * 2^expo1
@@ -199,7 +202,8 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::lovasz_test(int k)
   ftmp1.mul_2si(ftmp1, expo1 - 2 * expo0);
 #else  // MODIFIED_LOVASZ_TEST
   // Modified Lovasz test, following the comment above.
-  // FIXME: probably not maintened.
+  // FIXME: probably not maintened, especially if code is not compiled with -DMODIFIED_LOVASZ_TEST
+  // for a while.
 
   m.norm_square_R_row(ftmp1, k, k, m.get_n(),
                       expo1);  // sum_{i = k}^{i < n}R[k][i]^2 = ftmp1 * 2^expo1
@@ -235,6 +239,22 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::lovasz_test(int k)
 // TODO: there is maybe a problem. It seems that size_reduction is often (maybe always) stopped
 // because of reduced is false and almost never because the conditions about the norm of b[kappa]
 // are reached. This can be an issue.
+
+/*
+ * EXPLANATION:
+ *
+ * The incomplete size-reduction algorithm (Algorithm 3 in HLLL) performs several step to
+ * size-reduce b[kappa]. However, we remarked that the condition to break the do...until loop is
+ * not sufficient to guarantee that b[kappa] is weak size-reduced. We then modify the test, but now,
+ * this test seems never being reached (at least in this implementation) and we leave the
+ * size_reduction function almost only when b[kappa] remains unchanged, instead of leaving the loop
+ * when the progress is sufficient.
+ *
+ * My guess is that it can be a problem coming from this implementation, or coming from the test to
+ * stop the loop, since it is very strict. I think that it can be seen as a limitation of the code,
+ * and a way to improve it is to find clever bound to stop the loop depending on the norms of
+ * b[kappa].
+ */
 template <class ZT, class FT>
 void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
                                            int size_reduction_start)
@@ -354,7 +374,9 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
    *   |R(k, i)| <= 0.00...01 * ||b[kappa]|| + R(i, i)
    */
 
-  // TODO: can this test be more concise.
+  // TODO: can this test be more concise. This test is used at the end of each call to
+  // size_reduction, improving it can save time, especially if, for now, it does not help
+  // to detect loss of precision during the computation.
 
   m.get_norm_square_b(ftmp0, kappa, expo0);  // ||b[kappa]||^2 = ftmp0 * 2^expo0
 
@@ -425,7 +447,9 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
    *   |R(k, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
    */
 
-  // TODO: can this test be more concise.
+  // TODO: can this test be more concise. This test is used at the end of each call to
+  // size_reduction, improving it can save time, especially if, for now, it does not help
+  // to detect loss of precision during the computation.
 
   // Since R(kappa, kappa) is not know at this time, compute its value
   // For now on, R(kappa, kappa) is assumed to be known, even if the value stored

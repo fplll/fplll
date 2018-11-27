@@ -29,7 +29,6 @@ public:
    * class and must remain the same until the object is destroyed (or no longer
    * needed).
    */
-  // TODO: what is c?
   HLLLReduction(MatHouseholder<ZT, FT> &arg_m, double delta, double eta, double theta, double c,
                 int flags)
       : m(arg_m)

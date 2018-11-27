@@ -628,7 +628,6 @@ template <class ZT, class FT> inline void MatHouseholder<ZT, FT>::update_R_naive
     update_R_naively(i);
 }
 
-/* TODO: refactorize. */
 template <class ZT, class FT>
 inline void MatHouseholder<ZT, FT>::get_R_naively(FT &f, int i, int j, long &expo)
 {
