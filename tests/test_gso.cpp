@@ -104,6 +104,7 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
   ZZ_mat<ZT> U;
   ZZ_mat<ZT> UT;
   MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, GSO_INT_GRAM);
+  // Since HOUSEHOLDER_DEFAULT, the exponent returned by get_R(_naively) must be equal to zero.
   MatHouseholder<Z_NR<ZT>, FP_NR<FT>> Mhouseholder(A, U, UT, HOUSEHOLDER_DEFAULT);
   M.update_gso();
   // Here, we just need to refresh R. However, refresh_R() does not modify n_known_rows, but
@@ -121,8 +122,10 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
   for (int i = 0; i < A.get_rows(); i++)
   {
     Mhouseholder.get_R(rhd, i, i, expo);
+    FPLLL_CHECK(expo == 0, "expo must be equal to 0");
     assert_diag_R(rhd, i, status);
     Mhouseholder.get_R_naively(rhd, i, i, expo);
+    FPLLL_CHECK(expo == 0, "expo must be equal to 0");
     assert_diag_R(rhd, i, status);
   }
 
@@ -133,10 +136,14 @@ template <class ZT, class FT> int test_householder(ZZ_mat<ZT> &A)
       M.get_r(r, i, j);
       M.get_mu(mu, i, j);
       Mhouseholder.get_R(rh, i, j, expo);
+      FPLLL_CHECK(expo == 0, "expo must be equal to 0");
       Mhouseholder.get_R(rhd, j, j, expo);
+      FPLLL_CHECK(expo == 0, "expo must be equal to 0");
       assert_mu_r_householder(rh, rhd, mu, r, status);
       Mhouseholder.get_R_naively(rh, i, j, expo);
+      FPLLL_CHECK(expo == 0, "expo must be equal to 0");
       Mhouseholder.get_R_naively(rhd, j, j, expo);
+      FPLLL_CHECK(expo == 0, "expo must be equal to 0");
       assert_mu_r_householder(rh, rhd, mu, r, status);
     }
   }
@@ -286,7 +293,11 @@ template <class ZT, class FT> int test_int_rel(int d, int b)
         << " shows different GSO-outputs for grammatrix representation and basis representation.\n";
     return 1;
   }
-  return test_householder<ZT, FT>(A);
+  retvalue |= test_householder<ZT, FT>(A);
+  if (retvalue > 0)
+    return 1;
+
+  return 0;
 }
 
 int main(int /*argc*/, char ** /*argv*/)
