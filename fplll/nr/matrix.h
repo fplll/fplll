@@ -84,10 +84,16 @@ public:
     fplll::dot_product(result, this->row, v0.row, beg, n);
   }
 
+  /** Computes the dot product between two rows of a Matrix */
+  inline void dot_product(T &result, const MatrixRow<T> &v0, int n) const
+  {
+    fplll::dot_product(result, this->row, v0.row, n);
+  }
+
   /** Computes the truncated dot product between two rows of a Matrix */
   inline void dot_product(T &result, const MatrixRow<T> &v0) const
   {
-    this->dot_product(result, v0, 0, this->size());
+    fplll::dot_product(result, this->row, v0.row);
   }
 
   friend class Matrix<T>;

@@ -386,9 +386,16 @@ inline void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2, i
   }
 }
 
+template <class T>
+inline void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2, int n)
+{
+  FPLLL_DEBUG_CHECK(n <= v1.size() && v1.size() == v2.size() && (v1.is_zero(n) || v2.is_zero(n)));
+  dot_product(result, v1, v2, 0, n);
+}
+
 template <class T> inline void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2)
 {
-  dot_product(result, v1, v2, 0, v1.size());
+  dot_product(result, v1, v2, v1.size());
 }
 
 template <class T> inline void squared_norm(T &result, const NumVect<T> &v)

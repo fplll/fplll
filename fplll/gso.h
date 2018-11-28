@@ -249,7 +249,7 @@ template <class ZT, class FT> inline FT &MatGSO<ZT, FT>::get_gram(FT &f, int i, 
   {
     if (gf(i, j).is_nan())
     {
-      bf[i].dot_product(gf(i, j), bf[j], 0, n_known_cols);
+      bf[i].dot_product(gf(i, j), bf[j], n_known_cols);
     }
     f = gf(i, j);
   }

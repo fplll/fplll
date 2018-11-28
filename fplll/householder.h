@@ -540,6 +540,8 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row(FT &f, int k, long &expo)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
 
+  // TODO: maybe can be only dot_product(f, bf[k], n_known_rows). However, since the
+  // FPLLL_DEBUG_CHECK is more constraint, fall back to this version of dot_product
   bf[k].dot_product(f, bf[k], 0, n_known_cols);
 
   if (enable_row_expo)
@@ -648,6 +650,8 @@ inline void MatHouseholder<ZT, FT>::norm_square_R_row_naively(FT &f, int k, int 
   if (end == 0)
     f = 0.0;
   else
+    // TODO: maybe can be only dot_product(f, R_naively[k], end). However, since the
+    // FPLLL_DEBUG_CHECK is more constraint, fall back to this version of dot_product
     R_naively[k].dot_product(f, R_naively[k], 0, end);
 
   if (enable_row_expo)
@@ -662,12 +666,18 @@ inline void MatHouseholder<ZT, FT>::norm_square_b_row_naively(FT &f, int k, long
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
   if (enable_row_expo)
   {
+    // TODO: maybe can be only dot_product(ztmp0, b[k], n). However, since the FPLLL_DEBUG_CHECK
+    // is more constraint, fall back to this version of dot_product. However, since it is n here,
+    // a problem with the check will probably not appear.
     b[k].dot_product(ztmp0, b[k], 0, n);
     ztmp0.get_f_exp(f, expo);
   }
   else
   {
     expo = 0;
+    // TODO: maybe can be only dot_product(ztmp0, b[k], n). However, since the FPLLL_DEBUG_CHECK
+    // is more constraint, fall back to this version of dot_product. However, since it is n here,
+    // a problem with the check will probably not appear.
     b[k].dot_product(ztmp0, b[k], 0, n);
     f.set_z(ztmp0);
   }
