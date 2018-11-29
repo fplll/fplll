@@ -206,7 +206,7 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::lovasz_test(int k)
   ftmp1.mul_2si(ftmp1, expo1 - 2 * expo0);
 #else  // MODIFIED_LOVASZ_TEST
   // Modified Lovasz test, following the comment above.
-  // FIXME: probably not maintened, especially if code is not compiled with -DMODIFIED_LOVASZ_TEST
+  // FIXME: probably not maintained, especially if code is not compiled with -DMODIFIED_LOVASZ_TEST
   // for a while.
 
   m.norm_square_R_row(ftmp1, k, k, m.get_n(),
