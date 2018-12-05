@@ -40,6 +40,7 @@ enum Action
   ACTION_BKZ,
   ACTION_SVP,
   ACTION_CVP,
+  ACTION_HLLL,
   ACTION_PRU
 };
 
@@ -49,7 +50,7 @@ struct Options
       : action(ACTION_LLL), method(LM_WRAPPER), int_type(ZT_MPZ), float_type(FT_DEFAULT),
         delta(LLL_DEF_DELTA), eta(LLL_DEF_ETA), precision(0), early_red(false), siegel(false),
         no_lll(false), block_size(0), bkz_gh_factor(1.1), verbose(false), input_file(NULL),
-        output_format(NULL)
+        output_format(NULL), theta(HLLL_DEF_THETA), c(HLLL_DEF_C)
   {
     bkz_flags     = 0;
     bkz_max_loops = 0;
@@ -81,6 +82,9 @@ struct Options
   bool verbose;
   const char *input_file;
   const char *output_format;
+
+  double theta;
+  double c;
 };
 
 #endif

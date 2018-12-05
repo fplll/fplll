@@ -52,8 +52,11 @@ public:
   void add(const MatrixRow<T> &v, int n) { row.add(v.row, n); }
   void sub(const MatrixRow<T> &v) { row.sub(v.row); }
   void sub(const MatrixRow<T> &v, int n) { row.sub(v.row, n); }
+  void mul(const MatrixRow<T> &v, int b, int n, T x) { row.mul(v.row, b, n, x); }
+  void div(const MatrixRow<T> &v, int b, int n, T x) { row.div(v.row, b, n, x); }
   void addmul(const MatrixRow<T> &v, T x) { row.addmul(v.row, x); }
   void addmul(const MatrixRow<T> &v, T x, int n) { row.addmul(v.row, x, n); }
+  void addmul(const MatrixRow<T> &v, T x, int b, int n) { row.addmul(v.row, x, b, n); }
   void addmul_2exp(const MatrixRow<T> &v, const T &x, long expo, T &tmp)
   {
     row.addmul_2exp(v.row, x, expo, tmp);
@@ -73,16 +76,24 @@ public:
     row.addmul_si_2exp(v.row, x, expo, n, tmp);
   }
 
+  /** Computes the truncated dot product between two rows of a Matrix.
+   * Constraint: n > beg.
+   */
+  inline void dot_product(T &result, const MatrixRow<T> &v0, int beg, int n) const
+  {
+    fplll::dot_product(result, this->row, v0.row, beg, n);
+  }
+
   /** Computes the dot product between two rows of a Matrix */
   inline void dot_product(T &result, const MatrixRow<T> &v0, int n) const
   {
     fplll::dot_product(result, this->row, v0.row, n);
   }
 
-  /** Computes (inline) the dot product between two rows of a Matrix */
+  /** Computes the truncated dot product between two rows of a Matrix */
   inline void dot_product(T &result, const MatrixRow<T> &v0) const
   {
-    this->dot_product(result, v0, this->size());
+    fplll::dot_product(result, this->row, v0.row);
   }
 
   friend class Matrix<T>;

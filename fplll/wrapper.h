@@ -32,7 +32,16 @@ public:
   Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
           int flags);
 
+  // Used for HLLL
+  Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
+          double theta, double c, int flags);
+
   bool lll();
+
+  // Call HLLL on the wrapper object
+  // TODO: this wrapper does not offers as many options as the one of LLL (for example, use long
+  // instead of mpz_t, modify delta, ...)
+  bool hlll();
 
   int status;
 
@@ -80,6 +89,26 @@ private:
   int n;
   int d;
   int last_early_red;
+
+  // For HLLL
+  double theta;
+  double c;
+
+  // High level function, select depending on method and precision the best way to call
+  // HLLL (types, flags enabled, ...)
+  template <class F> bool call_hlll(LLLMethod method, int precision);
+
+  // = call_hlll(LM_FAST, 0);
+  template <class F> bool fast_hlll();
+
+  // = call_hlll(LM_PROVED, precision);
+  template <class F> bool proved_hlll(int precision);
+
+  // Perform proved_hlll until grood_prec is reached or the lattice is reduced
+  int hlll_proved_loop(int precision);
+
+  // Perform proved version of HLLL with good_prec
+  bool last_hlll();
 };
 
 #define FPLLL_DECLARE_LLL(T)                                                                       \
@@ -103,6 +132,38 @@ FPLLL_DECLARE_LLL(long)
 
 #ifdef FPLLL_WITH_ZDOUBLE
 FPLLL_DECLARE_LLL(double)
+#endif
+
+// HLLL
+
+/**
+ * We define HLLL for each input type instead of using a template,
+ * in order to force the compiler to instantiate the functions.
+ */
+#define FPLLL_DECLARE_HLLL(T)                                                                      \
+  int hlll_reduction(ZZ_mat<T> &b, double delta = LLL_DEF_DELTA, double eta = LLL_DEF_ETA,         \
+                     double theta = HLLL_DEF_THETA, double c = HLLL_DEF_C,                         \
+                     LLLMethod method = LM_WRAPPER, FloatType float_type = FT_DEFAULT,             \
+                     int precision = 0, int flags = LLL_DEFAULT, bool nolll = false);              \
+  int hlll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, double delta = LLL_DEF_DELTA,                     \
+                     double eta = LLL_DEF_ETA, double theta = HLLL_DEF_THETA,                      \
+                     double c = HLLL_DEF_C, LLLMethod method = LM_WRAPPER,                         \
+                     FloatType float_type = FT_DEFAULT, int precision = 0,                         \
+                     int flags = LLL_DEFAULT, bool nolll = false);                                 \
+  int hlll_reduction(ZZ_mat<T> &b, ZZ_mat<T> &u, ZZ_mat<T> &u_inv, double delta = LLL_DEF_DELTA,   \
+                     double eta = LLL_DEF_ETA, double theta = HLLL_DEF_THETA,                      \
+                     double c = HLLL_DEF_C, LLLMethod method = LM_WRAPPER,                         \
+                     FloatType float_type = FT_DEFAULT, int precision = 0,                         \
+                     int flags = LLL_DEFAULT, bool nolll = false);
+
+FPLLL_DECLARE_HLLL(mpz_t)
+
+#ifdef FPLLL_WITH_ZLONG
+FPLLL_DECLARE_HLLL(long)
+#endif
+
+#ifdef FPLLL_WITH_ZDOUBLE
+FPLLL_DECLARE_HLLL(double)
 #endif
 
 FPLLL_END_NAMESPACE

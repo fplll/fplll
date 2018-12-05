@@ -145,18 +145,26 @@ const double LLL_DEF_ETA          = 0.51;
 const double LLL_DEF_EPSILON      = 0.01;
 const int SIZE_RED_FAILURE_THRESH = 5;
 
+// Constraint: 1/2 < eta - theta
+const double HLLL_DEF_THETA = 0.001;
+// Constant for the size reduction.
+const double HLLL_DEF_C = 0.1;
+
 enum RedStatus
 {
   RED_SUCCESS = 0,
   // Skips value 1
-  RED_GSO_FAILURE     = 2,
-  RED_BABAI_FAILURE   = 3,
-  RED_LLL_FAILURE     = 4,
-  RED_ENUM_FAILURE    = 5,
-  RED_BKZ_FAILURE     = 6,
-  RED_BKZ_TIME_LIMIT  = 7,
-  RED_BKZ_LOOPS_LIMIT = 8,
-  RED_STATUS_MAX      = 9
+  RED_GSO_FAILURE       = 2,
+  RED_BABAI_FAILURE     = 3,
+  RED_LLL_FAILURE       = 4,
+  RED_ENUM_FAILURE      = 5,
+  RED_BKZ_FAILURE       = 6,
+  RED_BKZ_TIME_LIMIT    = 7,
+  RED_BKZ_LOOPS_LIMIT   = 8,
+  RED_HLLL_FAILURE      = 9,
+  RED_HLLL_NORM_FAILURE = 10,
+  RED_HLLL_SR_FAILURE   = 11,
+  RED_STATUS_MAX        = 12
 };
 
 const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
@@ -167,7 +175,10 @@ const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
                                                     "error in SVP solver",
                                                     "error in BKZ",
                                                     "time limit exceeded in BKZ",
-                                                    "loops limit exceeded in BKZ"};
+                                                    "loops limit exceeded in BKZ",
+                                                    "error in HLLL",
+                                                    "increase of the norm",
+                                                    "error in weak size reduction"};
 
 enum LLLMethod
 {
@@ -178,6 +189,10 @@ enum LLLMethod
 };
 
 const char *const LLL_METHOD_STR[6] = {"wrapper", "proved", "heuristic", "fast"};
+
+// LM_HEURISTIC is not (yet) an option for HLLL and cannot be called from the fplll binary, then
+// we leave empty the third string.
+const char *const HLLL_METHOD_STR[4] = {"wrapper", "proved", "", "fast"};
 
 enum IntType
 {
