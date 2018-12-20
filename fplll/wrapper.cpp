@@ -24,13 +24,12 @@ FPLLL_BEGIN_NAMESPACE
 
 /* prec=53, eta=0.501, dim < dim_double_max [ (delta / 100.0) + 25 ] */
 const double dim_double_max[75] = {
-  0,     26,    29.6,  28.1,  31.1,  32.6,  34.6,  34,    37.7,  38.8,  39.6,  41.8,  40.9,
-  43.6,  44.2,  47,    46.8,  50.6,  49.1,  51.5,  52.5,  54.8,  54.6,  57.4,  57.6,  59.9,
-  61.8,  62.3,  64.5,  67.1,  68.8,  68.3,  69.9,  73.1,  74,    76.1,  76.8,  80.9,  81.8,
-  83,    85.3,  87.9,  89,    90.1,  89,    94.6,  94.8,  98.7,  99,    101.6, 104.9, 106.8,
-  108.2, 107.4, 110,   112.7, 114.6, 118.1, 119.7, 121.8, 122.9, 126.6, 128.6, 129,   133.6,
-  126.9, 135.9, 139.5, 135.2, 137.2, 139.3, 142.8, 142.4, 142.5, 145.4
-};
+    0,     26,    29.6,  28.1,  31.1,  32.6,  34.6,  34,    37.7,  38.8,  39.6,  41.8,  40.9,
+    43.6,  44.2,  47,    46.8,  50.6,  49.1,  51.5,  52.5,  54.8,  54.6,  57.4,  57.6,  59.9,
+    61.8,  62.3,  64.5,  67.1,  68.8,  68.3,  69.9,  73.1,  74,    76.1,  76.8,  80.9,  81.8,
+    83,    85.3,  87.9,  89,    90.1,  89,    94.6,  94.8,  98.7,  99,    101.6, 104.9, 106.8,
+    108.2, 107.4, 110,   112.7, 114.6, 118.1, 119.7, 121.8, 122.9, 126.6, 128.6, 129,   133.6,
+    126.9, 135.9, 139.5, 135.2, 137.2, 139.3, 142.8, 142.4, 142.5, 145.4};
 
 const double eta_dep[10] = {1.,       // 0.5
                             1.,       // 0.55
@@ -41,13 +40,12 @@ const double eta_dep[10] = {1.,       // 0.5
                             1.6231,   // 0.8
                             1.8189,   // 0.85
                             2.1025,   // 0.9
-                            2.5117
-                           };  // 0.95
+                            2.5117};  // 0.95
 
 Wrapper::Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
                  int flags)
-  : status(RED_SUCCESS), b(b), u(u), u_inv(u_inv), delta(delta), eta(eta), use_long(false),
-    last_early_red(0)
+    : status(RED_SUCCESS), b(b), u(u), u_inv(u_inv), delta(delta), eta(eta), use_long(false),
+      last_early_red(0)
 {
   n            = b.get_cols();
   d            = b.get_rows();
@@ -61,8 +59,8 @@ Wrapper::Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, doubl
 // Constructor for HLLL
 Wrapper::Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
                  double theta, double c, int flags)
-  : status(RED_SUCCESS), b(b), u(u), u_inv(u_inv), delta(delta), eta(eta), use_long(false),
-    last_early_red(-1), theta(theta), c(c)
+    : status(RED_SUCCESS), b(b), u(u), u_inv(u_inv), delta(delta), eta(eta), use_long(false),
+      last_early_red(-1), theta(theta), c(c)
 {
   n           = b.get_cols();
   d           = b.get_rows();
@@ -239,7 +237,7 @@ int Wrapper::proved_loop(int precision)
 int Wrapper::last_lll()
 {
 
-  /* <long, FT> */
+/* <long, FT> */
 #ifdef FPLLL_WITH_ZLONG
   if (use_long)
   {
@@ -287,9 +285,9 @@ bool Wrapper::lll()
 
 #ifdef FPLLL_WITH_ZLONG
   bool heuristic_with_long =
-    max_exponent < numeric_limits<long>::digits - 2 && u.empty() && u_inv.empty();
+      max_exponent < numeric_limits<long>::digits - 2 && u.empty() && u_inv.empty();
   bool proved_with_long =
-    2 * max_exponent < numeric_limits<long>::digits - 2 && u.empty() && u_inv.empty();
+      2 * max_exponent < numeric_limits<long>::digits - 2 && u.empty() && u_inv.empty();
 #else
   bool heuristic_with_long = false, proved_with_long = false;
 #endif
@@ -444,7 +442,7 @@ template <class F> bool Wrapper::call_hlll(LLLMethod method, int precision)
  */
 bool Wrapper::last_hlll()
 {
-  /* <mpfr, FT> */
+/* <mpfr, FT> */
 #ifdef FPLLL_WITH_DPE
   if (good_prec <= numeric_limits<double>::digits)
     return proved_hlll<dpe_t>(good_prec);
