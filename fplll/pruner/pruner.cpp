@@ -48,7 +48,7 @@ int run_pruner_f(ZZ_mat<mpz_t> &b, int sel_ft, int prune_start, int prune_end,
     end = b.get_rows();
   if (prune_pre_nodes <= 1)
     prune_pre_nodes = 1;
-  int block_size    = end - start;
+  int block_size = end - start;
 
   PruningParams pruning;
   vector<double> r;

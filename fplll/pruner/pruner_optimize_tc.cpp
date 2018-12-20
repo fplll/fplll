@@ -256,7 +256,7 @@ void Pruner<FT>::optimize_coefficients_local_adjust_decr_single(/*io*/ vector<do
     {
       // cerr << " improved from " << old_cf << " to  " << new_cf << endl;
       if (slices[ind] < 1024)
-        slices[ind]     = slices[ind] * 1.05;
+        slices[ind] = slices[ind] * 1.05;
       consecutive_fails = 0;
     }
 
@@ -624,7 +624,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ vec &b)
   {
     mini = maxi = maxi2 = 0;
     for (int i = 0; i < dn; ++i)
-      bo[i]    = bs[0][i];
+      bo[i] = bs[0][i];
     ////////////////
     // step 1. and 2. : Order and centroid
     ////////////////
@@ -702,7 +702,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ vec &b)
     vec br(dn);  // reflected point
     FT fr;       // Value at the reflexion point
     for (int i = 0; i < dn; ++i)
-      br[i]    = bo[i] + ND_ALPHA * (bo[i] - bs[maxi][i]);
+      br[i] = bo[i] + ND_ALPHA * (bo[i] - bs[maxi][i]);
     enforce(br);
     fr = target_function(br);
     if (verbosity)
@@ -730,7 +730,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ vec &b)
       vec be(dn);
       FT fe;
       for (int i = 0; i < dn; ++i)
-        be[i]    = bo[i] + ND_GAMMA * (br[i] - bo[i]);
+        be[i] = bo[i] + ND_GAMMA * (br[i] - bo[i]);
       enforce(be);
       fe = target_function(be);
       if (verbosity)
@@ -771,7 +771,7 @@ template <class FT> int Pruner<FT>::nelder_mead_step(/*io*/ vec &b)
     vec bc(dn);
     FT fc;
     for (int i = 0; i < dn; ++i)
-      bc[i]    = bo[i] + ND_RHO * (bs[maxi][i] - bo[i]);
+      bc[i] = bo[i] + ND_RHO * (bs[maxi][i] - bo[i]);
     enforce(bc);
     fc = target_function(bc);
     if (verbosity)

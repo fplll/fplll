@@ -137,7 +137,7 @@ template <class ZT, class F> bool GaussSieve<ZT, F>::run_2sieve()
     /* sieve current_point */
     current_norm = update_p_2reduce(current_point);
 
-// print_list(List);
+    // print_list(List);
 
 #ifdef REDUCE_TIMING
     gettimeofday(&time2, 0);

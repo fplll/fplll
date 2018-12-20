@@ -74,7 +74,7 @@ typedef uint64_t(extenum_fc_enumerate)(int dim, enumf maxdist,
                                        std::function<extenum_cb_process_sol> cbsol,
                                        std::function<extenum_cb_process_subsol> cbsubsol,
                                        bool dual /*=false*/, bool findsubsols /*=false*/
-                                       );
+);
 
 // set & get external enumerator (nullptr => disabled)
 void set_external_enumerator(std::function<extenum_fc_enumerate> extenum = nullptr);
