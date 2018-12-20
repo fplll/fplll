@@ -239,7 +239,7 @@ void FastErrorBoundedEvaluator::eval_sub_sol(int offset,
   {
     sub_solutions[offset].first  = dist;
     sub_solutions[offset].second = new_sub_sol_coord;
-    for (int i                        = 0; i < offset; ++i)
+    for (int i = 0; i < offset; ++i)
       sub_solutions[offset].second[i] = 0.0;
   }
 }
@@ -345,7 +345,7 @@ void ExactErrorBoundedEvaluator::eval_sub_sol(int offset,
   {
     sub_solutions[offset].first  = subdist;
     sub_solutions[offset].second = new_sub_sol_coord;
-    for (int i                        = 0; i < offset; ++i)
+    for (int i = 0; i < offset; ++i)
       sub_solutions[offset].second[i] = 0.0;
   }
 }

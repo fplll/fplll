@@ -268,7 +268,7 @@ public:
   void gen_identity(int d)
   {
     gen_zero(d, d);
-    for (int i     = 0; i < d; i++)
+    for (int i = 0; i < d; i++)
       matrix[i][i] = 1;
   }
   /** Generate an augmented matrix of random coefficients for the first column */
@@ -296,7 +296,7 @@ public:
   void gen_ntrulike2_withq(int q);
 
   /** Construct a matrix ``[[I,H],[0,Iq]]`` where ``H`` is uniform mod q, of dimensions (n-k) x k.
-  */
+   */
 
   void gen_qary(int k, Z_NR<ZT> &q);
 

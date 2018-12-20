@@ -124,7 +124,7 @@ public:
    * Returns maximum exponent of b. In the gram
    * version it returns a half times the
    * maximum exponent of g.
-  */
+   */
   virtual long get_max_exp_of_b() = 0;
 
   /** Returns true if the ith row
@@ -147,8 +147,8 @@ public:
   virtual int get_rows_of_b() = 0;
 
   /** Negates the ith row of b. Needed
-    * by dbkz_postprocessing.
-    */
+   * by dbkz_postprocessing.
+   */
   virtual void negate_row_of_b(int i) = 0;
 
   /**
@@ -460,8 +460,8 @@ public:
 
 protected:
   /** Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
-    * When enable_int_gram=false, initializes bf.
-    */
+   * When enable_int_gram=false, initializes bf.
+   */
   virtual void size_increased() = 0;
 
   /* Increases known rows and invalidates the last
@@ -475,8 +475,8 @@ protected:
   // Marks mu(i, j) and r(i, j) as invalid for j >= new_valid_cols
   void invalidate_gso_row(int i, int new_valid_cols = 0);
   /*  Upates the i-th row of bf. It does not invalidate anything, so the caller
-    * must take into account that it might change row_expo.
-    */
+   * must take into account that it might change row_expo.
+   */
   virtual void update_bf(int i) = 0;
   /* Marks g(i, j) for all j <= i (but NOT for j > i) */
   virtual void invalidate_gram_row(int i) = 0;
@@ -546,10 +546,10 @@ protected:
 
 public:
   /** Replaced the gram matrix by a pointer. In the gso-class
-    * there is also a matrix g, and in the constructor gptr is
-    * defined to be equal to &g. In the ggso-class a gram matrix
-    * is given (arg_g), and gptr is defined as &arg_g.
-    */
+   * there is also a matrix g, and in the constructor gptr is
+   * defined to be equal to &g. In the ggso-class a gram matrix
+   * is given (arg_g), and gptr is defined as &arg_g.
+   */
 
   /* Gram matrix (dot products of basis vectors, lower triangular matrix)
    g(i, j) is valid if 0 <= i < n_known_rows and j <= i */

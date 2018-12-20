@@ -173,7 +173,7 @@ template <class ZT, class FT> void MatHouseholder<ZT, FT>::update_R(int i, bool 
       // Copy R into R_history
       // TODO: this is a row operation. Can try to copy R(i, j..n-1) directly in
       // R_history[i][j](j..n-1).
-      for (k               = j; k < n; k++)
+      for (k = j; k < n; k++)
         R_history[i][j][k] = R(i, k);
     }
 

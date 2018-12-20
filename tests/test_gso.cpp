@@ -248,13 +248,15 @@ template <class ZT, class FT> int test_filename(const char *input_filename)
   }
   if (retvalue & 2)
   {
-    cerr << input_filename << " shows different GSO-outputs for grammatrix representation and "
-                              "basis representation after moving rows.\n";
+    cerr << input_filename
+         << " shows different GSO-outputs for grammatrix representation and "
+            "basis representation after moving rows.\n";
   }
   if (retvalue & 4)
   {
-    cerr << input_filename << " shows different GSO-outputs for grammatrix representation and "
-                              "basis representation after adding rows.\n";
+    cerr << input_filename
+         << " shows different GSO-outputs for grammatrix representation and "
+            "basis representation after adding rows.\n";
   }
   retvalue |= test_householder<ZT, FT>(A);
   if (retvalue > 0)

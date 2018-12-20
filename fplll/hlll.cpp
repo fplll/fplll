@@ -398,9 +398,9 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
 // avoid to return it.
 #ifdef DEBUG
     m.get_R(ftmp1, kappa, i, expo1);  // R(kappa, i) = ftmp1 * 2^expo1
-#else   // DEBUG
+#else                                 // DEBUG
     m.get_R(ftmp1, kappa, i);  // R(kappa, i) = ftmp1 * 2^expo0
-#endif  // DEBUG
+#endif                                // DEBUG
 
     FPLLL_DEBUG_CHECK(expo0 == expo1);  // Since R[kappa] and b[kappa] share the same row_expo.
     ftmp1.abs(ftmp1);
