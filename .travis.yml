@@ -81,7 +81,7 @@ matrix:
       - bash <(curl -s https://codecov.io/bash)
   - os: linux
     compiler: clang
-    env: COMPILER=clang++ CLANGFORMAT=clang-format
+    env: COMPILER=clang++ CLANGFORMAT=clang-format-3.9
     addons:
       apt:
         packages:
@@ -89,8 +89,10 @@ matrix:
         - libmpfr-dev
         - libqd-dev
     before_install:
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.9 main'
+      - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
       - sudo apt-get update -qq 
-      - sudo apt-get install -qq -y clang-format
+      - sudo apt-get install -qq -y clang-format-3.9
   - os: osx
     compiler: clang
     env: COMPILER=clang++ CLANGFORMAT=clang-format
