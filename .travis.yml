@@ -8,7 +8,7 @@ matrix:
   include:
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-4.8 CLANGFORMAT=clang-format-7
+    env: COMPILER=g++-4.8 CLANGFORMAT=clang-format-6.0
     addons:
       apt:
         packages:
@@ -17,13 +17,13 @@ matrix:
         - libmpfr-dev
         - libqd-dev
     before_install:
-      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-7 main'
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
       - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
       - sudo apt-get update -qq 
-      - sudo apt-get install -qq -y clang-format-7
+      - sudo apt-get install -qq -y clang-format-6.0
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-4.9 CLANGFORMAT=clang-format-7
+    env: COMPILER=g++-4.9 CLANGFORMAT=clang-format-6.0
     addons:
       apt:
         sources:
@@ -34,13 +34,13 @@ matrix:
         - libmpfr-dev
         - libqd-dev
     before_install:
-      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-7 main'
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
       - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
       - sudo apt-get update -qq 
-      - sudo apt-get install -qq -y clang-format-7
+      - sudo apt-get install -qq -y clang-format-6.0
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-5 CLANGFORMAT=clang-format-7
+    env: COMPILER=g++-5 CLANGFORMAT=clang-format-6.0
     addons:
       apt:
         sources:
@@ -51,13 +51,13 @@ matrix:
         - libmpfr-dev
         - libqd-dev
     before_install:
-      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-7 main'
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
       - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
       - sudo apt-get update -qq 
-      - sudo apt-get install -qq -y clang-format-7
+      - sudo apt-get install -qq -y clang-format-6.0
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-6 CLANGFORMAT=clang-format-7 CXXFLAGS="-O3 -ggdb -fprofile-arcs -ftest-coverage" 
+    env: COMPILER=g++-6 CLANGFORMAT=clang-format-6.0 CXXFLAGS="-O3 -ggdb -fprofile-arcs -ftest-coverage" 
     addons:
       apt:
         sources:
@@ -68,10 +68,10 @@ matrix:
         - libmpfr-dev
         - libqd-dev
     before_install:
-      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-7 main'
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
       - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
       - sudo apt-get update -qq 
-      - sudo apt-get install -qq -y clang-format-7
+      - sudo apt-get install -qq -y clang-format-6.0
     script:
       - make
       - make check
@@ -81,7 +81,7 @@ matrix:
       - bash <(curl -s https://codecov.io/bash)
   - os: linux
     compiler: clang
-    env: COMPILER=clang++ CLANGFORMAT=clang-format-7
+    env: COMPILER=clang++ CLANGFORMAT=clang-format-6.0
     addons:
       apt:
         packages:
@@ -89,10 +89,10 @@ matrix:
         - libmpfr-dev
         - libqd-dev
     before_install:
-      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-7 main'
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
       - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
       - sudo apt-get update -qq 
-      - sudo apt-get install -qq -y clang-format-7
+      - sudo apt-get install -qq -y clang-format-6.0
   - os: osx
     compiler: clang
     env: COMPILER=clang++ CLANGFORMAT=clang-format
