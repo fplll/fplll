@@ -5,6 +5,12 @@ if [ "$CI" = "true" ] && [ "$TRAVIS_OS_NAME" = "osx" ]; then
    exit 0;
 fi
 
+if [ "$CI" = "true" ] && [ "$CLANGFORMAT" = "clang-format-3.9" ]; then
+   echo "Skipping style check when using clang-format-3.9.";
+   exit 0;
+fi
+
+
 make check-style
 if [[ $(git status -s) ]]; 
 then
