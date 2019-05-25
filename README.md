@@ -120,6 +120,8 @@ Then run `sudo apt-get install <packages>` for the (indirectly) required package
 
 The same comments as before apply for using e.g. `make install` or `make distclean` instead of `make`.
 
+Note: to fix a potential error `libfplll.so.5: cannot open shared object file: No such file or directory` raised after trying to run `fplll` after a successful compilation, find the location of `libfplll.so.5` (probably something like `/../fplll/.libs/`; run `find -name libfplll.so.5` to find it) and run `export LD_LIBRARY_PATH=<path>`. 
+
 ## Check ##
 
 Type
