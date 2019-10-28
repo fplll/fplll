@@ -292,7 +292,7 @@ int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
 //////////////////////////////////////////
 ////// SVP FOR GSO OBJECT  ///////////////
 //////////////////////////////////////////
-
+/*
 static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, SVPMethod method,
                               const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
                               long long &sol_count,
@@ -348,9 +348,9 @@ static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, 
   }
   else
   {
-    /* Computes a bound for the enumeration. This bound would work for an
-       exact algorithm, but we will increase it later to ensure that the fp
-       algorithm finds a solution */
+    // Computes a bound for the enumeration. This bound would work for an
+    //   exact algorithm, but we will increase it later to ensure that the fp
+    //   algorithm finds a solution 
     get_basis_min(int_max_dist, b, 0, d);
     max_dist.set_z(int_max_dist, GMP_RNDU);
   }
@@ -396,9 +396,9 @@ static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, 
   }
   else if (!evaluator->empty())
   {
-    /*FP_NR<mpfr_t> fMaxError;
-    validMaxError = evaluator->get_max_error(fMaxError);
-    max_error = fMaxError.get_d(GMP_RNDU);*/
+    //FP_NR<mpfr_t> fMaxError;
+    //validMaxError = evaluator->get_max_error(fMaxError);
+    //max_error = fMaxError.get_d(GMP_RNDU);
     for (int i = 0; i < d; i++)
     {
       itmp1.set_f(evaluator->begin()->second[i]);
@@ -483,7 +483,7 @@ int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
                             nullptr, &auxsol_coord, &auxsol_dist, max_aux_sols);
 }
 
-
+*/
 ///////////////////////////////////
 //////END SVP FOR GSO OBJECT //////
 ///////////////////////////////////
