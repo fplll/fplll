@@ -62,40 +62,7 @@ static bool enumerate_svp(int d, MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, FP_NR<
 {
   Enumeration<Z_NR<mpz_t>, FP_NR<mpfr_t>> enumobj(gso, evaluator);
   bool dual = (flags & SVP_DUAL);
-  if (d == 1 || !pruning.empty() || dual)
-  {
-    enumobj.enumerate(0, d, max_dist, 0, vector<FP_NR<mpfr_t>>(), vector<enumxt>(), pruning, dual);
-  }
-  else
-  {
-    Enumerator enumerator(d, gso.get_mu_matrix(), gso.get_r_matrix());
-    FP_NR<mpfr_t> bestdist = -1;
-    while (enumerator.enum_next(max_dist))
-    {
-      if (flags & SVP_VERBOSE)
-      {
-        cerr << enumerator.get_sub_tree();
-        if (evaluator.eval_mode != EVALMODE_SV)
-          cerr << " (count=2*" << evaluator.size() << ")";
-      }
-
-      /* Enumerates short vectors only in enumerator.get_sub_tree()
-        (about maxVolume iterations or less) */
-      enumobj.enumerate(0, d, max_dist, 0, vector<FP_NR<mpfr_t>>(), enumerator.get_sub_tree(),
-                        pruning);
-
-      if (flags & SVP_VERBOSE)
-      {
-        cerr << "\r" << (char)27 << "[K";
-        if (evaluator.eval_mode == EVALMODE_SV && !evaluator.empty() &&
-            evaluator.begin()->first != bestdist)
-        {
-          bestdist = evaluator.begin()->first;
-          cerr << "Solution norm^2=" << bestdist << " value=" << evaluator.begin()->second << endl;
-        }
-      }
-    }
-  }
+  enumobj.enumerate(0, d, max_dist, 0, vector<FP_NR<mpfr_t>>(), vector<enumxt>(), pruning, dual);
   return !evaluator.empty();
 }
 

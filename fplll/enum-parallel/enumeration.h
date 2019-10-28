@@ -124,7 +124,7 @@ struct lattice_enum_t
   std::chrono::system_clock::time_point starttime;
 
   lattice_enum_t(globals_t<N> &globals_)
-      : globals(globals_), starttime(std::chrono::system_clock::now()), activeswirly(false)
+      : activeswirly(false), globals(globals_), starttime(std::chrono::system_clock::now())
   {
   }
 
@@ -297,7 +297,7 @@ struct lattice_enum_t
     // if it has changed then signal all threads to update and update ourselves
     if (globals.A != _A)
     {
-      for (int j = 0; j < globals.signal.size(); ++j)
+      for (size_t j = 0; j < globals.signal.size(); ++j)
         globals.signal[j] = 1;
 
       _thread_local_update();
@@ -386,7 +386,7 @@ struct lattice_enum_t
 
   template <bool svp = true> void enumerate_recursive()
   {
-    for (int i = 0; i < globals.signal.size(); ++i)
+    for (size_t i = 0; i < globals.signal.size(); ++i)
       globals.signal[i] = 0;
     threadid = enumlib_nrthreads;
 
@@ -429,7 +429,7 @@ struct lattice_enum_t
       sort(swirlys[0].begin(), swirlys[0].end(), swirl_less);
     }
 
-    int swirly0idx = 0;
+    size_t swirly0idx = 0;
     swirlys[1].clear();
     while (swirly0idx < swirlys[0].size())
     {
@@ -452,7 +452,7 @@ struct lattice_enum_t
         cout << "[enumlib] Swirly1: #=" << swirlys[1].size() << " (" << swirly0idx << "/"
              << swirlys[0].size() << ")" << endl;
 
-      int swirly1end = (int)(swirlys[1].size());
+      size_t swirly1end = (int)(swirlys[1].size());
       if (activeswirly)
       {
         // sort the new additions to swirly1
@@ -463,8 +463,8 @@ struct lattice_enum_t
 
         // process portion of swirly[1] and then add more
         swirly1end = (SWIRLY2BUF >> SWIRLY1FRACTION);
-        if (swirly1end > (int)(swirlys[1].size()))
-          swirly1end = (int)(swirlys[1].size());
+        if (swirly1end > swirlys[1].size())
+          swirly1end = swirlys[1].size();
       }
 
       auto &swirly_ref = swirlys[1];
@@ -509,7 +509,7 @@ struct lattice_enum_t
             this->_subsol[j]  = mylat._subsol[j];
           }
       };
-      if (threadpool.size() != enumlib_nrthreads)
+      if (threadpool.size() != size_t(enumlib_nrthreads))
         cout << "[enumlib] threadpool size mismatch!" << enumlib_nrthreads
              << "!=" << threadpool.size() << endl;
       for (int i = 0; i < enumlib_nrthreads; ++i)

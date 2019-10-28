@@ -32,7 +32,7 @@ namespace enumlib
 
 template <int dimension> struct enumerate_traits
 {
-  static const int SWIRLY          = 1;  // + (dimension / 20);
+  static const int SWIRLY          = 1 + (dimension / 20);
   static const int SWIRLY2BUF      = 1 << 10;
   static const int SWIRLY1FRACTION = 4;
 };
