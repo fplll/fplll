@@ -17,6 +17,7 @@
 #include <cstring>
 #include <fplll.h>
 #include <test_utils.h>
+#include <gso_gram.h>
 
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."
@@ -40,22 +41,38 @@ enum Test
    @return
 */
 
-template <class ZT> int test_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
+template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G) //, vector<Z_NR<mpz_t>> &b)
 {
-  vector<Z_NR<mpz_t>> sol_coord;   // In the LLL-reduced basis
-  vector<Z_NR<mpz_t>> sol_coord2;  // In the initial basis
+  vector<Z_NR<mpz_t>> sol_coord;   // In the LLL-reduced grammatrix
   vector<Z_NR<mpz_t>> solution;
   ZZ_mat<mpz_t> u;
 
-  int status =
-      lll_reduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
-  if (status != RED_SUCCESS)
+
+  ZZ_mat<ZT> U;
+  ZZ_mat<ZT> UT;
+
+  MatGSOGram<Z_NR<ZT>, FP_NR<FT>> Mgram(G, U, UT, 1);
+
+
+  Mgram.update_gso();
+
+
+
+  LLLReduction<Z_NR<ZT>, FP_NR<FT>> LLLObjgram(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
+
+  LLLObjgram.lll();
+
+  Mgram.print_mu_r_g(cerr);
+
+  int is_greduced = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA);
+
+  if (!is_greduced)
   {
-    cerr << "LLL reduction failed: " << get_red_status_str(status) << endl;
-    return status;
+    cerr << "LLL reduction failed: " << get_red_status_str(is_greduced) << endl;
+    return 1;
   }
 
-  status = shortest_vector(A, sol_coord, SVPM_PROVED, SVP_DEFAULT);
+  int status = shortest_vector(Mgram, sol_coord, SVPM_FAST, SVP_DEFAULT);
 
   if (status != RED_SUCCESS)
   {
@@ -63,23 +80,23 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
     return status;
   }
 
-  vector_matrix_product(sol_coord2, sol_coord, u);
-  vector_matrix_product(solution, sol_coord, A);
+  vector_matrix_product(solution, sol_coord, G);
 
   Z_NR<ZT> tmp;
   Z_NR<ZT> norm_s;
   Z_NR<ZT> norm_b;
 
-  for (int i = 0; i < A.get_cols(); i++)
+  for (int i = 0; i < G.get_cols(); i++)
   {
-    tmp.mul(solution[i], solution[i]);
+    tmp.mul(solution[i], sol_coord[i]);
     norm_s.add(norm_s, tmp);
 
-    tmp.mul(b[i], b[i]);
-    norm_b.add(norm_b, tmp);
+    //tmp.mul(b[i], b[i]);
+    //norm_b.add(norm_b, tmp);
   }
-  if (norm_s != norm_b)
-    return 1;
+  cerr << "Norm of vector equals: " << norm_s << endl;
+  //if (norm_s != norm_b)
+  //  return 1;
 
   return 0;
 }
@@ -260,28 +277,28 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
    @return
 */
 
-template <class ZT>
-int test_filename(const char *input_filename, const char *output_filename,
+template <class ZT, class FT>
+int test_filename(const char *input_filename, // const char *output_filename,
                   const Test test = SVP_ENUM)
 {
-  ZZ_mat<ZT> A;
+  ZZ_mat<ZT> G;
   int status = 0;
-  status |= read_file(A, input_filename);
+  status |= read_file(G, input_filename);
 
-  vector<Z_NR<mpz_t>> b;
-  status |= read_file(b, output_filename);
+  //vector<Z_NR<mpz_t>> b;
+  //status |= read_file(b, output_filename);
 
   switch (test)
   {
   case SVP_ENUM:
-    status |= test_svp<ZT>(A, b);
+    status |= test_svp<ZT,FT>(G);
     return status;
-  case DSVP_ENUM:
-    status |= test_dual_svp<ZT>(A, b);
-    return status;
-  case DSVP_REDUCE:
-    status |= test_dsvp_reduce<ZT>(A, b);
-    return status;
+   case DSVP_ENUM:
+  //   status |= test_dual_svp<ZT>(A, b);
+     return status;
+   case DSVP_REDUCE:
+  //   status |= test_dsvp_reduce<ZT>(A, b);
+     return status;
   }
 
   cerr << "Unknown test." << endl;
@@ -298,12 +315,12 @@ int main()
 {
 
   int status = 0;
-  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_svp_in",
-                                 TESTDATADIR "/tests/lattices/example_svp_out");
-  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
-                                 TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_ENUM);
-  status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
-                                 TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_REDUCE);
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension7");
+                                //,TESTDATADIR "/tests/lattices/example_svp_out");
+  // status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
+  //                                TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_ENUM);
+  // status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
+  //                                TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_REDUCE);
 
   if (status == 0)
   {

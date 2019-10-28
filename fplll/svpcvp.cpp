@@ -60,11 +60,10 @@ static void get_basis_min(Z_NR<mpz_t> &basis_min, const ZZ_mat<mpz_t> &b, int fi
 static void get_basis_min(Z_NR<mpz_t> &basis_min, MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, int first, int last)
 {
   Z_NR<mpz_t> sq_norm;
-  gso.get_int_gram(sq_norm,first,first);
-
+  gso.get_int_gram(basis_min,first,first);
   for (int i = first + 1; i < last; i++)
   {
-    gso.get_int_gram(sq_norm,first,first);
+    gso.get_int_gram(sq_norm,i,i);
     if (sq_norm < basis_min)
       basis_min = sq_norm;
   }
@@ -400,6 +399,7 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
 
     // Use the GSO version of get_basis_min
     get_basis_min(int_max_dist, gso, 0, d);
+    cerr << int_max_dist << endl;
     max_dist.set_z(int_max_dist, GMP_RNDU);
   }
 
@@ -438,7 +438,7 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
   }
 
   // Main loop of the enumeration
-  enumerate_svp(d, gso, max_dist, *evaluator, pruning, flags); // Only uses r and mu
+  enumerate_svp(d, gso, max_dist, *evaluator, pruning, flags || SVP_VERBOSE); // Only uses r and mu
 
   int result = RED_ENUM_FAILURE;
   if (eval_mode != EVALMODE_SV)

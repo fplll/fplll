@@ -236,7 +236,8 @@ template <class ZT, class FT> inline ZT &MatGSOGram<ZT, FT>::get_int_gram(ZT &z,
     {
       throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
-   z = (*gptr)(i, j);
+   z = (*gptr)[i][j];
+
   }
   return z;
 }
