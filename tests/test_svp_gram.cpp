@@ -44,11 +44,13 @@ enum Test
 template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G) //, vector<Z_NR<mpz_t>> &b)
 {
   vector<Z_NR<mpz_t>> sol_coord;   // In the LLL-reduced grammatrix
+  vector<Z_NR<mpz_t>> sol_coord2;   // In the original grammatrix
   vector<Z_NR<mpz_t>> solution;
   ZZ_mat<mpz_t> u;
 
 
   ZZ_mat<ZT> U;
+  U.gen_identity(G.get_cols());
   ZZ_mat<ZT> UT;
 
   MatGSOGram<Z_NR<ZT>, FP_NR<FT>> Mgram(G, U, UT, 1);
@@ -80,6 +82,8 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G) //, vector<Z_NR<mpz_t>
     return status;
   }
 
+  cerr << U << endl;
+  vector_matrix_product(sol_coord2,sol_coord,U);
   vector_matrix_product(solution, sol_coord, G);
 
   Z_NR<ZT> tmp;
@@ -88,6 +92,8 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G) //, vector<Z_NR<mpz_t>
 
   for (int i = 0; i < G.get_cols(); i++)
   {
+    cerr << sol_coord2[i] << " " << endl;
+
     tmp.mul(solution[i], sol_coord[i]);
     norm_s.add(norm_s, tmp);
 
@@ -316,6 +322,7 @@ int main()
 
   int status = 0;
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension7");
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4");
                                 //,TESTDATADIR "/tests/lattices/example_svp_out");
   // status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
   //                                TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_ENUM);
