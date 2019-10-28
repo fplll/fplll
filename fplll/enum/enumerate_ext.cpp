@@ -15,16 +15,30 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "enumerate_ext.h"
+#include "../fplll_config.h"
+
+#ifdef FPLLL_WITH_PARALLEL_ENUM
+#include "../enum-parallel/enumlib.h"
+#endif
 
 FPLLL_BEGIN_NAMESPACE
 
 // set & get external enumerator (nullptr => disabled)
+#ifdef FPLLL_WITH_PARALLEL_ENUM
+std::function<extenum_fc_enumerate> fplll_extenum = enumlib::enumlib_enumerate;
+#else
 std::function<extenum_fc_enumerate> fplll_extenum = nullptr;
+#endif
+
 void set_external_enumerator(std::function<extenum_fc_enumerate> extenum)
 {
   fplll_extenum = extenum;
 }
-std::function<extenum_fc_enumerate> get_external_enumerator() { return fplll_extenum; }
+
+std::function<extenum_fc_enumerate> get_external_enumerator()
+{
+	return fplll_extenum;
+}
 
 template <typename ZT, typename FT>
 bool ExternalEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,

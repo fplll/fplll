@@ -152,6 +152,16 @@ AC_ARG_ENABLE(recursive-enum,
 AS_IF([test "x$enable_recursive_enum" != "xno"], [
         AC_DEFINE([FPLLL_WITH_RECURSIVE_ENUM], [1], [recursive enumeration enabled])])
 
+AC_ARG_ENABLE(parallel-enum,
+        AS_HELP_STRING([--disable-parallel-enum],
+         [Disable parallel enumeration]))
+
+AS_IF([test "x$enable_parallel_enum" != "xno"], [
+        AC_DEFINE([FPLLL_WITH_PARALLEL_ENUM], [1], [parallel enumeration enabled])
+        AX_PTHREAD()
+        ])
+AM_CONDITIONAL(FPLLL_PARALLEL_ENUM, test "x$enable_parallel_enum" != "xno")
+
 # Store version numbers in header
 
 AC_DEFINE_UNQUOTED([FPLLL_MAJOR_VERSION],[$FPLLL_MAJOR_VERSION],[major version])
