@@ -14,4 +14,4 @@ dist_strategy_DATA = strategies/default.json
 CLANGFORMAT       ?= clang-format
 .PHONY: check-style
 check-style:
-	$(CLANGFORMAT) -i --style=file fplll/*.{cpp,h,in} fplll/*/*.{cpp,h,in} tests/*.cpp
+	$(CLANGFORMAT) -i --style=file fplll/*.{cpp,h,inl} fplll/*/*.{cpp,h,inl} tests/*.cpp
