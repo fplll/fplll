@@ -34,12 +34,12 @@ namespace enumlib
 {
 
 typedef ::fplll::enumf fplll_float;
-using ::fplll::extenum_cb_set_config;
 using ::fplll::extenum_cb_process_sol;
 using ::fplll::extenum_cb_process_subsol;
+using ::fplll::extenum_cb_set_config;
 using ::fplll::extenum_fc_enumerate;
 
-} // namespace enumlib
+}  // namespace enumlib
 
 FPLLL_END_NAMESPACE
 

@@ -25,35 +25,33 @@ SOFTWARE.
 #ifndef ENUMLIB_EXTENUM_HPP
 #define ENUMLIB_EXTENUM_HPP
 
-#include <fplll/defs.h>
 #include "fplll_types.h"
+#include <fplll/defs.h>
 
 FPLLL_BEGIN_NAMESPACE
 
 namespace enumlib
 {
 
-extern "C" {
+extern "C"
+{
 
-/* -1=quiet, 0=normal, 1=verbose, 2=very verbose*/
-void fplll_enumlib_set_loglevel(int level);
+  /* -1=quiet, 0=normal, 1=verbose, 2=very verbose*/
+  void fplll_enumlib_set_loglevel(int level);
 
-/* (th<=0)=auto=#cores */
-void fplll_enumlib_set_numthreads(int th);
+  /* (th<=0)=auto=#cores */
+  void fplll_enumlib_set_numthreads(int th);
 
-//void fplll_register_enumlib();
-
+  // void fplll_register_enumlib();
 }
 
-
 uint64_t enumlib_enumerate(int dim, ::fplll::enumf maxdist,
-    std::function<::fplll::extenum_cb_set_config> cbfunc,
-    std::function<::fplll::extenum_cb_process_sol> cbsol,
-    std::function<::fplll::extenum_cb_process_subsol> cbsubsol,
-    bool dual, bool findsubsols
-    );
+                           std::function<::fplll::extenum_cb_set_config> cbfunc,
+                           std::function<::fplll::extenum_cb_process_sol> cbsol,
+                           std::function<::fplll::extenum_cb_process_subsol> cbsubsol, bool dual,
+                           bool findsubsols);
 
-} // namespace enumlib
+}  // namespace enumlib
 
 FPLLL_END_NAMESPACE
 
