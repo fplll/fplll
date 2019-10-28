@@ -42,6 +42,23 @@ int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
                             vector<vector<Z_NR<mpz_t>>> &auxsol_coord, vector<double> &auxsol_dist,
                             const int max_aux_sols, const vector<double> &pruning,
                             int flags = SVP_DEFAULT);
+
+
+
+int shortest_vector(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord,
+                    SVPMethod method = SVPM_PROVED, int flags = SVP_DEFAULT);
+
+int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord,
+                            const vector<double> &pruning, int flags = SVP_DEFAULT);
+
+int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord,
+                            vector<vector<Z_NR<mpz_t>>> &subsol_coord, vector<double> &subsol_dist,
+                            const vector<double> &pruning, int flags = SVP_DEFAULT);
+
+int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord,
+                            vector<vector<Z_NR<mpz_t>>> &auxsol_coord, vector<double> &auxsol_dist,
+                            const int max_aux_sols, const vector<double> &pruning,
+                            int flags = SVP_DEFAULT);
 /**
  * Computes a closest vector of a lattice to a target.
  * The vectors must be linearly independant and the basis must be LLL-reduced

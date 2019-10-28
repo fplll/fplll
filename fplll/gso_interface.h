@@ -179,6 +179,17 @@ public:
    */
   virtual FT &get_gram(FT &f, int i, int j) = 0;
 
+
+  /**
+   * Returns *integer* Gram matrix coefficients (0 &lt;= i &lt; n_known_rows and
+   * 0 &lt;= j &lt;= i).
+   * If (enable_int_gram = true), it returns the i,j-th coordinate of the Gram matrix
+   * else it computes the inner product of b_i and b_j 
+   * Returns reference to `z`.
+   */
+
+  virtual ZT &get_int_gram(ZT &z, int i, int j) = 0;
+
   /**
    * Returns the mu matrix
    * Coefficients of the Gram Schmidt Orthogonalization

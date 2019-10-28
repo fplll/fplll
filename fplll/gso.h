@@ -178,6 +178,8 @@ public:
   //  virtual inline void printparam(ostream &os);
   virtual inline FT &get_gram(FT &f, int i, int j);
 
+  virtual inline ZT &get_int_gram(ZT &z, int i, int j);
+
   // b[i] <-> b[j] (i < j)
   virtual void row_swap(int i, int j);
 
@@ -254,6 +256,23 @@ template <class ZT, class FT> inline FT &MatGSO<ZT, FT>::get_gram(FT &f, int i, 
     f = gf(i, j);
   }
   return f;
+}
+
+template <class ZT, class FT> inline ZT &MatGSO<ZT, FT>::get_int_gram(ZT &z, int i, int j)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j <= i && j < n_source_rows &&
+                    !in_row_op_range(i));
+  if (enable_int_gram)
+  {
+    z = g(i, j);
+  }
+  else
+  {
+
+      b[i].dot_product(z, b[j], n_known_cols);
+
+  }
+  return z;
 }
 
 template <class ZT, class FT> inline void MatGSO<ZT, FT>::create_rows(int n_new_rows)

@@ -119,6 +119,8 @@ public:
 
   virtual inline FT &get_gram(FT &f, int i, int j);
 
+  virtual inline ZT &get_int_gram(ZT &z, int i, int j);
+
   // b[i] <-> b[j] (i < j)
   virtual void row_swap(int i, int j);
 
@@ -222,6 +224,21 @@ template <class ZT, class FT> inline FT &MatGSOGram<ZT, FT>::get_gram(FT &f, int
     f.set_z((*gptr)(i, j));
   }
   return f;
+}
+
+template <class ZT, class FT> inline ZT &MatGSOGram<ZT, FT>::get_int_gram(ZT &z, int i, int j)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j <= i && j < n_source_rows &&
+                    !in_row_op_range(i));
+  if (enable_int_gram)
+  {
+    if (gptr == nullptr)
+    {
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
+    }
+   z = (*gptr)(i, j);
+  }
+  return z;
 }
 
 template <class ZT, class FT> inline void MatGSOGram<ZT, FT>::remove_last_rows(int n_removed_rows)
