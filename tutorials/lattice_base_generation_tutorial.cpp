@@ -14,7 +14,8 @@ using namespace fplll;
 #define TESTDATADIR ".."
 #endif
 
-/* Compile like so: g++ -std=c++11 -march=native -o3 lattice_base_generation_tutorial.cpp -lfplll -lmpfr -lgmp -o <executable_name> 
+/* Compile like so: g++ -std=c++11 -march=native -o3 lattice_base_generation_tutorial.cpp -lfplll -lmpfr -lgmp -o <executable_name> */
+
 
 /** 
  * This function generates a matrix of rows x (rows + 1), similar to 'r' method of latticegen.
