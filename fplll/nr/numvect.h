@@ -198,10 +198,21 @@ public:
   void sub(const NumVect<T> &v, int n);
   /** Subtraction of two NumVector objects. */
   void sub(const NumVect<T> &v) { sub(v, size()); }
+  /** Multiplication of NumVector and a number c, from index b till index n. */
+  void mul(const NumVect<T> &v, int b, int n, T c);
   /** Multiplication of NumVector and a number c, till index n. */
   void mul(const NumVect<T> &v, int n, T c);
   /** Multiplication of NumVector and a number c. */
   void mul(const NumVect<T> &v, T c) { mul(v, size(), c); }
+  /** Division of NumVector and a number c, from index b till index n. */
+  void div(const NumVect<T> &v, int b, int n, T c);
+  /** Division of NumVector and a number c, till index n. */
+  void div(const NumVect<T> &v, int n, T c);
+  /** Division of NumVector and a number c. */
+  void div(const NumVect<T> &v, T c) { div(v, size(), c); }
+  /** Incremeanting each coefficient of NumVector by its product with
+      number c, from beg to index n - 1. */
+  void addmul(const NumVect<T> &v, T x, int beg, int n);
   /** Incremeanting each coefficient of NumVector by its product with
       number c, till index n. */
   void addmul(const NumVect<T> &v, T x, int n);
@@ -260,18 +271,34 @@ template <class T> void NumVect<T>::sub(const NumVect<T> &v, int n)
     data[i].sub(data[i], v[i]);
 }
 
-template <class T> void NumVect<T>::mul(const NumVect<T> &v, int n, T c)
+template <class T> void NumVect<T>::mul(const NumVect<T> &v, int b, int n, T c)
 {
   FPLLL_DEBUG_CHECK(n <= size() && size() == v.size() && v.is_zero(n));
-  for (int i = n - 1; i >= 0; i--)
+  for (int i = n - 1; i >= b; i--)
     data[i].mul(v[i], c);
+}
+
+template <class T> void NumVect<T>::mul(const NumVect<T> &v, int n, T c) { mul(v, 0, n, c); }
+
+template <class T> void NumVect<T>::div(const NumVect<T> &v, int b, int n, T c)
+{
+  FPLLL_DEBUG_CHECK(n <= size() && size() == v.size() && v.is_zero(n));
+  for (int i = n - 1; i >= b; i--)
+    data[i].div(v[i], c);
+}
+
+template <class T> void NumVect<T>::div(const NumVect<T> &v, int n, T c) { div(v, 0, n, c); }
+
+template <class T> void NumVect<T>::addmul(const NumVect<T> &v, T x, int beg, int n)
+{
+  FPLLL_DEBUG_CHECK(n <= size() && size() == v.size() && v.is_zero(n));
+  for (int i = n - 1; i >= beg; i--)
+    data[i].addmul(v[i], x);
 }
 
 template <class T> void NumVect<T>::addmul(const NumVect<T> &v, T x, int n)
 {
-  FPLLL_DEBUG_CHECK(n <= size() && size() == v.size() && v.is_zero(n));
-  for (int i = n - 1; i >= 0; i--)
-    data[i].addmul(v[i], x);
+  this->addmul(v, x, 0, n);
 }
 
 template <class T>
@@ -344,16 +371,26 @@ template <class T> int NumVect<T>::size_nz() const
   return i;
 }
 
+/** Compute the truncated dot product between tow Numvect using coefficients [beg, n).
+ * Constraint: n > beg.
+ */
 template <class T>
-inline void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2, int n)
+inline void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2, int beg, int n)
 {
-  FPLLL_DEBUG_CHECK(n > 0 && n <= v1.size() && v1.size() == v2.size() &&
-                    (v1.is_zero(n) || v2.is_zero(n)));
-  result.mul(v1[0], v2[0]);
-  for (int i = 1; i < n; i++)
+  FPLLL_DEBUG_CHECK(beg >= 0 && n > beg && n <= v1.size() && n <= v2.size());
+  //(v1.is_zero(n) || v2.is_zero(n))); tested previously
+  result.mul(v1[beg], v2[beg]);
+  for (int i = beg + 1; i < n; i++)
   {
     result.addmul(v1[i], v2[i]);
   }
+}
+
+template <class T>
+inline void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2, int n)
+{
+  FPLLL_DEBUG_CHECK(n <= v1.size() && v1.size() == v2.size() && (v1.is_zero(n) || v2.is_zero(n)));
+  dot_product(result, v1, v2, 0, n);
 }
 
 template <class T> inline void dot_product(T &result, const NumVect<T> &v1, const NumVect<T> &v2)

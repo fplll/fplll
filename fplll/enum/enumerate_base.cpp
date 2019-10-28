@@ -55,18 +55,18 @@ inline void EnumerationBase::enumerate_recursive(
     partdist[kk - 1] = newdist;
     if (dualenum)
     {
-      for (int j                   = center_partsum_begin[kk]; j > kk - 1; --j)
+      for (int j = center_partsum_begin[kk]; j > kk - 1; --j)
         center_partsums[kk - 1][j] = center_partsums[kk - 1][j + 1] - alpha[j] * mut[kk - 1][j];
     }
     else
     {
-      for (int j                   = center_partsum_begin[kk]; j > kk - 1; --j)
+      for (int j = center_partsum_begin[kk]; j > kk - 1; --j)
         center_partsums[kk - 1][j] = center_partsums[kk - 1][j + 1] - x[j] * mut[kk - 1][j];
     }
     if (center_partsum_begin[kk] > center_partsum_begin[kk - 1])
       center_partsum_begin[kk - 1] = center_partsum_begin[kk];
-    center_partsum_begin[kk]       = kk;
-    center[kk - 1]                 = center_partsums[kk - 1][kk];
+    center_partsum_begin[kk] = kk;
+    center[kk - 1]           = center_partsums[kk - 1][kk];
     roundto(x[kk - 1], center[kk - 1]);
     dx[kk - 1] = ddx[kk - 1] = (((int)(center[kk - 1] >= x[kk - 1]) & 1) << 1) - 1;
   }
@@ -105,7 +105,7 @@ inline void EnumerationBase::enumerate_recursive(
               center_partsums[kk - 1][kk - 1 + 1 + 1] - x[kk - 1 + 1] * mut[kk - 1][kk - 1 + 1];
         if (kk > center_partsum_begin[kk - 1])
           center_partsum_begin[kk - 1] = kk;
-        center[kk - 1]                 = center_partsums[kk - 1][kk - 1 + 1];
+        center[kk - 1] = center_partsums[kk - 1][kk - 1 + 1];
         roundto(x[kk - 1], center[kk - 1]);
         dx[kk - 1] = ddx[kk - 1] = (((int)(center[kk - 1] >= x[kk - 1]) & 1) << 1) - 1;
       }
@@ -136,7 +136,7 @@ inline void EnumerationBase::enumerate_recursive(
               center_partsums[kk - 1][kk - 1 + 1 + 1] - x[kk - 1 + 1] * mut[kk - 1][kk - 1 + 1];
         if (kk > center_partsum_begin[kk - 1])
           center_partsum_begin[kk - 1] = kk;
-        center[kk - 1]                 = center_partsums[kk - 1][kk - 1 + 1];
+        center[kk - 1] = center_partsums[kk - 1][kk - 1 + 1];
         roundto(x[kk - 1], center[kk - 1]);
         dx[kk - 1] = ddx[kk - 1] = (((int)(center[kk - 1] >= x[kk - 1]) & 1) << 1) - 1;
       }
@@ -231,12 +231,12 @@ template <bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBa
       }
       if (dualenum)
       {
-        for (int j              = center_partsum_begin[k + 1]; j > k; --j)
+        for (int j = center_partsum_begin[k + 1]; j > k; --j)
           center_partsums[k][j] = center_partsums[k][j + 1] - alpha[j] * mut[k][j];
       }
       else
       {
-        for (int j              = center_partsum_begin[k + 1]; j > k; --j)
+        for (int j = center_partsum_begin[k + 1]; j > k; --j)
           center_partsums[k][j] = center_partsums[k][j + 1] - x[j] * mut[k][j];
       }
       center_partsum_begin[k]     = max(center_partsum_begin[k], center_partsum_begin[k + 1]);

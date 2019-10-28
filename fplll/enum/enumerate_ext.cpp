@@ -112,12 +112,12 @@ void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, b
 
   if (_pruning.empty())
   {
-    for (int i   = 0; i < _d; ++i)
+    for (int i = 0; i < _d; ++i)
       pruning[i] = 1.0;
   }
   else
   {
-    for (int i   = 0; i < _d; ++i)
+    for (int i = 0; i < _d; ++i)
       pruning[i] = _pruning[i];
   }
 }
@@ -126,7 +126,7 @@ template <typename ZT, typename FT>
 enumf ExternalEnumeration<ZT, FT>::callback_process_sol(enumf dist, enumf *sol)
 {
   for (int i = 0; i < _d; ++i)
-    _fx[i]   = sol[i];
+    _fx[i] = sol[i];
   _evaluator.eval_sol(_fx, dist, _maxdist);
   return _maxdist;
 }
@@ -135,9 +135,9 @@ template <typename ZT, typename FT>
 void ExternalEnumeration<ZT, FT>::callback_process_subsol(enumf dist, enumf *subsol, int offset)
 {
   for (int i = 0; i < offset; ++i)
-    _fx[i]   = 0.0;
+    _fx[i] = 0.0;
   for (int i = offset; i < _d; ++i)
-    _fx[i]   = subsol[i];
+    _fx[i] = subsol[i];
   _evaluator.eval_sub_sol(offset, _fx, dist);
 }
 

@@ -124,8 +124,9 @@ inline void FP_NR<dd_real>::set_z(const Z_NR<mpz_t>& a, mp_rnd_t /*rnd*/) {
   mpz_init(tz);
   mpz_set_d(tz,hi);
   mpz_sub(tz,a.get_data(),tz);
-   
+
   data = dd_real(hi,mpz_get_d(tz));
+  mpz_clear(tz);
 }
 
 #endif
@@ -338,13 +339,13 @@ inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<long>& a, long& expo, long expo_ad
 #ifdef FPLLL_WITH_ZDOUBLE
 /** get_z_exp_we (from dd_real to Z_NR<double>) */
 template<> template<>
-inline void FP_NR<dd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long expo_add) const {
+inline void FP_NR<dd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long) const {
   expo = 0;
   a = get_si();
 }
 /** get_z_exp_we (from qd_real to Z_NR<double>) */
 template<> template<>
-inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long expo_add) const {
+inline void FP_NR<qd_real>::get_z_exp_we(Z_NR<double>& a, long& expo, long) const {
   expo = 0;
   a = get_si();
 }

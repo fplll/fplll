@@ -120,8 +120,8 @@ protected:
 
   template <bool dualenum, bool findsubsols, bool enable_reset> void enumerate_loop();
 
-  virtual void reset(enumf, int) = 0;
-  virtual void process_solution(enumf newmaxdist) = 0;
+  virtual void reset(enumf, int)                              = 0;
+  virtual void process_solution(enumf newmaxdist)             = 0;
   virtual void process_subsolution(int offset, enumf newdist) = 0;
 
   int rounding_backup;

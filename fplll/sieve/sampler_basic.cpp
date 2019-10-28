@@ -124,9 +124,9 @@ template <class ZT, class F> NumVect<Z_NR<ZT>> KleinSampler<ZT, F>::sample()
   Z_NR<ZT> tmpz;
 
   for (int i = 0; i < nc; i++)
-    vec[i]   = 0.0;
+    vec[i] = 0.0;
   for (int i = 0; i < nr; i++)
-    ci[i]    = 0.0;
+    ci[i] = 0.0;
 
   for (int i = nr - 1; i >= 0; i--)
   {
@@ -155,4 +155,9 @@ template <class ZT, class F> NumVect<Z_NR<ZT>> KleinSampler<ZT, F>::sample()
 
 template class KleinSampler<long, FP_NR<double>>;
 template class KleinSampler<mpz_t, FP_NR<double>>;
+#ifdef FPLLL_WITH_QD
+template class KleinSampler<long, FP_NR<dd_real>>;
+template class KleinSampler<mpz_t, FP_NR<dd_real>>;
+#endif
+template class KleinSampler<long, FP_NR<mpfr_t>>;
 template class KleinSampler<mpz_t, FP_NR<mpfr_t>>;

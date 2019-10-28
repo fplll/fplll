@@ -29,7 +29,7 @@ FPLLL_BEGIN_NAMESPACE
  * @brief Performs a heuristic check if BKZ can be terminated.
  *
  * Checks if the slope of the basis hasn't decreased in a while.
-*/
+ */
 template <class ZT, class FT> class BKZAutoAbort
 {
 public:
@@ -42,7 +42,7 @@ public:
    *    the number of vectors to check
    * @param start_row
    *    the starting point of the vectors to check
-  */
+   */
   BKZAutoAbort(MatGSO<ZT, FT> &m, int num_rows, int start_row = 0)
       : m(m), old_slope(numeric_limits<double>::max()), no_dec(-1), num_rows(num_rows),
         start_row(start_row)
@@ -78,12 +78,12 @@ private:
 };
 
 /**
-   * @brief The class performing block reduction.
-   *
-   * This class implements BKZ, SD-BKZ and Slide Reduction. For this
-   * it relies on the GSO, LLL, and Enumeration modules. It assumes
-   * that the basis is LLL reduced.
-**/
+ * @brief The class performing block reduction.
+ *
+ * This class implements BKZ, SD-BKZ and Slide Reduction. For this
+ * it relies on the GSO, LLL, and Enumeration modules. It assumes
+ * that the basis is LLL reduced.
+ **/
 template <class ZT, class FT> class BKZReduction
 {
   /**
@@ -115,7 +115,7 @@ public:
    *@returns
    *    false if it modified the basis, true otherwise
    */
-  bool svp_preprocessing(int kappa, int block_size, const BKZParam &param);
+  bool svp_preprocessing(int kappa, unsigned int block_size, const BKZParam &param);
 
   /**
    * @brief Inserts given (dual) vector into the basis
@@ -160,7 +160,7 @@ public:
    *    flag specifying if the block is to be SVP or dual SVP reduced.
    * @returns
    *    false if it made progress, true otherwise
-  */
+   */
   bool svp_reduction(int kappa, int block_size, const BKZParam &param, bool dual = false);
 
   /**
@@ -303,7 +303,7 @@ private:
 
   bool set_status(int new_status);
 
-  const PruningParams &get_pruning(int kappa, int block_size, const BKZParam &par) const;
+  const PruningParams &get_pruning(int kappa, unsigned int block_size, const BKZParam &par) const;
 
   // handles the general case of inserting a vector into the (dual) basis, i.e.
   // when none of the coefficients are \pm 1

@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 {
   char *input_file_name = NULL;
   char *target_norm_s   = NULL;
-  bool flag_verbose = false, flag_file = false;
+  bool flag_verbose = true, flag_file = false;
   int option, alg, dim = 10, seed = 0, bs = 0;
 
 #if 0
@@ -72,6 +72,7 @@ int main(int argc, char **argv)
       alg = atoi(optarg);
       if (alg != 2 && alg != 3 && alg != 4)
         throw std::invalid_argument("only support 2-, 3- and 4-sieve");
+      break;
     case 'f':
       input_file_name = optarg;
       flag_file       = true;

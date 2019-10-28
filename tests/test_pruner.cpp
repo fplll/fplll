@@ -32,9 +32,9 @@ using namespace fplll;
 */
 
 #define N 56
-#define D (N / 2)
+#define D (N)
 #define Nbis 24
-#define Dbis 12
+#define Dbis 24
 
 int last_status = 0;
 void print_status(int status)
@@ -52,7 +52,7 @@ public:
   int n;
   int d;
   Pruner<FT> pru;
-  TestPruner(int n) : n(n), pru(n) { d = n / 2; }
+  TestPruner(int n) : n(n), pru(n) { d = n; }
 
   int test_enforce()
   {
@@ -359,7 +359,7 @@ template <class FT> int test_auto_prune(size_t n)
   cerr << endl << "Predicted Total Cost " << cost << endl;
 
   cerr << endl << "Gradient " << endl;
-  cerr << "radius " << radius_d << endl;
+  cerr << "Radius " << radius_d << endl;
   prune<FT>(pruning, radius_d, overhead, r, 0.3, PRUNER_METRIC_PROBABILITY_OF_SHORTEST,
             PRUNER_GRADIENT);
   status += !(pruning.expectation <= 1.001);
@@ -509,7 +509,7 @@ template <class FT> int test_auto_prune(size_t n)
   return status;
 }
 
-int main(int argc, char *argv[])
+int main()
 {
   int status = 0;
 #ifdef FPLLL_WITH_QD

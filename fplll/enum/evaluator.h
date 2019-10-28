@@ -46,7 +46,7 @@ enum EvaluatorStrategy
    * EVALSTRATEGY_FIRST_N_SOLUTIONS
    *   The enumeration bound is not updated. As soon as max_sols are found, enumeration
    *   stops.
-  */
+   */
   EVALSTRATEGY_BEST_N_SOLUTIONS          = 0,
   EVALSTRATEGY_OPPORTUNISTIC_N_SOLUTIONS = 1,
   EVALSTRATEGY_FIRST_N_SOLUTIONS         = 2
@@ -154,10 +154,10 @@ protected:
 };
 
 /**
-* Simple solution evaluator which provides a result without error bound.
-* The same instance can be used for several calls to enumerate on different
-* problems.
-*/
+ * Simple solution evaluator which provides a result without error bound.
+ * The same instance can be used for several calls to enumerate on different
+ * problems.
+ */
 template <class FT> class FastEvaluator : public Evaluator<FT>
 {
 public:
@@ -196,7 +196,7 @@ public:
     {
       sub_solutions[offset].first  = dist;
       sub_solutions[offset].second = new_sub_sol_coord;
-      for (int i                        = 0; i < offset; ++i)
+      for (int i = 0; i < offset; ++i)
         sub_solutions[offset].second[i] = 0.0;
     }
   }

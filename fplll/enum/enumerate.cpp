@@ -27,7 +27,7 @@ void EnumerationDyn<ZT, FT>::reset(enumf cur_dist, int cur_depth)
   int new_dim = cur_depth + 1;
 
   vector<enumxt> partial_sol(d - cur_depth - 1);
-  for (int i                       = cur_depth + 1; i < d; ++i)
+  for (int i = cur_depth + 1; i < d; ++i)
     partial_sol[i - cur_depth - 1] = x[i];
 
   FT new_dist = 0.0;
@@ -49,7 +49,7 @@ void EnumerationDyn<ZT, FT>::reset(enumf cur_dist, int cur_depth)
     {
       // FPLLL_TRACE("Saving it.");
       for (int i = 0; i < new_dim; ++i)
-        x[i]     = new_evaluator.begin()->second[i].get_d();
+        x[i] = new_evaluator.begin()->second[i].get_d();
       process_solution(sol_dist + cur_dist);
     }
   }
@@ -67,7 +67,7 @@ void EnumerationDyn<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long f
   target          = target_coord;
   if (last == -1)
     last = _gso.d;
-  d      = last - first;
+  d = last - first;
   fx.resize(d);
   FPLLL_CHECK(d < maxdim, "enumerate: dimension is too high");
   FPLLL_CHECK((solvingsvp || !dual), "CVP for dual not implemented! What does that even mean? ");
@@ -79,12 +79,12 @@ void EnumerationDyn<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long f
 
   if (solvingsvp)
   {
-    for (int i          = 0; i < d; ++i)
+    for (int i = 0; i < d; ++i)
       center_partsum[i] = 0.0;
   }
   else
   {
-    for (int i          = 0; i < d; ++i)
+    for (int i = 0; i < d; ++i)
       center_partsum[i] = target_coord[i + first].get_d();
   }
 
@@ -223,7 +223,7 @@ template <typename ZT, typename FT> void EnumerationDyn<ZT, FT>::set_bounds()
   }
   else
   {
-    for (int i          = 0; i < d; ++i)
+    for (int i = 0; i < d; ++i)
       partdistbounds[i] = pruning_bounds[i] * maxdist;
   }
 }
@@ -232,7 +232,7 @@ template <typename ZT, typename FT> void EnumerationDyn<ZT, FT>::process_solutio
 {
   FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << nodes << ")");
   for (int j = 0; j < d; ++j)
-    fx[j]    = x[j];
+    fx[j] = x[j];
   _evaluator.eval_sol(fx, newmaxdist, maxdist);
 
   set_bounds();
@@ -242,9 +242,9 @@ template <typename ZT, typename FT>
 void EnumerationDyn<ZT, FT>::process_subsolution(int offset, enumf newdist)
 {
   for (int j = 0; j < offset; ++j)
-    fx[j]    = 0.0;
+    fx[j] = 0.0;
   for (int j = offset; j < d; ++j)
-    fx[j]    = x[j];
+    fx[j] = x[j];
   _evaluator.eval_sub_sol(offset, fx, newdist);
 }
 

@@ -120,6 +120,8 @@ Then run `sudo apt-get install <packages>` for the (indirectly) required package
 
 The same comments as before apply for using e.g. `make install` or `make distclean` instead of `make`.
 
+Note: to fix a potential error `libfplll.so.5: cannot open shared object file: No such file or directory` raised after trying to run `fplll` after a successful compilation, find the location of `libfplll.so.5` (probably something like `/../fplll/.libs/`; run `find -name libfplll.so.5` to find it) and run `export LD_LIBRARY_PATH=<path>`. 
+
 ## Check ##
 
 Type
@@ -176,8 +178,9 @@ The options are:
 * `-a sld` : slide reduction.
 * `-a cvp` : prints the vector in the lattice closest to the input vector.
 * `-v` : verbose mode. 
-* `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution).
+* `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution). In the cas of hlll, verify if the input basis is HLLL-reduced.
 
+* `-a hlll` : HLLL-reduction.
 
 Options for LLL-reduction:
 
@@ -244,6 +247,10 @@ Output formats:
 * `-of vk` : prints inverse of u (if `-a lll`, format compatible with sage)
 
 A combination of these option is allowed (e.g., `-of bkut`).
+
+Only for `-a hlll`:
+* `-t theta` : θ (default=0.001). See [[MSV09](#MSV09)] for the definition of (δ,η,θ)-HLLL-reduced bases.
+* `-c c` : constant for HLLL during the size-reduction (only used if `fplll` is compiled with `-DHOUSEHOLDER_USE_SIZE_REDUCTION_TEST`)
 
 ## llldiff ##
 
@@ -338,7 +345,7 @@ This library does not currently use multiple cores and running multiple threads 
 fplll is currently maintained by:
 
 - Martin Albrecht, <martinralbrecht@googlemail.com>
-- Shi Bai, <shi.bai@gmail.com>
+- Shi Bai, <shih.bai@gmail.com>
 
 ## Contributors ##
 

@@ -37,12 +37,12 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::discover_row()
   gso_valid_cols[i] = 0;
 }
 
-template <class ZT, class FT> void MatGSOGram<ZT, FT>::update_bf(int i)
+template <class ZT, class FT> void MatGSOGram<ZT, FT>::update_bf(int)
 {
   // EMPTY
 }
 
-template <class ZT, class FT> void MatGSOGram<ZT, FT>::invalidate_gram_row(int i)
+template <class ZT, class FT> void MatGSOGram<ZT, FT>::invalidate_gram_row(int)
 {
   // EMPTY
 }

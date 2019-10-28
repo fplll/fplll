@@ -428,8 +428,8 @@ int closest_vector(ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &int_target,
           max_index = cur;
         }
       }
-      for (cur                        = max_index; cur < previous_max_index; ++cur)
-        max_indices[cur]              = max_index;
+      for (cur = max_index; cur < previous_max_index; ++cur)
+        max_indices[cur] = max_index;
       max_indices[previous_max_index] = previous_max_index;
       previous_max_index              = max_index;
       --max_index;

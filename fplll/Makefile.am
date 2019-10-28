@@ -36,7 +36,8 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	bkz_param.h \
 	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h \
 	sieve/sieve_gauss.h sieve/sieve_common.h sieve/sieve_gauss_str.h sieve/sampler_basic.h \
-	pruner.h
+	pruner/pruner.h pruner/pruner_simplex.h \
+	householder.h hlll.h
 
 bin_PROGRAMS=fplll latticegen latsieve
 check_PROGRAMS=llldiff
@@ -81,7 +82,15 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	bkz.cpp bkz.h \
 	bkz_param.cpp bkz_param.h \
 	gso_interface.cpp gso_interface.h gso_gram.cpp gso_gram.h gso.cpp gso.h \
-	pruner.cpp pruner.h \
+	pruner/pruner.cpp \
+	pruner/pruner.h \
+	pruner/pruner_simplex.h \
+	pruner/pruner_cost.cpp \
+	pruner/pruner_optimize.cpp \
+	pruner/pruner_optimize_tc.cpp \
+	pruner/pruner_optimize_tp.cpp \
+	pruner/pruner_prob.cpp \
+	pruner/pruner_util.cpp \
 	sieve/sieve_gauss.cpp \
 	sieve/sieve_gauss.h  \
 	sieve/sieve_common.h\
@@ -90,7 +99,8 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	sieve/sieve_gauss_3sieve.cpp \
 	sieve/sieve_gauss_4sieve.cpp \
 	sieve/sampler_basic.h \
-	sieve/sampler_basic.cpp
+	sieve/sampler_basic.cpp \
+	householder.cpp householder.h hlll.cpp hlll.h
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
 libfplll_la_LIBADD=$(LIBGMP) -lmpfr $(LIBQD_LIBADD)
@@ -118,6 +128,7 @@ install-data-hook:
 uninstall-hook:
 	if test -d "${DESTDIR}$(includedir)/fplll/enum"; then rmdir "${DESTDIR}$(includedir)/fplll/enum"; fi
 	if test -d "${DESTDIR}$(includedir)/fplll/nr"; then rmdir "${DESTDIR}$(includedir)/fplll/nr"; fi
+	if test -d "${DESTDIR}$(includedir)/fplll/pruner"; then rmdir "${DESTDIR}$(includedir)/fplll/pruner"; fi
 	(test -d "${DESTDIR}$(includedir)/fplll" && rmdir "${DESTDIR}$(includedir)/fplll") || true
 	rm -f "${DESTDIR}$(includedir)/fplll.h"
 

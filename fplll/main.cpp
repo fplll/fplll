@@ -104,8 +104,8 @@ void read_pruning_vector(const char *file_name, PruningParams &pr, int n)
   for (int i = 0; i <= n && fscanf(file, "%lf", &x) == 1; i++)
   {
     pr.coefficients.push_back(x);
-    CHECK(x > 0 && x <= 1, "Number " << x << " in file '" << file_name
-                                     << "' is not in the interval (0,1]");
+    CHECK(x > 0 && x <= 1,
+          "Number " << x << " in file '" << file_name << "' is not in the interval (0,1]");
     if (i == 0)
     {
       CHECK(x == 1, "The first number in file '" << file_name << "' should be 1");
@@ -120,7 +120,7 @@ void read_pruning_vector(const char *file_name, PruningParams &pr, int n)
         "File '" << file_name << "' should contain exactly " << n << " numbers");
 }
 
-template <class ZT> int bkz(Options &o, ZZ_mat<ZT> &b) { ABORT_MSG("mpz required for BKZ"); }
+template <class ZT> int bkz(Options &, ZZ_mat<ZT> &) { ABORT_MSG("mpz required for BKZ"); }
 
 template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
 {
@@ -194,7 +194,7 @@ template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
    Note: since we only force |mu_i,j| <= eta with eta > 0.5, the solution
    is not unique even for a generic matrix */
 
-template <class ZT> int hkz(Options &o, ZZ_mat<ZT> &b) { ABORT_MSG("mpz required for HKZ"); }
+template <class ZT> int hkz(Options &, ZZ_mat<ZT> &) { ABORT_MSG("mpz required for HKZ"); }
 
 template <> int hkz(Options &o, ZZ_mat<mpz_t> &b)
 {
@@ -225,7 +225,7 @@ template <> int hkz(Options &o, ZZ_mat<mpz_t> &b)
 
 /* Shortest vector problem and closest vector problem */
 
-template <class ZT> int svpcvp(Options &o, ZZ_mat<ZT> &b, const vector<Z_NR<ZT>> &target)
+template <class ZT> int svpcvp(Options &, ZZ_mat<ZT> &, const vector<Z_NR<ZT>> &target)
 {
   if (target.empty())
   {
@@ -310,6 +310,108 @@ template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &
   return status;
 }
 
+template <class ZT> int hlll(Options &o, ZZ_mat<ZT> &b)
+{
+  // Stupid initialization of u and u_inv to be not empty.
+  ZZ_mat<ZT> u(1, 1), u_inv(1, 1);
+  const char *format = o.output_format ? o.output_format : "b";
+  int status, flags = 0;
+  if (o.verbose)
+    flags |= LLL_VERBOSE;
+
+  if (strchr(format, 'v') != NULL)
+  {
+    status = hlll_reduction(b, u, u_inv, o.delta, o.eta, o.theta, o.c, o.method, o.float_type,
+                            o.precision, flags, o.no_lll);
+  }
+  else if (strchr(format, 'u') != NULL)
+  {
+    status = hlll_reduction(b, u, o.delta, o.eta, o.theta, o.c, o.method, o.float_type, o.precision,
+                            flags, o.no_lll);
+  }
+  else
+  {
+    status = hlll_reduction(b, o.delta, o.eta, o.theta, o.c, o.method, o.float_type, o.precision,
+                            flags, o.no_lll);
+  }
+
+  for (int i = 0; format[i]; i++)
+  {
+    switch (format[i])
+    {
+    case 'b':
+      if (format[i + 1] == 'k')
+      {
+        b.print_comma(cout);
+        i++;
+      }
+      else
+        cout << b << endl;
+      break;
+    case 'u':
+      if (format[i + 1] == 'k')
+      {
+        u.print_comma(cout);
+        i++;
+      }
+      else
+        cout << u << endl;
+      break;
+    case 'v':
+      if (format[i + 1] == 'k')
+      {
+        u_inv.print_comma(cout);
+        i++;
+      }
+      else
+        cout << u_inv << endl;
+      break;
+    case ' ':
+      cout << endl;
+      break;
+    }
+  }
+
+  if (status != RED_SUCCESS)
+  {
+    cerr << "Failure: " << get_red_status_str(status) << endl;
+  }
+  return status;
+}
+
+template <class ZT> int prune(Options &, ZZ_mat<ZT> &) { ABORT_MSG("mpz required for pruner"); }
+
+template <> int prune(Options &o, ZZ_mat<mpz_t> &b)
+{
+
+  int status, prune_start = 0, prune_end = b.get_rows();
+  double gh_factor = 1.0, prune_pre_nodes = 1e6, prune_min_prob = -1.0;
+
+  if (o.bkz_flags & BKZ_GH_BND)
+    gh_factor = o.bkz_gh_factor;
+
+  if (o.prune_start)
+    prune_start = o.prune_start;
+
+  if (o.prune_end)
+    prune_end = o.prune_end;
+
+  if (o.prune_pre_nodes)
+    prune_pre_nodes = o.prune_pre_nodes;
+
+  if (o.prune_min_prob)
+    prune_min_prob = o.prune_min_prob;
+
+  status = run_pruner(b, o.float_type, o.precision, prune_start, prune_end, prune_pre_nodes,
+                      prune_min_prob, gh_factor);
+
+  if (status != RED_SUCCESS)
+  {
+    cerr << "Failure: " << get_red_status_str(status) << endl;
+  }
+  return status;
+}
+
 template <class ZT> int run_action(Options &o)
 {
   istream *is;
@@ -349,6 +451,12 @@ template <class ZT> int run_action(Options &o)
   case ACTION_BKZ:
     result = bkz(o, m);
     break;
+  case ACTION_HLLL:
+    result = hlll(o, m);
+    break;
+  case ACTION_PRU:
+    result = prune(o, m);
+    break;
   default:
     ABORT_MSG("unimplemented action");
     break;
@@ -386,6 +494,10 @@ void read_options(int argc, char **argv, Options &o)
         o.action = ACTION_BKZ;
         o.bkz_flags |= BKZ_SLD_RED;
       }
+      else if (strcmp(argv[ac], "hlll") == 0)
+        o.action = ACTION_HLLL;
+      else if (strcmp(argv[ac], "pru") == 0)
+        o.action = ACTION_PRU;
       else
         ABORT_MSG("parse error in -a switch: lll or svp expected");
     }
@@ -394,6 +506,30 @@ void read_options(int argc, char **argv, Options &o)
       ++ac;
       CHECK(ac < argc, "missing value after -b switch");
       o.block_size = atoi(argv[ac]);
+    }
+    else if (strcmp(argv[ac], "-prustart") == 0)
+    {
+      ++ac;
+      CHECK(ac < argc, "missing value after -prustart switch");
+      o.prune_start = atoi(argv[ac]);
+    }
+    else if (strcmp(argv[ac], "-pruend") == 0)
+    {
+      ++ac;
+      CHECK(ac < argc, "missing value after -pruend switch");
+      o.prune_end = atoi(argv[ac]);
+    }
+    else if (strcmp(argv[ac], "-pruprenodes") == 0)
+    {
+      ++ac;
+      CHECK(ac < argc, "missing value after '-pruprenodes'");
+      o.prune_pre_nodes = atof(argv[ac]);
+    }
+    else if (strcmp(argv[ac], "-pruminprob") == 0)
+    {
+      ++ac;
+      CHECK(ac < argc, "missing value after '-pruminprob'");
+      o.prune_min_prob = atof(argv[ac]);
     }
     else if (strcmp(argv[ac], "-bkzboundedlll") == 0)
     {
@@ -426,7 +562,9 @@ void read_options(int argc, char **argv, Options &o)
     }
     else if (strcmp(argv[ac], "-c") == 0 || strcmp(argv[ac], "-r") == 0)
     {
-      ABORT_MSG("option " << argv[ac] << " no more supported");
+      ++ac;
+      CHECK(ac < argc, "missing value after -c switch");
+      o.c = atof(argv[ac]);
     }
     else if (strcmp(argv[ac], "-bkzghbound") == 0)
     {
@@ -446,6 +584,12 @@ void read_options(int argc, char **argv, Options &o)
       ++ac;
       CHECK(ac < argc, "missing value after -e switch");
       o.eta = atof(argv[ac]);
+    }
+    else if (strcmp(argv[ac], "-t") == 0 || strcmp(argv[ac], "-theta") == 0)
+    {
+      ++ac;
+      CHECK(ac < argc, "missing value after -t switch");
+      o.theta = atof(argv[ac]);
     }
     else if (strcmp(argv[ac], "-f") == 0)
     {
@@ -550,12 +694,19 @@ void read_options(int argc, char **argv, Options &o)
            << "       sdb = reduce the input matrix using the self dual BKZ variant\n"
            << "       sld = slide reduce the input matrix\n"
            << "       cvp = compute the vector in the input lattice closest to an input vector\n"
+           << "       hlll = HLLL-reduce the input matrix\n"
            << "  -v\n"
            << "       Enable verbose mode\n"
            << "  -nolll\n"
            << "       Does not apply initial LLL-reduction (for bkz, hkz and svp)\n"
+           << "  -c <c>\n"
+           << "       An arbitrary double constant > 0 for HLLL (default=0.1)\n"
+           << "  -r <size>\n"
+           << "       Was the number of rows (ignored)\n"
+
            << "  -d <delta> (default=0.99; alias to -delta <delta>)\n"
            << "  -e <eta> (default=0.51; alias to -eta <eta>)\n"
+           << "  -t <theta> (default=0.001; alias to -theta <theta>)\n"
            << "  -l <lovasz>\n"
            << "       If <lovasz> != 0, Lovasz's condition, otherwise, Siegel's condition\n"
            << "  -f [mpfr|dd|qd|dpe|double|longdouble]\n"
@@ -603,8 +754,9 @@ void read_options(int argc, char **argv, Options &o)
     }
     else if (argv[ac][0] == '-')
     {
-      ABORT_MSG("invalid option '" << argv[ac] << "'.\n"
-                                                  "Try '"
+      ABORT_MSG("invalid option '" << argv[ac]
+                                   << "'.\n"
+                                      "Try '"
                                    << argv[0] << " --help' for more information.");
     }
     else

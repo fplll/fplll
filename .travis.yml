@@ -23,7 +23,7 @@ matrix:
       - sudo apt-get install -qq -y clang-format-3.9
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-4.9 CLANGFORMAT=clang-format-3.9
+    env: COMPILER=g++-4.9 CLANGFORMAT=clang-format-6.0
     addons:
       apt:
         sources:
@@ -34,13 +34,13 @@ matrix:
         - libmpfr-dev
         - libqd-dev
     before_install:
-      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.9 main'
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
       - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
       - sudo apt-get update -qq 
-      - sudo apt-get install -qq -y clang-format-3.9
+      - sudo apt-get install -qq -y clang-format-6.0
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-5 CLANGFORMAT=clang-format-3.9
+    env: COMPILER=g++-5 CLANGFORMAT=clang-format-6.0
     addons:
       apt:
         sources:
@@ -51,13 +51,13 @@ matrix:
         - libmpfr-dev
         - libqd-dev
     before_install:
-      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.9 main'
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
       - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
       - sudo apt-get update -qq 
-      - sudo apt-get install -qq -y clang-format-3.9
+      - sudo apt-get install -qq -y clang-format-6.0
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-6 CLANGFORMAT=clang-format-3.9 CXXFLAGS="-O3 -ggdb -fprofile-arcs -ftest-coverage" 
+    env: COMPILER=g++-6 CLANGFORMAT=clang-format-6.0 CXXFLAGS="-O3 -ggdb -fprofile-arcs -ftest-coverage" 
     addons:
       apt:
         sources:
@@ -68,10 +68,10 @@ matrix:
         - libmpfr-dev
         - libqd-dev
     before_install:
-      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.9 main'
+      - sudo add-apt-repository 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-6.0 main'
       - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
       - sudo apt-get update -qq 
-      - sudo apt-get install -qq -y clang-format-3.9
+      - sudo apt-get install -qq -y clang-format-6.0
     script:
       - make
       - make check
@@ -99,8 +99,7 @@ matrix:
     before_install:
       - brew update
       - brew reinstall gmp
-      - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rm /usr/local/include/c++ ; fi
-      - brew install qd autoconf libtool clang-format
+      - brew install autoconf libtool clang-format
 
 install:
   - export CXX="$COMPILER"
