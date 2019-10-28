@@ -288,6 +288,222 @@ int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
   return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp, nullptr,
                             nullptr, &auxsol_coord, &auxsol_dist, max_aux_sols);
 }
+
+//////////////////////////////////////////
+////// SVP FOR GSO OBJECT  ///////////////
+//////////////////////////////////////////
+
+static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, SVPMethod method,
+                              const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
+                              long long &sol_count,
+                              vector<vector<Z_NR<mpz_t>>> *subsol_coord = nullptr,
+                              vector<enumf> *subsol_dist                = nullptr,
+                              vector<vector<Z_NR<mpz_t>>> *auxsol_coord = nullptr,
+                              vector<enumf> *auxsol_dist = nullptr, int max_aux_sols = 0)
+{
+  bool findsubsols = (subsol_coord != nullptr) && (subsol_dist != nullptr);
+  bool findauxsols = (auxsol_coord != nullptr) && (auxsol_dist != nullptr) && (max_aux_sols != 0);
+
+  // d = lattice dimension (note that it might decrease during preprocessing)
+  int d = b.get_rows();
+  // n = dimension of the space
+  int n = b.get_cols();
+
+  FPLLL_CHECK(d > 0 && n > 0, "shortestVector: empty matrix");
+  FPLLL_CHECK(d <= n, "shortestVector: number of vectors > size of the vectors");
+
+  // Sets the floating-point precision
+  // Error bounds on GSO are valid if prec >= minprec
+  double rho;
+  int min_prec = gso_min_prec(rho, d, LLL_DEF_DELTA, LLL_DEF_ETA);
+  int prec     = max(53, min_prec + 10);
+  int old_prec = FP_NR<mpfr_t>::set_prec(prec);
+
+  // Allocates space for vectors and matrices in constructors
+  ZZ_mat<mpz_t> empty_mat;
+  MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
+  FP_NR<mpfr_t> max_dist;
+  Z_NR<mpz_t> int_max_dist;
+  Z_NR<mpz_t> itmp1;
+
+  // Computes the Gram-Schmidt orthogonalization in floating-point
+  gso.update_gso();
+  gen_zero_vect(sol_coord, d);
+
+  // If the last b_i* are too large, removes them to avoid an underflow
+  int new_d = last_useful_index(gso.get_r_matrix());
+  if (new_d < d)
+  {
+    // FPLLL_TRACE("Ignoring the last " << d - new_d << " vector(s)");
+    d = new_d;
+  }
+
+  if (flags & SVP_DUAL)
+  {
+    max_dist = 1.0 / gso.get_r_exp(d - 1, d - 1);
+    if (flags & SVP_VERBOSE)
+    {
+      cout << "max_dist = " << max_dist << endl;
+    }
+  }
+  else
+  {
+    /* Computes a bound for the enumeration. This bound would work for an
+       exact algorithm, but we will increase it later to ensure that the fp
+       algorithm finds a solution */
+    get_basis_min(int_max_dist, b, 0, d);
+    max_dist.set_z(int_max_dist, GMP_RNDU);
+  }
+
+  // Initializes the evaluator of solutions
+  ErrorBoundedEvaluator *evaluator;
+  if (method == SVPM_FAST)
+  {
+    evaluator =
+        new FastErrorBoundedEvaluator(d, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode,
+                                      max_aux_sols + 1, EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
+  }
+  else if (method == SVPM_PROVED)
+  {
+    ExactErrorBoundedEvaluator *p = new ExactErrorBoundedEvaluator(
+        d, b, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode, max_aux_sols + 1,
+        EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
+    p->int_max_dist = int_max_dist;
+    evaluator       = p;
+  }
+  else
+  {
+    FPLLL_ABORT("shortestVector: invalid evaluator type");
+  }
+  evaluator->init_delta_def(prec, rho, true);
+
+  if (!(flags & SVP_OVERRIDE_BND) && (eval_mode == EVALMODE_SV || method == SVPM_PROVED))
+  {
+    FP_NR<mpfr_t> ftmp1;
+    bool result = evaluator->get_max_error_aux(max_dist, true, ftmp1);
+    FPLLL_CHECK(result, "shortestVector: cannot compute an initial bound");
+    max_dist.add(max_dist, ftmp1, GMP_RNDU);
+  }
+
+  // Main loop of the enumeration
+  enumerate_svp(d, gso, max_dist, *evaluator, pruning, flags);
+
+  int result = RED_ENUM_FAILURE;
+  if (eval_mode != EVALMODE_SV)
+  {
+    result    = RED_SUCCESS;
+    sol_count = evaluator->sol_count * 2;
+  }
+  else if (!evaluator->empty())
+  {
+    /*FP_NR<mpfr_t> fMaxError;
+    validMaxError = evaluator->get_max_error(fMaxError);
+    max_error = fMaxError.get_d(GMP_RNDU);*/
+    for (int i = 0; i < d; i++)
+    {
+      itmp1.set_f(evaluator->begin()->second[i]);
+      sol_coord[i].add(sol_coord[i], itmp1);
+    }
+    result = RED_SUCCESS;
+  }
+
+  if (findsubsols)
+  {
+    subsol_coord->clear();
+    subsol_dist->clear();
+    subsol_dist->resize(evaluator->sub_solutions.size());
+    for (size_t i = 0; i < evaluator->sub_solutions.size(); ++i)
+    {
+      (*subsol_dist)[i] = evaluator->sub_solutions[i].first.get_d();
+
+      vector<Z_NR<mpz_t>> ss_c;
+      for (size_t j = 0; j < evaluator->sub_solutions[i].second.size(); ++j)
+      {
+        itmp1.set_f(evaluator->sub_solutions[i].second[j]);
+        ss_c.emplace_back(itmp1);
+      }
+      subsol_coord->emplace_back(std::move(ss_c));
+    }
+  }
+  if (findauxsols)
+  {
+    auxsol_coord->clear();
+    auxsol_dist->clear();
+    // iterators over all solutions
+    auto it = evaluator->begin(), itend = evaluator->end();
+    // skip shortest solution
+    ++it;
+    for (; it != itend; ++it)
+    {
+      auxsol_dist->push_back(it->first.get_d());
+
+      vector<Z_NR<mpz_t>> as_c;
+      for (size_t j = 0; j < it->second.size(); ++j)
+      {
+        itmp1.set_f(it->second[j]);
+        as_c.emplace_back(itmp1);
+      }
+      auxsol_coord->emplace_back(std::move(as_c));
+    }
+  }
+
+  delete evaluator;
+  FP_NR<mpfr_t>::set_prec(old_prec);
+  return result;
+}
+
+int shortest_vector(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, SVPMethod method, int flags)
+{
+  long long tmp;
+  return shortest_vector_ex(b, sol_coord, method, vector<double>(), flags, EVALMODE_SV, tmp);
+}
+
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
+                            const vector<double> &pruning, int flags)
+{
+  long long tmp;
+  return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp);
+}
+
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
+                            vector<vector<Z_NR<mpz_t>>> &subsol_coord, vector<enumf> &subsol_dist,
+                            const vector<double> &pruning, int flags)
+{
+  long long tmp;
+  return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp,
+                            &subsol_coord, &subsol_dist);
+}
+
+int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
+                            vector<vector<Z_NR<mpz_t>>> &auxsol_coord, vector<enumf> &auxsol_dist,
+                            const int max_aux_sols, const vector<double> &pruning, int flags)
+{
+  long long tmp;
+  return shortest_vector_ex(b, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp, nullptr,
+                            nullptr, &auxsol_coord, &auxsol_dist, max_aux_sols);
+}
+
+
+///////////////////////////////////
+//////END SVP FOR GSO OBJECT //////
+///////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Closest vector problem
    ====================== */
 

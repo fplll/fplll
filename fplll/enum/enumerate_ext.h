@@ -20,7 +20,7 @@
 #include <array>
 #include <fplll/enum/enumerate_base.h>
 #include <fplll/enum/evaluator.h>
-#include <fplll/gso.h>
+#include <fplll/gso_interface.h>
 #include <functional>
 #include <memory>
 
@@ -83,7 +83,7 @@ std::function<extenum_fc_enumerate> get_external_enumerator();
 template <typename ZT, typename FT> class ExternalEnumeration
 {
 public:
-  ExternalEnumeration(MatGSO<ZT, FT> &gso, Evaluator<FT> &evaluator)
+  ExternalEnumeration(MatGSOInterface<ZT, FT> &gso, Evaluator<FT> &evaluator)
       : _gso(gso), _evaluator(evaluator)
   {
   }
@@ -100,7 +100,7 @@ private:
 
   void callback_process_subsol(enumf dist, enumf *subsol, int offset);
 
-  MatGSO<ZT, FT> &_gso;
+  MatGSOInterface<ZT, FT> &_gso;
   Evaluator<FT> &_evaluator;
   vector<enumf> _pruning;
   long _normexp;
