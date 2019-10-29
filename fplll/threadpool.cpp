@@ -20,19 +20,16 @@ FPLLL_BEGIN_NAMESPACE
 thread_pool::thread_pool threadpool(0);
 
 /* get and set number of threads in threadpool, both return the (new) number of threads */
-int get_threads()
-{
-	return threadpool.size() + 1;
-}
+int get_threads() { return threadpool.size() + 1; }
 
 int set_threads(int th)
 {
-	if (th > std::thread::hardware_concurrency() || th == -1)
-		th = std::thread::hardware_concurrency();
-	if (th < 1)
-		th = 1;
-	threadpool.resize(th - 1);
-	return get_threads();
+  if (th > std::thread::hardware_concurrency() || th == -1)
+    th = std::thread::hardware_concurrency();
+  if (th < 1)
+    th = 1;
+  threadpool.resize(th - 1);
+  return get_threads();
 }
 
 FPLLL_END_NAMESPACE
