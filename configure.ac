@@ -152,15 +152,18 @@ AC_ARG_ENABLE(recursive-enum,
 AS_IF([test "x$enable_recursive_enum" != "xno"], [
         AC_DEFINE([FPLLL_WITH_RECURSIVE_ENUM], [1], [recursive enumeration enabled])])
 
-AC_ARG_ENABLE(parallel-enum,
-        AS_HELP_STRING([--disable-parallel-enum],
-         [Disable parallel enumeration]))
 
-AS_IF([test "x$enable_parallel_enum" != "xno"], [
-        AC_DEFINE([FPLLL_WITH_PARALLEL_ENUM], [1], [parallel enumeration enabled])
+max_parallel_enum_dim=120
+AC_ARG_WITH(max-parallel-enum-dim,
+        AS_HELP_STRING([--with-max-parallel-enum-dim@<:@=DIM@:>@],
+         [Maximum supported parallel enumeration dimension (max=160, default=120, disable=0).]),
+        [max_parallel_enum_dim=$withval])
+
+AS_IF([test "x$max_parallel_enum_dim" != "x0"], [
+        AC_DEFINE([FPLLL_MAX_PARALLEL_ENUM_DIM], [$max_parallel_enum_dim], [parallel enumeration enabled])
         AX_PTHREAD()
         ])
-AM_CONDITIONAL(FPLLL_PARALLEL_ENUM, test "x$enable_parallel_enum" != "xno")
+AM_CONDITIONAL(FPLLL_PARALLEL_ENUM, test "x$max_parallel_enum_dim" != "x0")
 
 # Store version numbers in header
 

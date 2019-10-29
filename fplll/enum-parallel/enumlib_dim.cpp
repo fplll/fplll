@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#ifdef ENUMDIMENSION
+#if ENUMDIMENSION <= FPLLL_MAX_PARALLEL_ENUM_DIM
+
 #include "enumeration.h"
 #include "enumlib.h"
 
@@ -162,3 +165,6 @@ uint64_t DIMFUNC(ENUMDIMENSION)(int dim, float_type maxdist,
 }  // namespace enumlib
 
 FPLLL_END_NAMESPACE
+
+#endif
+#endif
