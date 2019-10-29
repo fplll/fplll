@@ -311,7 +311,7 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
                               vector<vector<Z_NR<mpz_t>>> *subsol_coord = nullptr,
                               vector<enumf> *subsol_dist                = nullptr,
                               vector<vector<Z_NR<mpz_t>>> *auxsol_coord = nullptr,
-                              vector<enumf> *auxsol_dist = nullptr, int max_aux_sols = 0)
+                              vector<enumf> *auxsol_dist = nullptr, int max_aux_sols = 0, bool merge_sol_in_aux = false)
 {
   bool findsubsols = (subsol_coord != nullptr) && (subsol_dist != nullptr);
   bool findauxsols = (auxsol_coord != nullptr) && (auxsol_dist != nullptr) && (max_aux_sols != 0);
@@ -458,7 +458,7 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
     // iterators over all solutions
     auto it = evaluator->begin(), itend = evaluator->end();
     // skip shortest solution
-    ++it;
+    if( !merge_sol_in_aux ) ++it;
     for (; it != itend; ++it)
     {
       auxsol_dist->push_back(it->first.get_d());
@@ -482,6 +482,16 @@ int shortest_vector(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_N
 {
   long long tmp;
   return shortest_vector_ex(gso, sol_coord, method, vector<double>(), flags, EVALMODE_SV, tmp);
+}
+
+int shortest_vectors(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                            vector<vector<Z_NR<mpz_t>>> &sol_coord, vector<enumf> &sol_dist,
+                            const int max_sols, SVPMethod method, int flags)
+{
+  long long tmp;
+  vector<Z_NR<mpz_t>> sol_coord_tmp;
+  return shortest_vector_ex(gso, sol_coord_tmp, method, vector<double>(), flags, EVALMODE_SV, tmp, nullptr,
+                            nullptr, &sol_coord, &sol_dist, max_sols-1, true);
 }
 
 int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord,
