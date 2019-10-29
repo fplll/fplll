@@ -16,7 +16,8 @@
 #ifndef FPLLL_EVALUATOR_H
 #define FPLLL_EVALUATOR_H
 
-#include "../util.h"
+#include <fplll/util.h>
+#include <fplll/gso_interface.h>
 #include <map>
 #include <queue>
 
@@ -280,14 +281,13 @@ public:
 class ExactErrorBoundedEvaluator : public ErrorBoundedEvaluator
 {
 public:
-  ExactErrorBoundedEvaluator(int d, const ZZ_mat<mpz_t> &matrix, const Matrix<FP_NR<mpfr_t>> &mu,
-                             const Matrix<FP_NR<mpfr_t>> &r, EvaluatorMode eval_mode,
+  ExactErrorBoundedEvaluator(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &_gso, 
+                             EvaluatorMode eval_mode,
                              size_t nr_solutions               = 1,
                              EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
                              bool find_subsolutions            = false)
-      : ErrorBoundedEvaluator(d, mu, r, eval_mode, nr_solutions, update_strategy,
-                              find_subsolutions),
-        matrix(matrix)
+      : ErrorBoundedEvaluator(_gso.d, _gso.get_mu_matrix(), _gso.get_r_matrix(),  eval_mode, nr_solutions, update_strategy,
+                              find_subsolutions), gso(_gso)
   {
     int_max_dist = -1;
   }
@@ -312,8 +312,8 @@ public:
 
 private:
   FP_NR<mpfr_t> int_dist2Float(Z_NR<mpz_t> int_dist);
-
-  const ZZ_mat<mpz_t> &matrix;  // matrix of the lattice
+  MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso;
+  //const ZZ_mat<mpz_t> &matrix;  // matrix of the lattice
 };
 
 FPLLL_END_NAMESPACE

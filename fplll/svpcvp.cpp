@@ -184,7 +184,8 @@ static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, 
   else if (method == SVPM_PROVED)
   {
     ExactErrorBoundedEvaluator *p = new ExactErrorBoundedEvaluator(
-        d, b, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode, max_aux_sols + 1,
+        //d, b, gso.get_mu_matrix(), gso.get_r_matrix()
+      gso, eval_mode, max_aux_sols + 1,
         EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
     p->int_max_dist = int_max_dist;
     evaluator       = p;
@@ -384,19 +385,17 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
     evaluator =
         new FastErrorBoundedEvaluator(d, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode,
                                       max_aux_sols + 1, EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
+
+  }  
+  else if (method == SVPM_PROVED)
+  {
+   ExactErrorBoundedEvaluator *p = new ExactErrorBoundedEvaluator(
+        //d, b, gso.get_mu_matrix(), gso.get_r_matrix(), 
+                      gso ,eval_mode, max_aux_sols + 1,
+        EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
+    p->int_max_dist = int_max_dist;
+    evaluator       = p;
   }
-  // commented out, as this needs a basis *b*, 
-  // but we want this to work for an GSOInterface object 
-  // ---> Something to be implemented later
-  //
-  //else if (method == SVPM_PROVED)
-  //{
-  //  ExactErrorBoundedEvaluator *p = new ExactErrorBoundedEvaluator(
-  //       d, b, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode, max_aux_sols + 1,
-  //       EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
-  //   p->int_max_dist = int_max_dist;
-  //   evaluator       = p;
-  // }
   else
   {
     FPLLL_ABORT("shortestVector: invalid evaluator type");

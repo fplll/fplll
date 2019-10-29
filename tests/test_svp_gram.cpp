@@ -85,7 +85,7 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b
   //Mgram.print_mu_r_g(cerr);
 
   // Apply SVP algorithm, check whether it yields success
-  int status = shortest_vector(Mgram, sol_coord, SVPM_FAST, SVP_DEFAULT);
+  int status = shortest_vector(Mgram, sol_coord, SVPM_PROVED, SVP_DEFAULT);
 
   if (status != RED_SUCCESS)
   {
@@ -102,7 +102,7 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b
   // Apply list svp algorithm
   vector<vector<Z_NR<mpz_t>>> sols_coord;
   vector<enumf> sols_dist;
-  status = shortest_vectors(Mgram, sols_coord, sols_dist, 500, SVPM_FAST, SVP_DEFAULT);
+  status = shortest_vectors(Mgram, sols_coord, sols_dist, 500, SVPM_PROVED, SVP_DEFAULT);
   if (status != RED_SUCCESS)
   {
     cerr << "Failure: " << get_red_status_str(status) << endl;
@@ -355,12 +355,12 @@ int main()
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension7",
                                                 TESTDATADIR "/tests/lattices/grammatrix_dimension7_out", DSVP_ENUM);
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4",
-                                                    TESTDATADIR "/tests/lattices/grammatrix_dimension4_out", DSVP_ENUM);
+                                                    TESTDATADIR "/tests/lattices/grammatrix_dimension4_out", DSVP_ENUM);  
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension7",
                                                 TESTDATADIR "/tests/lattices/grammatrix_dimension7_out", DSVP_REDUCE);
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4",
                                                     TESTDATADIR "/tests/lattices/grammatrix_dimension4_out", DSVP_REDUCE);
-
+  
   if (status == 0)
   {
     cerr << "All tests passed." << endl;
