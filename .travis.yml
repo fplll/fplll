@@ -4,6 +4,12 @@ dist: trusty
 
 language: cpp
 
+cache: ccache
+
+env:
+  global:
+    - MAKEFLAGS="-j 2"
+
 matrix:
   include:
   - os: linux
@@ -99,7 +105,8 @@ matrix:
     before_install:
       - brew update
       - brew reinstall gmp
-      - brew install autoconf libtool clang-format
+      - brew install autoconf libtool clang-format ccache
+      - export PATH="/usr/local/opt/ccache/libexec:$PATH"
 
 install:
   - export CXX="$COMPILER"
