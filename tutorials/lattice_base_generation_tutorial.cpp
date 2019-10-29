@@ -17,29 +17,32 @@ using namespace fplll;
 /* Compile like so: g++ -std=c++11 -march=native -o3 lattice_base_generation_tutorial.cpp -lfplll -lmpfr -lgmp -o <executable_name> */
 
 
+/**
+ * This function decides the randomness seed. By default, the same seed is used every time to ensure reproducibility.
+ * However, there exists the option of providing a random integer seed or of randomizing using seed provided by CPU clock.
+ * This is decided here.
+ */
+
+void decide_randomness (bool generate_with_clock) {
+	int seed = 0;
+	if (generate_with_clock) {
+		RandGen::init_with_time();
+	}
+	else {
+		cin >> seed;
+		RandGen::init_with_seed(seed);
+	}
+}
+
 /** 
  * This function generates a matrix of rows x (rows + 1), similar to 'r' method of latticegen.
  * The first element of each vector is initialized
  * with a random number between 0 and 2^bits - 1. The rest is the canonical vector.
 */
-void GenerateKnapsackLatticeBase (ZZ_mat<mpz_t> &base, int rows, bool random, bool with_seed, int random_seed, int bits) {
-	/**
-	 * This checks whether we desire a random base to be generated.
-	 * If so, FPLLL creates a lattice base of random vectors, otherwise it
-	 * creates a specific lattice base.
-	*/
-	int columns = rows;
-	if (random) {
-		/* If we desire to generate random lattice with a specific seed, we use this function, passing the seed as argument */ 
-		if (with_seed){
 
-			RandGen::init_with_seed(random_seed); /* RandGen method initializes a random seed provided by the user */
-		}
-		else{
-			RandGen::init_with_time(); /* RandGen method initializes with current clock time */
-		}
-		
-	}
+void generate_knapsack_matrix (ZZ_mat<mpz_t> &base, int rows, int bits) {
+	
+	int columns = rows;
 	/** 
 	 * This function resizes the base according to specifications, allocating desired memory.Parameters are:
 	 * @param int rows: the number of vectors in matrix.
@@ -58,23 +61,7 @@ void GenerateKnapsackLatticeBase (ZZ_mat<mpz_t> &base, int rows, bool random, bo
  * d - 1 independent integers in the space of [0, 2^bits - 1]. For each i > 1, the i-th vector is the
  * i-th canonical unit vector, scaled by a factor of 2^bits.  
 */
-void GenerateSimdiophLatticeBase (ZZ_mat<mpz_t> &base, int rows, bool random, bool with_seed, int random_seed, int bits, int bits2) {
-	/**
-	 * This checks whether we desire a random base to be generated.
-	 * If so, FPLLL creates a lattice base of random vectors, otherwise it
-	 * creates a specific lattice base.
-	 */
-	if (random) {
-		/* If we desire to generate random lattice base with a specific seed, we use this function, passing the seed as argument */ 
-		if (with_seed){
-
-			RandGen::init_with_seed(random_seed); /* RandGen method initializes with random seed */
-		}
-		else{
-			RandGen::init_with_time(); /* RandGen method initializes with current clock time */
-		}
-		
-	}
+void generate_simdioph_matrix (ZZ_mat<mpz_t> &base, int rows, int bits, int bits2) {
 	/** 
 	 * This function resizes the base according to specifications, allocating desired memory.Parameters are:
 	 * @param int rows: the number of vectors in matrix.
@@ -86,42 +73,138 @@ void GenerateSimdiophLatticeBase (ZZ_mat<mpz_t> &base, int rows, bool random, bo
 }
 
 /**
- * Generates a matrix of size dimension, with uniformly random coefficients between 0 and 2^@param int: bit_size - 1
- * The type of randomness used is chosen between clock and pseudorandom of seed equal to @param int: seed
+ * Generates a matrix of size dimension, with uniformly random coefficients between 0 and 2^bit_size - 1
  */
-
-void GenerateUniformlyRandomMatrix (ZZ_mat<mpz_t> &mat, int dimension, int bit_size, bool clock, bool random, int seed){
-  if (random) {
-      if (clock) { /* If clock randomness is chosen, initializes the random generator to clock */
-        RandGen::init_with_time();
-      }
-      else { /* If pseudorandom randomness is chosen, initializes the random generator to seed with the given seed */
-        RandGen::init_with_seed(seed);
-
-      }
-  }
-  mat.resize(dimension, dimension); /* Resize the matrix to a dimension*dimension matrix */
-  mat.gen_uniform(bit_size); /* Generates uniformly random coefficients for the matrix */
+void generate_uniformly_random_matrix (ZZ_mat<mpz_t> &base, int dimension, int bit_size){
+  base.resize(dimension, dimension); /* Resize the matrix to a dimension * dimension matrix */
+  base.gen_uniform(bit_size); /* Generates uniformly random coefficients for the matrix */
 }
+
+
+/**
+ * Generates a matrix of size (2 * dimension) * (2 * dimension), as the 'n' method of latticegen API.
+ * The method samples a uniform h in the ring Z_q[x]/(x^n-1). It finally returns the 2 x 2 block matrix [[I, Rot(h)], [0, q*I]],
+ * where each block is d x d, the first row of Rot(h) is the coefficient vector of h, and the i-th row of Rot(h)
+ * is the shift of the (i-1)-th (with last entry put back in first position), for all i>1.
+ * Warning: this does not produce a genuine ntru lattice with h a genuine public key.
+ */
+void generate_ntru_like_matrix (ZZ_mat<mpz_t> &base, int dimension, int bit_size, bool clock, bool random, int seed, char selection_char){
+  base.resize(2 * dimension, 2 * dimension); /* Resize the matrix to a (2 * dimension) * (2 * dimension) matrix */
+  /** 
+  * If the character is  'b', then the method first samples an integer q in space [0, 2^b-1] 
+  */
+  if (selection_char == 'b') {
+  	base.gen_ntrulike(bit_size); 
+  }
+  else {
+  	if (selection_char == 'q') {
+  		base.gen_ntrulike_withq(bit_size); /* If the character is 'q', then the integer is set to the provided value */
+  	}
+  	else {
+  		cout << "Warning: selection character MUST be 'b' or 'q'." << endl;
+  	}
+  }
+}
+
+/**
+ * Generates a matrix just like generate_ntrulike_matrix(), except that the constructed matrix is [[q*I, 0], [Rot(h), I]].
+ * This functions just like 'N' method of latticegen API.
+ */
+void generate_ntru_like_matrix_alt (ZZ_mat<mpz_t> &base, int dimension, int bit_size, char selection_char){
+  base.resize(2 * dimension, 2 * dimension); /* Resize the matrix to a (2 * dimension) * (2 * dimension) matrix */
+  /** 
+   * Matrix is now filled based on specifications selected by selection_char 
+  */
+  if (selection_char == 'b') {
+  	base.gen_ntrulike2(bit_size); /* If the character is  'b', then the method first samples an integer q in space [0, 2^b-1] */ 
+  }
+  else {
+  	if (selection_char == 'q') {
+  		base.gen_ntrulike2_withq(bit_size); /* If the character is 'q', then the integer is set to the provided value */	
+  	}
+  	else {
+  		cout << "Warning: selection character MUST be 'b' or 'q'." << endl;
+  	}
+  	
+  }
+}
+
+/**
+ * Generates a q-ary matrix. It returns a 2 x 2 block matrix [[I, H], [0, q*I]],
+ * where H is (d-k_param) x k_param and uniformly random modulo q. These bases correspond to
+ * the SIS/LWE q-ary lattices. Goldstein-Mayer lattices correspond to k=1 and q prime
+ * This functions just like 'u' method of latticegen API.
+ */
+void generate_qary_matrix (ZZ_mat<mpz_t> &base, int dimension, int bit_size, int k_param, char selection_char){
+  base.resize(dimension, dimension); /* Resize the matrix to a dimension * dimension matrix */
+  /** 
+  * Here the matrix is created, choosing a generation method according to the selection_char input  
+  */
+  if (selection_char == 'b') {
+  	base.gen_qary(k_param, bit_size); /* If the character is  'b', then the method first samples an integer q in space [0, 2^b-1]  */
+  }
+  else {
+  	if (selection_char == 'p'){
+  		base.gen_qary_prime(k_param, bit_size); /* If the character is 'p', then */
+  	}
+  	else {
+  		if (selection_char == 'q') {
+  			base.gen_qary_withq(k_param, bit_size); /* If the character is 'q', then the integer is set to the provided value */	
+  		}
+  		else {
+  			cout << "Warning: selection character MUST be 'b', 'p' or 'q'." << endl;
+  		}
+  	}
+  }
+}
+
+/**
+ * Generates a lower triangular matrix base of size dimension * dimension, where base[i][i] = 2^(dimension-i+1)^f_param for all i,
+ * and base[i][j] is uniform between -base[i][j]/2 and base[i][j]/2 for all j<i. This functions exactly like 't' generation method
+ * of latticegen API. 
+ */
+void generate_lower_triangular_matrix (ZZ_mat<mpz_t> &base, int dimension, float f_param) {
+  base.resize(dimension, dimension); /* Resize the matrix to a dimension * dimension matrix */
+  base.gen_trg(f_param); /* Matrix is generated here, as described above. */
+}
+
+/**
+ * Generates a lower triangular matrix base much like GenerateTriangularMatrix, except that it also receives as input a 
+ * dimension-dimensional vector, read from a file. It then generates base as follows: base[i][i] =vec[i] for all i, and
+ * base[i][j] is uniform betweeen -base[j][j]/2 and base[j][j]/2 for all j<i.
+ */
+void generate_lower_triangular_matrix_alt (ZZ_mat<mpz_t> &base, int dimension, float f_param) {
+	FP_NR<mpfr_t> *input_vector = new FP_NR<mpfr_t>[dimension]; /* This is the input vector declaration. */
+	for (int i = 0; i < dimension; i++) {
+		mpfr_inp_str(input_vector[i].get_data(), stdin, 10, GMP_RNDN); /* This function reads each element of the input vector */
+	} 
+	base.resize(dimension, dimension); /* Resize the matrix to a dimension * dimension matrix */
+	base.gen_trg(f_param); /* Matrix is generated here, as described above. */
+	delete[] input_vector;
+}
+
 
 int main (int argc, char** argv) {
 	int seed = 25;
 	int dimension = 5;
-	int bits2 = 4;
 	int bits = 4;
-	
+	int bits2 = 4;
+	int k_param = 1;
+	char input1 = 'b';
+	char input2 = 'q';
+	char input3 = 'p';
 	/* This is the lattice Base declaration. */ 
 	
 	/* ZZ_mat<mpz_t> integer_lattice_base: A matrix of integers. Initially, the matrix is empty. */
 	
 	ZZ_mat<mpz_t> integer_lattice_base;
-	GenerateKnapsackLatticeBase (integer_lattice_base, dimension, false, false, seed, bits);
+	generate_knapsack_matrix (integer_lattice_base, dimension, bits);
 	cout << "Knapsack-like matrix of dimension " << dimension << " and " << bits << " bits with random seed from clock time" << endl;
 	cout << endl;
 	cout << integer_lattice_base << endl;
 	integer_lattice_base.clear();
 	cout << endl;
-	GenerateSimdiophLatticeBase (integer_lattice_base, dimension, false, false, seed, bits, bits2);
+	generate_simdioph_matrix (integer_lattice_base, dimension, bits, bits2);
 	cout << "Matrix of form similar to that which is involved in finding rational approximations to reals with the same small denominator, of dimension " << dimension
 	<< " with each vector starting with integer of maximum bit-length " << bits2 << " and continues with " << dimension - 1 << " independent integers of maximum bit-length "
 	<< bits << ". Each subsequent vector is the canonical unit vector, scaled by a factor of " << pow(bits, 2) << "." << endl;
@@ -129,7 +212,7 @@ int main (int argc, char** argv) {
 	cout << integer_lattice_base << endl;
 	integer_lattice_base.clear();
 	cout << endl;
-	GenerateUniformlyRandomMatrix (integer_lattice_base, dimension, bits, false, false, seed);
+	generate_uniformly_random_matrix (integer_lattice_base, dimension, bits);
 	cout << "Matrix of dimension " << dimension << " whose entries are independent integers of " << bits << " maximum bit-length." << endl;
 	cout << endl;
 	cout << integer_lattice_base << endl;
