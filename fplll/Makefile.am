@@ -118,12 +118,6 @@ libfplll_la_SOURCES+=\
 EXTRA_libfplll_la_SOURCES+=enum-parallel/enumlib_dim.cpp
 libfplll_la_LIBADD+=$(PTHREAD_LIBS)
 libfplll_la_CXXFLAGS+=$(PTHREAD_CFLAGS)
-
-enum-parallel/enumlib_dim.%.o: enum-parallel/enumlib_dim.%.cpp
-
-enum-parallel/enumlib_dim.%.cpp:
-	@ ( echo -n '#define ENUMDIMENSION '; echo $@ | cut -d. -f2; echo '#include "enumlib_dim.cpp"' ) > $@
-
 endif
 	
 
