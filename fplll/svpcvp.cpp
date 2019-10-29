@@ -57,20 +57,22 @@ static void get_basis_min(Z_NR<mpz_t> &basis_min, const ZZ_mat<mpz_t> &b, int fi
   }
 }
 
-static void get_basis_min(Z_NR<mpz_t> &basis_min, MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, int first, int last)
+static void get_basis_min(Z_NR<mpz_t> &basis_min, MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                          int first, int last)
 {
   Z_NR<mpz_t> sq_norm;
-  gso.get_int_gram(basis_min,first,first);
+  gso.get_int_gram(basis_min, first, first);
   for (int i = first + 1; i < last; i++)
   {
-    gso.get_int_gram(sq_norm,i,i);
+    gso.get_int_gram(sq_norm, i, i);
     if (sq_norm < basis_min)
       basis_min = sq_norm;
   }
 }
 
-static bool enumerate_svp(int d, MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, FP_NR<mpfr_t> &max_dist,
-                          ErrorBoundedEvaluator &evaluator, const vector<enumf> &pruning, int flags)
+static bool enumerate_svp(int d, MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                          FP_NR<mpfr_t> &max_dist, ErrorBoundedEvaluator &evaluator,
+                          const vector<enumf> &pruning, int flags)
 {
   Enumeration<Z_NR<mpz_t>, FP_NR<mpfr_t>> enumobj(gso, evaluator);
   bool dual = (flags & SVP_DUAL);
@@ -184,9 +186,8 @@ static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, 
   else if (method == SVPM_PROVED)
   {
     ExactErrorBoundedEvaluator *p = new ExactErrorBoundedEvaluator(
-        //d, b, gso.get_mu_matrix(), gso.get_r_matrix()
-      gso, eval_mode, max_aux_sols + 1,
-        EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
+        // d, b, gso.get_mu_matrix(), gso.get_r_matrix()
+        gso, eval_mode, max_aux_sols + 1, EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
     p->int_max_dist = int_max_dist;
     evaluator       = p;
   }
@@ -306,25 +307,23 @@ int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
 ////// SVP FOR GSO OBJECT  ///////////////
 //////////////////////////////////////////
 
-static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord, SVPMethod method,
-                              const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
-                              long long &sol_count,
-                              vector<vector<Z_NR<mpz_t>>> *subsol_coord = nullptr,
-                              vector<enumf> *subsol_dist                = nullptr,
-                              vector<vector<Z_NR<mpz_t>>> *auxsol_coord = nullptr,
-                              vector<enumf> *auxsol_dist = nullptr, int max_aux_sols = 0, bool merge_sol_in_aux = false)
+static int shortest_vector_ex(
+    MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord,
+    SVPMethod method, const vector<double> &pruning, int flags, EvaluatorMode eval_mode,
+    long long &sol_count, vector<vector<Z_NR<mpz_t>>> *subsol_coord = nullptr,
+    vector<enumf> *subsol_dist = nullptr, vector<vector<Z_NR<mpz_t>>> *auxsol_coord = nullptr,
+    vector<enumf> *auxsol_dist = nullptr, int max_aux_sols = 0, bool merge_sol_in_aux = false)
 {
   bool findsubsols = (subsol_coord != nullptr) && (subsol_dist != nullptr);
   bool findauxsols = (auxsol_coord != nullptr) && (auxsol_dist != nullptr) && (max_aux_sols != 0);
 
   // d = lattice dimension (note that it might decrease during preprocessing)
-  //int d = b.get_rows();
-  int d = gso.d; // Number of rows of b in the GSO
+  // int d = b.get_rows();
+  int d = gso.d;  // Number of rows of b in the GSO
 
   // n = dimension of the space
-  //int n = b.get_cols();
-  int n = gso.get_cols_of_b(); // number of columns of b in the GSO
-
+  // int n = b.get_cols();
+  int n = gso.get_cols_of_b();  // number of columns of b in the GSO
 
   FPLLL_CHECK(d > 0 && n > 0, "shortestVector: empty matrix");
   FPLLL_CHECK(d <= n, "shortestVector: number of vectors > size of the vectors");
@@ -339,9 +338,8 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
   // Allocates space for vectors and matrices in constructors
 
   // ---> Commented out because of the GSO object already being defined in the input
-  //ZZ_mat<mpz_t> empty_mat;
-  //MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
-
+  // ZZ_mat<mpz_t> empty_mat;
+  // MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
 
   FP_NR<mpfr_t> max_dist;
   Z_NR<mpz_t> int_max_dist;
@@ -371,7 +369,7 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
   {
     // Computes a bound for the enumeration. This bound would work for an
     //   exact algorithm, but we will increase it later to ensure that the fp
-    //   algorithm finds a solution 
+    //   algorithm finds a solution
 
     // Use the GSO version of get_basis_min
     get_basis_min(int_max_dist, gso, 0, d);
@@ -385,14 +383,12 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
     evaluator =
         new FastErrorBoundedEvaluator(d, gso.get_mu_matrix(), gso.get_r_matrix(), eval_mode,
                                       max_aux_sols + 1, EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
-
-  }  
+  }
   else if (method == SVPM_PROVED)
   {
-   ExactErrorBoundedEvaluator *p = new ExactErrorBoundedEvaluator(
-        //d, b, gso.get_mu_matrix(), gso.get_r_matrix(), 
-                      gso ,eval_mode, max_aux_sols + 1,
-        EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
+    ExactErrorBoundedEvaluator *p = new ExactErrorBoundedEvaluator(
+        // d, b, gso.get_mu_matrix(), gso.get_r_matrix(),
+        gso, eval_mode, max_aux_sols + 1, EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
     p->int_max_dist = int_max_dist;
     evaluator       = p;
   }
@@ -411,7 +407,7 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
   }
 
   // Main loop of the enumeration
-  enumerate_svp(d, gso, max_dist, *evaluator, pruning, flags); // Only uses r and mu
+  enumerate_svp(d, gso, max_dist, *evaluator, pruning, flags);  // Only uses r and mu
 
   int result = RED_ENUM_FAILURE;
   if (eval_mode != EVALMODE_SV)
@@ -421,9 +417,9 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
   }
   else if (!evaluator->empty())
   {
-    //FP_NR<mpfr_t> fMaxError;
-    //validMaxError = evaluator->get_max_error(fMaxError);
-    //max_error = fMaxError.get_d(GMP_RNDU);
+    // FP_NR<mpfr_t> fMaxError;
+    // validMaxError = evaluator->get_max_error(fMaxError);
+    // max_error = fMaxError.get_d(GMP_RNDU);
     for (int i = 0; i < d; i++)
     {
       itmp1.set_f(evaluator->begin()->second[i]);
@@ -457,7 +453,8 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
     // iterators over all solutions
     auto it = evaluator->begin(), itend = evaluator->end();
     // skip shortest solution
-    if( !merge_sol_in_aux ) ++it;
+    if (!merge_sol_in_aux)
+      ++it;
     for (; it != itend; ++it)
     {
       auxsol_dist->push_back(it->first.get_d());
@@ -477,30 +474,33 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
   return result;
 }
 
-int shortest_vector(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord, SVPMethod method, int flags)
+int shortest_vector(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                    vector<Z_NR<mpz_t>> &sol_coord, SVPMethod method, int flags)
 {
   long long tmp;
   return shortest_vector_ex(gso, sol_coord, method, vector<double>(), flags, EVALMODE_SV, tmp);
 }
 
 int shortest_vectors(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
-                            vector<vector<Z_NR<mpz_t>>> &sol_coord, vector<enumf> &sol_dist,
-                            const int max_sols, SVPMethod method, int flags)
+                     vector<vector<Z_NR<mpz_t>>> &sol_coord, vector<enumf> &sol_dist,
+                     const int max_sols, SVPMethod method, int flags)
 {
   long long tmp;
   vector<Z_NR<mpz_t>> sol_coord_tmp;
-  return shortest_vector_ex(gso, sol_coord_tmp, method, vector<double>(), flags, EVALMODE_SV, tmp, nullptr,
-                            nullptr, &sol_coord, &sol_dist, max_sols-1, true);
+  return shortest_vector_ex(gso, sol_coord_tmp, method, vector<double>(), flags, EVALMODE_SV, tmp,
+                            nullptr, nullptr, &sol_coord, &sol_dist, max_sols - 1, true);
 }
 
-int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord,
-                            const vector<double> &pruning, int flags)
+int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                            vector<Z_NR<mpz_t>> &sol_coord, const vector<double> &pruning,
+                            int flags)
 {
   long long tmp;
   return shortest_vector_ex(gso, sol_coord, SVPM_FAST, pruning, flags, EVALMODE_SV, tmp);
 }
 
-int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord,
+int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                            vector<Z_NR<mpz_t>> &sol_coord,
                             vector<vector<Z_NR<mpz_t>>> &subsol_coord, vector<enumf> &subsol_dist,
                             const vector<double> &pruning, int flags)
 {
@@ -509,7 +509,8 @@ int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, ve
                             &subsol_coord, &subsol_dist);
 }
 
-int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord,
+int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                            vector<Z_NR<mpz_t>> &sol_coord,
                             vector<vector<Z_NR<mpz_t>>> &auxsol_coord, vector<enumf> &auxsol_dist,
                             const int max_aux_sols, const vector<double> &pruning, int flags)
 {
@@ -518,26 +519,9 @@ int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, ve
                             nullptr, &auxsol_coord, &auxsol_dist, max_aux_sols);
 }
 
-
 ///////////////////////////////////
 //////END SVP FOR GSO OBJECT //////
 ///////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* Closest vector problem
    ====================== */

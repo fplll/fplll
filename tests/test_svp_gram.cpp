@@ -16,8 +16,8 @@
 
 #include <cstring>
 #include <fplll.h>
-#include <test_utils.h>
 #include <gso_gram.h>
+#include <test_utils.h>
 
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."
@@ -33,7 +33,6 @@ enum Test
   DSVP_REDUCE
 };
 
-
 /**
    @brief Test if SVP function returns vector with right norm.
 
@@ -42,23 +41,19 @@ enum Test
    @return               zero if successful
 */
 
-
 template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b)
 {
-  vector<Z_NR<mpz_t>> sol_coord;   // In the LLL-reduced grammatrix
+  vector<Z_NR<mpz_t>> sol_coord;  // In the LLL-reduced grammatrix
 
-  vector<Z_NR<mpz_t>> solution_b;  
+  vector<Z_NR<mpz_t>> solution_b;
 
   ZZ_mat<ZT> U;
-  //U.gen_identity(G.get_cols());
+  // U.gen_identity(G.get_cols());
   ZZ_mat<ZT> UT;
-
-
 
   // Make GSO object of G  & apply GramSchmidt
   MatGSOGram<Z_NR<ZT>, FP_NR<FT>> Mgram(G, U, UT, 1);
   Mgram.update_gso();
-
 
   // Compute the length of b w.r.t. G
   Z_NR<ZT> norm_b;
@@ -76,13 +71,11 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b
     return 1;
   }
 
-
   // Symmetrize the Gram Matrix
   Mgram.symmetrize_g();
 
-
   // Possible print for sanity check
-  //Mgram.print_mu_r_g(cerr);
+  // Mgram.print_mu_r_g(cerr);
 
   // Apply SVP algorithm, check whether it yields success
   int status = shortest_vector(Mgram, sol_coord, SVPM_PROVED, SVP_DEFAULT);
@@ -97,7 +90,10 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b
   Z_NR<ZT> norm_s;
   Mgram.sqnorm_coordinates(norm_s, sol_coord);
 
-  if (norm_s != norm_b) { return 1; }
+  if (norm_s != norm_b)
+  {
+    return 1;
+  }
 
   // Apply list svp algorithm
   vector<vector<Z_NR<mpz_t>>> sols_coord;
@@ -324,14 +320,14 @@ int test_filename(const char *input_filename, const char *output_filename,
   switch (test)
   {
   case SVP_ENUM:
-     status |= test_svp<ZT,FT>(G, b);
+    status |= test_svp<ZT, FT>(G, b);
     return status;
-   case DSVP_ENUM:
-     status |= test_dual_svp<ZT>(G, b);
-     return status;
-   case DSVP_REDUCE:
-     status |= test_dsvp_reduce<ZT>(G, b);
-     return status;
+  case DSVP_ENUM:
+    status |= test_dual_svp<ZT>(G, b);
+    return status;
+  case DSVP_REDUCE:
+    status |= test_dsvp_reduce<ZT>(G, b);
+    return status;
   }
 
   cerr << "Unknown test." << endl;
@@ -349,18 +345,22 @@ int main()
 
   int status = 0;
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension7",
-                                                TESTDATADIR "/tests/lattices/grammatrix_dimension7_out");
+                                         TESTDATADIR "/tests/lattices/grammatrix_dimension7_out");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4",
-                                                    TESTDATADIR "/tests/lattices/grammatrix_dimension4_out");
+                                         TESTDATADIR "/tests/lattices/grammatrix_dimension4_out");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension7",
-                                                TESTDATADIR "/tests/lattices/grammatrix_dimension7_out", DSVP_ENUM);
+                                         TESTDATADIR "/tests/lattices/grammatrix_dimension7_out",
+                                         DSVP_ENUM);
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4",
-                                                    TESTDATADIR "/tests/lattices/grammatrix_dimension4_out", DSVP_ENUM);  
+                                         TESTDATADIR "/tests/lattices/grammatrix_dimension4_out",
+                                         DSVP_ENUM);
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension7",
-                                                TESTDATADIR "/tests/lattices/grammatrix_dimension7_out", DSVP_REDUCE);
+                                         TESTDATADIR "/tests/lattices/grammatrix_dimension7_out",
+                                         DSVP_REDUCE);
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4",
-                                                    TESTDATADIR "/tests/lattices/grammatrix_dimension4_out", DSVP_REDUCE);
-  
+                                         TESTDATADIR "/tests/lattices/grammatrix_dimension4_out",
+                                         DSVP_REDUCE);
+
   if (status == 0)
   {
     cerr << "All tests passed." << endl;

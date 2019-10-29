@@ -149,9 +149,10 @@ private:
   // virtual void apply_transform(const Matrix<FT> &transform, int src_base, int target_base);
 };
 
-template <class ZT, class FT> inline ZT &MatGSOGram<ZT,FT>::sqnorm_coordinates(ZT &sqnorm, vector<ZT> coordinates)
+template <class ZT, class FT>
+inline ZT &MatGSOGram<ZT, FT>::sqnorm_coordinates(ZT &sqnorm, vector<ZT> coordinates)
 {
-  vector<ZT> tmpvec; 
+  vector<ZT> tmpvec;
   Matrix<ZT> &g = *gptr;
   vector_matrix_product(tmpvec, coordinates, g);
 
@@ -163,7 +164,6 @@ template <class ZT, class FT> inline ZT &MatGSOGram<ZT,FT>::sqnorm_coordinates(Z
   }
   return sqnorm;
 }
-
 
 template <class ZT, class FT> inline long MatGSOGram<ZT, FT>::get_max_exp_of_b()
 {
@@ -255,8 +255,7 @@ template <class ZT, class FT> inline ZT &MatGSOGram<ZT, FT>::get_int_gram(ZT &z,
     {
       throw std::runtime_error("Error: gptr is equal to the nullpointer.");
     }
-   z = (*gptr)[i][j];
-
+    z = (*gptr)[i][j];
   }
   return z;
 }

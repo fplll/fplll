@@ -206,15 +206,17 @@ private:
   virtual void row_addmul_2exp(int i, int j, const ZT &x, long expo);
 };
 
-template <class ZT, class FT> inline ZT &MatGSO<ZT,FT>::sqnorm_coordinates(ZT &sqnorm, vector<ZT> coordinates)
+template <class ZT, class FT>
+inline ZT &MatGSO<ZT, FT>::sqnorm_coordinates(ZT &sqnorm, vector<ZT> coordinates)
 {
-  vector<ZT> tmpvec; 
+  vector<ZT> tmpvec;
   ZT tmp;
   sqnorm = 0;
   vector_matrix_product(tmpvec, coordinates, b);
-  for(int j = 0; j < get_cols_of_b(); j++) {
+  for (int j = 0; j < get_cols_of_b(); j++)
+  {
     tmp.mul(tmpvec[j], tmpvec[j]);
-    sqnorm.add(sqnorm, tmp);    
+    sqnorm.add(sqnorm, tmp);
   }
   return sqnorm;
 }
@@ -285,8 +287,7 @@ template <class ZT, class FT> inline ZT &MatGSO<ZT, FT>::get_int_gram(ZT &z, int
   else
   {
 
-      b[i].dot_product(z, b[j], n_known_cols);
-
+    b[i].dot_product(z, b[j], n_known_cols);
   }
   return z;
 }
