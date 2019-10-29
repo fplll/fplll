@@ -8,7 +8,7 @@ cache: ccache
 
 env:
   global:
-    - MAKEFLAGS="-j 2"
+    - MAKEFLAGS="-j 4"
 
 matrix:
   include:
