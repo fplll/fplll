@@ -48,6 +48,10 @@ int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
 int shortest_vector(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord,
                     SVPMethod method = SVPM_PROVED, int flags = SVP_DEFAULT);
 
+int shortest_vectors(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                            vector<vector<Z_NR<mpz_t>>> &sol_coord, vector<enumf> &sol_dist,
+                            const int max_sols, SVPMethod method, int flags);
+
 int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, vector<Z_NR<mpz_t>> &sol_coord,
                             const vector<double> &pruning, int flags = SVP_DEFAULT);
 

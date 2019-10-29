@@ -126,6 +126,16 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b
 
   if (norm_s != norm_b) { return 1; }
 
+  // Apply list svp algorithm
+  vector<vector<Z_NR<mpz_t>>> sols_coord;
+  vector<enumf> sols_dist;
+  status = shortest_vectors(Mgram, sols_coord, sols_dist, 500, SVPM_FAST, SVP_DEFAULT);
+  if (status != RED_SUCCESS)
+  {
+    cerr << "Failure: " << get_red_status_str(status) << endl;
+    return status;
+  }
+
   // Return 0 on success
   return 0;
 }
