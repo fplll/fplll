@@ -15,7 +15,7 @@ matrix:
   - stage: checkstyle
     name: checkstyle
     os: linux
-    env: CXX=g++-6 CLANGFORMAT=clang-format-6.0
+    env: COMPILER=g++-6 CLANGFORMAT=clang-format-6.0
     addons:
       apt:
         sources:
