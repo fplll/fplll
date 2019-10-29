@@ -13,14 +13,12 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
-
 #include <cstring>
 #include <fplll/fplll.h>
 
 using namespace fplll;
 
-template<class FT>
-int test_enum(size_t d)
+template <class FT> int test_enum(size_t d)
 {
   RandGen::init_with_seed(0x1337);
   ZZ_mat<mpz_t> A = ZZ_mat<mpz_t>(100, 100);
@@ -36,7 +34,7 @@ int test_enum(size_t d)
   M.get_r(max_dist, 0, 0);
   max_dist *= 0.99;
   enum_obj.enumerate(0, d, max_dist, 0);
-  if(evaluator.empty())
+  if (evaluator.empty())
   {
     return 1;
   }
@@ -48,17 +46,14 @@ int test_enum(size_t d)
 
 bool callback_firstf(size_t n, enumf *new_sol_coord, void *ctx)
 {
-  if(new_sol_coord[0] == static_cast<double*>(ctx)[0])
+  if (new_sol_coord[0] == static_cast<double *>(ctx)[0])
   {
     return true;
   }
   return false;
-
 }
 
-
-template<class FT>
-int test_callback_enum(size_t d)
+template <class FT> int test_callback_enum(size_t d)
 {
   RandGen::init_with_seed(0x1337);
   ZZ_mat<mpz_t> A = ZZ_mat<mpz_t>(100, 100);
@@ -75,16 +70,18 @@ int test_callback_enum(size_t d)
   M.get_r(max_dist, 0, 0);
   max_dist *= 0.99;
   enum_obj.enumerate(0, d, max_dist, 0);
-  if(evaluator.empty())
+  if (evaluator.empty())
   {
     return 1;
   }
   else
   {
-    if(evaluator.begin()->second[0].get_si() == 2)
+    if (evaluator.begin()->second[0].get_si() == 2)
     {
       return 0;
-    } else {
+    }
+    else
+    {
       return 1;
     }
   }
@@ -105,5 +102,4 @@ int main(int argc, char *argv[])
   {
     return -1;
   }
-
 }

@@ -17,10 +17,10 @@
 #define FPLLL_EVALUATOR_H
 
 #include "../util.h"
+#include <cassert>
+#include <functional>
 #include <map>
 #include <queue>
-#include <functional>
-#include <cassert>
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -209,11 +209,11 @@ public:
 
  */
 
-typedef bool(callback_evaluator_callback)(size_t n, enumf* new_sol_coord, void *ctx);
+typedef bool(callback_evaluator_callback)(size_t n, enumf *new_sol_coord, void *ctx);
 
 /**
-   @brief A FastEvaluator which additionally checks whether the predicate ``callbackf(solution, ctx)``
-   accepts or rejects.
+   @brief A FastEvaluator which additionally checks whether the predicate ``callbackf(solution,
+   ctx)`` accepts or rejects.
 
    @example tests/test_enum.cpp
 
@@ -232,14 +232,14 @@ public:
   using FastEvaluator<FT>::normExp;
   using FastEvaluator<FT>::sub_solutions;
 
-  CallbackEvaluator(std::function<callback_evaluator_callback> callbackf,
-                    void *ctx                         = NULL,
+  CallbackEvaluator(std::function<callback_evaluator_callback> callbackf, void *ctx = NULL,
                     size_t nr_solutions               = 1,
                     EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
                     bool find_subsolutions            = false
 
-    )
-    : FastEvaluator<FT>(nr_solutions, update_strategy, find_subsolutions), callbackf(callbackf), ctx(ctx)
+                    )
+      : FastEvaluator<FT>(nr_solutions, update_strategy, find_subsolutions), callbackf(callbackf),
+        ctx(ctx)
   {
   }
   virtual ~CallbackEvaluator() {}
@@ -248,18 +248,16 @@ public:
                         enumf &max_dist)
   {
     assert(new_sol_coord.size() <= FPLLL_MAX_ENUM_DIMENSION);
-    for(size_t i=0; i<new_sol_coord.size(); i++)
+    for (size_t i = 0; i < new_sol_coord.size(); i++)
     {
       new_sol_coordf[i] = new_sol_coord[i].get_d();
     }
-    if(!callbackf(new_sol_coord.size(), new_sol_coordf, this->ctx))
+    if (!callbackf(new_sol_coord.size(), new_sol_coordf, this->ctx))
       return;
 
     FastEvaluator<FT>::eval_sol(new_sol_coord, new_partial_dist, max_dist);
   }
-
 };
-
 
 /**
  * ErrorBoundEvaluator provides an extra interface to provide
