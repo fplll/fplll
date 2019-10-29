@@ -33,18 +33,6 @@ FPLLL_BEGIN_NAMESPACE
 namespace enumlib
 {
 
-extern "C"
-{
-
-  /* -1=quiet, 0=normal, 1=verbose, 2=very verbose*/
-  void fplll_enumlib_set_loglevel(int level);
-
-  /* (th<=0)=auto=#cores */
-  void fplll_enumlib_set_numthreads(int th);
-
-  // void fplll_register_enumlib();
-}
-
 uint64_t enumlib_enumerate(int dim, ::fplll::enumf maxdist,
                            std::function<::fplll::extenum_cb_set_config> cbfunc,
                            std::function<::fplll::extenum_cb_process_sol> cbsol,
