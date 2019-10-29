@@ -336,11 +336,6 @@ static int shortest_vector_ex(
   int old_prec = FP_NR<mpfr_t>::set_prec(prec);
 
   // Allocates space for vectors and matrices in constructors
-
-  // ---> Commented out because of the GSO object already being defined in the input
-  // ZZ_mat<mpz_t> empty_mat;
-  // MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
-
   FP_NR<mpfr_t> max_dist;
   Z_NR<mpz_t> int_max_dist;
   Z_NR<mpz_t> itmp1;
@@ -387,7 +382,6 @@ static int shortest_vector_ex(
   else if (method == SVPM_PROVED)
   {
     ExactErrorBoundedEvaluator *p = new ExactErrorBoundedEvaluator(
-        // d, b, gso.get_mu_matrix(), gso.get_r_matrix(),
         gso, eval_mode, max_aux_sols + 1, EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
     p->int_max_dist = int_max_dist;
     evaluator       = p;

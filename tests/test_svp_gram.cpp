@@ -74,9 +74,6 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b
   // Symmetrize the Gram Matrix
   Mgram.symmetrize_g();
 
-  // Possible print for sanity check
-  // Mgram.print_mu_r_g(cerr);
-
   // Apply SVP algorithm, check whether it yields success
   int status = shortest_vector(Mgram, sol_coord, SVPM_PROVED, SVP_DEFAULT);
 
