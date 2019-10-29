@@ -30,7 +30,11 @@ EXTRA_DIST=test_utils.h \
 	lattices/example_cvp_out2 \
 	lattices/example_cvp_out3 \
 	lattices/example_cvp_out4 \
-	lattices/example_cvp_out5 
+	lattices/example_cvp_out5 \
+	lattices/grammatrix_dimension4 \
+	lattices/grammatrix_dimension4_out \
+	lattices/grammatrix_dimension7 \
+	lattices/grammatrix_dimension7_out 
 
 # include TOPBUILDIR for fplll_config.h
 AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPSRCDIR)/fplll -I$(TOPBUILDDIR) -DTESTDATADIR=\"$(TOPSRCDIR)/\"
