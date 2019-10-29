@@ -101,11 +101,27 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	sieve/sampler_basic.h \
 	sieve/sampler_basic.cpp \
 	householder.cpp householder.h hlll.cpp hlll.h
+libfplll_la_CXXFLAGS=
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
 libfplll_la_LIBADD=$(LIBGMP) -lmpfr $(LIBQD_LIBADD)
 libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REVISION@:@FPLLL_LT_AGE@
 
+if FPLLL_PARALLEL_ENUM
+libfplll_la_SOURCES+=\
+	enum-parallel/enumeration.h enum-parallel/enumlib.h enum-parallel/fplll_types.h enum-parallel/thread_pool.hpp \
+	enum-parallel/enumlib.cpp \
+	enum-parallel/enumlib_dim.160.cpp enum-parallel/enumlib_dim.150.cpp enum-parallel/enumlib_dim.140.cpp enum-parallel/enumlib_dim.130.cpp \
+	enum-parallel/enumlib_dim.120.cpp enum-parallel/enumlib_dim.110.cpp enum-parallel/enumlib_dim.100.cpp enum-parallel/enumlib_dim.90.cpp \
+	enum-parallel/enumlib_dim.80.cpp enum-parallel/enumlib_dim.70.cpp enum-parallel/enumlib_dim.60.cpp enum-parallel/enumlib_dim.50.cpp \
+	enum-parallel/enumlib_dim.40.cpp enum-parallel/enumlib_dim.30.cpp enum-parallel/enumlib_dim.20.cpp
+EXTRA_libfplll_la_SOURCES+=enum-parallel/enumlib_dim.cpp
+libfplll_la_LIBADD+=$(PTHREAD_LIBS)
+libfplll_la_CXXFLAGS+=$(PTHREAD_CFLAGS)
+endif
+	
+
+# libfplll variants
 libfplllv_la_SOURCES=$(libfplll_la_SOURCES)
 EXTRA_libfplllv_la_SOURCES=$(EXTRA_libfplll_la_SOURCES)
 libfplllv_la_CPPFLAGS=$(AM_CPPFLAGS)
