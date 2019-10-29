@@ -123,7 +123,7 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b
   // Compare the length of found solution with given solution b.
   Z_NR<ZT> norm_s;
   length<ZT,FT>(norm_s,G,sol_coord);
-  cerr << "Solution: " << norm_s << " " << norm_b << endl;
+
   if (norm_s != norm_b) { return 1; }
 
   // Return 0 on success
@@ -349,7 +349,6 @@ int main()
                                                 TESTDATADIR "/tests/lattices/grammatrix_dimension7_out");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4",
                                                     TESTDATADIR "/tests/lattices/grammatrix_dimension4_out");
-                                //,TESTDATADIR "/tests/lattices/example_svp_out");
   // status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
   //                                TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_ENUM);
   // status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",

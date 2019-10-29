@@ -67,31 +67,6 @@ static void get_basis_min(Z_NR<mpz_t> &basis_min, MatGSOInterface<Z_NR<mpz_t>, F
     if (sq_norm < basis_min)
       basis_min = sq_norm;
   }
-  // if (! gso.enable_int_gram) {
-  //   Z_NR<mpz_t> sq_norm;
-  //   int n = gso.get_cols_of_b();
-  //   gso.b[first].dot_product(basis_min, gso.b[first], n);
-
-  //   for (int i = first + 1; i < last; i++)
-  //   {
-  //     gso.b[i].dot_product(sq_norm, gso.b[i], n);
-  //     if (sq_norm < basis_min)
-  //       basis_min = sq_norm;
-  //   }
-  // } else {
-  //   // Outputs maximum ||b_i||^2 for i in [first, last]
-  //   Z_NR<mpz_t> sq_norm;
-  //   int n = gso.get_cols_of_b();
-  //   basis_min = (gso.get_g_matrix())(first,first);
-
-  //   for (int i = first + 1; i < last; i++)
-  //   {
-  //     sq_norm = (gso.get_g_matrix())(i,i);
-  //     if (sq_norm < basis_min)
-  //       basis_min = sq_norm;
-  //   }
-
-  // }
 }
 
 static bool enumerate_svp(int d, MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, FP_NR<mpfr_t> &max_dist,
@@ -399,7 +374,6 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
 
     // Use the GSO version of get_basis_min
     get_basis_min(int_max_dist, gso, 0, d);
-    cerr << int_max_dist << endl;
     max_dist.set_z(int_max_dist, GMP_RNDU);
   }
 
@@ -438,7 +412,7 @@ static int shortest_vector_ex(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso, 
   }
 
   // Main loop of the enumeration
-  enumerate_svp(d, gso, max_dist, *evaluator, pruning, flags || SVP_VERBOSE); // Only uses r and mu
+  enumerate_svp(d, gso, max_dist, *evaluator, pruning, flags); // Only uses r and mu
 
   int result = RED_ENUM_FAILURE;
   if (eval_mode != EVALMODE_SV)
