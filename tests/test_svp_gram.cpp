@@ -33,47 +33,85 @@ enum Test
   DSVP_REDUCE
 };
 
+
+/**
+   @brief Computes length b^T G b 
+
+   @param G              input gram matrix 
+   @param b              shortest solution
+   @returns              the length b^T G b
+*/
+
+
+
+
+template <class ZT, class FT> int length(Z_NR<mpz_t> &lengthsol, ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b)
+{
+  vector<Z_NR<mpz_t>> tmpvec; 
+  vector_matrix_product(tmpvec, b, G);  
+
+  Z_NR<ZT> tmp;
+  Z_NR<ZT> norm_s;
+
+  for (int i = 0; i < G.get_cols(); i++)
+  {
+    tmp.mul(tmpvec[i], b[i]);
+    norm_s.add(norm_s, tmp);
+  }
+   lengthsol = norm_s;
+   return 1;
+}
+
 /**
    @brief Test if SVP function returns vector with right norm.
 
    @param A              input lattice
    @param b              shortest vector
-   @return
+   @return               zero if successful
 */
 
-template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G) //, vector<Z_NR<mpz_t>> &b)
+
+template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b)
 {
   vector<Z_NR<mpz_t>> sol_coord;   // In the LLL-reduced grammatrix
-  vector<Z_NR<mpz_t>> sol_coord2;   // In the original grammatrix
-  vector<Z_NR<mpz_t>> solution;
-  ZZ_mat<mpz_t> u;
 
+  vector<Z_NR<mpz_t>> solution_b;  
 
   ZZ_mat<ZT> U;
-  U.gen_identity(G.get_cols());
+  //U.gen_identity(G.get_cols());
   ZZ_mat<ZT> UT;
 
+
+  // Compute the length of b w.r.t. G
+  Z_NR<ZT> norm_b;
+  length<ZT,FT>(norm_b,G,b);
+
+
+  // Make GSO object of G  & apply GramSchmidt
   MatGSOGram<Z_NR<ZT>, FP_NR<FT>> Mgram(G, U, UT, 1);
-
-
   Mgram.update_gso();
 
-
-
+  // Make LLL object & apply LLL
   LLLReduction<Z_NR<ZT>, FP_NR<FT>> LLLObjgram(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
-
   LLLObjgram.lll();
 
-  Mgram.print_mu_r_g(cerr);
-
+  // Check if LLL reduced
   int is_greduced = is_lll_reduced<Z_NR<ZT>, FP_NR<FT>>(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA);
-
   if (!is_greduced)
   {
     cerr << "LLL reduction failed: " << get_red_status_str(is_greduced) << endl;
     return 1;
   }
 
+
+  // Symmetrize the Gram Matrix
+  Mgram.symmetrize_g();
+
+
+  // Possible print for sanity check
+  //Mgram.print_mu_r_g(cerr);
+
+  // Apply SVP algorithm, check whether it yields success
   int status = shortest_vector(Mgram, sol_coord, SVPM_FAST, SVP_DEFAULT);
 
   if (status != RED_SUCCESS)
@@ -82,28 +120,13 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G) //, vector<Z_NR<mpz_t>
     return status;
   }
 
-  cerr << U << endl;
-  vector_matrix_product(sol_coord2,sol_coord,U);
-  vector_matrix_product(solution, sol_coord, G);
-
-  Z_NR<ZT> tmp;
+  // Compare the length of found solution with given solution b.
   Z_NR<ZT> norm_s;
-  Z_NR<ZT> norm_b;
+  length<ZT,FT>(norm_s,G,sol_coord);
+  cerr << "Solution: " << norm_s << " " << norm_b << endl;
+  if (norm_s != norm_b) { return 1; }
 
-  for (int i = 0; i < G.get_cols(); i++)
-  {
-    cerr << sol_coord2[i] << " " << endl;
-
-    tmp.mul(solution[i], sol_coord[i]);
-    norm_s.add(norm_s, tmp);
-
-    //tmp.mul(b[i], b[i]);
-    //norm_b.add(norm_b, tmp);
-  }
-  cerr << "Norm of vector equals: " << norm_s << endl;
-  //if (norm_s != norm_b)
-  //  return 1;
-
+  // Return 0 on success
   return 0;
 }
 
@@ -284,20 +307,21 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
 */
 
 template <class ZT, class FT>
-int test_filename(const char *input_filename, // const char *output_filename,
+int test_filename(const char *input_filename, const char *output_filename,
                   const Test test = SVP_ENUM)
 {
   ZZ_mat<ZT> G;
+  Z_NR<mpz_t> len;
   int status = 0;
   status |= read_file(G, input_filename);
 
-  //vector<Z_NR<mpz_t>> b;
-  //status |= read_file(b, output_filename);
+  vector<Z_NR<mpz_t>> b;
+  status |= read_file(b, output_filename);
 
   switch (test)
   {
   case SVP_ENUM:
-    status |= test_svp<ZT,FT>(G);
+     status |= test_svp<ZT,FT>(G, b);
     return status;
    case DSVP_ENUM:
   //   status |= test_dual_svp<ZT>(A, b);
@@ -321,8 +345,10 @@ int main()
 {
 
   int status = 0;
-  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension7");
-  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4");
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension7",
+                                                TESTDATADIR "/tests/lattices/grammatrix_dimension7_out");
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4",
+                                                    TESTDATADIR "/tests/lattices/grammatrix_dimension4_out");
                                 //,TESTDATADIR "/tests/lattices/example_svp_out");
   // status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
   //                                TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_ENUM);
