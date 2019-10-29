@@ -120,6 +120,13 @@ public:
    * from lll.cpp and bkz.cpp indirect.
    */
 
+
+  /**
+   * Returns || sum_i  x_i b_i ||^2 on vectorial input (x_i)_i 
+   * in the Gram version, it returns x^T G x
+   */
+  virtual ZT &sqnorm_coordinates(ZT &sqnorm, vector<ZT> coordinates) = 0;
+
   /**
    * Returns maximum exponent of b. In the gram
    * version it returns a half times the

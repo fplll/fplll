@@ -20,6 +20,7 @@
 
 #include "gso_interface.h"
 #include "nr/matrix.h"
+#include "util.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -137,6 +138,8 @@ public:
    */
   Matrix<ZT> g;
 
+  virtual inline ZT &sqnorm_coordinates(ZT &sqnorm, vector<ZT> coordinates);
+
   virtual inline long get_max_exp_of_b();
   virtual inline bool b_row_is_zero(int i);
   virtual inline int get_cols_of_b();
@@ -202,6 +205,19 @@ private:
   virtual void row_addmul_si_2exp(int i, int j, long x, long expo);
   virtual void row_addmul_2exp(int i, int j, const ZT &x, long expo);
 };
+
+template <class ZT, class FT> inline ZT &MatGSO<ZT,FT>::sqnorm_coordinates(ZT &sqnorm, vector<ZT> coordinates)
+{
+  vector<ZT> tmpvec; 
+  ZT tmp;
+  sqnorm = 0;
+  vector_matrix_product(tmpvec, coordinates, b);
+  for(int j = 0; j < get_cols_of_b(); j++) {
+    tmp.mul(tmpvec[j], tmpvec[j]);
+    sqnorm.add(sqnorm, tmp);    
+  }
+  return sqnorm;
+}
 
 template <class ZT, class FT> inline long MatGSO<ZT, FT>::get_max_exp_of_b()
 {

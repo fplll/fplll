@@ -35,34 +35,6 @@ enum Test
 
 
 /**
-   @brief Computes length b^T G b 
-
-   @param G              input gram matrix 
-   @param b              shortest solution
-   @returns              the length b^T G b
-*/
-
-
-
-
-template <class ZT, class FT> int length(Z_NR<mpz_t> &lengthsol, ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b)
-{
-  vector<Z_NR<mpz_t>> tmpvec; 
-  vector_matrix_product(tmpvec, b, G);  
-
-  Z_NR<ZT> tmp;
-  Z_NR<ZT> norm_s;
-
-  for (int i = 0; i < G.get_cols(); i++)
-  {
-    tmp.mul(tmpvec[i], b[i]);
-    norm_s.add(norm_s, tmp);
-  }
-   lengthsol = norm_s;
-   return 1;
-}
-
-/**
    @brief Test if SVP function returns vector with right norm.
 
    @param A              input lattice
@@ -82,14 +54,15 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b
   ZZ_mat<ZT> UT;
 
 
-  // Compute the length of b w.r.t. G
-  Z_NR<ZT> norm_b;
-  length<ZT,FT>(norm_b,G,b);
-
 
   // Make GSO object of G  & apply GramSchmidt
   MatGSOGram<Z_NR<ZT>, FP_NR<FT>> Mgram(G, U, UT, 1);
   Mgram.update_gso();
+
+
+  // Compute the length of b w.r.t. G
+  Z_NR<ZT> norm_b;
+  Mgram.sqnorm_coordinates(norm_b, b);
 
   // Make LLL object & apply LLL
   LLLReduction<Z_NR<ZT>, FP_NR<FT>> LLLObjgram(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
@@ -122,7 +95,7 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b
 
   // Compare the length of found solution with given solution b.
   Z_NR<ZT> norm_s;
-  length<ZT,FT>(norm_s,G,sol_coord);
+  Mgram.sqnorm_coordinates(norm_s, sol_coord);
 
   if (norm_s != norm_b) { return 1; }
 
