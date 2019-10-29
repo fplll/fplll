@@ -148,13 +148,13 @@ template <class ZT, class FT> int test_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b
    @return
 */
 template <class ZT>
-int dual_length(FP_NR<mpfr_t> &norm, ZZ_mat<ZT> &A, const vector<Z_NR<mpz_t>> &coords)
+int dual_length(FP_NR<mpfr_t> &norm, ZZ_mat<ZT> &G, const vector<Z_NR<mpz_t>> &coords)
 {
   int d = coords.size();
-  if (A.get_rows() != d)
+  if (G.get_rows() != d)
   {
     cerr << "DSVP length error: Coefficient vector has wrong dimension: ";
-    cerr << A.get_rows() << " vs " << d << endl;
+    cerr << G.get_rows() << " vs " << d << endl;
     return 1;
   }
   vector<FP_NR<mpfr_t>> coords_d(d);
@@ -164,7 +164,7 @@ int dual_length(FP_NR<mpfr_t> &norm, ZZ_mat<ZT> &A, const vector<Z_NR<mpz_t>> &c
   }
 
   ZZ_mat<mpz_t> empty_mat;
-  MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
+  MatGSOGram<Z_NR<ZT>, FP_NR<mpfr_t>> gso(G, empty_mat, empty_mat, 1);
   if (!gso.update_gso())
   {
     cerr << "GSO Failure." << endl;
@@ -202,27 +202,39 @@ int dual_length(FP_NR<mpfr_t> &norm, ZZ_mat<ZT> &A, const vector<Z_NR<mpz_t>> &c
    @return
 */
 
-template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
+template <class ZT> int test_dual_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b)
 {
   vector<Z_NR<mpz_t>> sol_coord;  // In the LLL-reduced basis
   vector<Z_NR<mpz_t>> solution;
   ZZ_mat<mpz_t> u;
 
   FP_NR<mpfr_t> normb;
-  if (dual_length(normb, A, b))
+  if (dual_length(normb, G, b))
   {
     return 1;
   }
 
-  int status =
-      lll_reduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
-  if (status != RED_SUCCESS)
+  // Make GSO object of G  & apply GramSchmidt
+  ZZ_mat<mpz_t> empty_mat;
+  MatGSOGram<Z_NR<ZT>, FP_NR<mpfr_t>> Mgram(G, empty_mat, empty_mat, 1);
+  Mgram.update_gso();
+
+  // Make LLL object & apply LLL
+  LLLReduction<Z_NR<ZT>, FP_NR<mpfr_t>> LLLObjgram(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
+  LLLObjgram.lll();
+
+  // Check if LLL reduced
+  int is_greduced = is_lll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA);
+  if (!is_greduced)
   {
-    cerr << "LLL reduction failed: " << get_red_status_str(status) << endl;
-    return status;
+    cerr << "LLL reduction failed: " << get_red_status_str(is_greduced) << endl;
+    return 1;
   }
 
-  status = shortest_vector(A, sol_coord, SVPM_FAST, SVP_DUAL);
+  // Symmetrize the Gram Matrix
+  Mgram.symmetrize_g();
+
+  int status = shortest_vector(G, sol_coord, SVPM_FAST, SVP_DUAL);
 
   if (status != RED_SUCCESS)
   {
@@ -231,7 +243,7 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
   }
 
   FP_NR<mpfr_t> norm_sol;
-  if (dual_length(norm_sol, A, sol_coord))
+  if (dual_length(norm_sol, G, sol_coord))
   {
     return 1;
   }
@@ -256,32 +268,40 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
    @param b              shortest dual vector
    @return
 */
-template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
+template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b)
 {
   ZZ_mat<mpz_t> u;
-  int d = A.get_rows();
+  int d = G.get_rows();
 
   FP_NR<mpfr_t> normb;
-  if (dual_length(normb, A, b))
+  if (dual_length(normb, G, b))
   {
     return 1;
   }
 
-  int status =
-      lll_reduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
-  if (status != RED_SUCCESS)
+  // Make GSO object of G  & apply GramSchmidt
+  ZZ_mat<mpz_t> empty_mat;
+  MatGSOGram<Z_NR<ZT>, FP_NR<mpfr_t>> Mgram(G, empty_mat, empty_mat, 1);
+  Mgram.update_gso();
+
+  // Make LLL object & apply LLL
+  LLLReduction<Z_NR<ZT>, FP_NR<mpfr_t>> LLLObjgram(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
+  LLLObjgram.lll();
+
+  // Check if LLL reduced
+  int is_greduced = is_lll_reduced<Z_NR<ZT>, FP_NR<mpfr_t>>(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA);
+  if (!is_greduced)
   {
-    cerr << "LLL reduction failed: " << get_red_status_str(status) << endl;
-    return status;
+    cerr << "LLL reduction failed: " << get_red_status_str(is_greduced) << endl;
+    return 1;
   }
 
-  ZZ_mat<mpz_t> empty_mat;
-  MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
-  LLLReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>> lll_obj(gso, LLL_DEF_DELTA, LLL_DEF_ETA, LLL_DEFAULT);
+  // Symmetrize the Gram Matrix
+  Mgram.symmetrize_g();
 
   vector<Strategy> strategies;
   BKZParam dummy(d, strategies);
-  BKZReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>> bkz_obj(gso, lll_obj, dummy);
+  BKZReduction<Z_NR<mpz_t>, FP_NR<mpfr_t>> bkz_obj(Mgram, LLLObjgram, dummy);
 
   bkz_obj.svp_reduction(0, d, dummy, true);
 
@@ -290,7 +310,7 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
   zero = 0;
   vector<Z_NR<mpz_t>> e_n(d, zero);
   e_n[d - 1] = 1;
-  if (dual_length(norm_sol, A, e_n))
+  if (dual_length(norm_sol, G, e_n))
   {
     return 1;
   }
@@ -334,10 +354,10 @@ int test_filename(const char *input_filename, const char *output_filename,
      status |= test_svp<ZT,FT>(G, b);
     return status;
    case DSVP_ENUM:
-  //   status |= test_dual_svp<ZT>(A, b);
+     status |= test_dual_svp<ZT>(G, b);
      return status;
    case DSVP_REDUCE:
-  //   status |= test_dsvp_reduce<ZT>(A, b);
+     status |= test_dsvp_reduce<ZT>(G, b);
      return status;
   }
 
@@ -359,10 +379,14 @@ int main()
                                                 TESTDATADIR "/tests/lattices/grammatrix_dimension7_out");
   status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4",
                                                     TESTDATADIR "/tests/lattices/grammatrix_dimension4_out");
-  // status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
-  //                                TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_ENUM);
-  // status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
-  //                                TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_REDUCE);
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension7",
+                                                TESTDATADIR "/tests/lattices/grammatrix_dimension7_out", DSVP_ENUM);
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4",
+                                                    TESTDATADIR "/tests/lattices/grammatrix_dimension4_out", DSVP_ENUM);
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension7",
+                                                TESTDATADIR "/tests/lattices/grammatrix_dimension7_out", DSVP_REDUCE);
+  status |= test_filename<mpz_t, mpfr_t>(TESTDATADIR "/tests/lattices/grammatrix_dimension4",
+                                                    TESTDATADIR "/tests/lattices/grammatrix_dimension4_out", DSVP_REDUCE);
 
   if (status == 0)
   {
