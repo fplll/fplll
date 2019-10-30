@@ -90,6 +90,9 @@ namespace thread_pool {
 		// stop the thread pool
 		void stop();
 
+		// process single task
+		bool work();
+
 		// process tasks & then wait until all threads are idle
 		void wait_work();
 
@@ -143,20 +146,24 @@ namespace thread_pool {
 		resize(0);
 	}
 
-	inline void thread_pool::wait_work()
+	inline bool thread_pool::work()
 	{
 		std::function<void()> task;
-		std::unique_lock<std::mutex> lock(_mutex);
-		while (!_tasks.empty())
+		if (_tasks.empty())
+			return false;
 		{
+			std::lock_guard<std::mutex> lock(_mutex);
 			task = std::move(this->_tasks.front());
 			this->_tasks.pop();
-
-			lock.unlock();
-			task();
-			lock.lock();
 		}
-		lock.unlock();
+		task();
+		return true;
+	}
+
+	inline void thread_pool::wait_work()
+	{
+		while (work())
+			;
 		while (_threads_busy != 0)
 			std::this_thread::yield();
 	}
