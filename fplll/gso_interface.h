@@ -489,9 +489,10 @@ protected:
   // virtual void row_addmul_si_2exp(int i, int j, long x, long expo) = 0;
   // virtual void row_addmul_2exp(int i, int j, const ZT &x, long expo) = 0;
 
+public:
+  // made public for lll.cpp and bkz.cpp
   void symmetrize_g();
 
-public:
   // Made public for bkz.cpp (dbkz_postprocessing)
   // b[i] <-> b[j] (i < j)
   virtual void row_swap(int i, int j) = 0;

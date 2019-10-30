@@ -153,6 +153,9 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end,
     m.set_r(kappa, kappa, lovasz_tests[kappa]);
     kappa++;
   }
+  // Symmetrize the Gram matrix
+  if (m.enable_int_gram)
+    m.symmetrize_g();
 
   if (kappa < kappa_end - zeros)
     return set_status(RED_LLL_FAILURE);
