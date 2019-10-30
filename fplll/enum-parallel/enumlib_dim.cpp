@@ -61,36 +61,6 @@ uint64_t enumerate_dim_detail(int dim, float_type maxdist,
   cb_set_config(&lat.muT[0][0], dimension, true, &lat.risq[0], &lat.pr[0]);
   lat.pr2 = lat.pr;
 
-  if (enumlib_loglevel >= 1)
-    cout << "[enumlib] Running dimension " << dimension << ": A=" << maxdist << endl;
-  if (enumlib_loglevel >= 2)
-  {
-    cout << "[enumlib] pr2 = [";
-    for (int i = 0; i < dimension; ++i)
-      cout << lat.pr2[i] << " ";
-    cout << "]" << endl;
-
-    cout << "[enumlib] pr = [";
-    for (int i = 0; i < dimension; ++i)
-      cout << lat.pr[i] << " ";
-    cout << "]" << endl;
-
-    cout << "[enumlib] r = [";
-    for (int i = 0; i < dimension; ++i)
-      cout << lat.risq[i] << " ";
-    cout << "]" << endl;
-
-    cout << "[enumlib] mu[:5,:5] = [" << endl;
-    for (int j = 0; j < 5; ++j)
-    {
-      cout << "[";
-      for (int i = 0; i < 5; ++i)
-        cout << lat.muT[i * dimension + j] << " \t";
-      cout << "]" << endl;
-    }
-    cout << "]" << endl;
-  }
-
   lat.activeswirly = false;
 
   lat.enumerate_recursive();

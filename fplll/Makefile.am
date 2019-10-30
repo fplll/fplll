@@ -100,7 +100,9 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	sieve/sieve_gauss_4sieve.cpp \
 	sieve/sampler_basic.h \
 	sieve/sampler_basic.cpp \
-	householder.cpp householder.h hlll.cpp hlll.h
+	householder.cpp householder.h hlll.cpp hlll.h \
+	io/json.hpp \
+	threadpool.h threadpool.cpp io/thread_pool.hpp
 libfplll_la_CXXFLAGS=
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
@@ -109,7 +111,7 @@ libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REV
 
 if FPLLL_PARALLEL_ENUM
 libfplll_la_SOURCES+=\
-	enum-parallel/enumeration.h enum-parallel/enumlib.h enum-parallel/fplll_types.h enum-parallel/thread_pool.hpp \
+	enum-parallel/enumeration.h enum-parallel/enumlib.h enum-parallel/fplll_types.h \
 	enum-parallel/enumlib.cpp \
 	enum-parallel/enumlib_dim.160.cpp enum-parallel/enumlib_dim.150.cpp enum-parallel/enumlib_dim.140.cpp enum-parallel/enumlib_dim.130.cpp \
 	enum-parallel/enumlib_dim.120.cpp enum-parallel/enumlib_dim.110.cpp enum-parallel/enumlib_dim.100.cpp enum-parallel/enumlib_dim.90.cpp \

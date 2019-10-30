@@ -135,6 +135,8 @@ AC_C_VOLATILE
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([floor pow rint sqrt strtol])
 
+AX_PTHREAD()
+
 # enumeration dimension
 max_enumeration_dimension=256
 
@@ -161,7 +163,6 @@ AC_ARG_WITH(max-parallel-enum-dim,
 
 AS_IF([test "x$max_parallel_enum_dim" != "x0"], [
         AC_DEFINE([FPLLL_MAX_PARALLEL_ENUM_DIM], [$max_parallel_enum_dim], [parallel enumeration enabled])
-        AX_PTHREAD()
         ])
 AM_CONDITIONAL(FPLLL_PARALLEL_ENUM, test "x$max_parallel_enum_dim" != "x0")
 
