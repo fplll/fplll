@@ -23,12 +23,15 @@ using namespace fplll;
  * This is decided here.
  */
 
-void decide_randomness (bool generate_with_clock) {
+void decide_randomness (bool generate_with_clock) 
+{
 	int seed = 0;
-	if (generate_with_clock) {
+	if (generate_with_clock) 
+	{
 		RandGen::init_with_time();
 	}
-	else {
+	else 
+	{
 		cin >> seed;
 		RandGen::init_with_seed(seed);
 	}
@@ -40,7 +43,8 @@ void decide_randomness (bool generate_with_clock) {
  * with a random number between 0 and 2^bits - 1. The rest is the canonical vector.
 */
 
-void generate_knapsack_matrix (ZZ_mat<mpz_t> &base, int rows, int bits) {
+void generate_knapsack_matrix (ZZ_mat<mpz_t> &base, int rows, int bits) 
+{
 	
 	int columns = rows;
 	/** 
@@ -61,7 +65,8 @@ void generate_knapsack_matrix (ZZ_mat<mpz_t> &base, int rows, int bits) {
  * d - 1 independent integers in the space of [0, 2^bits - 1]. For each i > 1, the i-th vector is the
  * i-th canonical unit vector, scaled by a factor of 2^bits.  
 */
-void generate_simdioph_matrix (ZZ_mat<mpz_t> &base, int rows, int bits, int bits2) {
+void generate_simdioph_matrix (ZZ_mat<mpz_t> &base, int rows, int bits, int bits2) 
+{
 	/** 
 	 * This function resizes the base according to specifications, allocating desired memory.Parameters are:
 	 * @param int rows: the number of vectors in matrix.
@@ -75,7 +80,8 @@ void generate_simdioph_matrix (ZZ_mat<mpz_t> &base, int rows, int bits, int bits
 /**
  * Generates a matrix of size dimension, with uniformly random coefficients between 0 and 2^bit_size - 1
  */
-void generate_uniformly_random_matrix (ZZ_mat<mpz_t> &base, int dimension, int bit_size){
+void generate_uniformly_random_matrix (ZZ_mat<mpz_t> &base, int dimension, int bit_size)
+{
   base.resize(dimension, dimension); /* Resize the matrix to a dimension * dimension matrix */
   base.gen_uniform(bit_size); /* Generates uniformly random coefficients for the matrix */
 }
@@ -88,19 +94,24 @@ void generate_uniformly_random_matrix (ZZ_mat<mpz_t> &base, int dimension, int b
  * is the shift of the (i-1)-th (with last entry put back in first position), for all i>1.
  * Warning: this does not produce a genuine ntru lattice with h a genuine public key.
  */
-void generate_ntru_like_matrix (ZZ_mat<mpz_t> &base, int dimension, int bit_size, bool clock, bool random, int seed, char selection_char){
+void generate_ntru_like_matrix (ZZ_mat<mpz_t> &base, int dimension, int bit_size, bool clock, bool random, int seed, char selection_char)
+{
   base.resize(2 * dimension, 2 * dimension); /* Resize the matrix to a (2 * dimension) * (2 * dimension) matrix */
   /** 
   * If the character is  'b', then the method first samples an integer q in space [0, 2^b-1] 
   */
-  if (selection_char == 'b') {
+  if (selection_char == 'b')
+  {
   	base.gen_ntrulike(bit_size); 
   }
-  else {
-  	if (selection_char == 'q') {
+  else 
+   {
+  	if (selection_char == 'q') 
+  	{
   		base.gen_ntrulike_withq(bit_size); /* If the character is 'q', then the integer is set to the provided value */
   	}
-  	else {
+  	else
+  	{
   		cout << "Warning: selection character MUST be 'b' or 'q'." << endl;
   	}
   }
@@ -110,19 +121,24 @@ void generate_ntru_like_matrix (ZZ_mat<mpz_t> &base, int dimension, int bit_size
  * Generates a matrix just like generate_ntrulike_matrix(), except that the constructed matrix is [[q*I, 0], [Rot(h), I]].
  * This functions just like 'N' method of latticegen API.
  */
-void generate_ntru_like_matrix_alt (ZZ_mat<mpz_t> &base, int dimension, int bit_size, char selection_char){
+void generate_ntru_like_matrix_alt (ZZ_mat<mpz_t> &base, int dimension, int bit_size, char selection_char)
+{
   base.resize(2 * dimension, 2 * dimension); /* Resize the matrix to a (2 * dimension) * (2 * dimension) matrix */
   /** 
    * Matrix is now filled based on specifications selected by selection_char 
   */
-  if (selection_char == 'b') {
+  if (selection_char == 'b') 
+  {
   	base.gen_ntrulike2(bit_size); /* If the character is  'b', then the method first samples an integer q in space [0, 2^b-1] */ 
   }
-  else {
-  	if (selection_char == 'q') {
+  else 
+  {
+  	if (selection_char == 'q') 
+  	{
   		base.gen_ntrulike2_withq(bit_size); /* If the character is 'q', then the integer is set to the provided value */	
   	}
-  	else {
+  	else 
+  	{
   		cout << "Warning: selection character MUST be 'b' or 'q'." << endl;
   	}
   	
@@ -135,23 +151,30 @@ void generate_ntru_like_matrix_alt (ZZ_mat<mpz_t> &base, int dimension, int bit_
  * the SIS/LWE q-ary lattices. Goldstein-Mayer lattices correspond to k=1 and q prime
  * This functions just like 'u' method of latticegen API.
  */
-void generate_qary_matrix (ZZ_mat<mpz_t> &base, int dimension, int bit_size, int k_param, char selection_char){
+void generate_qary_matrix (ZZ_mat<mpz_t> &base, int dimension, int bit_size, int k_param, char selection_char)
+{
   base.resize(dimension, dimension); /* Resize the matrix to a dimension * dimension matrix */
   /** 
   * Here the matrix is created, choosing a generation method according to the selection_char input  
   */
-  if (selection_char == 'b') {
+  if (selection_char == 'b') 
+  {
   	base.gen_qary(k_param, bit_size); /* If the character is  'b', then the method first samples an integer q in space [0, 2^b-1]  */
   }
-  else {
-  	if (selection_char == 'p'){
+  else 
+  {
+  	if (selection_char == 'p')
+  	{
   		base.gen_qary_prime(k_param, bit_size); /* If the character is 'p', then */
   	}
-  	else {
-  		if (selection_char == 'q') {
+  	else 
+  	{
+  		if (selection_char == 'q') 
+  		{
   			base.gen_qary_withq(k_param, bit_size); /* If the character is 'q', then the integer is set to the provided value */	
   		}
-  		else {
+  		else 
+  		{
   			cout << "Warning: selection character MUST be 'b', 'p' or 'q'." << endl;
   		}
   	}
@@ -163,7 +186,8 @@ void generate_qary_matrix (ZZ_mat<mpz_t> &base, int dimension, int bit_size, int
  * and base[i][j] is uniform between -base[i][j]/2 and base[i][j]/2 for all j<i. This functions exactly like 't' generation method
  * of latticegen API. 
  */
-void generate_lower_triangular_matrix (ZZ_mat<mpz_t> &base, int dimension, float f_param) {
+void generate_lower_triangular_matrix (ZZ_mat<mpz_t> &base, int dimension, float f_param)
+{
   base.resize(dimension, dimension); /* Resize the matrix to a dimension * dimension matrix */
   base.gen_trg(f_param); /* Matrix is generated here, as described above. */
 }
@@ -173,9 +197,11 @@ void generate_lower_triangular_matrix (ZZ_mat<mpz_t> &base, int dimension, float
  * dimension-dimensional vector, read from a file. It then generates base as follows: base[i][i] =vec[i] for all i, and
  * base[i][j] is uniform betweeen -base[j][j]/2 and base[j][j]/2 for all j<i.
  */
-void generate_lower_triangular_matrix_alt (ZZ_mat<mpz_t> &base, int dimension, float f_param) {
+void generate_lower_triangular_matrix_alt (ZZ_mat<mpz_t> &base, int dimension, float f_param) 
+{
 	FP_NR<mpfr_t> *input_vector = new FP_NR<mpfr_t>[dimension]; /* This is the input vector declaration. */
-	for (int i = 0; i < dimension; i++) {
+	for (int i = 0; i < dimension; i++) 
+	{
 		mpfr_inp_str(input_vector[i].get_data(), stdin, 10, GMP_RNDN); /* This function reads each element of the input vector */
 	} 
 	base.resize(dimension, dimension); /* Resize the matrix to a dimension * dimension matrix */
@@ -184,7 +210,8 @@ void generate_lower_triangular_matrix_alt (ZZ_mat<mpz_t> &base, int dimension, f
 }
 
 
-int main (int argc, char** argv) {
+int main (int argc, char** argv) 
+{
 	int seed = 25;
 	int dimension = 5;
 	int bits = 4;

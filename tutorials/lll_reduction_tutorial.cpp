@@ -16,12 +16,18 @@ using namespace fplll;
 #endif
 
 /**
+ * Compile like so:
+ * g++ -std=c++11 -march=native -o3 lll_reduction_tutorial.cpp -lfplll -mpfr -lgmp -o <executable_name_here>
+ */
+
+/**
  * This function performs LLL reduction on a given lattice base, using the PROVED method.
  * In order to intercat with the LLLReduction class, which implements all LLL reduction methods,
  * the Wrapper interface is used.
  */
 
-void lll_reduction_proved (ZZ_mat<mpz_t> &base) {
+void lll_reduction_proved (ZZ_mat<mpz_t> &base)
+ {
 	bool result = 0;
 	double delta = 0.99, eta = 0.51; /* These are the default values of delta and eta respectively. */
 	ZZ_mat<mpz_t> identity_matrix; /* This must be either empty or the identity matrix */
@@ -36,7 +42,8 @@ void lll_reduction_proved (ZZ_mat<mpz_t> &base) {
 	cout << base << endl;
 }
 
-void lll_reduction_fast(ZZ_mat<mpz_t> &base) {
+void lll_reduction_fast(ZZ_mat<mpz_t> &base)
+ {
 	bool result = 0;
 	double delta = 0.99, eta = 0.51; /* These are the default values of delta and eta respectively. */
 	ZZ_mat<mpz_t> identity_matrix; /* This must be either empty or the identity matrix */
@@ -51,7 +58,8 @@ void lll_reduction_fast(ZZ_mat<mpz_t> &base) {
 	cout << base << endl;
 }
 
-void lll_reduction_heuristic (ZZ_mat<mpz_t> &base) {
+void lll_reduction_heuristic (ZZ_mat<mpz_t> &base) 
+{
 	bool result = 0;
 	double delta = 0.99, eta = 0.51; /* These are the default values of delta and eta respectively. */
 	ZZ_mat<mpz_t> identity_matrix; /* This must be either empty or the identity matrix */
@@ -66,7 +74,8 @@ void lll_reduction_heuristic (ZZ_mat<mpz_t> &base) {
 	cout << base << endl;
 }
 
-int main (int argc, char* argv[]) {
+int main (int argc, char* argv[]) 
+{
 	/* We are using a lattice of size 5 * 5,
 	 * where the element of each vector is an integer
 	 * in the space of [0, 15]. If a different base
@@ -98,4 +107,5 @@ int main (int argc, char* argv[]) {
 	cout << endl;
 	lll_reduction_heuristic(base);
 	cout << endl;
+	return 0;
 }
