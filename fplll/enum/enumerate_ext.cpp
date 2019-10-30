@@ -134,7 +134,8 @@ void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, b
   else
   {
     // Otherwise we just copy over the pruning parameters
-    memcpy(&pruning, &_pruning, sizeof(enumf) * _d);
+    for(int i = 0; i < _d;++i) 
+	    pruning[i] = _pruning[i];
   }
 }
 
