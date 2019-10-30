@@ -149,10 +149,10 @@ namespace thread_pool {
 	inline bool thread_pool::work()
 	{
 		std::function<void()> task;
-		if (_tasks.empty())
-			return false;
 		{
 			std::lock_guard<std::mutex> lock(_mutex);
+			if (_tasks.empty())
+				return false;
 			task = std::move(this->_tasks.front());
 			this->_tasks.pop();
 		}
