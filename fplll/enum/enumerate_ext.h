@@ -54,8 +54,8 @@ typedef void(extenum_cb_set_config)(enumf*  mu, size_t mudim, bool mutranspose, 
 /**
  * Callback function given to external enumeration library. 
  * Passes a new solution and its length to Evaluator, returning the new enumeration bound.
- * @param dist - the norm of the new solution.
- * @param sol - a pointer to the new solution. 
+ * @param[in] dist - the norm of the new solution.
+ * @param[in] sol - a pointer to the new solution. 
  * @return The new enumeration bound.
  */
 typedef enumf(extenum_cb_process_sol)(enumf dist, enumf*  sol);
@@ -70,7 +70,8 @@ typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
 /**
  * External enumeration function prototype.
  *
- * @param dim         enumeration dimension
+ * @param dim         enumeration dimension.
+ * @param maxdist     initial enumeration bound.  
  * @param cbfunc      given callback function to get mu, rdiag, pruning
  * @param cbsol       given callback function to pass solution and its length to Evaluator,
  *                    it returns new enumeration bound
@@ -81,7 +82,7 @@ typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
  *         Or ~uint64_t(0) when instance is not supported
  *         in which case fplll falls back to its own enumeration.
  */
-typedef uint64_t(extenum_fc_enumerate)(int dim, enumf maxdist,
+typedef uint64_t(extenum_fc_enumerate)(const int dim, enumf maxdist,
                                        std::function<extenum_cb_set_config> cbfunc,
                                        std::function<extenum_cb_process_sol> cbsol,
                                        std::function<extenum_cb_process_subsol> cbsubsol,

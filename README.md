@@ -109,7 +109,7 @@ Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to 
 
 	Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
 
-This will enable the WSL. Next, open the Windows Store and navigate to your favourite distribution - this may be installed as if it is a regular application. Afterwards, this system can be accessed as if it were a regular program e.g. by opening command prompt and typing `bash`. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
+This will enable the WSL. Next, open the Windows Store and navigate to your favourite available Linux distribution - this may be installed as if were a regular application. Afterwards, this system can be accessed as if it were a regular program e.g. by opening command prompt and typing `bash`. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
 	
 	sudo apt-get update
 	
