@@ -88,7 +88,11 @@ typedef uint64_t(extenum_fc_enumerate)(int dim, enumf maxdist,
                                        bool dual /*=false*/, bool findsubsols /*=false*/
 );
 
-// set & get external enumerator. If extenum = nullptr =>, then this interface is disabled.
+/* set & get external enumerator. If extenum = nullptr then this interface is disabled,
+				  and fplll will use the internal enumerator.
+				  Otherwise, fplll will use the enumeration function pointed to 
+				  by extenum.
+*/
 void set_external_enumerator(std::function<extenum_fc_enumerate> extenum = nullptr);
 std::function<extenum_fc_enumerate> get_external_enumerator();
 
@@ -101,10 +105,12 @@ public:
   {
   }
 
-  
+ 
   bool enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
                  const vector<enumf> &pruning = vector<enumf>(), bool dual = false);
 
+  //get_nodes. This returns the number of nodes visited by the external enumeration process. 
+  //If this returns 0, then fplll will fall back to the internal enumerator.
   inline uint64_t get_nodes() const { return _nodes; }
 
 private:

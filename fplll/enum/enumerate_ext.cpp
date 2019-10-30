@@ -121,15 +121,17 @@ void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, b
     }
   }
 
-  if (_pruning.empty())
+  //if there's no pruning enabled then we just copy over 
+  if (_pruning.empty()) 
   {
     for (int i = 0; i < _d; ++i)
       pruning[i] = 1.0;
+    
   }
   else
   {
-    for (int i = 0; i < _d; ++i)
-      pruning[i] = _pruning[i];
+     //copy over the pruning parameters
+     memcpy(&pruning, &_pruning, sizeof(enumf)*_d);
   }
 }
 
