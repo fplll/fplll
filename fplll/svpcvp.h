@@ -1,4 +1,5 @@
 /* Copyright (C) 2008-2011 Xavier Pujol.
+   Copyright (C) 2019 Koen de Boer & Wessel van Woerden
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser

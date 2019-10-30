@@ -1,6 +1,7 @@
 /* Copyright (C) 2005-2008 Damien Stehle.
    Copyright (C) 2007 David Cade.
    Copyright (C) 2011 Xavier Pujol.
+   Copyright (C) 2019 Koen de Boer
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
