@@ -162,7 +162,7 @@ AC_ARG_WITH(max-parallel-enum-dim,
         [max_parallel_enum_dim=$withval])
 
 AS_IF([test "x$max_parallel_enum_dim" != "x0"], [
-        AC_DEFINE([FPLLL_MAX_PARALLEL_ENUM_DIM], [$max_parallel_enum_dim], [parallel enumeration enabled])
+        AC_DEFINE_UNQUOTED([FPLLL_MAX_PARALLEL_ENUM_DIM], $max_parallel_enum_dim, [parallel enumeration enabled])
         ])
 AM_CONDITIONAL(FPLLL_PARALLEL_ENUM, test "x$max_parallel_enum_dim" != "x0")
 
