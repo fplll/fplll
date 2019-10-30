@@ -5,7 +5,7 @@
 
 fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL [[LLL82](#LLL82)] is central to the code, hence the name.
 
-It includes implementations of floating-point LLL reduction algorithms [[NS09](#NS09),[MSV09](#MSV09)], offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible [[S10](#S10)]. In the case of the wrapper, the succession of variants is oblivious to the user. 
+It includes implementations of floating-point LLL reduction algorithms [[NS09](#NS09),[MSV09](#MSV09)], offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible [[S09](#S09)]. In the case of the wrapper, the succession of variants is oblivious to the user. 
 
 It includes an implementation of the BKZ reduction algorithm [[SE94](#SE94)], including the BKZ-2.0 [[CN11](#CN11)] improvements (extreme enumeration pruning, pre-processing of blocks, early termination). Additionally, Slide reduction [[GN08](#GN08)] and self dual BKZ [[MW16](#MW16)] are supported. 
 
@@ -61,11 +61,12 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 - autotools 2.61 or higher
 - g++ 4.9.3 or higher
 
-
 ### Optional ###
 - QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install
   the shared library (e.g. `./configure --enable-shared=yes`).
   [http://crd-legacy.lbl.gov/~dhbailey/mpdist/](http://crd-legacy.lbl.gov/~dhbailey/mpdist/)
+  
+NOTE: If you are intending to use fplll on Windows 10, then these packages are not required before you get started. This is because you use fplll via the "Windows Subsystem for Linux". Please go straight to the instructions for [Windows 10](#windows-10).
 
 ## Installation ##
 
@@ -104,11 +105,11 @@ installation directory name other than `/usr/local` by giving `./configure` the 
 
 ### Windows 10 ###
 
-Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to **Settings** -> **Update and security** -> **For developers** and enable developer mode. (This may take a while.) Afterwards, open command prompt and run 
+Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to **Settings** -> **Update and security** -> **For developers** and enable developer mode. (This may take a while.) Afterwards, open Powershell as an administrator and run 
 
-	lxrun /install
+	Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
 
-This will install the WSL, and afterwards this system can be accessed e.g. by opening command prompt and typing `bash`. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
+This will enable the WSL. Next, open the Windows Store and navigate to your favourite distribution - this may be installed as if it is a regular application. Afterwards, this system can be accessed as if it were a regular program e.g. by opening command prompt and typing `bash`. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
 	
 	sudo apt-get update
 	
@@ -406,7 +407,6 @@ Bug reports may be sent to [https://groups.google.com/forum/#!forum/fplll-devel]
 
 <a name="GNR13">[GNR13]</a> N. Gama, P. Q. Nguyen and Oded Regev. Lattice Enumeration Using Extreme Pruning.
 
-
 <a name="HPS98">[HPS98]</a> J. Hoffstein, J. Pipher, J. H. Silverman. NTRU: A Ring-Based Public Key Cryptosystem. ANTS 1998: 267-288
 
 <a name="K83">[K83]</a> R. Kannan. Improved algorithms for integer programming and related lattice problems. STOC 1983, 99-108
@@ -425,7 +425,7 @@ Bug reports may be sent to [https://groups.google.com/forum/#!forum/fplll-devel]
 
 <a name="NS09">[NS09]</a> P. Q. Nguyen and D. Stehle. An LLL Algorithm with Quadratic Complexity. SIAM J. Comput. 39(3): 874-903 (2009)
 
-<a name="S10">[S10]</a> D. Stehle. Floating-Point LLL: Theoretical and Practical Aspects. The LLL Algorithm 2010: 179-213
+<a name="S09">[S09]</a> D. Stehle. Floating-Point LLL: Theoretical and Practical Aspects. The LLL Algorithm 2009: 179-213
 
 <a name="SE94">[SE94]</a>: C.-P. Schnorr and M. Euchner. Lattice basis reduction: Improved practical algorithms and solving subset sum problems. Math. Program. 66: 181-199 (1994)
 
