@@ -84,11 +84,11 @@ template <typename ZT, typename FT>
 void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, bool mutranspose,
                                                       enumf *rdiag, enumf *pruning)
 {
-	
+
   FT fr, fmu;
   long rexpo;
-  //Copy over the squared norms for the Gram-Schmidt vectors. 
-  //Note that these norms are normalised.
+  // Copy over the squared norms for the Gram-Schmidt vectors.
+  // Note that these norms are normalised.
   for (int i = 0; i < _d; ++i)
   {
     fr = _gso.get_r_exp(i + _first, i + _first, rexpo);
@@ -96,7 +96,7 @@ void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, b
     rdiag[i] = fr.get_d();
   }
 
-  //Now we copy the mu values from the gso matrix. 
+  // Now we copy the mu values from the gso matrix.
   if (mutranspose)
   {
 
@@ -125,17 +125,16 @@ void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, b
     }
   }
 
-  //if there's no pruning enabled then we just fill pruning with 1s
-  if (_pruning.empty()) 
+  // if there's no pruning enabled then we just fill pruning with 1s
+  if (_pruning.empty())
   {
     for (int i = 0; i < _d; ++i)
       pruning[i] = 1.0;
-    
   }
   else
   {
-     //Othwerwise we just copy over the pruning parameters
-     memcpy(&pruning, &_pruning, sizeof(enumf)*_d);
+    // Otherwise we just copy over the pruning parameters
+    memcpy(&pruning, &_pruning, sizeof(enumf) * _d);
   }
 }
 

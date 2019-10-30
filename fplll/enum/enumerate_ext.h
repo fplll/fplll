@@ -31,34 +31,36 @@ FPLLL_BEGIN_NAMESPACE
 /**
  * Callback function given to external enumeration library.
  *
- * @param[out] mu - this is a pointer to an array 'enumf mu[mudim][mudim]'. 
+ * @param[out] mu - this is a pointer to an array 'enumf mu[mudim][mudim]'.
  * 	       Upon return, this array will contain
  * 	       the mu values for the lattice basis.
- * 	       Note that the array pointed to by this argument needs to be contiguous, 
+ * 	       Note that the array pointed to by this argument needs to be contiguous,
  * 	       otherwise there will be write errors.
- * 	       This means that the only acceptable arguments are pointers to 
- * 	       variable-length arrays, 1D std::vector of dimension mudim*mudim, or 
+ * 	       This means that the only acceptable arguments are pointers to
+ * 	       variable-length arrays, 1D std::vector of dimension mudim*mudim, or
  * 	       1D raw(resp. std::array) arrays of dimension mudim*mudim.
- * @param[in]  mudim - the number of rows(resp. columns) in the mu array. 
- * @param[out] mutranspose - when true, mutranspose is stored in the mu param. 
- *                           Otherwise, mu is stored in the mu param. 
- * 			Storing mutranspose allows for more efficient memory access, as accesses will be contiguous. 
- * @param[out] rdiag - a pointer to an array 'enumf rdiag[mudim]'. 
- * 	               Upon return, this will contain the squared norms of the Gram-Schmidt vectors. 
- * @param[out] pruning - a pointer to an array 'enumf pruning[mudim]'. Upon return, this will contain the pruning coefficients 
- * 	                 for enumeration. In rigorous enumeration, this array will consist solely of 1's.
+ * @param[in]  mudim - the number of rows(resp. columns) in the mu array.
+ * @param[out] mutranspose - when true, mutranspose is stored in the mu param.
+ *                           Otherwise, mu is stored in the mu param.
+ * 			Storing mutranspose allows for more efficient memory access, as accesses
+ * will be contiguous.
+ * @param[out] rdiag - a pointer to an array 'enumf rdiag[mudim]'.
+ * 	               Upon return, this will contain the squared norms of the Gram-Schmidt vectors.
+ * @param[out] pruning - a pointer to an array 'enumf pruning[mudim]'. Upon return, this will
+ * contain the pruning coefficients for enumeration. In rigorous enumeration, this array will
+ * consist solely of 1's.
  */
-typedef void(extenum_cb_set_config)(enumf*  mu, size_t mudim, bool mutranspose, enumf* rdiag,
-                                    enumf*  pruning);
+typedef void(extenum_cb_set_config)(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag,
+                                    enumf *pruning);
 
 /**
- * Callback function given to external enumeration library. 
+ * Callback function given to external enumeration library.
  * Passes a new solution and its length to Evaluator, returning the new enumeration bound.
  * @param[in] dist - the norm of the new solution.
- * @param[in] sol - a pointer to the new solution. 
+ * @param[in] sol - a pointer to the new solution.
  * @return The new enumeration bound.
  */
-typedef enumf(extenum_cb_process_sol)(enumf dist, enumf*  sol);
+typedef enumf(extenum_cb_process_sol)(enumf dist, enumf *sol);
 
 /**
  * Callback function given to external enumeration library.
@@ -71,7 +73,7 @@ typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
  * External enumeration function prototype.
  *
  * @param dim         enumeration dimension.
- * @param maxdist     initial enumeration bound.  
+ * @param maxdist     initial enumeration bound.
  * @param cbfunc      given callback function to get mu, rdiag, pruning
  * @param cbsol       given callback function to pass solution and its length to Evaluator,
  *                    it returns new enumeration bound
@@ -90,13 +92,12 @@ typedef uint64_t(extenum_fc_enumerate)(const int dim, enumf maxdist,
 );
 
 /* set & get external enumerator. If extenum = nullptr then this interface is disabled,
-				  and fplll will use the internal enumerator.
-				  Otherwise, fplll will use the enumeration function pointed to 
-				  by extenum.
+                                  and fplll will use the internal enumerator.
+                                  Otherwise, fplll will use the enumeration function pointed to
+                                  by extenum.
 */
 void set_external_enumerator(std::function<extenum_fc_enumerate> extenum = nullptr);
 std::function<extenum_fc_enumerate> get_external_enumerator();
-
 
 template <typename ZT, typename FT> class ExternalEnumeration
 {
@@ -106,12 +107,11 @@ public:
   {
   }
 
- 
   bool enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
                  const vector<enumf> &pruning = vector<enumf>(), bool dual = false);
 
-  //get_nodes. This returns the number of nodes visited by the external enumeration process. 
-  //If this returns 0, then fplll will fall back to the internal enumerator.
+  // get_nodes. This returns the number of nodes visited by the external enumeration process.
+  // If this returns 0, then fplll will fall back to the internal enumerator.
   inline uint64_t get_nodes() const { return _nodes; }
 
 private:
