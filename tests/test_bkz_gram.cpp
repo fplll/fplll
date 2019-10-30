@@ -29,8 +29,8 @@ using json = nlohmann::json;
 using namespace std;
 using namespace fplll;
 
-template <class ZT>
-bool gram_is_equal( ZZ_mat<ZT> b, ZZ_mat<ZT> G ) {
+template <class ZT> bool gram_is_equal(ZZ_mat<ZT> b, ZZ_mat<ZT> G)
+{
   int r = b.r;
   int c = b.c;
   ZZ_mat<ZT> G_reduced;
@@ -94,7 +94,6 @@ int test_bkz(ZZ_mat<ZT> &A, const int block_size, FloatType float_type, int flag
       return wrapper.status;
   }
 
-
   // _______________________________________________
   // -----------------------------------------------
   // Create the Gram matrix G of the basis A
@@ -122,42 +121,47 @@ int test_bkz(ZZ_mat<ZT> &A, const int block_size, FloatType float_type, int flag
   BKZParam param(block_size, strategies);
   param.flags = flags;
 
-if( sel_ft == FT_DOUBLE ) {
-  MatGSO<Z_NR<ZT>, FP_NR<double>> M(A, U, UT, 0);
-  M.update_gso();
-  MatGSOGram<Z_NR<ZT>, FP_NR<double>> Mgram(G, U, UT, 1);
-  Mgram.update_gso();
+  if (sel_ft == FT_DOUBLE)
+  {
+    MatGSO<Z_NR<ZT>, FP_NR<double>> M(A, U, UT, 0);
+    M.update_gso();
+    MatGSOGram<Z_NR<ZT>, FP_NR<double>> Mgram(G, U, UT, 1);
+    Mgram.update_gso();
 
-  LLLReduction<Z_NR<ZT>, FP_NR<double>> LLLObj(M, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
-  BKZReduction<Z_NR<ZT>, FP_NR<double>> BKZObj(M, LLLObj, param);
-  BKZObj.bkz();
+    LLLReduction<Z_NR<ZT>, FP_NR<double>> LLLObj(M, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
+    BKZReduction<Z_NR<ZT>, FP_NR<double>> BKZObj(M, LLLObj, param);
+    BKZObj.bkz();
 
-  LLLReduction<Z_NR<ZT>, FP_NR<double>> LLLObjgram(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
-  BKZReduction<Z_NR<ZT>, FP_NR<double>> BKZObjgram(Mgram, LLLObjgram, param);
-  BKZObjgram.bkz();
+    LLLReduction<Z_NR<ZT>, FP_NR<double>> LLLObjgram(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
+    BKZReduction<Z_NR<ZT>, FP_NR<double>> BKZObjgram(Mgram, LLLObjgram, param);
+    BKZObjgram.bkz();
 
-  return gram_is_equal(A, G);
-} else if (sel_ft == FT_MPFR) {
-  int old_prec = FP_NR<mpfr_t>::set_prec(prec);
+    return gram_is_equal(A, G);
+  }
+  else if (sel_ft == FT_MPFR)
+  {
+    int old_prec = FP_NR<mpfr_t>::set_prec(prec);
 
-  MatGSO<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, U, UT, 1);
-  M.update_gso();
-  MatGSOGram<Z_NR<ZT>, FP_NR<mpfr_t>> Mgram(G, U, UT, 1);
-  Mgram.update_gso();
+    MatGSO<Z_NR<ZT>, FP_NR<mpfr_t>> M(A, U, UT, 1);
+    M.update_gso();
+    MatGSOGram<Z_NR<ZT>, FP_NR<mpfr_t>> Mgram(G, U, UT, 1);
+    Mgram.update_gso();
 
-  LLLReduction<Z_NR<ZT>, FP_NR<mpfr_t>> LLLObj(M, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
-  LLLReduction<Z_NR<ZT>, FP_NR<mpfr_t>> LLLObjgram(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
+    LLLReduction<Z_NR<ZT>, FP_NR<mpfr_t>> LLLObj(M, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
+    LLLReduction<Z_NR<ZT>, FP_NR<mpfr_t>> LLLObjgram(Mgram, LLL_DEF_DELTA, LLL_DEF_ETA, 0);
 
-  BKZReduction<Z_NR<ZT>, FP_NR<mpfr_t>> BKZObj(M, LLLObj, param);
-  BKZReduction<Z_NR<ZT>, FP_NR<mpfr_t>> BKZObjgram(Mgram, LLLObjgram, param);
+    BKZReduction<Z_NR<ZT>, FP_NR<mpfr_t>> BKZObj(M, LLLObj, param);
+    BKZReduction<Z_NR<ZT>, FP_NR<mpfr_t>> BKZObjgram(Mgram, LLLObjgram, param);
 
-  FP_NR<mpfr_t>::set_prec(old_prec);
+    FP_NR<mpfr_t>::set_prec(old_prec);
 
-  return gram_is_equal(A, G);
-} else {
-  cerr << "Type not supported for test" << endl;
-  return 0;
-}
+    return gram_is_equal(A, G);
+  }
+  else
+  {
+    cerr << "Type not supported for test" << endl;
+    return 0;
+  }
 
   return 0;
 }
@@ -241,9 +245,9 @@ int main(int /*argc*/, char ** /*argv*/)
   status |= test_int_rel<mpz_t>(50, 1000, 15, FT_MPFR, BKZ_SD_VARIANT | BKZ_AUTO_ABORT, 100);
   status |= test_int_rel<mpz_t>(50, 1000, 15, FT_MPFR, BKZ_SLD_RED, 100);
 
-  //status |= test_int_rel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_DEFAULT | BKZ_AUTO_ABORT);
-  //status |= test_int_rel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_SD_VARIANT | BKZ_AUTO_ABORT);
-  //status |= test_int_rel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_SLD_RED);
+  // status |= test_int_rel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_DEFAULT | BKZ_AUTO_ABORT);
+  // status |= test_int_rel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_SD_VARIANT | BKZ_AUTO_ABORT);
+  // status |= test_int_rel<mpz_t>(30, 2000, 10, FT_DPE, BKZ_SLD_RED);
   status |= test_int_rel<mpz_t>(30, 2000, 10, FT_MPFR, BKZ_DEFAULT | BKZ_AUTO_ABORT, 53);
   status |= test_int_rel<mpz_t>(30, 2000, 10, FT_MPFR, BKZ_SD_VARIANT | BKZ_AUTO_ABORT, 53);
   status |= test_int_rel<mpz_t>(30, 2000, 10, FT_MPFR, BKZ_SLD_RED, 53);
