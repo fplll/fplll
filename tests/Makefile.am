@@ -38,13 +38,14 @@ AM_CPPFLAGS = -I$(TOPSRCDIR) -I$(TOPSRCDIR)/fplll -I$(TOPBUILDDIR) -DTESTDATADIR
 STAGEDIR := $(realpath -s $(TOPBUILDDIR)/.libs)
 AM_LDFLAGS = -L$(STAGEDIR) -Wl,-rpath,$(STAGEDIR) -lfplll -no-install $(LIBQD_LIBADD)
 
-TESTS = test_nr test_lll test_cvp test_svp test_bkz test_pruner test_sieve test_gso test_lll_gram test_hlll
+TESTS = test_nr test_lll test_enum test_cvp test_svp test_bkz test_pruner test_sieve test_gso test_lll_gram test_hlll
 
 test_pruner_LDADD=$(LIBGMP) -lmpfr $(LIBQD_LIBADD)
 test_sieve_LDADD=$(LIBGMP) -lmpfr $(LIBQD_LIBADD)
 
 test_nr_SOURCES = test_nr.cpp
 test_lll_SOURCES = test_lll.cpp
+test_enum_SOURCES = test_enum.cpp
 test_svp_SOURCES = test_svp.cpp
 test_cvp_SOURCES = test_cvp.cpp
 test_bkz_SOURCES = test_bkz.cpp

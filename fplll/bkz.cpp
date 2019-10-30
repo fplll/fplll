@@ -376,6 +376,10 @@ bool BKZReduction<ZT, FT>::tour(const int loop, int &kappa_max, const BKZParam &
              (cputime() - cputime_start) * 0.001);
   }
 
+  // Symmetrize the Gram matrix
+  if (m.enable_int_gram)
+    m.symmetrize_g();
+
   return clean;
 }
 
