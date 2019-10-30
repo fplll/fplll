@@ -200,7 +200,7 @@ template <class ZT> int test_dual_svp(ZZ_mat<ZT> &G, vector<Z_NR<mpz_t>> &b)
   // Symmetrize the Gram Matrix
   Mgram.symmetrize_g();
 
-  int status = shortest_vector(G, sol_coord, SVPM_FAST, SVP_DUAL);
+  int status = shortest_vector(Mgram, sol_coord, SVPM_FAST, SVP_DUAL);
 
   if (status != RED_SUCCESS)
   {
