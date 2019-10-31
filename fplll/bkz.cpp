@@ -27,12 +27,12 @@
 FPLLL_BEGIN_NAMESPACE
 
 template <class ZT, class FT>
-BKZReduction<ZT, FT>::BKZReduction(MatGSO<ZT, FT> &m, LLLReduction<ZT, FT> &lll_obj,
+BKZReduction<ZT, FT>::BKZReduction(MatGSOInterface<ZT, FT> &m, LLLReduction<ZT, FT> &lll_obj,
                                    const BKZParam &param)
     : status(RED_SUCCESS), nodes(0), param(param), m(m), lll_obj(lll_obj), algorithm(NULL),
       cputime_start(0)
 {
-  for (num_rows = m.d; num_rows > 0 && m.b[num_rows - 1].is_zero(); num_rows--)
+  for (num_rows = m.d; num_rows > 0 && m.b_row_is_zero(num_rows - 1); num_rows--)
   {
   }
   this->delta = param.delta;
