@@ -104,44 +104,46 @@ template <class ZT> int test_generation_tutorial (ZZ_mat<ZT> &test_base)
    int status = 0;
    test_base.resize(5, 6);
    test_base.gen_intrel(4);
-   status |= test_generation_tutorial (test_base, "intrel_base_example");
-   //cout << status << endl;
+   status |= test_generation_tutorial (test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/intrel_base_example");
    clear_base(test_base, 6, 6);
    test_base.gen_simdioph(4, 4);
-   status |= test_generation_tutorial(test_base, "simdioph_base_example");
-   //cout << status << endl;
+   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/simdioph_base_example");
    clear_base(test_base, 5, 5);
    test_base.gen_uniform(4);
-   status  |= test_generation_tutorial(test_base, "uniform_base_example");
-   //cout << status << endl;
+   status  |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/uniform_base_example");
    clear_base(test_base, 10, 10);
    test_base.gen_ntrulike(4);
-   status |= test_generation_tutorial(test_base, "ntrulike_base_example");
-   //cout << status << endl;
+   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/ntrulike_base_example");
    clear_base(test_base, 10, 10);
    test_base.gen_ntrulike_withq(4);
-   status |= test_generation_tutorial(test_base, "ntrulike_withq_base_example");
-   //cout << status << endl;
+   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/ntrulike_withq_base_example");
    clear_base(test_base, 10, 10);
    test_base.gen_ntrulike2(4);
-   status |= test_generation_tutorial(test_base, "ntrulike2_base_example");
-   //cout << status << endl;
+   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/ntrulike2_base_example");
    clear_base(test_base, 10, 10);
    test_base.gen_ntrulike2_withq(4);
-   status |= test_generation_tutorial(test_base, "ntrulike2_withq_base_example");
-   //cout << status << endl;
+   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/ntrulike2_withq_base_example");
    clear_base(test_base, 5, 5);
    test_base.gen_qary_prime(1, 4);
-   status |= test_generation_tutorial(test_base, "qary_prime_base_example");
-   //cout << status << endl;
+   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/qary_prime_base_example");
    clear_base(test_base, 5, 5);
    test_base.gen_qary_withq(1, 4);
-   status |= test_generation_tutorial(test_base, "qary_withq_base_example");
-   //cout << status << endl;
+   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/qary_withq_base_example");
    clear_base(test_base, 5, 5);
    test_base.gen_qary(1, 4);
-   status |= test_generation_tutorial(test_base, "qary_base_example");
-   //cout << status << endl;
+   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/qary_base_example");
+   clear_base(test_base, 5, 5);
+   test_base.gen_trg(1.02);
+   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/trg_base_example");
+   FP_NR<mpfr_t> *input_vector = new FP_NR<mpfr_t>[test_base.get_cols()];
+   for (int i =0; i < test_base.get_cols(); i++)
+   {
+      input_vector[i] = (float) i + 1;
+   }
+   clear_base(test_base, 5, 5);
+   test_base.gen_trg2(input_vector);
+   delete[] input_vector;
+   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/trg2_base_example");
    return status;
 }
 
@@ -150,4 +152,5 @@ int main (int argc, char * argv[])
    int status = 0;
    ZZ_mat<mpz_t> test_base;
    status |=test_generation_tutorial(test_base);
+   cout << status << endl;
 }
