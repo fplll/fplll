@@ -103,11 +103,11 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	householder.cpp householder.h hlll.cpp hlll.h \
 	io/json.hpp \
 	threadpool.h threadpool.cpp io/thread_pool.hpp
-libfplll_la_CXXFLAGS=
+libfplll_la_CXXFLAGS=$(PTHREAD_CFLAGS)
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
-libfplll_la_LIBADD=$(LIBGMP) -lmpfr $(LIBQD_LIBADD)
-libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REVISION@:@FPLLL_LT_AGE@
+libfplll_la_LIBADD=$(LIBGMP) -lmpfr $(LIBQD_LIBADD) $(PTHREAD_LIBS)
+libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REVISION@:@FPLLL_LT_AGE@ $(PTHREAD_CFLAGS)
 
 if FPLLL_PARALLEL_ENUM
 libfplll_la_SOURCES+=\
@@ -118,8 +118,6 @@ libfplll_la_SOURCES+=\
 	enum-parallel/enumlib_dim.80.cpp enum-parallel/enumlib_dim.70.cpp enum-parallel/enumlib_dim.60.cpp enum-parallel/enumlib_dim.50.cpp \
 	enum-parallel/enumlib_dim.40.cpp enum-parallel/enumlib_dim.30.cpp enum-parallel/enumlib_dim.20.cpp
 EXTRA_libfplll_la_SOURCES+=enum-parallel/enumlib_dim.cpp
-libfplll_la_LIBADD+=$(PTHREAD_LIBS)
-libfplll_la_CXXFLAGS+=$(PTHREAD_CFLAGS)
 endif
 	
 

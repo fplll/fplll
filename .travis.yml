@@ -135,7 +135,7 @@ install:
 
 before_script:
   - "./autogen.sh"
-  - "./configure --disable-static --with-max-enumeration-dimension=64 --with-max-parallel-enum-dim=60"
+  - "./configure --disable-static --with-max-enumeration-dimension=64 --with-max-parallel-enum-dim=20"
   - bash .travis-check-style.sh # check that clang-format was used
 
 script:

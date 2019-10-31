@@ -24,7 +24,7 @@ int get_threads() { return threadpool.size() + 1; }
 
 int set_threads(int th)
 {
-  if (th > std::thread::hardware_concurrency() || th == -1)
+  if (th > int(std::thread::hardware_concurrency()) || th == -1)
     th = std::thread::hardware_concurrency();
   if (th < 1)
     th = 1;
