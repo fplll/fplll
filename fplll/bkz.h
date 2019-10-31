@@ -43,7 +43,7 @@ public:
    * @param start_row
    *    the starting point of the vectors to check
    */
-  BKZAutoAbort(MatGSO<ZT, FT> &m, int num_rows, int start_row = 0)
+  BKZAutoAbort(MatGSOInterface<ZT, FT> &m, int num_rows, int start_row = 0)
       : m(m), old_slope(numeric_limits<double>::max()), no_dec(-1), num_rows(num_rows),
         start_row(start_row)
   {
@@ -70,7 +70,7 @@ public:
   bool test_abort(double scale = 1.0, int maxNoDec = 5);
 
 private:
-  MatGSO<ZT, FT> &m;
+  MatGSOInterface<ZT, FT> &m;
   double old_slope;
   int no_dec;
   int num_rows;
@@ -97,7 +97,7 @@ template <class ZT, class FT> class BKZReduction
    *    parameter object (see bkz_param.h)
    */
 public:
-  BKZReduction(MatGSO<ZT, FT> &m, LLLReduction<ZT, FT> &lll_obj, const BKZParam &param);
+  BKZReduction(MatGSOInterface<ZT, FT> &m, LLLReduction<ZT, FT> &lll_obj, const BKZParam &param);
   ~BKZReduction();
 
   /**
@@ -318,7 +318,7 @@ private:
 
   const BKZParam &param;
   int num_rows;
-  MatGSO<ZT, FT> &m;
+  MatGSOInterface<ZT, FT> &m;
   LLLReduction<ZT, FT> &lll_obj;
   // evaluator passed to the enumeration object to handle solutions found
   FastEvaluator<FT> evaluator;

@@ -1,6 +1,7 @@
 /* Copyright (C) 2005-2008 Damien Stehle.
    Copyright (C) 2007 David Cade.
    Copyright (C) 2011 Xavier Pujol.
+   Copyright (C) 2019 Koen de Boer
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -121,6 +122,12 @@ public:
    */
 
   /**
+   * Returns || sum_i  x_i b_i ||^2 on vectorial input (x_i)_i
+   * in the Gram version, it returns x^T G x
+   */
+  virtual ZT &sqnorm_coordinates(ZT &sqnorm, vector<ZT> coordinates) = 0;
+
+  /**
    * Returns maximum exponent of b. In the gram
    * version it returns a half times the
    * maximum exponent of g.
@@ -178,6 +185,16 @@ public:
    * Returns reference to `f`.
    */
   virtual FT &get_gram(FT &f, int i, int j) = 0;
+
+  /**
+   * Returns *integer* Gram matrix coefficients (0 &lt;= i &lt; n_known_rows and
+   * 0 &lt;= j &lt;= i).
+   * If (enable_int_gram = true), it returns the i,j-th coordinate of the Gram matrix
+   * else it computes the inner product of b_i and b_j
+   * Returns reference to `z`.
+   */
+
+  virtual ZT &get_int_gram(ZT &z, int i, int j) = 0;
 
   /**
    * Returns the mu matrix

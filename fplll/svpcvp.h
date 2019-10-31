@@ -1,4 +1,5 @@
 /* Copyright (C) 2008-2011 Xavier Pujol.
+   Copyright (C) 2019 Koen de Boer & Wessel van Woerden
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -39,6 +40,29 @@ int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
                             const vector<double> &pruning, int flags = SVP_DEFAULT);
 
 int shortest_vector_pruning(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord,
+                            vector<vector<Z_NR<mpz_t>>> &auxsol_coord, vector<double> &auxsol_dist,
+                            const int max_aux_sols, const vector<double> &pruning,
+                            int flags = SVP_DEFAULT);
+
+int shortest_vector(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                    vector<Z_NR<mpz_t>> &sol_coord, SVPMethod method = SVPM_PROVED,
+                    int flags = SVP_DEFAULT);
+
+int shortest_vectors(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                     vector<vector<Z_NR<mpz_t>>> &sol_coord, vector<enumf> &sol_dist,
+                     const int max_sols, SVPMethod method, int flags);
+
+int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                            vector<Z_NR<mpz_t>> &sol_coord, const vector<double> &pruning,
+                            int flags = SVP_DEFAULT);
+
+int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                            vector<Z_NR<mpz_t>> &sol_coord,
+                            vector<vector<Z_NR<mpz_t>>> &subsol_coord, vector<double> &subsol_dist,
+                            const vector<double> &pruning, int flags = SVP_DEFAULT);
+
+int shortest_vector_pruning(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso,
+                            vector<Z_NR<mpz_t>> &sol_coord,
                             vector<vector<Z_NR<mpz_t>>> &auxsol_coord, vector<double> &auxsol_dist,
                             const int max_aux_sols, const vector<double> &pruning,
                             int flags = SVP_DEFAULT);

@@ -1,6 +1,7 @@
 /* Copyright (C) 2005-2008 Damien Stehle.
    Copyright (C) 2007 David Cade.
    Copyright (C) 2011 Xavier Pujol.
+   Copyright (C) 2019 Koen de Boer
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -20,6 +21,7 @@
 
 #include "gso_interface.h"
 #include "nr/matrix.h"
+#include "util.h"
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -117,7 +119,11 @@ public:
 
   //  virtual inline void printparam(ostream &os);
 
+  virtual inline ZT &sqnorm_coordinates(ZT &sqnorm, vector<ZT> coordinates);
+
   virtual inline FT &get_gram(FT &f, int i, int j);
+
+  virtual inline ZT &get_int_gram(ZT &z, int i, int j);
 
   // b[i] <-> b[j] (i < j)
   virtual void row_swap(int i, int j);
@@ -143,6 +149,22 @@ private:
   virtual void row_addmul_2exp(int i, int j, const ZT &x, long expo);
   // virtual void apply_transform(const Matrix<FT> &transform, int src_base, int target_base);
 };
+
+template <class ZT, class FT>
+inline ZT &MatGSOGram<ZT, FT>::sqnorm_coordinates(ZT &sqnorm, vector<ZT> coordinates)
+{
+  vector<ZT> tmpvec;
+  Matrix<ZT> &g = *gptr;
+  vector_matrix_product(tmpvec, coordinates, g);
+
+  sqnorm = 0;
+  for (int i = 0; i < g.get_cols(); i++)
+  {
+    ztmp1.mul(tmpvec[i], coordinates[i]);
+    sqnorm.add(sqnorm, ztmp1);
+  }
+  return sqnorm;
+}
 
 template <class ZT, class FT> inline long MatGSOGram<ZT, FT>::get_max_exp_of_b()
 {
@@ -222,6 +244,21 @@ template <class ZT, class FT> inline FT &MatGSOGram<ZT, FT>::get_gram(FT &f, int
     f.set_z((*gptr)(i, j));
   }
   return f;
+}
+
+template <class ZT, class FT> inline ZT &MatGSOGram<ZT, FT>::get_int_gram(ZT &z, int i, int j)
+{
+  FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j <= i && j < n_source_rows &&
+                    !in_row_op_range(i));
+  if (enable_int_gram)
+  {
+    if (gptr == nullptr)
+    {
+      throw std::runtime_error("Error: gptr is equal to the nullpointer.");
+    }
+    z = (*gptr)[i][j];
+  }
+  return z;
 }
 
 template <class ZT, class FT> inline void MatGSOGram<ZT, FT>::remove_last_rows(int n_removed_rows)
