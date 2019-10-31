@@ -370,7 +370,6 @@ public:
 private:
   FP_NR<mpfr_t> int_dist2Float(Z_NR<mpz_t> int_dist);
   MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso;
-  // const ZZ_mat<mpz_t> &matrix;  // matrix of the lattice
 };
 
 FPLLL_END_NAMESPACE
