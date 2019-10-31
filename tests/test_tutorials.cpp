@@ -24,6 +24,11 @@
 #include "fplll/defs.h"
 #include "fplll/util.h"
 
+#ifndef TESTDATADIR
+#define TESTDATADIR ".."
+#endif
+
+
 using namespace std;
 using namespace fplll;
 
@@ -60,7 +65,7 @@ template <class T> int read_file(T &X, const char *input_filename) {
    
    @return 0 on success, where the input matrix will be compared with pre-initialized matrix according to method.
 */
-template <class ZT> bool test_generation_tutorial (ZZ_mat<ZT> &lattice_base, const char *input_name) 
+template <class ZT> bool test_generation (ZZ_mat<ZT> &lattice_base, const char *input_name) 
 {
    ZZ_mat<ZT> test_matrix;
    int status = 1, input = 1, rows = lattice_base.get_rows(), columns = lattice_base.get_cols();
@@ -77,6 +82,12 @@ template <class ZT> bool test_generation_tutorial (ZZ_mat<ZT> &lattice_base, con
    }
    return status;
 
+}
+
+template <class ZT> bool test_lll (ZZ_mat<ZT> &lattice_base, const char *input_name)
+{
+   int status = 0;
+   return status;
 }
 
 /* @brief Function that clears and resizes base.
@@ -104,37 +115,37 @@ template <class ZT> int test_generation_tutorial (ZZ_mat<ZT> &test_base)
    int status = 0;
    test_base.resize(5, 6);
    test_base.gen_intrel(4);
-   status |= test_generation_tutorial (test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/intrel_base_example");
+   status |= test_generation (test_base, TESTDATADIR "/tests/lattices/intrel_base_example");
    clear_base(test_base, 6, 6);
    test_base.gen_simdioph(4, 4);
-   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/simdioph_base_example");
+   status |= test_generation(test_base, TESTDATADIR "/tests/lattices/simdioph_base_example");
    clear_base(test_base, 5, 5);
    test_base.gen_uniform(4);
-   status  |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/uniform_base_example");
+   status  |= test_generation (test_base, TESTDATADIR "/tests/lattices/uniform_base_example");
    clear_base(test_base, 10, 10);
    test_base.gen_ntrulike(4);
-   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/ntrulike_base_example");
+   status |= test_generation (test_base, TESTDATADIR "/tests/lattices/ntrulike_base_example");
    clear_base(test_base, 10, 10);
    test_base.gen_ntrulike_withq(4);
-   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/ntrulike_withq_base_example");
+   status |= test_generation (test_base, TESTDATADIR "/tests/lattices/ntrulike_withq_base_example");
    clear_base(test_base, 10, 10);
    test_base.gen_ntrulike2(4);
-   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/ntrulike2_base_example");
+   status |= test_generation (test_base, TESTDATADIR "/tests/lattices/ntrulike2_base_example");
    clear_base(test_base, 10, 10);
    test_base.gen_ntrulike2_withq(4);
-   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/ntrulike2_withq_base_example");
+   status |= test_generation (test_base, TESTDATADIR  "/tests/lattices/ntrulike2_withq_base_example");
    clear_base(test_base, 5, 5);
    test_base.gen_qary_prime(1, 4);
-   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/qary_prime_base_example");
+   status |= test_generation (test_base, TESTDATADIR "/tests/lattices/qary_prime_base_example");
    clear_base(test_base, 5, 5);
    test_base.gen_qary_withq(1, 4);
-   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/qary_withq_base_example");
+   status |= test_generation (test_base, TESTDATADIR "/tests/lattices/qary_withq_base_example");
    clear_base(test_base, 5, 5);
    test_base.gen_qary(1, 4);
-   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/qary_base_example");
+   status |= test_generation (test_base, TESTDATADIR "/tests/lattices/qary_base_example");
    clear_base(test_base, 5, 5);
    test_base.gen_trg(1.02);
-   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/trg_base_example");
+   status |= test_generation (test_base, TESTDATADIR "/tests/lattices/trg_base_example");
    FP_NR<mpfr_t> *input_vector = new FP_NR<mpfr_t>[test_base.get_cols()];
    for (int i =0; i < test_base.get_cols(); i++)
    {
@@ -143,14 +154,31 @@ template <class ZT> int test_generation_tutorial (ZZ_mat<ZT> &test_base)
    clear_base(test_base, 5, 5);
    test_base.gen_trg2(input_vector);
    delete[] input_vector;
-   status |= test_generation_tutorial(test_base, "/home/marios/Desktop/fplll_days_5/fplll/tests/lattices/trg2_base_example");
+   status |= test_generation (test_base, TESTDATADIR "/tests/lattices/trg2_base_example");
    return status;
+}
+
+template <class ZT> int test_lll_tutorial (ZZ_mat<ZT> &test)
+{
+   ZZ_mat<ZT> identity_matrix, identity_matrix_transposed;
+   test.clear_(test, 5, 5);
+   test.generate_uniform(5, 4); 
+
 }
 
 int main (int argc, char * argv[])
 {
    int status = 0;
-   ZZ_mat<mpz_t> test_base;
+   ZZ_mat<mpz_t> test_base, test_lll, test_bkz;
    status |=test_generation_tutorial(test_base);
-   cout << status << endl;
+
+   if (status == 0)
+   {
+      cerr << "All tests passed" << endl;
+   }
+   else
+   {
+      return -1;
+   }
+   return 0;
 }
