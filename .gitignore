@@ -72,3 +72,5 @@ doc/html/
 /fplll/pruner/*.o
 /fplll/enum-parallel/*.o
 /tests/test_enum
+/tests/test_bkz_gram
+/tests/test_svp_gram
