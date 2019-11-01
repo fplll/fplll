@@ -84,9 +84,27 @@ template <class ZT> bool test_generation (ZZ_mat<ZT> &lattice_base, const char *
 
 }
 
-template <class ZT> bool test_lll (ZZ_mat<ZT> &lattice_base, const char *input_name)
+/* @brief Function that tests LLL reduction
+   @param ZZ_mat<ZT> lattice_base:     The input lattice base.
+   @param LLLMethod method:            The LLL reduction method to be used.
+   @param const char *input_filename:  The name of file against which the method will be tested.
+   @return zero on success, denoting equality betweeen the two matrices.
+*/
+
+template <class ZT> bool test_lll (ZZ_mat<ZT> &lattice_base, LLLMethod method, const char *input_name)
 {
-   int status = 0;
+   int input = 0, status = 0, rows = lattice_base.get_rows(), columns = lattice_base.get_cols(), reduction_result = 0;
+   double delta = 0.99, eta = 0.51;
+   ZZ_mat<ZT> identity_matrix, identity_matrix_transposed, evaluation_matrix;
+   input = read_file(evaluation_matrix, input_name);
+   reduction_result = lll_reduction(lattice_base, identity_matrix, identity_matrix_transposed, delta, eta, method, FT_DEFAULT, 0, LLL_DEFAULT);
+   for (int i = 0; i < rows; i++)
+   {
+      for (int j = 0; j < columns; j++) 
+      {
+         status |= lattice_base[i][j] != evaluation_matrix[i][j];
+      }
+   }
    return status;
 }
 
@@ -103,10 +121,9 @@ template <class ZT> void clear_base (ZZ_mat<ZT> &input_base, int rows, int colum
    input_base.resize(rows, columns);
 }
 
-/* @brief Function that clears and resizes base.
-   @param ZZ_mat<ZT> input_base: input lattice base.
-   @param int rows:              number of vectors in base.
-   @param int columns:           number of elements in each vector.
+/* @brief Function that tests all different base generation methods.
+   @param ZZ_mat<ZT> test_base: input lattice base to be tested.
+   @return zero on success, when all tests have passed, 1 otherwise.
 
 */
 
@@ -160,9 +177,17 @@ template <class ZT> int test_generation_tutorial (ZZ_mat<ZT> &test_base)
 
 template <class ZT> int test_lll_tutorial (ZZ_mat<ZT> &test)
 {
-   ZZ_mat<ZT> identity_matrix, identity_matrix_transposed;
-   test.clear_(test, 5, 5);
-   test.generate_uniform(5, 4); 
+   int status = 0, input = 0;
+   clear_base (test, 5, 5);
+   input = read_file (test, TESTDATADIR "/tests/lattices/lll_fast_basis");
+   status |= test_lll (test, LM_FAST, TESTDATADIR "/tests/lattices/lll_fast_example");
+   clear_base (test, 5, 5);
+   input = read_file(test, TESTDATADIR "/tests/lattices/lll_proved_basis");
+   status |= test_lll (test, LM_PROVED, TESTDATADIR "/tests/lattices/lll_proved_example");
+   clear_base (test, 5, 5);
+   input = read_file (test, TESTDATADIR "/tests/lattices/lll_heuristic_basis");
+   status |= test_lll (test, LM_HEURISTIC, TESTDATADIR "/tests/lattices/lll_heuristic_example");
+   return status;
 
 }
 
@@ -170,7 +195,8 @@ int main (int argc, char * argv[])
 {
    int status = 0;
    ZZ_mat<mpz_t> test_base, test_lll, test_bkz;
-   status |=test_generation_tutorial(test_base);
+   status |= test_generation_tutorial(test_base);
+   status |= test_lll_tutorial(test_lll);
 
    if (status == 0)
    {
