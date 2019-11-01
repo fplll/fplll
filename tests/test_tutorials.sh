@@ -16,4 +16,9 @@ touch bkz_output
 ./test_base
 ./test__lll_reduction
 ./test_bkz_reduction
+diff base_output base_generation_evaluation
 diff bkz_output BKZ_reduction_evaluation
+diff lll_output lll_reduction_evaluation
+rm -f test_base
+rm -f test_lll_reduction
+rm -f test_bkz_reduction
