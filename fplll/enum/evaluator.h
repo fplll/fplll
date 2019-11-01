@@ -224,7 +224,7 @@ template <class FT> class CallbackEvaluator : public FastEvaluator<FT>
 
   std::function<callback_evaluator_callback> callbackf;
   void *ctx;
-  enumf new_sol_coordf[FPLLL_MAX_ENUM_DIMENSION];
+  enumf new_sol_coordf[FPLLL_MAX_ENUM_DIM];
 
 public:
   using FastEvaluator<FT>::max_sols;
@@ -248,7 +248,7 @@ public:
   virtual void eval_sol(const vector<FT> &new_sol_coord, const enumf &new_partial_dist,
                         enumf &max_dist)
   {
-    assert(new_sol_coord.size() <= FPLLL_MAX_ENUM_DIMENSION);
+    assert(new_sol_coord.size() <= FPLLL_MAX_ENUM_DIM);
     for (size_t i = 0; i < new_sol_coord.size(); i++)
     {
       new_sol_coordf[i] = new_sol_coord[i].get_d();

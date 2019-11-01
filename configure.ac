@@ -138,14 +138,14 @@ AC_CHECK_FUNCS([floor pow rint sqrt strtol])
 AX_PTHREAD()
 
 # enumeration dimension
-max_enumeration_dimension=256
+max_enum_dim=256
 
-AC_ARG_WITH(max-enumeration-dimension,
-        AS_HELP_STRING([--with-max-enumeration-dimension@<:@=DIM@:>@],
+AC_ARG_WITH(max-enum-dim,
+        AS_HELP_STRING([--with-max-enum-dim@<:@=DIM@:>@],
          [Maximum supported enumeration dimension (default: 256).]),
-        [max_enumeration_dimension=$withval])
+        [max_enum_dim=$withval])
 
-AC_DEFINE_UNQUOTED([FPLLL_MAX_ENUM_DIMENSION], $max_enumeration_dimension, [maximum supported enumeration dimension])
+AC_DEFINE_UNQUOTED([FPLLL_MAX_ENUM_DIM], $max_enum_dim, [maximum supported enumeration dimension])
 
 AC_ARG_ENABLE(recursive-enum,
         AS_HELP_STRING([--disable-recursive-enum],
