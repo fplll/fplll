@@ -27,8 +27,8 @@
 #include "hlll.h"
 #include "pruner/pruner.h"
 #include "svpcvp.h"
+#include "threadpool.h"
 #include "util.h"
 #include "wrapper.h"
-#include "threadpool.h"
 
 #endif
