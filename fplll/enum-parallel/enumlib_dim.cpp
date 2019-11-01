@@ -51,7 +51,7 @@ uint64_t enumerate_dim_detail(int dim, float_type maxdist,
   static const int SWIRLY          = enumerate_traits<dimension>::SWIRLY;
   static const int SWIRLY2BUF      = enumerate_traits<dimension>::SWIRLY2BUF;
   static const int SWIRLY1FRACTION = enumerate_traits<dimension>::SWIRLY1FRACTION;
-  typedef lattice_enum_t<dimension, SWIRLY, SWIRLY2BUF, SWIRLY1FRACTION> lat_t;
+  typedef lattice_enum_t<dimension, SWIRLY, SWIRLY2BUF, SWIRLY1FRACTION, findsubsols> lat_t;
 
   globals_t<dimension> globals;
   globals.A              = maxdist;
