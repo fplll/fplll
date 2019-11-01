@@ -57,6 +57,20 @@ template <class T> int read_file(T &X, const char *input_filename) {
   return status;
 }
 
+void strategize(int block_size, vector<Strategy> &strategies)
+{
+   for (int i = 0; i <= block_size; i++) 
+   {
+      Strategy strategy = Strategy::EmptyStrategy(i);
+      if ((i == 10) || (i == 20) || (i == 30)) 
+      {
+         strategy.preprocessing_block_sizes.emplace_back(i / 2);
+      }
+      strategies.emplace_back(move(strategy));
+   }
+}
+
+
 /* @brief test base generation tutorial
    @param ZZ_mat<ZT> lattice_base:   input lattice base.
    @param int rows:                  number of vectors in base.
@@ -87,7 +101,7 @@ template <class ZT> bool test_generation (ZZ_mat<ZT> &lattice_base, const char *
 /* @brief Function that tests LLL reduction
    @param ZZ_mat<ZT> lattice_base:     The input lattice base.
    @param LLLMethod method:            The LLL reduction method to be used.
-   @param const char *input_filename:  The name of file against which the method will be tested.
+   @param const char *input_name:      The name of file against which the method will be tested.
    @return zero on success, denoting equality betweeen the two matrices.
 */
 
@@ -106,6 +120,49 @@ template <class ZT> bool test_lll (ZZ_mat<ZT> &lattice_base, LLLMethod method, c
       }
    }
    return status;
+}
+
+/* @brief Function that tests BKZ reduction
+   @param ZZ_mat<ZT> lattice_base:        Input lattice base.
+   @param BKZMethod method:               The BKZ method to be implemented.
+   @param int with_parameters:            Indicates whether a pruning strategy will be used. If so, that must be tested BEFORE testing the reduction.
+   @param const char *input_name:         The name of the file against which the method will be tested.
+   @return zero on success, 1 otherwise.
+*/
+
+template<class ZT> int test_bkz(ZZ_mat<ZT> &lattice_base, int method, int with_parameters, const char*input_name)
+{
+   int input = 0, status = 0, rows = lattice_base.get_rows(), columns = lattice_base.get_cols(), reduction_result = 0;
+   int block_size = round(sqrt(columns)), precision = 0;
+   ZZ_mat<ZT> evaluation_matrix;
+   input = read_file(evaluation_matrix, input_name);
+   if (with_parameters == 0)
+   {
+      reduction_result = bkz_reduction(lattice_base, block_size, method, FT_DOUBLE, precision);
+   }
+   else
+   {
+      vector<Strategy> strategies;
+      strategize(block_size, strategies);
+      BKZParam parameters (block_size, strategies);
+      parameters.flags = BKZ_DEFAULT; 
+      reduction_result = bkz_reduction(&lattice_base, NULL, parameters, FT_DEFAULT, 53);
+      if (reduction_result != RED_SUCCESS)
+      {
+         cerr << "BKZ parameter test failed with error '" << get_red_status_str(status) << "'" << endl;
+         return reduction_result;
+      }
+      
+   }
+   for (int i = 0; i < rows; i++)
+   {
+      for (int j = 0; j < columns; j++) 
+      {
+         status |= lattice_base[i][j] != evaluation_matrix[i][j];
+      }
+   }
+   return status;
+
 }
 
 /* @brief Function that clears and resizes base.
@@ -191,12 +248,25 @@ template <class ZT> int test_lll_tutorial (ZZ_mat<ZT> &test)
 
 }
 
+template<class ZT> int test_bkz_tutorial (ZZ_mat<ZT> &test)
+{
+   int status = 0, input = 0;
+   clear_base(test, 30, 30);
+   input = read_file (test, TESTDATADIR "/tests/lattices/default_bkz_basis");
+   status |= test_bkz(test, BKZ_DEFAULT, 0, TESTDATADIR"/tests/lattices/default_BKZ_reduction_example");
+   clear_base(test, 30, 30);
+   input = read_file (test, TESTDATADIR "/tests/lattices/BKZ_basis_for_BKZ_with_parameters");
+   status |= test_bkz(test, BKZ_DEFAULT, 1, TESTDATADIR"/tests/lattices/BKZ_reduction_with_parameters_example");
+   return status;
+}
+
 int main (int argc, char * argv[])
 {
    int status = 0;
    ZZ_mat<mpz_t> test_base, test_lll, test_bkz;
    status |= test_generation_tutorial(test_base);
    status |= test_lll_tutorial(test_lll);
+   status |= test_bkz_tutorial(test_bkz);
 
    if (status == 0)
    {
