@@ -338,12 +338,12 @@ public:
 class ExactErrorBoundedEvaluator : public ErrorBoundedEvaluator
 {
 public:
-  ExactErrorBoundedEvaluator(MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &_gso,
+  ExactErrorBoundedEvaluator(int d, MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &_gso,
                              EvaluatorMode eval_mode, size_t nr_solutions = 1,
                              EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
                              bool find_subsolutions            = false)
-      : ErrorBoundedEvaluator(_gso.d, _gso.get_mu_matrix(), _gso.get_r_matrix(), eval_mode,
-                              nr_solutions, update_strategy, find_subsolutions),
+      : ErrorBoundedEvaluator(d, _gso.get_mu_matrix(), _gso.get_r_matrix(), eval_mode, nr_solutions,
+                              update_strategy, find_subsolutions),
         gso(_gso)
   {
     int_max_dist = -1;

@@ -155,7 +155,7 @@ static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, 
   {
     ExactErrorBoundedEvaluator *p = new ExactErrorBoundedEvaluator(
         // d, b, gso.get_mu_matrix(), gso.get_r_matrix()
-        gso, eval_mode, max_aux_sols + 1, EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
+        d, gso, eval_mode, max_aux_sols + 1, EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
     p->int_max_dist = int_max_dist;
     evaluator       = p;
   }
@@ -350,7 +350,7 @@ static int shortest_vector_ex(
   else if (method == SVPM_PROVED)
   {
     ExactErrorBoundedEvaluator *p = new ExactErrorBoundedEvaluator(
-        gso, eval_mode, max_aux_sols + 1, EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
+        d, gso, eval_mode, max_aux_sols + 1, EVALSTRATEGY_BEST_N_SOLUTIONS, findsubsols);
     p->int_max_dist = int_max_dist;
     evaluator       = p;
   }
