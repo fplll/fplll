@@ -273,8 +273,7 @@ int test_rank_defect()
   A[3][3]         = -20;
   lll_reduction(A);
   vector<Z_NR<mpz_t>> sol_coord;
-  shortest_vector(A, sol_coord);
-  return 0;
+  return shortest_vector(A, sol_coord);
 }
 
 /**
