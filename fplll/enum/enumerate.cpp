@@ -68,6 +68,9 @@ void EnumerationDyn<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long f
   if (last == -1)
     last = _gso.d;
   d = last - first;
+  if (d <= 1)
+    return;
+
   fx.resize(d);
   FPLLL_CHECK(d < maxdim, "enumerate: dimension is too high");
   FPLLL_CHECK((solvingsvp || !dual), "CVP for dual not implemented! What does that even mean? ");

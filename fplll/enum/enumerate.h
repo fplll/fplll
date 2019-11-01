@@ -80,6 +80,10 @@ public:
                  const vector<enumf> &pruning = vector<enumf>(), bool dual = false,
                  bool subtree_reset = false)
   {
+    // enumeration over 1 dimension (or less) is non-sensical
+    if (last - first <= 1)
+      return;
+
     // check for external enumerator and use that
     if (get_external_enumerator() != nullptr && subtree.empty() && target_coord.empty())
     {
