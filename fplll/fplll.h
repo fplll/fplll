@@ -29,5 +29,6 @@
 #include "svpcvp.h"
 #include "util.h"
 #include "wrapper.h"
+#include "threadpool.h"
 
 #endif
