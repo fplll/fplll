@@ -85,7 +85,7 @@ public:
     {
       if (enumext.get() == nullptr)
         enumext.reset(new ExternalEnumeration<ZT, FT>(_gso, _evaluator));
-      if (enumext->enumerate(first, last, fmaxdist, fmaxdistexpo, pruning, dual))
+      if (enumext->enumerate(first, last, fmaxdist, fmaxdistexpo, pruning, dual) != ~uint64_t(0))
       {
         _nodes = enumext->get_nodes();
         return;
