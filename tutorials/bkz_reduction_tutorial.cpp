@@ -1,3 +1,17 @@
+/*
+
+   This file is part of fplll. fplll is free software: you
+   can redistribute it and/or modify it under the terms of the GNU Lesser
+   General Public License as published by the Free Software Foundation,
+   either version 2.1 of the License, or (at your option) any later version.
+   fplll is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+   GNU Lesser General Public License for more details.
+   You should have received a copy of the GNU Lesser General Public License
+   along with fplll. If not, see <http://www.gnu.org/licenses/>. */
+
+
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
@@ -18,7 +32,7 @@ using namespace fplll;
 
 /**
  * Compile like so:
- * g++ -std=c++11 -march=native -o3 lll_reduction_tutorial.cpp -lfplll -mpfr -lgmp -o <executable_name_here>
+ * g++ -std=c++11 -march=native -o3 bkz_reduction_tutorial.cpp -lfplll -mpfr -lgmp -o <executable_name_here>
  */
 
 /** 
@@ -66,7 +80,6 @@ void bkz_reduction_default (ZZ_mat<mpz_t> &base)
 	 * MUST be other than 0 (128 is recommended, as it is used on test files).
 	 */
 	status = bkz_reduction(base, block_size, BKZ_DEFAULT, FT_DOUBLE, precision);
-	cout << base << endl;
 }
 /**
  * Function that implements BKZ reduction WITH an input pruning vector. Block_size is as with bkz_reduction_defalut().
@@ -90,7 +103,6 @@ void bkz_reduction_with_parameters (ZZ_mat<mpz_t> &base)
 	 */
 	parameters.flags = BKZ_DEFAULT; 
 	status = bkz_reduction(&base, NULL, parameters, FT_DEFAULT, 53);
-	cout << base << endl;
 }
 
 
@@ -99,10 +111,30 @@ void bkz_reduction_with_parameters (ZZ_mat<mpz_t> &base)
  	ZZ_mat<mpz_t> base;
  	base.resize(30, 30);
  	base.gen_uniform(10);
+ 	cout << endl;
+ 	cout << "Initial basis." << endl;
+ 	cout << endl;
  	cout << base << endl;
  	cout << endl;
  	bkz_reduction_default (base);
+ 	cout << endl;
+ 	cout << "Default BKZ Reduction" << endl;
+ 	cout << endl;
+ 	cout << base << endl;
+ 	cout << endl;
+ 	base.clear();
+ 	base.resize(30, 30);
+ 	base.gen_uniform(10);
+ 	cout << endl;
+ 	cout << "Basis, reinitialised." << endl;
+ 	cout << endl;
+ 	cout << base << endl;
+ 	cout << endl;
  	bkz_reduction_with_parameters(base);
+ 	cout << endl;
+ 	cout << "BKZ Reduction with appropriate parameters " << endl;
+ 	cout << endl;
+ 	cout << base << endl;
  	cout << endl;
  	return 0;
  }
