@@ -1,4 +1,4 @@
-/*
+/* Copyright (c) 2019 Marios Mavropoulos Papoudas
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -49,6 +49,32 @@ using namespace fplll;
  * BKZ_SD_VARIANT: run SD-BKZ
  * BKZ_SLD_RED: run slide reduction 
  */
+
+
+/**
+   @brief Write T to `output_filename`.
+   @param X T (T is usually a ZZ_mat<ZT> or a vector<Z_NR<ZT>>
+   @param output_filename
+   @return zero if the file is correctly written to, 1 otherwise.
+*/
+
+template <class T> int write_to_file(T &X, const char *output_filename) {
+  int status = 0;
+  ofstream os;
+  os.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+  try {
+    os.open(output_filename, std::ios::app);
+    os << X;
+    os.close();
+  }
+  catch (const ofstream::failure&) {
+    status = 1;
+    cerr << "Error by writing to " << output_filename << "." << endl;
+    cout << os.rdstate() << endl;
+  }
+
+  return status;
+}
 
 
 void strategize(int block_size, vector<Strategy> &strategies)
@@ -109,32 +135,15 @@ void bkz_reduction_with_parameters (ZZ_mat<mpz_t> &base)
  int main (int argc, char *argv[])
  {
  	ZZ_mat<mpz_t> base;
+ 	int output = 0;
  	base.resize(30, 30);
  	base.gen_uniform(10);
- 	cout << endl;
- 	cout << "Initial basis." << endl;
- 	cout << endl;
- 	cout << base << endl;
- 	cout << endl;
  	bkz_reduction_default (base);
- 	cout << endl;
- 	cout << "Default BKZ Reduction" << endl;
- 	cout << endl;
- 	cout << base << endl;
- 	cout << endl;
+ 	output = write_to_file (base, "bkz_output");
  	base.clear();
  	base.resize(30, 30);
  	base.gen_uniform(10);
- 	cout << endl;
- 	cout << "Basis, reinitialised." << endl;
- 	cout << endl;
- 	cout << base << endl;
- 	cout << endl;
  	bkz_reduction_with_parameters(base);
- 	cout << endl;
- 	cout << "BKZ Reduction with appropriate parameters " << endl;
- 	cout << endl;
- 	cout << base << endl;
- 	cout << endl;
+ 	output = write_to_file(base, "bkz_output");
  	return 0;
  }
