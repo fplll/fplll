@@ -22,6 +22,7 @@
 #error fplll needs at least a C++11 compliant compiler
 #endif
 
+#include "gso_gram.h"
 #include "bkz.h"
 #include "bkz_param.h"
 #include "hlll.h"
