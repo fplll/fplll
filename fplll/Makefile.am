@@ -37,7 +37,8 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h \
 	sieve/sieve_gauss.h sieve/sieve_common.h sieve/sieve_gauss_str.h sieve/sampler_basic.h \
 	pruner/pruner.h pruner/pruner_simplex.h \
-	householder.h hlll.h
+	householder.h hlll.h \
+	threadpool.h io/thread_pool.hpp
 
 bin_PROGRAMS=fplll latticegen latsieve
 check_PROGRAMS=llldiff
@@ -119,7 +120,7 @@ libfplll_la_SOURCES+=\
 	enum-parallel/enumlib_dim.40.cpp enum-parallel/enumlib_dim.30.cpp enum-parallel/enumlib_dim.20.cpp
 EXTRA_libfplll_la_SOURCES+=enum-parallel/enumlib_dim.cpp
 endif
-	
+
 
 # libfplll variants
 libfplllv_la_SOURCES=$(libfplll_la_SOURCES)
