@@ -705,7 +705,14 @@ template <class ZT, class FT> inline FT &MatGSOInterface<ZT, FT>::get_r(FT &f, i
 
 template <class ZT, class FT> inline bool MatGSOInterface<ZT, FT>::update_gso_row(int i)
 {
-  return update_gso_row(i, i);
+  bool r = update_gso_row(i, i);
+#ifdef DEBUG
+  // if a user submits a non-gram Matrix as a Gram matrix, this might happen
+  FT tmp;
+  get_r(tmp, i, i);
+  FPLLL_DEBUG_CHECK(tmp >= 0);
+#endif
+  return r;
 }
 
 template <class ZT, class FT> inline void MatGSOInterface<ZT, FT>::set_r(int i, int j, FT &f)
