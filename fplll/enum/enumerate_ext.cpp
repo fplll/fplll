@@ -103,7 +103,7 @@ void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, b
     size_t offs = 0;
     for (int i = 0; i < _d; ++i, offs += mudim)
     {
-      for (int j = 0; j < _d; ++j)
+      for (int j = i+1; j < _d; ++j)
       {
         _gso.get_mu(fmu, j + _first, i + _first);
         /* mu[i][j]= */
