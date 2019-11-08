@@ -252,6 +252,30 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
   return 0;
 }
 
+int test_rank_defect()
+{
+  ZZ_mat<mpz_t> A = ZZ_mat<mpz_t>(4, 4);
+  A[0][0]         = 75;
+  A[0][1]         = 44;
+  A[0][2]         = -5;
+  A[0][3]         = -16;
+  A[1][0]         = 29;
+  A[1][1]         = 7;
+  A[1][2]         = -52;
+  A[1][3]         = 134;
+  A[2][0]         = -89;
+  A[2][1]         = 108;
+  A[2][2]         = 56;
+  A[2][3]         = 29;
+  A[3][0]         = -94;
+  A[3][1]         = 55;
+  A[3][2]         = -194;
+  A[3][3]         = -20;
+  lll_reduction(A);
+  vector<Z_NR<mpz_t>> sol_coord;
+  return shortest_vector(A, sol_coord);
+}
+
 /**
    @brief Test if SVP function returns vector with right norm.
 
@@ -304,6 +328,8 @@ int main()
                                  TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_ENUM);
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_dsvp_in",
                                  TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_REDUCE);
+
+  status |= test_rank_defect();
 
   if (status == 0)
   {

@@ -26,7 +26,7 @@ SOFTWARE.
 #define ENUMLIB_ENUMERATION_HPP
 
 #include "fplll_types.h"
-#include "thread_pool.hpp"
+#include <fplll/threadpool.h>
 
 #include <algorithm>
 #include <array>
@@ -81,11 +81,6 @@ template <int N> struct globals_t
 };
 
 extern mutex_type global_mutex;
-
-extern int enumlib_nrthreads;
-extern int enumlib_loglevel;
-
-extern thread_pool::thread_pool threadpool;
 
 template <int N, int SWIRLY, int SWIRLY2BUF, int SWIRLY1FRACTION, bool findsubsols = false>
 struct lattice_enum_t
@@ -388,7 +383,7 @@ struct lattice_enum_t
   {
     for (size_t i = 0; i < globals.signal.size(); ++i)
       globals.signal[i] = 0;
-    threadid = enumlib_nrthreads;
+    threadid = get_threads();
 
     _A = globals.A;
     _update_AA();
@@ -418,8 +413,6 @@ struct lattice_enum_t
     swirlys.resize(2);
     swirlys[0].clear();
     enumerate_recur(i_tag<N - 1, svp, N - SWIRLY, 0>());
-    if (enumlib_loglevel >= 1)
-      cout << "[enumlib] Swirly0: #=" << swirlys[0].size() << endl;
 
     const auto swirl_less = [](const swirl_item_t &l, const swirl_item_t &r) {
       return l.second.second < r.second.second;
@@ -448,9 +441,6 @@ struct lattice_enum_t
 
         ++swirly0idx;
       }
-      if (enumlib_loglevel >= 1)
-        cout << "[enumlib] Swirly1: #=" << swirlys[1].size() << " (" << swirly0idx << "/"
-             << swirlys[0].size() << ")" << endl;
 
       size_t swirly1end = (int)(swirlys[1].size());
       if (activeswirly)
@@ -476,8 +466,6 @@ struct lattice_enum_t
           lock_type lock(globals.mutex);
           mylat.threadid = threadid++;
         }
-        if (enumlib_loglevel >= 2)
-          cout << "[enumlib] Thread " << mylat.threadid << " started." << endl;
         for (int j = 0; j < N - SWIRLY; ++j)
           mylat._counts[j] = 0;
         while (true)
@@ -509,10 +497,7 @@ struct lattice_enum_t
             this->_subsol[j]  = mylat._subsol[j];
           }
       };
-      if (threadpool.size() != size_t(enumlib_nrthreads))
-        cout << "[enumlib] threadpool size mismatch!" << enumlib_nrthreads
-             << "!=" << threadpool.size() << endl;
-      for (int i = 0; i < enumlib_nrthreads; ++i)
+      for (int i = 0; i < ::fplll::get_threads(); ++i)
         threadpool.push(f);
       threadpool.wait_work();
 

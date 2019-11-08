@@ -54,7 +54,7 @@ inline void roundto(double &dest, const double &src) { dest = round(src); }
 class EnumerationBase
 {
 public:
-  static const int maxdim = FPLLL_MAX_ENUM_DIMENSION;
+  static const int maxdim = FPLLL_MAX_ENUM_DIM;
 
   inline uint64_t get_nodes() const { return nodes; }
   virtual ~EnumerationBase() {}

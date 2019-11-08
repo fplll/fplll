@@ -277,25 +277,21 @@ bool ExactErrorBoundedEvaluator::get_max_error(FP_NR<mpfr_t> &max_error, const F
 void ExactErrorBoundedEvaluator::eval_sol(const vector<FP_NR<mpfr_t>> &new_sol_coord, const enumf &,
                                           enumf &max_dist)
 {
-  int n = matrix.get_cols();
-  Z_NR<mpz_t> new_sol_dist, coord;
-  vector<Z_NR<mpz_t>> new_sol;
+  int n = gso.get_cols_of_b();
+
+  Z_NR<mpz_t> new_sol_dist;
+  vector<Z_NR<mpz_t>> new_sol, coord;
 
   gen_zero_vect(new_sol, n);
+  gen_zero_vect(coord, n);
   new_sol_dist = 0;
 
   // Computes the distance between x and zero
   for (int i = 0; i < d; i++)
   {
-    coord.set_f(new_sol_coord[i]);
-    for (int j = 0; j < n; j++)
-      new_sol[j].addmul(coord, matrix(i, j));
+    coord[i].set_f(new_sol_coord[i]);
   }
-  for (int i = 0; i < n; i++)
-  {
-    coord = new_sol[i];
-    new_sol_dist.addmul(coord, coord);
-  }
+  gso.sqnorm_coordinates(new_sol_dist, coord);
 
   if (int_max_dist < 0 || new_sol_dist <= int_max_dist)
   {
@@ -319,25 +315,21 @@ void ExactErrorBoundedEvaluator::eval_sub_sol(int offset,
   Z_NR<mpz_t> minusone;
   minusone = -1;
 
-  int n = matrix.get_cols();
-  Z_NR<mpz_t> new_sol_dist, coord;
-  vector<Z_NR<mpz_t>> new_sol;
+  int n = gso.get_cols_of_b();
+  Z_NR<mpz_t> new_sol_dist;
+  vector<Z_NR<mpz_t>> new_sol, coord;
 
   gen_zero_vect(new_sol, n);
+  gen_zero_vect(coord, n);
   new_sol_dist = 0;
 
   // Computes the distance between x[[offset,d)] and zero
   for (int i = offset; i < d; i++)
   {
-    coord.set_f(new_sub_sol_coord[i]);
-    for (int j = 0; j < n; j++)
-      new_sol[j].addmul(coord, matrix(i, j));
+    coord[i].set_f(new_sub_sol_coord[i]);
   }
-  for (int i = 0; i < n; i++)
-  {
-    coord = new_sol[i];
-    new_sol_dist.addmul(coord, coord);
-  }
+  gso.sqnorm_coordinates(new_sol_dist, coord);
+
   FP_NR<mpfr_t> subdist = int_dist2Float(new_sol_dist);
 
   sub_solutions.resize(std::max(sub_solutions.size(), std::size_t(offset + 1)));

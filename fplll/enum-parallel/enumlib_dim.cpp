@@ -22,6 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <fplll/fplll_config.h>
+
 #ifdef ENUMDIMENSION
 #if ENUMDIMENSION <= FPLLL_MAX_PARALLEL_ENUM_DIM
 
@@ -49,7 +51,7 @@ uint64_t enumerate_dim_detail(int dim, float_type maxdist,
   static const int SWIRLY          = enumerate_traits<dimension>::SWIRLY;
   static const int SWIRLY2BUF      = enumerate_traits<dimension>::SWIRLY2BUF;
   static const int SWIRLY1FRACTION = enumerate_traits<dimension>::SWIRLY1FRACTION;
-  typedef lattice_enum_t<dimension, SWIRLY, SWIRLY2BUF, SWIRLY1FRACTION> lat_t;
+  typedef lattice_enum_t<dimension, SWIRLY, SWIRLY2BUF, SWIRLY1FRACTION, findsubsols> lat_t;
 
   globals_t<dimension> globals;
   globals.A              = maxdist;
@@ -60,36 +62,6 @@ uint64_t enumerate_dim_detail(int dim, float_type maxdist,
 
   cb_set_config(&lat.muT[0][0], dimension, true, &lat.risq[0], &lat.pr[0]);
   lat.pr2 = lat.pr;
-
-  if (enumlib_loglevel >= 1)
-    cout << "[enumlib] Running dimension " << dimension << ": A=" << maxdist << endl;
-  if (enumlib_loglevel >= 2)
-  {
-    cout << "[enumlib] pr2 = [";
-    for (int i = 0; i < dimension; ++i)
-      cout << lat.pr2[i] << " ";
-    cout << "]" << endl;
-
-    cout << "[enumlib] pr = [";
-    for (int i = 0; i < dimension; ++i)
-      cout << lat.pr[i] << " ";
-    cout << "]" << endl;
-
-    cout << "[enumlib] r = [";
-    for (int i = 0; i < dimension; ++i)
-      cout << lat.risq[i] << " ";
-    cout << "]" << endl;
-
-    cout << "[enumlib] mu[:5,:5] = [" << endl;
-    for (int j = 0; j < 5; ++j)
-    {
-      cout << "[";
-      for (int i = 0; i < 5; ++i)
-        cout << lat.muT[i * dimension + j] << " \t";
-      cout << "]" << endl;
-    }
-    cout << "]" << endl;
-  }
 
   lat.activeswirly = false;
 

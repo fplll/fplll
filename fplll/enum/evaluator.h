@@ -16,7 +16,10 @@
 #ifndef FPLLL_EVALUATOR_H
 #define FPLLL_EVALUATOR_H
 
-#include "../util.h"
+#include <cassert>
+#include <fplll/gso_interface.h>
+#include <fplll/util.h>
+#include <functional>
 #include <map>
 #include <queue>
 
@@ -203,6 +206,61 @@ public:
 };
 
 /**
+   @brief Callback function used by CallbackEvaluator.
+
+ */
+
+typedef bool(callback_evaluator_callback)(size_t n, enumf *new_sol_coord, void *ctx);
+
+/**
+   @brief A FastEvaluator which additionally checks whether the predicate ``callbackf(solution,
+   ctx)`` accepts or rejects.
+
+   @example tests/test_enum.cpp
+
+ */
+template <class FT> class CallbackEvaluator : public FastEvaluator<FT>
+{
+
+  std::function<callback_evaluator_callback> callbackf;
+  void *ctx;
+  enumf new_sol_coordf[FPLLL_MAX_ENUM_DIM];
+
+public:
+  using FastEvaluator<FT>::max_sols;
+  using FastEvaluator<FT>::strategy;
+  using FastEvaluator<FT>::findsubsols;
+  using FastEvaluator<FT>::normExp;
+  using FastEvaluator<FT>::sub_solutions;
+
+  CallbackEvaluator(std::function<callback_evaluator_callback> callbackf, void *ctx = NULL,
+                    size_t nr_solutions               = 1,
+                    EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
+                    bool find_subsolutions            = false
+
+                    )
+      : FastEvaluator<FT>(nr_solutions, update_strategy, find_subsolutions), callbackf(callbackf),
+        ctx(ctx)
+  {
+  }
+  virtual ~CallbackEvaluator() {}
+
+  virtual void eval_sol(const vector<FT> &new_sol_coord, const enumf &new_partial_dist,
+                        enumf &max_dist)
+  {
+    assert(new_sol_coord.size() <= FPLLL_MAX_ENUM_DIM);
+    for (size_t i = 0; i < new_sol_coord.size(); i++)
+    {
+      new_sol_coordf[i] = new_sol_coord[i].get_d();
+    }
+    if (!callbackf(new_sol_coord.size(), new_sol_coordf, this->ctx))
+      return;
+
+    FastEvaluator<FT>::eval_sol(new_sol_coord, new_partial_dist, max_dist);
+  }
+};
+
+/**
  * ErrorBoundEvaluator provides an extra interface to provide
  * information about the accuracy of solutions.
  */
@@ -280,14 +338,13 @@ public:
 class ExactErrorBoundedEvaluator : public ErrorBoundedEvaluator
 {
 public:
-  ExactErrorBoundedEvaluator(int d, const ZZ_mat<mpz_t> &matrix, const Matrix<FP_NR<mpfr_t>> &mu,
-                             const Matrix<FP_NR<mpfr_t>> &r, EvaluatorMode eval_mode,
-                             size_t nr_solutions               = 1,
+  ExactErrorBoundedEvaluator(int d, MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &_gso,
+                             EvaluatorMode eval_mode, size_t nr_solutions = 1,
                              EvaluatorStrategy update_strategy = EVALSTRATEGY_BEST_N_SOLUTIONS,
                              bool find_subsolutions            = false)
-      : ErrorBoundedEvaluator(d, mu, r, eval_mode, nr_solutions, update_strategy,
-                              find_subsolutions),
-        matrix(matrix)
+      : ErrorBoundedEvaluator(d, _gso.get_mu_matrix(), _gso.get_r_matrix(), eval_mode, nr_solutions,
+                              update_strategy, find_subsolutions),
+        gso(_gso)
   {
     int_max_dist = -1;
   }
@@ -312,8 +369,7 @@ public:
 
 private:
   FP_NR<mpfr_t> int_dist2Float(Z_NR<mpz_t> int_dist);
-
-  const ZZ_mat<mpz_t> &matrix;  // matrix of the lattice
+  MatGSOInterface<Z_NR<mpz_t>, FP_NR<mpfr_t>> &gso;
 };
 
 FPLLL_END_NAMESPACE

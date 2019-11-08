@@ -1,6 +1,4 @@
-/* Copyright (C) 2005-2008 Damien Stehle.
-   Copyright (C) 2007 David Cade.
-   Copyright (C) 2011 Xavier Pujol.
+/* Copyright (C) 2019 Marc Stevens.
 
    This file is part of fplll. fplll is free software: you
    can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -15,21 +13,23 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
-#ifndef FPLLL_H
-#define FPLLL_H
+#include <fplll/threadpool.h>
 
-#if __cplusplus < 201103L
-#error fplll needs at least a C++11 compliant compiler
-#endif
+FPLLL_BEGIN_NAMESPACE
 
-#include "bkz.h"
-#include "bkz_param.h"
-#include "gso_gram.h"
-#include "hlll.h"
-#include "pruner/pruner.h"
-#include "svpcvp.h"
-#include "threadpool.h"
-#include "util.h"
-#include "wrapper.h"
+thread_pool::thread_pool threadpool(std::thread::hardware_concurrency() - 1);
 
-#endif
+/* get and set number of threads in threadpool, both return the (new) number of threads */
+int get_threads() { return threadpool.size() + 1; }
+
+int set_threads(int th)
+{
+  if (th > int(std::thread::hardware_concurrency()) || th == -1)
+    th = std::thread::hardware_concurrency();
+  if (th < 1)
+    th = 1;
+  threadpool.resize(th - 1);
+  return get_threads();
+}
+
+FPLLL_END_NAMESPACE

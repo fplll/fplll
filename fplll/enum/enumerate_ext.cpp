@@ -17,14 +17,14 @@
 #include "enumerate_ext.h"
 #include <fplll/defs.h>
 
-#ifdef FPLLL_WITH_PARALLEL_ENUM
+#if FPLLL_MAX_PARALLEL_ENUM_DIM != 0
 #include "../enum-parallel/enumlib.h"
 #endif
 
 FPLLL_BEGIN_NAMESPACE
 
 // set & get external enumerator (nullptr => disabled)
-#ifdef FPLLL_WITH_PARALLEL_ENUM
+#if FPLLL_MAX_PARALLEL_ENUM_DIM != 0
 std::function<extenum_fc_enumerate> fplll_extenum = enumlib::enumlib_enumerate;
 #else
 std::function<extenum_fc_enumerate> fplll_extenum = nullptr;
@@ -84,9 +84,11 @@ template <typename ZT, typename FT>
 void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, bool mutranspose,
                                                       enumf *rdiag, enumf *pruning)
 {
+
   FT fr, fmu;
   long rexpo;
-
+  // Copy over the squared norms for the Gram-Schmidt vectors.
+  // Note that these norms are normalised.
   for (int i = 0; i < _d; ++i)
   {
     fr = _gso.get_r_exp(i + _first, i + _first, rexpo);
@@ -94,8 +96,10 @@ void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, b
     rdiag[i] = fr.get_d();
   }
 
+  // Now we copy the mu values from the gso matrix.
   if (mutranspose)
   {
+
     size_t offs = 0;
     for (int i = 0; i < _d; ++i, offs += mudim)
     {
@@ -121,6 +125,7 @@ void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, b
     }
   }
 
+  // if there's no pruning enabled then we just fill pruning with 1s
   if (_pruning.empty())
   {
     for (int i = 0; i < _d; ++i)
@@ -128,6 +133,7 @@ void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, b
   }
   else
   {
+    // Otherwise we just copy over the pruning parameters
     for (int i = 0; i < _d; ++i)
       pruning[i] = _pruning[i];
   }

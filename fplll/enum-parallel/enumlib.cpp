@@ -34,43 +34,11 @@ namespace enumlib
 
 using namespace std;
 
-thread_pool::thread_pool threadpool(std::thread::hardware_concurrency());
-
-int enumlib_nrthreads = std::thread::hardware_concurrency();
-int enumlib_loglevel  = 0;
-
 uint64_t enumlib_enumerate(int dim, fplll::enumf maxdist,
                            std::function<fplll::extenum_cb_set_config> cbfunc,
                            std::function<fplll::extenum_cb_process_sol> cbsol,
                            std::function<fplll::extenum_cb_process_subsol> cbsubsol, bool dual,
                            bool findsubsols);
-
-extern "C"
-{
-
-  void fplll_enumlib_set_loglevel(int level)
-  {
-    if (level < 0)
-      level = -1;
-    if (level > 2)
-      level = 2;
-    enumlib_loglevel               = level;
-    static const char *levelstrs[] = {"quiet", "normal", "verbose", "very verbose"};
-    cout << "[enumlib] setting verbose level to " << levelstrs[level + 1] << "." << endl;
-  }
-
-  void fplll_enumlib_set_numthreads(int th)
-  {
-    if (th <= 0 || th > (int)(std::thread::hardware_concurrency()))
-      th = std::thread::hardware_concurrency();
-    cout << "[enumlib] setting number of threads to " << th << "." << endl;
-    enumlib_nrthreads = th;
-    threadpool.resize(th);
-  }
-
-  void fplll_register_enumlib() { fplll::set_external_enumerator(enumlib_enumerate); }
-
-}  // extern "C"
 
 #define ENUMFUNCNAME(DIM)                                                                          \
   uint64_t enumerate##DIM(int, float_type, std::function<extenum_cb_set_config>,                   \

@@ -61,11 +61,12 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 - autotools 2.61 or higher
 - g++ 4.9.3 or higher
 
-
 ### Optional ###
 - QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install
   the shared library (e.g. `./configure --enable-shared=yes`).
   [http://crd-legacy.lbl.gov/~dhbailey/mpdist/](http://crd-legacy.lbl.gov/~dhbailey/mpdist/)
+  
+NOTE: If you are intending to use fplll on Windows 10, then these packages are not required before you get started. This is because you use fplll via the "Windows Subsystem for Linux". Please go straight to the instructions for [Windows 10](#windows-10).
 
 ## Installation ##
 
@@ -104,11 +105,11 @@ installation directory name other than `/usr/local` by giving `./configure` the 
 
 ### Windows 10 ###
 
-Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to **Settings** -> **Update and security** -> **For developers** and enable developer mode. (This may take a while.) Afterwards, open command prompt and run 
+Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to **Settings** -> **Update and security** -> **For developers** and enable developer mode. (This may take a while.) Afterwards, open Powershell as an administrator and run 
 
-	lxrun /install
+	Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
 
-This will install the WSL, and afterwards this system can be accessed e.g. by opening command prompt and typing `bash`. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
+This will enable the WSL. Next, open the Windows Store and navigate to your favourite available Linux distribution - this may be installed as if were a regular application. Afterwards, this system can be accessed as if it were a regular program e.g. by opening command prompt and typing `bash`. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
 	
 	sudo apt-get update
 	
