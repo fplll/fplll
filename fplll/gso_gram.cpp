@@ -88,7 +88,6 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_sub(int i, int j)
 
   if (enable_int_gram)
   {
-    FPLLL_DEBUG_CHECK(i > j);
     if (gptr == nullptr)
     {
       throw std::runtime_error("Error: gptr is equal to the nullpointer.");
@@ -116,7 +115,6 @@ template <class ZT, class FT> void MatGSOGram<ZT, FT>::row_addmul_si(int i, int 
 
   if (enable_int_gram)
   {
-    FPLLL_DEBUG_CHECK(i > j);
     // g(i, i) += 2 * (2^e * x) * g(i, j) + 2^(2*e) * x^2 * g(j, j)
     //  (must be done before updating g(i, j))
     if (gptr == nullptr)
