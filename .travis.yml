@@ -50,7 +50,7 @@ matrix:
       - sudo apt-get install -qq -y clang-format-3.9
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-4.9 CLANGFORMAT=clang-format-6.0
+    env: COMPILER=g++-4.9 CLANGFORMAT=clang-format-6.0 CPPFLAGS="-DDEBUG"
     addons:
       apt:
         sources:
@@ -84,7 +84,7 @@ matrix:
       - sudo apt-get install -qq -y clang-format-6.0
   - os: linux
     compiler: gcc
-    env: COMPILER=g++-6 CLANGFORMAT=clang-format-6.0 CXXFLAGS="-O3 -ggdb -fprofile-arcs -ftest-coverage" CPPFLAGS="-DDEBUG"
+    env: COMPILER=g++-6 CLANGFORMAT=clang-format-6.0 CXXFLAGS="-O3 -ggdb -fprofile-arcs -ftest-coverage"
     addons:
       apt:
         sources:
