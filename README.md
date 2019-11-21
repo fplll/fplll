@@ -262,7 +262,7 @@ equal iff d=d' and for any i, bi = +- ci. Concretely, if basis B is in file 'B.t
 ## latsieve ##
 
 `latsieve` does (tuple) lattice sieve on a matrix (considered as a set of row
-vectors) given in a file as parameter. You may compile it by using `make latsieve`.
+vectors) given in a file as parameter. 
  It will generate the executable file
  `latsieve` in `fplll/` which is a wrapper of `fplll/.libs/latsieve`.
 
