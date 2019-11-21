@@ -134,6 +134,8 @@ public:
   NumVect() {}
   /** Initializes NumVect with the elements of the given NumVect. */
   NumVect(const NumVect &v) : data(v.data) {}
+  /** Initializes NumVect with the elements of a given vector. */
+  NumVect(const vector<T> &v) : data(v) {}
   /** Initializes NumVect of specific size, The initial content is
       undefined. */
   NumVect(int size) : data(size) {}
@@ -164,6 +166,12 @@ public:
     data.resize(size);
     fill(0);
   }
+
+  /**Compares two NumVects by comparing the underlying vectors. Returns true if equivalent & false
+   * otherwise.
+   * Note that this only works if the two NumVects have the same template type parameter. **/
+  bool operator==(NumVect<T> &other) { return other.data == data; }
+
   /** Inserts an element in the back of NumVect. */
   void push_back(const T &t) { data.push_back(t); }
   /** Removes the back element of NumVect. */
