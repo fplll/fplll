@@ -82,7 +82,7 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 24
+#serial 26
 
 AU_ALIAS([ACX_PTHREAD], [AX_PTHREAD])
 AC_DEFUN([AX_PTHREAD], [
@@ -371,7 +371,13 @@ for ax_pthread_try_flag in $ax_pthread_flags; do
 #                       if $ax_pthread_check_cond
 #                        error "$ax_pthread_check_macro must be defined"
 #                       endif
-                        static void routine(void *a) { a = 0; }
+                        static void *some_global = NULL;
+                        static void routine(void *a)
+                          {
+                             /* To avoid any unused-parameter or
+                                unused-but-set-parameter warning.  */
+                             some_global = a;
+                          }
                         static void *start_routine(void *a) { return a; }],
                        [pthread_t th; pthread_attr_t attr;
                         pthread_create(&th, 0, start_routine, 0);
@@ -438,7 +444,8 @@ if test "x$ax_pthread_ok" = "xyes"; then
         AC_CACHE_CHECK([for PTHREAD_PRIO_INHERIT],
             [ax_cv_PTHREAD_PRIO_INHERIT],
             [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pthread.h>]],
-                                             [[int i = PTHREAD_PRIO_INHERIT;]])],
+                                             [[int i = PTHREAD_PRIO_INHERIT;
+                                               return i;]])],
                             [ax_cv_PTHREAD_PRIO_INHERIT=yes],
                             [ax_cv_PTHREAD_PRIO_INHERIT=no])
             ])
