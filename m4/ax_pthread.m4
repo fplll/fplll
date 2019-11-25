@@ -82,7 +82,8 @@
 #   modified version of the Autoconf Macro, you may extend this special
 #   exception to the GPL to apply to your modified version as well.
 
-#serial 26
+# modified based on version serial 26
+## serial 26
 
 AU_ALIAS([ACX_PTHREAD], [AX_PTHREAD])
 AC_DEFUN([AX_PTHREAD], [
@@ -194,14 +195,14 @@ case $host_os in
         # that too in a future libc.)  So we'll check first for the
         # standard Solaris way of linking pthreads (-mt -lpthread).
 
-        ax_pthread_flags="-mt,pthread pthread $ax_pthread_flags"
+        ax_pthread_flags=",-mt,-lpthread pthread $ax_pthread_flags"
         ;;
 esac
 
 # GCC generally uses -pthread, or -pthreads on some platforms (e.g. SPARC)
 
 AS_IF([test "x$GCC" = "xyes"],
-      [ax_pthread_flags="-pthread -pthreads $ax_pthread_flags"])
+      [ax_pthread_flags=",-pthread,-lpthread -pthread -pthreads $ax_pthread_flags"])
 
 # The presence of a feature test macro requesting re-entrant function
 # definitions is, on some systems, a strong hint that pthreads support is
@@ -328,15 +329,15 @@ for ax_pthread_try_flag in $ax_pthread_flags; do
                 AC_MSG_CHECKING([whether pthreads work without any flags])
                 ;;
 
-                -mt,pthread)
-                AC_MSG_CHECKING([whether pthreads work with -mt -lpthread])
-                PTHREAD_CFLAGS="-mt"
-                PTHREAD_LIBS="-lpthread"
-                ;;
-
                 -*)
                 AC_MSG_CHECKING([whether pthreads work with $ax_pthread_try_flag])
                 PTHREAD_CFLAGS="$ax_pthread_try_flag"
+                ;;
+
+                ,*)
+                PTHREAD_CFLAGS=`echo $ax_pthread_try_flag | sed "s/^,\(.*\),\(.*\)$/\1/"`
+                PTHREAD_LIBS=`echo $ax_pthread_try_flag | sed "s/^,\(.*\),\(.*\)$/\2/"`
+                AC_MSG_CHECKING([whether pthreads work with CFLAGS="$PTHREAD_CFLAGS" LIBS="$PTHREAD_LIBS"])
                 ;;
 
                 pthread-config)
