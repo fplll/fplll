@@ -224,8 +224,8 @@ namespace thread_pool {
 
 	inline void thread_pool::run(const std::function<void()>& f, int threads)
 	{
-		if (threads == -1 || threads > _threads.size()+1)
-			threads = _threads.size()+1;
+		if (threads < 1 || threads > int(_threads.size())+1)
+			threads = int(_threads.size())+1;
 		for (int i = 0; i < threads; ++i)
 			this->push(f);
 		this->wait_work();
@@ -233,8 +233,8 @@ namespace thread_pool {
 
 	inline void thread_pool::run(const std::function<void(int)>& f, int threads)
 	{
-		if (threads == -1 || threads > _threads.size()+1)
-			threads = _threads.size()+1;
+		if (threads < 1 || threads > int(_threads.size())+1)
+			threads = int(_threads.size())+1;
 		for (int i = 0; i < threads; ++i)
 			this->push( [f,i](){f(i);} );
 		this->wait_work();
@@ -242,8 +242,8 @@ namespace thread_pool {
 
 	inline void thread_pool::run(const std::function<void(int,int)>& f, int threads)
 	{
-		if (threads == -1 || threads > _threads.size()+1)
-			threads = _threads.size()+1;
+		if (threads < 1 || threads > int(_threads.size())+1)
+			threads = int(_threads.size())+1;
 		for (int i = 0; i < threads; ++i)
 			this->push( [f,i,threads](){f(i,threads);} );
 		this->wait_work();
