@@ -554,7 +554,8 @@ template <class ZT, class FT>
 inline void MatHouseholder<ZT, FT>::norm_square_R_row(FT &f, int k, int beg, int end, long &expo)
 {
   FPLLL_DEBUG_CHECK(k >= 0 && k < d);
-  FPLLL_DEBUG_CHECK(beg <= end && end <= k);
+  FPLLL_DEBUG_CHECK(beg <= end);
+  FPLLL_DEBUG_CHECK(end <= k);
   if (end == beg)
     f = 0.0;
   else
