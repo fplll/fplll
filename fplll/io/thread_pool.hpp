@@ -43,7 +43,7 @@
 #include <atomic>
 
 /*************************** example usage ***************************************\
-grep "^//test.cpp" thread_pool.hpp -A18 > test.cpp
+grep "^//test.cpp" thread_pool.hpp -A33 > test.cpp
 g++ -std=c++11 -o test test.cpp -pthread -lpthread
 
 //test.cpp:
@@ -62,6 +62,21 @@ int main()
         std::cout << aui << std::endl;
         tp.wait_work();
         std::cout << aui << std::endl;
+
+	// blocking run 'void f()' function on all threads and main thread
+	tp.run( [&aui](){
+			std::cout << "Run 1: Thread started." << std::endl;
+		}); 
+
+	// blocking run 'void f(int)' function on all threads and main thread
+	tp.run( [&aui](int threadid){
+			std::cout << "Run 2: Thread " << threadid << " started." << std::endl;
+		}); 
+
+	// blocking run 'void f(int,int)' function on all threads and main thread
+	tp.run( [&aui](int threadid, int threads){
+			std::cout << "Run 3: Thread " << threadid << " of " << threads << " started." << std::endl;
+		});  
         return 0;
 }
 
@@ -98,6 +113,14 @@ namespace thread_pool {
 
 		// sleep until all threads are idle
 		void wait_sleep();
+
+		// run a job 'void f()' on #threads <= #threadpoolsize+1
+		// (-1 => #threads = #threadpoolsize + 1)
+		void run(const std::function<void()>& f, int threads = -1);
+		// run a job given function 'void f(int threadid)'
+		void run(const std::function<void(int)>& f, int threads = -1);
+		// run a job given function 'void f(int threadid, int threads)' (0 <= threadid < threads)
+		void run(const std::function<void(int,int)>& f, int threads = -1);
 
 	private:
 		void _init_thread();
@@ -199,18 +222,47 @@ namespace thread_pool {
 		return task->get_future();
 	}
 
+	inline void thread_pool::run(const std::function<void()>& f, int threads)
+	{
+		if (threads < 1 || threads > int(_threads.size())+1)
+			threads = int(_threads.size())+1;
+		for (int i = 0; i < threads; ++i)
+			this->push(f);
+		this->wait_work();
+	}
+
+	inline void thread_pool::run(const std::function<void(int)>& f, int threads)
+	{
+		if (threads < 1 || threads > int(_threads.size())+1)
+			threads = int(_threads.size())+1;
+		for (int i = 0; i < threads; ++i)
+			this->push( [f,i](){f(i);} );
+		this->wait_work();
+	}
+
+	inline void thread_pool::run(const std::function<void(int,int)>& f, int threads)
+	{
+		if (threads < 1 || threads > int(_threads.size())+1)
+			threads = int(_threads.size())+1;
+		for (int i = 0; i < threads; ++i)
+			this->push( [f,i,threads](){f(i,threads);} );
+		this->wait_work();
+	}
+
 	inline void thread_pool::resize(std::size_t nrthreads)
 	{
 		if (nrthreads < _threads.size())
 		{
 			// decreasing number of active threads
+			std::unique_lock<std::mutex> lock(_mutex);
 			for (std::size_t i = nrthreads; i < _threads.size(); ++i)
 				*(_threads_stop[i]) = true;
 			_condition.notify_all();
+			lock.unlock();
 			for (std::size_t i = nrthreads; i < _threads.size(); ++i)
 				_threads[i]->join();
 
-			std::unique_lock<std::mutex> lock(_mutex);
+			lock.lock();
 			_threads_stop.resize(nrthreads);
 			_threads.resize(nrthreads);
 		} 
