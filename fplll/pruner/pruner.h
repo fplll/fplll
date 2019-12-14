@@ -1027,8 +1027,8 @@ template <class FT> inline bool Pruner<FT>::enforce(/*io*/ vec &b, /*opt i*/ con
     status |= (b[i] > 1.0001);
     b[i] = b[i] > 1 ? 1. : b[i];
 
-    // note min_pruning_coefficients always has length n
-    if (b[i] <= min_pruning_coefficients[i / c])
+    // note min_pruning_coefficients always has length d
+    if (i / c < d && b[i] <= min_pruning_coefficients[i / c])
       b[i] = min_pruning_coefficients[i / c];
   }
 
@@ -1041,7 +1041,7 @@ template <class FT> inline bool Pruner<FT>::enforce(/*io*/ vec &b, /*opt i*/ con
     }
   }
 
-  for (int i = j - 1; i >= 0; --i)
+  for (int i = std::min(j - 1, dn - 2); i >= 0; --i)
   {
     if (b[i + 1] < b[i])
     {
