@@ -111,7 +111,7 @@ public:
            int flags = BKZ_DEFAULT, int max_loops = 0, double max_time = 0,
            double auto_abort_scale        = BKZ_DEF_AUTO_ABORT_SCALE,
            int auto_abort_max_no_dec      = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
-           double gh_factor               = BKZ_DEF_AUTO_ABORT_MAX_NO_DEC,
+           double gh_factor               = BKZ_DEF_GH_FACTOR,
            double min_success_probability = BKZ_DEF_MIN_SUCCESS_PROBABILITY,
            int rerandomization_density    = BKZ_DEF_RERANDOMIZATION_DENSITY)
       : block_size(block_size), strategies(strategies), delta(delta), flags(flags),
