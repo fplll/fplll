@@ -435,7 +435,9 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
 
     if (ftmp1.cmp(ftmp2) > 0)
     {
+#ifdef HOUSEHOLDER_DEBUG
       cerr << "This is probably the first time this test is used." << endl;
+#endif  // HOUSEHOLDER_DEBUG
 
       cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa << " and i = " << i
            << endl;
@@ -443,7 +445,7 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
       return false;
     }
   }
-#else   // HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
+#else  // HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
   /*
    * This test is similar to the test of hplll in hsizereduce. It is however not
    * exactly the same, this one crudely verify the condition of the weak-size
@@ -481,7 +483,9 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
 
     if (ftmp0.cmp(ftmp2) > 0)
     {
+#ifdef HOUSEHOLDER_DEBUG
       cerr << "This is probably the first time this test is used." << endl;
+#endif  // HOUSEHOLDER_DEBUG
 
       cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa << " and i = " << i
            << endl;
