@@ -810,7 +810,7 @@ int hlll_reduction_z(ZZ_mat<ZT> &b, ZZ_mat<ZT> &u, ZZ_mat<ZT> &u_inv, double del
                      double theta, double c, LLLMethod method, IntType int_type,
                      FloatType float_type, int precision, int flags, bool nolll)
 {
-  FPLLL_CHECK(method != LM_HEURISTIC, "HLLL heuristic is not implementated.");
+  FPLLL_CHECK(method != LM_HEURISTIC, "HLLL heuristic is not implemented.");
 
   int sel_prec = 0;
   int status   = -1;

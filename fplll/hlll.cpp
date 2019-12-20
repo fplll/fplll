@@ -354,7 +354,7 @@ void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
 
 /*
  * A first version of this test was introduced in 2015-04-09 in hplll (see
- * commit 93da15d1418347714ef5c07ae8860946825772e5). This test to detect not
+ * commit 93da15d1418347714ef5c07ae8860946825772e5). This test detects not
  * enough precision during the computation is therefore needed in addition to
  * the one about the norms (such a test is implemented and send a
  * RED_HLLL_NORM_FAILURE in this implementation).
@@ -435,7 +435,9 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
 
     if (ftmp1.cmp(ftmp2) > 0)
     {
+#ifdef HOUSEHOLDER_DEBUG
       cerr << "This is probably the first time this test is used." << endl;
+#endif  // HOUSEHOLDER_DEBUG
 
       cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa << " and i = " << i
            << endl;
@@ -443,7 +445,7 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
       return false;
     }
   }
-#else   // HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
+#else  // HOUSEHOLDER_VERIFY_SIZE_REDUCTION_HPLLL
   /*
    * This test is similar to the test of hplll in hsizereduce. It is however not
    * exactly the same, this one crudely verify the condition of the weak-size
@@ -481,7 +483,9 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
 
     if (ftmp0.cmp(ftmp2) > 0)
     {
+#ifdef HOUSEHOLDER_DEBUG
       cerr << "This is probably the first time this test is used." << endl;
+#endif  // HOUSEHOLDER_DEBUG
 
       cerr << "Anomaly: weak size reduction is not complete kappa = " << kappa << " and i = " << i
            << endl;
