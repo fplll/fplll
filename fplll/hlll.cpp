@@ -354,7 +354,7 @@ void HLLLReduction<ZT, FT>::size_reduction(int kappa, int size_reduction_end,
 
 /*
  * A first version of this test was introduced in 2015-04-09 in hplll (see
- * commit 93da15d1418347714ef5c07ae8860946825772e5). This test to detect not
+ * commit 93da15d1418347714ef5c07ae8860946825772e5). This test detects not
  * enough precision during the computation is therefore needed in addition to
  * the one about the norms (such a test is implemented and send a
  * RED_HLLL_NORM_FAILURE in this implementation).
