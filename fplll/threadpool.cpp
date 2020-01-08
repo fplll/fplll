@@ -17,7 +17,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-thread_pool::thread_pool threadpool(std::thread::hardware_concurrency() - 1);
+thread_pool::thread_pool threadpool;
 
 /* get and set number of threads in threadpool, both return the (new) number of threads */
 int get_threads() { return threadpool.size() + 1; }
