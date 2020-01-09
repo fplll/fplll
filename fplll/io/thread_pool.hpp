@@ -27,8 +27,10 @@
 *                                                                                 *
 \*********************************************************************************/
 
-#ifndef THREAD_POOL_HPP
-#define THREAD_POOL_HPP
+// this file is slightly modified for fplll to use specialized header guards and namespace
+
+#ifndef FPLLL_THREAD_POOL_HPP
+#define FPLLL_THREAD_POOL_HPP
 
 #include <cstdint>
 #include <memory>
@@ -41,6 +43,10 @@
 #include <condition_variable>
 #include <future>
 #include <atomic>
+
+
+#include <fplll/defs.h>
+FPLLL_BEGIN_NAMESPACE
 
 /*************************** example usage ***************************************\
 grep "^//test.cpp" thread_pool.hpp -A33 > test.cpp
@@ -342,4 +348,6 @@ namespace thread_pool {
 
 } // namespace thread_pool
 
-#endif // THREAD_POOL_HPP
+FPLLL_END_NAMESPACE
+
+#endif // FPLLL_THREAD_POOL_HPP
