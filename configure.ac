@@ -106,17 +106,19 @@ AC_CHECK_LIB(mpfr, mpfr_fms, , [AC_MSG_ERROR(
 AC_ARG_WITH(qd, AS_HELP_STRING([--with-qd=@<:@=DIR@:>@], [quaddouble install directory]),)
 
 AS_IF([test "x$with_qd" != "xno"], [
-       CPPFLAGS="$CPPFLAGS -I$with_qd/include"
-       LDFLAGS="$LDFLAGS -L$with_qd/lib"
-       qd_lib_path="$with_qd/lib"
-       AC_CHECK_HEADER(qd/dd_real.h,
-           have_libqd="yes",
-           have_libqd="no")
-      ])
+  CPPFLAGS="$CPPFLAGS -I$with_qd/include"
+  AC_CHECK_HEADER(qd/dd_real.h, [
+    LDFLAGS="$LDFLAGS -L$with_qd/lib"
+    qd_lib_path="$with_qd/lib"
+    LIBQD_LIBS="-lqd"
+    have_libqd="yes"],
+    [ AC_MSG_ERROR([unable to find header qd/dd_real.h]) ]
+  )]
+)
 
 AS_IF([test "x${have_libqd}" = "xyes"], [
-    LIBQD_LIBS="-lqd"
-    AC_DEFINE([FPLLL_WITH_QD], [1], [defined when libqd-dev is available])])
+  AC_DEFINE([FPLLL_WITH_QD], [1], [defined when libqd is usable])
+])
 
 AC_SUBST(LIBQD_LIBS)
 
