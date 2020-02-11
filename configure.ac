@@ -115,10 +115,10 @@ AS_IF([test "x$with_qd" != "xno"], [
       ])
 
 AS_IF([test "x${have_libqd}" = "xyes"], [
-    LIBQD_LIBADD="-lqd"
+    LIBQD_LIBS="-lqd"
     AC_DEFINE([FPLLL_WITH_QD], [1], [defined when libqd-dev is available])])
 
-AC_SUBST(LIBQD_LIBADD)
+AC_SUBST(LIBQD_LIBS)
 
 # Checks for header files.
 AC_HEADER_STDC

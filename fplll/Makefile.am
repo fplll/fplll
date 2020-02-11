@@ -68,7 +68,7 @@ llldiff_LDADD=libfplll.la
 
 # latsieve bin
 latsieve_SOURCES=sieve/sieve_main.cpp sieve/sieve_main.h
-latsieve_LDADD=libfplll.la $(LIBQD_LIBADD)
+latsieve_LDADD=libfplll.la $(LIBQD_LIBS)
 
 # libfplll
 libfplll_la_SOURCES=fplll.cpp fplll.h \
@@ -107,7 +107,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 libfplll_la_CXXFLAGS=$(PTHREAD_CFLAGS)
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
-libfplll_la_LIBADD=$(LIBGMP) -lmpfr $(LIBQD_LIBADD) $(PTHREAD_LIBS)
+libfplll_la_LIBADD=$(LIBGMP) -lmpfr $(LIBQD_LIBS) $(PTHREAD_LIBS)
 libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REVISION@:@FPLLL_LT_AGE@ $(PTHREAD_CFLAGS)
 
 if FPLLL_PARALLEL_ENUM
