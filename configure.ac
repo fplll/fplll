@@ -105,7 +105,24 @@ AC_CHECK_LIB(mpfr, mpfr_fms, , [AC_MSG_ERROR(
 
 AC_ARG_WITH(qd, AS_HELP_STRING([--with-qd=@<:@=DIR@:>@], [quaddouble install directory]),)
 
-AS_IF([test "x$with_qd" != "xno"], [
+# Passing --with-qd (without an argument) will use pkg-config to
+# detect qd on the system, or fall back to manual detection of headers
+# and libraries if that didn't work for some reason.
+AS_IF([test "x$with_qd" == "xyes"], [
+  PKG_CHECK_MODULES([LIBQD], [qd], [have_libqd="yes"], [
+    # fall back to manual search.
+    AC_SEARCH_LIBS(c_dd_add,
+                   qd,
+		   [
+		     AC_CHECK_HEADER(qd/dd_real.h,
+		       [have_libqd="yes"],
+		       [AC_MSG_ERROR([unable to find header qd/dd_real.h])])
+                   ],
+		   [ AC_MSG_ERROR([unable to find c_dd_add() in libqd]) ]
+    )]
+  )],
+  # else if
+  [test "x$with_qd" != "xno"], [
   CPPFLAGS="$CPPFLAGS -I$with_qd/include"
   AC_CHECK_HEADER(qd/dd_real.h, [
     LDFLAGS="$LDFLAGS -L$with_qd/lib"
