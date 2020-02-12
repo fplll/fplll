@@ -105,6 +105,9 @@ AC_CHECK_LIB(mpfr, mpfr_fms, , [AC_MSG_ERROR(
 
 AC_ARG_WITH(qd, AS_HELP_STRING([--with-qd=@<:@=DIR@:>@], [quaddouble install directory]),)
 
+# Act as if --without-qd was passed, by default.
+AS_IF([test -z "$with_qd"], [with_qd=no])
+
 # Passing --with-qd (without an argument) will use pkg-config to
 # detect qd on the system, or fall back to manual detection of headers
 # and libraries if that didn't work for some reason.
