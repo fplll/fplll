@@ -116,12 +116,12 @@ AS_IF([test "x$with_qd" == "xyes"], [
     # fall back to manual search.
     AC_SEARCH_LIBS(c_dd_add,
                    qd,
-		   [
-		     AC_CHECK_HEADER(qd/dd_real.h,
-		       [have_libqd="yes"],
-		       [AC_MSG_ERROR([unable to find header qd/dd_real.h])])
+                   [
+                     AC_CHECK_HEADER(qd/dd_real.h,
+                       [have_libqd="yes"],
+                       [AC_MSG_ERROR([unable to find header qd/dd_real.h])])
                    ],
-		   [ AC_MSG_ERROR([unable to find c_dd_add() in libqd]) ]
+                   [ AC_MSG_ERROR([unable to find c_dd_add() in libqd]) ]
     )]
   )],
   # else if
