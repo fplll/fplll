@@ -7,4 +7,4 @@ Name: @PACKAGE_NAME@
 Description: lattice algorithms with floating-point computations
 Version: @PACKAGE_VERSION@
 Cflags: @PTHREAD_CFLAGS@
-Libs: -L${libdir} @LIBQD_LIBADD@ @LIBGMP@ @PTHREAD_LIBS@ -lmpfr -lfplll
+Libs: -L${libdir} @LIBQD_LIBS@ @LIBGMP@ @PTHREAD_LIBS@ -lmpfr -lfplll

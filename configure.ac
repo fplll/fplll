@@ -105,20 +105,42 @@ AC_CHECK_LIB(mpfr, mpfr_fms, , [AC_MSG_ERROR(
 
 AC_ARG_WITH(qd, AS_HELP_STRING([--with-qd=@<:@=DIR@:>@], [quaddouble install directory]),)
 
-AS_IF([test "x$with_qd" != "xno"], [
-       CPPFLAGS="$CPPFLAGS -I$with_qd/include"
-       LDFLAGS="$LDFLAGS -L$with_qd/lib"
-       qd_lib_path="$with_qd/lib"
-       AC_CHECK_HEADER(qd/dd_real.h,
-           have_libqd="yes",
-           have_libqd="no")
-      ])
+# Act as if --without-qd was passed, by default.
+AS_IF([test -z "$with_qd"], [with_qd=no])
+
+# Passing --with-qd (without an argument) will use pkg-config to
+# detect qd on the system, or fall back to manual detection of headers
+# and libraries if that didn't work for some reason.
+AS_IF([test "x$with_qd" == "xyes"], [
+  PKG_CHECK_MODULES([LIBQD], [qd], [have_libqd="yes"], [
+    # fall back to manual search.
+    AC_SEARCH_LIBS(c_dd_add,
+                   qd,
+                   [
+                     AC_CHECK_HEADER(qd/dd_real.h,
+                       [have_libqd="yes"],
+                       [AC_MSG_ERROR([unable to find header qd/dd_real.h])])
+                   ],
+                   [ AC_MSG_ERROR([unable to find c_dd_add() in libqd]) ]
+    )]
+  )],
+  # else if
+  [test "x$with_qd" != "xno"], [
+  CPPFLAGS="$CPPFLAGS -I$with_qd/include"
+  AC_CHECK_HEADER(qd/dd_real.h, [
+    LDFLAGS="$LDFLAGS -L$with_qd/lib"
+    qd_lib_path="$with_qd/lib"
+    LIBQD_LIBS="-lqd"
+    have_libqd="yes"],
+    [ AC_MSG_ERROR([unable to find header qd/dd_real.h]) ]
+  )]
+)
 
 AS_IF([test "x${have_libqd}" = "xyes"], [
-    LIBQD_LIBADD="-lqd"
-    AC_DEFINE([FPLLL_WITH_QD], [1], [defined when libqd-dev is available])])
+  AC_DEFINE([FPLLL_WITH_QD], [1], [defined when libqd is usable])
+])
 
-AC_SUBST(LIBQD_LIBADD)
+AC_SUBST(LIBQD_LIBS)
 
 # Checks for header files.
 AC_HEADER_STDC
