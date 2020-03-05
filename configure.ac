@@ -69,7 +69,6 @@ AS_IF([test "x$enable_mpir" = "xyes"], [
 	   ])
 	AC_CHECK_LIB(mpir, __gmp_get_memory_functions, , [AC_MSG_ERROR(
 	[MPIR version >= 1.0.0 needed, see http://mpir.org])])
-        LIBGMP="-lmpir"
 ])
 
 AS_IF([test "x$enable_mpir" != "xyes"], [
@@ -81,10 +80,7 @@ AS_IF([test "x$enable_mpir" != "xyes"], [
 	   ])
 	AC_CHECK_LIB(gmp, __gmp_get_memory_functions, , [AC_MSG_ERROR(
 	[GMP version >= 4.2.0 needed, see http://gmplib.org])])
-        LIBGMP="-lgmp"
 ])
-
-AC_SUBST(LIBGMP)
 
 AC_ARG_WITH(mpfr,
    AS_HELP_STRING([--with-mpfr=@<:@=DIR@:>@], [MPFR install directory]), [
