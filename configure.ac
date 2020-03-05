@@ -129,6 +129,11 @@ AS_IF([test "x${have_libqd}" = "xyes"], [
   AC_DEFINE([FPLLL_WITH_QD], [1], [defined when libqd is usable])
 ])
 
+# This will be non-empty if we found qd using pkg-config, or if a path
+# was passed to --with-qd=<path> and we set the variable ourselves. If
+# we found libqd via a manual library search, on the other hand, then
+# the linker flag will be found in LIBS instead because that's just how
+# the AC_SEARCH_LIBS macro works.
 AC_SUBST(LIBQD_LIBS)
 
 # Checks for header files.
