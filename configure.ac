@@ -67,11 +67,8 @@ AS_IF([test "x$enable_mpir" = "xyes"], [
 	      LDFLAGS="$LDFLAGS -L$withval/lib"
 	      mpir_lib_path="$withval/lib"
 	   ])
-	AC_CHECK_LIB(mpir, __gmpz_init, , [AC_MSG_ERROR(
-	[MPIR not found, see http://mpir.org])])
 	AC_CHECK_LIB(mpir, __gmp_get_memory_functions, , [AC_MSG_ERROR(
-	[MPIR version too old, need >= 1.0.0, see http://mpir.org])])
-        LIBGMP="-lmpir"
+	[MPIR version >= 1.0.0 needed, see http://mpir.org])])
 ])
 
 AS_IF([test "x$enable_mpir" != "xyes"], [
@@ -81,14 +78,9 @@ AS_IF([test "x$enable_mpir" != "xyes"], [
 	      LDFLAGS="$LDFLAGS -L$withval/lib"
 	      mpir_lib_path="$withval/lib"
 	   ])
-	AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
-	[GNU MP not found, see http://mpir.org])])
 	AC_CHECK_LIB(gmp, __gmp_get_memory_functions, , [AC_MSG_ERROR(
-	[GMP version too old, need >= 4.2.0, see http://gmplib.org])])
-        LIBGMP="-lgmp"
+	[GMP version >= 4.2.0 needed, see http://gmplib.org])])
 ])
-
-AC_SUBST(LIBGMP)
 
 AC_ARG_WITH(mpfr,
    AS_HELP_STRING([--with-mpfr=@<:@=DIR@:>@], [MPFR install directory]), [
@@ -97,11 +89,8 @@ AC_ARG_WITH(mpfr,
        mpfr_lib_path="$withval/lib"
    ])
 
-AC_CHECK_LIB(mpfr, mpfr_add, , [AC_MSG_ERROR(
-[MPFR not found, see http://www.mpfr.org])])
-
 AC_CHECK_LIB(mpfr, mpfr_fms, , [AC_MSG_ERROR(
-[MPFR version too old, need >= 2.3.0, see http://www.mpfr.org])])
+[MPFR version >= 2.3.0 needed, see http://www.mpfr.org])])
 
 AC_ARG_WITH(qd, AS_HELP_STRING([--with-qd=@<:@=DIR@:>@], [quaddouble install directory]),)
 
@@ -140,6 +129,11 @@ AS_IF([test "x${have_libqd}" = "xyes"], [
   AC_DEFINE([FPLLL_WITH_QD], [1], [defined when libqd is usable])
 ])
 
+# This will be non-empty if we found qd using pkg-config, or if a path
+# was passed to --with-qd=<path> and we set the variable ourselves. If
+# we found libqd via a manual library search, on the other hand, then
+# the linker flag will be found in LIBS instead because that's just how
+# the AC_SEARCH_LIBS macro works.
 AC_SUBST(LIBQD_LIBS)
 
 # Checks for header files.

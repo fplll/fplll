@@ -107,7 +107,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 libfplll_la_CXXFLAGS=$(PTHREAD_CFLAGS)
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
-libfplll_la_LIBADD=$(LIBGMP) -lmpfr $(LIBQD_LIBS) $(PTHREAD_LIBS)
+libfplll_la_LIBADD=$(LIBQD_LIBS) $(PTHREAD_LIBS)
 libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REVISION@:@FPLLL_LT_AGE@ $(PTHREAD_CFLAGS)
 
 if FPLLL_PARALLEL_ENUM

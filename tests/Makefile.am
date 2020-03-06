@@ -44,8 +44,8 @@ AM_LDFLAGS = -L$(STAGEDIR) -Wl,-rpath,$(STAGEDIR) -lfplll -no-install $(LIBQD_LI
 
 TESTS = test_nr test_lll test_enum test_cvp test_svp test_bkz test_pruner test_sieve test_gso test_lll_gram test_hlll test_svp_gram test_bkz_gram
 
-test_pruner_LDADD=$(LIBGMP) -lmpfr $(LIBQD_LIBS)
-test_sieve_LDADD=$(LIBGMP) -lmpfr $(LIBQD_LIBS)
+test_pruner_LDADD=$(LIBQD_LIBS)
+test_sieve_LDADD=$(LIBQD_LIBS)
 
 test_nr_SOURCES = test_nr.cpp
 test_lll_SOURCES = test_lll.cpp
