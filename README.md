@@ -113,7 +113,7 @@ This will enable the WSL. Next, open the Windows Store and navigate to your favo
 	
 	sudo apt-get update
 	
-Then run `sudo apt-get install <packages>` for the (indirectly) required packages, such as `make`, `autoconf`, `libtool`, `gcc`, `g++`, `libgmp-dev`, and `libmpfr-dev`. Finally, download the fplll source code, extract the contents, navigate to this folder in Bash (commonly found under `/mnt/c/<local path>` when stored somewhere on the `C:\` drive), and run:
+Then run `sudo apt-get install <packages>` for the (indirectly) required packages, such as `make`, `autoconf`, `libtool`, `gcc`, `g++`, `libgmp-dev`, `libmpfr-dev` and `pkg-config`. Finally, download the fplll source code, extract the contents, navigate to this folder in Bash (commonly found under `/mnt/c/<local path>` when stored somewhere on the `C:\` drive), and run:
 	
 	./autogen.sh
 	./configure
