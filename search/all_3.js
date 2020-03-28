@@ -1,7 +1,10 @@
 var searchData=
 [
-  ['c',['c',['../classMatrix.html#a2eca4fafddc5fc882036e7fc799a7cfd',1,'Matrix']]],
+  ['c',['c',['../structOptions.html#a2e84c748aba31c4114f0960d0429bbda',1,'Options::c()'],['../classMatrix.html#a2eca4fafddc5fc882036e7fc799a7cfd',1,'Matrix::c()']]],
   ['calc_5fenum_5fbound',['calc_enum_bound',['../classEvaluator.html#ad5ad85cb774d84dcc629133e64adb250',1,'Evaluator']]],
+  ['callback_5fevaluator_5fcallback',['callback_evaluator_callback',['../evaluator_8h.html#aec4dead56255cdb7f26d8765df16dae8',1,'evaluator.h']]],
+  ['callback_5ffirstf',['callback_firstf',['../test__enum_8cpp.html#a2d3b080d0b6ae4c5e371d5034eb2393e',1,'test_enum.cpp']]],
+  ['callbackevaluator',['CallbackEvaluator',['../classCallbackEvaluator.html',1,'CallbackEvaluator&lt; FT &gt;'],['../classCallbackEvaluator.html#ae61e44bc3f285f1f6bb526c45c9b33c8',1,'CallbackEvaluator::CallbackEvaluator()']]],
   ['center',['center',['../classEnumerationBase.html#a32c6e3752273861ad232b5a088b0ac29',1,'EnumerationBase']]],
   ['center_5fpartsum',['center_partsum',['../classEnumerationBase.html#a18520e91a3ee8cdec7cd8f5e16647f50',1,'EnumerationBase']]],
   ['center_5fpartsum_5fbegin',['center_partsum_begin',['../classEnumerationBase.html#a41df50d85251329cae2029c8f5d33601',1,'EnumerationBase']]],
@@ -24,6 +27,7 @@ var searchData=
   ['coefficients',['coefficients',['../classPruningParams.html#a84d154b5bf5b718360a13061db78118a',1,'PruningParams']]],
   ['cols_5flocked',['cols_locked',['../classMatGSOInterface.html#a12314f4f5365a00982ce276df929b6be',1,'MatGSOInterface']]],
   ['compute_5fmin_5fprec',['compute_min_prec',['../util_8cpp.html#aabcde9f48f46d609ec6ee43f028dbe43',1,'util.cpp']]],
+  ['config_2eh',['config.h',['../config_8h.html',1,'']]],
   ['container_5ft',['container_t',['../classEvaluator.html#abc2d9baa26a12edd81489fdc87f5f870',1,'Evaluator']]],
   ['contributing_2emd',['CONTRIBUTING.md',['../CONTRIBUTING_8md.html',1,'']]],
   ['convert',['convert',['../matrix_8cpp.html#aa2093b40e87c9ca9907432c4f357f7f7',1,'convert(ZZ_mat&lt; ZTto &gt; &amp;Ato, const ZZ_mat&lt; ZTfrom &gt; &amp;Afrom, int buffer):&#160;matrix.cpp'],['../matrix_8h.html#ad8d9de1da1d439b3f78ec129cc0d9e0e',1,'convert(ZZ_mat&lt; ZTto &gt; &amp;Ato, const ZZ_mat&lt; ZTfrom &gt; &amp;Afrom, int buffer=0):&#160;matrix.cpp']]],

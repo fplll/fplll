@@ -1,12 +1,18 @@
 var searchData=
 [
-  ['n',['n',['../classPruner_1_1TestPruner.html#a94c1f0c310970c3de1e7aff6ca09ddd0',1,'Pruner::TestPruner']]],
-  ['n_5fknown_5fcols',['n_known_cols',['../classMatGSOInterface.html#a7793521e71855c99a125a8e28655788e',1,'MatGSOInterface']]],
-  ['n_5fknown_5frows',['n_known_rows',['../classMatGSOInterface.html#a38b4a27e8dc473eca8fa22ab3b45ca96',1,'MatGSOInterface']]],
-  ['n_5fsource_5frows',['n_source_rows',['../classMatGSOInterface.html#a4353c8d392c8d04fd546cc12359d8e6b',1,'MatGSOInterface']]],
-  ['n_5fswaps',['n_swaps',['../classLLLReduction.html#a4bcfc1598d6e9df6502c1b4f2082ace3',1,'LLLReduction']]],
-  ['no_5flll',['no_lll',['../structOptions.html#aa5b1d890761096451355169db419261c',1,'Options']]],
-  ['nodes',['nodes',['../classBKZReduction.html#a0dd16ffbff20bdd4066cccaa81c40382',1,'BKZReduction::nodes()'],['../classEnumerationBase.html#ab72fbab7cf3bdd8a6189a2da0b2ba915',1,'EnumerationBase::nodes()']]],
-  ['norm',['norm',['../classListPoint.html#acc16778b3864c3ecc9464180629f1abb',1,'ListPoint']]],
-  ['normexp',['normExp',['../classEvaluator.html#a0a9f67bf6cb417d54021885129983aaf',1,'Evaluator']]]
+  ['matrix',['matrix',['../classMatrix.html#a1374b09dd54813fac241b11c7c28b234',1,'Matrix']]],
+  ['max_5fdm_5fu',['max_dm_u',['../classErrorBoundedEvaluator.html#a6a5d29b5e94ec74c9f380ce21b8a3643',1,'ErrorBoundedEvaluator']]],
+  ['max_5fdr_5fdiag',['max_dr_diag',['../classErrorBoundedEvaluator.html#aa6c66271173bd2739ed8e0957791bc2e',1,'ErrorBoundedEvaluator']]],
+  ['max_5fexp_5fdouble',['MAX_EXP_DOUBLE',['../defs_8h.html#a00b9674ff444d709b9c403dab3aa07db',1,'defs.h']]],
+  ['max_5flong_5ffast',['MAX_LONG_FAST',['../defs_8h.html#a4b9c79d9ac8d3a894322b0d88866ce77',1,'defs.h']]],
+  ['max_5floops',['max_loops',['../classBKZParam.html#ac3a7527b580f295485538abb2acd122c',1,'BKZParam']]],
+  ['max_5fsols',['max_sols',['../classEvaluator.html#a3e160fef5248bdff7d83081a973731fa',1,'Evaluator']]],
+  ['max_5ftime',['max_time',['../classBKZParam.html#aa8c884ea4f925e1cc010abce559e7e1a',1,'BKZParam']]],
+  ['maxdim',['maxdim',['../classEnumerationBase.html#aa2c385d81c2369044f85da336bf1e377',1,'EnumerationBase']]],
+  ['method',['method',['../structOptions.html#a1aa3cc335fa8997dab310fb3760bf09c',1,'Options']]],
+  ['metric',['metric',['../classPruningParams.html#a2ea0928b544ae4381220dd77f710aaf9',1,'PruningParams']]],
+  ['min_5fsuccess_5fprobability',['min_success_probability',['../classBKZParam.html#ad6a9fc0114b8883eb4bc5766b85a2183',1,'BKZParam']]],
+  ['mu',['mu',['../classErrorBoundedEvaluator.html#a76161b93b22e32d84c6b1dcf60f39dca',1,'ErrorBoundedEvaluator::mu()'],['../classMatGSOInterface.html#a205ae70cd379ccb6acc00d19c32b6bee',1,'MatGSOInterface::mu()']]],
+  ['mut',['muT',['../structenumlib_1_1lattice__enum__t.html#a6d75b1ebea828eac5d1150579dcf1d5f',1,'enumlib::lattice_enum_t::muT()'],['../classEnumerationBase.html#acf82def2b4e592a9f3f3d9a49d69a5e0',1,'EnumerationBase::mut()']]],
+  ['mutex',['mutex',['../structenumlib_1_1globals__t.html#a21098ae527fe6956682c422797df4ba9',1,'enumlib::globals_t::mutex()'],['../threadpool_8h.html#ab694a98ad67eb53532ed95ddca24f9c4',1,'mutex():&#160;threadpool.h']]]
 ];

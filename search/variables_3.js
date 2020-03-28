@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['c',['c',['../classMatrix.html#a2eca4fafddc5fc882036e7fc799a7cfd',1,'Matrix']]],
+  ['c',['c',['../structOptions.html#a2e84c748aba31c4114f0960d0429bbda',1,'Options::c()'],['../classMatrix.html#a2eca4fafddc5fc882036e7fc799a7cfd',1,'Matrix::c()']]],
   ['center',['center',['../classEnumerationBase.html#a32c6e3752273861ad232b5a088b0ac29',1,'EnumerationBase']]],
   ['center_5fpartsum',['center_partsum',['../classEnumerationBase.html#a18520e91a3ee8cdec7cd8f5e16647f50',1,'EnumerationBase']]],
   ['center_5fpartsum_5fbegin',['center_partsum_begin',['../classEnumerationBase.html#a41df50d85251329cae2029c8f5d33601',1,'EnumerationBase']]],

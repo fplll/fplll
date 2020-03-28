@@ -81,7 +81,7 @@ $(function() {
 <div class="contents">
 <div class="textblock"><p><a href="https://travis-ci.org/fplll/fplll"></a> <a href="https://codecov.io/gh/fplll/fplll"></a></p>
 <p>fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL [<a href="#LLL82">LLL82</a>] is central to the code, hence the name.</p>
-<p>It includes implementations of floating-point LLL reduction algorithms [<a href="#NS09">NS09</a>,<a href="#MSV09">MSV09</a>], offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible [<a href="#S10">S10</a>]. In the case of the wrapper, the succession of variants is oblivious to the user.</p>
+<p>It includes implementations of floating-point LLL reduction algorithms [<a href="#NS09">NS09</a>,<a href="#MSV09">MSV09</a>], offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible [<a href="#S09">S09</a>]. In the case of the wrapper, the succession of variants is oblivious to the user.</p>
 <p>It includes an implementation of the BKZ reduction algorithm [<a href="#SE94">SE94</a>], including the BKZ-2.0 [<a href="#CN11">CN11</a>] improvements (extreme enumeration pruning, pre-processing of blocks, early termination). Additionally, Slide reduction [<a href="#GN08">GN08</a>] and self dual BKZ [<a href="#MW16">MW16</a>] are supported.</p>
 <p>It also includes a floating-point implementation of the Kannan-Fincke-Pohst algorithm [<a href="#K83">K83</a>,<a href="#FP85">FP85</a>] that finds a shortest non-zero lattice vector. For the same task, the <a class="el" href="classGaussSieve.html">GaussSieve</a> algorithm [<a href="#MV10">MV10</a>] is also available in fplll. Finally, it contains a variant of the enumeration algorithm that computes a lattice vector closest to a given vector belonging to the real span of the lattice.</p>
 <p>fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of the License, or, at your option, any later version) as published by the Free Software Foundation.</p>
@@ -143,6 +143,7 @@ $(function() {
 <ul>
 <li>QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install the shared library (e.g. <code>./configure --enable-shared=yes</code>). <a href="http://crd-legacy.lbl.gov/~dhbailey/mpdist/">http://crd-legacy.lbl.gov/~dhbailey/mpdist/</a></li>
 </ul>
+<p>NOTE: If you are intending to use fplll on Windows 10, then these packages are not required before you get started. This is because you use fplll via the "Windows Subsystem for Linux". Please go straight to the instructions for <a href="#windows-10">Windows 10</a>.</p>
 <h2>Installation</h2>
 <h3>Linux</h3>
 <p>You should downloaded the source code from github and then run </p><pre class="fragment">./autogen.sh
@@ -155,12 +156,13 @@ make install            # (as root)
 </pre><p>The same philosophy applies to the (optional) QD library. If you want to use mpir instead of gmp, use <code>--enable-mpir</code> and <code>--with-mpir=path/to/mpir</code>.</p>
 <p>You can remove the program binaries and object files from the source code directory by typing <code>make clean</code>. To also remove the files that <code>./configure</code> created (so you can compile the package for a different kind of computer), type <code>make distclean</code>. By default, <code>make install</code> installs the package commands under <code>/usr/local/bin</code>, include files under <code>/usr/local/include</code>, etc. You can specify an installation directory name other than <code>/usr/local</code> by giving <code>./configure</code> the option <code>--prefix=dirname</code>. Run <code>./configure --help</code> for further details.</p>
 <h3>Windows 10</h3>
-<p>Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to <b>Settings</b> -&gt; <b>Update and security</b> -&gt; <b>For developers</b> and enable developer mode. (This may take a while.) Afterwards, open command prompt and run </p><pre class="fragment">lxrun /install
-</pre><p>This will install the WSL, and afterwards this system can be accessed e.g. by opening command prompt and typing <code>bash</code>. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run: </p><pre class="fragment">sudo apt-get update
-</pre><p>Then run <code>sudo apt-get install &lt;packages&gt;</code> for the (indirectly) required packages, such as <code>make</code>, <code>autoconf</code>, <code>libtool</code>, <code>gcc</code>, <code>g++</code>, <code>libgmp-dev</code>, and <code>libmpfr-dev</code>. Finally, download the fplll source code, extract the contents, navigate to this folder in Bash (commonly found under <code>/mnt/c/&lt;local path&gt;</code> when stored somewhere on the <code>C:\</code> drive), and run: </p><pre class="fragment">./autogen.sh
+<p>Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to <b>Settings</b> -&gt; <b>Update and security</b> -&gt; <b>For developers</b> and enable developer mode. (This may take a while.) Afterwards, open Powershell as an administrator and run </p><pre class="fragment">Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+</pre><p>This will enable the WSL. Next, open the Windows Store and navigate to your favourite available Linux distribution - this may be installed as if were a regular application. Afterwards, this system can be accessed as if it were a regular program e.g. by opening command prompt and typing <code>bash</code>. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run: </p><pre class="fragment">sudo apt-get update
+</pre><p>Then run <code>sudo apt-get install &lt;packages&gt;</code> for the (indirectly) required packages, such as <code>make</code>, <code>autoconf</code>, <code>libtool</code>, <code>gcc</code>, <code>g++</code>, <code>libgmp-dev</code>, <code>libmpfr-dev</code> and <code>pkg-config</code>. Finally, download the fplll source code, extract the contents, navigate to this folder in Bash (commonly found under <code>/mnt/c/&lt;local path&gt;</code> when stored somewhere on the <code>C:\</code> drive), and run: </p><pre class="fragment">./autogen.sh
 ./configure
 make 
 </pre><p>The same comments as before apply for using e.g. <code>make install</code> or <code>make distclean</code> instead of <code>make</code>.</p>
+<p>Note: to fix a potential error <code>libfplll.so.5: cannot open shared object file: No such file or directory</code> raised after trying to run <code>fplll</code> after a successful compilation, find the location of <code>libfplll.so.5</code> (probably something like <code>/../fplll/.libs/</code>; run <code>find -name libfplll.so.5</code> to find it) and run <code>export LD_LIBRARY_PATH=&lt;path&gt;</code>.</p>
 <h2>Check</h2>
 <p>Type </p><pre class="fragment">make check
 </pre><h2>Optimization</h2>
@@ -195,7 +197,8 @@ make
 <li><code>-a sld</code> : slide reduction.</li>
 <li><code>-a cvp</code> : prints the vector in the lattice closest to the input vector.</li>
 <li><code>-v</code> : verbose mode.</li>
-<li><code>-nolll</code> : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution).</li>
+<li><code>-nolll</code> : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution). In the cas of hlll, verify if the input basis is HLLL-reduced.</li>
+<li><code>-a hlll</code> : HLLL-reduction.</li>
 </ul>
 <p><a class="el" href="structOptions.html">Options</a> for LLL-reduction:</p>
 <ul>
@@ -250,10 +253,14 @@ make
 <li><code>-of vk</code> : prints inverse of u (if <code>-a lll</code>, format compatible with sage)</li>
 </ul>
 <p>A combination of these option is allowed (e.g., <code>-of bkut</code>).</p>
+<p>Only for <code>-a hlll</code>:</p><ul>
+<li><code>-t theta</code> : θ (default=0.001). See [<a href="#MSV09">MSV09</a>] for the definition of (δ,η,θ)-HLLL-reduced bases.</li>
+<li><code>-c c</code> : constant for HLLL during the size-reduction (only used if <code>fplll</code> is compiled with <code>-DHOUSEHOLDER_USE_SIZE_REDUCTION_TEST</code>)</li>
+</ul>
 <h2>llldiff</h2>
 <p><code>llldiff</code> compares two bases (b1,...,bd) and (c1,...c_d'): they are considered equal iff d=d' and for any i, bi = +- ci. Concretely, if basis B is in file 'B.txt' and if basis C is in file 'C.txt' (in the fplll format), then one may run <code>cat B.txt C.txt | ./llldiff</code>.</p>
 <h2>latsieve</h2>
-<p><code>latsieve</code> does (tuple) lattice sieve on a matrix (considered as a set of row vectors) given in a file as parameter. You may compile it by using <code>make latsieve</code>. It will generate the executable file <code>latsieve</code> in <code>fplll/</code> which is a wrapper of <code>fplll/.libs/latsieve</code>.</p>
+<p><code>latsieve</code> does (tuple) lattice sieve on a matrix (considered as a set of row vectors) given in a file as parameter. It will generate the executable file <code>latsieve</code> in <code>fplll/</code> which is a wrapper of <code>fplll/.libs/latsieve</code>.</p>
 <p>The options are:</p>
 <ul>
 <li><code>-a nnn</code> : nnn is the tuple algorithm to use (default 2 corresponding to <a class="el" href="classGaussSieve.html">GaussSieve</a>)</li>
@@ -295,7 +302,7 @@ make
 <p>fplll is currently maintained by:</p>
 <ul>
 <li>Martin Albrecht, <a href="#" onclick="location.href='mai'+'lto:'+'mar'+'ti'+'nra'+'lb'+'rec'+'ht'+'@go'+'og'+'lem'+'ai'+'l.c'+'om'; return false;">marti<span style="display: none;">.nosp@m.</span>nral<span style="display: none;">.nosp@m.</span>brech<span style="display: none;">.nosp@m.</span>t@go<span style="display: none;">.nosp@m.</span>oglem<span style="display: none;">.nosp@m.</span>ail.<span style="display: none;">.nosp@m.</span>com</a></li>
-<li>Shi Bai, <a href="#" onclick="location.href='mai'+'lto:'+'shi'+'.b'+'ai@'+'gm'+'ail'+'.c'+'om'; return false;">shi.b<span style="display: none;">.nosp@m.</span>ai@g<span style="display: none;">.nosp@m.</span>mail.<span style="display: none;">.nosp@m.</span>com</a></li>
+<li>Shi Bai, <a href="#" onclick="location.href='mai'+'lto:'+'shi'+'h.'+'bai'+'@g'+'mai'+'l.'+'com'; return false;">shih.<span style="display: none;">.nosp@m.</span>bai@<span style="display: none;">.nosp@m.</span>gmail<span style="display: none;">.nosp@m.</span>.com</a></li>
 </ul>
 <h2>Contributors</h2>
 <p>The following people have contributed to fplll:</p>
@@ -344,7 +351,7 @@ make
 <p><a class="anchor" id="MW16"></a>[MW16] D. Micciancio and M. Walter. Practical, Predictable Lattice Basis Reduction. EUROCRYPT 2016: 820-849</p>
 <p><a class="anchor" id="MR09"></a>[MR09] D. Micciancio and O. Regev. Post-Quantum Cryptography. Chapter of Lattice-based Cryptography, 147-191 (2009)</p>
 <p><a class="anchor" id="NS09"></a>[NS09] P. Q. Nguyen and D. Stehle. An LLL Algorithm with Quadratic Complexity. SIAM J. Comput. 39(3): 874-903 (2009)</p>
-<p><a class="anchor" id="S10"></a>[S10] D. Stehle. Floating-Point LLL: Theoretical and Practical Aspects. The LLL Algorithm 2010: 179-213</p>
+<p><a class="anchor" id="S09"></a>[S09] D. Stehle. Floating-Point LLL: Theoretical and Practical Aspects. The LLL Algorithm 2009: 179-213</p>
 <p><a class="anchor" id="SE94"></a>[SE94]: C.-P. Schnorr and M. Euchner. Lattice basis reduction: Improved practical algorithms and solving subset sum problems. Math. Program. 66: 181-199 (1994) </p>
 </div></div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.8-->

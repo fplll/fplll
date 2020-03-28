@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['listpoint',['ListPoint',['../classListPoint.html',1,'']]],
-  ['lllreduction',['LLLReduction',['../classLLLReduction.html',1,'']]]
+  ['hlllreduction',['HLLLReduction',['../classHLLLReduction.html',1,'']]]
 ];

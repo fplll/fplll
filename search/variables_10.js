@@ -1,12 +1,13 @@
 var searchData=
 [
-  ['siegel',['siegel',['../structOptions.html#a83df486751ab02cc8faaabee49cd9b6f',1,'Options']]],
-  ['size_5fred_5ffailure_5fthresh',['SIZE_RED_FAILURE_THRESH',['../defs_8h.html#aa34d57416d55e30ac1a521d69e4056ce',1,'defs.h']]],
-  ['sol_5fcount',['sol_count',['../classEvaluator.html#a51a11fd7f92a4d096b80e50629d461ad',1,'Evaluator']]],
-  ['solutions',['solutions',['../classEvaluator.html#aa1961cf80c2bc93b023a67650af1f93a',1,'Evaluator']]],
-  ['status',['status',['../classBKZReduction.html#a3d1b696147dbcda48b7653f6b560c221',1,'BKZReduction::status()'],['../classLLLReduction.html#a267b066bc658139b9a367a5a4e0a397a',1,'LLLReduction::status()'],['../classWrapper.html#a7bc359b879dda42db0dc624cbcf31fc7',1,'Wrapper::status()']]],
-  ['strategies',['strategies',['../classBKZParam.html#a295b0c797576b7d35755f0f73302bfd8',1,'BKZParam']]],
-  ['strategy',['strategy',['../classEvaluator.html#aeaf10918bb6d58baacfb0e7fd8e1c247',1,'Evaluator']]],
-  ['sub_5fsolutions',['sub_solutions',['../classEvaluator.html#aa3e57fa15c7510918b188061d55124b6',1,'Evaluator']]],
-  ['subsoldists',['subsoldists',['../classEnumerationBase.html#ac474043b1f24afc8ca091f3fa7ac017a',1,'EnumerationBase']]]
+  ['r',['r',['../classErrorBoundedEvaluator.html#a628b7638b833e5a179b0d16ef069fb2b',1,'ErrorBoundedEvaluator::r()'],['../classMatGSOInterface.html#abaa2792ab3ceeeb1257126bc5871932d',1,'MatGSOInterface::r()'],['../classMatrix.html#a00f69f6f14324cb0ea61442b6ebd12e8',1,'Matrix::r()']]],
+  ['rdiag',['rdiag',['../classEnumerationBase.html#a8530338edc2bf31b1a0d37f8844515ea',1,'EnumerationBase']]],
+  ['red_5fstatus_5fstr',['RED_STATUS_STR',['../defs_8h.html#a3114ab3a9bd3769670383e6888148391',1,'defs.h']]],
+  ['rerandomization_5fdensity',['rerandomization_density',['../classBKZParam.html#ab3af02549b4b62e4803e17d66119fcdd',1,'BKZParam']]],
+  ['reset_5fdepth',['reset_depth',['../classEnumerationBase.html#a1077ba4cb04b2818be5e972f802e05e2',1,'EnumerationBase']]],
+  ['resetflag',['resetflag',['../classEnumerationBase.html#a5c7aba0c4f498200f77c7d5424cad6c3',1,'EnumerationBase']]],
+  ['risq',['risq',['../structenumlib_1_1lattice__enum__t.html#a00df627f13f0328d845c0afb33bc298b',1,'enumlib::lattice_enum_t']]],
+  ['rounding_5fbackup',['rounding_backup',['../classEnumerationBase.html#a14547ce36311af3358ab04540c44adc2',1,'EnumerationBase']]],
+  ['row_5fexpo',['row_expo',['../classMatGSOInterface.html#a0459dc8e6ba5438f6a631598fa79e580',1,'MatGSOInterface']]],
+  ['row_5fop_5fforce_5flong',['row_op_force_long',['../classMatGSOInterface.html#ab0248e47b4e04e2d56900086445104e6',1,'MatGSOInterface']]]
 ];

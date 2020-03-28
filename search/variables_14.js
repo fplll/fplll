@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['x',['x',['../classEnumerationBase.html#a696de75c80d93206f75edbefee96d426',1,'EnumerationBase']]]
+  ['v',['v',['../classListPoint.html#a50a04ba07f4fbaee3aee4b4e8fd2f38c',1,'ListPoint']]],
+  ['verbose',['verbose',['../structOptions.html#abaa084df3c7ed900634b4d187aa58ea0',1,'Options::verbose()'],['../classKleinSampler.html#a89903333e064a8c361dea5cd3e3a1f73',1,'KleinSampler::verbose()'],['../classGaussSieve.html#a62b795bd1e1929dc91fc9f0f70efe56f',1,'GaussSieve::verbose()']]]
 ];

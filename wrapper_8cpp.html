@@ -88,6 +88,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="wrapper_8h_source.html">wrapper.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="hlll_8h_source.html">hlll.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="lll_8h_source.html">lll.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="util_8h_source.html">util.h</a>&quot;</code><br />
 </div><table class="memberdecls">
@@ -95,6 +96,8 @@ $(function() {
 Macros</h2></td></tr>
 <tr class="memitem:a9df72e712e2a1f7156bcb3ef1b61ea68"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wrapper_8cpp.html#a9df72e712e2a1f7156bcb3ef1b61ea68">FPLLL_DEFINE_LLL</a>(T,  id_t)</td></tr>
 <tr class="separator:a9df72e712e2a1f7156bcb3ef1b61ea68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9ae4a4001fc3bde5c3b5dff9777bfc9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="wrapper_8cpp.html#ae9ae4a4001fc3bde5c3b5dff9777bfc9">FPLLL_DEFINE_HLLL</a>(T,  id_t)</td></tr>
+<tr class="separator:ae9ae4a4001fc3bde5c3b5dff9777bfc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -110,6 +113,24 @@ Functions</h2></td></tr>
 <tr class="memitem:a75d15b92c7d2f8a5855832a518a04079"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
 <tr class="memitem:a75d15b92c7d2f8a5855832a518a04079"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="wrapper_8cpp.html#a75d15b92c7d2f8a5855832a518a04079">lll_reduction_z</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;b, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u_inv, double delta, double eta, <a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7">LLLMethod</a> method, <a class="el" href="defs_8h.html#ab5b2eeac230a658259cf105702f447db">IntType</a> int_type, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> float_type, int precision, int flags)</td></tr>
 <tr class="separator:a75d15b92c7d2f8a5855832a518a04079"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfddca3e6de3fe19d0f7f8e20bf144ce"><td class="memTemplParams" colspan="2">template&lt;class ZT , class FT &gt; </td></tr>
+<tr class="memitem:abfddca3e6de3fe19d0f7f8e20bf144ce"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="wrapper_8cpp.html#abfddca3e6de3fe19d0f7f8e20bf144ce">is_hlll_reduced_zf</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;b, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u_inv, double delta, double eta, double theta)</td></tr>
+<tr class="separator:abfddca3e6de3fe19d0f7f8e20bf144ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75d4ad7577f29008594aaef13d0229d8"><td class="memTemplParams" colspan="2">template&lt;class ZT , class FT &gt; </td></tr>
+<tr class="memitem:a75d4ad7577f29008594aaef13d0229d8"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="wrapper_8cpp.html#a75d4ad7577f29008594aaef13d0229d8">is_hlll_reduced_pr</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;b, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u_inv, double delta, double eta, double theta)</td></tr>
+<tr class="separator:a75d4ad7577f29008594aaef13d0229d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d53176d912f5c033572abff69dd83b4"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
+<tr class="memitem:a3d53176d912f5c033572abff69dd83b4"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="wrapper_8cpp.html#a3d53176d912f5c033572abff69dd83b4">hlll_reduction_wrapper</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;, double, double, double, double, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a>, int, int)</td></tr>
+<tr class="separator:a3d53176d912f5c033572abff69dd83b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a071018e8013b7156677bd35e0d60f2b2"><td class="memTemplParams" colspan="2">template&lt;&gt; </td></tr>
+<tr class="memitem:a071018e8013b7156677bd35e0d60f2b2"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="wrapper_8cpp.html#a071018e8013b7156677bd35e0d60f2b2">hlll_reduction_wrapper</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; mpz_t &gt; &amp;b, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; mpz_t &gt; &amp;u, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; mpz_t &gt; &amp;u_inv, double delta, double eta, double theta, double c, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> float_type, int precision, int flags)</td></tr>
+<tr class="separator:a071018e8013b7156677bd35e0d60f2b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d1a116eeb86108202fe57805e7b0465"><td class="memTemplParams" colspan="2">template&lt;class ZT , class FT &gt; </td></tr>
+<tr class="memitem:a6d1a116eeb86108202fe57805e7b0465"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="wrapper_8cpp.html#a6d1a116eeb86108202fe57805e7b0465">hlll_reduction_zf</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;b, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u_inv, double delta, double eta, double theta, double c, <a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7">LLLMethod</a> method, int flags)</td></tr>
+<tr class="separator:a6d1a116eeb86108202fe57805e7b0465"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62ae9f66d80ffd5204fe68b83810b76b"><td class="memTemplParams" colspan="2">template&lt;class ZT &gt; </td></tr>
+<tr class="memitem:a62ae9f66d80ffd5204fe68b83810b76b"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="wrapper_8cpp.html#a62ae9f66d80ffd5204fe68b83810b76b">hlll_reduction_z</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;b, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u, <a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;u_inv, double delta, double eta, double theta, double c, <a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7">LLLMethod</a> method, <a class="el" href="defs_8h.html#ab5b2eeac230a658259cf105702f447db">IntType</a> int_type, <a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a> float_type, int precision, int flags, bool nolll)</td></tr>
+<tr class="separator:a62ae9f66d80ffd5204fe68b83810b76b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -119,6 +140,35 @@ Variables</h2></td></tr>
 <tr class="separator:a29a6d1848cfe056c21e289b1a9615423"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ae9ae4a4001fc3bde5c3b5dff9777bfc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9ae4a4001fc3bde5c3b5dff9777bfc9">&#9670;&nbsp;</a></span>FPLLL_DEFINE_HLLL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FPLLL_DEFINE_HLLL</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">T, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">id_t&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>We define HLLL for each input type instead of using a template, in order to force the compiler to instantiate the functions. </p>
+
+</div>
+</div>
 <a id="a9df72e712e2a1f7156bcb3ef1b61ea68"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9df72e712e2a1f7156bcb3ef1b61ea68">&#9670;&nbsp;</a></span>FPLLL_DEFINE_LLL</h2>
 
@@ -149,6 +199,438 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a3d53176d912f5c033572abff69dd83b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d53176d912f5c033572abff69dd83b4">&#9670;&nbsp;</a></span>hlll_reduction_wrapper() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int hlll_reduction_wrapper </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a071018e8013b7156677bd35e0d60f2b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a071018e8013b7156677bd35e0d60f2b2">&#9670;&nbsp;</a></span>hlll_reduction_wrapper() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int hlll_reduction_wrapper </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; mpz_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; mpz_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; mpz_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u_inv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>delta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>eta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>theta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>c</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a>&#160;</td>
+          <td class="paramname"><em>float_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>precision</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a62ae9f66d80ffd5204fe68b83810b76b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62ae9f66d80ffd5204fe68b83810b76b">&#9670;&nbsp;</a></span>hlll_reduction_z()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int hlll_reduction_z </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u_inv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>delta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>eta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>theta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>c</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7">LLLMethod</a>&#160;</td>
+          <td class="paramname"><em>method</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="defs_8h.html#ab5b2eeac230a658259cf105702f447db">IntType</a>&#160;</td>
+          <td class="paramname"><em>int_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="defs_8h.html#aa039815ec6b74d0fe4cb016415781c08">FloatType</a>&#160;</td>
+          <td class="paramname"><em>float_type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>precision</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>nolll</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6d1a116eeb86108202fe57805e7b0465"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d1a116eeb86108202fe57805e7b0465">&#9670;&nbsp;</a></span>hlll_reduction_zf()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZT , class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int hlll_reduction_zf </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u_inv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>delta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>eta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>theta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>c</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="defs_8h.html#a63feabd2ed811cf202f109b0426922e7">LLLMethod</a>&#160;</td>
+          <td class="paramname"><em>method</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a75d4ad7577f29008594aaef13d0229d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75d4ad7577f29008594aaef13d0229d8">&#9670;&nbsp;</a></span>is_hlll_reduced_pr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZT , class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int is_hlll_reduced_pr </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u_inv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>delta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>eta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>theta</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abfddca3e6de3fe19d0f7f8e20bf144ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfddca3e6de3fe19d0f7f8e20bf144ce">&#9670;&nbsp;</a></span>is_hlll_reduced_zf()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZT , class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int is_hlll_reduced_zf </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>u_inv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>delta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>eta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>theta</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="abdfaa360243a2b78bf2a413cb87a2c64"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abdfaa360243a2b78bf2a413cb87a2c64">&#9670;&nbsp;</a></span>lll_reduction_wrapper() <span class="overload">[1/2]</span></h2>
 

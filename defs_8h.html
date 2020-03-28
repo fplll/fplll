@@ -105,13 +105,14 @@ $(function() {
 <code>#include &lt;sys/resource.h&gt;</code><br />
 <code>#include &lt;sys/time.h&gt;</code><br />
 <code>#include &lt;unistd.h&gt;</code><br />
-<code>#include &quot;fplll_config.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="fplll__config_8h_source.html">fplll_config.h</a>&quot;</code><br />
+<code>#include &lt;gmp.h&gt;</code><br />
 <code>#include &lt;mpfr.h&gt;</code><br />
 <code>#include &quot;nr/dpe.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="defs_8h__dep__incl.svg" width="2243" height="1082"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="defs_8h__dep__incl.svg" width="3391" height="827"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 </div>
@@ -172,7 +173,10 @@ Enumerations</h2></td></tr>
 <a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a07a49310c3a8373db244eb3501b1659a">RED_BKZ_TIME_LIMIT</a> = 7, 
 <a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a674cdd801040c34bff1404d3d51ac955">RED_BKZ_LOOPS_LIMIT</a> = 8, 
 <br />
-&#160;&#160;<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5af52499b62bae7c4636a1308c81c83e17">RED_STATUS_MAX</a> = 9
+&#160;&#160;<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a3df6de3acb8d4a7c9023752643985df6">RED_HLLL_FAILURE</a> = 9, 
+<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a9c01f6b79d988df640d56d9910fbe8f9">RED_HLLL_NORM_FAILURE</a> = 10, 
+<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5aa766f3bbf857edb4820c366f54014948">RED_HLLL_SR_FAILURE</a> = 11, 
+<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5af52499b62bae7c4636a1308c81c83e17">RED_STATUS_MAX</a> = 12
 <br />
  }</td></tr>
 <tr class="separator:a5bc9cc17a20cb4546d3d80d0ac0c6fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -254,7 +258,9 @@ Enumerations</h2></td></tr>
 <a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a3281602adb24c04e3e37d04e152438c1">PRUNER_GRADIENT</a> = 0x4, 
 <a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a224093a8b8e04d67103350c6ed8040ca">PRUNER_NELDER_MEAD</a> = 0x8, 
 <br />
-&#160;&#160;<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a20d82d69ccb304a187f3c3c097a8aa4b">PRUNER_VERBOSE</a> = 0x10
+&#160;&#160;<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a20d82d69ccb304a187f3c3c097a8aa4b">PRUNER_VERBOSE</a> = 0x10, 
+<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925af0c03e618a8cc0306e4e9249f815a1f2">PRUNER_HALF</a> = 0x20, 
+<a class="el" href="defs_8h.html#aeecb158ab74a8748b28a07c8cb3d5925a009d90411694291a437682a90ab7215a">PRUNER_SINGLE</a> = 0x40
 <br />
  }</td></tr>
 <tr class="separator:aeecb158ab74a8748b28a07c8cb3d5925"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -285,10 +291,16 @@ Variables</h2></td></tr>
 <tr class="separator:a8929541e148554cfb57abea11c4d4a36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa34d57416d55e30ac1a521d69e4056ce"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#aa34d57416d55e30ac1a521d69e4056ce">SIZE_RED_FAILURE_THRESH</a> = 5</td></tr>
 <tr class="separator:aa34d57416d55e30ac1a521d69e4056ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab754d5745b6436f0107f1296a70a75ae"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#ab754d5745b6436f0107f1296a70a75ae">HLLL_DEF_THETA</a> = 0.001</td></tr>
+<tr class="separator:ab754d5745b6436f0107f1296a70a75ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e04a1a7809329065727456697e4f2b6"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#a8e04a1a7809329065727456697e4f2b6">HLLL_DEF_C</a> = 0.1</td></tr>
+<tr class="separator:a8e04a1a7809329065727456697e4f2b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3114ab3a9bd3769670383e6888148391"><td class="memItemLeft" align="right" valign="top">const char *const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#a3114ab3a9bd3769670383e6888148391">RED_STATUS_STR</a> [<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5af52499b62bae7c4636a1308c81c83e17">RED_STATUS_MAX</a>]</td></tr>
 <tr class="separator:a3114ab3a9bd3769670383e6888148391"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a86bc4d14c8ca5720f312e6c59e7fe2"><td class="memItemLeft" align="right" valign="top">const char *const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#a2a86bc4d14c8ca5720f312e6c59e7fe2">LLL_METHOD_STR</a> [6] = {&quot;wrapper&quot;, &quot;proved&quot;, &quot;heuristic&quot;, &quot;fast&quot;}</td></tr>
 <tr class="separator:a2a86bc4d14c8ca5720f312e6c59e7fe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6af704456d5e1886eb0a879dd08d109b"><td class="memItemLeft" align="right" valign="top">const char *const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#a6af704456d5e1886eb0a879dd08d109b">HLLL_METHOD_STR</a> [4] = {&quot;wrapper&quot;, &quot;proved&quot;, &quot;&quot;, &quot;fast&quot;}</td></tr>
+<tr class="separator:a6af704456d5e1886eb0a879dd08d109b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af42a536bf026e38c4d6e86330482acd6"><td class="memItemLeft" align="right" valign="top">const char *const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#af42a536bf026e38c4d6e86330482acd6">INT_TYPE_STR</a> [5] = {&quot;mpz&quot;, &quot;long&quot;, &quot;double&quot;}</td></tr>
 <tr class="separator:af42a536bf026e38c4d6e86330482acd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a14ef4143ced8b375a41d5fc4536b4ee3"><td class="memItemLeft" align="right" valign="top">const char *const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="defs_8h.html#a14ef4143ced8b375a41d5fc4536b4ee3">FLOAT_TYPE_STR</a> [7] = {&quot;&quot;, &quot;double&quot;, &quot;long double&quot;, &quot;dpe&quot;, &quot;dd&quot;, &quot;qd&quot;, &quot;mpfr&quot;}</td></tr>
@@ -763,6 +775,8 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="aeecb158ab74a8748b28a07c8cb3d5925a3281602adb24c04e3e37d04e152438c1"></a>PRUNER_GRADIENT&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="aeecb158ab74a8748b28a07c8cb3d5925a224093a8b8e04d67103350c6ed8040ca"></a>PRUNER_NELDER_MEAD&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="aeecb158ab74a8748b28a07c8cb3d5925a20d82d69ccb304a187f3c3c097a8aa4b"></a>PRUNER_VERBOSE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aeecb158ab74a8748b28a07c8cb3d5925af0c03e618a8cc0306e4e9249f815a1f2"></a>PRUNER_HALF&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aeecb158ab74a8748b28a07c8cb3d5925a009d90411694291a437682a90ab7215a"></a>PRUNER_SINGLE&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>
@@ -805,6 +819,9 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5a25098aff32746c06189980631ca6d325"></a>RED_BKZ_FAILURE&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5a07a49310c3a8373db244eb3501b1659a"></a>RED_BKZ_TIME_LIMIT&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5a674cdd801040c34bff1404d3d51ac955"></a>RED_BKZ_LOOPS_LIMIT&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5a3df6de3acb8d4a7c9023752643985df6"></a>RED_HLLL_FAILURE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5a9c01f6b79d988df640d56d9910fbe8f9"></a>RED_HLLL_NORM_FAILURE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5aa766f3bbf857edb4820c366f54014948"></a>RED_HLLL_SR_FAILURE&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5af52499b62bae7c4636a1308c81c83e17"></a>RED_STATUS_MAX&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
@@ -975,6 +992,48 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a8e04a1a7809329065727456697e4f2b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e04a1a7809329065727456697e4f2b6">&#9670;&nbsp;</a></span>HLLL_DEF_C</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double HLLL_DEF_C = 0.1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab754d5745b6436f0107f1296a70a75ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab754d5745b6436f0107f1296a70a75ae">&#9670;&nbsp;</a></span>HLLL_DEF_THETA</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double HLLL_DEF_THETA = 0.001</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6af704456d5e1886eb0a879dd08d109b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6af704456d5e1886eb0a879dd08d109b">&#9670;&nbsp;</a></span>HLLL_METHOD_STR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char* const HLLL_METHOD_STR[4] = {&quot;wrapper&quot;, &quot;proved&quot;, &quot;&quot;, &quot;fast&quot;}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="af42a536bf026e38c4d6e86330482acd6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af42a536bf026e38c4d6e86330482acd6">&#9670;&nbsp;</a></span>INT_TYPE_STR</h2>
 
@@ -1126,7 +1185,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {<span class="stringliteral">&quot;success&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;infinite number in GSO&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;infinite loop in babai&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;infinite loop in LLL&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;error in SVP solver&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;error in BKZ&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;time limit exceeded in BKZ&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;loops limit exceeded in BKZ&quot;</span>}</div></div><!-- fragment -->
+<b>Initial value:</b><div class="fragment"><div class="line">= {<span class="stringliteral">&quot;success&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;infinite number in GSO&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;infinite loop in babai&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;infinite loop in LLL&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;error in SVP solver&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;error in BKZ&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;time limit exceeded in BKZ&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;loops limit exceeded in BKZ&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;error in HLLL&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;increase of the norm&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;error in weak size reduction&quot;</span>}</div></div><!-- fragment -->
 </div>
 </div>
 <a id="aa34d57416d55e30ac1a521d69e4056ce"></a>

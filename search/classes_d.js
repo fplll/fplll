@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['wrapper',['Wrapper',['../classWrapper.html',1,'']]]
+  ['randgen',['RandGen',['../classRandGen.html',1,'']]],
+  ['randgenint',['RandGenInt',['../classRandGenInt.html',1,'']]]
 ];

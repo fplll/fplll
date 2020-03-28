@@ -1,12 +1,21 @@
 var searchData=
 [
-  ['r',['r',['../classErrorBoundedEvaluator.html#a628b7638b833e5a179b0d16ef069fb2b',1,'ErrorBoundedEvaluator::r()'],['../classMatGSOInterface.html#abaa2792ab3ceeeb1257126bc5871932d',1,'MatGSOInterface::r()'],['../classMatrix.html#a00f69f6f14324cb0ea61442b6ebd12e8',1,'Matrix::r()']]],
-  ['rdiag',['rdiag',['../classEnumerationBase.html#a8530338edc2bf31b1a0d37f8844515ea',1,'EnumerationBase']]],
-  ['red_5fstatus_5fstr',['RED_STATUS_STR',['../defs_8h.html#a3114ab3a9bd3769670383e6888148391',1,'defs.h']]],
-  ['rerandomization_5fdensity',['rerandomization_density',['../classBKZParam.html#ab3af02549b4b62e4803e17d66119fcdd',1,'BKZParam']]],
-  ['reset_5fdepth',['reset_depth',['../classEnumerationBase.html#a1077ba4cb04b2818be5e972f802e05e2',1,'EnumerationBase']]],
-  ['resetflag',['resetflag',['../classEnumerationBase.html#a5c7aba0c4f498200f77c7d5424cad6c3',1,'EnumerationBase']]],
-  ['rounding_5fbackup',['rounding_backup',['../classEnumerationBase.html#a14547ce36311af3358ab04540c44adc2',1,'EnumerationBase']]],
-  ['row_5fexpo',['row_expo',['../classMatGSOInterface.html#a0459dc8e6ba5438f6a631598fa79e580',1,'MatGSOInterface']]],
-  ['row_5fop_5fforce_5flong',['row_op_force_long',['../classMatGSOInterface.html#ab0248e47b4e04e2d56900086445104e6',1,'MatGSOInterface']]]
+  ['partdist',['partdist',['../classEnumerationBase.html#a56f26facb12622a88c8333f66f63a072',1,'EnumerationBase']]],
+  ['partdistbounds',['partdistbounds',['../classEnumerationBase.html#ab5493c43092988853369c1dd12ddb36c',1,'EnumerationBase']]],
+  ['pr',['pr',['../structenumlib_1_1lattice__enum__t.html#a5997bf0c0f4ed0fc20da8d1c4494d4f3',1,'enumlib::lattice_enum_t']]],
+  ['pr2',['pr2',['../structenumlib_1_1lattice__enum__t.html#a1ba98f16554ceae21e2f12a39f9bea6e',1,'enumlib::lattice_enum_t']]],
+  ['prec_5fdd',['PREC_DD',['../defs_8h.html#a9d443a0180951308ebb50c152cdfe361',1,'defs.h']]],
+  ['prec_5fdouble',['PREC_DOUBLE',['../defs_8h.html#a7da5b64b690ad347b27b5daa641df7c5',1,'defs.h']]],
+  ['prec_5fqd',['PREC_QD',['../defs_8h.html#a731677e5d836510ca5135bbb6301f959',1,'defs.h']]],
+  ['precision',['precision',['../structOptions.html#af3e21501b38e7136444cbc97f21007b0',1,'Options']]],
+  ['preprocessing_5fblock_5fsizes',['preprocessing_block_sizes',['../classStrategy.html#a23888fd72fc470e9f61e488713da3e0a',1,'Strategy']]],
+  ['print_5fmode',['print_mode',['../classMatrix.html#a58653ffd34876b10e518f5eac02a668c',1,'Matrix']]],
+  ['process_5fsol',['process_sol',['../structenumlib_1_1globals__t.html#aae2351adf9c96202fa883342cb72be53',1,'enumlib::globals_t']]],
+  ['process_5fsubsol',['process_subsol',['../structenumlib_1_1globals__t.html#a0c8212390516bea309dde17e68138d33',1,'enumlib::globals_t']]],
+  ['pru',['pru',['../classPruner_1_1TestPruner.html#a555c273bc9116e0b424b511a2d8282e5',1,'Pruner::TestPruner']]],
+  ['prune_5fend',['prune_end',['../structOptions.html#aa0f1c1e124eddbdc002e258729e2f4f3',1,'Options']]],
+  ['prune_5fmin_5fprob',['prune_min_prob',['../structOptions.html#aead5c4122e9577ced8a09d5a04294f97',1,'Options']]],
+  ['prune_5fpre_5fnodes',['prune_pre_nodes',['../structOptions.html#a03a063aa79e06635eb2060ef02df143c',1,'Options']]],
+  ['prune_5fstart',['prune_start',['../structOptions.html#a006e78bc4e5e397be18e9dbce3a46f90',1,'Options']]],
+  ['pruning_5fparameters',['pruning_parameters',['../classStrategy.html#ad413c6b7a58d4110410843726169919e',1,'Strategy']]]
 ];

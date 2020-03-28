@@ -89,6 +89,8 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac856313af3a4849e4d057a23b2f9a659"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSO.html#ac856313af3a4849e4d057a23b2f9a659">MatGSO</a> (<a class="el" href="classMatrix.html">Matrix</a>&lt; ZT &gt; &amp;arg_b, <a class="el" href="classMatrix.html">Matrix</a>&lt; ZT &gt; &amp;arg_u, <a class="el" href="classMatrix.html">Matrix</a>&lt; ZT &gt; &amp;arg_uinv_t, int flags)</td></tr>
 <tr class="separator:ac856313af3a4849e4d057a23b2f9a659"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68cfa0987303898151a132b9761aa2ab"><td class="memItemLeft" align="right" valign="top">virtual ZT &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSO.html#a68cfa0987303898151a132b9761aa2ab">sqnorm_coordinates</a> (ZT &amp;sqnorm, vector&lt; ZT &gt; coordinates)</td></tr>
+<tr class="separator:a68cfa0987303898151a132b9761aa2ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a703fe3705395d9cac9770dc215243fe3"><td class="memItemLeft" align="right" valign="top">virtual long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSO.html#a703fe3705395d9cac9770dc215243fe3">get_max_exp_of_b</a> ()</td></tr>
 <tr class="separator:a703fe3705395d9cac9770dc215243fe3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3bf6b525579e651ef3328f62ed8f031"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSO.html#ad3bf6b525579e651ef3328f62ed8f031">b_row_is_zero</a> (int i)</td></tr>
@@ -113,6 +115,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae9cdbe7627dc6551012b2b36747f248e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1501a05f3f349e855ec0e425892c3fb9"><td class="memItemLeft" align="right" valign="top">virtual FT &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSO.html#a1501a05f3f349e855ec0e425892c3fb9">get_gram</a> (FT &amp;f, int i, int j)</td></tr>
 <tr class="separator:a1501a05f3f349e855ec0e425892c3fb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf4daef1488dce0b9a7faf7e0ed63e0f"><td class="memItemLeft" align="right" valign="top">virtual ZT &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSO.html#acf4daef1488dce0b9a7faf7e0ed63e0f">get_int_gram</a> (ZT &amp;z, int i, int j)</td></tr>
+<tr class="separator:acf4daef1488dce0b9a7faf7e0ed63e0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca8cdf5cef760e2d3cb51b8c8bc2c499"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSO.html#aca8cdf5cef760e2d3cb51b8c8bc2c499">row_swap</a> (int i, int j)</td></tr>
 <tr class="separator:aca8cdf5cef760e2d3cb51b8c8bc2c499"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classMatGSOInterface"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classMatGSOInterface')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classMatGSOInterface.html">MatGSOInterface&lt; ZT, FT &gt;</a></td></tr>
@@ -194,6 +198,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2463f4dd7566feeaf11d3ec70227dfed inherit pub_methods_classMatGSOInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd888481ee8478e7192912d66dd73804 inherit pub_methods_classMatGSOInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSOInterface.html#abd888481ee8478e7192912d66dd73804">print_mu_r_g</a> (ostream &amp;os)</td></tr>
 <tr class="separator:abd888481ee8478e7192912d66dd73804 inherit pub_methods_classMatGSOInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad34c25b44724d1520192f1bb6ba61e03 inherit pub_methods_classMatGSOInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSOInterface.html#ad34c25b44724d1520192f1bb6ba61e03">symmetrize_g</a> ()</td></tr>
+<tr class="separator:ad34c25b44724d1520192f1bb6ba61e03 inherit pub_methods_classMatGSOInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Data Fields</h2></td></tr>
@@ -224,8 +230,6 @@ Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_classMatGSOInterface"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classMatGSOInterface')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classMatGSOInterface.html">MatGSOInterface&lt; ZT, FT &gt;</a></td></tr>
 <tr class="memitem:a3e2f17288899b40db25026e4d4e79998 inherit pro_methods_classMatGSOInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSOInterface.html#a3e2f17288899b40db25026e4d4e79998">invalidate_gso_row</a> (int i, int new_valid_cols=0)</td></tr>
 <tr class="separator:a3e2f17288899b40db25026e4d4e79998 inherit pro_methods_classMatGSOInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad34c25b44724d1520192f1bb6ba61e03 inherit pro_methods_classMatGSOInterface"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSOInterface.html#ad34c25b44724d1520192f1bb6ba61e03">symmetrize_g</a> ()</td></tr>
-<tr class="separator:ad34c25b44724d1520192f1bb6ba61e03 inherit pro_methods_classMatGSOInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad847805e84c8ed1aa4a6ab07d260e545 inherit pro_methods_classMatGSOInterface"><td class="memItemLeft" align="right" valign="top">ZT &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMatGSOInterface.html#ad847805e84c8ed1aa4a6ab07d260e545">sym_g</a> (int i, int j)</td></tr>
 <tr class="separator:ad847805e84c8ed1aa4a6ab07d260e545 inherit pro_methods_classMatGSOInterface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classMatGSOInterface"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classMatGSOInterface')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classMatGSOInterface.html">MatGSOInterface&lt; ZT, FT &gt;</a></td></tr>
@@ -473,6 +477,53 @@ template&lt;class ZT , class FT&gt; </div>
 
 </div>
 </div>
+<a id="acf4daef1488dce0b9a7faf7e0ed63e0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf4daef1488dce0b9a7faf7e0ed63e0f">&#9670;&nbsp;</a></span>get_int_gram()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZT, class FT &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ZT &amp; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; ZT, FT &gt;::get_int_gram </td>
+          <td>(</td>
+          <td class="paramtype">ZT &amp;&#160;</td>
+          <td class="paramname"><em>z</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>j</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns <em>integer</em> Gram matrix coefficients (0 &lt;= i &lt; n_known_rows and 0 &lt;= j &lt;= i). If (enable_int_gram = true), it returns the i,j-th coordinate of the Gram matrix else it computes the inner product of b_i and b_j Returns reference to <code>z</code>. </p>
+
+<p>Implements <a class="el" href="classMatGSOInterface.html#abd56d2909a70e42f95351e39a20792bb">MatGSOInterface&lt; ZT, FT &gt;</a>.</p>
+
+</div>
+</div>
 <a id="a703fe3705395d9cac9770dc215243fe3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a703fe3705395d9cac9770dc215243fe3">&#9670;&nbsp;</a></span>get_max_exp_of_b()</h2>
 
@@ -497,7 +548,7 @@ template&lt;class ZT , class FT &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Basis of the lattice The next five functions make calls from <a class="el" href="lll_8cpp.html">lll.cpp</a> and <a class="el" href="bkz_8cpp.html">bkz.cpp</a> indirect. Returns maximum exponent of b. In the gram version it returns a half times the maximum exponent of g. </p>
+<p>Returns maximum exponent of b. In the gram version it returns a half times the maximum exponent of g. </p>
 
 <p>Implements <a class="el" href="classMatGSOInterface.html#a1a0a67d3e9e4814aade56156e9efeca7">MatGSOInterface&lt; ZT, FT &gt;</a>.</p>
 
@@ -805,6 +856,47 @@ template&lt;class ZT , class FT &gt; </div>
 </div><div class="memdoc">
 
 <p>Implements <a class="el" href="classMatGSOInterface.html#aa40ca0a394dfd8930b6612b4ae258dd9">MatGSOInterface&lt; ZT, FT &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a68cfa0987303898151a132b9761aa2ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68cfa0987303898151a132b9761aa2ab">&#9670;&nbsp;</a></span>sqnorm_coordinates()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZT, class FT &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ZT &amp; <a class="el" href="classMatGSO.html">MatGSO</a>&lt; ZT, FT &gt;::sqnorm_coordinates </td>
+          <td>(</td>
+          <td class="paramtype">ZT &amp;&#160;</td>
+          <td class="paramname"><em>sqnorm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">vector&lt; ZT &gt;&#160;</td>
+          <td class="paramname"><em>coordinates</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Basis of the lattice The next five functions make calls from <a class="el" href="lll_8cpp.html">lll.cpp</a> and <a class="el" href="bkz_8cpp.html">bkz.cpp</a> indirect. Returns || sum_i x_i b_i ||^2 on vectorial input (x_i)_i in the Gram version, it returns x^T G x </p>
+
+<p>Implements <a class="el" href="classMatGSOInterface.html#a96c6f3e42530a14b71ad798b4823552f">MatGSOInterface&lt; ZT, FT &gt;</a>.</p>
 
 </div>
 </div>

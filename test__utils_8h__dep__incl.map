@@ -1,9 +1,12 @@
 <map id="tests/test_utils.h" name="tests/test_utils.h">
 <area shape="rect" id="node2" href="$test__bkz_8cpp.html" title="tests/test_bkz.cpp" alt="" coords="5,80,136,107"/>
-<area shape="rect" id="node3" href="$test__cvp_8cpp.html" title="tests/test_cvp.cpp" alt="" coords="160,80,291,107"/>
-<area shape="rect" id="node4" href="$test__gso_8cpp.html" title="tests/test_gso.cpp" alt="" coords="315,80,445,107"/>
-<area shape="rect" id="node5" href="$test__lll_8cpp.html" title="tests/test_lll.cpp" alt="" coords="470,80,589,107"/>
-<area shape="rect" id="node6" href="$test__lll__gram_8cpp.html" title="tests/test_lll_gram.cpp" alt="" coords="612,80,767,107"/>
-<area shape="rect" id="node7" href="$test__sieve_8cpp.html" title="tests/test_sieve.cpp" alt="" coords="791,80,931,107"/>
-<area shape="rect" id="node8" href="$test__svp_8cpp.html" title="tests/test_svp.cpp" alt="" coords="956,80,1087,107"/>
+<area shape="rect" id="node3" href="$test__bkz__gram_8cpp.html" title="tests/test_bkz_gram.cpp" alt="" coords="161,80,327,107"/>
+<area shape="rect" id="node4" href="$test__cvp_8cpp.html" title="tests/test_cvp.cpp" alt="" coords="352,80,483,107"/>
+<area shape="rect" id="node5" href="$test__gso_8cpp.html" title="tests/test_gso.cpp" alt="" coords="507,80,637,107"/>
+<area shape="rect" id="node6" href="$test__hlll_8cpp.html" title="tests/test_hlll.cpp" alt="" coords="661,80,787,107"/>
+<area shape="rect" id="node7" href="$test__lll_8cpp.html" title="tests/test_lll.cpp" alt="" coords="811,80,930,107"/>
+<area shape="rect" id="node8" href="$test__lll__gram_8cpp.html" title="tests/test_lll_gram.cpp" alt="" coords="953,80,1108,107"/>
+<area shape="rect" id="node9" href="$test__sieve_8cpp.html" title="tests/test_sieve.cpp" alt="" coords="1133,80,1273,107"/>
+<area shape="rect" id="node10" href="$test__svp_8cpp.html" title="tests/test_svp.cpp" alt="" coords="1297,80,1428,107"/>
+<area shape="rect" id="node11" href="$test__svp__gram_8cpp.html" title="tests/test_svp_gram.cpp" alt="" coords="1453,80,1619,107"/>
 </map>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['check',['CHECK',['../main_8h.html#a4fd95491287cc131e6ae4f5dafc26ac1',1,'main.h']]]
+  ['balance_5fheuristic_5fpruner_5foptimize',['BALANCE_HEURISTIC_PRUNER_OPTIMIZE',['../pruner__optimize__tc_8cpp.html#a224a02ce7f2eadd950a96fc031ebbbae',1,'pruner_optimize_tc.cpp']]]
 ];

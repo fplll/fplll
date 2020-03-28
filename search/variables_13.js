@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['v',['v',['../classListPoint.html#a50a04ba07f4fbaee3aee4b4e8fd2f38c',1,'ListPoint']]],
-  ['verbose',['verbose',['../structOptions.html#abaa084df3c7ed900634b4d187aa58ea0',1,'Options::verbose()'],['../classKleinSampler.html#a89903333e064a8c361dea5cd3e3a1f73',1,'KleinSampler::verbose()'],['../classGaussSieve.html#a62b795bd1e1929dc91fc9f0f70efe56f',1,'GaussSieve::verbose()']]]
+  ['u',['u',['../classMatGSOInterface.html#ae3075749037dd712de26245ccef6cd9f',1,'MatGSOInterface']]],
+  ['u_5finv_5ft',['u_inv_t',['../classMatGSOInterface.html#aa4f7ef89fda0c714c05565e31fcf5051',1,'MatGSOInterface']]]
 ];

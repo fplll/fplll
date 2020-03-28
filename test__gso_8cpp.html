@@ -90,6 +90,7 @@ $(function() {
 <code>#include &lt;<a class="el" href="gso_8h_source.html">gso.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="gso__gram_8h_source.html">gso_gram.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="gso__interface_8h_source.html">gso_interface.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="householder_8h_source.html">householder.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="matrix_8h_source.html">nr/matrix.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="test__utils_8h_source.html">test_utils.h</a>&gt;</code><br />
 </div><table class="memberdecls">
@@ -106,6 +107,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a71de35b1a49d40e4e91b04a04112a447"><td class="memTemplParams" colspan="2">template&lt;class ZT , class FT &gt; </td></tr>
 <tr class="memitem:a71de35b1a49d40e4e91b04a04112a447"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__gso_8cpp.html#a71de35b1a49d40e4e91b04a04112a447">rs_are_equal</a> (<a class="el" href="classMatGSO.html">MatGSO</a>&lt; ZT, FT &gt; M1, <a class="el" href="classMatGSOGram.html">MatGSOGram</a>&lt; ZT, FT &gt; M2, FT error)</td></tr>
 <tr class="separator:a71de35b1a49d40e4e91b04a04112a447"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0cf56ffcac19928b699ca9d3daea848d"><td class="memTemplParams" colspan="2">template&lt;class FT &gt; </td></tr>
+<tr class="memitem:a0cf56ffcac19928b699ca9d3daea848d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__gso_8cpp.html#a0cf56ffcac19928b699ca9d3daea848d">assert_diag_R</a> (FT rhd, int i, int &amp;status)</td></tr>
+<tr class="separator:a0cf56ffcac19928b699ca9d3daea848d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19f2516be7814abdbc983468c1f32ef7"><td class="memTemplParams" colspan="2">template&lt;class FT &gt; </td></tr>
+<tr class="memitem:a19f2516be7814abdbc983468c1f32ef7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__gso_8cpp.html#a19f2516be7814abdbc983468c1f32ef7">assert_mu_r_householder</a> (FT rh, FT rhd, FT mu, FT r, int &amp;status)</td></tr>
+<tr class="separator:a19f2516be7814abdbc983468c1f32ef7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2aeb0754dd108ba77663936758dd7dc"><td class="memTemplParams" colspan="2">template&lt;class ZT , class FT &gt; </td></tr>
+<tr class="memitem:ac2aeb0754dd108ba77663936758dd7dc"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__gso_8cpp.html#ac2aeb0754dd108ba77663936758dd7dc">test_householder</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A)</td></tr>
+<tr class="separator:ac2aeb0754dd108ba77663936758dd7dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47d98ec5df573f7fe359c68bcee5fdf7"><td class="memTemplParams" colspan="2">template&lt;class ZT , class FT &gt; </td></tr>
 <tr class="memitem:a47d98ec5df573f7fe359c68bcee5fdf7"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="test__gso_8cpp.html#a47d98ec5df573f7fe359c68bcee5fdf7">test_ggso</a> (<a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;A)</td></tr>
 <tr class="separator:a47d98ec5df573f7fe359c68bcee5fdf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -135,6 +145,90 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a0cf56ffcac19928b699ca9d3daea848d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0cf56ffcac19928b699ca9d3daea848d">&#9670;&nbsp;</a></span>assert_diag_R()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void assert_diag_R </td>
+          <td>(</td>
+          <td class="paramtype">FT&#160;</td>
+          <td class="paramname"><em>rhd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int &amp;&#160;</td>
+          <td class="paramname"><em>status</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a19f2516be7814abdbc983468c1f32ef7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19f2516be7814abdbc983468c1f32ef7">&#9670;&nbsp;</a></span>assert_mu_r_householder()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void assert_mu_r_householder </td>
+          <td>(</td>
+          <td class="paramtype">FT&#160;</td>
+          <td class="paramname"><em>rh</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FT&#160;</td>
+          <td class="paramname"><em>rhd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FT&#160;</td>
+          <td class="paramname"><em>mu</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FT&#160;</td>
+          <td class="paramname"><em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int &amp;&#160;</td>
+          <td class="paramname"><em>status</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a2c3f6775325c30275d11c6abee2db6a0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2c3f6775325c30275d11c6abee2db6a0">&#9670;&nbsp;</a></span>main()</h2>
 
@@ -266,6 +360,27 @@ template&lt;class ZT , class FT &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac2aeb0754dd108ba77663936758dd7dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2aeb0754dd108ba77663936758dd7dc">&#9670;&nbsp;</a></span>test_householder()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ZT , class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int test_householder </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classZZ__mat.html">ZZ_mat</a>&lt; ZT &gt; &amp;&#160;</td>
+          <td class="paramname"><em>A</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Test if: mu(i, j) = R(i, j) / R(j, j) r(i, j) = R(i, j) * R(j, j) </p>
 
 </div>
 </div>

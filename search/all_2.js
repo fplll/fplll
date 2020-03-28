@@ -4,6 +4,8 @@ var searchData=
   ['b_5frow_5fis_5fzero',['b_row_is_zero',['../classMatGSO.html#ad3bf6b525579e651ef3328f62ed8f031',1,'MatGSO::b_row_is_zero()'],['../classMatGSOGram.html#a2ed9c54829674ec3bbbfb898bcbcd921',1,'MatGSOGram::b_row_is_zero()'],['../classMatGSOInterface.html#adbefb2d91525216d02a0c700ca562a4c',1,'MatGSOInterface::b_row_is_zero()']]],
   ['babai',['babai',['../svpcvp_8cpp.html#a6532f18cd627225860708680985db524',1,'svpcvp.cpp']]],
   ['back',['back',['../classNumVect.html#ac8549b7178c301dca14382054b712073',1,'NumVect::back()'],['../classNumVect.html#ae2026ebc882287031bd8eb15f6e0859d',1,'NumVect::back() const']]],
+  ['balance_5fheuristic_5fpruner_5foptimize',['BALANCE_HEURISTIC_PRUNER_OPTIMIZE',['../pruner__optimize__tc_8cpp.html#a224a02ce7f2eadd950a96fc031ebbbae',1,'pruner_optimize_tc.cpp']]],
+  ['barrier',['barrier',['../classthread__pool_1_1barrier.html',1,'thread_pool::barrier'],['../classthread__pool_1_1barrier.html#ab4a130d2ec5969c95cf5ac203cf49472',1,'thread_pool::barrier::barrier()'],['../threadpool_8h.html#aae572db64bcdb8d2a1b9b0845c8d1e58',1,'barrier():&#160;threadpool.h']]],
   ['begin',['begin',['../classEvaluator.html#a9f6b08797a0d7dde27f8d36a15899e3f',1,'Evaluator::begin() const'],['../classEvaluator.html#a5c746fad6ac8b9e02a62d3d720e2b156',1,'Evaluator::begin()'],['../classNumVect.html#a8f71df5f7af8fba71b41993af174ec20',1,'NumVect::begin()']]],
   ['bf',['bf',['../classMatGSOInterface.html#a230a34d0cfc0a49276e376fd343a4263',1,'MatGSOInterface']]],
   ['bkz',['bkz',['../classBKZReduction.html#a0b0fc808b95ca09e13010885c9a95fe3',1,'BKZReduction::bkz()'],['../main_8cpp.html#adba4d3a1667bff13057c2c9010202647',1,'bkz(Options &amp;, ZZ_mat&lt; ZT &gt; &amp;):&#160;main.cpp'],['../main_8cpp.html#ad1fb69a22a82987e8b4b776a578be063',1,'bkz(Options &amp;o, ZZ_mat&lt; mpz_t &gt; &amp;b):&#160;main.cpp']]],
@@ -33,9 +35,9 @@ var searchData=
   ['bkz_5fsld_5fred',['BKZ_SLD_RED',['../defs_8h.html#a421c505152986d864de8d1c65ffc9d50a29644850d8e1806b6fe847c0722bc227',1,'defs.h']]],
   ['bkz_5fstrategy_5ffile',['bkz_strategy_file',['../structOptions.html#a4362107c23dc4df2028dba0ce81050e4',1,'Options']]],
   ['bkz_5fverbose',['BKZ_VERBOSE',['../defs_8h.html#a421c505152986d864de8d1c65ffc9d50a21be4fc2ff953f2d4e364da87ac3e99b',1,'defs.h']]],
-  ['bkzautoabort',['BKZAutoAbort',['../classBKZAutoAbort.html',1,'BKZAutoAbort&lt; ZT, FT &gt;'],['../classBKZAutoAbort.html#ae0d20aee5480286ae1fbce5a3ddaa57f',1,'BKZAutoAbort::BKZAutoAbort()']]],
+  ['bkzautoabort',['BKZAutoAbort',['../classBKZAutoAbort.html',1,'BKZAutoAbort&lt; ZT, FT &gt;'],['../classBKZAutoAbort.html#a77f6c2e177800f6190b0c1b26d376dac',1,'BKZAutoAbort::BKZAutoAbort()']]],
   ['bkzflags',['BKZFlags',['../defs_8h.html#a421c505152986d864de8d1c65ffc9d50',1,'defs.h']]],
-  ['bkzparam',['BKZParam',['../classBKZParam.html',1,'BKZParam'],['../classBKZParam.html#a4204a5b122759bf1cb9ec7a481481a64',1,'BKZParam::BKZParam()']]],
-  ['bkzreduction',['BKZReduction',['../classBKZReduction.html',1,'BKZReduction&lt; ZT, FT &gt;'],['../classBKZReduction.html#a1568c2e02ddf7e7020dd3884490e94aa',1,'BKZReduction::BKZReduction()']]],
+  ['bkzparam',['BKZParam',['../classBKZParam.html',1,'BKZParam'],['../classBKZParam.html#a1d46378b9d65e4459084113a36d2f64c',1,'BKZParam::BKZParam()']]],
+  ['bkzreduction',['BKZReduction',['../classBKZReduction.html',1,'BKZReduction&lt; ZT, FT &gt;'],['../classBKZReduction.html#a85812c0cb6e967777fc304de4257fbf5',1,'BKZReduction::BKZReduction()']]],
   ['block_5fsize',['block_size',['../classStrategy.html#a613b4da5786dd83e69576935600603f4',1,'Strategy::block_size()'],['../classBKZParam.html#ae2f99afffed15639bad84ffc805122ef',1,'BKZParam::block_size()'],['../structOptions.html#afe980246862dbb107c178f306c4ac078',1,'Options::block_size()']]]
 ];

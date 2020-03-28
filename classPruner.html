@@ -106,16 +106,28 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a520d1f20ca38720a8dab5a07b4f185a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for <a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a> with multiple basis (averaging the cost function over all of them)  <a href="#a520d1f20ca38720a8dab5a07b4f185a0">More...</a><br /></td></tr>
 <tr class="separator:a520d1f20ca38720a8dab5a07b4f185a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad66283687b7299421410b7cde8d4a520"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#ad66283687b7299421410b7cde8d4a520">optimize_coefficients</a> (vector&lt; double &gt; &amp;pr)</td></tr>
-<tr class="memdesc:ad66283687b7299421410b7cde8d4a520"><td class="mdescLeft">&#160;</td><td class="mdescRight">run the optimization process  <a href="#ad66283687b7299421410b7cde8d4a520">More...</a><br /></td></tr>
+<tr class="memdesc:ad66283687b7299421410b7cde8d4a520"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main interface for optimizing pruning coefficients.  <a href="#ad66283687b7299421410b7cde8d4a520">More...</a><br /></td></tr>
 <tr class="separator:ad66283687b7299421410b7cde8d4a520"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d134050fc658fc4c971f675b61ad33c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a1d134050fc658fc4c971f675b61ad33c">optimize_coefficients_cost_vary_prob</a> (vector&lt; double &gt; &amp;pr)</td></tr>
+<tr class="memdesc:a1d134050fc658fc4c971f675b61ad33c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main interface for optimizing the pruning coefficients with respect to the overall enumeration time.  <a href="#a1d134050fc658fc4c971f675b61ad33c">More...</a><br /></td></tr>
+<tr class="separator:a1d134050fc658fc4c971f675b61ad33c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1eb0211d53434a4e1f19819f4c7b91f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a1eb0211d53434a4e1f19819f4c7b91f5">optimize_coefficients_cost_fixed_prob</a> (vector&lt; double &gt; &amp;pr)</td></tr>
+<tr class="memdesc:a1eb0211d53434a4e1f19819f4c7b91f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main interface to optimize the pruning coefficients with respect to the single enumeration.  <a href="#a1eb0211d53434a4e1f19819f4c7b91f5">More...</a><br /></td></tr>
+<tr class="separator:a1eb0211d53434a4e1f19819f4c7b91f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7670868605b50c87fec400a564d1f6fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a7670868605b50c87fec400a564d1f6fc">optimize_coefficients_evec</a> (vector&lt; double &gt; &amp;pr)</td></tr>
+<tr class="memdesc:a7670868605b50c87fec400a564d1f6fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the optimization process using 'even' coefficients.  <a href="#a7670868605b50c87fec400a564d1f6fc">More...</a><br /></td></tr>
+<tr class="separator:a7670868605b50c87fec400a564d1f6fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ef23d64d4effc918d600a8805ca4d6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a7ef23d64d4effc918d600a8805ca4d6a">optimize_coefficients_full</a> (vector&lt; double &gt; &amp;pr)</td></tr>
+<tr class="memdesc:a7ef23d64d4effc918d600a8805ca4d6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the optimization process using all the coefficients.  <a href="#a7ef23d64d4effc918d600a8805ca4d6a">More...</a><br /></td></tr>
+<tr class="separator:a7ef23d64d4effc918d600a8805ca4d6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae754a53f2da0ea4ddc3f122f52d1f23d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#ae754a53f2da0ea4ddc3f122f52d1f23d">single_enum_cost</a> (const vector&lt; double &gt; &amp;pr, vector&lt; double &gt; *detailed_cost=nullptr)</td></tr>
 <tr class="memdesc:ae754a53f2da0ea4ddc3f122f52d1f23d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the cost of a single enumeration.  <a href="#ae754a53f2da0ea4ddc3f122f52d1f23d">More...</a><br /></td></tr>
 <tr class="separator:ae754a53f2da0ea4ddc3f122f52d1f23d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6030c2080c0066085b18664ec4c662b0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a6030c2080c0066085b18664ec4c662b0">repeated_enum_cost</a> (const vector&lt; double &gt; &amp;pr)</td></tr>
-<tr class="memdesc:a6030c2080c0066085b18664ec4c662b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cost of repeating enumeration and preprocessing until reaching target.  <a href="#a6030c2080c0066085b18664ec4c662b0">More...</a><br /></td></tr>
+<tr class="memdesc:a6030c2080c0066085b18664ec4c662b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">cost of repeating enumeration and preprocessing  <a href="#a6030c2080c0066085b18664ec4c662b0">More...</a><br /></td></tr>
 <tr class="separator:a6030c2080c0066085b18664ec4c662b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa132b8db17f7becd456df3cbca4c7db1"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#aa132b8db17f7becd456df3cbca4c7db1">measure_metric</a> (const vector&lt; double &gt; &amp;pr)</td></tr>
-<tr class="memdesc:aa132b8db17f7becd456df3cbca4c7db1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the success proba of a single enumeration.  <a href="#aa132b8db17f7becd456df3cbca4c7db1">More...</a><br /></td></tr>
+<tr class="memdesc:aa132b8db17f7becd456df3cbca4c7db1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return either SVP probability or expected number of solution depending on metric.  <a href="#aa132b8db17f7becd456df3cbca4c7db1">More...</a><br /></td></tr>
 <tr class="separator:aa132b8db17f7becd456df3cbca4c7db1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fa68fd92550a70f9c418049e0a97425"><td class="memItemLeft" align="right" valign="top">FT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPruner.html#a0fa68fd92550a70f9c418049e0a97425">gaussian_heuristic</a> ()</td></tr>
 <tr class="memdesc:a0fa68fd92550a70f9c418049e0a97425"><td class="mdescLeft">&#160;</td><td class="mdescRight">gaussian heuristic for the shortest vector length of the loaded basis.  <a href="#a0fa68fd92550a70f9c418049e0a97425">More...</a><br /></td></tr>
@@ -244,7 +256,7 @@ template&lt;class FT &gt; </div>
 </div><div class="memdoc">
 
 <p>Constructor for <a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a>. </p>
-<p>Algorithmic details are given for the wrapping function <a class="el" href="pruner_8cpp.html#aef8c3b453b5e55ed8553ac1d97c392a5" title="Search for optimal pruning parameters. ">prune()</a>.</p>
+<p>Algorithmic details are given for the wrapping function <a class="el" href="main_8cpp.html#a4968b6b8ff71211a9f026be31df763d1">prune()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">enumeration_radius</td><td>radius of the desired enumeration </td></tr>
@@ -320,7 +332,7 @@ template&lt;class FT &gt; </div>
 </div><div class="memdoc">
 
 <p>Constructor for <a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a> with multiple basis (averaging the cost function over all of them) </p>
-<p>Algorithmic details are given for the wrapping function <a class="el" href="pruner_8cpp.html#aef8c3b453b5e55ed8553ac1d97c392a5" title="Search for optimal pruning parameters. ">prune()</a>.</p>
+<p>Algorithmic details are given for the wrapping function <a class="el" href="main_8cpp.html#a4968b6b8ff71211a9f026be31df763d1">prune()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">enumeration_radius</td><td>radius of the desired enumeration </td></tr>
@@ -384,7 +396,7 @@ template&lt;class FT &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Compute the success proba of a single enumeration. </p>
+<p>Return either SVP probability or expected number of solution depending on metric. </p>
 
 </div>
 </div>
@@ -406,8 +418,125 @@ template&lt;class FT &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>run the optimization process </p>
-<p>Run the optimization process, successively using the algorithm activated </p>
+<p>Main interface for optimizing pruning coefficients. </p>
+<p>It will invoke either of the two functions:</p>
+<ol type="1">
+<li><code><a class="el" href="classPruner.html#a1d134050fc658fc4c971f675b61ad33c" title="Main interface for optimizing the pruning coefficients with respect to the overall enumeration time...">optimize_coefficients_cost_vary_prob()</a></code> or</li>
+<li><code><a class="el" href="classPruner.html#a1eb0211d53434a4e1f19819f4c7b91f5" title="Main interface to optimize the pruning coefficients with respect to the single enumeration. ">optimize_coefficients_cost_fixed_prob()</a></code></li>
+</ol>
+<p>depending on the input flags.</p>
+<p>If the flag PRUNER_SINGLE is disabled (default), it calls function (1) so that goal is to optimize the cost computed as<code>single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)</code></p>
+<p>If the flag PRUNER_SINGLE is enabled in <code>flags</code>, it calls function (2) such that the goal is to optimize the single_enum_cost(pr) while fixing the metric (number of solutions or success probability) to the target.</p>
+<p>optimize either overall cost or cost by fixing probability </p>
+
+</div>
+</div>
+<a id="a1eb0211d53434a4e1f19819f4c7b91f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1eb0211d53434a4e1f19819f4c7b91f5">&#9670;&nbsp;</a></span>optimize_coefficients_cost_fixed_prob()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::optimize_coefficients_cost_fixed_prob </td>
+          <td>(</td>
+          <td class="paramtype">vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Main interface to optimize the pruning coefficients with respect to the single enumeration. </p>
+<p>Main interface to optimize the single enumeration time with the constraint such that the succ. prob (or expected solutions) is fixed (and given) from input to the <a class="el" href="classPruner.html" title="Pruner class, to compute and optimize cost and success probability of pruned enumeration. ">Pruner</a> constructor.</p>
+<p>Hierarchy of calls if PRUNER_HALF is not set (default):</p>
+<ul>
+<li>This function first invokes optimize_coefficients_evec_core() and then optimize_coefficients_full_core() to optimize the overall enumeration cost.</li>
+<li>Then it tries to adjust the pruning parameters to achieve the target succ. probability (or expected number of solutions) by calling either optimize_coefficients_incr_prob() or optimize_coefficients_decr_prob().</li>
+<li>Finally, it does some local optimization by calling optimize_coefficients_local_adjust_smooth() which aims to smooth the discountinuities in the curve and then optimize_coefficients_local_adjust_prob() which aims to fine-adjust the succ. probability to be close enough to the target. </li>
+</ul>
+
+</div>
+</div>
+<a id="a1d134050fc658fc4c971f675b61ad33c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d134050fc658fc4c971f675b61ad33c">&#9670;&nbsp;</a></span>optimize_coefficients_cost_vary_prob()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::optimize_coefficients_cost_vary_prob </td>
+          <td>(</td>
+          <td class="paramtype">vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Main interface for optimizing the pruning coefficients with respect to the overall enumeration time. </p>
+<p>Main interface to optimize the overall enumeration time where the target function is: single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0);</p>
+<p>Hierarchy of calls if PRUNER_HALF is not set (default):</p>
+<ul>
+<li>This function first invokes optimize_coefficients_evec_core() which optimizes using only even-position vectors for speed.</li>
+<li>Then it calls several local tuning functions optimize_coefficients_local_adjust_*() to adjust the parameters in small scales.</li>
+<li>Finally it does an optimization using full vectors using optimize_coefficients_full_core(). This procedure is repeated for several rounds until no further improvements can be achieved.</li>
+</ul>
+<p>If PRUNER_HALF is set, this function simply calls optimize_coefficients_evec. Note that if PRUNER_HALF is set, one can not use PRUNER_SINGLE. </p>
+
+</div>
+</div>
+<a id="a7670868605b50c87fec400a564d1f6fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7670868605b50c87fec400a564d1f6fc">&#9670;&nbsp;</a></span>optimize_coefficients_evec()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::optimize_coefficients_evec </td>
+          <td>(</td>
+          <td class="paramtype">vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Run the optimization process using 'even' coefficients. </p>
+<p>Run the optimization process, successively using the algorithm activated using using half coefficients: the input pr has length n; but only the even indices in the vector will be used in the optimization. In the end, we have pr_i = pr_{i+1}.</p>
+<p>Note that this function calls <code>optimize_coefficients_evec_core()</code>. The difference is that this function <code><a class="el" href="classPruner.html#a7670868605b50c87fec400a564d1f6fc" title="Run the optimization process using &#39;even&#39; coefficients. ">optimize_coefficients_evec()</a></code> do not assume pr contains some valid coefficient in prior. If the input pr is empty, it starts with the <code>greedy()</code> method and does some preparation work before it invokes <code>optimize_coefficients_evec_core()</code>.</p>
+<p>Note that this function (and <code>optimize_coefficients_evec_core()</code>) only optimizes the overall enumeration time where the target function is: </p><pre class="fragment">      `single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`</pre><p>preparation and call optimization with constrains that b_i = b_{i+1} for even i. </p>
+
+</div>
+</div>
+<a id="a7ef23d64d4effc918d600a8805ca4d6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ef23d64d4effc918d600a8805ca4d6a">&#9670;&nbsp;</a></span>optimize_coefficients_full()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FT &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classPruner.html">Pruner</a>&lt; FT &gt;::optimize_coefficients_full </td>
+          <td>(</td>
+          <td class="paramtype">vector&lt; double &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Run the optimization process using all the coefficients. </p>
+<p>Run the optimization process, successively using the algorithm activated using using full coefficients. That is, we do not have the constraint pr_i = pr_{i+1} in this function.</p>
+<p>Note that this function calls <code>optimize_coefficients_full_core()</code>. The difference is that this function <code><a class="el" href="classPruner.html#a7ef23d64d4effc918d600a8805ca4d6a" title="Run the optimization process using all the coefficients. ">optimize_coefficients_full()</a></code> do not assume pr contains some valid coefficient in prior. If the input pr is empty, it starts with the <code>greedy()</code> method and does some preparation work before it invokes <code>optimize_coefficients_full_core()</code>.</p>
+<p>Note that this function (and <code>optimize_coefficients_full_core()</code>) only optimizes the overall enumeration time where the target function is: </p><pre class="fragment">       `single_enum_cost(pr) * trials + preproc_cost * (trials - 1.0)`</pre><p>Optimize without constrains b_i = b_{i+1} for even i. Note that this function assumes the pr already contains some valid pruning coefficients. </p>
 
 </div>
 </div>
@@ -437,8 +566,14 @@ template&lt;class FT &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Cost of repeating enumeration and preprocessing until reaching target. </p>
-<p>Compute the cost of r enumeration and (r-1) preprocessing, where r is the required number of retrials to reach target. </p>
+<p>cost of repeating enumeration and preprocessing </p>
+<p>Compute the cost of r enumeration and (r-1) preprocessing, where r is the required number of retrials to reach target/target_solution </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">b</td><td>pruning bounds </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>cost </dd></dl>
 
 </div>
 </div>
@@ -508,8 +643,15 @@ template&lt;class FT &gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>fplll/<a class="el" href="pruner_8h_source.html">pruner.h</a></li>
-<li>fplll/<a class="el" href="pruner_8cpp.html">pruner.cpp</a></li>
+<li>fplll/pruner/<a class="el" href="pruner_8h_source.html">pruner.h</a></li>
+<li>fplll/pruner/<a class="el" href="pruner_8cpp.html">pruner.cpp</a></li>
+<li>fplll/pruner/<a class="el" href="pruner__cost_8cpp.html">pruner_cost.cpp</a></li>
+<li>fplll/pruner/<a class="el" href="pruner__optimize_8cpp.html">pruner_optimize.cpp</a></li>
+<li>fplll/pruner/<a class="el" href="pruner__optimize__tc_8cpp.html">pruner_optimize_tc.cpp</a></li>
+<li>fplll/pruner/<a class="el" href="pruner__optimize__tp_8cpp.html">pruner_optimize_tp.cpp</a></li>
+<li>fplll/pruner/<a class="el" href="pruner__prob_8cpp.html">pruner_prob.cpp</a></li>
+<li>fplll/pruner/<a class="el" href="pruner__simplex_8h_source.html">pruner_simplex.h</a></li>
+<li>fplll/pruner/<a class="el" href="pruner__util_8cpp.html">pruner_util.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- HTML footer for doxygen 1.8.8-->

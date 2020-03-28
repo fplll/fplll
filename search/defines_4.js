@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['enum_5falways_5finline',['ENUM_ALWAYS_INLINE',['../enumerate__base_8h.html#a6d5cd436bbee4e99f6ee4977d95ea412',1,'enumerate_base.h']]],
-  ['extension_5ffiltering',['EXTENSION_FILTERING',['../sieve__gauss__3sieve_8cpp.html#ab5da69d6367a099f76fe61f198733c1c',1,'sieve_gauss_3sieve.cpp']]]
+  ['d',['D',['../test__pruner_8cpp.html#af316c33cc298530f245e8b55330e86b5',1,'test_pruner.cpp']]],
+  ['dbis',['Dbis',['../test__pruner_8cpp.html#a99386745def8f06b366cca3b7901acdd',1,'test_pruner.cpp']]]
 ];

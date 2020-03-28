@@ -90,7 +90,7 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="util_8h__dep__incl.svg" width="1506" height="590"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="util_8h__dep__incl.svg" width="3127" height="619"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 </div>
@@ -110,6 +110,8 @@ Functions</h2></td></tr>
 <tr class="separator:a2ff45aab67aaca6d75fbf22b37bb2498"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac61800c7566dd0b1b8902e72c86f913"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="util_8h.html#aac61800c7566dd0b1b8902e72c86f913">l2_min_prec</a> (int d, double delta, double eta, double epsilon)</td></tr>
 <tr class="separator:aac61800c7566dd0b1b8902e72c86f913"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41d0ec0efb6f212003cbce9f185745e0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="util_8h.html#a41d0ec0efb6f212003cbce9f185745e0">hlll_min_prec</a> (int d_i, int n_i, double delta, double eta, double theta, double c)</td></tr>
+<tr class="separator:a41d0ec0efb6f212003cbce9f185745e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a051cec8240e1c8aaa48085aca18ffb05"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="util_8h.html#a051cec8240e1c8aaa48085aca18ffb05">sphere_volume</a> (<a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &amp;volume, int d)</td></tr>
 <tr class="separator:a051cec8240e1c8aaa48085aca18ffb05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc70b3d4c201b82317a12fc5f3b02e36"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="util_8h.html#abc70b3d4c201b82317a12fc5f3b02e36">cost_estimate</a> (<a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &amp;cost, const <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt; &amp;bound, const <a class="el" href="classMatrix.html">Matrix</a>&lt; <a class="el" href="classFP__NR.html">FP_NR</a>&lt; mpfr_t &gt;&gt; &amp;r, int dimMax)</td></tr>
@@ -262,6 +264,59 @@ Variables</h2></td></tr>
 <p>Returns the minimum precision required to ensure that error bounds on the GSO are valid. Computes rho such that for all 0 &lt;= i &lt; d and 0 &lt;= j &lt;= i:</p>
 <p>|r~_i - r_i| / r_i &lt;= d * rho ^ (i + 1) * 2 ^ (2 - prec)</p>
 <p>|mu~_(i,j) - mu_(i,j)| &lt;= d * rho ^ (i + 1) * 2 ^ (4 - prec) </p>
+
+</div>
+</div>
+<a id="a41d0ec0efb6f212003cbce9f185745e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41d0ec0efb6f212003cbce9f185745e0">&#9670;&nbsp;</a></span>hlll_min_prec()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int hlll_min_prec </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>d_i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n_i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>delta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>eta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>theta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>c</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns the minimum precision for the proved version of HLLL. </p>
 
 </div>
 </div>
