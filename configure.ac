@@ -155,6 +155,8 @@ AC_CHECK_FUNCS([floor pow rint sqrt strtol])
 
 AX_PTHREAD()
 
+CHECK_ATOMIC()
+
 # enumeration dimension
 max_enum_dim=256
 
