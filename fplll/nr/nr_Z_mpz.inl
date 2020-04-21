@@ -11,7 +11,7 @@ FPLLL_BEGIN_NAMESPACE
 template <> inline Z_NR<mpz_t>::Z_NR() { mpz_init(data); }
 
 template <> inline Z_NR<mpz_t>::Z_NR(const Z_NR<mpz_t> &z) { mpz_init_set(data, z.data); }
-
+template <> inline Z_NR<mpz_t>::Z_NR(const mpz_t &z) {mpz_init_set(data,z);}
 template <> inline Z_NR<mpz_t>::~Z_NR() { mpz_clear(data); }
 
 /** get data */

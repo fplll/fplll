@@ -26,6 +26,7 @@ public:
    */
   inline Z_NR<Z>();
   inline Z_NR<Z>(const Z_NR<Z> &z);
+  inline Z_NR<Z>(const Z &z);
   inline ~Z_NR<Z>();
 
   /** get data */
@@ -125,7 +126,7 @@ public:
   inline bool operator==(long a) const;
   inline bool operator!=(const Z_NR<Z> &a) const;
   inline bool operator!=(long a) const;
-
+  
   /**
    * max between a and b
    */

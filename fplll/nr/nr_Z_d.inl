@@ -13,7 +13,7 @@ FPLLL_BEGIN_NAMESPACE
 template <> inline Z_NR<double>::Z_NR() {}
 
 template <> inline Z_NR<double>::Z_NR(const Z_NR<double> &z) : data(z.data) {}
-
+template <> inline Z_NR<double>::Z_NR(const double &z) : data(z) {}
 template <> inline Z_NR<double>::~Z_NR() {}
 
 /** get data */
@@ -123,6 +123,7 @@ template <> inline bool Z_NR<double>::operator!=(long a) const
 {
   return data != static_cast<double>(a);
 }
+
 
 /** arithmetic */
 template <> inline void Z_NR<double>::add(const Z_NR<double> &a, const Z_NR<double> &b)
