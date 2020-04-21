@@ -124,7 +124,6 @@ template <> inline bool Z_NR<double>::operator!=(long a) const
   return data != static_cast<double>(a);
 }
 
-
 /** arithmetic */
 template <> inline void Z_NR<double>::add(const Z_NR<double> &a, const Z_NR<double> &b)
 {

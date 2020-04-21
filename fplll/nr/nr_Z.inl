@@ -126,7 +126,7 @@ public:
   inline bool operator==(long a) const;
   inline bool operator!=(const Z_NR<Z> &a) const;
   inline bool operator!=(long a) const;
-  
+
   /**
    * max between a and b
    */
