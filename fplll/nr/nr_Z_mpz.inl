@@ -54,6 +54,7 @@ template <> inline int Z_NR<mpz_t>::sgn() const { return mpz_sgn(data); }
 /** operator */
 template <> inline void Z_NR<mpz_t>::operator=(const Z_NR<mpz_t> &a) { mpz_set(data, a.data); }
 
+// Note - you'll still need to call mpz_free on a, because references are non-owning.
 template <> inline void Z_NR<mpz_t>::operator=(const mpz_t &a) { mpz_set(data, a); }
 
 template <> inline void Z_NR<mpz_t>::operator=(long a) { mpz_set_si(data, a); }
