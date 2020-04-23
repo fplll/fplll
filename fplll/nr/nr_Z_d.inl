@@ -13,7 +13,7 @@ FPLLL_BEGIN_NAMESPACE
 template <> inline Z_NR<double>::Z_NR() {}
 
 template <> inline Z_NR<double>::Z_NR(const Z_NR<double> &z) : data(z.data) {}
-
+template <> inline Z_NR<double>::Z_NR(const double &z) : data(z) {}
 template <> inline Z_NR<double>::~Z_NR() {}
 
 /** get data */

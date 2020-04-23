@@ -26,6 +26,7 @@ public:
    */
   inline Z_NR<Z>();
   inline Z_NR<Z>(const Z_NR<Z> &z);
+  inline Z_NR<Z>(const Z &z);
   inline ~Z_NR<Z>();
 
   /** get data */
