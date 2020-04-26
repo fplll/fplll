@@ -124,6 +124,11 @@ template <> inline void Z_NR<mpz_t>::sub_ui(const Z_NR<mpz_t> &a, unsigned int b
   mpz_sub_ui(data, a.data, b);
 }
 
+template <> inline void Z_NR<mpz_t>::mod(const Z_NR<mpz_t> &a, const Z_NR<mpz_t> &b)
+{
+  mpz_mod(data, a.data, b.data);
+}
+
 template <> inline void Z_NR<mpz_t>::neg(const Z_NR<mpz_t> &a) { mpz_neg(data, a.data); }
 
 template <> inline void Z_NR<mpz_t>::mul(const Z_NR<mpz_t> &a, const Z_NR<mpz_t> &b)

@@ -119,7 +119,10 @@ template <> inline void Z_NR<long>::sub_ui(const Z_NR<long> &a, unsigned int b)
 {
   data = a.data - b;
 }
-
+template <> inline void Z_NR<long>::mod(const Z_NR<long> &a, const Z_NR<long> &b)
+{
+  data = a.data % b.data;
+}
 template <> inline void Z_NR<long>::neg(const Z_NR<long> &a) { data = -a.data; }
 
 template <> inline void Z_NR<long>::mul(const Z_NR<long> &a, const Z_NR<long> &b)

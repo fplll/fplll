@@ -145,6 +145,11 @@ template <> inline void Z_NR<double>::sub_ui(const Z_NR<double> &a, unsigned int
   data = a.data - static_cast<double>(b);
 }
 
+template <> inline void Z_NR<double>::mod(const Z_NR<double> &a, const Z_NR<double> &b)
+{
+  data = std::fmod(a.data, b.data);
+}
+
 template <> inline void Z_NR<double>::neg(const Z_NR<double> &a) { data = -a.data; }
 
 template <> inline void Z_NR<double>::mul(const Z_NR<double> &a, const Z_NR<double> &b)

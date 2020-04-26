@@ -157,6 +157,11 @@ public:
   inline void sub_ui(const Z_NR<Z> &a, unsigned int b);
 
   /**
+   * value := a mod b
+   */
+  inline void mod(const Z_NR<Z> &a, const Z_NR<Z> &b);
+
+  /**
    * value := -a.
    */
   inline void neg(const Z_NR<Z> &a);
