@@ -146,6 +146,8 @@ template <> int bkz(Options &o, ZZ_mat<mpz_t> &b)
     param.gh_factor = o.bkz_gh_factor;
   if (o.bkz_flags & BKZ_MAX_LOOPS)
     param.max_loops = o.bkz_max_loops;
+  if (o.bkz_flags & BKZ_MAX_TIME)
+    param.max_time = o.bkz_max_time;
   if (o.verbose)
     param.flags |= BKZ_VERBOSE;
   if (o.no_lll)
