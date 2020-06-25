@@ -1,0 +1,211 @@
+name: Run Sage CI for Linux/Cygwin
+
+## This GitHub Actions workflow runs SAGE_ROOT/tox.ini with select environments,
+## whenever a GitHub pull request is opened or synchronized in a repository
+## where GitHub Actions are enabled.
+##
+## It builds and checks some sage spkgs as defined in TARGETS.
+##
+## A job succeeds if there is no error.
+##
+## The build is run with "make V=0", so the build logs of individual packages are suppressed.
+##
+## At the end, all package build logs that contain an error are printed out.
+##
+## After all jobs have finished (or are canceled) and a short delay,
+## tar files of all logs are made available as "build artifacts".
+
+#on: [push, pull_request]
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    tags:
+      - '*'
+
+env:
+  DIST_PREREQ: libgmp-dev autoconf automake libtool libglpk-dev
+  SPKG:        4ti2
+  TARGETS_PRE: build/make/Makefile
+  TARGETS:     SAGE_CHECK=yes 4ti2
+  TARGETS_OPTIONAL: build/make/Makefile
+
+jobs:
+
+  dist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out ${{ env.SPKG }}
+        uses: actions/checkout@v2
+        with:
+          path: build/pkgs/${{ env.SPKG }}/src
+      - name: Install prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $DIST_PREREQ
+      - name: Run make dist
+        run: |
+          (cd build/pkgs/${{ env.SPKG }}/src && autoreconf -fi && ./configure && make dist) \
+          && mkdir -p upstream && cp build/pkgs/${{ env.SPKG }}/src/*.tar.gz upstream/${{ env.SPKG }}-git.tar.gz \
+          && echo "sage-package create ${{ env.SPKG }} --version git --tarball ${{ env.SPKG }}-git.tar.gz --type=optional" > upstream/update-pkgs.sh \
+          && ls -l upstream/
+      - uses: actions/upload-artifact@v2
+        with:
+          path: upstream
+          name: upstream
+
+  cygwin:
+    env:
+      STAGE: i-a
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      MAKE: make -j8
+      SAGE_NUM_THREADS: 3
+      SAGE_CHECK: yes
+      SAGE_CHECK_PACKAGES: "!cython,!r,!python3,!python2,!nose,!pathpy,!gap,!cysignals,!linbox,!git,!ppl"
+      CYGWIN: winsymlinks:native
+      CONFIGURE_ARGS: --enable-experimental-packages --enable-download-from-upstream-url
+      SAGE_FAT_BINARY: yes
+
+    runs-on: windows-latest
+
+    needs: [dist]
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [minimal, standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - name: Check out SageMath
+      uses: actions/checkout@v2
+      with:
+        repository: sagemath/sage
+        ref: develop
+    - uses: actions/download-artifact@v2
+      with:
+        path: upstream
+        name: upstream
+    - name: install cygwin and minimal prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES=$(sed 's/#.*//;' ./build/pkgs/cygwin.txt ./build/pkgs/cygwin-bootstrap.txt)
+        choco install $PACKAGES --source cygwin
+    - name: Update Sage packages from upstream artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && ls -l upstream/ && export PATH="$(pwd)/build/bin:$PATH:/usr/local/bin:/usr/bin" && (cd upstream && bash update-pkgs.sh) && git diff'
+    - name: bootstrap
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && env && ./bootstrap'
+    - name: install additional cygwin packages with choco
+      if: contains(matrix.pkgs, 'standard')
+      shell: bash {0}
+      run: |
+        PACKAGES=$(sed 's/#.*//;' ./build/pkgs/*/distros/cygwin.txt)
+        choco install $PACKAGES --source cygwin
+    - name: configure
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && ./configure $CONFIGURE_ARGS'
+    - name: make
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'export PATH=/usr/local/bin:/usr/bin && cd $(cygpath -u "$GITHUB_WORKSPACE") && make -k -w V=0 base-toolchain && make -k -w V=1 $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in local/var/tmp/sage/build/*; do if [ -d $a ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename $a).tar" $a; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the local/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f local/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --remove-files local'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      # upload-artifact@v2 does not support whitespace in file names.
+      # so we tar up the directory ourselves
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: [dist]
+    strategy:
+      fail-fast: false
+      max-parallel: 32
+      matrix:
+        tox_system_factor: [ubuntu-trusty, ubuntu-xenial, ubuntu-bionic, ubuntu-eoan, ubuntu-focal, debian-jessie, debian-stretch, debian-buster, debian-bullseye, debian-sid, linuxmint-17, linuxmint-18, linuxmint-19, linuxmint-19.3, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, centos-7, centos-8, archlinux-latest, slackware-14.2, conda-forge, ubuntu-bionic-i386, ubuntu-eoan-i386, debian-buster-i386, centos-7-i386]
+        tox_packages_factor: [minimal, standard]
+    env:
+      TOX_ENV: docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
+      DOCKER_TARGETS: configured with-targets
+    steps:
+      - name: Check out SageMath
+        uses: actions/checkout@v2
+        with:
+          repository: sagemath/sage
+          ref: develop
+      - uses: actions/download-artifact@v2
+        with:
+          path: upstream
+          name: upstream
+      - name: Install test prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install python-tox python3-setuptools
+      - name: Update Sage packages from upstream artifact
+        run: |
+          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore && echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - build/bin/write-dockerfile.sh && git diff)
+      - run: |
+          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
+      - name: Copy logs from the docker image or build container
+        run: |
+          mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"
+          cp -r .tox/$TOX_ENV/Dockerfile .tox/$TOX_ENV/log "artifacts/$LOGS_ARTIFACT_NAME"
+          if [ -f .tox/$TOX_ENV/Dockertags ]; then CONTAINERS=$(docker create $(tail -1 .tox/$TOX_ENV/Dockertags) /bin/bash || true); fi
+          if [ -n "$CONTAINERS" ]; then for CONTAINER in $CONTAINERS; do for ARTIFACT in /sage/logs; do docker cp $CONTAINER:$ARTIFACT artifacts/$LOGS_ARTIFACT_NAME && HAVE_LOG=1; done; if [ -n "$HAVE_LOG" ]; then break; fi; done; fi
+        if: always()
+      - uses: actions/upload-artifact@v2
+        with:
+          path: artifacts
+          name: ${{ env.LOGS_ARTIFACT_NAME }}
+        if: always()
+      - name: Print out logs for immediate inspection
+        # and markup the output with GitHub Actions logging commands
+        run: |
+          .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
+        if: always()
+      - name: Push docker images
+        run: |
+          if [ -f .tox/$TOX_ENV/Dockertags ]; then
+            TOKEN="${{ secrets.DOCKER_PKG_GITHUB_TOKEN }}"
+            if [ -z "$TOKEN" ]; then
+              TOKEN="${{ secrets.GITHUB_TOKEN }}"
+            fi
+            echo "$TOKEN" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+            for a in $(cat .tox/$TOX_ENV/Dockertags); do
+              FULL_TAG=docker.pkg.github.com/$(echo ${{ github.repository }}|tr 'A-Z' 'a-z')/$a
+              docker tag $a $FULL_TAG
+              echo Pushing $FULL_TAG
+              docker push $FULL_TAG
+            done || echo "(Ignoring errors)"
+          fi
+        if: always()
