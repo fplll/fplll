@@ -15,14 +15,14 @@ name: Run Sage CI for Linux/Cygwin
 ## After all jobs have finished (or are canceled) and a short delay,
 ## tar files of all logs are made available as "build artifacts".
 
-#on: [push, pull_request]
+on: [push, pull_request]
 
-on:
-  pull_request:
-    types: [opened, synchronize]
-  push:
-    tags:
-      - '*'
+## on:
+##   pull_request:
+##     types: [opened, synchronize]
+##   push:
+##     tags:
+##       - '*'
 
 env:
   DIST_PREREQ: libgmp-dev autoconf automake libtool libglpk-dev
