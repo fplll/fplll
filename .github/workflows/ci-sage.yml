@@ -30,6 +30,8 @@ env:
   TARGETS_PRE: build/make/Makefile
   TARGETS:     SAGE_CHECK=yes fplll
   TARGETS_OPTIONAL: build/make/Makefile
+  SAGE_REPO:   sagemath/sage
+  SAGE_REF:    develop
 
 jobs:
 
@@ -83,8 +85,8 @@ jobs:
     - name: Check out SageMath
       uses: actions/checkout@v2
       with:
-        repository: sagemath/sage
-        ref: develop
+        repository: ${{ env.SAGE_REPO }}
+        ref: ${{ env.SAGE_REF }}
     - uses: actions/download-artifact@v2
       with:
         path: upstream
@@ -161,8 +163,8 @@ jobs:
       - name: Check out SageMath
         uses: actions/checkout@v2
         with:
-          repository: sagemath/sage
-          ref: develop
+          repository: ${{ env.SAGE_REPO }}
+          ref: ${{ env.SAGE_REF }}
       - uses: actions/download-artifact@v2
         with:
           path: upstream
