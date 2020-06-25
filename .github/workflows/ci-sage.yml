@@ -25,7 +25,7 @@ on: [push, pull_request]
 ##       - '*'
 
 env:
-  DIST_PREREQ: libgmp-dev autoconf automake libtool libglpk-dev
+  DIST_PREREQ: libgmp-dev autoconf automake libtool libmpfr-dev
   SPKG:        fplll
   TARGETS_PRE: build/make/Makefile
   TARGETS:     SAGE_CHECK=yes fplll
