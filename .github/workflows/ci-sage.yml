@@ -26,9 +26,9 @@ on:
 
 env:
   DIST_PREREQ: libgmp-dev autoconf automake libtool libglpk-dev
-  SPKG:        4ti2
+  SPKG:        fplll
   TARGETS_PRE: build/make/Makefile
-  TARGETS:     SAGE_CHECK=yes 4ti2
+  TARGETS:     SAGE_CHECK=yes fplll
   TARGETS_OPTIONAL: build/make/Makefile
 
 jobs:
