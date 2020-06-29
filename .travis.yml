@@ -128,7 +128,7 @@ matrix:
     before_install:
     - brew update
     - brew reinstall gmp
-    - brew install autoconf libtool clang-format ccache
+    - brew install autoconf clang-format ccache
     - export PATH="/usr/local/opt/ccache/libexec:$PATH"
 install:
 - export CXX="$COMPILER"
