@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['z_5fnr',['Z_NR',['../classZ__NR.html',1,'Z_NR&lt; Z &gt;'],['../classZ__NR.html#a38f83f81e129c0fbb42ded3baf393f91',1,'Z_NR::Z_NR()'],['../classZ__NR.html#a75f5dbc7a965323690a597ddc1a9c08f',1,'Z_NR::Z_NR(const Z_NR&lt; Z &gt; &amp;z)']]],
+  ['z_5fnr',['Z_NR',['../classZ__NR.html',1,'Z_NR&lt; Z &gt;'],['../classZ__NR.html#a38f83f81e129c0fbb42ded3baf393f91',1,'Z_NR::Z_NR()'],['../classZ__NR.html#a75f5dbc7a965323690a597ddc1a9c08f',1,'Z_NR::Z_NR(const Z_NR&lt; Z &gt; &amp;z)'],['../classZ__NR.html#a85812228df38c0f126a1e991a9bcae7d',1,'Z_NR::Z_NR(const Z &amp;z)']]],
   ['z_5fnr_3c_20mpz_5ft_20_3e',['Z_NR&lt; mpz_t &gt;',['../classZ__NR.html',1,'']]],
   ['z_5fnr_3c_20zt_20_3e',['Z_NR&lt; ZT &gt;',['../classZ__NR.html',1,'']]],
   ['zero_5fp',['zero_p',['../classFP__NR.html#a6322beb4ba05be5475eda09b10df54b5',1,'FP_NR']]],
