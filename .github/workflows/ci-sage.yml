@@ -57,6 +57,7 @@ env:
   SAGE_REF:    develop
   # Temporarily test on the branch from sage ticket 29091
   SAGE_TRAC_GIT: git://trac.sagemath.org/sage.git
+  SAGE_TRAC_COMMAND: try
   SAGE_TICKET: 29091
   REMOVE_PATCHES: "*"
 
@@ -130,7 +131,7 @@ jobs:
       shell: bash {0}
       # Random sleep and retry to limit the load on trac.sagemath.org
       run: |
-        if [ ! -d .git ]; then git init; fi; git remote add trac ${{ env.SAGE_TRAC_GIT }} && x=1 && while [ $x -le 5 ]; do x=$(( $x + 1 )); sleep $(( $RANDOM % 60 + 1 )); if git-trac-command/git-trac checkout $SAGE_TICKET; then exit 0; fi; sleep 40; done; exit 1
+        if [ ! -d .git ]; then git init; fi; git remote add trac ${{ env.SAGE_TRAC_GIT }} && x=1 && while [ $x -le 5 ]; do x=$(( $x + 1 )); sleep $(( $RANDOM % 60 + 1 )); if git-trac-command/git-trac ${{ env.SAGE_TRAC_COMMAND }} $SAGE_TICKET; then exit 0; fi; sleep 40; done; exit 1
       if: env.SAGE_TRAC_GIT != ''
     - uses: actions/download-artifact@v2
       with:
@@ -220,7 +221,7 @@ jobs:
       - name: Check out SageMath from trac.sagemath.org
         shell: bash {0}
         run: |
-          if [ ! -d .git ]; then git init; fi; git remote add trac ${{ env.SAGE_TRAC_GIT }} && x=1 && while [ $x -le 5 ]; do x=$(( $x + 1 )); sleep $(( $RANDOM % 60 + 1 )); if git-trac-command/git-trac checkout $SAGE_TICKET; then exit 0; fi; sleep 40; done; exit 1
+          if [ ! -d .git ]; then git init; fi; git remote add trac ${{ env.SAGE_TRAC_GIT }} && x=1 && while [ $x -le 5 ]; do x=$(( $x + 1 )); sleep $(( $RANDOM % 60 + 1 )); if git-trac-command/git-trac ${{ env.SAGE_TRAC_COMMAND }} $SAGE_TICKET; then exit 0; fi; sleep 40; done; exit 1
         if: env.SAGE_TRAC_GIT != ''
       - uses: actions/download-artifact@v2
         with:
@@ -301,7 +302,7 @@ jobs:
       - name: Check out SageMath from trac.sagemath.org
         shell: bash {0}
         run: |
-          if [ ! -d .git ]; then git init; fi; git remote add trac ${{ env.SAGE_TRAC_GIT }} && x=1 && while [ $x -le 5 ]; do x=$(( $x + 1 )); sleep $(( $RANDOM % 60 + 1 )); if git-trac-command/git-trac checkout $SAGE_TICKET; then exit 0; fi; sleep 40; done; exit 1
+          if [ ! -d .git ]; then git init; fi; git remote add trac ${{ env.SAGE_TRAC_GIT }} && x=1 && while [ $x -le 5 ]; do x=$(( $x + 1 )); sleep $(( $RANDOM % 60 + 1 )); if git-trac-command/git-trac ${{ env.SAGE_TRAC_COMMAND }} $SAGE_TICKET; then exit 0; fi; sleep 40; done; exit 1
         if: env.SAGE_TRAC_GIT != ''
       - uses: actions/download-artifact@v2
         with:
