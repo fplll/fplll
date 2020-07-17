@@ -559,8 +559,8 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
     print_params(param, cerr);
     cerr << endl;
   }
-  
-  cputime_start = (flags & BKZ_DUMP_GSO) ? cputime() : 0;
+
+  cputime_start = ((flags & BKZ_DUMP_GSO) || (flags & BKZ_MAX_TIME)) ? cputime() : 0;
 
   m.discover_all_rows();
 
