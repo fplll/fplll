@@ -33,7 +33,7 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::hlll()
    * Experimentally, the delta used during the computation must be equal to
    * (delta + (0.01 or 0.02) to have an basis which is HLLL-reduced w.r.t delta.
    */
-  int start_time = cputime();
+  int start_time = (verbose) ? cputime() : 0;
   // True if the corresponding vector is weak size-reduced
   bool status_sr = true;
 

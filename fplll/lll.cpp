@@ -49,7 +49,7 @@ bool LLLReduction<ZT, FT>::lll(int kappa_min, int kappa_start, int kappa_end,
     kappa_end = m.d;
 
   FPLLL_DEBUG_CHECK(kappa_min <= kappa_start && kappa_start < kappa_end && kappa_end <= m.d);
-  int start_time = cputime();
+  int start_time = (verbose) ? cputime() : 0;
   int kappa      = kappa_start + 1;
   int kappa_max  = 0;
   int d          = kappa_end - kappa_min;
