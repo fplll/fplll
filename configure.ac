@@ -4,6 +4,7 @@
 AC_PREREQ(2.61)
 AC_INIT(fplll, 5.3.3)
 AC_CONFIG_SRCDIR([fplll/fplll.cpp])
+AM_MAINTAINER_MODE([enable])
 
 # cf http://comments.gmane.org/gmane.comp.sysutils.autoconf.general/15737
 
