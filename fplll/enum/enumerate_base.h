@@ -51,12 +51,57 @@ inline void roundto(double &dest, const double &src) { dest = round(src); }
 #define ENUM_ALWAYS_INLINE ALWAYS_INLINE
 #endif
 
+class WholeTreeCounter {
+    public:
+        using UnderlyingCounterType = uint64_t;
+        WholeTreeCounter(UnderlyingCounterType starting_count = 0) : _nodes{starting_count}{}
+        inline UnderlyingCounterType get_nodes() const { return _nodes; }
+        inline void update_node_count(const long amount = 1, const unsigned int index = 0) {
+            _nodes++;
+        }
+
+        WholeTreeCounter& operator=(const UnderlyingCounterType& value) {
+            _nodes = value;
+            return *this;
+        }
+
+    private:
+        UnderlyingCounterType _nodes;
+};
+
+
+template<class CounterClass>
+class CounterClassWrapper {
+    CounterClass base_counter;
+public: 
+    using UnderlyingCounterType = typename CounterClass::UnderlyingCounterType;
+
+    inline typename CounterClass::UnderlyingCounterType get_nodes() const {
+        return base_counter.get_nodes();
+    }
+
+    inline void update_node_count(const unsigned int index, const long amount) const {
+        return base_counter.update_node_count(index, amount);
+    }
+
+    CounterClassWrapper<CounterClass>& operator=(const UnderlyingCounterType& value) {
+        base_counter = value;
+        return *this;
+    }
+};
+
+template<class CounterClass = WholeTreeCounter>
 class EnumerationBase
 {
 public:
   static const int maxdim = FPLLL_MAX_ENUM_DIM;
+  using UnderlyingCounterType = typename CounterClassWrapper<CounterClass>::UnderlyingCounterType;
+  
+  inline UnderlyingCounterType get_nodes() const { return nodes_counter.get_nodes(); }
+  inline void update_node_count(const long amount = 1, const unsigned int index = 0) const {
+      nodes_counter.update_node_count(amount, index);
+  }
 
-  inline uint64_t get_nodes() const { return nodes; }
   virtual ~EnumerationBase() {}
 
 protected:
@@ -86,10 +131,8 @@ protected:
 
   int k, k_max;
   bool finished;
-
-  /* nodes count */
-  uint64_t nodes;
-
+  
+  CounterClassWrapper<CounterClass> nodes_counter;
   template <int kk, int kk_start, bool dualenum, bool findsubsols, bool enable_reset> struct opts
   {
   };

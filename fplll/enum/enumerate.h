@@ -28,14 +28,14 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <typename ZT, typename FT> class EnumerationDyn : public EnumerationBase
+template <typename ZT, typename FT, typename CounterClass = WholeTreeCounter> class EnumerationDyn : public EnumerationBase<CounterClass>
 {
 public:
   EnumerationDyn(MatGSOInterface<ZT, FT> &gso, Evaluator<FT> &evaluator,
                  const vector<int> &max_indices = vector<int>())
       : _gso(gso), _evaluator(evaluator)
   {
-    _max_indices = max_indices;
+    this->_max_indices = max_indices;
   }
 
   void enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
@@ -44,7 +44,7 @@ public:
                  const vector<enumf> &pruning = vector<enumf>(), bool dual = false,
                  bool subtree_reset = false);
 
-  inline uint64_t get_nodes() const { return nodes; }
+  inline typename EnumerationBase<CounterClass>::UnderlyingCounterType get_nodes() const { return this->nodes_counter.get_nodes();}
 
 private:
   MatGSOInterface<ZT, FT> &_gso;
@@ -65,14 +65,16 @@ private:
   virtual void process_subsolution(int offset, enumf newdist);
 };
 
-template <typename ZT, typename FT> class Enumeration
+template <typename ZT, typename FT, typename CounterClass = WholeTreeCounter> class Enumeration
 {
 public:
   Enumeration(MatGSOInterface<ZT, FT> &gso, Evaluator<FT> &evaluator,
               const vector<int> &max_indices = vector<int>())
-      : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr), _nodes(0)
+      : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr), _nodes_counter()
   {
   }
+
+  using UnderlyingCounterType = typename CounterClassWrapper<CounterClass>::UnderlyingCounterType;
 
   void enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
                  const vector<FT> &target_coord = vector<FT>(),
@@ -81,13 +83,13 @@ public:
                  bool subtree_reset = false)
   {
     // check for external enumerator and use that
-    if (get_external_enumerator() != nullptr && subtree.empty() && target_coord.empty())
+    if (get_external_enumerator<UnderlyingCounterType>() != nullptr && subtree.empty() && target_coord.empty())
     {
       if (enumext.get() == nullptr)
         enumext.reset(new ExternalEnumeration<ZT, FT>(_gso, _evaluator));
       if (enumext->enumerate(first, last, fmaxdist, fmaxdistexpo, pruning, dual))
       {
-        _nodes = enumext->get_nodes();
+        _nodes_counter = enumext->get_nodes();
         return;
       }
     }
@@ -97,18 +99,18 @@ public:
       enumdyn.reset(new EnumerationDyn<ZT, FT>(_gso, _evaluator, _max_indices));
     enumdyn->enumerate(first, last, fmaxdist, fmaxdistexpo, target_coord, subtree, pruning, dual,
                        subtree_reset);
-    _nodes = enumdyn->get_nodes();
+    _nodes_counter = enumdyn->get_nodes();
   }
 
-  inline uint64_t get_nodes() const { return _nodes; }
+  inline UnderlyingCounterType get_nodes() const { return _nodes_counter.get_nodes(); }
 
 private:
   MatGSOInterface<ZT, FT> &_gso;
   Evaluator<FT> &_evaluator;
   vector<int> _max_indices;
-  std::unique_ptr<EnumerationDyn<ZT, FT>> enumdyn;
-  std::unique_ptr<ExternalEnumeration<ZT, FT>> enumext;
-  uint64_t _nodes;
+  std::unique_ptr<EnumerationDyn<ZT, FT, CounterClass>> enumdyn;
+  std::unique_ptr<ExternalEnumeration<ZT, FT, CounterClass>> enumext;
+  CounterClassWrapper<CounterClass> _nodes_counter;
 };
 
 FPLLL_END_NAMESPACE

@@ -84,7 +84,9 @@ typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
  *         Or ~uint64_t(0) when instance is not supported
  *         in which case fplll falls back to its own enumeration.
  */
-typedef uint64_t(extenum_fc_enumerate)(const int dim, enumf maxdist,
+
+template<typename UnderlyingCounterType>
+using extenum_fc_enumerate = UnderlyingCounterType(const int dim, enumf maxdist,
                                        std::function<extenum_cb_set_config> cbfunc,
                                        std::function<extenum_cb_process_sol> cbsol,
                                        std::function<extenum_cb_process_subsol> cbsubsol,
@@ -96,10 +98,13 @@ typedef uint64_t(extenum_fc_enumerate)(const int dim, enumf maxdist,
                                   Otherwise, fplll will use the enumeration function pointed to
                                   by extenum.
 */
-void set_external_enumerator(std::function<extenum_fc_enumerate> extenum = nullptr);
-std::function<extenum_fc_enumerate> get_external_enumerator();
 
-template <typename ZT, typename FT> class ExternalEnumeration
+template<typename UnderlyingCounterType>
+void set_external_enumerator(std::function<extenum_fc_enumerate<UnderlyingCounterType>> extenum = nullptr);
+template<typename UnderlyingCounterType>
+std::function<extenum_fc_enumerate<UnderlyingCounterType>> get_external_enumerator();
+
+template <typename ZT, typename FT, typename CounterClass = WholeTreeCounter> class ExternalEnumeration
 {
 public:
   ExternalEnumeration(MatGSOInterface<ZT, FT> &gso, Evaluator<FT> &evaluator)
@@ -112,7 +117,7 @@ public:
 
   // get_nodes. This returns the number of nodes visited by the external enumeration process.
   // If this returns 0, then fplll will fall back to the internal enumerator.
-  inline uint64_t get_nodes() const { return _nodes; }
+  inline typename CounterClassWrapper<CounterClass>::UnderlyingCounterType get_nodes() const { return _nodes_counter.get_nodes(); }
 
 private:
   void callback_set_config(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag, enumf *pruning);
@@ -126,7 +131,7 @@ private:
   vector<enumf> _pruning;
   long _normexp;
 
-  uint64_t _nodes;
+  CounterClassWrapper<CounterClass> _nodes_counter;
   bool _dual;
   int _d, _first;
   enumf _maxdist;
