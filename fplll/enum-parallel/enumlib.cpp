@@ -34,14 +34,14 @@ namespace enumlib
 
 using namespace std;
 
-uint64_t enumlib_enumerate(int dim, fplll::enumf maxdist,
+NodeCountType enumlib_enumerate(int dim, fplll::enumf maxdist,
                            std::function<fplll::extenum_cb_set_config> cbfunc,
                            std::function<fplll::extenum_cb_process_sol> cbsol,
                            std::function<fplll::extenum_cb_process_subsol> cbsubsol, bool dual,
                            bool findsubsols);
 
 #define ENUMFUNCNAME(DIM)                                                                          \
-  uint64_t enumerate##DIM(int, float_type, std::function<extenum_cb_set_config>,                   \
+    NodeCountType enumerate##DIM(int, float_type, std::function<extenum_cb_set_config>,                   \
                           std::function<extenum_cb_process_sol>,                                   \
                           std::function<extenum_cb_process_subsol>, bool, bool);
 
@@ -91,7 +91,7 @@ ENUMFUNCNAME(150);
 ENUMFUNCNAME(160);
 #endif
 
-uint64_t enumlib_enumerate(int dim, fplll_float maxdist,
+NodeCountType enumlib_enumerate(int dim, fplll_float maxdist,
                            std::function<extenum_cb_set_config> cbfunc,
                            std::function<extenum_cb_process_sol> cbsol,
                            std::function<extenum_cb_process_subsol> cbsubsol, bool dual,

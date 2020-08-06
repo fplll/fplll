@@ -56,13 +56,21 @@ class WholeTreeCounter {
         using UnderlyingCounterType = uint64_t;
         WholeTreeCounter(UnderlyingCounterType starting_count = 0) : _nodes{starting_count}{}
         inline UnderlyingCounterType get_nodes() const { return _nodes; }
-        inline void update_node_count(const long amount = 1, const unsigned int index = 0) {
+        inline void update_nodes_count(const long amount = 1, const unsigned int index = 0) {
             _nodes++;
         }
 
         WholeTreeCounter& operator=(const UnderlyingCounterType& value) {
             _nodes = value;
             return *this;
+        }
+
+        inline void reset() {
+            _nodes = 0;
+        }
+
+        inline bool is_valid() {
+            return _nodes != ~uint64_t(0);
         }
 
     private:
@@ -80,13 +88,21 @@ public:
         return base_counter.get_nodes();
     }
 
-    inline void update_node_count(const unsigned int index, const long amount) const {
-        return base_counter.update_node_count(index, amount);
+    inline void update_nodes_count(const unsigned int index, const long amount = 1)  {
+        base_counter.update_nodes_count(index, amount);
     }
 
     CounterClassWrapper<CounterClass>& operator=(const UnderlyingCounterType& value) {
         base_counter = value;
         return *this;
+    }
+
+    inline void reset() {
+        base_counter.reset();
+    }
+
+    inline bool is_valid() {
+        return base_counter.is_valid();
     }
 };
 
@@ -98,8 +114,12 @@ public:
   using UnderlyingCounterType = typename CounterClassWrapper<CounterClass>::UnderlyingCounterType;
   
   inline UnderlyingCounterType get_nodes() const { return nodes_counter.get_nodes(); }
-  inline void update_node_count(const long amount = 1, const unsigned int index = 0) const {
-      nodes_counter.update_node_count(amount, index);
+  inline void update_nodes_count(const long amount = 1, const unsigned int index = 0) {
+      nodes_counter.update_nodes_count(amount, index);
+  }
+
+  inline void reset_nodes_count() {
+      nodes_counter.reset();
   }
 
   virtual ~EnumerationBase() {}

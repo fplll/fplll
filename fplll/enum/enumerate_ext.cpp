@@ -23,22 +23,24 @@
 
 FPLLL_BEGIN_NAMESPACE
 
+
+
 // set & get external enumerator (nullptr => disabled)
 #if FPLLL_MAX_PARALLEL_ENUM_DIM != 0
-std::function<extenum_fc_enumerate> fplll_extenum = enumlib::enumlib_enumerate;
+std::function<extenum_fc_enumerate<enumlib::NodeCountType>> fplll_extenum = enumlib::enumlib_enumerate;
 #else
-std::function<extenum_fc_enumerate> fplll_extenum = nullptr;
+std::function<extenum_fc_enumerate<enumlib::NodeCountType>> fplll_extenum = nullptr;
 #endif
 
-void set_external_enumerator(std::function<extenum_fc_enumerate> extenum)
+void set_external_enumerator(std::function<extenum_fc_enumerate<enumlib::NodeCountType>> extenum)
 {
   fplll_extenum = extenum;
 }
 
-std::function<extenum_fc_enumerate> get_external_enumerator() { return fplll_extenum; }
+std::function<extenum_fc_enumerate<enumlib::NodeCountType>> get_external_enumerator() { return fplll_extenum; }
 
-template <typename ZT, typename FT>
-bool ExternalEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
+template <typename ZT, typename FT, typename CounterClass>
+bool ExternalEnumeration<ZT, FT, CounterClass>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
                                             const vector<enumf> &pruning, bool dual)
 {
   using namespace std::placeholders;
@@ -70,18 +72,18 @@ bool ExternalEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, l
   _evaluator.set_normexp(_normexp);
 
   // clang-format off
-  _nodes = fplll_extenum(_d, _maxdist,
+  this->_nodes_counter = fplll_extenum(_d, _maxdist,
                          std::bind(&ExternalEnumeration<ZT,FT>::callback_set_config, this, _1, _2, _3, _4, _5),
                          std::bind(&ExternalEnumeration<ZT,FT>::callback_process_sol, this, _1, _2),
                          std::bind(&ExternalEnumeration<ZT,FT>::callback_process_subsol, this, _1, _2, _3),
                _dual, _evaluator.findsubsols
                );
   // clang-format on
-  return _nodes != ~uint64_t(0);
+  return _nodes_counter.is_valid();
 }
 
-template <typename ZT, typename FT>
-void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, bool mutranspose,
+template <typename ZT, typename FT, typename CounterClass>
+void ExternalEnumeration<ZT, FT, CounterClass>::callback_set_config(enumf *mu, size_t mudim, bool mutranspose,
                                                       enumf *rdiag, enumf *pruning)
 {
 
@@ -139,8 +141,8 @@ void ExternalEnumeration<ZT, FT>::callback_set_config(enumf *mu, size_t mudim, b
   }
 }
 
-template <typename ZT, typename FT>
-enumf ExternalEnumeration<ZT, FT>::callback_process_sol(enumf dist, enumf *sol)
+template <typename ZT, typename FT, typename CounterClass>
+enumf ExternalEnumeration<ZT, FT, CounterClass>::callback_process_sol(enumf dist, enumf *sol)
 {
   for (int i = 0; i < _d; ++i)
     _fx[i] = sol[i];
@@ -148,8 +150,8 @@ enumf ExternalEnumeration<ZT, FT>::callback_process_sol(enumf dist, enumf *sol)
   return _maxdist;
 }
 
-template <typename ZT, typename FT>
-void ExternalEnumeration<ZT, FT>::callback_process_subsol(enumf dist, enumf *subsol, int offset)
+template <typename ZT, typename FT, typename CounterClass>
+void ExternalEnumeration<ZT, FT, CounterClass>::callback_process_subsol(enumf dist, enumf *subsol, int offset)
 {
   for (int i = 0; i < offset; ++i)
     _fx[i] = 0.0;

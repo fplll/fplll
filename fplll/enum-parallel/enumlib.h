@@ -33,7 +33,8 @@ FPLLL_BEGIN_NAMESPACE
 namespace enumlib
 {
 
-uint64_t enumlib_enumerate(int dim, ::fplll::enumf maxdist,
+using NodeCountType = uint64_t;
+NodeCountType enumlib_enumerate(int dim, ::fplll::enumf maxdist,
                            std::function<::fplll::extenum_cb_set_config> cbfunc,
                            std::function<::fplll::extenum_cb_process_sol> cbsol,
                            std::function<::fplll::extenum_cb_process_subsol> cbsubsol, bool dual,

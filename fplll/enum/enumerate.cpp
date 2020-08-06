@@ -25,9 +25,10 @@ void EnumerationDyn<ZT, FT, CounterClass>::reset(enumf cur_dist, int cur_depth)
 {
   // FPLLL_TRACE("Reset level " << cur_depth);
   int new_dim = cur_depth + 1;
+  auto& d = this->d;
 
-  vector<enumxt> partial_sol(this->d - cur_depth - 1);
-  for (int i = cur_depth + 1; i < this->d; ++i)
+  vector<enumxt> partial_sol(d - cur_depth - 1);
+  for (int i = cur_depth + 1; i < d; ++i)
     partial_sol[i - cur_depth - 1] = this->x[i];
 
   FT new_dist = 0.0;
@@ -36,7 +37,7 @@ void EnumerationDyn<ZT, FT, CounterClass>::reset(enumf cur_dist, int cur_depth)
 
   FastEvaluator<FT> new_evaluator;
   Enumeration<ZT, FT> enumobj(_gso, new_evaluator, this->_max_indices);
-  enumobj.enumerate(0, this->d, new_dist, 0, target, partial_sol, pruning_bounds, false, true);
+  enumobj.enumerate(0, d, new_dist, 0, target, partial_sol, pruning_bounds, false, true);
 
   if (!new_evaluator.empty())
   {
@@ -61,15 +62,16 @@ void EnumerationDyn<ZT, FT, CounterClass>::enumerate(int first, int last, FT &fm
                                        const vector<enumxt> &subtree, const vector<enumf> &pruning,
                                        bool _dual, bool subtree_reset)
 {
+  auto& d = this->d;
   bool solvingsvp = target_coord.empty();
   this->dual            = _dual;
   pruning_bounds  = pruning;
   target          = target_coord;
   if (last == -1)
     last = _gso.d;
-  this->d = last - first;
-  fx.resize(this->d);
-  FPLLL_CHECK(this->d < this->maxdim, "enumerate: dimension is too high");
+  d = last - first;
+  fx.resize(d);
+  FPLLL_CHECK(d < this->maxdim, "enumerate: dimension is too high");
   FPLLL_CHECK((solvingsvp || !this->dual), "CVP for dual not implemented! What does that even mean? ");
   FPLLL_CHECK((subtree.empty() || !this->dual), "Subtree enumeration for dual not implemented!");
 
@@ -79,18 +81,18 @@ void EnumerationDyn<ZT, FT, CounterClass>::enumerate(int first, int last, FT &fm
 
   if (solvingsvp)
   {
-    for (int i = 0; i < this->d; ++i)
+    for (int i = 0; i < d; ++i)
       this->center_partsum[i] = 0.0;
   }
   else
   {
-    for (int i = 0; i < this->d; ++i)
+    for (int i = 0; i < d; ++i)
       this->center_partsum[i] = target_coord[i + first].get_d();
   }
 
   FT fr, fmu, fmaxdistnorm;
   long rexpo, normexp = -1;
-  for (int i = 0; i < this->d; ++i)
+  for (int i = 0; i < d; ++i)
   {
     fr      = _gso.get_r_exp(i + first, i + first, rexpo);
     normexp = max(normexp, rexpo + fr.exponent());
@@ -107,45 +109,45 @@ void EnumerationDyn<ZT, FT, CounterClass>::enumerate(int first, int last, FT &fm
 
   if (this->dual)
   {
-    for (int i = 0; i < this->d; ++i)
+    for (int i = 0; i < d; ++i)
     {
       fr = _gso.get_r_exp(i + first, i + first, rexpo);
       fr.mul_2si(fr, rexpo + normexp);
-      this->rdiag[this->d - i - 1] = enumf(1.0) / fr.get_d();
+      this->rdiag[d - i - 1] = enumf(1.0) / fr.get_d();
     }
-    for (int i = 0; i < this->d; ++i)
+    for (int i = 0; i < d; ++i)
     {
-      for (int j = i + 1; j < this->d; ++j)
+      for (int j = i + 1; j < d; ++j)
       {
         _gso.get_mu(fmu, j + first, i + first);
-        this->mut[this->d - j - 1][this->d - i - 1] = -fmu.get_d();
+        this->mut[d - j - 1][d - i - 1] = -fmu.get_d();
       }
     }
   }
   else
   {
-    for (int i = 0; i < this->d; ++i)
+    for (int i = 0; i < d; ++i)
     {
       fr = _gso.get_r_exp(i + first, i + first, rexpo);
       fr.mul_2si(fr, rexpo - normexp);
       this->rdiag[i] = fr.get_d();
     }
-    for (int i = 0; i < this->d; ++i)
+    for (int i = 0; i < d; ++i)
     {
-      for (int j = i + 1; j < this->d; ++j)
+      for (int j = i + 1; j < d; ++j)
       {
         _gso.get_mu(fmu, j + first, i + first);
-        mut[i][j] = fmu.get_d();
+        this->mut[i][j] = fmu.get_d();
       }
     }
   }
 
   this->subsoldists = this->rdiag;
 
-  save_rounding();
+  this->save_rounding();
   prepare_enumeration(subtree, solvingsvp, subtree_reset);
   do_enumerate();
-  restore_rounding();
+  this->restore_rounding();
 
   fmaxdistnorm = maxdist;  // Exact
 
@@ -154,85 +156,90 @@ void EnumerationDyn<ZT, FT, CounterClass>::enumerate(int first, int last, FT &fm
   if (this->dual && !_evaluator.empty())
   {
     for (auto it = _evaluator.begin(), itend = _evaluator.end(); it != itend; ++it)
-      reverse_by_swap(it->second, 0, this->d - 1);
+      reverse_by_swap(it->second, 0, d - 1);
   }
 }
 
 template <typename ZT, typename FT, typename CounterClass>
-void EnumerationDyn<ZT, FT, typename CounterClass>::prepare_enumeration(const vector<enumxt> &subtree, bool solvingsvp,
+void EnumerationDyn<ZT, FT, CounterClass>::prepare_enumeration(const vector<enumxt> &subtree, bool solvingsvp,
                                                  bool subtree_reset)
 {
-  is_svp = solvingsvp;
+  this->is_svp = solvingsvp;
+  auto& k = this->k;
+  auto& d = this->d;
+  auto& k_end = this->k_end;
 
   enumf newdist = 0.0;
-  k_end         = d - subtree.size();
+  this->k_end         = d - subtree.size();
   for (k = d - 1; k >= 0 && newdist <= maxdist; --k)
   {
-    enumf newcenter = center_partsum[k];
+    enumf newcenter = this->center_partsum[k];
     if (k >= k_end)
     {
       // use subtree
-      x[k] = subtree[k - k_end];
+      this->x[k] = subtree[k - k_end];
 
-      if (x[k] != 0)
-        is_svp = false;
+      if (this->x[k] != 0)
+        this->is_svp = false;
 
       for (int j = 0; j < k; ++j)
-        center_partsum[j] -= x[k] * mut[j][k];
+        this->center_partsum[j] -= this->x[k] * this->mut[j][k];
     }
     else
     {
-      if (dual)
+      if (this->dual)
       {
         for (int j = k + 1; j < k_end; ++j)
-          newcenter -= alpha[j] * mut[k][j];
+          newcenter -= this->alpha[j] * this->mut[k][j];
       }
       else
       {
         for (int j = k + 1; j < k_end; ++j)
-          newcenter -= x[j] * mut[k][j];
+          newcenter -= this->x[j] * this->mut[k][j];
       }
-      roundto(x[k], newcenter);  // newX = rint(newCenter) / lrint(newCenter)
-      center[k]   = newcenter;
-      partdist[k] = newdist;
-      dx[k] = ddx[k] = (((int)(newcenter >= x[k]) & 1) << 1) - 1;
+      roundto(this->x[k], newcenter);  // newX = rint(newCenter) / lrint(newCenter)
+      this->center[k]   = newcenter;
+      this->partdist[k] = newdist;
+      this->dx[k] = this->ddx[k] = (((int)(newcenter >= this->x[k]) & 1) << 1) - 1;
     }
     if (!subtree_reset || k < k_end)
     {
-      alpha[k] = x[k] - newcenter;
-      newdist += alpha[k] * alpha[k] * rdiag[k];
+      this->alpha[k] = this->x[k] - newcenter;
+      newdist += this->alpha[k] * this->alpha[k] * this->rdiag[k];
     }
   }
-  if (!is_svp)
+  if (!this->is_svp)
   {
-    k_max = k_end;  // The last non-zero coordinate of x will not stay positive
+    this->k_max = k_end;  // The last non-zero coordinate of x will not stay positive
   }
   else
   {
-    k_max = 0;
-    x[0]  = 1;  // Excludes (0,...,0) from the enumeration
+    this->k_max = 0;
+    this->x[0]  = 1;  // Excludes (0,...,0) from the enumeration
   }
   ++k;
 }
 
 template <typename ZT, typename FT, typename CounterClass> void EnumerationDyn<ZT, FT, CounterClass>::set_bounds()
 {
+  auto& d = this->d;
   if (pruning_bounds.empty())
   {
-    fill(&partdistbounds[0] + 0, &partdistbounds[0] + d, maxdist);
+    fill(&this->partdistbounds[0] + 0, &this->partdistbounds[0] + d, maxdist);
   }
   else
   {
     for (int i = 0; i < d; ++i)
-      partdistbounds[i] = pruning_bounds[i] * maxdist;
+      this->partdistbounds[i] = this->pruning_bounds[i] * maxdist;
   }
 }
 
 template <typename ZT, typename FT, typename CounterClass> void EnumerationDyn<ZT, FT, CounterClass>::process_solution(enumf newmaxdist)
 {
   FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << nodes << ")");
+  auto& d = this->d;
   for (int j = 0; j < d; ++j)
-    fx[j] = x[j];
+    fx[j] = this->x[j];
   _evaluator.eval_sol(fx, newmaxdist, maxdist);
 
   set_bounds();
@@ -241,31 +248,34 @@ template <typename ZT, typename FT, typename CounterClass> void EnumerationDyn<Z
 template <typename ZT, typename FT, typename CounterClass>
 void EnumerationDyn<ZT, FT, CounterClass>::process_subsolution(int offset, enumf newdist)
 {
+  auto& d = this->d;
   for (int j = 0; j < offset; ++j)
     fx[j] = 0.0;
   for (int j = offset; j < d; ++j)
-    fx[j] = x[j];
+    fx[j] = this->x[j];
   _evaluator.eval_sub_sol(offset, fx, newdist);
 }
 
-template <typename ZT, typename FT, CounterClass> void EnumerationDyn<ZT, FT, CounterClass>::do_enumerate()
+template <typename ZT, typename FT, typename CounterClass> void EnumerationDyn<ZT, FT, CounterClass>::do_enumerate()
 {
-  nodes = 0;
 
+  this->nodes_counter.reset();
   set_bounds();
+  auto dual = this->dual;
+  auto resetflag = this->resetflag;
 
-  if (dual && _evaluator.findsubsols && !resetflag)
-    enumerate_loop<true, true, false>();
+  if (dual && _evaluator.findsubsols && !resetflag) 
+    (*this).template enumerate_loop<true, true, false>();
   else if (!dual && _evaluator.findsubsols && !resetflag)
-    enumerate_loop<false, true, false>();
+    (*this).template enumerate_loop<false, true, false>();
   else if (dual && !_evaluator.findsubsols && !resetflag)
-    enumerate_loop<true, false, false>();
+    (*this).template enumerate_loop<true, false, false>();
   else if (!dual && !_evaluator.findsubsols && !resetflag)
-    enumerate_loop<false, false, false>();
+    (*this).template enumerate_loop<false, false, false>();
   else if (!dual && _evaluator.findsubsols && resetflag)
-    enumerate_loop<false, true, true>();
+    (*this).template enumerate_loop<false, true, true>();
   else if (!dual && !_evaluator.findsubsols && resetflag)
-    enumerate_loop<false, false, true>();
+    (*this).template enumerate_loop<false, false, true>();
 }
 
 template class Enumeration<Z_NR<mpz_t>, FP_NR<double>>;
