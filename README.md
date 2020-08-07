@@ -359,6 +359,7 @@ The following people have contributed to fplll:
 - Léo Ducas
 - Joop van de Pol
 - Xavier Pujol
+- Joe Rowell
 - Damien Stehlé
 - Marc Stevens
 - Gilles Villard
