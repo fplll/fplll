@@ -26,9 +26,10 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <class ZT, class FT>
-BKZReduction<ZT, FT>::BKZReduction(MatGSOInterface<ZT, FT> &m, LLLReduction<ZT, FT> &lll_obj,
-                                   const BKZParam &param)
+template <class ZT, class FT, class CounterClass>
+BKZReduction<ZT, FT, CounterClass>::BKZReduction(MatGSOInterface<ZT, FT> &m,
+                                                 LLLReduction<ZT, FT> &lll_obj,
+                                                 const BKZParam &param)
     : status(RED_SUCCESS), nodes(0), param(param), m(m), lll_obj(lll_obj), algorithm(NULL),
       cputime_start(0)
 {
@@ -38,10 +39,13 @@ BKZReduction<ZT, FT>::BKZReduction(MatGSOInterface<ZT, FT> &m, LLLReduction<ZT, 
   this->delta = param.delta;
 }
 
-template <class ZT, class FT> BKZReduction<ZT, FT>::~BKZReduction() {}
+template <class ZT, class FT, class CounterClass>
+BKZReduction<ZT, FT, CounterClass>::~BKZReduction()
+{
+}
 
-template <class ZT, class FT>
-void BKZReduction<ZT, FT>::rerandomize_block(int min_row, int max_row, int density)
+template <class ZT, class FT, class CounterClass>
+void BKZReduction<ZT, FT, CounterClass>::rerandomize_block(int min_row, int max_row, int density)
 {
   if (max_row - min_row < 2)
     return;
@@ -79,9 +83,10 @@ void BKZReduction<ZT, FT>::rerandomize_block(int min_row, int max_row, int densi
   return;
 }
 
-template <class ZT, class FT>
-const PruningParams &BKZReduction<ZT, FT>::get_pruning(int kappa, unsigned int block_size,
-                                                       const BKZParam &par) const
+template <class ZT, class FT, class CounterClass>
+const PruningParams &BKZReduction<ZT, FT, CounterClass>::get_pruning(int kappa,
+                                                                     unsigned int block_size,
+                                                                     const BKZParam &par) const
 {
 
   FPLLL_DEBUG_CHECK(param.strategies.size() > block_size);
@@ -97,9 +102,9 @@ const PruningParams &BKZReduction<ZT, FT>::get_pruning(int kappa, unsigned int b
                            gh_max_dist.get_d() * pow(2, max_dist_expo));
 }
 
-template <class ZT, class FT>
-bool BKZReduction<ZT, FT>::svp_preprocessing(int kappa, unsigned int block_size,
-                                             const BKZParam &param)
+template <class ZT, class FT, class CounterClass>
+bool BKZReduction<ZT, FT, CounterClass>::svp_preprocessing(int kappa, unsigned int block_size,
+                                                           const BKZParam &param)
 {
   bool clean = true;
 
@@ -125,9 +130,9 @@ bool BKZReduction<ZT, FT>::svp_preprocessing(int kappa, unsigned int block_size,
   return clean;
 }
 
-template <class ZT, class FT>
-bool BKZReduction<ZT, FT>::svp_postprocessing(int kappa, int block_size, const vector<FT> &solution,
-                                              bool dual)
+template <class ZT, class FT, class CounterClass>
+bool BKZReduction<ZT, FT, CounterClass>::svp_postprocessing(int kappa, int block_size,
+                                                            const vector<FT> &solution, bool dual)
 {
   // Is it already in the basis ?
   int nz_vectors = 0, i_vector = -1;
@@ -202,9 +207,10 @@ bool BKZReduction<ZT, FT>::svp_postprocessing(int kappa, int block_size, const v
   return false;
 }
 
-template <class ZT, class FT>
-bool BKZReduction<ZT, FT>::svp_postprocessing_generic(int kappa, int block_size,
-                                                      const vector<FT> &solution, bool dual)
+template <class ZT, class FT, class CounterClass>
+bool BKZReduction<ZT, FT, CounterClass>::svp_postprocessing_generic(int kappa, int block_size,
+                                                                    const vector<FT> &solution,
+                                                                    bool dual)
 {
   vector<FT> x = solution;
   int d        = block_size;
@@ -271,8 +277,9 @@ bool BKZReduction<ZT, FT>::svp_postprocessing_generic(int kappa, int block_size,
   return false;
 }
 
-template <class ZT, class FT>
-bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZParam &par, bool dual)
+template <class ZT, class FT, class CounterClass>
+bool BKZReduction<ZT, FT, CounterClass>::svp_reduction(int kappa, int block_size,
+                                                       const BKZParam &par, bool dual)
 {
   int first = dual ? kappa + block_size - 1 : kappa;
 
@@ -326,7 +333,7 @@ bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZPar
 
     FPLLL_DEBUG_CHECK(pruning.metric == PRUNER_METRIC_PROBABILITY_OF_SHORTEST)
     evaluator.solutions.clear();
-    Enumeration<ZT, FT> enum_obj(m, evaluator);
+    Enumeration<ZT, FT, WholeTreeCounter> enum_obj(m, evaluator);
     enum_obj.enumerate(kappa, kappa + block_size, max_dist, max_dist_expo, vector<FT>(),
                        vector<enumxt>(), pruning.coefficients, dual);
     nodes += enum_obj.get_nodes();
@@ -357,9 +364,9 @@ bool BKZReduction<ZT, FT>::svp_reduction(int kappa, int block_size, const BKZPar
   return (dual) ? (old_first >= new_first) : (old_first <= new_first);
 }
 
-template <class ZT, class FT>
-bool BKZReduction<ZT, FT>::tour(const int loop, int &kappa_max, const BKZParam &par, int min_row,
-                                int max_row)
+template <class ZT, class FT, class CounterClass>
+bool BKZReduction<ZT, FT, CounterClass>::tour(const int loop, int &kappa_max, const BKZParam &par,
+                                              int min_row, int max_row)
 {
   bool clean = true;
   clean &= trunc_tour(kappa_max, par, min_row, max_row);
@@ -383,8 +390,9 @@ bool BKZReduction<ZT, FT>::tour(const int loop, int &kappa_max, const BKZParam &
   return clean;
 }
 
-template <class ZT, class FT>
-bool BKZReduction<ZT, FT>::trunc_tour(int &kappa_max, const BKZParam &par, int min_row, int max_row)
+template <class ZT, class FT, class CounterClass>
+bool BKZReduction<ZT, FT, CounterClass>::trunc_tour(int &kappa_max, const BKZParam &par,
+                                                    int min_row, int max_row)
 {
   bool clean     = true;
   int block_size = par.block_size;
@@ -402,8 +410,8 @@ bool BKZReduction<ZT, FT>::trunc_tour(int &kappa_max, const BKZParam &par, int m
   return clean;
 }
 
-template <class ZT, class FT>
-bool BKZReduction<ZT, FT>::trunc_dtour(const BKZParam &par, int min_row, int max_row)
+template <class ZT, class FT, class CounterClass>
+bool BKZReduction<ZT, FT, CounterClass>::trunc_dtour(const BKZParam &par, int min_row, int max_row)
 {
   bool clean     = true;
   int block_size = par.block_size;
@@ -416,8 +424,9 @@ bool BKZReduction<ZT, FT>::trunc_dtour(const BKZParam &par, int min_row, int max
   return clean;
 }
 
-template <class ZT, class FT>
-bool BKZReduction<ZT, FT>::hkz(int &kappa_max, const BKZParam &param, int min_row, int max_row)
+template <class ZT, class FT, class CounterClass>
+bool BKZReduction<ZT, FT, CounterClass>::hkz(int &kappa_max, const BKZParam &param, int min_row,
+                                             int max_row)
 {
   bool clean = true;
   for (int kappa = min_row; kappa < max_row - 1; ++kappa)
@@ -440,8 +449,9 @@ bool BKZReduction<ZT, FT>::hkz(int &kappa_max, const BKZParam &param, int min_ro
   return clean;
 }
 
-template <class ZT, class FT>
-bool BKZReduction<ZT, FT>::sd_tour(const int loop, const BKZParam &par, int min_row, int max_row)
+template <class ZT, class FT, class CounterClass>
+bool BKZReduction<ZT, FT, CounterClass>::sd_tour(const int loop, const BKZParam &par, int min_row,
+                                                 int max_row)
 {
   int dummy_kappa_max = num_rows;
   bool clean          = true;
@@ -462,8 +472,9 @@ bool BKZReduction<ZT, FT>::sd_tour(const int loop, const BKZParam &par, int min_
   return clean;
 }
 
-template <class ZT, class FT>
-bool BKZReduction<ZT, FT>::slide_tour(const int loop, const BKZParam &par, int min_row, int max_row)
+template <class ZT, class FT, class CounterClass>
+bool BKZReduction<ZT, FT, CounterClass>::slide_tour(const int loop, const BKZParam &par,
+                                                    int min_row, int max_row)
 {
   int p = (max_row - min_row) / par.block_size;
   if ((max_row - min_row) % par.block_size)
@@ -519,14 +530,14 @@ bool BKZReduction<ZT, FT>::slide_tour(const int loop, const BKZParam &par, int m
   return false;
 }
 
-template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
+template <class ZT, class FT, class CounterClass> bool BKZReduction<ZT, FT, CounterClass>::bkz()
 {
   int flags        = param.flags;
   int final_status = RED_SUCCESS;
-  nodes            = 0;
-  bool sd          = (flags & BKZ_SD_VARIANT);
-  bool sld         = (flags & BKZ_SLD_RED);
-  algorithm        = sd ? "SD-BKZ" : sld ? "SLD" : "BKZ";
+  nodes.reset();
+  bool sd   = (flags & BKZ_SD_VARIANT);
+  bool sld  = (flags & BKZ_SLD_RED);
+  algorithm = sd ? "SD-BKZ" : sld ? "SLD" : "BKZ";
 
   if (sd && sld)
   {
@@ -671,8 +682,8 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::bkz()
   return set_status(final_status);
 }
 
-template <class ZT, class FT>
-void BKZReduction<ZT, FT>::print_tour(const int loop, int min_row, int max_row)
+template <class ZT, class FT, class CounterClass>
+void BKZReduction<ZT, FT, CounterClass>::print_tour(const int loop, int min_row, int max_row)
 {
   FT r0;
   FP_NR<mpfr_t> fr0;
@@ -685,11 +696,12 @@ void BKZReduction<ZT, FT>::print_tour(const int loop, int min_row, int max_row)
   cerr << ", r_" << min_row << " = " << fr0;
   cerr << ", slope = " << std::setw(9) << std::setprecision(6)
        << m.get_current_slope(min_row, max_row);
-  cerr << ", log2(nodes) = " << std::setw(9) << std::setprecision(6) << log2(nodes) << endl;
+  cerr << ", log2(nodes) = " << std::setw(9) << std::setprecision(6)
+       << log2(nodes.get_total_nodes()) << endl;
 }
 
-template <class ZT, class FT>
-void BKZReduction<ZT, FT>::print_params(const BKZParam &param, ostream &out)
+template <class ZT, class FT, class CounterClass>
+void BKZReduction<ZT, FT, CounterClass>::print_params(const BKZParam &param, ostream &out)
 {
   out << "block size: " << std::setw(3) << param.block_size << ", ";
   out << "flags: 0x" << std::setw(4) << setfill('0') << std::hex << param.flags << ", " << std::dec
@@ -710,7 +722,8 @@ void BKZReduction<ZT, FT>::print_params(const BKZParam &param, ostream &out)
   out << endl;
 }
 
-template <class ZT, class FT> bool BKZReduction<ZT, FT>::set_status(int new_status)
+template <class ZT, class FT, class CounterClass>
+bool BKZReduction<ZT, FT, CounterClass>::set_status(int new_status)
 {
   status = new_status;
   if (param.flags & BKZ_VERBOSE)
@@ -725,9 +738,10 @@ template <class ZT, class FT> bool BKZReduction<ZT, FT>::set_status(int new_stat
 
 // Generate the json file by hand to generate a flexible human-readable file.
 // TODO: think about use io/json.hpp
-template <class ZT, class FT>
-void BKZReduction<ZT, FT>::dump_gso(const std::string &filename, bool append,
-                                    const std::string &step, const int loop, const double time)
+template <class ZT, class FT, class CounterClass>
+void BKZReduction<ZT, FT, CounterClass>::dump_gso(const std::string &filename, bool append,
+                                                  const std::string &step, const int loop,
+                                                  const double time)
 {
   ofstream dump;
   // Enable exceptions

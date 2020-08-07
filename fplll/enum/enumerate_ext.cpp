@@ -27,17 +27,17 @@ FPLLL_BEGIN_NAMESPACE
 
 // set & get external enumerator (nullptr => disabled)
 #if FPLLL_MAX_PARALLEL_ENUM_DIM != 0
-std::function<extenum_fc_enumerate<enumlib::NodeCountType>> fplll_extenum = enumlib::enumlib_enumerate;
+std::function<extenum_fc_enumerate> fplll_extenum = enumlib::enumlib_enumerate;
 #else
-std::function<extenum_fc_enumerate<enumlib::NodeCountType>> fplll_extenum = nullptr;
+std::function<extenum_fc_enumerate> fplll_extenum = nullptr;
 #endif
 
-void set_external_enumerator(std::function<extenum_fc_enumerate<enumlib::NodeCountType>> extenum)
+void set_external_enumerator(std::function<extenum_fc_enumerate> extenum)
 {
   fplll_extenum = extenum;
 }
 
-std::function<extenum_fc_enumerate<enumlib::NodeCountType>> get_external_enumerator() { return fplll_extenum; }
+std::function<extenum_fc_enumerate> get_external_enumerator() { return fplll_extenum; }
 
 template <typename ZT, typename FT, typename CounterClass>
 bool ExternalEnumeration<ZT, FT, CounterClass>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
@@ -70,12 +70,12 @@ bool ExternalEnumeration<ZT, FT, CounterClass>::enumerate(int first, int last, F
 
   _maxdist = fmaxdistnorm.get_d(GMP_RNDU);
   _evaluator.set_normexp(_normexp);
-
+  
   // clang-format off
   this->_nodes_counter = fplll_extenum(_d, _maxdist,
-                         std::bind(&ExternalEnumeration<ZT,FT>::callback_set_config, this, _1, _2, _3, _4, _5),
-                         std::bind(&ExternalEnumeration<ZT,FT>::callback_process_sol, this, _1, _2),
-                         std::bind(&ExternalEnumeration<ZT,FT>::callback_process_subsol, this, _1, _2, _3),
+                         std::bind(&ExternalEnumeration<ZT,FT, CounterClass>::callback_set_config, this, _1, _2, _3, _4, _5),
+                         std::bind(&ExternalEnumeration<ZT,FT, CounterClass>::callback_process_sol, this, _1, _2),
+                         std::bind(&ExternalEnumeration<ZT,FT, CounterClass>::callback_process_subsol, this, _1, _2, _3),
                _dual, _evaluator.findsubsols
                );
   // clang-format on
@@ -160,40 +160,49 @@ void ExternalEnumeration<ZT, FT, CounterClass>::callback_process_subsol(enumf di
   _evaluator.eval_sub_sol(offset, _fx, dist);
 }
 
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<double>>;
-
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<double>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<double>, LevelTreeCounter>;
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<long double>>;
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<long double>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<long double>, LevelTreeCounter>;
 #endif
 
 #ifdef FPLLL_WITH_QD
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<dd_real>>;
-
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<qd_real>>;
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<dd_real>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<dd_real>, LevelTreeCounter>;
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<qd_real>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<qd_real>, LevelTreeCounter>;
 #endif
 
 #ifdef FPLLL_WITH_DPE
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<dpe_t>>;
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<dpe_t>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<dpe_t>, LevelTreeCounter>;
 #endif
 
-template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
-
-template class ExternalEnumeration<Z_NR<long>, FP_NR<double>>;
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<mpfr_t>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<mpfr_t>, LevelTreeCounter>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<double>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<double>, LevelTreeCounter>;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class ExternalEnumeration<Z_NR<long>, FP_NR<long double>>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<long double>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<long double>, LevelTreeCounter>;
 #endif
 
 #ifdef FPLLL_WITH_QD
-template class ExternalEnumeration<Z_NR<long>, FP_NR<dd_real>>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<dd_real>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<dd_real>, LevelTreeCounter>;
 
-template class ExternalEnumeration<Z_NR<long>, FP_NR<qd_real>>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<qd_real>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<qd_real>, LevelTreeCounter>;
 #endif
 
 #ifdef FPLLL_WITH_DPE
-template class ExternalEnumeration<Z_NR<long>, FP_NR<dpe_t>>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<dpe_t>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<dpe_t>, LevelTreeCounter>;
 #endif
 
-template class ExternalEnumeration<Z_NR<long>, FP_NR<mpfr_t>>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<mpfr_t>, WholeTreeCounter>;
+template class ExternalEnumeration<Z_NR<long>, FP_NR<mpfr_t>, LevelTreeCounter>;
 
 FPLLL_END_NAMESPACE

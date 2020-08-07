@@ -36,7 +36,7 @@ void EnumerationDyn<ZT, FT, CounterClass>::reset(enumf cur_dist, int cur_depth)
     new_dist.add(new_dist, _gso.get_r_exp(i, i));
 
   FastEvaluator<FT> new_evaluator;
-  Enumeration<ZT, FT> enumobj(_gso, new_evaluator, this->_max_indices);
+  Enumeration<ZT, FT, CounterClass> enumobj(_gso, new_evaluator, this->_max_indices);
   enumobj.enumerate(0, d, new_dist, 0, target, partial_sol, pruning_bounds, false, true);
 
   if (!new_evaluator.empty())
@@ -278,52 +278,77 @@ template <typename ZT, typename FT, typename CounterClass> void EnumerationDyn<Z
     (*this).template enumerate_loop<false, false, true>();
 }
 
-template class Enumeration<Z_NR<mpz_t>, FP_NR<double>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<double>>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<double>, WholeTreeCounter>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<double>, LevelTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<double>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<double>, LevelTreeCounter>;
+
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class Enumeration<Z_NR<mpz_t>, FP_NR<long double>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<long double>>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<long double>, WholeTreeCounter>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<long double>, LevelTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<long double>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<long double>, LevelTreeCounter>;
 #endif
 
 #ifdef FPLLL_WITH_QD
-template class Enumeration<Z_NR<mpz_t>, FP_NR<dd_real>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<dd_real>>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<dd_real>, WholeTreeCounter>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<dd_real>, LevelTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<dd_real>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<dd_real>, LevelTreeCounter>;
 
-template class Enumeration<Z_NR<mpz_t>, FP_NR<qd_real>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<qd_real>>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<qd_real>, WholeTreeCounter>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<qd_real>, LevelTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<qd_real>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<qd_real>, LevelTreeCounter>;
 #endif
 
 #ifdef FPLLL_WITH_DPE
-template class Enumeration<Z_NR<mpz_t>, FP_NR<dpe_t>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<dpe_t>>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<dpe_t>, WholeTreeCounter>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<dpe_t>, LevelTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<dpe_t>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<dpe_t>, LevelTreeCounter>;
 #endif
 
-template class Enumeration<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
-template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<mpfr_t>>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<mpfr_t>, WholeTreeCounter>;
+template class Enumeration<Z_NR<mpz_t>, FP_NR<mpfr_t>, LevelTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<mpfr_t>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<mpfr_t>, LevelTreeCounter>;
 
-template class Enumeration<Z_NR<long>, FP_NR<double>>;
-template class EnumerationDyn<Z_NR<long>, FP_NR<double>>;
+template class Enumeration<Z_NR<long>, FP_NR<double>, WholeTreeCounter>;
+template class Enumeration<Z_NR<long>, FP_NR<double>, LevelTreeCounter>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<double>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<double>, LevelTreeCounter>;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class Enumeration<Z_NR<long>, FP_NR<long double>>;
-template class EnumerationDyn<Z_NR<long>, FP_NR<long double>>;
+template class Enumeration<Z_NR<long>, FP_NR<long double>,WholeTreeCounter>;
+template class Enumeration<Z_NR<long>, FP_NR<long double>,LevelTreeCounter>; 
+template class EnumerationDyn<Z_NR<long>, FP_NR<long double>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<long double>, LevelTreeCounter>;
 #endif
 
 #ifdef FPLLL_WITH_QD
-template class Enumeration<Z_NR<long>, FP_NR<dd_real>>;
-template class EnumerationDyn<Z_NR<long>, FP_NR<dd_real>>;
+template class Enumeration<Z_NR<long>, FP_NR<dd_real>, WholeTreeCounter>;
+template class Enumeration<Z_NR<long>, FP_NR<dd_real>, LevelTreeCounter>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<dd_real>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<dd_real>, LevelTreeCounter>;
 
-template class Enumeration<Z_NR<long>, FP_NR<qd_real>>;
-template class EnumerationDyn<Z_NR<long>, FP_NR<qd_real>>;
+template class Enumeration<Z_NR<long>, FP_NR<qd_real>, WholeTreeCounter>;
+template class Enumeration<Z_NR<long>, FP_NR<qd_real>, LevelTreeCounter>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<qd_real>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<qd_real>, LevelTreeCounter>;
 #endif
 
 #ifdef FPLLL_WITH_DPE
-template class Enumeration<Z_NR<long>, FP_NR<dpe_t>>;
-template class EnumerationDyn<Z_NR<long>, FP_NR<dpe_t>>;
+template class Enumeration<Z_NR<long>, FP_NR<dpe_t>, WholeTreeCounter>;
+template class Enumeration<Z_NR<long>, FP_NR<dpe_t>, LevelTreeCounter>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<dpe_t>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<dpe_t>, LevelTreeCounter>;
 #endif
 
-template class Enumeration<Z_NR<long>, FP_NR<mpfr_t>>;
-template class EnumerationDyn<Z_NR<long>, FP_NR<mpfr_t>>;
+template class Enumeration<Z_NR<long>, FP_NR<mpfr_t>, WholeTreeCounter>;
+template class Enumeration<Z_NR<long>, FP_NR<mpfr_t>, LevelTreeCounter>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<mpfr_t>, WholeTreeCounter>;
+template class EnumerationDyn<Z_NR<long>, FP_NR<mpfr_t>, LevelTreeCounter>;
 
 FPLLL_END_NAMESPACE

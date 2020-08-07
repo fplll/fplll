@@ -84,7 +84,7 @@ private:
  * it relies on the GSO, LLL, and Enumeration modules. It assumes
  * that the basis is LLL reduced.
  **/
-template <class ZT, class FT> class BKZReduction
+template <class ZT, class FT, class CounterClass = WholeTreeCounter> class BKZReduction
 {
   /**
    * @brief Create a BKZObject
@@ -295,7 +295,7 @@ public:
   /**
       Number of nodes visited during enumeration.
   */
-  long nodes;
+  CounterClassWrapper<CounterClass> nodes;
 
 private:
   void print_tour(const int loop, int min_row, int max_row);

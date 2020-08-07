@@ -260,11 +260,20 @@ template<bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBas
   }
 }
 
-template void EnumerationBase<>::enumerate_loop<false, false, true>();
-template void EnumerationBase<>::enumerate_loop<false, true, true>();
-template void EnumerationBase<>::enumerate_loop<false, false, false>();
-template void EnumerationBase<>::enumerate_loop<false, true, false>();
-template void EnumerationBase<>::enumerate_loop<true, false, false>();
-template void EnumerationBase<>::enumerate_loop<true, true, false>();
+template void EnumerationBase<WholeTreeCounter>::enumerate_loop<false, false, true>();
+template void EnumerationBase<WholeTreeCounter>::enumerate_loop<false, true, true>();
+template void EnumerationBase<WholeTreeCounter>::enumerate_loop<false, false, false>();
+template void EnumerationBase<WholeTreeCounter>::enumerate_loop<false, true, false>();
+template void EnumerationBase<WholeTreeCounter>::enumerate_loop<true, false, false>();
+template void EnumerationBase<WholeTreeCounter>::enumerate_loop<true, true, false>();
+
+template void EnumerationBase<LevelTreeCounter>::enumerate_loop<false, false, true>();
+template void EnumerationBase<LevelTreeCounter>::enumerate_loop<false, true, true>();
+template void EnumerationBase<LevelTreeCounter>::enumerate_loop<false, false, false>();
+template void EnumerationBase<LevelTreeCounter>::enumerate_loop<false, true, false>();
+template void EnumerationBase<LevelTreeCounter>::enumerate_loop<true, false, false>();
+template void EnumerationBase<LevelTreeCounter>::enumerate_loop<true, true, false>();
+
+
 
 FPLLL_END_NAMESPACE

@@ -28,7 +28,7 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <typename ZT, typename FT, typename CounterClass=WholeTreeCounter> class EnumerationDyn : public EnumerationBase<CounterClass>
+template <typename ZT, typename FT, typename CounterClass> class EnumerationDyn : public EnumerationBase<CounterClass>
 {
 public:
   EnumerationDyn(MatGSOInterface<ZT, FT> &gso, Evaluator<FT> &evaluator,
@@ -65,7 +65,7 @@ private:
   virtual void process_subsolution(int offset, enumf newdist);
 };
 
-template <typename ZT, typename FT, typename CounterClass = WholeTreeCounter> class Enumeration
+template <typename ZT, typename FT, typename CounterClass=WholeTreeCounter> class Enumeration
 {
 public:
   Enumeration(MatGSOInterface<ZT, FT> &gso, Evaluator<FT> &evaluator,
@@ -83,10 +83,10 @@ public:
                  bool subtree_reset = false)
   {
     // check for external enumerator and use that
-    if (get_external_enumerator<UnderlyingCounterType>() != nullptr && subtree.empty() && target_coord.empty())
+    if (get_external_enumerator() != nullptr && subtree.empty() && target_coord.empty())
     {
       if (enumext.get() == nullptr)
-        enumext.reset(new ExternalEnumeration<ZT, FT>(_gso, _evaluator));
+        enumext.reset(new ExternalEnumeration<ZT, FT, CounterClass>(_gso, _evaluator));
       if (enumext->enumerate(first, last, fmaxdist, fmaxdistexpo, pruning, dual))
       {
         _nodes_counter = enumext->get_nodes();
