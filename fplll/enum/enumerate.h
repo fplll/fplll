@@ -28,7 +28,8 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-template <typename ZT, typename FT, typename CounterClass> class EnumerationDyn : public EnumerationBase<CounterClass>
+template <typename ZT, typename FT, typename CounterClass>
+class EnumerationDyn : public EnumerationBase<CounterClass>
 {
 public:
   EnumerationDyn(MatGSOInterface<ZT, FT> &gso, Evaluator<FT> &evaluator,
@@ -44,7 +45,10 @@ public:
                  const vector<enumf> &pruning = vector<enumf>(), bool dual = false,
                  bool subtree_reset = false);
 
-  inline typename EnumerationBase<CounterClass>::UnderlyingCounterType get_nodes() const { return this->nodes_counter.get_nodes();}
+  inline typename EnumerationBase<CounterClass>::UnderlyingCounterType get_nodes() const
+  {
+    return this->nodes_counter.get_nodes();
+  }
 
 private:
   MatGSOInterface<ZT, FT> &_gso;
@@ -65,12 +69,13 @@ private:
   virtual void process_subsolution(int offset, enumf newdist);
 };
 
-template <typename ZT, typename FT, typename CounterClass=WholeTreeCounter> class Enumeration
+template <typename ZT, typename FT, typename CounterClass = WholeTreeCounter> class Enumeration
 {
 public:
   Enumeration(MatGSOInterface<ZT, FT> &gso, Evaluator<FT> &evaluator,
               const vector<int> &max_indices = vector<int>())
-      : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr), _nodes_counter()
+      : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr),
+        _nodes_counter()
   {
   }
 

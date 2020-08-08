@@ -21,7 +21,7 @@
 FPLLL_BEGIN_NAMESPACE
 
 #ifdef FPLLL_WITH_RECURSIVE_ENUM
-template<typename CounterClass>
+template <typename CounterClass>
 template <int kk, int kk_start, bool dualenum, bool findsubsols, bool enable_reset>
 inline void EnumerationBase<CounterClass>::enumerate_recursive(
     EnumerationBase::opts<kk, kk_start, dualenum, findsubsols, enable_reset>)
@@ -31,7 +31,6 @@ inline void EnumerationBase<CounterClass>::enumerate_recursive(
 
   if (!(newdist <= partdistbounds[kk]))
     return;
-
 
   this->nodes_counter.update_nodes_count(kk);
 
@@ -90,7 +89,7 @@ inline void EnumerationBase<CounterClass>::enumerate_recursive(
       enumf newdist2 = partdist[kk] + alphak2 * alphak2 * rdiag[kk];
       if (!(newdist2 <= partdistbounds[kk]))
         return;
-      
+
       this->nodes_counter.update_nodes_count(kk);
       alpha[kk] = alphak2;
       if (kk == 0)
@@ -166,7 +165,7 @@ inline void EnumerationBase<CounterClass>::enumerate_recursive(
   ENUM_TABLE_FILL64(a)                                                                             \
   , ENUM_TABLE_FILL64(a + 64), ENUM_TABLE_FILL64(a + 128), ENUM_TABLE_FILL64(a + 192)
 
-template<typename CounterClass>
+template <typename CounterClass>
 template <bool dualenum, bool findsubsols, bool enable_reset>
 inline void EnumerationBase<CounterClass>::enumerate_recursive_dispatch(int kk)
 {
@@ -181,8 +180,9 @@ inline void EnumerationBase<CounterClass>::enumerate_recursive_dispatch(int kk)
 
 #endif
 
-template<typename CounterClass>
-template<bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBase<CounterClass>::enumerate_loop()
+template <typename CounterClass>
+template <bool dualenum, bool findsubsols, bool enable_reset>
+void EnumerationBase<CounterClass>::enumerate_loop()
 {
   if (k >= k_end)
     return;
@@ -195,7 +195,7 @@ template<bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBas
   }
 
   partdist[k_end] = 0.0;  // needed to make next_pos_up() work properly
-  this->nodes_counter.update_nodes_count(k_end, -(k_end-k));
+  this->nodes_counter.update_nodes_count(k_end, -(k_end - k));
   k = k_end - 1;
 
 #ifdef FPLLL_WITH_RECURSIVE_ENUM
@@ -273,7 +273,5 @@ template void EnumerationBase<LevelTreeCounter>::enumerate_loop<false, false, fa
 template void EnumerationBase<LevelTreeCounter>::enumerate_loop<false, true, false>();
 template void EnumerationBase<LevelTreeCounter>::enumerate_loop<true, false, false>();
 template void EnumerationBase<LevelTreeCounter>::enumerate_loop<true, true, false>();
-
-
 
 FPLLL_END_NAMESPACE

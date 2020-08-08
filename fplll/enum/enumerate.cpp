@@ -25,7 +25,7 @@ void EnumerationDyn<ZT, FT, CounterClass>::reset(enumf cur_dist, int cur_depth)
 {
   // FPLLL_TRACE("Reset level " << cur_depth);
   int new_dim = cur_depth + 1;
-  auto& d = this->d;
+  auto &d     = this->d;
 
   vector<enumxt> partial_sol(d - cur_depth - 1);
   for (int i = cur_depth + 1; i < d; ++i)
@@ -57,14 +57,13 @@ void EnumerationDyn<ZT, FT, CounterClass>::reset(enumf cur_dist, int cur_depth)
 }
 
 template <typename ZT, typename FT, typename CounterClass>
-void EnumerationDyn<ZT, FT, CounterClass>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
-                                       const vector<FT> &target_coord,
-                                       const vector<enumxt> &subtree, const vector<enumf> &pruning,
-                                       bool _dual, bool subtree_reset)
+void EnumerationDyn<ZT, FT, CounterClass>::enumerate(
+    int first, int last, FT &fmaxdist, long fmaxdistexpo, const vector<FT> &target_coord,
+    const vector<enumxt> &subtree, const vector<enumf> &pruning, bool _dual, bool subtree_reset)
 {
-  auto& d = this->d;
+  auto &d         = this->d;
   bool solvingsvp = target_coord.empty();
-  this->dual            = _dual;
+  this->dual      = _dual;
   pruning_bounds  = pruning;
   target          = target_coord;
   if (last == -1)
@@ -72,7 +71,8 @@ void EnumerationDyn<ZT, FT, CounterClass>::enumerate(int first, int last, FT &fm
   d = last - first;
   fx.resize(d);
   FPLLL_CHECK(d < this->maxdim, "enumerate: dimension is too high");
-  FPLLL_CHECK((solvingsvp || !this->dual), "CVP for dual not implemented! What does that even mean? ");
+  FPLLL_CHECK((solvingsvp || !this->dual),
+              "CVP for dual not implemented! What does that even mean? ");
   FPLLL_CHECK((subtree.empty() || !this->dual), "Subtree enumeration for dual not implemented!");
 
   this->resetflag = !this->_max_indices.empty();
@@ -161,16 +161,16 @@ void EnumerationDyn<ZT, FT, CounterClass>::enumerate(int first, int last, FT &fm
 }
 
 template <typename ZT, typename FT, typename CounterClass>
-void EnumerationDyn<ZT, FT, CounterClass>::prepare_enumeration(const vector<enumxt> &subtree, bool solvingsvp,
-                                                 bool subtree_reset)
+void EnumerationDyn<ZT, FT, CounterClass>::prepare_enumeration(const vector<enumxt> &subtree,
+                                                               bool solvingsvp, bool subtree_reset)
 {
   this->is_svp = solvingsvp;
-  auto& k = this->k;
-  auto& d = this->d;
-  auto& k_end = this->k_end;
+  auto &k      = this->k;
+  auto &d      = this->d;
+  auto &k_end  = this->k_end;
 
   enumf newdist = 0.0;
-  this->k_end         = d - subtree.size();
+  this->k_end   = d - subtree.size();
   for (k = d - 1; k >= 0 && newdist <= maxdist; --k)
   {
     enumf newcenter = this->center_partsum[k];
@@ -220,9 +220,10 @@ void EnumerationDyn<ZT, FT, CounterClass>::prepare_enumeration(const vector<enum
   ++k;
 }
 
-template <typename ZT, typename FT, typename CounterClass> void EnumerationDyn<ZT, FT, CounterClass>::set_bounds()
+template <typename ZT, typename FT, typename CounterClass>
+void EnumerationDyn<ZT, FT, CounterClass>::set_bounds()
 {
-  auto& d = this->d;
+  auto &d = this->d;
   if (pruning_bounds.empty())
   {
     fill(&this->partdistbounds[0] + 0, &this->partdistbounds[0] + d, maxdist);
@@ -234,10 +235,11 @@ template <typename ZT, typename FT, typename CounterClass> void EnumerationDyn<Z
   }
 }
 
-template <typename ZT, typename FT, typename CounterClass> void EnumerationDyn<ZT, FT, CounterClass>::process_solution(enumf newmaxdist)
+template <typename ZT, typename FT, typename CounterClass>
+void EnumerationDyn<ZT, FT, CounterClass>::process_solution(enumf newmaxdist)
 {
   FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << nodes << ")");
-  auto& d = this->d;
+  auto &d = this->d;
   for (int j = 0; j < d; ++j)
     fx[j] = this->x[j];
   _evaluator.eval_sol(fx, newmaxdist, maxdist);
@@ -248,7 +250,7 @@ template <typename ZT, typename FT, typename CounterClass> void EnumerationDyn<Z
 template <typename ZT, typename FT, typename CounterClass>
 void EnumerationDyn<ZT, FT, CounterClass>::process_subsolution(int offset, enumf newdist)
 {
-  auto& d = this->d;
+  auto &d = this->d;
   for (int j = 0; j < offset; ++j)
     fx[j] = 0.0;
   for (int j = offset; j < d; ++j)
@@ -256,15 +258,16 @@ void EnumerationDyn<ZT, FT, CounterClass>::process_subsolution(int offset, enumf
   _evaluator.eval_sub_sol(offset, fx, newdist);
 }
 
-template <typename ZT, typename FT, typename CounterClass> void EnumerationDyn<ZT, FT, CounterClass>::do_enumerate()
+template <typename ZT, typename FT, typename CounterClass>
+void EnumerationDyn<ZT, FT, CounterClass>::do_enumerate()
 {
 
   this->nodes_counter.reset();
   set_bounds();
-  auto dual = this->dual;
+  auto dual      = this->dual;
   auto resetflag = this->resetflag;
 
-  if (dual && _evaluator.findsubsols && !resetflag) 
+  if (dual && _evaluator.findsubsols && !resetflag)
     (*this).template enumerate_loop<true, true, false>();
   else if (!dual && _evaluator.findsubsols && !resetflag)
     (*this).template enumerate_loop<false, true, false>();
@@ -282,7 +285,6 @@ template class Enumeration<Z_NR<mpz_t>, FP_NR<double>, WholeTreeCounter>;
 template class Enumeration<Z_NR<mpz_t>, FP_NR<double>, LevelTreeCounter>;
 template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<double>, WholeTreeCounter>;
 template class EnumerationDyn<Z_NR<mpz_t>, FP_NR<double>, LevelTreeCounter>;
-
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class Enumeration<Z_NR<mpz_t>, FP_NR<long double>, WholeTreeCounter>;
@@ -321,8 +323,8 @@ template class EnumerationDyn<Z_NR<long>, FP_NR<double>, WholeTreeCounter>;
 template class EnumerationDyn<Z_NR<long>, FP_NR<double>, LevelTreeCounter>;
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-template class Enumeration<Z_NR<long>, FP_NR<long double>,WholeTreeCounter>;
-template class Enumeration<Z_NR<long>, FP_NR<long double>,LevelTreeCounter>; 
+template class Enumeration<Z_NR<long>, FP_NR<long double>, WholeTreeCounter>;
+template class Enumeration<Z_NR<long>, FP_NR<long double>, LevelTreeCounter>;
 template class EnumerationDyn<Z_NR<long>, FP_NR<long double>, WholeTreeCounter>;
 template class EnumerationDyn<Z_NR<long>, FP_NR<long double>, LevelTreeCounter>;
 #endif

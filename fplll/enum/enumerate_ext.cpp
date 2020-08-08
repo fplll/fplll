@@ -23,8 +23,6 @@
 
 FPLLL_BEGIN_NAMESPACE
 
-
-
 // set & get external enumerator (nullptr => disabled)
 #if FPLLL_MAX_PARALLEL_ENUM_DIM != 0
 std::function<extenum_fc_enumerate> fplll_extenum = enumlib::enumlib_enumerate;
@@ -40,8 +38,9 @@ void set_external_enumerator(std::function<extenum_fc_enumerate> extenum)
 std::function<extenum_fc_enumerate> get_external_enumerator() { return fplll_extenum; }
 
 template <typename ZT, typename FT, typename CounterClass>
-bool ExternalEnumeration<ZT, FT, CounterClass>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
-                                            const vector<enumf> &pruning, bool dual)
+bool ExternalEnumeration<ZT, FT, CounterClass>::enumerate(int first, int last, FT &fmaxdist,
+                                                          long fmaxdistexpo,
+                                                          const vector<enumf> &pruning, bool dual)
 {
   using namespace std::placeholders;
   if (fplll_extenum == nullptr)
@@ -70,7 +69,7 @@ bool ExternalEnumeration<ZT, FT, CounterClass>::enumerate(int first, int last, F
 
   _maxdist = fmaxdistnorm.get_d(GMP_RNDU);
   _evaluator.set_normexp(_normexp);
-  
+
   // clang-format off
   this->_nodes_counter = fplll_extenum(_d, _maxdist,
                          std::bind(&ExternalEnumeration<ZT,FT, CounterClass>::callback_set_config, this, _1, _2, _3, _4, _5),
@@ -83,8 +82,9 @@ bool ExternalEnumeration<ZT, FT, CounterClass>::enumerate(int first, int last, F
 }
 
 template <typename ZT, typename FT, typename CounterClass>
-void ExternalEnumeration<ZT, FT, CounterClass>::callback_set_config(enumf *mu, size_t mudim, bool mutranspose,
-                                                      enumf *rdiag, enumf *pruning)
+void ExternalEnumeration<ZT, FT, CounterClass>::callback_set_config(enumf *mu, size_t mudim,
+                                                                    bool mutranspose, enumf *rdiag,
+                                                                    enumf *pruning)
 {
 
   FT fr, fmu;
@@ -151,7 +151,8 @@ enumf ExternalEnumeration<ZT, FT, CounterClass>::callback_process_sol(enumf dist
 }
 
 template <typename ZT, typename FT, typename CounterClass>
-void ExternalEnumeration<ZT, FT, CounterClass>::callback_process_subsol(enumf dist, enumf *subsol, int offset)
+void ExternalEnumeration<ZT, FT, CounterClass>::callback_process_subsol(enumf dist, enumf *subsol,
+                                                                        int offset)
 {
   for (int i = 0; i < offset; ++i)
     _fx[i] = 0.0;

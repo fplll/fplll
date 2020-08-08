@@ -114,7 +114,10 @@ public:
 
   // get_nodes. This returns the number of nodes visited by the external enumeration process.
   // If this returns 0, then fplll will fall back to the internal enumerator.
-  inline typename CounterClassWrapper<CounterClass>::UnderlyingCounterType get_nodes() const { return _nodes_counter.get_nodes(); }
+  inline typename CounterClassWrapper<CounterClass>::UnderlyingCounterType get_nodes() const
+  {
+    return _nodes_counter.get_nodes();
+  }
 
 private:
   void callback_set_config(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag, enumf *pruning);
