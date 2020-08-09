@@ -142,17 +142,18 @@ public:
   // Copy constructor for an array input
   LevelTreeCounter(const UnderlyingCounterType &node_set) : _nodes{node_set} {}
   // Move constructor for an array input
-  LevelTreeCounter(const UnderlyingCounterType &&node_set)
-      : _nodes{std::move(node_set)} {}
+  LevelTreeCounter(const UnderlyingCounterType &&node_set) : _nodes{std::move(node_set)} {}
   // This returns the array containing the nodes on each level.
   inline UnderlyingCounterType get_nodes() const { return _nodes; }
   // This returns the total number of nodes in the tree.
-  inline UnderlyingIndividualType get_all_nodes() const { 
-      UnderlyingIndividualType total = 0;
-      for(unsigned i = 0; i < _nodes.size();i++) {
-          total+= _nodes[i];
-      }
-      return total;
+  inline UnderlyingIndividualType get_all_nodes() const
+  {
+    UnderlyingIndividualType total = 0;
+    for (unsigned i = 0; i < _nodes.size(); i++)
+    {
+      total += _nodes[i];
+    }
+    return total;
   }
 
   // This updates the number of nodes visited in the tree.
@@ -198,10 +199,7 @@ public:
   }
 
   // Reset. We simply clear the _nodes array and set the _total_nodes to 0.
-  inline void reset()
-  {
-    std::fill(std::begin(_nodes), std::end(_nodes), 0);
-  }
+  inline void reset() { std::fill(std::begin(_nodes), std::end(_nodes), 0); }
 
   // Similarly to WholeTreeCounter, we denote failure as ~uint64_t(0).
   inline bool is_valid() const { return _nodes[0] != ~uint64_t(0); }
