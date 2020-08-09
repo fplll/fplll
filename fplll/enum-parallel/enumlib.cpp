@@ -34,16 +34,16 @@ namespace enumlib
 
 using namespace std;
 
-uint64_t enumlib_enumerate(int dim, fplll::enumf maxdist,
-                           std::function<fplll::extenum_cb_set_config> cbfunc,
-                           std::function<fplll::extenum_cb_process_sol> cbsol,
-                           std::function<fplll::extenum_cb_process_subsol> cbsubsol, bool dual,
-                           bool findsubsols);
+extenum_return_type enumlib_enumerate(int dim, fplll::enumf maxdist,
+                                      std::function<fplll::extenum_cb_set_config> cbfunc,
+                                      std::function<fplll::extenum_cb_process_sol> cbsol,
+                                      std::function<fplll::extenum_cb_process_subsol> cbsubsol,
+                                      bool dual, bool findsubsols);
 
 #define ENUMFUNCNAME(DIM)                                                                          \
-  uint64_t enumerate##DIM(int, float_type, std::function<extenum_cb_set_config>,                   \
-                          std::function<extenum_cb_process_sol>,                                   \
-                          std::function<extenum_cb_process_subsol>, bool, bool);
+  extenum_return_type enumerate##DIM(int, float_type, std::function<extenum_cb_set_config>,        \
+                                     std::function<extenum_cb_process_sol>,                        \
+                                     std::function<extenum_cb_process_subsol>, bool, bool);
 
 #if 20 <= FPLLL_MAX_PARALLEL_ENUM_DIM
 ENUMFUNCNAME(20);
@@ -91,15 +91,17 @@ ENUMFUNCNAME(150);
 ENUMFUNCNAME(160);
 #endif
 
-uint64_t enumlib_enumerate(int dim, fplll_float maxdist,
-                           std::function<extenum_cb_set_config> cbfunc,
-                           std::function<extenum_cb_process_sol> cbsol,
-                           std::function<extenum_cb_process_subsol> cbsubsol, bool dual,
-                           bool findsubsols)
+extenum_return_type enumlib_enumerate(int dim, fplll_float maxdist,
+                                      std::function<extenum_cb_set_config> cbfunc,
+                                      std::function<extenum_cb_process_sol> cbsol,
+                                      std::function<extenum_cb_process_subsol> cbsubsol, bool dual,
+                                      bool findsubsols)
 {
   // dual svp enumeration not supported yet
   if (dim <= 10 || dual)
-    return ~uint64_t(0);
+  {
+    return InvalidCounterFactory::produce_invalid_entry<extenum_return_type>();
+  }
 
 #if 20 <= FPLLL_MAX_PARALLEL_ENUM_DIM
   if (dim <= 20)
@@ -161,7 +163,7 @@ uint64_t enumlib_enumerate(int dim, fplll_float maxdist,
   if (dim <= 160)
     return enumerate160(dim, maxdist, cbfunc, cbsol, cbsubsol, dual, findsubsols);
 #endif
-  return ~uint64_t(0);
+  return InvalidCounterFactory::produce_invalid_entry<extenum_return_type>();
 }
 
 }  // namespace enumlib

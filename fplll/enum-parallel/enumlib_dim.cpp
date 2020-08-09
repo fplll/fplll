@@ -43,10 +43,11 @@ template <int dimension> struct enumerate_traits
 };
 
 template <int dimension, bool findsubsols>
-uint64_t enumerate_dim_detail(int dim, float_type maxdist,
-                              std::function<extenum_cb_set_config> cb_set_config,
-                              std::function<extenum_cb_process_sol> cb_process_sol,
-                              std::function<extenum_cb_process_subsol> cb_process_subsol, bool dual)
+extenum_return_type enumerate_dim_detail(int dim, float_type maxdist,
+                                         std::function<extenum_cb_set_config> cb_set_config,
+                                         std::function<extenum_cb_process_sol> cb_process_sol,
+                                         std::function<extenum_cb_process_subsol> cb_process_subsol,
+                                         bool dual)
 {
   static const int SWIRLY          = enumerate_traits<dimension>::SWIRLY;
   static const int SWIRLY2BUF      = enumerate_traits<dimension>::SWIRLY2BUF;
@@ -77,18 +78,34 @@ uint64_t enumerate_dim_detail(int dim, float_type maxdist,
       }
     }
   }
-  uint64_t count = 0;
-  for (int j = 0; j <= dimension; ++j)
-    count += lat._counts[j];
+
+// If FPLLL ever switches to CPP17 or greater, replace this with a constexpr if.
+#ifdef EXTENUM_RT_IS_WHOLE_TREE
+  WholeTreeCounter::UnderlyingCounterType count{};
+  for (unsigned i = 0; i < dimension + 1; i++)
+  {
+    count += lat._counts[i];
+  }
   return count;
+#elif ifdef EXTENUM_RT_IS_LEVEL_TREE
+  LevelTreeCounter::UnderlyingCounterType count;
+  static_assert(count.size() >= dimension + 1,
+                "Warning: FPLLL_MAX_ENUM_DIM should be greater than FPLLL_MAX_PARALLEL_ENUM_DIM");
+  std::copy(std::begin(input), std::end(input), std::begin(count));
+  return count;
+#endif
+  cout << "[enumlib] Warning: The right macro hasn't been written for the return type of enumlib. "
+          "Returning an invalid entry."
+       << std::endl;
+  return InvalidCounterFactory::produce_invalid_entry<extenum_return_type>();
 }
 
 template <int dimension>
-uint64_t enumerate_dim(int dim, float_type maxdist,
-                       std::function<extenum_cb_set_config> cb_set_config,
-                       std::function<extenum_cb_process_sol> cb_process_sol,
-                       std::function<extenum_cb_process_subsol> cb_process_subsol, bool dual,
-                       bool findsubsols)
+extenum_return_type enumerate_dim(int dim, float_type maxdist,
+                                  std::function<extenum_cb_set_config> cb_set_config,
+                                  std::function<extenum_cb_process_sol> cb_process_sol,
+                                  std::function<extenum_cb_process_subsol> cb_process_subsol,
+                                  bool dual, bool findsubsols)
 {
   if (findsubsols)
     return enumerate_dim_detail<dimension, true>(dim, maxdist, cb_set_config, cb_process_sol,
@@ -109,11 +126,10 @@ uint64_t enumerate_dim(int dim, float_type maxdist,
                               dual, findsubsols);                                                  \
     break;
 
-uint64_t DIMFUNC(ENUMDIMENSION)(int dim, float_type maxdist,
-                                std::function<extenum_cb_set_config> cb_set_config,
-                                std::function<extenum_cb_process_sol> cb_process_sol,
-                                std::function<extenum_cb_process_subsol> cb_process_subsol,
-                                bool dual, bool findsubsols)
+extenum_return_type DIMFUNC(ENUMDIMENSION)(
+    int dim, float_type maxdist, std::function<extenum_cb_set_config> cb_set_config,
+    std::function<extenum_cb_process_sol> cb_process_sol,
+    std::function<extenum_cb_process_subsol> cb_process_subsol, bool dual, bool findsubsols)
 {
   static const int d = ENUMDIMENSION;
   switch (dim)
@@ -131,7 +147,7 @@ uint64_t DIMFUNC(ENUMDIMENSION)(int dim, float_type maxdist,
   }
 
   cout << "[enumlib] " << ENUMDIMENSION << ":" << dim << " wrong dimension!" << endl;
-  return ~uint64_t(0);
+  return InvalidCounterFactory::produce_invalid_entry<extenum_return_type>();
 }
 
 }  // namespace enumlib

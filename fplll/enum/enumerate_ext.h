@@ -69,6 +69,18 @@ typedef enumf(extenum_cb_process_sol)(enumf dist, enumf *sol);
  */
 typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
 
+/*
+ * This is the return type for the external enumerator.
+ * By default this is an array of counters, where each entry i counts the number of nodes visited at
+ * level i in the tree. Note: Whilst fplll remains with C++11, you will need to define an equivalent
+ * macro for your return type. Two of these are shown below. If fplll switches to C++17 then these
+ * can be replaced by constexpr ifs.
+ */
+
+using extenum_return_type = LevelTreeCounter::UnderlyingCounterType;
+#define EXTENUM_RT_IS_LEVEL_TREE
+//#define EXTENUM_RT_IS_WHOLE_TREE
+
 /**
  * External enumeration function prototype.
  *
@@ -85,11 +97,11 @@ typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
  *         in which case fplll falls back to its own enumeration.
  */
 
-typedef uint64_t(extenum_fc_enumerate)(const int dim, enumf maxdist,
-                                       std::function<extenum_cb_set_config> cbfunc,
-                                       std::function<extenum_cb_process_sol> cbsol,
-                                       std::function<extenum_cb_process_subsol> cbsubsol,
-                                       bool dual /*=false*/, bool findsubsols /*=false*/
+typedef extenum_return_type(extenum_fc_enumerate)(const int dim, enumf maxdist,
+                                                  std::function<extenum_cb_set_config> cbfunc,
+                                                  std::function<extenum_cb_process_sol> cbsol,
+                                                  std::function<extenum_cb_process_subsol> cbsubsol,
+                                                  bool dual /*=false*/, bool findsubsols /*=false*/
 );
 
 /* set & get external enumerator. If extenum = nullptr then this interface is disabled,
