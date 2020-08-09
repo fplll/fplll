@@ -137,39 +137,28 @@ public:
   using UnderlyingCounterType    = std::array<UnderlyingIndividualType, FPLLL_MAX_ENUM_DIM>;
 
   // Default, zero initialisation for the constructors
-  LevelTreeCounter() : _nodes{0}, _total_nodes{0} {}
-  LevelTreeCounter(const UnderlyingIndividualType total_nodes)
-      : _nodes{total_nodes}, _total_nodes{total_nodes * _nodes.size()}
-  {
-  }
+  LevelTreeCounter() : _nodes{} {}
+  LevelTreeCounter(const UnderlyingIndividualType total_nodes) : _nodes{} {}
   // Copy constructor for an array input
-  LevelTreeCounter(const UnderlyingCounterType &node_set) : _nodes{node_set}, _total_nodes{0}
-  {
-    for (unsigned i = 0; i < FPLLL_MAX_ENUM_DIM; i++)
-    {
-      _total_nodes += _nodes[i];
-    }
-  }
+  LevelTreeCounter(const UnderlyingCounterType &node_set) : _nodes{node_set} {}
   // Move constructor for an array input
   LevelTreeCounter(const UnderlyingCounterType &&node_set)
-      : _nodes{std::move(node_set)}, _total_nodes{0}
-  {
-    for (unsigned i = 0; i < FPLLL_MAX_ENUM_DIM; i++)
-    {
-      _total_nodes += _nodes[i];
-    }
-  }
-
+      : _nodes{std::move(node_set)} {}
   // This returns the array containing the nodes on each level.
   inline UnderlyingCounterType get_nodes() const { return _nodes; }
   // This returns the total number of nodes in the tree.
-  inline UnderlyingIndividualType get_all_nodes() const { return _total_nodes; }
+  inline UnderlyingIndividualType get_all_nodes() const { 
+      UnderlyingIndividualType total = 0;
+      for(unsigned i = 0; i < _nodes.size();i++) {
+          total+= _nodes[i];
+      }
+      return total;
+  }
 
   // This updates the number of nodes visited in the tree.
   inline void update_nodes_count(const unsigned int index, const uint64_t amount)
   {
     _nodes[index] += amount;
-    _total_nodes += amount;
   }
 
   // This is a copy assignment operator for the number of nodes in the tree.
@@ -187,14 +176,11 @@ public:
   // a += enum_obj.get_nodes();
   LevelTreeCounter &operator+=(const UnderlyingCounterType &value)
   {
-    // Reset the number of total nodes: we recompute this during the loop.
-    _total_nodes = 0;
     // Note: we use FPLLL_MAX_ENUM_DIM. This is safe because the counter type is defined with width
     // FPLLL_MAX_ENUM. A sensible compiler should unroll this loop.
     for (unsigned i = 0; i < FPLLL_MAX_ENUM_DIM; i++)
     {
       _nodes[i] += value[i];
-      _total_nodes += _nodes[i];
     }
     return *this;
   }
@@ -208,7 +194,6 @@ public:
     {
       _nodes[i] += value._nodes[i];
     }
-    _total_nodes += value._total_nodes;
     return *this;
   }
 
@@ -216,15 +201,13 @@ public:
   inline void reset()
   {
     std::fill(std::begin(_nodes), std::end(_nodes), 0);
-    _total_nodes = 0;
   }
 
   // Similarly to WholeTreeCounter, we denote failure as ~uint64_t(0).
-  inline bool is_valid() const { return _total_nodes != ~uint64_t(0); }
+  inline bool is_valid() const { return _nodes[0] != ~uint64_t(0); }
 
 private:
   UnderlyingCounterType _nodes;
-  UnderlyingIndividualType _total_nodes;
 };
 
 /***
