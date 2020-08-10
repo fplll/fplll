@@ -33,7 +33,7 @@ public:
   // This returns the array containing the nodes on each level.
   inline UnderlyingCounterType get_nodes() const { return _nodes; }
   // This returns the total number of nodes in the tree.
-  inline UnderlyingIndividualType get_all_nodes() const
+  inline UnderlyingIndividualType get_total_nodes() const
   {
     UnderlyingIndividualType total = 0;
     for (unsigned i = 0; i < _nodes.size(); i++)
