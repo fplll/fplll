@@ -30,9 +30,6 @@ public:
 
   // Default, zero initialisation for the constructors
   LevelTreeCounter() : _nodes{} {}
-  LevelTreeCounter(const UnderlyingIndividualType total_nodes) : _nodes{} {}
-  // Move constructor for an array input
-  LevelTreeCounter(const UnderlyingCounterType &&node_set) : _nodes{std::move(node_set)} {}
   // This returns the array containing the nodes on each level.
   inline UnderlyingCounterType get_nodes() const { return _nodes; }
   // This returns the total number of nodes in the tree.
@@ -96,7 +93,7 @@ public:
   inline void invalidate() { _nodes[0] = ~uint64_t(0); }
   constexpr static UnderlyingCounterType produce_invalid_entry()
   {
-    return UnderlyingCounterType{~uint64_t(0)};
+    return UnderlyingCounterType{{~uint64_t(0)}};
   }
 
 private:
