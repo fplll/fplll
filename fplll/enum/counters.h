@@ -4,9 +4,7 @@
 #include "fplll/fplll_config.h"
 #include "fplll/nr/nr.h"
 #include <array>
-#include <cfenv>
 #include <cmath>
-#include <vector>
 
 /***
  * This file contains the implementations of all of the various counters for the enumeration
@@ -20,11 +18,6 @@ FPLLL_BEGIN_NAMESPACE
  * level on the tree. The structure of this class is the following: we keep an array in this object
  * that is indexed by the level. For example, if the current level k is k, then the number of nodes
  * visited at level k can be found in _nodes[k].
- *
- * We also keep a track of a memoised quantity, _total_nodes. This keeps track of the sum of the
- * elements in the array in total. This is done so that we don't need to add all of the elements in
- * the array every time we want to ascertain the total number of nodes that were visited during
- * enumeration.
  */
 class LevelTreeCounter
 {
@@ -38,6 +31,8 @@ public:
   // Default, zero initialisation for the constructors
   LevelTreeCounter() : _nodes{} {}
   LevelTreeCounter(const UnderlyingIndividualType total_nodes) : _nodes{} {}
+  // Move constructor for an array input
+  LevelTreeCounter(const UnderlyingCounterType &&node_set) : _nodes{std::move(node_set)} {}
   // This returns the array containing the nodes on each level.
   inline UnderlyingCounterType get_nodes() const { return _nodes; }
   // This returns the total number of nodes in the tree.
@@ -227,17 +222,6 @@ template <> constexpr WholeTreeCounter::UnderlyingCounterType produce_invalid_en
   return WholeTreeCounter::produce_invalid_entry();
 }
 
-template <typename in_data_type, std::size_t array_size>
-WholeTreeCounter::UnderlyingCounterType
-convert_array_counter_to_extenum_rt(const std::array<in_data_type, array_size> &input)
-{
-  WholeTreeCounter::UnderlyingCounterType count{};
-  for (unsigned i = 0; i < array_size; i++)
-  {
-    count += input[i];
-  }
-  return count;
-}
 }  // namespace InvalidCounterFactory
 
 /***

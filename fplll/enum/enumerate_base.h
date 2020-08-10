@@ -19,7 +19,7 @@
 #ifndef FPLLL_ENUMERATE_BASE_H
 #define FPLLL_ENUMERATE_BASE_H
 
-#include "counters.h"
+#include "fplll/enum/counters.h"
 #include "fplll/fplll_config.h"
 #include "fplll/nr/nr.h"
 #include <array>
