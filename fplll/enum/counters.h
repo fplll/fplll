@@ -38,10 +38,6 @@ public:
   // Default, zero initialisation for the constructors
   LevelTreeCounter() : _nodes{} {}
   LevelTreeCounter(const UnderlyingIndividualType total_nodes) : _nodes{} {}
-  // Copy constructor for an array input
-  LevelTreeCounter(const UnderlyingCounterType &node_set) : _nodes{node_set} {}
-  // Move constructor for an array input
-  LevelTreeCounter(const UnderlyingCounterType &&node_set) : _nodes{std::move(node_set)} {}
   // This returns the array containing the nodes on each level.
   inline UnderlyingCounterType get_nodes() const { return _nodes; }
   // This returns the total number of nodes in the tree.
