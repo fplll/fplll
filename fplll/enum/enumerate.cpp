@@ -238,7 +238,7 @@ void EnumerationDyn<ZT, FT, CounterClass>::set_bounds()
 template <typename ZT, typename FT, typename CounterClass>
 void EnumerationDyn<ZT, FT, CounterClass>::process_solution(enumf newmaxdist)
 {
-  FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << nodes << ")");
+  FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << this->nodes_counter.get_total_nodes() << ")");
   auto &d = this->d;
   for (int j = 0; j < d; ++j)
     fx[j] = this->x[j];
