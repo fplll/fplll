@@ -66,7 +66,7 @@ public:
   using UnderlyingCounterType    = std::array<UnderlyingIndividualType, FPLLL_MAX_ENUM_DIM>;
 
   // Default, zero initialisation for the constructors
-  LevelTreeCounter() : _nodes{} {}
+  inline LevelTreeCounter() : _nodes{} {}
   // This returns the array containing the nodes on each level.
   inline UnderlyingCounterType get_nodes() const { return _nodes; }
   // This returns the total number of nodes in the tree.
@@ -88,18 +88,27 @@ public:
 
   // This is a copy assignment operator for the number of nodes in the tree.
   // In this instance, this is an array copy.
-  LevelTreeCounter &operator=(const UnderlyingCounterType &value)
+  inline LevelTreeCounter &operator=(const UnderlyingCounterType &value)
   {
     _nodes = value;
     return *this;
   }
+
+  inline bool operator==(const UnderlyingCounterType value) { return _nodes == value; }
+
+  inline bool operator==(const UnderlyingIndividualType value)
+  {
+    return is_valid() && get_total_nodes() == value;
+  }
+
+  inline bool operator!=(const UnderlyingIndividualType value) { return !(*this == value); }
 
   // These operators add an array and another LevelTreeCounter to this tree counter.
   // Usage: in this instance we'd have the following.
   // LevelTreeCounter a;
   // ....
   // a += enum_obj.get_nodes();
-  LevelTreeCounter &operator+=(const UnderlyingCounterType &value)
+  inline LevelTreeCounter &operator+=(const UnderlyingCounterType &value)
   {
     // Note: we use FPLLL_MAX_ENUM_DIM. This is safe because the counter type is defined with width
     // FPLLL_MAX_ENUM. A sensible compiler should unroll this loop.
@@ -113,7 +122,7 @@ public:
   // LevelTreeCounter a = .....
   // LevelTreeCounter b = .....
   // a += b;
-  LevelTreeCounter &operator+=(const LevelTreeCounter &value)
+  inline LevelTreeCounter &operator+=(const LevelTreeCounter &value)
   {
     for (unsigned i = 0; i < FPLLL_MAX_ENUM_DIM; i++)
     {
@@ -128,7 +137,7 @@ public:
   // Similarly to WholeTreeCounter, we denote failure as ~uint64_t(0).
   inline bool is_valid() const { return _nodes[0] != ~uint64_t(0); }
   inline void invalidate() { _nodes[0] = ~uint64_t(0); }
-  constexpr static UnderlyingCounterType produce_invalid_entry()
+  inline constexpr static UnderlyingCounterType produce_invalid_entry()
   {
     return UnderlyingCounterType{{~uint64_t(0)}};
   }
@@ -154,7 +163,7 @@ public:
   using UnderlyingIndividualType = uint64_t;
   using UnderlyingCounterType    = UnderlyingIndividualType;
 
-  WholeTreeCounter(UnderlyingCounterType starting_count = 0) : _nodes{starting_count} {}
+  inline WholeTreeCounter(UnderlyingCounterType starting_count = 0) : _nodes{starting_count} {}
 
   // This is a getter method that is typically called from the outside world.
   inline UnderlyingCounterType get_nodes() const { return _nodes; }
@@ -169,7 +178,7 @@ public:
 
   // We provide an equals operator here for copying.
   // We accept a copy: we're only copying 64 bits at a time, and so doing so is cheap.
-  WholeTreeCounter &operator=(const UnderlyingCounterType value)
+  inline WholeTreeCounter &operator=(const UnderlyingCounterType value)
   {
     _nodes = value;
     return *this;
@@ -177,13 +186,13 @@ public:
 
   // This is an override for the += operator: this method just operates on the underlying type
   // directly.
-  WholeTreeCounter &operator+=(const UnderlyingCounterType &value)
+  inline WholeTreeCounter &operator+=(const UnderlyingCounterType &value)
   {
     _nodes += value;
     return *this;
   }
 
-  WholeTreeCounter &operator+=(const LevelTreeCounter::UnderlyingCounterType &value)
+  inline WholeTreeCounter &operator+=(const LevelTreeCounter::UnderlyingCounterType &value)
   {
     // If valid, add up the entries
     for (unsigned i = 0; i < value.size(); i++)
@@ -194,7 +203,7 @@ public:
     return *this;
   }
 
-  WholeTreeCounter &operator=(const LevelTreeCounter::UnderlyingCounterType &value)
+  inline WholeTreeCounter &operator=(const LevelTreeCounter::UnderlyingCounterType &value)
   {
     _nodes = 0;
     for (unsigned i = 0; i < value.size(); i++)
@@ -206,11 +215,15 @@ public:
 
   // This is an override for the += operator: here we accept another WholeTreecounter, which we just
   // add to our own counter.
-  WholeTreeCounter &operator+=(const WholeTreeCounter &value)
+  inline WholeTreeCounter &operator+=(const WholeTreeCounter &value)
   {
     _nodes += value._nodes;
     return *this;
   }
+
+  inline bool operator==(const UnderlyingCounterType value) { return _nodes == value; }
+
+  inline bool operator!=(const UnderlyingCounterType value) { return !(*this == value); }
 
   // This resets the number of nodes in the tree to 0.
   inline void reset() { _nodes = 0; }
@@ -220,7 +233,7 @@ public:
 
   // This method tells us if the value in the counter is valid.
   inline bool is_valid() const { return _nodes != ~uint64_t(0); }
-  constexpr static UnderlyingCounterType produce_invalid_entry() { return ~uint64_t(0); }
+  inline constexpr static UnderlyingCounterType produce_invalid_entry() { return ~uint64_t(0); }
 
 private:
   // This is the underlying counter for the number of nodes in the tree.
@@ -322,6 +335,14 @@ public:
     return *this;
   }
 
+  bool operator==(const UnderlyingCounterType &value) { return base_counter == value; }
+
+  template <typename = std::enable_if<
+                std::is_same<UnderlyingCounterType, UnderlyingIndividualType>::value>>
+  bool operator==(const UnderlyingIndividualType &value)
+  {
+    return base_counter == value;
+  }
   inline void reset() { base_counter.reset(); }
 
   inline bool is_valid() { return base_counter.is_valid(); }

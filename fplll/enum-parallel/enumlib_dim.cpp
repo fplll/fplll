@@ -87,13 +87,16 @@ extenum_return_type enumerate_dim_detail(int dim, float_type maxdist,
     count += lat._counts[i];
   }
   return count;
-#elif ifdef EXTENUM_RT_IS_LEVEL_TREE
+#else
+#ifdef EXTENUM_RT_IS_LEVEL_TREE
   LevelTreeCounter::UnderlyingCounterType count;
   static_assert(count.size() >= dimension + 1,
                 "Warning: FPLLL_MAX_ENUM_DIM should be greater than FPLLL_MAX_PARALLEL_ENUM_DIM");
-  std::copy(std::begin(input), std::end(input), std::begin(count));
+  std::copy(std::begin(lat._counts), std::end(lat._counts), std::begin(count));
   return count;
 #endif
+#endif
+
   cout << "[enumlib] Warning: The right macro hasn't been written for the return type of enumlib. "
           "Returning an invalid entry."
        << std::endl;

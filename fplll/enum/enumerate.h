@@ -80,6 +80,8 @@ public:
   }
 
   using UnderlyingCounterType = typename CounterClassWrapper<CounterClass>::UnderlyingCounterType;
+  using UnderlyingIndividualType =
+      typename CounterClassWrapper<CounterClass>::UnderlyingIndividualType;
 
   void enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
                  const vector<FT> &target_coord = vector<FT>(),
@@ -108,6 +110,10 @@ public:
   }
 
   inline UnderlyingCounterType get_nodes() const { return _nodes_counter.get_nodes(); }
+  inline UnderlyingIndividualType get_total_nodes() const
+  {
+    return _nodes_counter.get_total_nodes();
+  }
 
 private:
   MatGSOInterface<ZT, FT> &_gso;

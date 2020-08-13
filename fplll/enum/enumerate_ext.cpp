@@ -163,6 +163,7 @@ void ExternalEnumeration<ZT, FT, CounterClass>::callback_process_subsol(enumf di
 
 template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<double>, WholeTreeCounter>;
 template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<double>, LevelTreeCounter>;
+
 #ifdef FPLLL_WITH_LONG_DOUBLE
 template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<long double>, WholeTreeCounter>;
 template class ExternalEnumeration<Z_NR<mpz_t>, FP_NR<long double>, LevelTreeCounter>;
