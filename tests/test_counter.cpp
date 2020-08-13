@@ -66,6 +66,7 @@ template <class FT> int test_enum(size_t d)
   // Here we just duplicate everything to prevent any interactions.
   FastEvaluator<FP_NR<FT>> evaluator;
   FastEvaluator<FP_NR<FT>> evaluator2;
+
   Enumeration<Z_NR<mpz_t>, FP_NR<FT>, WholeTreeCounter> enum_obj(M, evaluator);
   Enumeration<Z_NR<mpz_t>, FP_NR<FT>, LevelTreeCounter> enum_obj2(M, evaluator2);
 
@@ -75,6 +76,7 @@ template <class FT> int test_enum(size_t d)
   max_dist *= 0.99;
   enum_obj.enumerate(0, d, max_dist, 0);
   enum_obj2.enumerate(0, d, max_dist, 0);
+
   // Here we assume enumeration works, and we only care that their nodes are the same
   // across two different counters
   return enum_obj.get_total_nodes() != enum_obj2.get_total_nodes();

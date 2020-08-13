@@ -89,7 +89,7 @@ extenum_return_type enumerate_dim_detail(int dim, float_type maxdist,
   return count;
 #else
 #ifdef EXTENUM_RT_IS_LEVEL_TREE
-  LevelTreeCounter::UnderlyingCounterType count;
+  LevelTreeCounter::UnderlyingCounterType count{};
   static_assert(count.size() >= dimension + 1,
                 "Warning: FPLLL_MAX_ENUM_DIM should be greater than FPLLL_MAX_PARALLEL_ENUM_DIM");
   std::copy(std::begin(lat._counts), std::end(lat._counts), std::begin(count));
