@@ -24,6 +24,7 @@
 #include <array>
 #include <cfenv>
 #include <cmath>
+#include <numeric>
 #include <vector>
 
 FPLLL_BEGIN_NAMESPACE
@@ -56,7 +57,15 @@ class EnumerationBase
 public:
   static const int maxdim = FPLLL_MAX_ENUM_DIM;
 
-  inline uint64_t get_nodes() const { return nodes; }
+  inline uint64_t get_nodes(const int level = -1) const
+  {
+    if (level == -1)
+    {
+      return std::accumulate(nodes.begin(), nodes.end(), 0);
+    }
+
+    return nodes[level];
+  }
   virtual ~EnumerationBase() {}
 
 protected:
@@ -88,7 +97,7 @@ protected:
   bool finished;
 
   /* nodes count */
-  uint64_t nodes;
+  array<uint64_t, maxdim> nodes;
 
   template <int kk, int kk_start, bool dualenum, bool findsubsols, bool enable_reset> struct opts
   {

@@ -77,7 +77,7 @@ bool ExternalEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, l
                _dual, _evaluator.findsubsols
                );
   // clang-format on
-  return _nodes != ~uint64_t(0);
+  return _nodes[0] != ~uint64_t(0);
 }
 
 template <typename ZT, typename FT>

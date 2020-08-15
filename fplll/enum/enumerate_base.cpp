@@ -30,7 +30,7 @@ inline void EnumerationBase::enumerate_recursive(
 
   if (!(newdist <= partdistbounds[kk]))
     return;
-  ++nodes;
+  ++nodes[kk];
 
   alpha[kk] = alphak;
   if (findsubsols && newdist < subsoldists[kk] && newdist != 0.0)
@@ -87,7 +87,7 @@ inline void EnumerationBase::enumerate_recursive(
       enumf newdist2 = partdist[kk] + alphak2 * alphak2 * rdiag[kk];
       if (!(newdist2 <= partdistbounds[kk]))
         return;
-      ++nodes;
+      ++nodes[kk];
       alpha[kk] = alphak2;
       if (kk == 0)
       {
@@ -118,7 +118,7 @@ inline void EnumerationBase::enumerate_recursive(
       enumf newdist2 = partdist[kk] + alphak2 * alphak2 * rdiag[kk];
       if (!(newdist2 <= partdistbounds[kk]))
         return;
-      ++nodes;
+      ++nodes[kk];
       alpha[kk] = alphak2;
       if (kk == 0)
       {
@@ -190,7 +190,7 @@ template <bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBa
 
   partdist[k_end] = 0.0;  // needed to make next_pos_up() work properly
 
-  nodes -= k_end - k;
+  nodes[k_end] -= k_end - k;
   k = k_end - 1;
 
 #ifdef FPLLL_WITH_RECURSIVE_ENUM
@@ -207,7 +207,7 @@ template <bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBa
                            << " newdist=" << newdist << " partdistbounds_k=" << partdistbounds[k]);
     if (newdist <= partdistbounds[k])
     {
-      ++nodes;
+      ++nodes[k];
       alpha[k] = alphak;
       if (findsubsols && newdist < subsoldists[k] && newdist != 0.0)
       {

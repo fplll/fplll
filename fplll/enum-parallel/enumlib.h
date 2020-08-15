@@ -33,11 +33,10 @@ FPLLL_BEGIN_NAMESPACE
 namespace enumlib
 {
 
-uint64_t enumlib_enumerate(int dim, ::fplll::enumf maxdist,
-                           std::function<::fplll::extenum_cb_set_config> cbfunc,
-                           std::function<::fplll::extenum_cb_process_sol> cbsol,
-                           std::function<::fplll::extenum_cb_process_subsol> cbsubsol, bool dual,
-                           bool findsubsols);
+array<uint64_t, FPLLL_MAX_ENUM_DIM> enumlib_enumerate(
+    int dim, ::fplll::enumf maxdist, std::function<::fplll::extenum_cb_set_config> cbfunc,
+    std::function<::fplll::extenum_cb_process_sol> cbsol,
+    std::function<::fplll::extenum_cb_process_subsol> cbsubsol, bool dual, bool findsubsols);
 
 }  // namespace enumlib
 
