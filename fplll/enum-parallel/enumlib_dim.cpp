@@ -81,7 +81,7 @@ enumerate_dim_detail(int dim, float_type maxdist,
   static_assert(FPLLL_MAX_ENUM_DIM > dimension,
                 "The maximum enumeration dimension needs to be bigger than, or equal to, the "
                 "parallel enumeration dim");
-  array<uint64_t, FPLLL_MAX_ENUM_DIM> arr;
+  array<uint64_t, FPLLL_MAX_ENUM_DIM> arr{};
   std::copy(lat._counts.cbegin(), lat._counts.cend(), arr.begin());
   return arr;
 }
@@ -133,7 +133,7 @@ array<uint64_t, FPLLL_MAX_ENUM_DIM> DIMFUNC(ENUMDIMENSION)(
   }
 
   cout << "[enumlib] " << ENUMDIMENSION << ":" << dim << " wrong dimension!" << endl;
-  array<uint64_t, FPLLL_MAX_ENUM_DIM> arr;
+  array<uint64_t, FPLLL_MAX_ENUM_DIM> arr{};
   arr[0] = ~uint64_t(0);
   return arr;
 }

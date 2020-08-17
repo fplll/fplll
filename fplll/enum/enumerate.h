@@ -117,6 +117,8 @@ public:
     return _nodes[level];
   }
 
+  inline array<uint64_t, EnumerationBase::maxdim> get_nodes_array() const { return _nodes; }
+
 private:
   MatGSOInterface<ZT, FT> &_gso;
   Evaluator<FT> &_evaluator;
