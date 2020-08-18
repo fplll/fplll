@@ -19,8 +19,7 @@ template <class FT> int test_enum(size_t d)
   max_dist *= 0.99;
   enum_obj.enumerate(0, d, max_dist, 0);
   int status = 0;
-  // Check that we haven't overwritten beyond our bounds
-  status |= (enum_obj.get_nodes(d + 1) != 0);
+
   // Check that we haven't screwed up the sum
   const auto a   = enum_obj.get_nodes_array();
   uint64_t total = 0;
@@ -30,6 +29,13 @@ template <class FT> int test_enum(size_t d)
   }
 
   status |= (total != enum_obj.get_nodes());
+
+  // Check that we haven't overwritten beyond our bounds
+  for (unsigned int i = d + 1; i < a.size(); i++)
+  {
+    status |= (enum_obj.get_nodes(i) != 0);
+  }
+
   return status;
 }
 
