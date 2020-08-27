@@ -190,7 +190,25 @@ template <bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBa
 
   partdist[k_end] = 0.0;  // needed to make next_pos_up() work properly
 
-  nodes[k_end] -= k_end - k;
+  /* The next few lines provide compatibility between the various different enumerators in fplll.
+   * Because the recursive enumerator needs to start at one level down from the last position, we
+   * decrement it. However, this has the tendency of screwing up the node count by a factor of k
+   * (which, although asymptotically shouldn't matter, practically it will). In particular, it has
+   * the property of meaning we count an extra node per level (in k+1....k_end-1) in the initial
+   * descent. You can think of this as fplll just Babai lifting from k_end->k. However, clearly this
+   * may screw up the total - so we adjust this. For more info, see
+   * https://github.com/fplll/fplll/pull/442.
+   *
+   * Note: this adjustment does no checks on the nodes array. This will cause wrap arounds if the
+   * values are 0. But, adding to these later will reset them, so this should  not matter in
+   * practice.
+   */
+
+  for (int i = k + 1; i < k_end; i++)
+  {
+    nodes[i]--;
+  }
+
   k = k_end - 1;
 
 #ifdef FPLLL_WITH_RECURSIVE_ENUM
