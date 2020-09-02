@@ -230,7 +230,7 @@ template <typename ZT, typename FT> void EnumerationDyn<ZT, FT>::set_bounds()
 
 template <typename ZT, typename FT> void EnumerationDyn<ZT, FT>::process_solution(enumf newmaxdist)
 {
-  FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << nodes << ")");
+  FPLLL_TRACE("Sol dist: " << newmaxdist << " (nodes:" << get_nodes() << ")");
   for (int j = 0; j < d; ++j)
     fx[j] = x[j];
   _evaluator.eval_sol(fx, newmaxdist, maxdist);
@@ -250,7 +250,7 @@ void EnumerationDyn<ZT, FT>::process_subsolution(int offset, enumf newdist)
 
 template <typename ZT, typename FT> void EnumerationDyn<ZT, FT>::do_enumerate()
 {
-  nodes = 0;
+  std::fill(nodes.begin(), nodes.end(), 0);
 
   set_bounds();
 

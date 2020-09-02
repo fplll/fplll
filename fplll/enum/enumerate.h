@@ -36,6 +36,7 @@ public:
       : _gso(gso), _evaluator(evaluator)
   {
     _max_indices = max_indices;
+    std::fill(nodes.begin(), nodes.end(), 0);
   }
 
   void enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
@@ -44,7 +45,16 @@ public:
                  const vector<enumf> &pruning = vector<enumf>(), bool dual = false,
                  bool subtree_reset = false);
 
-  inline uint64_t get_nodes() const { return nodes; }
+  inline uint64_t get_nodes(const int level = -1) const
+  {
+    if (level == -1)
+    {
+      return std::accumulate(nodes.cbegin(), nodes.cend(), 0);
+    }
+    return nodes[level];
+  }
+
+  inline array<uint64_t, FPLLL_MAX_ENUM_DIM> get_nodes_array() { return nodes; }
 
 private:
   MatGSOInterface<ZT, FT> &_gso;
@@ -70,7 +80,7 @@ template <typename ZT, typename FT> class Enumeration
 public:
   Enumeration(MatGSOInterface<ZT, FT> &gso, Evaluator<FT> &evaluator,
               const vector<int> &max_indices = vector<int>())
-      : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr), _nodes(0)
+      : _gso(gso), _evaluator(evaluator), _max_indices(max_indices), enumdyn(nullptr), _nodes{}
   {
   }
 
@@ -87,7 +97,7 @@ public:
         enumext.reset(new ExternalEnumeration<ZT, FT>(_gso, _evaluator));
       if (enumext->enumerate(first, last, fmaxdist, fmaxdistexpo, pruning, dual))
       {
-        _nodes = enumext->get_nodes();
+        _nodes = enumext->get_nodes_array();
         return;
       }
     }
@@ -97,10 +107,17 @@ public:
       enumdyn.reset(new EnumerationDyn<ZT, FT>(_gso, _evaluator, _max_indices));
     enumdyn->enumerate(first, last, fmaxdist, fmaxdistexpo, target_coord, subtree, pruning, dual,
                        subtree_reset);
-    _nodes = enumdyn->get_nodes();
+    _nodes = enumdyn->get_nodes_array();
   }
 
-  inline uint64_t get_nodes() const { return _nodes; }
+  inline uint64_t get_nodes(const int level = -1) const
+  {
+    if (level == -1)
+      return std::accumulate(_nodes.begin(), _nodes.end(), 0);
+    return _nodes[level];
+  }
+
+  inline array<uint64_t, EnumerationBase::maxdim> get_nodes_array() const { return _nodes; }
 
 private:
   MatGSOInterface<ZT, FT> &_gso;
@@ -108,7 +125,7 @@ private:
   vector<int> _max_indices;
   std::unique_ptr<EnumerationDyn<ZT, FT>> enumdyn;
   std::unique_ptr<ExternalEnumeration<ZT, FT>> enumext;
-  uint64_t _nodes;
+  array<uint64_t, EnumerationBase::maxdim> _nodes;
 };
 
 FPLLL_END_NAMESPACE

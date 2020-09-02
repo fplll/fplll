@@ -43,10 +43,11 @@ template <int dimension> struct enumerate_traits
 };
 
 template <int dimension, bool findsubsols>
-uint64_t enumerate_dim_detail(int dim, float_type maxdist,
-                              std::function<extenum_cb_set_config> cb_set_config,
-                              std::function<extenum_cb_process_sol> cb_process_sol,
-                              std::function<extenum_cb_process_subsol> cb_process_subsol, bool dual)
+array<uint64_t, FPLLL_MAX_ENUM_DIM>
+enumerate_dim_detail(int dim, float_type maxdist,
+                     std::function<extenum_cb_set_config> cb_set_config,
+                     std::function<extenum_cb_process_sol> cb_process_sol,
+                     std::function<extenum_cb_process_subsol> cb_process_subsol, bool dual)
 {
   static const int SWIRLY          = enumerate_traits<dimension>::SWIRLY;
   static const int SWIRLY2BUF      = enumerate_traits<dimension>::SWIRLY2BUF;
@@ -77,18 +78,20 @@ uint64_t enumerate_dim_detail(int dim, float_type maxdist,
       }
     }
   }
-  uint64_t count = 0;
-  for (int j = 0; j <= dimension; ++j)
-    count += lat._counts[j];
-  return count;
+  static_assert(FPLLL_MAX_ENUM_DIM > dimension,
+                "The maximum enumeration dimension needs to be bigger than, or equal to, the "
+                "parallel enumeration dim");
+  array<uint64_t, FPLLL_MAX_ENUM_DIM> arr{};
+  std::copy(lat._counts.cbegin(), lat._counts.cend(), arr.begin());
+  return arr;
 }
 
 template <int dimension>
-uint64_t enumerate_dim(int dim, float_type maxdist,
-                       std::function<extenum_cb_set_config> cb_set_config,
-                       std::function<extenum_cb_process_sol> cb_process_sol,
-                       std::function<extenum_cb_process_subsol> cb_process_subsol, bool dual,
-                       bool findsubsols)
+array<uint64_t, FPLLL_MAX_ENUM_DIM>
+enumerate_dim(int dim, float_type maxdist, std::function<extenum_cb_set_config> cb_set_config,
+              std::function<extenum_cb_process_sol> cb_process_sol,
+              std::function<extenum_cb_process_subsol> cb_process_subsol, bool dual,
+              bool findsubsols)
 {
   if (findsubsols)
     return enumerate_dim_detail<dimension, true>(dim, maxdist, cb_set_config, cb_process_sol,
@@ -109,11 +112,10 @@ uint64_t enumerate_dim(int dim, float_type maxdist,
                               dual, findsubsols);                                                  \
     break;
 
-uint64_t DIMFUNC(ENUMDIMENSION)(int dim, float_type maxdist,
-                                std::function<extenum_cb_set_config> cb_set_config,
-                                std::function<extenum_cb_process_sol> cb_process_sol,
-                                std::function<extenum_cb_process_subsol> cb_process_subsol,
-                                bool dual, bool findsubsols)
+array<uint64_t, FPLLL_MAX_ENUM_DIM> DIMFUNC(ENUMDIMENSION)(
+    int dim, float_type maxdist, std::function<extenum_cb_set_config> cb_set_config,
+    std::function<extenum_cb_process_sol> cb_process_sol,
+    std::function<extenum_cb_process_subsol> cb_process_subsol, bool dual, bool findsubsols)
 {
   static const int d = ENUMDIMENSION;
   switch (dim)
@@ -131,7 +133,9 @@ uint64_t DIMFUNC(ENUMDIMENSION)(int dim, float_type maxdist,
   }
 
   cout << "[enumlib] " << ENUMDIMENSION << ":" << dim << " wrong dimension!" << endl;
-  return ~uint64_t(0);
+  array<uint64_t, FPLLL_MAX_ENUM_DIM> arr{};
+  arr[0] = ~uint64_t(0);
+  return arr;
 }
 
 }  // namespace enumlib

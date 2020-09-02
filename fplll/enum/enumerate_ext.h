@@ -84,11 +84,10 @@ typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
  *         Or ~uint64_t(0) when instance is not supported
  *         in which case fplll falls back to its own enumeration.
  */
-typedef uint64_t(extenum_fc_enumerate)(const int dim, enumf maxdist,
-                                       std::function<extenum_cb_set_config> cbfunc,
-                                       std::function<extenum_cb_process_sol> cbsol,
-                                       std::function<extenum_cb_process_subsol> cbsubsol,
-                                       bool dual /*=false*/, bool findsubsols /*=false*/
+typedef array<uint64_t, FPLLL_MAX_ENUM_DIM>(extenum_fc_enumerate)(
+    const int dim, enumf maxdist, std::function<extenum_cb_set_config> cbfunc,
+    std::function<extenum_cb_process_sol> cbsol, std::function<extenum_cb_process_subsol> cbsubsol,
+    bool dual /*=false*/, bool findsubsols /*=false*/
 );
 
 /* set & get external enumerator. If extenum = nullptr then this interface is disabled,
@@ -112,7 +111,16 @@ public:
 
   // get_nodes. This returns the number of nodes visited by the external enumeration process.
   // If this returns 0, then fplll will fall back to the internal enumerator.
-  inline uint64_t get_nodes() const { return _nodes; }
+  inline uint64_t get_nodes(const int level = -1) const
+  {
+    if (level == -1)
+    {
+      return std::accumulate(_nodes.begin(), _nodes.end(), 0);
+    }
+    return _nodes[level];
+  }
+
+  inline array<uint64_t, FPLLL_MAX_ENUM_DIM> get_nodes_array() const { return _nodes; }
 
 private:
   void callback_set_config(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag, enumf *pruning);
@@ -126,7 +134,7 @@ private:
   vector<enumf> _pruning;
   long _normexp;
 
-  uint64_t _nodes;
+  array<uint64_t, FPLLL_MAX_ENUM_DIM> _nodes;
   bool _dual;
   int _d, _first;
   enumf _maxdist;
