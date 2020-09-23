@@ -279,7 +279,7 @@ The options are:
 
 ## How to use as a library ##
 
-See [API documentation](https://fplll.github.io/fplll/).
+See [API documentation](https://fplll.github.io/fplll/annotated.html) and [tests](https://github.com/fplll/fplll/tree/master/tests) as a source of examples.
 
 ## Multicore support ##
 
