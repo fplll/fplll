@@ -19,7 +19,7 @@
 #include "enumerate_base.h"
 
 FPLLL_BEGIN_NAMESPACE
-#define FPLLL_WITH_RECURSIVE_ENUM
+
 #ifdef FPLLL_WITH_RECURSIVE_ENUM
 template <int kk, int kk_start, bool dualenum, bool findsubsols, bool enable_reset>
 inline void EnumerationBase::enumerate_recursive(
