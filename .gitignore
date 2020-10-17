@@ -74,5 +74,9 @@ doc/html/
 /tests/test_enum
 /tests/test_bkz_gram
 /tests/test_svp_gram
+
+# visual studio stuff
 .vs
 .vscode
+*.log
+*.tlog
