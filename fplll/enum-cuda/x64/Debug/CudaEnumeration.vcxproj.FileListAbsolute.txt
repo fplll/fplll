@@ -1,0 +1,2 @@
+E:\Users\Simon\Documents\Projekte\fplll\fplll\enum-cuda\x64\Debug\CudaEnumeration.exe
+E:\Users\Simon\Documents\Projekte\fplll\fplll\enum-cuda\x64\Debug\CudaEnumeration.pdb
