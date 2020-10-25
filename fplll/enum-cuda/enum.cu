@@ -9,313 +9,49 @@
 #include <limits>
 #include <memory>
 #include <stdint.h>
+#include <vector>
 
 #include "atomic.cuh"
 #include "prefix.cuh"
-#include "testdata.h"
 #include "util.h"
+#include "treebuffer.cuh"
 
-constexpr unsigned int EXPAND_NODES_PER_CHILDREN = 1;
-
-/**
-Provides an iterator that iterates over Z in the order 0, -1, 1, -2, 2, -3, 3, ...
-*/
-struct CenterToOutIterator
+template<typename FL, unsigned int levels, unsigned int dimensions> struct GramSchmidtCoeffs
 {
-  int current;
+private:
+  // dimensions x dimensions matrix in row-major storage
+  const FL *mu;
 
-  __device__ __host__ inline CenterToOutIterator() : current(0) {}
-
-  __device__ __host__ inline void operator++()
-  {
-    current += static_cast<int>(current >= 0);
-    current = -current;
-  }
-
-  __device__ __host__ inline void operator+=(unsigned int val)
-  {
-    if (val % 2 == 0)
-    {
-      current += current >= 0 ? val / 2 : -val / 2;
-    }
-    else
-    {
-      operator+=(val - 1);
-      operator++();
-    }
-  }
-
-  __device__ __host__ inline int operator*() { return current; }
-};
-
-/**
- * Stores a set of enumeration tree nodes whose subtrees have to be processed, ordered by tree level in a way
- * that maximizes memory coalescing.
- * 
- * For general information about how the tree search works, refer to the readme.
- */
-template <typename FL, unsigned int levels, unsigned int max_nodes_per_level>
-struct OpenExpansionTreeNodeBuffer
-{
-  // shape [levels, levels, max_nodes_per_level]; origin is not contained (would be at level -1)
-  FL *__restrict__ coefficients;
-  // shape [levels, max_nodes_per_levle]
-  CenterToOutIterator *__restrict__ children_iterator;
-
-  // shape [levels, max_nodes_per_level], contains the squared norm of the point projected into the
-  // subspace perpendicular to the first k lattice vectors
-  FL *__restrict__ partdist;
-  // shape [levels, levels, max_nodes_per_level]; [k, j, i] contains the scalar product of the i-th point
-  // at level k with the j-th orthogonalized basis vector
-  FL *__restrict__ center_partsums;
-
-  // shape [levels]
-  unsigned int *__restrict__ open_node_count;
-
-  __device__ __host__ OpenExpansionTreeNodeBuffer(unsigned char *memory)
-      : coefficients(reinterpret_cast<FL *>(memory)),
-        children_iterator(reinterpret_cast<CenterToOutIterator *>(
-            memory + (levels * sizeof(FL)) * levels * max_nodes_per_level)),
-        partdist(
-            reinterpret_cast<FL *>(memory + (levels * sizeof(FL) + sizeof(CenterToOutIterator)) *
-                                                levels * max_nodes_per_level)),
-        center_partsums(reinterpret_cast<FL *>(
-            memory + (levels * sizeof(FL) + sizeof(CenterToOutIterator) + sizeof(FL)) * levels *
-                         max_nodes_per_level)),
-        open_node_count(reinterpret_cast<unsigned int *>(
-            memory +
-            (levels * sizeof(FL) + sizeof(CenterToOutIterator) + sizeof(FL) + levels * sizeof(FL)) *
-                levels * max_nodes_per_level))
+public:
+  __device__ __host__ inline GramSchmidtCoeffs(const FL *mu)
+      : mu(mu)
   {
   }
 
-  template <typename CG> __device__ __host__ inline void init(CG &cooperative_group)
+  __device__ __host__ inline FL get(unsigned int row, unsigned int col)
   {
-    if (cooperative_group.thread_rank() == 0)
-    {
-      for (unsigned int i = 0; i < levels; ++i)
-      {
-        open_node_count[i] = 0;
-      }
-    }
-  }
-
-  constexpr static size_t memory_size_in_bytes_per_group =
-      (levels * sizeof(int) + sizeof(CenterToOutIterator) + sizeof(FL) + levels * sizeof(FL)) *
-          levels * max_nodes_per_level +
-      sizeof(unsigned int) * levels;
-
-  static_assert(memory_size_in_bytes_per_group < std::numeric_limits<unsigned int>::max(),
-                "Requires more memory than indexable with unsigned int");
-
-  __device__ __host__ inline unsigned int get_node_count(unsigned int tree_level)
-  {
-    return open_node_count[tree_level];
-  }
-
-  /**
-   * Returns the squared norm of the node_index-th point at level tree_level projected into
-   * the subspace perpendicular to the first levels - tree_level basis vectors
-   */
-  __device__ __host__ inline FL get_partdist(unsigned int tree_level,
-                                                                unsigned int node_index)
-  {
-    return partdist[tree_level * max_nodes_per_level + node_index];
-  }
-
-  /**
-   * Sets the squared norm of the node_index-th point at level tree_level projected into
-   * the subspace perpendicular to the first levels - tree_level basis vectors
-   */
-  __device__ __host__ inline void set_partdist(unsigned int tree_level,
-                                                                  unsigned int node_index, FL value)
-  {
-    partdist[tree_level * max_nodes_per_level + node_index] = value;
-  }
-
-  /**
-   * Returns the inner product of the node_index-th point at level tree_level with
-   * the given orthogonalized basis vector (given via index in basis)
-   */
-  __device__ __host__ inline FL get_center_partsum(unsigned int tree_level, unsigned int node_index,
-                                                  unsigned int orthogonalized_basis_vector_index)
-  {
-    return center_partsums[tree_level * levels * max_nodes_per_level +
-                       orthogonalized_basis_vector_index * max_nodes_per_level + node_index];
-  }
-
-  /**
-   * Returns the inner product of the node_index-th point at level tree_level with
-   * the given orthogonalized basis vector (given via index in basis)
-   */
-  __device__ __host__ inline void set_center_partsum(unsigned int tree_level,
-                                                    unsigned int node_index,
-                                                    unsigned int orthogonalized_basis_vector_index,
-                                                    FL value)
-  {
-    center_partsums[tree_level * levels * max_nodes_per_level +
-                orthogonalized_basis_vector_index * max_nodes_per_level + node_index] = value;
-  }
-
-  /**
-   * Returns the iterator over the children coefficients
-   */
-  __device__ __host__ inline CenterToOutIterator &get_children_iterator(unsigned int tree_level,
-                                                                        unsigned int node_index)
-  {
-    return children_iterator[tree_level * max_nodes_per_level + node_index];
-  }
-
-  /**
-   * Returns the coefficient of the node_index-th point at level tree_level w.r.t.
-   * the given basis vector (given by index). Called x in other fplll algorithms
-   */
-  __device__ __host__ inline FL get_coefficient(unsigned int tree_level, unsigned int node_index,
-                                                unsigned int coordinate)
-  {
-    return coefficients[tree_level * max_nodes_per_level * levels +
-                        coordinate * max_nodes_per_level + node_index];
-  }
-
-  /**
-   * Adds a new node to the enumeration tree at the given tree level. The coefficient of this
-   * node must be known, but the additionally calculated data (center_partsums, partdist) must
-   * be set later via the corresponding setter functions.
-   * 
-   * This modifies the node count and the nodes at the given tree level, so any subsequent
-   * reads or writes on this data must be synchronized.
-   * 
-   * Returns the index of the created node.
-   */
-  template <typename CG, unsigned int block_size>
-  __device__ __host__ inline unsigned int
-  add_open_task(CG &cooperative_group, PrefixCounter<CG, block_size> &prefix_counter,
-                bool this_thread_active, unsigned int tree_level, FL coefficient,
-                unsigned int parent_node_index)
-  {
-    unsigned int total_new_tasks      = 0;
-    const unsigned int existing_tasks = get_node_count(tree_level);
-    const unsigned int new_task_offset =
-        prefix_counter.prefix_count(cooperative_group, this_thread_active, total_new_tasks);
-    assert(existing_tasks + total_new_tasks <= max_nodes_per_level);
-    const unsigned int new_task_index = new_task_offset + existing_tasks;
-
-    if (this_thread_active)
-    {
-      assert(tree_level == 0 || parent_node_index < open_node_count[tree_level - 1]);
-      children_iterator[tree_level * max_nodes_per_level + new_task_index] = CenterToOutIterator{};
-      coefficients[tree_level * max_nodes_per_level * levels +
-                   (levels - tree_level - 1) * max_nodes_per_level + new_task_index] = coefficient;
-      for (unsigned int i = levels - tree_level; i < levels; ++i)
-      {
-        coefficients[tree_level * max_nodes_per_level * levels + i * max_nodes_per_level +
-                     new_task_index] = get_coefficient(tree_level - 1, parent_node_index, i);
-      }
-    }
-
-    if (cooperative_group.thread_rank() == 0)
-    {
-      assert(total_new_tasks + open_node_count[tree_level] <= max_nodes_per_level);
-      open_node_count[tree_level] += total_new_tasks;
-    }
-    return new_task_index;
-  }
-
-  /**
-   * Filters the open nodes at the given tree level. All nodes for which a thread invokes this function
-   * with parameter keep_this_thread_task == false are removed, all other tasks on the tree level are
-   * kept.
-
-   * To allow an efficient implementation, it is required that node_index ==
-   * open_nodes_count[tree_level] - active_thread_count + cooperative_group.thread_rank(); For inactive
-   * threads (i.e. cooperative_group.thread_rank() >= active_thread_count), the value for
-   * keep_this_thread_task is ignored, as there is no task to remove.
-   * 
-   * This modifies the node count and the nodes at the given tree level, so any subsequent
-   * reads or writes on this data must be synchronized.
-   */
-  template <typename CG, unsigned int block_size>
-  __device__ __host__ inline void
-  filter_open_nodes_segment(CG &cooperative_group, PrefixCounter<CG, block_size> &prefix_counter,
-                            unsigned int tree_level, unsigned int node_index,
-                            bool keep_this_thread_task, unsigned int active_thread_count)
-  {
-    assert(active_thread_count <= open_node_count[tree_level]);
-    assert(node_index == open_node_count[tree_level] - active_thread_count +
-                             cooperative_group.thread_rank());
-
-    unsigned int kept_tasks = 0;
-    const bool is_active =
-        keep_this_thread_task && cooperative_group.thread_rank() < active_thread_count;
-    const unsigned int new_offset =
-        prefix_counter.prefix_count(cooperative_group, is_active, kept_tasks);
-    const unsigned int new_index =
-        new_offset + open_node_count[tree_level] - active_thread_count;
-
-    const unsigned int old_node_index = tree_level * max_nodes_per_level + node_index;
-    const unsigned int new_node_index = tree_level * max_nodes_per_level + new_index;
-
-    FL projected_point_norm_square_tmp;
-    FL partial_sum_tmp[levels];
-    int coefficient_tmp[levels];
-    CenterToOutIterator children_iterator_tmp;
-    if (is_active)
-    {
-      projected_point_norm_square_tmp = partdist[old_node_index];
-      children_iterator_tmp           = children_iterator[old_node_index];
-      for (unsigned int j = 0; j < levels; ++j)
-      {
-        partial_sum_tmp[j] = center_partsums[tree_level * levels * max_nodes_per_level +
-                                         j * max_nodes_per_level + node_index];
-      }
-      for (unsigned int j = levels - tree_level - 1; j < levels; ++j)
-      {
-        coefficient_tmp[j] = coefficients[tree_level * levels * max_nodes_per_level +
-                                          j * max_nodes_per_level + node_index];
-      }
-    }
-
-    cooperative_group.sync();
-
-    if (is_active)
-    {
-      partdist[new_node_index] = projected_point_norm_square_tmp;
-      children_iterator[new_node_index]            = children_iterator_tmp;
-      for (unsigned int j = 0; j < levels; ++j)
-      {
-        center_partsums[tree_level * levels * max_nodes_per_level + j * max_nodes_per_level +
-                    new_index] = partial_sum_tmp[j];
-      }
-      for (unsigned int j = levels - tree_level - 1; j < levels; ++j)
-      {
-        coefficients[tree_level * levels * max_nodes_per_level + j * max_nodes_per_level +
-                     new_index] = coefficient_tmp[j];
-      }
-    }
-
-    if (cooperative_group.thread_rank() == 0)
-    {
-      open_node_count[tree_level] -= active_thread_count - kept_tasks;
-    }
+    assert(row < dimensions);
+    assert(col < dimensions);
+    return mu[row * dimensions + col];
   }
 };
 
 /**
- * Calculates the next child in the enumeration tree for the given node. If the projection of this 
- * child is still within the radius, it will be added to the next level in the enumeration tree, 
+ * Calculates the next child in the enumeration tree for the given node. If the projection of this
+ * child is still within the radius, it will be added to the next level in the enumeration tree,
  * with all values correctly initialized.
- * 
+ *
  * The node is given as a point in the buffer, and if the projection of its child is not within the
  * radius, the subtree of the node is seen as finished and the node is deleted from the buffer.
- * 
+ *
  * As in all cuda functions, mu should be the triangular basis matrix in column-major storage.
  */
 template <typename CG, unsigned int block_size, typename FL, unsigned int levels,
-          unsigned int max_nodes_per_level>
+          unsigned int max_nodes_per_level, unsigned int dimensions>
 __device__ __host__ void
 enumerate_children(CG &cooperative_group, PrefixCounter<CG, block_size> &prefix_counter,
-                   OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level> &buffer,
-                   unsigned int level, const FL *mu, const FL radius_squared,
+                   OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level, dimensions> &buffer,
+                   unsigned int level, GramSchmidtCoeffs<FL, levels, dimensions>& mu, const FL radius_squared,
                    unsigned long long *visited_node_counter)
 {
 
@@ -336,71 +72,84 @@ enumerate_children(CG &cooperative_group, PrefixCounter<CG, block_size> &prefix_
   FL projected_child_norm_square;
   int child_coefficient = 0;
 
+  unsigned long long start = time();
   if (active)
   {
     CenterToOutIterator &children_iter = buffer.get_children_iterator(level, node_index);
     int next_coefficient_centered      = *children_iter;
     ++children_iter;
 
-    const FL basis_vector_orthogonal_component =
-        mu[basis_vector_index * levels + basis_vector_index];
+    const FL basis_vector_orthogonal_component = mu.get(basis_vector_index, basis_vector_index);
 
     const FL center_length = buffer.get_center_partsum(level, node_index, basis_vector_index);
-    const FL center        = round(center_length / basis_vector_orthogonal_component);
+    const FL center        = center_length / basis_vector_orthogonal_component;
 
-    child_coefficient = next_coefficient_centered + center;
+    child_coefficient = next_coefficient_centered + round(center);
 
     // the length of the orthogonal part added to the projected point; Equal to alpha
     // times the length of the orthogonalized basis vector
     FL alpha_length = child_coefficient * basis_vector_orthogonal_component - center_length;
 
-    projected_child_norm_square = alpha_length * alpha_length +
-                                  buffer.get_partdist(level, node_index);
+    projected_child_norm_square =
+        alpha_length * alpha_length + buffer.get_partdist(level, node_index);
     is_children_in_bounds = (projected_child_norm_square <= radius_squared);
   }
+  unsigned long long end = time();
+
+  if (cooperative_group.thread_rank() == 0 && active)
+  {
+    atomic_add(&visited_node_counter[1], end - start);
+  }
+
+  start = time();
 
   const unsigned int child_index =
       buffer.add_open_task(cooperative_group, prefix_counter, is_children_in_bounds, level + 1,
                            child_coefficient, node_index);
 
+  end = time();
+  if (cooperative_group.thread_rank() == 0 && active)
+  {
+    atomic_add(&visited_node_counter[2], end - start);
+  }
+
+  start = time();
   if (is_children_in_bounds)
   {
     buffer.set_partdist(level + 1, child_index, projected_child_norm_square);
-    // we make a different approach for calculating the center_partsums than other fplll algorithms; 
-    // instead of calculating the partsums that are necessary for the next step, calculate all partsums 
-    // that can be calculated with the given information
+    // we make a different approach for calculating the center_partsums than other fplll algorithms;
+    // instead of calculating the partsums that are necessary for the next step, calculate all
+    // partsums that can be calculated with the given information
     for (unsigned int j = 0; j < basis_vector_index; ++j)
     {
       const FL current_center_partsum = buffer.get_center_partsum(level, node_index, j);
-      buffer.set_center_partsum(
-          level + 1, child_index, j,
-          current_center_partsum -
-              child_coefficient * mu[basis_vector_index * levels + j]);
+      buffer.set_center_partsum(level + 1, child_index, j,
+                                current_center_partsum -
+                                    child_coefficient * mu.get(j, basis_vector_index));
     }
   }
+  end = time();
+  if (cooperative_group.thread_rank() == 0 && active)
+  {
+    atomic_add(&visited_node_counter[3], end - start);
+  }
 
+  start = time();
   buffer.filter_open_nodes_segment(cooperative_group, prefix_counter, level, node_index,
                                    is_children_in_bounds, process_node_count);
-}
-
-/**
- * Calculates the count of multiples of the last vector so that its projection onto the
- * last dimension is less or equal than radius. Just returns the count of nonzero multiples.
- * 
- * As in all cuda functions, mu should be the triangular basis matrix in column-major storage.
- */
-template <typename FL, unsigned int levels>
-constexpr unsigned int calc_starting_point_count(const FL *mu, const FL radius)
-{
-  return static_cast<unsigned int>(floor(abs(radius / mu[levels * (levels - 1) + levels - 1]))) + 1;
+  end = time();
+  if (cooperative_group.thread_rank() == 0 && active)
+  {
+    atomic_add(&visited_node_counter[4], end - start);
+  }
 }
 
 template <typename CG, unsigned int block_size, typename FL, unsigned int levels,
-          unsigned int max_nodes_per_level>
+          unsigned int max_nodes_per_level, unsigned int dimensions>
 __device__ __host__ void init_starting_points(
     CG &cooperative_group, PrefixCounter<CG, block_size> &prefix_counter, unsigned int group_id,
     unsigned int points_per_group, unsigned int max_start_point_count,
-    OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level> &buffer, const FL *mu)
+    OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level, dimensions> &buffer, const FL *mu)
 {
 
   const int this_group_start_point_index_begin = group_id * points_per_group;
@@ -429,14 +178,14 @@ __device__ __host__ void init_starting_points(
  * will be deleted from the buffer.
  * 
  * Parameters:
- * shortest_points_per_thread   2d array of shape [total_thread_count, levels] containing
+ * shortest_points_per_thread   2d array of shape [total_thread_count, dimension] containing
  *                              the best solution found by each thread until now.
  */
-template <typename CG, unsigned int block_size, typename FL,
-          unsigned int levels, unsigned int max_nodes_per_level>
+template <typename CG, unsigned int block_size, typename FL, unsigned int levels,
+          unsigned int max_nodes_per_level, unsigned int dimension>
 __device__ __host__ void
 process_solution(CG &cooperative_group, PrefixCounter<CG, block_size> &prefix_counter,
-                 OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level> &buffer,
+                 OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level, dimension> &buffer,
                  uint32_t *radius_squared_location, FL *shortest_points_per_thread)
 {
 
@@ -447,7 +196,6 @@ process_solution(CG &cooperative_group, PrefixCounter<CG, block_size> &prefix_co
   bool active = node_index < process_node_count;
 
   const unsigned int thread_index = thread_id();
-  assert(cooperative_group.thread_rank() == thread_index);
 
   if (active)
   {
@@ -458,7 +206,7 @@ process_solution(CG &cooperative_group, PrefixCounter<CG, block_size> &prefix_co
       bool is_shortest_found = length_squared < atomic_min(radius_squared_location, length_squared);
       if (is_shortest_found)
       {
-        for (unsigned int i = 0; i < levels; ++i)
+        for (unsigned int i = 0; i < dimension; ++i)
         {
           const FL coefficient = buffer.get_coefficient(levels - 1, node_index, i);
           shortest_points_per_thread[levels * thread_index + i] = coefficient;
@@ -489,9 +237,9 @@ process_solution(CG &cooperative_group, PrefixCounter<CG, block_size> &prefix_co
  *                      If this is equal to levels, the search is complete
  */
 template <unsigned int block_size, typename FL, unsigned int levels,
-          unsigned int max_nodes_per_level>
-__device__ __host__ void
-update_current_level(OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level> &buffer,
+          unsigned int max_nodes_per_level, unsigned int dimension>
+__device__ __host__ void update_current_level(
+    OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level, dimension> &buffer,
                      unsigned int group_size, unsigned int &current_level,
                      unsigned int &cleared_level_count)
 {
@@ -544,11 +292,11 @@ update_current_level(OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level
  *                              with short found vectors
  */
 template <typename CG, unsigned int block_size, typename FL,
-          unsigned int levels, unsigned int max_nodes_per_level>
+          unsigned int levels, unsigned int max_nodes_per_level, unsigned int dimensions>
 __device__ __host__ void
 search_enumeration_tree(CG &cooperative_group, PrefixCounter<CG, block_size> &prefix_counter,
-                   OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level> &buffer,
-                   const FL *mu, FL *shortest_points_per_thread, uint32_t* radius_squared_location,
+                   OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level, dimensions> &buffer,
+                   GramSchmidtCoeffs<FL, levels, dimensions>& mu, FL *shortest_points_per_thread, uint32_t* radius_squared_location,
                    unsigned long long *visited_node_counter)
 {
 
@@ -562,13 +310,13 @@ search_enumeration_tree(CG &cooperative_group, PrefixCounter<CG, block_size> &pr
 
     if (level + 1 < levels)
     {
-      enumerate_children<CG, block_size, FL, levels, max_nodes_per_level>(
+      enumerate_children<CG, block_size, FL, levels, max_nodes_per_level, dimensions>(
           cooperative_group, prefix_counter, buffer, level, mu, int_to_float_order_preserving_bijection(*radius_squared_location),
           visited_node_counter);
     }
     else
     {
-      process_solution<CG, block_size, FL, levels, max_nodes_per_level>(
+      process_solution<CG, block_size, FL, levels, max_nodes_per_level, dimensions>(
           cooperative_group, prefix_counter, buffer, radius_squared_location,
           shortest_points_per_thread);
     }
@@ -596,45 +344,105 @@ search_enumeration_tree(CG &cooperative_group, PrefixCounter<CG, block_size> &pr
 /**
  * Kernel that wraps the parallel execution of the enumeration tree search.
  * 
- * TODO: initialization of starting points
+ * mu               dimensions x dimensions matrix in column-major storage
+ * 
+ * starting_points  2d array of shape [starting_point_count, dimensions - levels + 1] of coefficients
  */
 template <unsigned int block_size, typename FL, unsigned int levels,
-          unsigned int max_nodes_per_level>
+          unsigned int max_nodes_per_level, unsigned int dimensions>
 __global__ void __launch_bounds__(512, 1)
-    search_enumeration_tree_kernel(const unsigned int starting_points_per_group,
-                              const unsigned int total_starting_points,
-                              unsigned char *buffer_memory, uint32_t *radius_squared_location, const FL *mu,
-                              FL *shortest_points_per_thread,
-                              unsigned long long *visited_node_counter)
+    search_enumeration_tree_kernel(const FL *starting_points,
+                                   const unsigned int starting_point_count,
+                                   const unsigned int starting_points_per_group,
+                                   unsigned int* processed_starting_points,
+                                   unsigned char *buffer_memory, 
+                                   uint32_t *radius_squared_location, 
+                                   const FL *gram_schmidt_coeffs,
+                                   FL *shortest_points_per_thread,
+                                   unsigned long long *visited_node_counter)
 {
+  static_assert(levels >= 1, "Enumeration tree must have at least a root");
 
   extern __shared__ unsigned char shared_mem[PrefixCounter<cooperative_groups::thread_block,
-                                                           block_size>::shared_mem_size_in_bytes()];
+                                                           block_size>::shared_mem_size_in_bytes() + sizeof(unsigned int)];
 
   typedef cooperative_groups::thread_block CG;
   CG group = cooperative_groups::this_thread_block();
-  PrefixCounter<CG, block_size> prefix_counter(shared_mem);
+  PrefixCounter<CG, block_size> prefix_counter(shared_mem + sizeof(unsigned int));
   const unsigned int group_id = blockIdx.x;
 
-  typedef OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level> NodeBuffer;
+  typedef OpenExpansionTreeNodeBuffer<FL, levels, max_nodes_per_level, dimensions> NodeBuffer;
   NodeBuffer buffer(buffer_memory + group_id * NodeBuffer::memory_size_in_bytes_per_group);
-  buffer.init(group);
 
-  init_starting_points(group, prefix_counter, group_id, starting_points_per_group,
-                       total_starting_points, buffer, mu);
+  GramSchmidtCoeffs<FL, levels, dimensions> mu(gram_schmidt_coeffs);
+
+  assert(starting_points_per_group <= group.size());
+  unsigned int *shared_starting_point_offset = reinterpret_cast<unsigned int*>(shared_mem);
+  if (group.thread_rank() == 0)
+  {
+    *shared_starting_point_offset =
+        atomic_add(processed_starting_points, starting_points_per_group);
+  }
   group.sync();
-  search_enumeration_tree(group, prefix_counter, buffer, mu, shortest_points_per_thread,
-                          radius_squared_location, visited_node_counter);
+  while (*shared_starting_point_offset < starting_point_count)
+  {
+    buffer.init(group);
+    group.sync();
+
+    const unsigned int starting_point_index = *shared_starting_point_offset + group.thread_rank();
+    const bool active                       = group.thread_rank() < starting_points_per_group &&
+                        starting_point_index < starting_point_count;
+
+    const unsigned int node_index =
+        buffer.add_starting_task(group, prefix_counter, active);
+
+    if (active)
+    {
+      constexpr unsigned int starting_point_last_dim = dimensions - levels + 1;
+      FL partdist                                    = 0;
+      for (unsigned int i = levels - 1; i < dimensions; ++i)
+      {
+        const FL coefficient = starting_points[starting_point_index * starting_point_last_dim + i];
+        buffer.set_start_coefficient(node_index, i, coefficient);
+        const FL orthogonal_component = mu.get(i, i);
+        partdist += coefficient * coefficient * orthogonal_component * orthogonal_component;
+      }
+      buffer.set_partdist(0, node_index, partdist);
+      for (unsigned int basis_vector_index = 0; basis_vector_index < levels; ++basis_vector_index)
+      {
+        FL center_partsum = 0;
+        for (unsigned int i = levels - 1; i < dimensions; ++i)
+        {
+          const FL coefficient =
+              starting_points[starting_point_index * starting_point_last_dim + i];
+          center_partsum -= coefficient * mu.get(basis_vector_index, i);
+        }
+        buffer.set_center_partsum(0, node_index, basis_vector_index, center_partsum);
+      }
+    }
+
+    group.sync();
+
+    search_enumeration_tree(group, prefix_counter, buffer, mu, shortest_points_per_thread,
+                            radius_squared_location, visited_node_counter);
+
+    if (group.thread_rank() == 0)
+    {
+      *shared_starting_point_offset =
+          atomic_add(processed_starting_points, starting_points_per_group);
+    }
+    group.sync();
+  }
 }
 
-template <typename FL, unsigned int levels>
-CudaPtr<FL> search_enumeration(const FL* host_mu, unsigned int &output_point_count, const FL initial_radius)
+template <typename FL, unsigned int levels, unsigned int dimensions>
+CudaPtr<FL> search_enumeration(const std::array<std::array<FL, dimensions>, dimensions>& host_mu, const std::vector<std::array<FL, dimensions - levels + 1>>& starting_points, unsigned int &output_point_count, const FL initial_radius)
 {
 
   constexpr unsigned int block_size          = 512;
-  constexpr unsigned int max_nodes_per_level = (EXPAND_NODES_PER_CHILDREN + 1) * block_size;
+  constexpr unsigned int max_nodes_per_level = 2 * block_size;
 
-  typedef OpenExpansionTreeNodeBuffer<FL, levels, block_size * 2> NodeBuffer;
+  typedef OpenExpansionTreeNodeBuffer<FL, levels, block_size * 2, dimensions> NodeBuffer;
 
   const uint32_t radius_store_init =
       float_to_int_order_preserving_bijection(initial_radius * initial_radius);
@@ -642,29 +450,45 @@ CudaPtr<FL> search_enumeration(const FL* host_mu, unsigned int &output_point_cou
   check(cudaMemcpy(radius_squared.get(), &radius_store_init, sizeof(uint32_t),
                    cudaMemcpyHostToDevice));
 
+  constexpr unsigned int starting_point_dim    = dimensions - levels + 1;
+  CudaPtr<FL> device_starting_points = alloc(FL, starting_points.size() * starting_point_dim);
+  for (unsigned int i = 0; i < starting_points.size(); ++i)
+  {
+    check(cudaMemcpy(&device_starting_points.get()[i * starting_point_dim],
+                     starting_points[i].data(), starting_point_dim * sizeof(FL),
+                     cudaMemcpyHostToDevice));
+  }
+
   const unsigned int starting_points_per_group = 4;
-  const unsigned int total_starting_point_count =
-      calc_starting_point_count<FL, levels>(host_mu, initial_radius);
-  const unsigned int block_count = (total_starting_point_count - 1) / starting_points_per_group + 1;
+  const unsigned int block_count               = std::min<unsigned int>(64, (starting_points.size() - 1) / starting_points_per_group + 1);
+
+  CudaPtr<unsigned int> processed_starting_points = alloc(unsigned int, 1);
+  check(cudaMemset(processed_starting_points.get(), 0, sizeof(unsigned int)));
+
   CudaPtr<FL> shortest_points_per_thread = alloc(FL, block_count * block_size * levels);
 
-  CudaPtr<FL> mu = alloc(FL, levels * levels);
-  check(cudaMemcpy(mu.get(), host_mu, levels * levels * sizeof(FL), cudaMemcpyHostToDevice));
+  CudaPtr<FL> mu = alloc(FL, dimensions * dimensions);
+  for (unsigned int i = 0; i < dimensions; ++i)
+  {
+    check(cudaMemcpy(&mu.get()[i * dimensions], host_mu[i].data(), dimensions * sizeof(FL),
+                     cudaMemcpyHostToDevice));
+  }
 
   std::cout << "Start " << block_count << " blocks with " << block_size
             << " threads, global memory "
             << (block_count * NodeBuffer::memory_size_in_bytes_per_group) << " bytes" << std::endl;
   CudaPtr<unsigned char> buffer_memory =
       alloc(unsigned char, block_count *NodeBuffer::memory_size_in_bytes_per_group);
-  CudaPtr<unsigned long long> visited_node_counter = alloc(unsigned long long, 1);
+  CudaPtr<unsigned long long> visited_node_counter = alloc(unsigned long long, 5);
 
   std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-  search_enumeration_tree_kernel<block_size, FL, levels, max_nodes_per_level>
+  search_enumeration_tree_kernel<block_size, FL, levels, max_nodes_per_level, dimensions>
       <<<dim3(block_count), dim3(block_size)>>>(
-          starting_points_per_group, total_starting_point_count, buffer_memory.get(),
-          radius_squared.get(), mu.get(), shortest_points_per_thread.get(),
-          visited_node_counter.get());
+          device_starting_points.get(), starting_points.size(), starting_points_per_group,
+          processed_starting_points.get(), buffer_memory.get(), radius_squared.get(), mu.get(),
+          shortest_points_per_thread.get(), visited_node_counter.get()
+      );
   check(cudaDeviceSynchronize());
   check(cudaGetLastError());
 
@@ -683,10 +507,16 @@ CudaPtr<FL> search_enumeration(const FL* host_mu, unsigned int &output_point_cou
             << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms"
             << std::endl;
 
+  print_performance_counter(&visited_node_counter.get()[1]);
+  print_performance_counter(&visited_node_counter.get()[2]);
+  print_performance_counter(&visited_node_counter.get()[3]);
+  print_performance_counter(&visited_node_counter.get()[4]);
+
   output_point_count = block_size * block_count;
   return shortest_points_per_thread;
 }
 
+/*
 template <typename FL, unsigned int min_levels, unsigned int max_levels>
 CudaPtr<FL> search_enumeration_choose_template_instance(const FL *mu, const unsigned int levels,
                                                         const FL initial_radius)
@@ -715,9 +545,6 @@ CudaPtr<FL> search_enumeration_choose_template_instance(const FL *mu, const unsi
 
 constexpr unsigned int max_levels_for_enumeration = 128;
 
-// instantiating this greatly increases compile time
-
-/*
 std::unique_ptr<float[]> search_enumeration_cuda(const float *mu, const unsigned int levels, const FL initial_radius)
 {
   assert(levels <= max_levels_for_enumeration);

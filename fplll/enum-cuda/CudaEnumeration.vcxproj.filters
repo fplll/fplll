@@ -26,10 +26,15 @@
     <ClInclude Include="atomic.cuh">
       <Filter>utility</Filter>
     </ClInclude>
+    <ClInclude Include="enum.h" />
+    <ClInclude Include="treebuffer.cuh" />
+    <ClInclude Include="enum.cuh" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="test.cu">
       <Filter>unittest</Filter>
     </CudaCompile>
+    <CudaCompile Include="enum.cu" />
+    <CudaCompile Include="enum2.cu" />
   </ItemGroup>
 </Project>

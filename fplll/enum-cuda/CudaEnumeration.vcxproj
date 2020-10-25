@@ -12,13 +12,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="atomic.cuh" />
+    <ClInclude Include="enum.cuh" />
     <ClInclude Include="enum.h" />
     <ClInclude Include="prefix.cuh" />
     <ClInclude Include="testdata.h" />
+    <ClInclude Include="treebuffer.cuh" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="enum.cu" />
+    <CudaCompile Include="enum2.cu" />
     <CudaCompile Include="test.cu" />
   </ItemGroup>
   <ItemGroup>

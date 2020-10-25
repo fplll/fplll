@@ -39,6 +39,45 @@ __device__ __host__ inline unsigned long long atomic_add(unsigned long long *tar
 #endif
 }
 
+__device__ __host__ inline unsigned int aggregated_atomic_inc(unsigned int *ctr)
+{
+#ifdef __CUDA_ARCH__
+  auto g = cooperative_groups::coalesced_threads();
+  int warp_res;
+  if (g.thread_rank() == 0)
+  {
+    warp_res = atomicAdd(ctr, g.size());
+  }
+  return g.shfl(warp_res, 0) + g.thread_rank();
+#else
+  return (*ctr)++;
+#endif
+}
+
+__device__ __host__ inline unsigned long long aggregated_atomic_inc(unsigned long long *ctr)
+{
+#ifdef __CUDA_ARCH__
+  auto g = cooperative_groups::coalesced_threads();
+  int warp_res;
+  if (g.thread_rank() == 0)
+  {
+    warp_res = atomicAdd(ctr, g.size());
+  }
+  return g.shfl(warp_res, 0) + g.thread_rank();
+#else
+  return (*ctr)++;
+#endif
+}
+
+__device__ __host__ inline unsigned int atomic_add(unsigned int *target, unsigned int amount)
+{
+#ifdef __CUDA_ARCH__
+  return atomicAdd(target, amount);
+#else
+  return (*target += amount) - amount;
+#endif
+}
+
 __device__ __host__ inline uint32_t atomic_min(uint32_t* target, uint32_t value) {
 #ifdef __CUDA_ARCH__
   return atomicMin(target, value);
