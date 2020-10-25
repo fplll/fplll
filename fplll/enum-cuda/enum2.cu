@@ -379,9 +379,6 @@ inline void cpu_test() {
   constexpr unsigned int dimensions = 20;
   constexpr unsigned int levels     = dimensions;
 
-  std::array<std::array<float, dimensions>, dimensions> host_mu = {
-      {{4.58257569, 4.3643578, 3.27326835}, {0., 1.71824939, 2.16166858}, {0., 0., 1.27000127}}};
-
   std::vector<std::array<float, dimensions - levels + 1>> start_points;
   start_points.push_back({0});
   start_points.push_back({1});
