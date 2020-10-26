@@ -56,7 +56,6 @@ template <unsigned int maxdim> struct CudaEnumeration
 {
   enumi x[maxdim];
   enumf partdist[maxdim];
-  unsigned int center_partsum_begin[maxdim];
   // ! different to base enumeration of fplll, the second index is shifted !
   // _[i][j] contains inner product of i-th orthogonalized basis vector with B * (0, ..., 0, x[j +
   // 1], ... x[n])
@@ -137,19 +136,13 @@ CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &m
     {
       partdist[kk - 1] = newdist;
 
-      for (int j = center_partsum_begin[kk]; j > kk - 1; --j)
+      for (int j = 0; j < kk; ++j)
       {
-        center_partsums[kk - 1][j - 1] =
-            center_partsums[kk - 1][j] - x[j] * mu[(kk - 1) * ldmu + j];
+        center_partsums[j][kk - 1] =
+            center_partsums[j][kk] - x[kk] * mu[j * ldmu + kk];
       }
       assert(!isnan(center_partsums[kk - 1][kk - 1]));
 
-      if (center_partsum_begin[kk] > center_partsum_begin[kk - 1])
-      {
-        center_partsum_begin[kk - 1] = center_partsum_begin[kk];
-      }
-
-      center_partsum_begin[kk] = kk;
       center[kk - 1]           = center_partsums[kk - 1][kk - 1];
       if (isnan(x[kk - 1]))
       {
@@ -192,12 +185,11 @@ CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &m
       {
         partdist[kk - 1] = newdist2;
 
-        center_partsums[kk - 1][kk - 1] =
-            center_partsums[kk - 1][kk - 1 + 1] - x[kk - 1 + 1] * mu[(kk - 1) * ldmu + kk - 1 + 1];
+        for (int j = 0; j < kk; ++j)
+        {
+          center_partsums[j][kk - 1] = center_partsums[j][kk] - x[kk] * mu[j * ldmu + kk];
+        }
         assert(!isnan(center_partsums[kk - 1][kk - 1]));
-
-        if (kk > center_partsum_begin[kk - 1])
-          center_partsum_begin[kk - 1] = kk;
 
         center[kk - 1] = center_partsums[kk - 1][kk - 1];
         x[kk - 1]      = round(center[kk - 1]);
@@ -302,8 +294,6 @@ public:
     {
       result.x[i] = enumeration_x[tree_level * dimensions_per_level * max_nodes_per_level +
                                   i * max_nodes_per_level + index];
-
-      result.center_partsum_begin[i] = dimensions_per_level - 1;
 
       const enumf center_partsum_i =
           center_partsum[tree_level * dimensions * max_nodes_per_level +
