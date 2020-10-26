@@ -6,20 +6,20 @@
 
 inline void gpu_test()
 {
-  constexpr unsigned int levels               = 20;
-  constexpr unsigned int dimensions_per_level = 2;
+  constexpr unsigned int levels               = 13;
+  constexpr unsigned int dimensions_per_level = 4;
   constexpr unsigned int dimensions           = levels * dimensions_per_level;
-  constexpr unsigned int max_nodes_per_level  = 400;
-  constexpr unsigned int start_point_dim      = 10;
+  constexpr unsigned int max_nodes_per_level  = 800;
+  constexpr unsigned int start_point_dim      = 8;
   constexpr unsigned int mu_n                 = dimensions + start_point_dim;
 
-  const std::array<std::array<float, mu_n>, mu_n> &mu = test_mu_normal;
+  const std::array<std::array<float, mu_n>, mu_n> &mu = test_mu_big;
 
-  std::vector<std::array<enumf, start_point_dim>> start_points;
-  std::array<enumf, start_point_dim> x;
+  std::vector<std::array<enumi, start_point_dim>> start_points;
+  std::array<enumi, start_point_dim> x;
   x[start_point_dim - 1] = -1;
-  enumf radius           = find_initial_radius(mu) * 1.1;
-  std::function<void(const std::array<enumf, start_point_dim> &)> callback =
+  enumf radius           = find_initial_radius(mu) * 1.5;
+  std::function<void(const std::array<float, start_point_dim> &)> callback =
       [&start_points](const auto &a) { start_points.push_back(a); };
   do
   {
@@ -27,9 +27,10 @@ inline void gpu_test()
   } while (!naive_enum_recursive<start_point_dim, mu_n>(x, 0, 0, mu, mu_n - 1,
                                                         radius * radius, callback));
 
-  search<512, levels, dimensions_per_level, max_nodes_per_level>(mu, start_points, 10, 64);
+  search<levels, dimensions_per_level, max_nodes_per_level>(mu, start_points, 20, 32, 8);
 }
 
+template<typename Dummy>
 inline void gpu_test4d()
 {
   constexpr unsigned int levels               = 3;
@@ -43,11 +44,11 @@ inline void gpu_test4d()
       {{3, 2, 4, 3}, {0, 3, 4, 2}, {0, 0, 3, 3}, {0, 0, 0, 2}}};
   const std::array<std::array<float, mu_n>, mu_n> &mu = test_mu_tiny;
 
-  std::vector<std::array<enumf, start_point_dim>> start_points;
+  std::vector<std::array<enumi, start_point_dim>> start_points;
   start_points.push_back({0});
   start_points.push_back({1});
 
-  search<512, levels, dimensions_per_level, max_nodes_per_level>(mu, start_points, 10, 1);
+  search<levels, dimensions_per_level, max_nodes_per_level>(mu, start_points, 10, 1, 1);
 }
 
 inline void cpu_test()
@@ -67,8 +68,9 @@ inline void cpu_test()
                                                  max_nodes_per_level>::memory_size_in_bytes]);
   buffer.init(group);
 
-  std::unique_ptr<float[]> mu(new float[dimensions * dimensions]);
-  std::unique_ptr<float[]> rdiag(new float[dimensions]);
+  std::unique_ptr<enumf[]> mu(new enumf[dimensions * dimensions]);
+  std::unique_ptr<enumf[]> local_mu(new enumf[dimensions_per_level * dimensions_per_level]);
+  std::unique_ptr<enumf[]> rdiag(new enumf[dimensions]);
   for (unsigned int i = 0; i < dimensions; ++i)
   {
     rdiag[i] = host_mu[i][i];
@@ -78,7 +80,7 @@ inline void cpu_test()
     }
     rdiag[i] = rdiag[i] * rdiag[i];
   }
-  float radius             = find_initial_radius(host_mu) * 1.1;
+  enumf radius             = find_initial_radius(host_mu) * 1.1;
   uint32_t radius_location = float_to_int_order_preserving_bijection(radius * radius);
 
   const unsigned int index = buffer.add_subtree(0, 0);
@@ -91,8 +93,9 @@ inline void cpu_test()
   unsigned int counter = 0;
   unsigned long long node_counter = 0;
   clear_level<single_thread, 1, levels, dimensions_per_level, max_nodes_per_level>(
-      group, prefix_counter, &counter, buffer, 0, mu.get(), dimensions, rdiag.get(), &radius_location, 5,
-      NodeCounter(&node_counter));
+      group, prefix_counter, reinterpret_cast<unsigned char *>(local_mu.get()), &counter, buffer, 0,
+      mu.get(), dimensions, rdiag.get(), &radius_location, 5,
+      PerfCounter(&node_counter));
 }
 
 inline void cpu_test4d()
@@ -113,8 +116,9 @@ inline void cpu_test4d()
                                                  max_nodes_per_level>::memory_size_in_bytes]);
   buffer.init(group);
 
-  std::unique_ptr<float[]> mu(new float[dimensions * dimensions]);
-  std::unique_ptr<float[]> rdiag(new float[dimensions]);
+  std::unique_ptr<enumf[]> mu(new enumf[dimensions * dimensions]);
+  std::unique_ptr<enumf[]> local_mu(new enumf[dimensions_per_level * dimensions_per_level]);
+  std::unique_ptr<enumf[]> rdiag(new enumf[dimensions]);
   for (unsigned int i = 0; i < dimensions; ++i)
   {
     rdiag[i] = host_mu[i][i];
@@ -124,7 +128,7 @@ inline void cpu_test4d()
     }
     rdiag[i] = rdiag[i] * rdiag[i];
   }
-  float radius             = 3.01;
+  enumf radius             = 3.01;
   uint32_t radius_location = float_to_int_order_preserving_bijection(radius * radius);
 
   const unsigned int index = buffer.add_subtree(0, 0);
@@ -137,8 +141,9 @@ inline void cpu_test4d()
   unsigned int counter      = 0;
   unsigned long long node_counter = 0;
   clear_level<single_thread, 1, levels, dimensions_per_level, max_nodes_per_level>(
-      group, prefix_counter, &counter, buffer, 0, mu.get(), dimensions, rdiag.get(), &radius_location, 5,
-      NodeCounter(&node_counter));
+      group, prefix_counter, reinterpret_cast<unsigned char *>(local_mu.get()), &counter, buffer, 0,
+      mu.get(), dimensions, rdiag.get(), &radius_location, 5,
+      PerfCounter(&node_counter));
 }
 
 int main()

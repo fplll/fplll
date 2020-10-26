@@ -60,11 +60,7 @@ public:
 
     __device__ inline PrefixCounter(unsigned char *shared_mem) : shared_mem(shared_mem) {}
 
-    constexpr static inline __device__ __host__ unsigned int shared_mem_size_in_bytes()
-    {
-        assert(block_size_log >= 5);
-        return (block_size + block_size / 32) * sizeof(unsigned int);
-    }
+    constexpr static unsigned int shared_mem_size_in_bytes = (block_size + block_size / 32) * sizeof(unsigned int);
 
     __device__ inline unsigned int prefix_count(cooperative_groups::thread_block &group,
                                                 bool predicate, unsigned int &total_len)
@@ -113,11 +109,7 @@ public:
 
   __device__ inline PrefixCounter() {}
 
-  constexpr static inline __device__ __host__ unsigned int shared_mem_size_in_bytes()
-  {
-    assert(block_size_log >= 5);
-    return 0;
-  }
+  constexpr static unsigned int shared_mem_size_in_bytes = 0;
 
   __device__ inline unsigned int prefix_count(cooperative_groups::thread_block_tile<32> &group,
                                               bool predicate, unsigned int &total_len)

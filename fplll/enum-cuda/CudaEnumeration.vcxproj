@@ -15,7 +15,6 @@
     <ClInclude Include="enum.h" />
     <ClInclude Include="prefix.cuh" />
     <ClInclude Include="testdata.h" />
-    <ClInclude Include="treebuffer.cuh" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
