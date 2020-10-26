@@ -1,99 +1,149 @@
 #include "enum.cu"
-#include "enum2.cu"
-#include "enum.cuh"
 #include "testdata.h"
 
 #include <array>
 #include <functional>
 
-void simple_gpu_test() {
-
-  constexpr unsigned int dimensions         = 3;
-  constexpr unsigned int levels             = dimensions;
-
-  std::array<std::array<float, dimensions>, dimensions> host_mu = {
-      {{4.58257569, 4.3643578, 3.27326835}, {0., 1.71824939, 2.16166858}, {0., 0., 1.27000127}}};
-
-  std::vector<std::array<float, dimensions - levels + 1>> start_points;
-  start_points.push_back({0});
-  start_points.push_back({1});
-
-  unsigned int output_point_count = 0;
-  CudaPtr<float> shortest_points_per_thread = search_enumeration<float, levels, dimensions>(
-      host_mu, start_points, output_point_count, find_initial_radius(host_mu) * 1.1);
-
-  std::unique_ptr<float[]> result(new float[dimensions * output_point_count]);
-  check(cudaMemcpy(result.get(), shortest_points_per_thread.get(), levels * output_point_count * sizeof(float), cudaMemcpyDeviceToHost));
-
-  std::array<float, levels> expected = { 1, -1, 0 };
-  if (!contains_solution(result.get(), expected.data(), levels, output_point_count)) {
-      throw "Test failed";
-  }
-}
-
-void complex_gpu_test() {
-
-  constexpr unsigned int dimensions = 50;
-  constexpr unsigned int levels     = dimensions;
-
-  std::vector<std::array<float, dimensions - levels + 1>> start_points;
-  start_points.push_back({0});
-  start_points.push_back({1});
-
-  unsigned int output_point_count = 0;
-  CudaPtr<float> shortest_points_per_thread = search_enumeration<float, levels, dimensions>(
-      test_mu_normal, start_points, output_point_count,
-      find_initial_radius(test_mu_normal) * 1.1);
-
-  std::unique_ptr<float[]> result(new float[dimensions * output_point_count]);
-  check(cudaMemcpy(result.get(), shortest_points_per_thread.get(), levels * output_point_count * sizeof(float), cudaMemcpyDeviceToHost));
-
-  if (!contains_solution(result.get(), test_solution_normal.data(), levels, output_point_count)) {
-      throw "Test failed";
-  }
-}
-
-void complex_multiblock_gpu_test()
+inline void gpu_test()
 {
-  constexpr unsigned int dimensions = 50;
-  constexpr unsigned int levels     = dimensions - 2;
+  constexpr unsigned int levels               = 20;
+  constexpr unsigned int dimensions_per_level = 2;
+  constexpr unsigned int dimensions           = levels * dimensions_per_level;
+  constexpr unsigned int max_nodes_per_level  = 400;
+  constexpr unsigned int start_point_dim      = 10;
+  constexpr unsigned int mu_n                 = dimensions + start_point_dim;
 
-  std::vector<std::array<float, dimensions - levels + 1>> start_points;
+  const std::array<std::array<float, mu_n>, mu_n> &mu = test_mu_normal;
 
-  float initial_radius = find_initial_radius(test_mu_normal) * 1.1;
-
-  std::array<float, 3> x;
-  std::function<void(const std::array<float, 3> &)> fn = [&start_points](auto point) {
-    start_points.emplace_back(point);
-  };
-  CenterToOutIterator iter;
+  std::vector<std::array<enumf, start_point_dim>> start_points;
+  std::array<enumf, start_point_dim> x;
+  x[start_point_dim - 1] = -1;
+  enumf radius           = find_initial_radius(mu) * 1.1;
+  std::function<void(const std::array<enumf, start_point_dim> &)> callback =
+      [&start_points](const auto &a) { start_points.push_back(a); };
   do
   {
-    x[2] = *iter;
-    ++iter;
-  } while (!naive_enum_recursive<3, dimensions>(x, 0.f, 0.f, test_mu_normal, dimensions - 1,
-                                                initial_radius * initial_radius, fn));
+    ++x[start_point_dim - 1];
+  } while (!naive_enum_recursive<start_point_dim, mu_n>(x, 0, 0, mu, mu_n - 1,
+                                                        radius * radius, callback));
 
-  unsigned int output_point_count           = 0;
-  CudaPtr<float> shortest_points_per_thread = search_enumeration<float, levels, dimensions>(
-      test_mu_normal, start_points, output_point_count, initial_radius);
+  search<512, levels, dimensions_per_level, max_nodes_per_level>(mu, start_points, 10, 64);
+}
 
-  std::unique_ptr<float[]> result(new float[dimensions * output_point_count]);
-  check(cudaMemcpy(result.get(), shortest_points_per_thread.get(),
-                   levels * output_point_count * sizeof(float), cudaMemcpyDeviceToHost));
+inline void gpu_test4d()
+{
+  constexpr unsigned int levels               = 3;
+  constexpr unsigned int dimensions_per_level = 1;
+  constexpr unsigned int dimensions           = levels * dimensions_per_level;
+  constexpr unsigned int max_nodes_per_level  = 5000;
+  constexpr unsigned int start_point_dim      = 1;
+  constexpr unsigned int mu_n                 = dimensions + start_point_dim;
 
-  if (!contains_solution(result.get(), test_solution_normal.data(), levels, output_point_count))
+  std::array<std::array<float, mu_n>, mu_n> test_mu_tiny = {
+      {{3, 2, 4, 3}, {0, 3, 4, 2}, {0, 0, 3, 3}, {0, 0, 0, 2}}};
+  const std::array<std::array<float, mu_n>, mu_n> &mu = test_mu_tiny;
+
+  std::vector<std::array<enumf, start_point_dim>> start_points;
+  start_points.push_back({0});
+  start_points.push_back({1});
+
+  search<512, levels, dimensions_per_level, max_nodes_per_level>(mu, start_points, 10, 1);
+}
+
+inline void cpu_test()
+{
+  constexpr unsigned int levels               = 5;
+  constexpr unsigned int dimensions_per_level = 4;
+  constexpr unsigned int dimensions           = levels * dimensions_per_level;
+  constexpr unsigned int max_nodes_per_level  = 200000;
+
+  const std::array<std::array<float, dimensions>, dimensions> &host_mu = test_mu_small;
+
+  single_thread group;
+  PrefixCounter<single_thread, 1> prefix_counter;
+
+  SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> buffer(
+      new unsigned char[SubtreeEnumerationBuffer<levels, dimensions_per_level,
+                                                 max_nodes_per_level>::memory_size_in_bytes]);
+  buffer.init(group);
+
+  std::unique_ptr<float[]> mu(new float[dimensions * dimensions]);
+  std::unique_ptr<float[]> rdiag(new float[dimensions]);
+  for (unsigned int i = 0; i < dimensions; ++i)
   {
-    throw "Test failed";
+    rdiag[i] = host_mu[i][i];
+    for (unsigned int j = 0; j < dimensions; ++j)
+    {
+      mu[i * dimensions + j] = host_mu[i][j] / rdiag[i];
+    }
+    rdiag[i] = rdiag[i] * rdiag[i];
   }
+  float radius             = find_initial_radius(host_mu) * 1.1;
+  uint32_t radius_location = float_to_int_order_preserving_bijection(radius * radius);
+
+  const unsigned int index = buffer.add_subtree(0, 0);
+  for (unsigned int i = 0; i < dimensions; ++i)
+  {
+    buffer.set_center_partsum(0, index, i, 0);
+  }
+  buffer.init_subtree(0, index, 0, 0);
+
+  unsigned int counter = 0;
+  unsigned long long node_counter = 0;
+  clear_level<single_thread, 1, levels, dimensions_per_level, max_nodes_per_level>(
+      group, prefix_counter, &counter, buffer, 0, mu.get(), dimensions, rdiag.get(), &radius_location, 5,
+      NodeCounter(&node_counter));
+}
+
+inline void cpu_test4d()
+{
+  constexpr unsigned int levels               = 1;
+  constexpr unsigned int dimensions_per_level = 4;
+  constexpr unsigned int dimensions           = levels * dimensions_per_level;
+  constexpr unsigned int max_nodes_per_level  = 100;
+
+  std::array<std::array<float, dimensions>, dimensions> host_mu = {
+      {{3, 2, 4, 3}, {0, 3, 4, 2}, {0, 0, 3, 3}, {0, 0, 0, 2}}};
+
+  single_thread group;
+  PrefixCounter<single_thread, 1> prefix_counter;
+
+  SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> buffer(
+      new unsigned char[SubtreeEnumerationBuffer<levels, dimensions_per_level,
+                                                 max_nodes_per_level>::memory_size_in_bytes]);
+  buffer.init(group);
+
+  std::unique_ptr<float[]> mu(new float[dimensions * dimensions]);
+  std::unique_ptr<float[]> rdiag(new float[dimensions]);
+  for (unsigned int i = 0; i < dimensions; ++i)
+  {
+    rdiag[i] = host_mu[i][i];
+    for (unsigned int j = 0; j < dimensions; ++j)
+    {
+      mu[i * dimensions + j] = host_mu[i][j] / rdiag[i];
+    }
+    rdiag[i] = rdiag[i] * rdiag[i];
+  }
+  float radius             = 3.01;
+  uint32_t radius_location = float_to_int_order_preserving_bijection(radius * radius);
+
+  const unsigned int index = buffer.add_subtree(0, 0);
+  for (unsigned int i = 0; i < dimensions; ++i)
+  {
+    buffer.set_center_partsum(0, index, i, 0);
+  }
+  buffer.init_subtree(0, index, 0, 0);
+
+  unsigned int counter      = 0;
+  unsigned long long node_counter = 0;
+  clear_level<single_thread, 1, levels, dimensions_per_level, max_nodes_per_level>(
+      group, prefix_counter, &counter, buffer, 0, mu.get(), dimensions, rdiag.get(), &radius_location, 5,
+      NodeCounter(&node_counter));
 }
 
 int main()
 {
-  hybrid_enum::test();
-  /*simple_gpu_test();
-  complex_multiblock_gpu_test();
-  complex_gpu_test();*/
+  gpu_test();
 
   return 0;
 }

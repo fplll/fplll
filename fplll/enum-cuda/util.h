@@ -66,6 +66,15 @@ __device__ __host__ inline unsigned int thread_id()
 #endif
 }
 
+__device__ __host__ inline unsigned int thread_id_in_block()
+{
+#ifdef __CUDA_ARCH__
+  return threadIdx.x;
+#else
+  return 0;
+#endif
+}
+
 __device__ __host__ inline unsigned long long time()
 {
 #ifdef __CUDA_ARCH__
@@ -78,6 +87,15 @@ __device__ __host__ inline unsigned long long time()
 template <typename... Args> __device__ __host__ void debug_message_thread(const char *string, Args... arguments)
 {
   if (thread_id() == 0 && TRACE)
+  {
+    printf(string, arguments...);
+  }
+}
+
+template <typename CG, typename... Args>
+__device__ __host__ void debug_message_group(CG& group, const char *string, Args... arguments)
+{
+  if (group.thread_rank() == 0 && TRACE)
   {
     printf(string, arguments...);
   }
@@ -208,4 +226,16 @@ inline void print_performance_counter(unsigned long long *device_ptr)
   unsigned long long counter;
   check(cudaMemcpy(&counter, device_ptr, sizeof(unsigned long long), cudaMemcpyDeviceToHost));
   std::cout << "Performance counter: " << counter << std::endl;
+}
+
+template <typename CG>
+__device__ __host__ bool all_threads_eq(CG &group, unsigned int value, unsigned int *shared_mem)
+{
+  group.sync();
+  if (group.thread_rank() == 0)
+  {
+    *shared_mem = value;
+  }
+  group.sync();
+  return value == *shared_mem;
 }

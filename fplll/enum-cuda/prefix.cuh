@@ -103,6 +103,39 @@ public:
     }
 };
 
+template <unsigned int block_size> class PrefixCounter<cooperative_groups::thread_block_tile<32>, block_size>
+{
+
+public:
+  static_assert(block_size == (1L << int_log2(block_size)),
+                "Expected BlockSize to be a power of 2");
+  constexpr static unsigned int block_size_log = int_log2(block_size);
+
+  __device__ inline PrefixCounter() {}
+
+  constexpr static inline __device__ __host__ unsigned int shared_mem_size_in_bytes()
+  {
+    assert(block_size_log >= 5);
+    return 0;
+  }
+
+  __device__ inline unsigned int prefix_count(cooperative_groups::thread_block_tile<32> &group,
+                                              bool predicate, unsigned int &total_len)
+  {
+    assert(blockDim.x == block_size);
+    assert(blockDim.y == 1 && blockDim.z == 1);
+
+    const unsigned int warpid               = threadIdx.x / 32;
+    const unsigned int laneid               = threadIdx.x % 32;
+    const unsigned int in_warp_values       = __ballot_sync(0xFFFFFFFF, predicate ? 1 : 0);
+    const unsigned int in_warp_accumulation = __popc(in_warp_values);
+    const unsigned int in_warp_prefix_count = __popc(in_warp_values << (32 - laneid));
+
+    total_len = in_warp_accumulation;
+    return in_warp_prefix_count;
+  }
+};
+
 struct single_thread {
 
     __device__ __host__ inline void sync() {}

@@ -12,7 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="atomic.cuh" />
-    <ClInclude Include="enum.cuh" />
     <ClInclude Include="enum.h" />
     <ClInclude Include="prefix.cuh" />
     <ClInclude Include="testdata.h" />
@@ -21,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="enum.cu" />
-    <CudaCompile Include="enum2.cu" />
     <CudaCompile Include="test.cu" />
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +89,7 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <GenerateLineInfo>true</GenerateLineInfo>
     </CudaCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
