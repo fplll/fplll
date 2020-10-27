@@ -52,6 +52,25 @@ __device__ __host__ inline enumi next_coeff(enumi coeff, const enumf center)
   }
 }
 
+struct Matrix
+{
+  const enumf *ptr;
+  unsigned int ld;
+
+  __device__ __host__ inline Matrix(const enumf *ptr, unsigned int ld) : ptr(ptr), ld(ld) {}
+
+  __device__ __host__ inline Matrix() : ptr(nullptr), ld(0) {}
+
+  __device__ __host__ inline enumf at(unsigned int row, unsigned int col) const
+  {
+    return ptr[row * ld + col];
+  }
+
+  __device__ __host__ inline Matrix block(unsigned int start_row, unsigned int start_col) const {
+    return Matrix(&ptr[start_col + start_row * ld], ld);
+  }
+};
+
 template <unsigned int maxdim> struct CudaEnumeration
 {
   enumi x[maxdim];
@@ -64,8 +83,7 @@ template <unsigned int maxdim> struct CudaEnumeration
   const uint32_t *radius_squared_location;
 
   // row-major
-  const enumf *mu;
-  unsigned int ldmu;
+  Matrix mu;
   const enumf *rdiag;
 
   template <int kk, typename Callback>
@@ -73,7 +91,7 @@ template <unsigned int maxdim> struct CudaEnumeration
 
   template <int kk> __device__ __host__ bool is_enumeration_done() const;
 
-  __device__ __host__ enumf get_radius_squared() const;
+  __device__ __host__ enumf get_radius_squared();
 
   template <unsigned int levels, unsigned int dimensions_per_level,
             unsigned int max_nodes_per_level>
@@ -81,7 +99,7 @@ template <unsigned int maxdim> struct CudaEnumeration
 };
 
 template <unsigned int maxdim>
-__device__ __host__ inline enumf CudaEnumeration<maxdim>::get_radius_squared() const
+__device__ __host__ inline enumf CudaEnumeration<maxdim>::get_radius_squared()
 {
   return int_to_float_order_preserving_bijection(*radius_squared_location);
 }
@@ -138,8 +156,7 @@ CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &m
 
       for (int j = 0; j < kk; ++j)
       {
-        center_partsums[j][kk - 1] =
-            center_partsums[j][kk] - x[kk] * mu[j * ldmu + kk];
+        center_partsums[j][kk - 1] = center_partsums[j][kk] - x[kk] * mu.at(j, kk);
       }
       assert(!isnan(center_partsums[kk - 1][kk - 1]));
 
@@ -187,7 +204,7 @@ CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &m
 
         for (int j = 0; j < kk; ++j)
         {
-          center_partsums[j][kk - 1] = center_partsums[j][kk] - x[kk] * mu[j * ldmu + kk];
+          center_partsums[j][kk - 1] = center_partsums[j][kk] - x[kk] * mu.at(j, kk);
         }
         assert(!isnan(center_partsums[kk - 1][kk - 1]));
 
@@ -275,8 +292,8 @@ public:
                 "Requires more memory than indexable with unsigned int");
 
   __device__ __host__ inline CudaEnumeration<dimensions_per_level>
-  get_enumeration(unsigned int tree_level, unsigned int index, const enumf *mu,
-                  const unsigned int ldmu, const enumf *rdiag,
+  get_enumeration(unsigned int tree_level, unsigned int index,
+                  Matrix mu_block, const enumf *rdiag,
                   const uint32_t *radius_squared_location)
   {
     assert(tree_level < levels);
@@ -285,8 +302,7 @@ public:
 
     const unsigned int offset_kk = (levels - tree_level - 1) * dimensions_per_level;
 
-    result.mu                      = mu;
-    result.ldmu                    = ldmu;
+    result.mu                      = mu_block;
     result.rdiag                   = &rdiag[offset_kk];
     result.radius_squared_location = radius_squared_location;
 
@@ -295,9 +311,8 @@ public:
       result.x[i] = enumeration_x[tree_level * dimensions_per_level * max_nodes_per_level +
                                   i * max_nodes_per_level + index];
 
-      const enumf center_partsum_i =
-          center_partsum[tree_level * dimensions * max_nodes_per_level +
-                         (offset_kk + i) * max_nodes_per_level + index];
+      const enumf center_partsum_i = center_partsum[tree_level * dimensions * max_nodes_per_level +
+                                                    (offset_kk + i) * max_nodes_per_level + index];
       assert(!isnan(center_partsum_i));
       result.center_partsums[i][dimensions_per_level - 1] = center_partsum_i;
     }
@@ -500,8 +515,7 @@ struct ProcessLeafCallback
 {
   unsigned int level;
   unsigned int parent_index;
-  const enumf *mu;
-  unsigned int ldmu;
+  Matrix mu;
   uint32_t *radius_squared_location;
   SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer;
 
@@ -554,8 +568,7 @@ struct AddToTreeCallback
 {
   unsigned int level;
   unsigned int parent_index;
-  const enumf *mu;
-  unsigned int ldmu;
+  Matrix mu;
   SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer;
   PerfCounter &counter;
 
@@ -578,30 +591,30 @@ AddToTreeCallback<levels, dimensions_per_level, max_nodes_per_level>::operator()
   // subtree initialization will be done later in a synchronized way
 }
 
-template <unsigned int levels, unsigned int dimensions_per_level,
-          unsigned int max_nodes_per_level>
+template <unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level>
 __device__ __host__ inline enumf calc_center_partsum(
     unsigned int level, unsigned int index, unsigned int center_partsum_index,
     SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer,
-    const enumf *mu, unsigned int ldmu)
+    Matrix mu)
 {
   unsigned int kk_offset = (levels - level - 1) * dimensions_per_level;
-  enumf center_partsum = 0;
+  enumf center_partsum   = 0;
   for (unsigned int j = 0; j < dimensions_per_level; ++j)
   {
     const enumi coefficient = buffer.get_coefficient(level, index, j);
     center_partsum -=
-        coefficient * mu[center_partsum_index * ldmu + j + dimensions_per_level + kk_offset];
+        coefficient * mu.at(center_partsum_index, j + dimensions_per_level + kk_offset);
   }
   assert(!isnan(center_partsum));
   return center_partsum;
 }
 
-template<typename CG, unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level>
+template <typename CG, unsigned int levels, unsigned int dimensions_per_level,
+          unsigned int max_nodes_per_level>
 __device__ __host__ inline void calc_center_partsums(
     CG &group, unsigned int level, unsigned int already_calculated_node_count,
-    SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer,
-    const enumf *mu, unsigned int ldmu, PerfCounter &counter)
+    SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer, Matrix mu,
+    PerfCounter &counter)
 {
   unsigned long long begin = time();
 
@@ -616,18 +629,17 @@ __device__ __host__ inline void calc_center_partsums(
     for (unsigned int i = 0; i < kk_offset + dimensions_per_level; ++i)
     {
       enumf center_partsum = buffer.get_center_partsum(level - 1, parent_index, i) +
-                             calc_center_partsum(level, new_index, i, buffer, mu, ldmu);
+                             calc_center_partsum(level, new_index, i, buffer, mu);
       assert(!isnan(center_partsum));
       buffer.set_center_partsum(level, new_index, i, center_partsum);
     }
 
-    enumf center           = buffer.get_center_partsum(level, new_index, center_i);
+    enumf center = buffer.get_center_partsum(level, new_index, center_i);
     assert(!isnan(center));
     buffer.set_center_partsum(level, new_index, center_i, center);
 
     enumf partdist = buffer.get_partdist(level, new_index);
     buffer.init_subtree(level, new_index, partdist, center);
-
   }
 
   unsigned long long end = time();
@@ -638,11 +650,9 @@ __device__ __host__ inline void calc_center_partsums(
 template <typename CG, unsigned int levels, unsigned int dimensions_per_level,
           unsigned int max_nodes_per_level>
 __device__ __host__ void
-do_search_step(CG &group, unsigned char *mu_shared_memory,
-               SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer,
-               unsigned int level, const enumf *mu, unsigned int ldmu, const enumf *rdiag,
-               uint32_t *radius_squared_location, unsigned int max_subtree_paths,
-               PerfCounter &counter)
+do_search_step(CG &group, SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer,
+               unsigned int level, Matrix mu, const enumf *rdiag, uint32_t *radius_squared_location,
+               unsigned int max_subtree_paths, PerfCounter &counter)
 {
   unsigned long long begin = time();
 
@@ -651,19 +661,9 @@ do_search_step(CG &group, unsigned char *mu_shared_memory,
       buffer.get_node_count(level) - active_thread_count + group.thread_rank();
   const bool active = index < buffer.get_node_count(level);
 
-  // copy the important part of mu into shared memory for efficiency
-  const unsigned int offset_kk   = (levels - level - 1) * dimensions_per_level;
-  enumf *mu_shared               = reinterpret_cast<enumf *>(mu_shared_memory);
-  const unsigned int ldmu_shared = dimensions_per_level;
-  for (unsigned int i = group.thread_rank(); i < dimensions_per_level * dimensions_per_level;
-       i += group.size())
-  {
-    const unsigned int row             = i / dimensions_per_level;
-    const unsigned int col             = i % dimensions_per_level;
-    mu_shared[row * ldmu_shared + col] = mu[(row + offset_kk) * ldmu + col + offset_kk];
-  }
-
+  const unsigned int offset_kk = (levels - level - 1) * dimensions_per_level;
   unsigned int max_paths = max_subtree_paths;
+
   if (level < levels - 1)
   {
     unsigned int existing_nodes = buffer.get_node_count(level + 1);
@@ -671,28 +671,27 @@ do_search_step(CG &group, unsigned char *mu_shared_memory,
     if (active)
     {
       CudaEnumeration<dimensions_per_level> enumeration = buffer.get_enumeration(
-          level, index, mu_shared, ldmu_shared, rdiag, radius_squared_location);
+          level, index, mu.block(offset_kk, offset_kk), rdiag, radius_squared_location);
 
       typedef AddToTreeCallback<levels, dimensions_per_level, max_nodes_per_level> CallbackType;
-      CallbackType callback = {level + 1, index, mu, ldmu, buffer, counter};
+      CallbackType callback = {level + 1, index, mu, buffer, counter};
       enumeration.template enumerate_recursive<dimensions_per_level - 1, CallbackType>(
           callback, max_paths, counter);
 
       buffer.set_enumeration(level, index, enumeration);
     }
     group.sync();
-    calc_center_partsums(group, level + 1, existing_nodes, buffer, mu, ldmu, counter);
+    calc_center_partsums(group, level + 1, existing_nodes, buffer, mu, counter);
   }
   else
   {
-    group.sync();
     if (active)
     {
-      CudaEnumeration<dimensions_per_level> enumeration =
-          buffer.get_enumeration(level, index, mu, ldmu, rdiag, radius_squared_location);
+      CudaEnumeration<dimensions_per_level> enumeration = buffer.get_enumeration(
+          level, index, mu.block(offset_kk, offset_kk), rdiag, radius_squared_location);
 
       typedef ProcessLeafCallback<levels, dimensions_per_level, max_nodes_per_level> CallbackT;
-      CallbackT callback = {level + 1, index, mu, ldmu, radius_squared_location, buffer};
+      CallbackT callback = {level + 1, index, mu, radius_squared_location, buffer};
       enumeration.template enumerate_recursive<dimensions_per_level - 1, CallbackT>(
           callback, max_paths, counter);
 
@@ -709,17 +708,20 @@ template <typename CG, unsigned int levels, unsigned int dimensions_per_level,
 __device__ __host__ inline void get_done_subtree_count(
     CG &group, unsigned int *shared_counter,
     SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer,
-    unsigned int level, const enumf *mu, unsigned int ldmu, const enumf *rdiag,
-    const uint32_t *radius_square_location)
+    unsigned int level, Matrix mu, const enumf *rdiag, const uint32_t *radius_square_location)
 {
   const unsigned int active_thread_count = min(buffer.get_node_count(level), group.size());
   const unsigned int index =
       buffer.get_node_count(level) - active_thread_count + group.thread_rank();
   const bool active = index < buffer.get_node_count(level);
 
+  const unsigned int offset_kk = (levels - level - 1) * dimensions_per_level;
+
   if (active)
   {
-    bool is_done = buffer.get_enumeration(level, index, mu, ldmu, rdiag, radius_square_location)
+    bool is_done = buffer
+                       .get_enumeration(level, index, mu.block(offset_kk, offset_kk), rdiag,
+                                        radius_square_location)
                        .template is_enumeration_done<dimensions_per_level - 1>();
     if (is_done)
     {
@@ -734,7 +736,7 @@ template <typename CG, unsigned int block_size, unsigned int levels,
 __device__ __host__ inline void
 do_cleanup_step(CG &group, PrefixCounter<CG, block_size> &prefix_counter,
                 SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer,
-                unsigned int level, const enumf *mu, unsigned int ldmu, const enumf *rdiag,
+                unsigned int level, Matrix mu, const enumf *rdiag,
                 const uint32_t *radius_square_location)
 {
   const unsigned int active_thread_count = min(buffer.get_node_count(level), group.size());
@@ -742,17 +744,25 @@ do_cleanup_step(CG &group, PrefixCounter<CG, block_size> &prefix_counter,
       buffer.get_node_count(level) - active_thread_count + group.thread_rank();
   const bool active = index < buffer.get_node_count(level);
 
-  bool is_done = buffer.get_enumeration(level, index, mu, ldmu, rdiag, radius_square_location)
+  const unsigned int offset_kk = (levels - level - 1) * dimensions_per_level;
+
+  bool is_done = buffer
+                     .get_enumeration(level, index, mu.block(offset_kk, offset_kk), rdiag,
+                                      radius_square_location)
                      .template is_enumeration_done<dimensions_per_level - 1>();
+
+  group.sync();
+
   buffer.filter_nodes(group, prefix_counter, level, index, !is_done, active_thread_count);
 }
 
 template <typename CG, unsigned int block_size, unsigned int levels,
           unsigned int dimensions_per_level, unsigned int max_nodes_per_level>
 __device__ __host__ inline void
-clear_level(CG &group, PrefixCounter<CG, block_size> &prefix_counter, unsigned char* mu_shared_mem, unsigned int *shared_counter,
+clear_level(CG &group, PrefixCounter<CG, block_size> &prefix_counter,
+            unsigned int *shared_counter,
             SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer,
-            int level, const enumf *mu, unsigned int ldmu, const enumf *rdiag,
+            int level, Matrix mu, const enumf *rdiag,
             uint32_t *radius_square_location,
             unsigned int max_subtree_paths, PerfCounter counter)
 {
@@ -768,14 +778,14 @@ clear_level(CG &group, PrefixCounter<CG, block_size> &prefix_counter, unsigned c
         // create as many children as fit into the children buffer (and only as long as we can generate using enough parallel threads)
         while (true)
         {
-          do_search_step(group, mu_shared_mem, buffer, level, mu, ldmu, rdiag,
-                         radius_square_location, max_subtree_paths, counter);
+          do_search_step(group, buffer, level, mu, rdiag, radius_square_location,
+                         max_subtree_paths, counter);
           if (group.thread_rank() == 0)
           {
             *shared_counter = 0;
           }
           group.sync();
-          get_done_subtree_count(group, shared_counter, buffer, level, mu, ldmu, rdiag,
+          get_done_subtree_count(group, shared_counter, buffer, level, mu, rdiag,
                                  radius_square_location);
           group.sync();
           
@@ -802,7 +812,8 @@ clear_level(CG &group, PrefixCounter<CG, block_size> &prefix_counter, unsigned c
         if (level >= 0)
         {
           group.sync();
-          do_cleanup_step(group, prefix_counter, buffer, level, mu, ldmu, rdiag, radius_square_location);
+          do_cleanup_step(group, prefix_counter, buffer, level, mu, rdiag,
+                          radius_square_location);
           group.sync();
 
           debug_message_thread("Cleaned up level %d, has now %d nodes\n",
@@ -816,16 +827,18 @@ clear_level(CG &group, PrefixCounter<CG, block_size> &prefix_counter, unsigned c
     {
       while (buffer.get_node_count(level) > 0)
       {
-        do_search_step(group, mu_shared_mem, buffer, level, mu, ldmu, rdiag, radius_square_location,
+        do_search_step(group, buffer, level, mu, rdiag, radius_square_location,
                        max_subtree_paths, counter);
-        do_cleanup_step(group, prefix_counter, buffer, level, mu, ldmu, rdiag, radius_square_location);
+        do_cleanup_step(group, prefix_counter, buffer, level, mu, rdiag,
+                        radius_square_location);
         group.sync();
       }
       --level;
       if (level >= 0)
       {
         group.sync();
-        do_cleanup_step(group, prefix_counter, buffer, level, mu, ldmu, rdiag, radius_square_location);
+        do_cleanup_step(group, prefix_counter, buffer, level, mu, rdiag,
+                        radius_square_location);
         group.sync();
       }
     }
@@ -853,7 +866,7 @@ template <unsigned int levels, unsigned int dimensions_per_level,
 __global__ void __launch_bounds__(search_block_size, 1)
     search_kernel(unsigned char *buffer_memory, const enumi *start_points,
                   unsigned int *processed_start_point_counter, unsigned int start_point_dim,
-                  unsigned int start_point_count, const enumf *mu, const enumf *rdiag,
+                  unsigned int start_point_count, const enumf *mu_ptr, const enumf *rdiag,
                   uint32_t *radius_squared_location, unsigned int max_subtree_paths,
                   unsigned long long *perf_counter_memory, const unsigned int nodes_per_group)
 {
@@ -864,31 +877,38 @@ __global__ void __launch_bounds__(search_block_size, 1)
 
   constexpr unsigned int block_size = search_block_size;
   constexpr unsigned int dimensions = dimensions_per_level * levels;
-
   constexpr unsigned int group_count_per_block = block_size / 32;
-  constexpr unsigned int mu_shared_mem_size_per_group =
-      dimensions_per_level * dimensions_per_level * sizeof(enumf);
+
+  constexpr unsigned int mu_shared_memory_size = dimensions * dimensions * sizeof(enumf);
+
   constexpr unsigned int shared_mem_size =
-      group_count_per_block * sizeof(unsigned int) +
-      constexpr_max(PrefixCounter<CG, block_size>::shared_mem_size_in_bytes,
-                    group_count_per_block * mu_shared_mem_size_per_group);
+      group_count_per_block * sizeof(unsigned int) + mu_shared_memory_size;
+
   extern __shared__ unsigned char shared_mem[shared_mem_size];
 
   CG group = cooperative_groups::tiled_partition<32>(cooperative_groups::this_thread_block());
   const unsigned int group_id          = thread_id() / 32;
   const unsigned int group_id_in_block = thread_id_in_block() / 32;
-  // shared_mem can be used both for prefix counter and mu_shared_memory, as the uses do not overlap
-  unsigned char *mu_shared_mem = shared_mem + group_count_per_block * sizeof(unsigned int) +
-                                 group_id_in_block * mu_shared_mem_size_per_group;
-  PrefixCounter<CG, block_size>
-      prefix_counter /*(shared_mem + group_count_per_block * sizeof(unsigned int))*/;
+
+  PrefixCounter<CG, block_size> prefix_counter;
+
   unsigned int *group_shared_counter =
       reinterpret_cast<unsigned int *>(shared_mem + group_id_in_block * sizeof(unsigned int));
 
-  PerfCounter counter(perf_counter_memory);
-  assert(nodes_per_group <= group.size());
+  enumf *mu_shared =
+      reinterpret_cast<enumf *>(shared_mem + group_count_per_block * sizeof(unsigned int));
 
   const unsigned int ldmu = dimensions + start_point_dim;
+  for (unsigned int i = threadIdx.x; i < dimensions * dimensions; i += blockDim.x)
+  {
+    mu_shared[i] = mu_ptr[i / dimensions * ldmu + i % dimensions];
+  }
+  __syncthreads();
+  Matrix mu(mu_shared, dimensions);
+
+  PerfCounter counter(perf_counter_memory);
+
+  assert(nodes_per_group <= group.size());
 
   SubtreeBuffer buffer(buffer_memory + group_id * SubtreeBuffer::memory_size_in_bytes);
 
@@ -919,7 +939,7 @@ __global__ void __launch_bounds__(search_block_size, 1)
         enumf center_partsum = 0;
         for (unsigned int j = 0; j < start_point_dim; ++j)
         {
-          center_partsum -= start_point[j] * mu[i * ldmu + dimensions + j];
+          center_partsum -= start_point[j] * mu_ptr[i * ldmu + dimensions + j];
         }
         buffer.set_center_partsum(0, index, i, center_partsum);
       }
@@ -929,7 +949,7 @@ __global__ void __launch_bounds__(search_block_size, 1)
         enumf alpha = start_point[j];
         for (unsigned int i = j + 1; i < start_point_dim; ++i)
         {
-          alpha += start_point[i] * mu[(j + dimensions) * ldmu + dimensions + i];
+          alpha += start_point[i] * mu_ptr[(j + dimensions) * ldmu + i + dimensions];
         }
         partdist += alpha * alpha * rdiag[dimensions + j];
       }
@@ -940,7 +960,7 @@ __global__ void __launch_bounds__(search_block_size, 1)
     group.sync();
 
     clear_level<CG, block_size, levels, dimensions_per_level, max_nodes_per_level>(
-        group, prefix_counter, mu_shared_mem, group_shared_counter, buffer, 0, mu, ldmu, rdiag,
+        group, prefix_counter, group_shared_counter, buffer, 0, mu, rdiag,
         radius_squared_location, max_subtree_paths, counter);
   }
 

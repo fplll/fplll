@@ -9,7 +9,7 @@ inline void gpu_test()
   constexpr unsigned int levels               = 13;
   constexpr unsigned int dimensions_per_level = 4;
   constexpr unsigned int dimensions           = levels * dimensions_per_level;
-  constexpr unsigned int max_nodes_per_level  = 800;
+  constexpr unsigned int max_nodes_per_level  = 2000;
   constexpr unsigned int start_point_dim      = 8;
   constexpr unsigned int mu_n                 = dimensions + start_point_dim;
 
@@ -27,7 +27,7 @@ inline void gpu_test()
   } while (!naive_enum_recursive<start_point_dim, mu_n>(x, 0, 0, mu, mu_n - 1,
                                                         radius * radius, callback));
 
-  search<levels, dimensions_per_level, max_nodes_per_level>(mu, start_points, 20, 32, 8);
+  search<levels, dimensions_per_level, max_nodes_per_level>(mu, start_points, 50, 64, 8);
 }
 
 template<typename Dummy>
@@ -93,9 +93,8 @@ inline void cpu_test()
   unsigned int counter = 0;
   unsigned long long node_counter = 0;
   clear_level<single_thread, 1, levels, dimensions_per_level, max_nodes_per_level>(
-      group, prefix_counter, reinterpret_cast<unsigned char *>(local_mu.get()), &counter, buffer, 0,
-      mu.get(), dimensions, rdiag.get(), &radius_location, 5,
-      PerfCounter(&node_counter));
+      group, prefix_counter, &counter, buffer, 0,
+      Matrix(mu.get(), dimensions), rdiag.get(), &radius_location, 5, PerfCounter(&node_counter));
 }
 
 inline void cpu_test4d()
@@ -141,9 +140,8 @@ inline void cpu_test4d()
   unsigned int counter      = 0;
   unsigned long long node_counter = 0;
   clear_level<single_thread, 1, levels, dimensions_per_level, max_nodes_per_level>(
-      group, prefix_counter, reinterpret_cast<unsigned char *>(local_mu.get()), &counter, buffer, 0,
-      mu.get(), dimensions, rdiag.get(), &radius_location, 5,
-      PerfCounter(&node_counter));
+      group, prefix_counter, &counter, buffer, 0,
+      Matrix(mu.get(), dimensions), rdiag.get(), &radius_location, 5, PerfCounter(&node_counter));
 }
 
 int main()
