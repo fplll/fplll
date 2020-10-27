@@ -591,19 +591,16 @@ AddToTreeCallback<levels, dimensions_per_level, max_nodes_per_level>::operator()
   // subtree initialization will be done later in a synchronized way
 }
 
-template <unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level>
+template <unsigned int levels, unsigned int dimensions_per_level>
 __device__ __host__ inline enumf calc_center_partsum(
     unsigned int level, unsigned int index, unsigned int center_partsum_index,
-    SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer,
-    Matrix mu)
+    enumi x[dimensions_per_level], Matrix mu)
 {
   unsigned int kk_offset = (levels - level - 1) * dimensions_per_level;
   enumf center_partsum   = 0;
   for (unsigned int j = 0; j < dimensions_per_level; ++j)
   {
-    const enumi coefficient = buffer.get_coefficient(level, index, j);
-    center_partsum -=
-        coefficient * mu.at(center_partsum_index, j + dimensions_per_level + kk_offset);
+    center_partsum -= x[j] * mu.at(center_partsum_index, j + dimensions_per_level + kk_offset);
   }
   assert(!isnan(center_partsum));
   return center_partsum;
@@ -616,22 +613,169 @@ __device__ __host__ inline void calc_center_partsums(
     SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer, Matrix mu,
     PerfCounter &counter)
 {
-  unsigned long long begin = time();
-
   for (unsigned int new_index = already_calculated_node_count + group.thread_rank();
        new_index < buffer.get_node_count(level); new_index += group.size())
   {
-    const unsigned int parent_index = buffer.get_parent_index(level, new_index);
-
     unsigned int kk_offset = (levels - level - 1) * dimensions_per_level;
     unsigned int center_i  = kk_offset + dimensions_per_level - 1;
 
-    for (unsigned int i = 0; i < kk_offset + dimensions_per_level; ++i)
+    const unsigned int parent_index = buffer.get_parent_index(level, new_index);
+    enumi x[dimensions_per_level];
+    for (unsigned int j = 0; j < dimensions_per_level; ++j)
     {
-      enumf center_partsum = buffer.get_center_partsum(level - 1, parent_index, i) +
-                             calc_center_partsum(level, new_index, i, buffer, mu);
-      assert(!isnan(center_partsum));
+      x[j] = buffer.get_coefficient(level, new_index, j);
+    }
+    
+    unsigned int i = 0;
+    enumf center_partsum;
+    enumf preloaded_parent_center_partsums[4];
+    preloaded_parent_center_partsums[0] = buffer.get_center_partsum(level - 1, parent_index, 0);
+    preloaded_parent_center_partsums[1] = buffer.get_center_partsum(level - 1, parent_index, 1);
+    preloaded_parent_center_partsums[2] = buffer.get_center_partsum(level - 1, parent_index, 2);
+    for (; i + 6 < kk_offset + dimensions_per_level; i += 4)
+    {
+      preloaded_parent_center_partsums[3] = buffer.get_center_partsum(level - 1, parent_index, i + 3);
+      center_partsum =
+          preloaded_parent_center_partsums[0] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i, x, mu);
       buffer.set_center_partsum(level, new_index, i, center_partsum);
+
+      preloaded_parent_center_partsums[0] =
+          buffer.get_center_partsum(level - 1, parent_index, i + 4);
+      center_partsum =
+          preloaded_parent_center_partsums[1] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 1, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 1, center_partsum);
+
+      preloaded_parent_center_partsums[1] =
+          buffer.get_center_partsum(level - 1, parent_index, i + 5);
+      center_partsum =
+          preloaded_parent_center_partsums[2] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 2, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 2, center_partsum);
+
+      preloaded_parent_center_partsums[2] =
+          buffer.get_center_partsum(level - 1, parent_index, i + 6);
+      center_partsum =
+          preloaded_parent_center_partsums[3] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 3, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 3, center_partsum);
+    }
+    if (i + 6 == kk_offset + dimensions_per_level)
+    {
+      preloaded_parent_center_partsums[3] =
+          buffer.get_center_partsum(level - 1, parent_index, i + 3);
+
+      center_partsum =
+          preloaded_parent_center_partsums[0] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i, x, mu);
+      buffer.set_center_partsum(level, new_index, i, center_partsum);
+
+      preloaded_parent_center_partsums[0] =
+          buffer.get_center_partsum(level - 1, parent_index, i + 4);
+
+      center_partsum =
+          preloaded_parent_center_partsums[1] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 1, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 1, center_partsum);
+
+      preloaded_parent_center_partsums[1] =
+          buffer.get_center_partsum(level - 1, parent_index, i + 5);
+
+      center_partsum =
+          preloaded_parent_center_partsums[2] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 2, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 2, center_partsum);
+
+      center_partsum =
+          preloaded_parent_center_partsums[3] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 3, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 3, center_partsum);
+
+      center_partsum =
+          preloaded_parent_center_partsums[0] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 4, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 4, center_partsum);
+      
+      center_partsum =
+          preloaded_parent_center_partsums[1] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 5, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 5, center_partsum);
+    }
+    if (i + 5 == kk_offset + dimensions_per_level)
+    {
+      preloaded_parent_center_partsums[3] =
+          buffer.get_center_partsum(level - 1, parent_index, i + 3);
+
+      center_partsum =
+          preloaded_parent_center_partsums[0] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i, x, mu);
+      buffer.set_center_partsum(level, new_index, i, center_partsum);
+
+      preloaded_parent_center_partsums[0] =
+          buffer.get_center_partsum(level - 1, parent_index, i + 4);
+
+      center_partsum =
+          preloaded_parent_center_partsums[1] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 1, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 1, center_partsum);
+
+      center_partsum =
+          preloaded_parent_center_partsums[2] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 2, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 2, center_partsum);
+
+      center_partsum =
+          preloaded_parent_center_partsums[3] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 3, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 3, center_partsum);
+
+      center_partsum =
+          preloaded_parent_center_partsums[0] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 4, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 4, center_partsum);
+    }
+    if (i + 4 == kk_offset + dimensions_per_level)
+    {
+      preloaded_parent_center_partsums[3] =
+          buffer.get_center_partsum(level - 1, parent_index, i + 3);
+
+      center_partsum =
+          preloaded_parent_center_partsums[0] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i, x, mu);
+      buffer.set_center_partsum(level, new_index, i, center_partsum);
+
+      center_partsum =
+          preloaded_parent_center_partsums[1] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 1, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 1, center_partsum);
+
+      center_partsum =
+          preloaded_parent_center_partsums[2] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 2, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 2, center_partsum);
+
+      center_partsum =
+          preloaded_parent_center_partsums[3] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 3, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 3, center_partsum);
+    }
+    if (i + 3 == kk_offset + dimensions_per_level)
+    {
+      center_partsum =
+          preloaded_parent_center_partsums[0] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i, x, mu);
+      buffer.set_center_partsum(level, new_index, i, center_partsum);
+
+      center_partsum =
+          preloaded_parent_center_partsums[1] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 1, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 1, center_partsum);
+
+      center_partsum =
+          preloaded_parent_center_partsums[2] +
+          calc_center_partsum<levels, dimensions_per_level>(level, new_index, i + 2, x, mu);
+      buffer.set_center_partsum(level, new_index, i + 2, center_partsum);
     }
 
     enumf center = buffer.get_center_partsum(level, new_index, center_i);
@@ -643,7 +787,6 @@ __device__ __host__ inline void calc_center_partsums(
   }
 
   unsigned long long end = time();
-  counter.perf_count(1, end - begin);
 }
 
 // needs synchronization with operations that modify tree_level level - 1 of the buffer
@@ -859,7 +1002,7 @@ constexpr __device__ __host__ unsigned int constexpr_max(unsigned int a, unsigne
   }
 }
 
-constexpr unsigned int search_block_size = 256;
+constexpr unsigned int search_block_size = 128;
 
 template <unsigned int levels, unsigned int dimensions_per_level,
           unsigned int max_nodes_per_level>
