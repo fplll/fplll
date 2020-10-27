@@ -27,6 +27,8 @@
       <Filter>utility</Filter>
     </ClInclude>
     <ClInclude Include="enum.h" />
+    <ClInclude Include="recenum.cuh" />
+    <ClInclude Include="types.cuh" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="test.cu">

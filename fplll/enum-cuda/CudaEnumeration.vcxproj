@@ -14,7 +14,9 @@
     <ClInclude Include="atomic.cuh" />
     <ClInclude Include="enum.h" />
     <ClInclude Include="prefix.cuh" />
+    <ClInclude Include="recenum.cuh" />
     <ClInclude Include="testdata.h" />
+    <ClInclude Include="types.cuh" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
