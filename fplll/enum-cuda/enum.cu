@@ -410,157 +410,63 @@ init_new_nodes(CG &group, unsigned int level, unsigned int already_calculated_no
       x[j] = buffer.get_coefficient(level, new_index, j);
     }
 
+    // sets center_partsum[i] = parent_center_partsum[i] + calc_center_partsum_delta(..., i)
+    // to reduce latency, the loop is transformed as to load data now that is needed after 4 loop cycles
+    constexpr unsigned int loop_preload_count = 3;
+    constexpr unsigned int loop_preload_offset = loop_preload_count - 1;
     unsigned int i = 0;
     enumf center_partsum;
-    enumf preloaded_parent_center_partsums[4];
-    preloaded_parent_center_partsums[0] = buffer.get_center_partsum(level - 1, parent_index, 0);
-    preloaded_parent_center_partsums[1] = buffer.get_center_partsum(level - 1, parent_index, 1);
-    preloaded_parent_center_partsums[2] = buffer.get_center_partsum(level - 1, parent_index, 2);
-    for (; i + 6 < kk_offset + dimensions_per_level; i += 4)
+    enumf preloaded_parent_center_partsums[loop_preload_count];
+
+#pragma unroll
+    for (unsigned int j = 0; j < loop_preload_offset; ++j)
     {
-      preloaded_parent_center_partsums[3] =
-          buffer.get_center_partsum(level - 1, parent_index, i + 3);
-      center_partsum =
-          preloaded_parent_center_partsums[0] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i, x, mu);
-      buffer.set_center_partsum(level, new_index, i, center_partsum);
-
-      preloaded_parent_center_partsums[0] =
-          buffer.get_center_partsum(level - 1, parent_index, i + 4);
-      center_partsum =
-          preloaded_parent_center_partsums[1] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 1, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 1, center_partsum);
-
-      preloaded_parent_center_partsums[1] =
-          buffer.get_center_partsum(level - 1, parent_index, i + 5);
-      center_partsum =
-          preloaded_parent_center_partsums[2] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 2, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 2, center_partsum);
-
-      preloaded_parent_center_partsums[2] =
-          buffer.get_center_partsum(level - 1, parent_index, i + 6);
-      center_partsum =
-          preloaded_parent_center_partsums[3] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 3, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 3, center_partsum);
+      preloaded_parent_center_partsums[j] = buffer.get_center_partsum(level - 1, parent_index, j);
     }
-    if (i + 6 == kk_offset + dimensions_per_level)
+
+    for (; i + 2 * loop_preload_offset < kk_offset + dimensions_per_level; i += loop_preload_count)
     {
-      preloaded_parent_center_partsums[3] =
-          buffer.get_center_partsum(level - 1, parent_index, i + 3);
+#pragma unroll
+      for (unsigned int j = 0; j < loop_preload_count; ++j)
+      {
+        preloaded_parent_center_partsums[(j + loop_preload_offset) % loop_preload_count] =
+            buffer.get_center_partsum(level - 1, parent_index, i + j + loop_preload_offset);
 
-      center_partsum =
-          preloaded_parent_center_partsums[0] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i, x, mu);
-      buffer.set_center_partsum(level, new_index, i, center_partsum);
-
-      preloaded_parent_center_partsums[0] =
-          buffer.get_center_partsum(level - 1, parent_index, i + 4);
-
-      center_partsum =
-          preloaded_parent_center_partsums[1] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 1, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 1, center_partsum);
-
-      preloaded_parent_center_partsums[1] =
-          buffer.get_center_partsum(level - 1, parent_index, i + 5);
-
-      center_partsum =
-          preloaded_parent_center_partsums[2] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 2, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 2, center_partsum);
-
-      center_partsum =
-          preloaded_parent_center_partsums[3] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 3, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 3, center_partsum);
-
-      center_partsum =
-          preloaded_parent_center_partsums[0] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 4, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 4, center_partsum);
-
-      center_partsum =
-          preloaded_parent_center_partsums[1] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 5, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 5, center_partsum);
+        assert(preloaded_parent_center_partsums[j] ==
+               buffer.get_center_partsum(level - 1, parent_index, i + j));
+        center_partsum =
+            preloaded_parent_center_partsums[j] +
+            calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + j, x, mu);
+        buffer.set_center_partsum(level, new_index, i + j, center_partsum);
+      }
     }
-    if (i + 5 == kk_offset + dimensions_per_level)
+
+    assert(i + 2 * loop_preload_offset - loop_preload_count + 1 <=
+           kk_offset + dimensions_per_level);
+    assert(i + 2 * loop_preload_offset >= kk_offset + dimensions_per_level);
+
+#pragma unroll
+    for (unsigned int ii = 2 * loop_preload_offset - loop_preload_count + 1;
+         ii <= 2 * loop_preload_offset; ++ii)
     {
-      preloaded_parent_center_partsums[3] =
-          buffer.get_center_partsum(level - 1, parent_index, i + 3);
-
-      center_partsum =
-          preloaded_parent_center_partsums[0] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i, x, mu);
-      buffer.set_center_partsum(level, new_index, i, center_partsum);
-
-      preloaded_parent_center_partsums[0] =
-          buffer.get_center_partsum(level - 1, parent_index, i + 4);
-
-      center_partsum =
-          preloaded_parent_center_partsums[1] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 1, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 1, center_partsum);
-
-      center_partsum =
-          preloaded_parent_center_partsums[2] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 2, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 2, center_partsum);
-
-      center_partsum =
-          preloaded_parent_center_partsums[3] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 3, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 3, center_partsum);
-
-      center_partsum =
-          preloaded_parent_center_partsums[0] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 4, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 4, center_partsum);
-    }
-    if (i + 4 == kk_offset + dimensions_per_level)
-    {
-      preloaded_parent_center_partsums[3] =
-          buffer.get_center_partsum(level - 1, parent_index, i + 3);
-
-      center_partsum =
-          preloaded_parent_center_partsums[0] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i, x, mu);
-      buffer.set_center_partsum(level, new_index, i, center_partsum);
-
-      center_partsum =
-          preloaded_parent_center_partsums[1] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 1, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 1, center_partsum);
-
-      center_partsum =
-          preloaded_parent_center_partsums[2] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 2, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 2, center_partsum);
-
-      center_partsum =
-          preloaded_parent_center_partsums[3] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 3, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 3, center_partsum);
-    }
-    if (i + 3 == kk_offset + dimensions_per_level)
-    {
-      center_partsum =
-          preloaded_parent_center_partsums[0] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i, x, mu);
-      buffer.set_center_partsum(level, new_index, i, center_partsum);
-
-      center_partsum =
-          preloaded_parent_center_partsums[1] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 1, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 1, center_partsum);
-
-      center_partsum =
-          preloaded_parent_center_partsums[2] +
-          calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index, i + 2, x, mu);
-      buffer.set_center_partsum(level, new_index, i + 2, center_partsum);
+      if (i + ii == kk_offset + dimensions_per_level)
+      {
+#pragma unroll
+        for (unsigned int j = 0; j < ii; ++j)
+        {
+          if (j + loop_preload_offset < ii)
+          {
+            preloaded_parent_center_partsums[(j + loop_preload_offset) % loop_preload_count] =
+                buffer.get_center_partsum(level - 1, parent_index, i + j + loop_preload_offset);
+          }
+          assert(preloaded_parent_center_partsums[j % loop_preload_count] ==
+                 buffer.get_center_partsum(level - 1, parent_index, i + j));
+          center_partsum = preloaded_parent_center_partsums[j % loop_preload_count] +
+                           calc_center_partsum_delta<levels, dimensions_per_level>(level, new_index,
+                                                                                   i + j, x, mu);
+          buffer.set_center_partsum(level, new_index, i + j, center_partsum);
+        }
+      }
     }
 
     enumf center = buffer.get_center_partsum(level, new_index, center_i);
