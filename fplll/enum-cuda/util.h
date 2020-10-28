@@ -84,6 +84,14 @@ __device__ __host__ inline unsigned long long time()
 #endif
 }
 
+__device__ __host__ inline void runtime_error() {
+#ifdef __CUDA_ARCH__
+  asm("trap;");
+#else
+  throw;
+#endif
+}
+
 template <typename... Args> __device__ __host__ void debug_message_thread(const char *string, Args... arguments)
 {
   if (thread_id() == 0 && TRACE)

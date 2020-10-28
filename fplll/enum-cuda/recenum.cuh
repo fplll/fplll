@@ -8,21 +8,20 @@ private:
 
   enumi x[maxdim];
   enumf partdist[maxdim];
-  // ! different to base enumeration of fplll, the second index is shifted !
+  // different to base enumeration of fplll, the second index is shifted
   // _[i][j] contains inner product of i-th orthogonalized basis vector with B * (0, ..., 0, x[j +
   // 1], ... x[n])
   enumf center_partsums[maxdim][maxdim];
   enumf center[maxdim];
   const uint32_t *radius_squared_location;
 
-  // row-major
   Matrix mu;
   const enumf *rdiag;
 
 public:
 
   template <int kk, typename Callback>
-  __device__ __host__ bool enumerate_recursive(Callback &, unsigned int &max_paths,
+  __device__ __host__ bool enumerate_recursive(Callback &callback, unsigned int &max_paths,
                                                PerfCounter &counter);
 
   template <int kk> __device__ __host__ bool is_enumeration_done() const;
@@ -75,6 +74,8 @@ __device__ __host__ inline enumi next_coeff(enumi coeff, const enumf center)
  * this is exceeded, the tree search is aborted but can be resumed later by calling
  * enumerate_recursive on this object. The function returns whether the subtree was completely
  * searched.
+ * 
+ * Adjustment of enumerate_recursive() in enumerate_base.cpp
  */
 template <unsigned int maxdim>
 template <int kk, typename Callback>

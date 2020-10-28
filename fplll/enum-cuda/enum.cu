@@ -15,21 +15,32 @@
 #include "recenum.cuh"
 #include "util.h"
 
+/**
+ * Stores the state of the enumeration tree search, i.e. all nodes of the tree whose subtrees have to be searched, 
+ * or are currently searched, ordered by tree level.
+ * 
+ * A node is a dimensions_per_level-level subtree of the enumeration tree that is traversed via enumerate_recursive()
+ * and is given by the point corresponding to its root, i.e. a point in the sublattice spanned by the last level * dimensions_per_level
+ * basis vectors.
+ */
 template <unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level>
 struct SubtreeEnumerationBuffer
 {
 private:
+  // coefficients of the children enumeration for this point, used to pause and resume enumerate_recursive()
   // shape [levels, dimensions_per_level, max_nodes_per_level]
   enumi *enumeration_x;
+  // last dimensions_per_level coefficients of the point, the other coefficients must be retrieved by querying the parent node
   // shape [levels, dimensions_per_level, max_nodes_per_level]
   enumi *coefficients;
-  // shape [levels, dimensions, max_nodes_per_level], of subtree root
+  // inner products with the scaled lattice vectors of the point, only the first (levels - level) * dimensions_per_level are of interest
+  // shape [levels, dimensions, max_nodes_per_level]
   enumf *center_partsum;
-  // shape [levels, max_nodes_per_level], of subtree root
+  // squared norm of the point, projected into the perpendicular subspace to the first (levels - level) * dimensions_per_level basis vectors
+  // shape [levels, max_nodes_per_level]
   enumf *partdist;
   // shape [levels, max_nodes_per_level]
   unsigned int *parent_indices;
-
   // shape [levels]
   unsigned int *open_node_count;
 
@@ -238,16 +249,19 @@ public:
     // in this case, we want an error also in Release builds
     if (new_task_index >= max_nodes_per_level)
     {
-#ifdef __CUDA_ARCH__
-      asm("trap;");
-#else
-      throw;
-#endif
+      runtime_error();
     }
     parent_indices[tree_level * max_nodes_per_level + new_task_index] = parent_node_index;
     return new_task_index;
   }
 
+  /**
+   * Removes all nodes this functions was called for with keep_this_thread_task=false from the tree.
+   * 
+   * To allow an efficient implementation, requires that old_index == node_count - active_thread_count + cooperative_group.thread_rank(),
+   * i.e. all threads in the group have to call this function for the last active_thread_count nodes in the tree.
+   * Calls with cooperative_group.thread_rank() >= active_thread_count will be ignored.
+   */
   template <typename CG, unsigned int block_size>
   __device__ __host__ inline void
   filter_nodes(CG &cooperative_group, PrefixCounter<CG, block_size> &prefix_counter,
@@ -390,6 +404,13 @@ __device__ __host__ inline enumf calc_center_partsum_delta(unsigned int level, u
   return center_partsum;
 }
 
+/**
+ * Initializes newly generated nodes with all information necessary to perform subtree enumeration, namely
+ * the center_partsums and the partdist. Requires the coefficients of these nodes to be already stored in
+ * the tree buffer.
+ * 
+ * Newly generated nodes are all nodes on the given level, except the already_calculated_node_count first nodes.
+ */
 template <typename CG, unsigned int levels, unsigned int dimensions_per_level,
           unsigned int max_nodes_per_level>
 __device__ __host__ inline void
@@ -411,7 +432,7 @@ init_new_nodes(CG &group, unsigned int level, unsigned int already_calculated_no
     }
 
     // sets center_partsum[i] = parent_center_partsum[i] + calc_center_partsum_delta(..., i)
-    // to reduce latency, the loop is transformed as to load data now that is needed after 4 loop cycles
+    // to reduce latency, the loop is transformed as to load data now that is needed after some loop cycles
     constexpr unsigned int loop_preload_count = 3;
     constexpr unsigned int loop_preload_offset = loop_preload_count - 1;
     unsigned int i = 0;
@@ -476,10 +497,13 @@ init_new_nodes(CG &group, unsigned int level, unsigned int already_calculated_no
     enumf partdist = buffer.get_partdist(level, new_index);
     buffer.init_subtree(level, new_index, partdist, center);
   }
-
-  unsigned long long end = time();
 }
 
+/**
+ * Generates more children for the last group.size() nodes on the given level and adds them to the buffer.
+ * The subtree enumerations of the processed nodes are accordingly updated so that they will only yield
+ * new children.
+ */
 template <typename CG, unsigned int levels, unsigned int dimensions_per_level,
           unsigned int max_nodes_per_level>
 __device__ __host__ void generate_nodes_children(
@@ -518,6 +542,12 @@ __device__ __host__ void generate_nodes_children(
   init_new_nodes(group, level + 1, existing_nodes, buffer, mu, counter);
 }
 
+/**
+ * Searches the subtrees of the last group.size() nodes on the last tree level, possibly finding a new
+ * nonzero shortest vector.
+ * The subtree enumerations of the processed nodes are accordingly updated so that they will only yield
+ * new vectors.
+ */
 template <typename CG, unsigned int levels, unsigned int dimensions_per_level,
           unsigned int max_nodes_per_level>
 __device__ __host__ void inline process_leaf_nodes(
@@ -545,6 +575,10 @@ __device__ __host__ void inline process_leaf_nodes(
   }
 }
 
+/**
+ * Calculates the count of nodes among the last roup.size() nodes on the given level whose subtrees have nodes not
+ * exceeding the radius limit.
+ */
 template <typename CG, unsigned int levels, unsigned int dimensions_per_level,
           unsigned int max_nodes_per_level>
 __device__ __host__ inline unsigned int get_done_node_count(
@@ -580,6 +614,11 @@ __device__ __host__ inline unsigned int get_done_node_count(
   return *shared_counter;
 }
 
+/**
+ * Removes all nodes among the last group.size() nodes on the given level whose subtrees have nodes with partdist exceeding the radius limit.
+ * Be careful as the buffer can still have nodes referencing such a done node as a parent node, since the enumeration data is updated when
+ * children are generated, not when children are fully processed.
+ */
 template <typename CG, unsigned int block_size, unsigned int levels,
           unsigned int dimensions_per_level, unsigned int max_nodes_per_level>
 __device__ __host__ inline void remove_done_nodes(
@@ -615,7 +654,7 @@ struct StrategyOpts
 };
 
 /**
- * Generates children from the last group.size() nodes on level, until either
+ * Generates children from the last group.size() nodes on level and adds them to the buffer, until either
  * the children buffer is full or most of these nodes are done.
  */
 template <typename CG, unsigned int levels,
@@ -674,18 +713,21 @@ __device__ __host__ inline void process_leaf_level(
   }
 }
 
+/**
+ * Removes finished nodes from the parent level of the given level. Does nothing when called on the root.
+ */
 template <typename CG, unsigned int block_size, unsigned int levels,
           unsigned int dimensions_per_level, unsigned int max_nodes_per_level>
 __device__ __host__ inline void
-cleanup_level(CG &group, PrefixCounter<CG, block_size> &prefix_counter,
+cleanup_parent_level(CG &group, PrefixCounter<CG, block_size> &prefix_counter,
               SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer,
               int level, Matrix mu, const enumf *rdiag, uint32_t *radius_square_location)
 {
-  if (level >= 0)
+  if (level > 0)
   {
     group.sync();
 
-    remove_done_nodes(group, prefix_counter, buffer, level, mu, rdiag, radius_square_location);
+    remove_done_nodes(group, prefix_counter, buffer, level - 1, mu, rdiag, radius_square_location);
 
     group.sync();
 
@@ -717,30 +759,19 @@ clear_level(CG &group, PrefixCounter<CG, block_size> &prefix_counter, unsigned i
       }
       else
       {
+        cleanup_parent_level(group, prefix_counter, buffer, level, mu, rdiag,
+                             radius_square_location);
         --level;
-        cleanup_level(group, prefix_counter, buffer, level, mu, rdiag, radius_square_location);
       }
     }
     else
     {
       process_leaf_level(group, prefix_counter, buffer, mu, rdiag, radius_square_location,
                          node_counter, opts);
+      cleanup_parent_level(group, prefix_counter, buffer, level, mu, rdiag, radius_square_location);
       --level;
-      cleanup_level(group, prefix_counter, buffer, level, mu, rdiag, radius_square_location);
     }
     group.sync();
-  }
-}
-
-constexpr __device__ __host__ unsigned int constexpr_max(unsigned int a, unsigned int b)
-{
-  if (a > b)
-  {
-    return a;
-  }
-  else
-  {
-    return b;
   }
 }
 
@@ -880,8 +911,8 @@ void search(const std::array<std::array<float, levels * dimensions_per_level + s
   CudaPtr<uint32_t> radius_mem             = alloc(uint32_t, 1);
   CudaPtr<enumf> device_mu                 = alloc(enumf, mu_n * mu_n);
   CudaPtr<enumf> device_rdiag              = alloc(enumf, mu_n);
-  CudaPtr<unsigned long long> node_counter = alloc(unsigned long long, 5);
-  CudaPtr<enumi> device_start_points       = alloc(enumi, start_points.size() * opts.start_point_dim);
+  CudaPtr<unsigned long long> node_counter = alloc(unsigned long long, 1);
+  CudaPtr<enumi> device_start_points = alloc(enumi, start_points.size() * opts.start_point_dim);
   CudaPtr<unsigned int> processed_start_point_count = alloc(unsigned int, 1);
 
   const enumf radius                     = find_initial_radius(mu) * 1.01;
@@ -931,8 +962,4 @@ void search(const std::array<std::array<float, levels * dimensions_per_level + s
   std::cout << "searched nodes: " << searched_nodes << std::endl;
   std::cout << "result radius: " << sqrt(int_to_float_order_preserving_bijection(result_radius))
             << std::endl;
-  print_performance_counter(&node_counter.get()[1]);
-  print_performance_counter(&node_counter.get()[2]);
-  print_performance_counter(&node_counter.get()[3]);
-  print_performance_counter(&node_counter.get()[4]);
 }
