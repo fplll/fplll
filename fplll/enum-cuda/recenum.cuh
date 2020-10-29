@@ -55,7 +55,7 @@ __device__ __host__ inline bool CudaEnumeration<maxdim>::is_enumeration_done() c
 
 __device__ __host__ inline enumi next_coeff(enumi coeff, const enumf center)
 {
-  const enumf rounded_center = round(center);
+  const enumi rounded_center = static_cast<enumi>(round(center));
   coeff                      = 2 * rounded_center - coeff;
   if (center >= rounded_center)
   {

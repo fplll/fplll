@@ -2,7 +2,7 @@
 #include "cuda_runtime.h"
 #include "atomic.cuh"
 
-typedef float enumf;
+typedef double enumf;
 typedef float enumi;
 
 struct Matrix

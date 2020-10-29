@@ -63,6 +63,10 @@ private:
 
   constexpr static unsigned int open_node_count_size_in_bytes = sizeof(unsigned int) * levels;
 
+  constexpr static size_t content_memory_size_in_bytes =
+      enumeration_x_size_in_bytes + coefficient_size_in_bytes + center_partsum_size_in_bytes +
+      partdist_size_in_bytes + parent_indices_size_in_bytes + open_node_count_size_in_bytes;
+
 public:
   __device__ __host__ inline SubtreeEnumerationBuffer(unsigned char *memory)
       : center_partsum(reinterpret_cast<enumf *>(memory)),
@@ -79,6 +83,7 @@ public:
             memory + center_partsum_size_in_bytes + partdist_size_in_bytes +
             enumeration_x_size_in_bytes + coefficient_size_in_bytes + parent_indices_size_in_bytes))
   {
+    assert(((intptr_t)memory) % sizeof(enumf) == 0);
   }
 
   template <typename CG> __device__ __host__ inline void init(CG &cooperative_group)
@@ -92,9 +97,12 @@ public:
     }
   }
 
+  // ensure alignment
   constexpr static size_t memory_size_in_bytes =
-      enumeration_x_size_in_bytes + coefficient_size_in_bytes + center_partsum_size_in_bytes +
-      partdist_size_in_bytes + parent_indices_size_in_bytes + open_node_count_size_in_bytes;
+      ((content_memory_size_in_bytes - 1) / sizeof(enumf) + 1) * sizeof(enumf);
+
+  static_assert(memory_size_in_bytes >= content_memory_size_in_bytes,
+                "Bug in memory_size_in_bytes calculation");
 
   static_assert(memory_size_in_bytes < std::numeric_limits<unsigned int>::max(),
                 "Requires more memory than indexable with unsigned int");
@@ -168,7 +176,7 @@ public:
     }
     partdist[tree_level * max_nodes_per_level + index]                      = parent_partdist;
     enumeration_x[tree_level * dimensions_per_level * max_nodes_per_level +
-                  (dimensions_per_level - 1) * max_nodes_per_level + index] = round(center);
+                  (dimensions_per_level - 1) * max_nodes_per_level + index] = static_cast<enumi>(round(center));
   }
 
   __device__ __host__ inline void set_center_partsum(unsigned int tree_level, unsigned int index,
@@ -815,13 +823,13 @@ __global__ void __launch_bounds__(search_block_size, 1)
 
   PrefixCounter<CG, block_size> prefix_counter;
 
-  unsigned int *group_shared_counter =
-      reinterpret_cast<unsigned int *>(shared_mem + group_id_in_block * sizeof(unsigned int));
+  enumf *mu_shared = reinterpret_cast<enumf *>(shared_mem);
 
-  enumf *mu_shared =
-      reinterpret_cast<enumf *>(shared_mem + group_count_per_block * sizeof(unsigned int));
-  enumf *rdiag_shared = reinterpret_cast<enumf *>(
-      shared_mem + group_count_per_block * sizeof(unsigned int) + mu_shared_memory_size);
+  enumf *rdiag_shared = reinterpret_cast<enumf *>(shared_mem + mu_shared_memory_size);
+  
+  unsigned int *group_shared_counter =
+      reinterpret_cast<unsigned int *>(shared_mem + group_id_in_block * sizeof(unsigned int) +
+                                       mu_shared_memory_size + rdiag_shared_memory_size);
 
   const unsigned int ldmu = dimensions + opts.start_point_dim;
   for (unsigned int i = threadIdx.x; i < dimensions * dimensions; i += blockDim.x)
@@ -871,6 +879,7 @@ __global__ void __launch_bounds__(search_block_size, 1)
         {
           center_partsum -= start_point[j] * mu_ptr[i * ldmu + dimensions + j];
         }
+        assert(!isnan(center_partsum));
         buffer.set_center_partsum(0, index, i, center_partsum);
       }
       enumf partdist = 0;
@@ -925,8 +934,8 @@ void search(const std::array<std::array<float, levels * dimensions_per_level + s
 
   const enumf radius                     = find_initial_radius(mu) * 1.01;
   const uint32_t radius_squared_location = float_to_int_order_preserving_bijection(radius * radius);
-  std::unique_ptr<float[]> host_mu(new float[mu_n * mu_n]);
-  std::unique_ptr<float[]> host_rdiag(new float[mu_n]);
+  std::unique_ptr<enumf[]> host_mu(new enumf[mu_n * mu_n]);
+  std::unique_ptr<enumf[]> host_rdiag(new enumf[mu_n]);
   for (unsigned int i = 0; i < mu_n; ++i)
   {
     host_rdiag[i] = mu[i][i];
