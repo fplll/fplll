@@ -802,9 +802,10 @@ __global__ void __launch_bounds__(search_block_size, 1)
   constexpr unsigned int group_count_per_block = block_size / 32;
 
   constexpr unsigned int mu_shared_memory_size = dimensions * dimensions * sizeof(enumf);
+  constexpr unsigned int rdiag_shared_memory_size = dimensions * sizeof(enumf);
 
-  constexpr unsigned int shared_mem_size =
-      group_count_per_block * sizeof(unsigned int) + mu_shared_memory_size;
+  constexpr unsigned int shared_mem_size = group_count_per_block * sizeof(unsigned int) +
+                                           mu_shared_memory_size + rdiag_shared_memory_size;
 
   extern __shared__ unsigned char shared_mem[shared_mem_size];
 
@@ -819,11 +820,17 @@ __global__ void __launch_bounds__(search_block_size, 1)
 
   enumf *mu_shared =
       reinterpret_cast<enumf *>(shared_mem + group_count_per_block * sizeof(unsigned int));
+  enumf *rdiag_shared = reinterpret_cast<enumf *>(
+      shared_mem + group_count_per_block * sizeof(unsigned int) + mu_shared_memory_size);
 
   const unsigned int ldmu = dimensions + opts.start_point_dim;
   for (unsigned int i = threadIdx.x; i < dimensions * dimensions; i += blockDim.x)
   {
     mu_shared[i] = mu_ptr[i / dimensions * ldmu + i % dimensions];
+  }
+  for (unsigned int i = threadIdx.x; i < dimensions; i += blockDim.x)
+  {
+    rdiag_shared[i] = rdiag[i];
   }
   __syncthreads();
   Matrix mu(mu_shared, dimensions);
@@ -883,7 +890,8 @@ __global__ void __launch_bounds__(search_block_size, 1)
     group.sync();
 
     clear_level<CG, block_size, levels, dimensions_per_level, max_nodes_per_level>(
-        group, prefix_counter, group_shared_counter, buffer, 0, mu, rdiag, radius_squared_location,
+        group, prefix_counter, group_shared_counter, buffer, 0, mu, rdiag_shared,
+        radius_squared_location,
         opts.tree_clear_opts, node_counter);
   }
 }
