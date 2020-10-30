@@ -362,6 +362,24 @@ ProcessLeafCallback<levels, dimensions_per_level, max_nodes_per_level>::operator
 
   if (old_repr > squared_norm_repr)
   {
+    if constexpr (TRACE)
+    {
+      for (unsigned int j = 0; j < dimensions_per_level; ++j)
+      {
+        printf("%f, ", x[j]);
+      }
+      unsigned int index = parent_index;
+      for (unsigned int i = levels - 1; i > 0; --i)
+      {
+        for (unsigned int j = 0; j < dimensions_per_level; ++j)
+        {
+          printf("%f, ", buffer.get_coefficient(i, index, j));
+        }
+        index = buffer.get_parent_index(i, index);
+      }
+      index = buffer.get_parent_index(0, index);
+      printf(" -> %d\n\n", index);
+    }
     // Here save the found result
   }
 }
@@ -795,7 +813,7 @@ struct Opts
 };
 
 template <unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level>
-__global__ void __launch_bounds__(search_block_size, 1)
+__global__ void __launch_bounds__(search_block_size, 2)
     search_kernel(unsigned char *buffer_memory, const enumi *start_points,
                   unsigned int *processed_start_point_counter, unsigned int start_point_count,
                   const enumf *mu_ptr, const enumf *rdiag, uint32_t *radius_squared_location,

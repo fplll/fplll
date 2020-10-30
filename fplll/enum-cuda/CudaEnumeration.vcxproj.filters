@@ -9,11 +9,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="testdata.cpp">
-      <Filter>unittest</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="testdata.h">
       <Filter>unittest</Filter>
     </ClInclude>
@@ -35,5 +30,10 @@
       <Filter>unittest</Filter>
     </CudaCompile>
     <CudaCompile Include="enum.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="testdata.cpp">
+      <Filter>unittest</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

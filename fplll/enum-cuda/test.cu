@@ -7,17 +7,17 @@
 
 inline void gpu_test()
 {
-  constexpr unsigned int levels               = 13;
-  constexpr unsigned int dimensions_per_level = 4;
+  constexpr unsigned int levels               = 14;
+  constexpr unsigned int dimensions_per_level = 3;
   constexpr unsigned int dimensions           = levels * dimensions_per_level;
-  constexpr unsigned int max_nodes_per_level  = 2000;
+  constexpr unsigned int max_nodes_per_level  = 3000;
   constexpr unsigned int start_point_dim      = 8;
   constexpr unsigned int mu_n                 = dimensions + start_point_dim;
 
   const Opts<levels, dimensions_per_level, max_nodes_per_level> opts = {
       50, .5, 1500, 8, start_point_dim, 32 * 256};
 
-  const std::array<std::array<float, mu_n>, mu_n> &mu = test_mu_big;
+  const std::array<std::array<float, mu_n>, mu_n> &mu = test_mu_knapsack_big;
 
   std::vector<std::array<enumi, start_point_dim>> start_points;
   std::array<enumi, start_point_dim> x;
@@ -31,7 +31,14 @@ inline void gpu_test()
   } while (!naive_enum_recursive<start_point_dim, mu_n>(x, 0, 0, mu, mu_n - 1, radius * radius,
                                                         callback));
 
-  search<levels, dimensions_per_level, max_nodes_per_level, start_point_dim>(mu, start_points, opts);
+  //for (auto x : start_points[2275286])
+  //{
+  //  std::cout << x << ", ";
+  //}
+  //std::cout << std::endl;
+
+  search<levels, dimensions_per_level, max_nodes_per_level, start_point_dim>(mu, start_points,
+                                                                             opts);
 }
 
 template <typename Dummy> inline void gpu_test4d()
