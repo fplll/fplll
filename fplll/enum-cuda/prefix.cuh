@@ -1,4 +1,6 @@
-#pragma once
+#ifndef FPLLL_PREFIX_CUH
+#define FPLLL_PREFIX_CUH
+
 #include "cuda_runtime.h"
 #include "cooperative_groups.h"
 #include <assert.h>
@@ -155,3 +157,5 @@ public:
         return 0;
     }
 };
+
+#endif

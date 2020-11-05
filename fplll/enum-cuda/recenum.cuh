@@ -1,6 +1,11 @@
-#pragma once
+#ifndef FPLLL_RECENUM_CUH
+#define FPLLL_RECENUM_CUH
+
 #include "cuda_runtime.h"
 #include "types.cuh"
+
+namespace cudaenum
+{
 
 template <unsigned int maxdim> struct CudaEnumeration
 {
@@ -47,10 +52,7 @@ __device__ __host__ inline bool CudaEnumeration<maxdim>::is_enumeration_done() c
   {
     return isnan(x[kk]);
   }
-  else
-  {
-    return false;
-  }
+  return false;
 }
 
 __device__ __host__ inline enumi next_coeff(enumi coeff, const enumf center)
@@ -90,6 +92,10 @@ CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &m
   {
     enumf alphak  = x[kk] - center[kk];
     enumf newdist = partdist[kk] + alphak * alphak * rdiag[kk];
+    assert(!isnan(x[kk]));
+    assert(partdist[kk] >= 0);
+    assert(rdiag[kk] >= 0);
+    assert(newdist >= 0);
 
     if (!(newdist <= get_radius_squared()))
     {
@@ -131,7 +137,7 @@ CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &m
 
       enumf alphak2  = x[kk] - center[kk];
       enumf newdist2 = partdist[kk] + alphak2 * alphak2 * rdiag[kk];
-      assert(!isnan(newdist2));
+      assert(newdist2 >= 0);
 
       if (max_paths == 1)
       {
@@ -166,3 +172,7 @@ CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &m
   }
   return true;
 }
+
+}  // namespace cudaenum
+
+#endif

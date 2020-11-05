@@ -1,6 +1,8 @@
-#pragma once
+#ifndef FPLLL_TYPES_CUH
+#define FPLLL_TYPES_CUH
+
 #include "cuda_runtime.h"
-#include "atomic.cuh"
+#include "atomic.h"
 
 typedef double enumf;
 typedef float enumi;
@@ -34,5 +36,7 @@ struct PerfCounter
 
   __device__ __host__ inline PerfCounter(unsigned long long *target) : counter(target) {}
 
-  __device__ __host__ inline void inc() { aggregated_atomic_inc(counter); }
+  __device__ __host__ inline void inc() { atomic_inc(counter); }
 };
+
+#endif
