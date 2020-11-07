@@ -35,11 +35,10 @@ void search_arr(const std::array<std::array<float, total_dims>, total_dims> &mu,
                 eval_sol_fn callback)
 {
   constexpr unsigned int mu_n = total_dims;
-  constexpr unsigned int dimensions_per_level = 4;
+  constexpr unsigned int dimensions_per_level = 3;
   static_assert((total_dims - start_point_dim) % dimensions_per_level == 0,
                 "enumerated dims must be dividable by dimensions_per_level");
-  assert(opts.dimensions_per_level == dimensions_per_level);
-
+  
   std::unique_ptr<enumf[]> host_mu(new enumf[mu_n * mu_n]);
   std::unique_ptr<enumf[]> host_rdiag(new enumf[mu_n]);
   for (unsigned int i = 0; i < mu_n; ++i)
@@ -59,22 +58,22 @@ void search_arr(const std::array<std::array<float, total_dims>, total_dims> &mu,
       2048 - 32 * opts.max_subtree_paths, opts.initial_nodes_per_group, opts.thread_count};
 
   cudaenum::enumerate(host_mu.get(), host_rdiag.get(), start_points[0].data(), start_point_dim,
-                      start_points.size(), find_initial_radius(mu), callback, static_opts);
+                      start_points.size(), find_initial_radius<float, total_dims>(mu), callback, static_opts);
 }
 
 inline void gpu_test()
 {
-  constexpr unsigned int total_dim       = 50;
-  constexpr unsigned int start_point_dim = 6;
+  constexpr unsigned int total_dim       = 40;
+  constexpr unsigned int start_point_dim = 7;
 
-  const std::array<std::array<float, total_dim>, total_dim> &mu = test_mu_knapsack_big;
+  const std::array<std::array<float, total_dim>, total_dim> &mu = test_mu_knapsack_normal;
   std::vector<std::array<enumi, start_point_dim>> start_points;
 
   std::array<enumi, start_point_dim> x;
   x[start_point_dim - 1] = -1;
-  enumf radius           = find_initial_radius(mu) * 1.5;
+  enumf radius           = find_initial_radius<float, total_dim>(mu) * 1.5;
   std::function<void(const std::array<float, start_point_dim> &)> callback =
-      [&start_points](const auto &a) { start_points.push_back(a); };
+      [&start_points](const std::array<enumi, start_point_dim> &a) { start_points.push_back(a); };
   do
   {
     ++x[start_point_dim - 1];
@@ -82,7 +81,7 @@ inline void gpu_test()
                                                              radius * radius, callback));
 
   Evaluator evaluator;
-  search_arr(mu, start_points, evaluator);
+  search_arr<Evaluator, total_dim, start_point_dim>(mu, start_points, evaluator);
 }
 
 // inline void cpu_test4d()

@@ -4,14 +4,11 @@
 #include "cooperative_groups.h"
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include <array>
 #include <assert.h>
 #include <chrono>
 #include <iostream>
 #include <limits>
-#include <memory>
 #include <stdint.h>
-#include <vector>
 
 #include "atomic.h"
 #include "cuda_util.cuh"

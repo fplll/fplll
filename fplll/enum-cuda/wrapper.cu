@@ -4,7 +4,7 @@
 
 constexpr unsigned int cudaenum_max_dims_per_level   = 5;
 constexpr unsigned int cudaenum_max_levels           = 15;
-constexpr unsigned int cudaenum_max_nodes_per_level  = 2048;
+constexpr unsigned int cudaenum_max_nodes_per_level  = 3100;
 
 template <typename eval_sol_fn, unsigned int min_level, unsigned int max_level, unsigned int dimensions_per_level>
 inline void search_enumeration_choose_levels(const enumf *mu, const enumf *rdiag,

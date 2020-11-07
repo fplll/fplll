@@ -7,6 +7,10 @@
 namespace cudaenum
 {
 
+template <int kk> struct kk_marker
+{
+};
+
 template <unsigned int maxdim> struct CudaEnumeration
 {
 private:
@@ -27,7 +31,12 @@ public:
 
   template <int kk, typename Callback>
   __device__ __host__ bool enumerate_recursive(Callback &callback, unsigned int &max_paths,
-                                               PerfCounter &counter);
+                                               PerfCounter &counter,
+                                               kk_marker<kk> = kk_marker<kk>());
+  template <typename Callback>
+  __device__ __host__ bool enumerate_recursive(Callback &callback, unsigned int &max_paths,
+                                               PerfCounter &counter,
+                                               kk_marker<-1>);
 
   template <int kk> __device__ __host__ bool is_enumeration_done() const;
 
@@ -48,7 +57,7 @@ template <unsigned int maxdim>
 template <int kk>
 __device__ __host__ inline bool CudaEnumeration<maxdim>::is_enumeration_done() const
 {
-  if constexpr (kk >= 0)
+  if (kk >= 0)
   {
     return isnan(x[kk]);
   }
@@ -69,6 +78,12 @@ __device__ __host__ inline enumi next_coeff(enumi coeff, const enumf center)
   }
 }
 
+#if __cplusplus < 201703L
+#define if_constexpr
+#else
+#define if_constexpr if constexpr
+#endif
+
 /**
  * Searches the subtree of height kk + 1 using as root the values stored in this object. The
  * reference max_paths contains an integer that gives the maximal count of tree paths to search
@@ -83,33 +98,79 @@ template <unsigned int maxdim>
 template <int kk, typename Callback>
 __device__ __host__ inline bool
 CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &max_paths,
-                                             PerfCounter &node_counter)
+                                             PerfCounter &node_counter, kk_marker<kk>)
 {
   static_assert(kk < static_cast<int>(maxdim),
                 "Tree level count must be <= maximal enumeration dimension count");
   assert(max_paths >= 1);
-  if constexpr (kk >= 0)
-  {
-    enumf alphak  = x[kk] - center[kk];
-    enumf newdist = partdist[kk] + alphak * alphak * rdiag[kk];
-    assert(!isnan(x[kk]));
-    assert(partdist[kk] >= 0);
-    assert(rdiag[kk] >= 0);
-    assert(newdist >= 0);
+  enumf alphak  = x[kk] - center[kk];
+  enumf newdist = partdist[kk] + alphak * alphak * rdiag[kk];
+  assert(!isnan(x[kk]));
+  assert(partdist[kk] >= 0);
+  assert(rdiag[kk] >= 0);
+  assert(newdist >= 0);
 
-    if (!(newdist <= get_radius_squared()))
+  if (!(newdist <= get_radius_squared()))
+  {
+    x[kk] = NAN;
+    return true;
+  }
+
+  if (kk == 0)
+  {
+    callback(x, newdist);
+  }
+  else
+  {
+    partdist[kk - 1] = newdist;
+
+    for (int j = 0; j < kk; ++j)
+    {
+      center_partsums[j][kk - 1] = center_partsums[j][kk] - x[kk] * mu.at(j, kk);
+    }
+    assert(!isnan(center_partsums[kk - 1][kk - 1]));
+
+    center[kk - 1] = center_partsums[kk - 1][kk - 1];
+    if (isnan(x[kk - 1]))
+    {
+      x[kk - 1] = round(center[kk - 1]);
+    }
+  }
+
+  while (true)
+  {
+    node_counter.inc();
+    bool is_done = enumerate_recursive(callback, max_paths, node_counter, kk_marker<kk - 1>());
+    if (!is_done)
+    {
+      return false;
+    }
+
+    x[kk] = next_coeff(x[kk], center[kk]);
+
+    enumf alphak2  = x[kk] - center[kk];
+    enumf newdist2 = partdist[kk] + alphak2 * alphak2 * rdiag[kk];
+    assert(newdist2 >= 0);
+
+    if (max_paths == 1)
+    {
+      return false;
+    }
+    --max_paths;
+
+    if (!(newdist2 <= get_radius_squared()))
     {
       x[kk] = NAN;
       return true;
     }
 
-    if constexpr (kk == 0)
+    if (kk == 0)
     {
-      callback(x, newdist);
+      callback(x, newdist2);
     }
     else
     {
-      partdist[kk - 1] = newdist;
+      partdist[kk - 1] = newdist2;
 
       for (int j = 0; j < kk; ++j)
       {
@@ -118,58 +179,17 @@ CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &m
       assert(!isnan(center_partsums[kk - 1][kk - 1]));
 
       center[kk - 1] = center_partsums[kk - 1][kk - 1];
-      if (isnan(x[kk - 1]))
-      {
-        x[kk - 1] = round(center[kk - 1]);
-      }
-    }
-
-    while (true)
-    {
-      node_counter.inc();
-      bool is_done = enumerate_recursive<kk - 1, Callback>(callback, max_paths, node_counter);
-      if (!is_done)
-      {
-        return false;
-      }
-
-      x[kk] = next_coeff(x[kk], center[kk]);
-
-      enumf alphak2  = x[kk] - center[kk];
-      enumf newdist2 = partdist[kk] + alphak2 * alphak2 * rdiag[kk];
-      assert(newdist2 >= 0);
-
-      if (max_paths == 1)
-      {
-        return false;
-      }
-      --max_paths;
-
-      if (!(newdist2 <= get_radius_squared()))
-      {
-        x[kk] = NAN;
-        return true;
-      }
-
-      if constexpr (kk == 0)
-      {
-        callback(x, newdist2);
-      }
-      else
-      {
-        partdist[kk - 1] = newdist2;
-
-        for (int j = 0; j < kk; ++j)
-        {
-          center_partsums[j][kk - 1] = center_partsums[j][kk] - x[kk] * mu.at(j, kk);
-        }
-        assert(!isnan(center_partsums[kk - 1][kk - 1]));
-
-        center[kk - 1] = center_partsums[kk - 1][kk - 1];
-        x[kk - 1]      = round(center[kk - 1]);
-      }
+      x[kk - 1]      = round(center[kk - 1]);
     }
   }
+}
+
+template <unsigned int maxdim>
+template <typename Callback>
+__device__ __host__ inline bool
+CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &max_paths,
+                                             PerfCounter &node_counter, kk_marker<-1>)
+{
   return true;
 }
 

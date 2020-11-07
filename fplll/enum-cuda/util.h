@@ -68,7 +68,7 @@ inline bool naive_enum_recursive(std::array<float, levels> &x, const float paren
   {
     x[k + levels - dimensions - 1] = round(newcenter) + *iter;
     is_out_of_bounds =
-        naive_enum_recursive(x, newdist, newcenter, mu, k - 1, radius_square, callback);
+        naive_enum_recursive<levels, dimensions>(x, newdist, newcenter, mu, k - 1, radius_square, callback);
   }
   return false;
 }

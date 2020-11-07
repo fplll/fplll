@@ -5,17 +5,17 @@
 #include "cooperative_groups.h"
 #include <assert.h>
 
-constexpr inline unsigned int int_log2(unsigned int x) {
-    if (x == 0) {
-        return std::numeric_limits<unsigned int>::max();
-    }
-    unsigned int result = 0;
-    while (x >>= 1) {
-        result += 1;
-    }
-    return result;
+constexpr inline unsigned int int_log2_rec(unsigned int x) {
+  return x == 1 ? 0 : int_log2_rec(x >> 1) + 1;
 }
 
+constexpr inline unsigned int int_log2(unsigned int x) {
+  return x == 0 ? std::numeric_limits<unsigned int>::max() : int_log2_rec(x);
+}
+
+static_assert(int_log2(0) == std::numeric_limits<unsigned int>::max(), "error in log2");
+static_assert(int_log2(1) == 0, "error in log2");
+static_assert(int_log2(7) == 2, "error in log2");
 static_assert(int_log2(8) == 3, "error in log2");
 
 template<typename CG, unsigned int block_size>
@@ -31,7 +31,7 @@ class PrefixCounter<cooperative_groups::thread_block, block_size> {
     */
     template<unsigned int level>
     __device__ inline void prefix_sum_reduction_step(cooperative_groups::thread_block& group, unsigned int tid, unsigned int* accumulator, unsigned int* cell_offsets) {
-        if constexpr (block_size_log >= level + 1) {
+        if (block_size_log >= level + 1) {
             unsigned int buffer;
             if (tid < (1 << level)) {
                 buffer = accumulator[2 * tid] + accumulator[2 * tid + 1];
@@ -50,7 +50,7 @@ class PrefixCounter<cooperative_groups::thread_block, block_size> {
     template<unsigned int level>
     __device__ inline void prefix_count_reduction_step(cooperative_groups::thread_block& group, unsigned int tid, unsigned int* accumulator, unsigned int* cell_offsets) {
         constexpr unsigned int warpCountLog = block_size_log - 5;
-        if constexpr (warpCountLog >= level + 1) {
+        if (warpCountLog >= level + 1) {
             prefix_sum_reduction_step<level>(group, tid, accumulator, cell_offsets);
         }
     }

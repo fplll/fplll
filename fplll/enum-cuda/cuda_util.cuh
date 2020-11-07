@@ -3,6 +3,7 @@
 
 #include "cuda_runtime.h"
 #include <iostream>
+#include <memory>
 #include <ctime>
 
 struct CudaError {
@@ -17,7 +18,7 @@ inline void checkCudaError(cudaError_t status, const char *file, const unsigned 
 {
 	if (status != cudaSuccess) {
 		std::cerr << "Error: " << cudaGetErrorString(status) << " at " << file << ":" << line << std::endl;
-		//throw CudaError(status);
+		throw CudaError(status);
 	}
 }
 
