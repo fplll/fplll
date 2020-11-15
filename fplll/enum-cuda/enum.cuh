@@ -15,7 +15,7 @@
 #include "prefix.cuh"
 #include "recenum.cuh"
 
-namespace cudaenum
+namespace cuenum
 {
 
 constexpr bool TRACE = false;
@@ -429,7 +429,7 @@ __device__ __host__ inline enumf calc_center_partsum_delta(unsigned int level, u
                                                            enumi x[dimensions_per_level], Matrix mu)
 {
   unsigned int kk_offset = (levels - level - 1) * dimensions_per_level;
-  enumf center_partsum   = 0;
+  enumf center_partsum = 0;
   for (unsigned int j = 0; j < dimensions_per_level; ++j)
   {
     center_partsum -= x[j] * mu.at(center_partsum_index, j + dimensions_per_level + kk_offset);
@@ -974,15 +974,15 @@ constexpr unsigned int get_started_thread_count(unsigned int thread_count) {
  * In other words, the memory must contain n consecutive batches of memory, each consisting of n entries storing
  * the values of the corresponding row of the matrix. 
  * @param rdiag - n entries containing the squared norms of the gram-schmidt vectors, in one contigous segment of memory
- * @param start_points - coefficients of the points whose enumeration subtrees to search. Should be start_point_count consecutive
- * batches of memory, each consisting of start_point_dim entries.
+ * @param start_points - Function yielding a pointer to memory containing the start_point_dim coefficients of the i-th start point. This
+ * pointer must stay valid until the next call of the function. 
  * @param process_sol - callback function with signature void(enumi x, unsigned int i, bool done, enumf norm_squared, uint32_t* enum_bound_location);
  * this object will be passed to the cuda kernel, so it should be memcpy-able to device memory. It might also be called from multiple cuda threads
  * concurrently. The function is called once for each point and each coordinate, and on the last call for a point, done == true. The enumeration bound
  * stored at enum_bound_location must be mapped to the squared enumeration radius by using int_to_float_order_preserving_bijection() from "atomic.h".
  */
 template <typename eval_sol_fn, unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level, bool print_status = true>
-void enumerate(const enumf *mu, const enumf *rdiag, const enumi *start_points,
+void enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
                unsigned int start_point_dim, unsigned int start_point_count, enumf initial_radius,
                eval_sol_fn process_sol,
                Opts<levels, dimensions_per_level, max_nodes_per_level> opts)
@@ -1048,6 +1048,6 @@ void enumerate(const enumf *mu, const enumf *rdiag, const enumi *start_points,
   }
 }
 
-}  // namespace cudaenum
+}
 
 #endif

@@ -1,0 +1,75 @@
+#include <array>
+#include <functional>
+#include <vector>
+
+#include "cuda_wrapper.h"
+#include "atomic.h"
+
+#include "testdata.h"
+#include "util.h"
+
+using namespace cuenum;
+
+typedef float enumi;
+typedef double enumf;
+
+template <unsigned int total_dims, unsigned int start_point_dim>
+void search_arr_dyn(const std::array<std::array<float, total_dims>, total_dims> &mu,
+                    const std::vector<std::array<enumi, start_point_dim>> &start_points)
+{
+  constexpr unsigned int mu_n                 = total_dims;
+  constexpr unsigned int dimensions_per_level = 3;
+  static_assert((total_dims - start_point_dim) % dimensions_per_level == 0,
+                "enumerated dims must be dividable by dimensions_per_level");
+
+  std::unique_ptr<enumf[]> host_mu(new enumf[mu_n * mu_n]);
+  std::unique_ptr<enumf[]> host_rdiag(new enumf[mu_n]);
+  for (size_t i = 0; i < mu_n; ++i)
+  {
+    host_rdiag[i] = mu[i][i];
+    for (size_t j = 0; j < mu_n; ++j)
+    {
+      host_mu[i * mu_n + j] = mu[i][j] / host_rdiag[i];
+    }
+    host_rdiag[i] = host_rdiag[i] * host_rdiag[i];
+  }
+
+  CudaEnumOpts opts         = default_opts;
+  opts.dimensions_per_level = dimensions_per_level;
+
+  auto start_point_memory = create_start_point_array(start_points.size(), start_point_dim,
+                                                     start_points.begin(), start_points.end());
+  search_enumeration_cuda(host_mu.get(), host_rdiag.get(), total_dims - start_point_dim,
+                          start_point_memory.get(), static_cast<unsigned int>(start_points.size()),
+                          start_point_dim, EvaluatorStrategy::FAST,
+                          find_initial_radius<float, total_dims>(mu), opts);
+}
+
+inline void gpu_test()
+{
+  constexpr unsigned int total_dim       = 50;
+  constexpr unsigned int start_point_dim = 8;
+
+  const std::array<std::array<float, total_dim>, total_dim> &mu = test_mu_knapsack_big;
+  std::vector<std::array<enumi, start_point_dim>> start_points;
+
+  std::array<enumi, start_point_dim> x;
+  x[start_point_dim - 1] = -1;
+  enumf radius           = find_initial_radius<float, total_dim>(mu) * 1.5;
+  std::function<void(const std::array<float, start_point_dim> &)> callback =
+      [&start_points](const std::array<enumi, start_point_dim> &a) { start_points.push_back(a); };
+  do
+  {
+    ++x[start_point_dim - 1];
+  } while (!naive_enum_recursive<start_point_dim, total_dim>(x, 0, 0, mu, total_dim - 1,
+                                                             static_cast<float>(radius * radius), callback));
+
+  search_arr_dyn<total_dim, start_point_dim>(mu, start_points);
+}
+
+int main()
+{
+  gpu_test();
+
+  return 0;
+}

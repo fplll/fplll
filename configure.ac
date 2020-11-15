@@ -185,6 +185,35 @@ AC_ARG_WITH(max-parallel-enum-dim,
 AC_DEFINE_UNQUOTED([FPLLL_MAX_PARALLEL_ENUM_DIM], $max_parallel_enum_dim, [parallel enumeration enabled])
 AM_CONDITIONAL(FPLLL_PARALLEL_ENUM, test "x$max_parallel_enum_dim" != "x0")
 
+# Cuda enumeration (code from here: https://forums.developer.nvidia.com/t/cuda-and-autotools-configure-ac-makefile-am/1970/17)
+use_cuda=0
+AC_ARG_ENABLE(cuda, 
+	AS_HELP_STRING([--enable-cuda=ARCH], [Enable cuda enumeration]),[
+
+	# Search nvcc compiler
+	AC_PATH_PROG(NVCC, nvcc, "no")
+
+	AS_IF([test "x$NVCC" = "xno"],[
+		AC_MSG_ERROR([NVCC compiler not found!])
+	])
+
+	# Set CUDA_CFLAGS to $NVCC, where substring "bin/nvcc" is substituted by "include".
+	CUDA_CFLAGS=" -I${NVCC/'bin/nvcc'/include}"
+
+	#Set CUDA_LIBS to $NVCC, where substring "bin/nvcc" is substituted by "lib".
+	CUDA_LIBS=" -L${NVCC/'bin/nvcc'/lib/x64}"
+
+	CUDA_LIBS+=" -lcudart"
+
+   use_cuda=1
+
+   AC_DEFINE([FPLLL_WITH_CUDA_ENUM], [1], [cuda enumeration enabled])
+	AC_SUBST(CUDA_CFLAGS)
+	AC_SUBST(CUDA_LIBS)
+	AC_SUBST(NVCC)
+])
+AM_CONDITIONAL(FPLLL_CUDA_ENUM, test "x$use_cuda" != "x0")
+
 # Store version numbers in header
 
 AC_DEFINE_UNQUOTED([FPLLL_MAJOR_VERSION],[$FPLLL_MAJOR_VERSION],[major version])

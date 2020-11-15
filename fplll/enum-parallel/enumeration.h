@@ -497,6 +497,8 @@ struct lattice_enum_t
             this->_subsol[j]  = mylat._subsol[j];
           }
       };
+      
+
       for (int i = 0; i < ::fplll::get_threads(); ++i)
         threadpool.push(f);
       threadpool.wait_work();

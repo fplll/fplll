@@ -12,9 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="atomic.h" />
+    <ClInclude Include="cuda_check.h" />
     <ClInclude Include="cuda_util.cuh" />
     <ClInclude Include="enum.cuh" />
-    <ClInclude Include="gpufunc.h" />
     <ClInclude Include="prefix.cuh" />
     <ClInclude Include="recenum.cuh" />
     <ClInclude Include="testdata.h" />
@@ -23,7 +23,7 @@
     <ClInclude Include="wrapper.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="test.cu" />
+    <CudaCompile Include="test.cpp" />
     <CudaCompile Include="wrapper.cu" />
   </ItemGroup>
   <ItemGroup>

@@ -23,20 +23,20 @@
     <ClInclude Include="cuda_util.cuh">
       <Filter>utility</Filter>
     </ClInclude>
-    <ClInclude Include="gpufunc.h">
-      <Filter>utility</Filter>
-    </ClInclude>
     <ClInclude Include="atomic.h">
       <Filter>utility</Filter>
     </ClInclude>
     <ClInclude Include="enum.cuh" />
     <ClInclude Include="wrapper.h" />
+    <ClInclude Include="cuda_check.h">
+      <Filter>utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="test.cu">
+    <CudaCompile Include="wrapper.cu" />
+    <CudaCompile Include="test.cpp">
       <Filter>unittest</Filter>
     </CudaCompile>
-    <CudaCompile Include="wrapper.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="testdata.cpp">

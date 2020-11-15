@@ -17,6 +17,7 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "enumerate_base.h"
+#include <chrono>
 
 FPLLL_BEGIN_NAMESPACE
 

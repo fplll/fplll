@@ -4,7 +4,7 @@
 #include "cuda_runtime.h"
 #include "types.cuh"
 
-namespace cudaenum
+namespace cuenum
 {
 
 template <int kk> struct kk_marker

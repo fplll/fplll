@@ -1,13 +1,13 @@
 #ifndef FPLLL_ATOMIC_CUH
 #define FPLLL_ATOMIC_CUH
 
-#include "cuda_runtime.h"
-#include "cooperative_groups.h"
 #include <assert.h>
 #include <atomic>
 
 #ifdef __CUDACC__
 #define DEVICE_HOST_FUNCTION __device__ __host__
+#include "cuda_runtime.h"
+#include "cooperative_groups.h"
 #else
 #define DEVICE_HOST_FUNCTION
 #endif

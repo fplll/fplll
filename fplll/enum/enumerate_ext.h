@@ -106,8 +106,10 @@ public:
   {
   }
 
-  bool enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
-                 const vector<enumf> &pruning = vector<enumf>(), bool dual = false);
+  virtual ~ExternalEnumeration() = default;
+
+  virtual bool enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
+                         const vector<enumf> &pruning = vector<enumf>(), bool dual = false);
 
   // get_nodes. This returns the number of nodes visited by the external enumeration process.
   // If this returns 0, then fplll will fall back to the internal enumerator.
@@ -122,7 +124,7 @@ public:
 
   inline array<uint64_t, FPLLL_MAX_ENUM_DIM> get_nodes_array() const { return _nodes; }
 
-private:
+protected:
   void callback_set_config(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag, enumf *pruning);
 
   enumf callback_process_sol(enumf dist, enumf *sol);

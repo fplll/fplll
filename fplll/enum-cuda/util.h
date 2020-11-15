@@ -1,6 +1,4 @@
 #pragma once
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
 #include <iostream>
 #include <functional>
 
@@ -11,15 +9,15 @@ struct CenterToOutIterator
 {
   int current;
 
-  __device__ __host__ inline CenterToOutIterator() : current(0) {}
+  inline CenterToOutIterator() : current(0) {}
 
-  __device__ __host__ inline void operator++()
+  inline void operator++()
   {
     current += static_cast<int>(current >= 0);
     current = -current;
   }
 
-  __device__ __host__ inline void operator+=(unsigned int val)
+  inline void operator+=(unsigned int val)
   {
     if (val % 2 == 0)
     {
@@ -32,7 +30,7 @@ struct CenterToOutIterator
     }
   }
 
-  __device__ __host__ inline int operator*() { return current; }
+  inline int operator*() { return current; }
 };
 
 template <unsigned int levels, unsigned int dimensions>
@@ -119,26 +117,7 @@ FL find_initial_radius(const std::array<std::array<FL, dimensions>, dimensions> 
     {
       norm_square += mu[i][vector] * mu[i][vector];
     }
-    result = min(result, norm_square);
+    result = std::min<FL>(result, norm_square);
   }
   return sqrt(result);
-}
-
-inline void print_performance_counter(unsigned long long *device_ptr)
-{
-  unsigned long long counter;
-  check(cudaMemcpy(&counter, device_ptr, sizeof(unsigned long long), cudaMemcpyDeviceToHost));
-  std::cout << "Performance counter: " << counter << std::endl;
-}
-
-template <typename CG>
-__device__ __host__ bool all_threads_eq(CG &group, unsigned int value, unsigned int *shared_mem)
-{
-  group.sync();
-  if (group.thread_rank() == 0)
-  {
-    *shared_mem = value;
-  }
-  group.sync();
-  return value == *shared_mem;
 }

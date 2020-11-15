@@ -119,7 +119,6 @@ public:
     assert(blockDim.x == block_size);
     assert(blockDim.y == 1 && blockDim.z == 1);
 
-    const unsigned int warpid               = threadIdx.x / 32;
     const unsigned int laneid               = threadIdx.x % 32;
     const unsigned int in_warp_values       = __ballot_sync(0xFFFFFFFF, predicate ? 1 : 0);
     const unsigned int in_warp_accumulation = __popc(in_warp_values);

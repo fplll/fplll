@@ -5,45 +5,12 @@
 #include <iostream>
 #include <memory>
 #include <ctime>
+#include "cuda_check.h"
 
-struct CudaError {
-	cudaError_t status;
-
-	constexpr inline CudaError(cudaError_t status) : status(status)
-	{
-	}
+template <typename T> struct CudaDeleter
+{
+  inline void operator()(T *ptr) const { check(cudaFree(ptr)); }
 };
-
-inline void checkCudaError(cudaError_t status, const char *file, const unsigned int line)
-{
-	if (status != cudaSuccess) {
-		std::cerr << "Error: " << cudaGetErrorString(status) << " at " << file << ":" << line << std::endl;
-		throw CudaError(status);
-	}
-}
-
-#define check(x) checkCudaError(x, __FILE__, __LINE__)
-
-template<typename T>
-class CudaDeleter
-{
-public:
-	CudaDeleter() noexcept = default;
-	CudaDeleter(const CudaDeleter&) noexcept = default;
-	CudaDeleter(CudaDeleter&&) noexcept = default;
-	~CudaDeleter() = default;
-
-	CudaDeleter& operator=(const CudaDeleter&) = default;
-	CudaDeleter& operator=(CudaDeleter&&) = default;
-
-	void operator()(T*) const;
-};
-
-template<typename T>
-inline void CudaDeleter<T>::operator()(T* ptr) const
-{
-	check(cudaFree(ptr));
-}
 
 template<typename T>
 using CudaPtr = std::unique_ptr<T, CudaDeleter<T>>;

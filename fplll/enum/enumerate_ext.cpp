@@ -16,6 +16,7 @@
 
 #include "enumerate_ext.h"
 #include <fplll/defs.h>
+#include <chrono>
 
 #if FPLLL_MAX_PARALLEL_ENUM_DIM != 0
 #include "../enum-parallel/enumlib.h"
@@ -39,7 +40,7 @@ std::function<extenum_fc_enumerate> get_external_enumerator() { return fplll_ext
 
 template <typename ZT, typename FT>
 bool ExternalEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
-                                            const vector<enumf> &pruning, bool dual)
+                                                    const vector<enumf> &pruning, bool dual)
 {
   using namespace std::placeholders;
   if (fplll_extenum == nullptr)
@@ -77,6 +78,7 @@ bool ExternalEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, l
                _dual, _evaluator.findsubsols
                );
   // clang-format on
+
   return _nodes[0] != ~uint64_t(0);
 }
 
