@@ -10,6 +10,7 @@
  */
 
 #include "sieve_gauss.h"
+#include "sieve_cvpp.cpp"
 #include "sieve_gauss_2sieve.cpp"
 #include "sieve_gauss_3sieve.cpp"
 #include "sieve_gauss_4sieve.cpp"
@@ -303,6 +304,33 @@ template <class ZT, class F> void GaussSieve<ZT, F>::print_final_info()
 template <class ZT, class F> NumVect<Z_NR<ZT>> GaussSieve<ZT, F>::return_first()
 {
   return List.front()->v;
+}
+
+/**
+ * prints List to a file
+ */
+template <class ZT, class F> void GaussSieve<ZT, F>::print_list_to_file(const char *file_name)
+{
+  typename list<ListPoint<ZT> *>::iterator lp_it;
+  if (file_name != NULL)
+  {
+    ofstream output_file(file_name);
+    if (!(output_file.is_open()))
+    {
+      cout << "[ERROR] The output file " << file_name;
+      cout << " was not opened properly. The list will not be saved." << endl;
+    }
+    else
+    {
+      for (lp_it = List.begin(); lp_it != List.end(); ++lp_it)
+      {
+        output_file << (*lp_it)->v;
+        // output_file << " " << (*lp_it)->norm ;
+        output_file << endl;
+      }
+      output_file.close();
+    }
+  }
 }
 
 template <class ZT, class F> bool GaussSieve<ZT, F>::sieve(Z_NR<ZT> target_norm)

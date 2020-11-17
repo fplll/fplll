@@ -63,6 +63,14 @@ void set_listpoint_numvect(NumVect<Z_NR<ZT>> a, Z_NR<ZT> norm2, ListPoint<ZT> *p
 template <class ZT> inline void del_listpoint(ListPoint<ZT> *p) { delete p; }
 
 /**
+ * compare two ListPoints according to Euclidean norm
+ */
+template <class ZT> bool compare_listpoints(const ListPoint<ZT> *p1, const ListPoint<ZT> *p2)
+{
+  return (p1->norm < p2->norm);
+}
+
+/**
  * reduce p1 w.r.t to p2
  * (TBA: optimize this function)
  */
@@ -127,14 +135,14 @@ template <class ZT> inline bool half_2reduce(ListPoint<ZT> *p1, const ListPoint<
   t.mul_ui(t, 2);
   t.mul(t, dot);
   (p1->norm).sub(s, t);
-  /*
-  if (debug) {
-    cout << "[debug]  p1new = " << p1->v << endl;
-    cout << "[debug]  |p1new| = " << p1->norm << endl;
-    cout << "[debug]  |v| = " << p2->norm << endl;
-       if (p1->norm <= p2->norm && p1->norm != 0)
-       exit(1);
-  }*/
+/*
+if (debug) {
+  cout << "[debug]  p1new = " << p1->v << endl;
+  cout << "[debug]  |p1new| = " << p1->norm << endl;
+  cout << "[debug]  |v| = " << p2->norm << endl;
+     if (p1->norm <= p2->norm && p1->norm != 0)
+     exit(1);
+}*/
 
 #if 0
   gettimeofday(&time, 0);
