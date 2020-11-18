@@ -18,7 +18,7 @@
 namespace cuenum
 {
 
-constexpr bool TRACE = false;
+constexpr bool CUENUM_TRACE = false;
 
 /**
  * Stores the state of the enumeration tree search, i.e. all nodes of the tree whose subtrees have
@@ -150,20 +150,18 @@ public:
   {
     assert(tree_level < levels);
     assert(index < max_nodes_per_level);
+  #ifndef NDEBUG
     const unsigned int offset_kk = (levels - tree_level - 1) * dimensions_per_level;
+  #endif
 
     for (unsigned int i = 0; i < dimensions_per_level; ++i)
     {
       enumeration_x[tree_level * dimensions_per_level * max_nodes_per_level +
                     i * max_nodes_per_level + index] = value.x[i];
 
-      const enumf old_parent_center_partsum =
-          center_partsum[tree_level * dimensions * max_nodes_per_level +
-                         (offset_kk + i) * max_nodes_per_level + index];
-      const enumf new_parent_center_partsum = value.center_partsums[i][dimensions_per_level - 1];
-      assert(!isnan(old_parent_center_partsum));
-      assert(!isnan(new_parent_center_partsum));
-      assert(old_parent_center_partsum == new_parent_center_partsum);
+      assert(center_partsum[tree_level * dimensions * max_nodes_per_level + 
+                            (offset_kk + i) * max_nodes_per_level + index] == 
+             value.center_partsums[i][dimensions_per_level - 1]);
     }
     assert(center_partsum[tree_level * dimensions * max_nodes_per_level +
                           (offset_kk + dimensions_per_level - 1) * max_nodes_per_level + index] ==
@@ -572,8 +570,8 @@ __device__ __host__ void generate_nodes_children(
     {
       typedef AddToTreeCallback<levels, dimensions_per_level, max_nodes_per_level> CallbackType;
       CallbackType callback = {static_cast<unsigned int>(level + 1), index, mu, buffer, counter};
-      enumeration.template enumerate_recursive<dimensions_per_level - 1, CallbackType>(
-          callback, max_paths, counter);
+      enumeration.template enumerate_recursive(
+          callback, max_paths, counter, kk_marker<dimensions_per_level - 1>());
 
       buffer.set_enumeration(level, index, enumeration);
     }
@@ -613,8 +611,8 @@ __device__ __host__ void inline process_leaf_nodes(
         CallbackT;
     CallbackT callback = {level + 1, index,        start_point_dim,         process_sol,
                           mu,        start_points, radius_squared_location, buffer};
-    enumeration.template enumerate_recursive<dimensions_per_level - 1, CallbackT>(
-        callback, max_paths, node_counter);
+    enumeration.template enumerate_recursive(
+        callback, max_paths, node_counter, kk_marker<dimensions_per_level - 1>());
 
     buffer.set_enumeration(level, index, enumeration);
   }
@@ -725,10 +723,9 @@ __device__ __host__ inline void generate_level_children(
 
     group.sync();
 
-    if (TRACE && thread_id() == 0)
+    if (CUENUM_TRACE && thread_id() == 0)
     {
-      printf("Worked on level %d, next level points are %d, %d nodes of current working pool "
-             "(%d) are done\n",
+      printf("Thread 0: Worked on level %d, next level points are %d, %d nodes of current working pool (%d) are done\n",
              level, buffer.get_node_count(level + 1), *shared_counter, active_thread_count);
     }
 
@@ -782,9 +779,9 @@ __device__ __host__ inline void cleanup_parent_level(
 
     group.sync();
 
-    if (TRACE && thread_id() == 0)
+    if (CUENUM_TRACE && thread_id() == 0)
     {
-      printf("Cleaned up level %d, has now %d nodes\n", level - 1, buffer.get_node_count(level - 1));
+      printf("Thread 0: Cleaned up level %d, has now %d nodes\n", level - 1, buffer.get_node_count(level - 1));
     }
 
     group.sync();
@@ -942,9 +939,9 @@ __global__ void __launch_bounds__(enumerate_block_size, 2)
       }
       buffer.init_subtree(0, index, partdist, buffer.get_center_partsum(0, index, dimensions - 1));
     }
-    if (TRACE && thread_id() == 0)
+    if (CUENUM_TRACE && thread_id() == 0)
     {
-      printf("Get %d new nodes\n", opts.initial_nodes_per_group);
+      printf("Thread 0: Get %d new nodes\n", opts.initial_nodes_per_group);
     }
 
     group.sync();

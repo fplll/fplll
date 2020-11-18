@@ -1,6 +1,7 @@
 #include <array>
 #include <functional>
 #include <vector>
+#include <memory>
 
 #include "cuda_wrapper.h"
 #include "atomic.h"
@@ -13,9 +14,39 @@ using namespace cuenum;
 typedef float enumi;
 typedef double enumf;
 
+struct FT {
+  float value;
+
+  inline double get_d() const {
+    return value;
+  }
+
+  inline FT operator-(float rhs) const {
+    return { value - rhs };
+  }
+
+  inline FT operator*(float rhs) const {
+    return { value * rhs };
+  }
+
+  inline FT& operator=(float rhs) {
+    value = rhs;
+    return *this;
+  }
+
+  inline FT& operator++() {
+    ++value;
+    return *this;
+  }
+
+  inline operator float() const {
+    return value;
+  }
+};
+
 template <unsigned int total_dims, unsigned int start_point_dim>
 void search_arr_dyn(const std::array<std::array<float, total_dims>, total_dims> &mu,
-                    const std::vector<std::array<enumi, start_point_dim>> &start_points)
+                    const std::vector<std::pair<int, std::array<FT, start_point_dim>>> &start_points)
 {
   constexpr unsigned int mu_n                 = total_dims;
   constexpr unsigned int dimensions_per_level = 3;
@@ -51,19 +82,19 @@ inline void gpu_test()
   constexpr unsigned int start_point_dim = 8;
 
   const std::array<std::array<float, total_dim>, total_dim> &mu = test_mu_knapsack_big;
-  std::vector<std::array<enumi, start_point_dim>> start_points;
+  std::vector<std::pair<int, std::array<FT, start_point_dim>>> start_points;
 
-  std::array<enumi, start_point_dim> x;
+  std::array<FT, start_point_dim> x;
   x[start_point_dim - 1] = -1;
   enumf radius           = find_initial_radius<float, total_dim>(mu) * 1.5;
-  std::function<void(const std::array<float, start_point_dim> &)> callback =
-      [&start_points](const std::array<enumi, start_point_dim> &a) { start_points.push_back(a); };
+  std::function<void(const std::array<FT, start_point_dim> &)> callback =
+      [&start_points](const std::array<FT, start_point_dim> &a) { start_points.push_back(std::make_pair(0, a)); };
   do
   {
     ++x[start_point_dim - 1];
-  } while (!naive_enum_recursive<start_point_dim, total_dim>(x, 0, 0, mu, total_dim - 1,
+  } while (!naive_enum_recursive<FT, start_point_dim, total_dim>(x, 0, 0, mu, total_dim - 1,
                                                              static_cast<float>(radius * radius), callback));
-
+  
   search_arr_dyn<total_dim, start_point_dim>(mu, start_points);
 }
 

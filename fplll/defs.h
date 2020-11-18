@@ -104,6 +104,9 @@ struct DebugTracer
   FPLLL_TRACE("<" << __func__ << " " << x << ">");                                                 \
   DebugTracer debugTracer(__func__);
 #define FPLLL_DEBUG_SAFEVECT
+
+#undef FPLLL_TRACE
+#define FPLLL_TRACE(x)
 #else
 #define FPLLL_DEBUG_ABORT(x)
 #define FPLLL_DEBUG_CHECK(x)

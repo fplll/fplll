@@ -16,10 +16,14 @@ struct AllPointsEvaluator : public Evaluator<FT> {
   using Evaluator<FT>::solutions;
   using Evaluator<FT>::size;
 
-  AllPointsEvaluator()
+  AllPointsEvaluator(int solution_dim)
       : Evaluator<FT>(std::numeric_limits<size_t>::max(), EvaluatorStrategy::EVALSTRATEGY_BEST_N_SOLUTIONS, false)
   {
+    vector<FT> zero_vec;
+    gen_zero_vect(zero_vec, solution_dim);
+    solutions.insert(std::make_pair(0, std::move(zero_vec)));
   }
+
   virtual ~AllPointsEvaluator() {}
 
   virtual void eval_sol(const vector<FT> &new_sol_coord, const enumf &new_partial_dist,
@@ -33,19 +37,19 @@ struct AllPointsEvaluator : public Evaluator<FT> {
                             const enumf &sub_dist) 
   {}
 
-  typename Evaluator<FT>::container_t::const_iterator shortest_first_begin() const {
-      return solutions.begin(); 
+  typename Evaluator<FT>::container_t::const_reverse_iterator shortest_first_begin() const {
+      return solutions.rbegin(); 
   }
 
-  typename Evaluator<FT>::container_t::const_iterator shortest_first_end() const {
-      return solutions.end();
+  typename Evaluator<FT>::container_t::const_reverse_iterator shortest_first_end() const {
+      return solutions.rend();
   }
 };
 
 template <typename ZT, typename FT>
 std::unique_ptr<AllPointsEvaluator<FT>> CudaEnumeration<ZT, FT>::enumerate_start_points(size_t start_dims, FT &fmaxdist, long fmaxdistexpo) {
 
-    std::unique_ptr<AllPointsEvaluator<FT>> start_point_enumeration_evaluator(new AllPointsEvaluator<FT>());
+    std::unique_ptr<AllPointsEvaluator<FT>> start_point_enumeration_evaluator(new AllPointsEvaluator<FT>(start_dims));
     EnumerationDyn<ZT, FT> start_point_enumeration(_gso, *start_point_enumeration_evaluator);
     std::vector<FT> target_coord;
     std::vector<enumxt> subtree;
@@ -58,6 +62,7 @@ template <typename ZT, typename FT>
 bool CudaEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
                                         const vector<enumf> &pruning, bool dual)
 {
+
     try {
 
         std::cout << "cuda enumeration called" << std::endl;
@@ -96,27 +101,61 @@ bool CudaEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long 
         std::unique_ptr<enumf[]> pruning(new enumf[_d]);
 
         callback_set_config(mu.get(), _d, true, rdiag.get(), pruning.get());
+        for (unsigned int i = 0; i < _d; ++i) {
+            mu[i * _d + i] = 1.;
+        }
 
         cuenum::CudaEnumOpts options = cuenum::default_opts;
 
         // currently, the enumerated dimension count must be divisible by dimensions_per_level, so
         // we have to adapt start_dims accordingly
-        size_t start_dims = 5;
-        while (start_dims % options.dimensions_per_level != 0) {
+        int start_dims = 5;
+        while ((_d - start_dims) % options.dimensions_per_level != 0) {
             ++start_dims;
         }
-        if (_d < 0 || start_dims >= static_cast<size_t>(_d)) {
+        if (start_dims >= _d) {
             // use fallback, as cuda enumeration in such small dimensions is too much overhead
             return false;
         }
 
         std::unique_ptr<AllPointsEvaluator<FT>> start_point_evaluator = enumerate_start_points(start_dims, fmaxdist, fmaxdistexpo);
-        typedef typename AllPointsEvaluator<FT>::container_t::const_iterator start_point_iter;
-        start_point_iter begin = start_point_evaluator->shortest_first_begin();
-        start_point_iter end = start_point_evaluator->shortest_first_end();
-        auto start_points = cuenum::create_start_point_array<start_point_iter>(start_point_evaluator->size(), start_dims, begin, end);
+        auto begin = start_point_evaluator->shortest_first_begin();
+        auto end = start_point_evaluator->shortest_first_end();
+        auto start_points = cuenum::create_start_point_array<decltype(begin)>(start_point_evaluator->size(), start_dims, begin, end);
+        
+        FT fmaxdistnorm;
+        fmaxdistnorm.mul_2si(fmaxdist, fmaxdistexpo - _normexp);
 
-        cuenum::search_enumeration_cuda(mu.get(), rdiag.get(), _d - start_dims, start_points.get(), start_point_evaluator->size(), start_dims, evaluator, fmaxdist.get_d(), options);
+        std::cout << "Lattice is (up to orthogonal transform) given by the columns:" << std::endl;
+        for (unsigned int i = 0; i < _d; ++i) {
+            std::cout << "{";
+            for (unsigned int j = 0; j < i; ++j) {
+                std::cout << 0.f << ", "; 
+            }
+            for (unsigned int j = i; j < _d; ++j) {
+                std::cout << mu[i * _d + j];
+                if (j + 1 != _d) {
+                std::cout << ", ";
+                }
+            }
+            std::cout << "}" << ", " << std::endl;
+        }
+        std::cout << std::endl << std::endl;
+        for (unsigned int i = 0; i < _d; ++i) {
+            std::cout << rdiag[i] << ", ";
+        }
+        std::cout << std::endl << std::endl;
+        auto it = start_point_evaluator->shortest_first_begin();
+        for (unsigned int i = 0; i < 10 && it != end; ++i, ++it) {
+            std::cout << it->first << ": ";
+            for (unsigned int j = 0; j < start_dims; ++j) {
+                std::cout << it->second[j] << ", ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl << std::endl;
+
+        cuenum::search_enumeration_cuda(mu.get(), rdiag.get(), static_cast<size_t>(_d - start_dims), start_points.get(), start_point_evaluator->size(), start_dims, evaluator, fmaxdistnorm.get_d(), options);
 
         return true;
 

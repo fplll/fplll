@@ -149,11 +149,15 @@ libfpllld_la_LIBADD=$(libfplll_la_LIBADD)
 libfpllld_la_LDFLAGS=$(libfplll_la_LDFLAGS)
 
 if FPLLL_CUDA_ENUM
-#EXTRA_libfplllv_la_DEPENDENCIES+=enum-cuda/cuda_wrapper.lo 
+EXTRA_libfplllv_la_DEPENDENCIES+=enum-cuda/cuda_wrapper.lo 
 libfplllv_la_LIBADD+=enum-cuda/cuda_wrapper.lo
 libfplllv_la_LDFLAGS+=$(CUDA_LIBS)
 
-#EXTRA_libfpllld_la_DEPENDENCIES+=enum-cuda/cuda_wrapper_dbg.lo 
+EXTRA_libfplll_la_DEPENDENCIES+=enum-cuda/cuda_wrapper.lo 
+libfplll_la_LIBADD+=enum-cuda/cuda_wrapper.lo
+libfplll_la_LDFLAGS+=$(CUDA_LIBS)
+
+EXTRA_libfpllld_la_DEPENDENCIES+=enum-cuda/cuda_wrapper_dbg.lo 
 libfpllld_la_LIBADD+=enum-cuda/cuda_wrapper_dbg.lo
 libfpllld_la_LDFLAGS+=$(CUDA_LIBS)
 endif
@@ -176,7 +180,7 @@ dbg: fplll_dbg latticegen_dbg mybench_dbg
 MOSTLYCLEANFILES=enum-cuda/wrapper.lo enum-cuda/wrapper_dbg.lo enum-cuda/wrapper.o enum-cuda/wrapper_dbg.o
 
 enum-cuda/cuda_wrapper.lo: enum-cuda/cuda_wrapper.cu
-	$(LIBTOOL) --tag=CXX --mode=compile $(NVCC) -O3 --compiler-options -fPIC -ccbin=$(CC) --compile --ptxas-options=-v --std c++11 -o $@ $^ -static
+	$(LIBTOOL) --tag=CXX --mode=compile $(NVCC) -D NDEBUG -O3 --compiler-options -fPIC -ccbin=$(CC) --compile --ptxas-options=-v --std c++11 -o $@ $^ -static
 
 enum-cuda/cuda_wrapper_dbg.lo: enum-cuda/cuda_wrapper.cu
-	$(LIBTOOL) --tag=CXX --mode=compile $(NVCC) -g -G -O1 --compiler-options -fPIC -ccbin=$(CC) --compile --ptxas-options=-v --std c++11 -o $@ $^ -static
+	$(LIBTOOL) --tag=CXX --mode=compile $(NVCC) -g -G -O1 --compiler-options -fPIC -ccbin=$(CC) --compile --std c++11 -o $@ $^ -static

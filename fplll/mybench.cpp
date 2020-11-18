@@ -60,7 +60,7 @@ int main() {
   ZZ_mat<mpz_t> b(d, d);
   for (unsigned int i = 0; i < d; ++i) {
     for (unsigned int j = 0; j < d; ++j) {
-      b(i, j) = lattice[j][i];
+      b(i, j) = lattice[j][i] * 1e9;
     }
   }
   set_threads(-1);

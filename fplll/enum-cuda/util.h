@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <functional>
+#include <cmath>
 
 /**
 Provides an iterator that iterates over Z in the order 0, -1, 1, -2, 2, -3, 3, ...
@@ -33,12 +34,12 @@ struct CenterToOutIterator
   inline int operator*() { return current; }
 };
 
-template <unsigned int levels, unsigned int dimensions>
-inline bool naive_enum_recursive(std::array<float, levels> &x, const float parentdist,
+template <typename FT, unsigned int levels, unsigned int dimensions>
+inline bool naive_enum_recursive(std::array<FT, levels> &x, const float parentdist,
                                  const float parentcenter,
                                  const std::array<std::array<float, dimensions>, dimensions> &mu,
                                  const unsigned int k, const float radius_square,
-                                 std::function<void(const std::array<float, levels> &)> &callback)
+                                 std::function<void(const std::array<FT, levels> &)> &callback)
 {
   float alphak  = x[k + levels - dimensions] - parentcenter;
   float newdist = parentdist + alphak * alphak * mu[k][k] * mu[k][k];
@@ -66,7 +67,7 @@ inline bool naive_enum_recursive(std::array<float, levels> &x, const float paren
   {
     x[k + levels - dimensions - 1] = round(newcenter) + *iter;
     is_out_of_bounds =
-        naive_enum_recursive<levels, dimensions>(x, newdist, newcenter, mu, k - 1, radius_square, callback);
+        naive_enum_recursive<FT, levels, dimensions>(x, newdist, newcenter, mu, k - 1, radius_square, callback);
   }
   return false;
 }
