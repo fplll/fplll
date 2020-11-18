@@ -32,7 +32,7 @@ struct CudaEnumOpts
   unsigned int thread_count;
 };
 
-constexpr CudaEnumOpts default_opts = {50, .5, 4, 8, 32 * 256};
+constexpr CudaEnumOpts default_opts = {50, .5, 3, 8, 32 * 256};
 
 void search_enumeration_cuda(const double *mu, const double *rdiag,
                              const unsigned int enum_dimensions,

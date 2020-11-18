@@ -87,6 +87,7 @@ inline void gpu_test()
   std::array<FT, start_point_dim> x;
   x[start_point_dim - 1] = -1;
   enumf radius           = find_initial_radius<float, total_dim>(mu) * 1.5;
+  std::cout << radius << std::endl;
   std::function<void(const std::array<FT, start_point_dim> &)> callback =
       [&start_points](const std::array<FT, start_point_dim> &a) { start_points.push_back(std::make_pair(0, a)); };
   do

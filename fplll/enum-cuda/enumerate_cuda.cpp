@@ -62,10 +62,7 @@ template <typename ZT, typename FT>
 bool CudaEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long fmaxdistexpo,
                                         const vector<enumf> &pruning, bool dual)
 {
-
     try {
-
-        std::cout << "cuda enumeration called" << std::endl;
 
         if (dual) {
             throw "cuda enumeration does not yet support dual lattice enumeration";
@@ -101,7 +98,7 @@ bool CudaEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long 
         std::unique_ptr<enumf[]> pruning(new enumf[_d]);
 
         callback_set_config(mu.get(), _d, true, rdiag.get(), pruning.get());
-        for (unsigned int i = 0; i < _d; ++i) {
+        for (int i = 0; i < _d; ++i) {
             mu[i * _d + i] = 1.;
         }
 
@@ -109,7 +106,7 @@ bool CudaEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long 
 
         // currently, the enumerated dimension count must be divisible by dimensions_per_level, so
         // we have to adapt start_dims accordingly
-        int start_dims = 5;
+        int start_dims = 6;
         while ((_d - start_dims) % options.dimensions_per_level != 0) {
             ++start_dims;
         }
@@ -125,37 +122,9 @@ bool CudaEnumeration<ZT, FT>::enumerate(int first, int last, FT &fmaxdist, long 
         
         FT fmaxdistnorm;
         fmaxdistnorm.mul_2si(fmaxdist, fmaxdistexpo - _normexp);
+        const double radius_bound = std::sqrt(fmaxdistnorm.get_d());
 
-        std::cout << "Lattice is (up to orthogonal transform) given by the columns:" << std::endl;
-        for (unsigned int i = 0; i < _d; ++i) {
-            std::cout << "{";
-            for (unsigned int j = 0; j < i; ++j) {
-                std::cout << 0.f << ", "; 
-            }
-            for (unsigned int j = i; j < _d; ++j) {
-                std::cout << mu[i * _d + j];
-                if (j + 1 != _d) {
-                std::cout << ", ";
-                }
-            }
-            std::cout << "}" << ", " << std::endl;
-        }
-        std::cout << std::endl << std::endl;
-        for (unsigned int i = 0; i < _d; ++i) {
-            std::cout << rdiag[i] << ", ";
-        }
-        std::cout << std::endl << std::endl;
-        auto it = start_point_evaluator->shortest_first_begin();
-        for (unsigned int i = 0; i < 10 && it != end; ++i, ++it) {
-            std::cout << it->first << ": ";
-            for (unsigned int j = 0; j < start_dims; ++j) {
-                std::cout << it->second[j] << ", ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout << std::endl << std::endl;
-
-        cuenum::search_enumeration_cuda(mu.get(), rdiag.get(), static_cast<size_t>(_d - start_dims), start_points.get(), start_point_evaluator->size(), start_dims, evaluator, fmaxdistnorm.get_d(), options);
+        cuenum::search_enumeration_cuda(mu.get(), rdiag.get(), static_cast<size_t>(_d - start_dims), start_points.get(), start_point_evaluator->size(), start_dims, evaluator, radius_bound, options);
 
         return true;
 
