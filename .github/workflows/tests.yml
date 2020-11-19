@@ -1,0 +1,38 @@
+name: Check Style
+
+on: 
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * 0' # weekly
+
+env:
+  DIST_PREREQ: autoconf automake libtool libgmp-dev libmpfr-dev libqd-dev
+  MAX_ENUM_DIM: 64
+  MAX_PARALLEL_ENUM_DIM: 20
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - name: Install prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $DIST_PREREQ
+      - name: Configure
+        run: |
+          ./autogen.sh
+          ./configure --disable-static --with-max-enumeration-dimension=$MAX_ENUM_DIM \
+                      --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM
+      - name: Compile
+        run: make
+
+      - name: Test
+        run: make check
+
+      - name: Distcheck
+        run: make distcheck
+      
