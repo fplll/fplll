@@ -164,9 +164,14 @@ template <class ZT, class FT> inline bool HLLLReduction<ZT, FT>::set_status(int 
   if (verbose)
   {
     if (status == RED_SUCCESS)
+    {
       cerr << "End of HLLL: success" << endl;
-    else
+    }
+    else 
+    {
       cerr << "End of HLLL: failure: " << RED_STATUS_STR[status] << endl;
+      cerr << RED_STATUS_STR[RedStatus::RED_URL_ERR] << endl;
+    }
   }
   return status == RED_SUCCESS;
 }
