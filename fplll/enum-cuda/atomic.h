@@ -48,8 +48,8 @@ DEVICE_HOST_FUNCTION inline unsigned long long atomic_add(unsigned long long *ta
 #endif
 }
 
-// implementation is only atomic on the device
-DEVICE_HOST_FUNCTION inline unsigned int atomic_inc(unsigned int *ctr)
+// implementation is only atomic on the device, requires ctr to be the same for all threads in the warp
+DEVICE_HOST_FUNCTION inline unsigned int aggregated_atomic_inc(unsigned int *ctr)
 {
 #ifdef __CUDA_ARCH__
   // use warp-aggregated atomic for improved performance
@@ -65,8 +65,8 @@ DEVICE_HOST_FUNCTION inline unsigned int atomic_inc(unsigned int *ctr)
 #endif
 }
 
-// implementation is only atomic on the device
-DEVICE_HOST_FUNCTION inline unsigned long long atomic_inc(unsigned long long *ctr)
+// implementation is only atomic on the device, requires ctr to be the same for all threads in the warp
+DEVICE_HOST_FUNCTION inline unsigned long long aggregated_atomic_inc(unsigned long long *ctr)
 {
 #ifdef __CUDA_ARCH__
   // use warp-aggregated atomic for improved performance

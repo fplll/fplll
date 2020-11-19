@@ -80,10 +80,10 @@ void search_arr_dyn(const std::array<std::array<float, total_dims>, total_dims> 
 
 inline void gpu_test()
 {
-  constexpr unsigned int total_dim       = 60;
-  constexpr unsigned int start_point_dim = 6;
+  constexpr unsigned int total_dim       = 50;
+  constexpr unsigned int start_point_dim = 8;
 
-  const std::array<std::array<float, total_dim>, total_dim> &mu = test_mu_big;
+  const std::array<std::array<float, total_dim>, total_dim> &mu = test_mu_knapsack_big;
   std::vector<std::pair<int, std::array<FT, start_point_dim>>> start_points;
 
   std::array<FT, start_point_dim> x;

@@ -49,8 +49,7 @@ public:
                                              uint32_t *enum_bound_location)
   {
     if (coordinate == 0) {
-      point_index = atomic_inc(write_to_index) % buffer_size;
-      printf("Writing point to %d\n", point_index);
+      point_index = aggregated_atomic_inc(write_to_index) % buffer_size;
       result_squared_norms[point_index] = norm_square;
     }
  
@@ -58,8 +57,7 @@ public:
  
     if (done) {
       threadfence_system();
-      //printf("Finished writing point to %d\n", point_index);
-      atomic_inc(&has_written_round[point_index]);
+      atomic_add(&has_written_round[point_index], 1);
     }
   }
 };
@@ -68,11 +66,12 @@ template<unsigned int buffer_size>
 class PointStreamEndpoint {
 
   void* device_memory;
+  uint32_t* device_enumeration_bound_location;
   unsigned int evaluator_count;
   unsigned int point_dimension;
   PinnedPtr<unsigned char> host_memory;
   std::vector<std::unique_ptr<unsigned int[]>> last_has_written_round;
-  cudaStream_t stream;
+  CudaStream stream;
 
   inline void* evaluator_memory(unsigned int evaluator_id) {
       return static_cast<void*>(host_memory.get() + evaluator_id * PointStreamEvaluator<buffer_size>::memory_size_in_bytes(point_dimension));
@@ -89,45 +88,45 @@ class PointStreamEndpoint {
   
 public:
 
-  inline PointStreamEndpoint(unsigned char* device_memory, unsigned int evaluator_count, unsigned int point_dimension)
+  inline PointStreamEndpoint(unsigned char* device_memory, uint32_t* device_enumeration_bound_location, unsigned int evaluator_count, unsigned int point_dimension)
     : evaluator_count(evaluator_count),
       point_dimension(point_dimension),
+      device_enumeration_bound_location(device_enumeration_bound_location),
       device_memory(device_memory),
       host_memory(allocatePinnedMemory<unsigned char>(evaluator_count * PointStreamEvaluator<buffer_size>::memory_size_in_bytes(point_dimension)))
     {
         const unsigned int used_device = 0;
         cudaDeviceProp deviceProp;
         cudaGetDeviceProperties(&deviceProp, used_device);
-        if (deviceProp.asyncEngineCount <= 0) {
+        if (deviceProp.asyncEngineCount <= 1) {
             throw "your cuda device does not support asynchronous kernel execution and data transfer, which is required for solution point streaming";
         }
-        check(cudaStreamCreate(&stream));
+        cudaStream_t raw_stream;
+        check(cudaStreamCreate(&raw_stream));
+        stream.reset(raw_stream);
         for (unsigned int i = 0; i < evaluator_count; ++i) {
             last_has_written_round.push_back(std::unique_ptr<unsigned int[]>(new unsigned int[buffer_size]));
         }
     }
 
-    inline ~PointStreamEndpoint() {
-        check(cudaStreamDestroy(stream));
-    }
-
     __host__ inline void init() {
         for (unsigned int i = 0; i < evaluator_count; ++i) {
+            // use default cuda stream to prevent overlap with kernel execution & point query
             check(cudaMemset(device_has_written_round(i), 0, buffer_size * sizeof(unsigned int)));
             std::memset(host_has_written_round(i), 0, buffer_size * sizeof(unsigned int));
         }
     }
   
-    template<typename Fn>
+    template<typename Fn, bool print_status = true>
     __host__ inline void query_new_points(Fn callback) {
         for (unsigned int i = 0; i < evaluator_count; ++i) {
             std::memcpy(last_has_written_round[i].get(), host_has_written_round(i), buffer_size * sizeof(unsigned int));
         }
         const unsigned int total_size = PointStreamEvaluator<buffer_size>::memory_size_in_bytes(point_dimension) * evaluator_count;
-        check(cudaMemcpyAsync(host_memory.get(), device_memory, total_size, cudaMemcpyDeviceToHost, stream));
-        check(cudaStreamSynchronize(stream));
+        check(cudaMemcpyAsync(host_memory.get(), device_memory, total_size, cudaMemcpyDeviceToHost, stream.get()));
+        check(cudaStreamSynchronize(stream.get()));
 
-        std::cout << "Querying points" << std::endl;
+        float new_enumeration_bound = INFINITY;
         for (unsigned int i = 0; i < evaluator_count; ++i) {
             for (unsigned int j = 0; j < buffer_size; ++j) {
                 const unsigned int last_written_count = last_has_written_round[i][j];
@@ -138,16 +137,23 @@ public:
                     enumf norm_square = static_cast<enumf*>(evaluator_memory(i))[j];
                     enumi* x = static_cast<enumi*>(evaluator_memory(i) + (sizeof(enumf) + sizeof(unsigned int)) * buffer_size);
                     enumf new_enum_bound = callback(norm_square, x);
-                    std::cout << "Can decrease enum bound to " << new_enum_bound << std::endl;
+                    new_enumeration_bound = std::min<float>(new_enum_bound, new_enumeration_bound);
                 } else {
                     throw "buffer not big enough to hold all solution points found between two queries";
                 }
             }
         }
+        if (!isinf(new_enumeration_bound)) {
+            uint32_t enumeration_bound_encoded = float_to_int_order_preserving_bijection(new_enumeration_bound);
+            check(cudaMemcpyAsync(device_enumeration_bound_location, &enumeration_bound_encoded, sizeof(uint32_t), cudaMemcpyHostToDevice, stream.get()));
+            if (print_status) {
+                std::cout << "Can decrease enum bound to " << new_enumeration_bound << std::endl;
+            }
+        }
     } 
 
     __host__ inline void wait_for_event(cudaEvent_t event) {
-        check(cudaStreamWaitEvent(stream, event, 0));
+        check(cudaStreamWaitEvent(stream.get(), event, 0));
     }
 };
 

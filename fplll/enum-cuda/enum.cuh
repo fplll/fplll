@@ -261,7 +261,7 @@ public:
                                                    unsigned int parent_node_index)
   {
     assert(tree_level < levels);
-    const unsigned int new_task_index = atomic_inc(&open_node_count[tree_level]);
+    const unsigned int new_task_index = aggregated_atomic_inc(&open_node_count[tree_level]);
     assert(new_task_index < max_nodes_per_level);
     // in this case, we want an error also in Release builds
     if (new_task_index >= max_nodes_per_level)
@@ -651,7 +651,7 @@ __device__ __host__ inline unsigned int get_done_node_count(
                        .template is_enumeration_done<dimensions_per_level - 1>();
     if (is_done)
     {
-      atomic_inc(shared_counter);
+      aggregated_atomic_inc(shared_counter);
     }
   }
 
@@ -971,6 +971,8 @@ constexpr unsigned int get_started_thread_count(unsigned int thread_count) {
   return get_grid_size(thread_count) * enumerate_block_size;
 }
  
+typedef std::function<float(double, float*)> process_sol_fn;
+
 /**
  * Enumerates all points within the enumeration bound (initialized to parameter initial_radius) and calls
  * the given function on each coordinate of each of these points.
@@ -988,7 +990,7 @@ constexpr unsigned int get_started_thread_count(unsigned int thread_count) {
 template <unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level, bool print_status = true>
 void enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
                unsigned int start_point_dim, unsigned int start_point_count, enumf initial_radius,
-               std::function<float(double, float*)> process_sol,
+               process_sol_fn process_sol,
                Opts<levels, dimensions_per_level, max_nodes_per_level> opts)
 {
   typedef SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> SubtreeBuffer;
@@ -1021,12 +1023,16 @@ void enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
   check(cudaMemcpy(device_start_points.get(), start_points,
                    start_point_dim * start_point_count * sizeof(enumi), cudaMemcpyHostToDevice));
 
-  PointStream stream(point_stream_memory.get(), grid_size, mu_n);
+  PointStream stream(point_stream_memory.get(), radius_mem.get(), grid_size, mu_n);
   stream.init();
 
   cudaEvent_t raw_event;
   check(cudaEventCreateWithFlags(&raw_event, cudaEventDisableTiming));
   CudaEvent event(raw_event);
+
+  cudaStream_t raw_exec_stream;
+  check(cudaStreamCreate(&raw_exec_stream));
+  CudaStream exec_stream(raw_exec_stream);
 
   if (print_status)
   {
@@ -1036,19 +1042,19 @@ void enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
   }
   std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-  enumerate_kernel<<<dim3(grid_size), dim3(enumerate_block_size)>>>(
+  enumerate_kernel<<<dim3(grid_size), dim3(enumerate_block_size), 0, exec_stream.get()>>>(
       buffer_mem.get(), device_start_points.get(), processed_start_point_count.get(),
       start_point_count, start_point_dim, device_mu.get(), device_rdiag.get(), radius_mem.get(),
       node_counter.get(), point_stream_memory.get(), opts);
   
-  check(cudaEventRecord(event.get()));
+  check(cudaEventRecord(event.get(), exec_stream.get()));
 
   while(cudaEventQuery(event.get()) != cudaSuccess) 
   {
-    stream.query_new_points(process_sol);
+    stream.query_new_points<process_sol_fn, print_status>(process_sol);
   }
   stream.wait_for_event(event.get());
-  stream.query_new_points(process_sol);
+  stream.query_new_points<process_sol_fn, print_status>(process_sol);
 
   check(cudaDeviceSynchronize());
   check(cudaGetLastError());

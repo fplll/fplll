@@ -20,6 +20,11 @@ struct EventDeleter
   inline void operator()(cudaEvent_t ptr) const { check(cudaEventDestroy(ptr)); }
 };
 
+struct StreamDeleter
+{
+  inline void operator()(cudaStream_t ptr) const { check(cudaStreamDestroy(ptr)); }
+};
+
 template<typename T>
 using CudaPtr = std::unique_ptr<T, CudaDeleter<T>>;
 
@@ -27,6 +32,8 @@ template<typename T>
 using PinnedPtr = std::unique_ptr<T, PinnedDeleter<T>>;
 
 using CudaEvent = std::unique_ptr<std::remove_pointer<cudaEvent_t>::type, EventDeleter>;
+
+using CudaStream = std::unique_ptr<std::remove_pointer<cudaStream_t>::type, StreamDeleter>;
 
 template<typename T>
 inline CudaPtr<T> allocateCudaMemory(size_t len, const char* file, const unsigned int line)
