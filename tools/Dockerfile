@@ -1,4 +1,4 @@
-## -*- docker-image-name: "martinralbrecht/fplll" -*-
+## -*- docker-image-name: "fplll/fplll" -*-
 
 FROM debian:buster
 MAINTAINER Martin Albrecht <martin.albrecht@royalholloway.ac.uk>
