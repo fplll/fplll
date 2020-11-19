@@ -1,0 +1,38 @@
+name: Code Coverage
+
+on: 
+  pull_request:
+  push:
+    
+env:
+  MAX_ENUM_DIM: 64
+  MAX_PARALLEL_ENUM_DIM: 20
+  JOBS: 2
+  CXXFLAGS: -O2 -ggdb -fprofile-arcs -ftest-coverage
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - name: Install prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install autoconf automake libtool libgmp-dev libmpfr-dev libqd-dev
+      - name: Configure
+        run: |
+          ./autogen.sh
+          ./configure --disable-static --with-max-enum-dim=$MAX_ENUM_DIM \
+                      --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM
+      - name: Compile
+        run: make -j $JOBS
+
+      - name: Generate
+        run: |
+          make -j $JOBS check
+          cd fplll && gcov --object-directory .libs *.cpp && cd ..
+
+      - name: Push
+        uses: codecov/codecov-action@v1
