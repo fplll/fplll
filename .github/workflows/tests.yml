@@ -46,7 +46,7 @@ jobs:
         run: |
           brew update
           brew reinstall gmp
-          brew install autoconf clang-format
+          brew install autoconf automake clang-format
       - name: Configure
         run: |
           ./autogen.sh
