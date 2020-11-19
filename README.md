@@ -30,13 +30,18 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
     * [How to cite](#How-to-cite)
   * [Table of contents](#table-of-contents)
   * [Compilation](#compilation)
-    * [Dependencies](#dependencies)
-      * [Required](#required), [Optional](#optional).
-    * [Installation](#installation)
-      * [Linux](#linux)
-      * [Windows 10](#windows-10)
-    * [Optimization](#optimization)
+    * [Installation from packages](#Installation-from-packages)
+    	* [Ubuntu and Debian](#Ubuntu-and-Debian)
+    	* [Conda](#Conda)
+    	* [MacOS](#MacOS)
+    	* [Docker and AWS](#Docker-and-AWS)
+    * [Installation from source](#Installation-from-source)
+    	* [Dependencies](#dependencies)
+      		* [Required](#required), [Optional](#optional).
+      	* [Linux and MacOS](#Linux-and-MacOS)
+      	* [Windows 10](#windows-10)
     * [Check](#check)
+    * [Optimization](#optimization)
   * [How to use](#how-to-use)
     * Programs [latticegen](#latticegen), [fplll](#fplll-1), [llldiff](#llldiff), [latsieve](#latsieve).
     * [How to use as a library](#how-to-use-as-a-library)
@@ -52,27 +57,65 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 
 # Compilation #
 
-## Dependencies ##
+## Installation from packages ##
 
-### Required ###
+fplll is available as a pre-built package for a variety of operating systems; these pre-built packages typically include all mandatory dependencies, and so these packages can be used to start running fplll quickly.
+
+Below, we give some instructions on how to install these packaged variants of fplll.
+
+Note that these packages are likely to be rebuilt every time a new tag is cut; as a result, if you want fully up-to-date code, then it is necessary to build from source (See the "Install from Source" section).
+
+### Ubuntu and Debian ###
+fplll can be installed directly via Aptitude or Synaptic. Both of these package managers package fplll in the package `fplll-tools`. Therefore, to install this package using Aptitude, run the following command
+
+``` 
+sudo aptitude install fplll-tools
+```
+
+If you want to use Synaptic, then you will need to search for the `fplll-tools` package using the search bar.
+
+
+### Conda ###
+fplll can be installed natively as a conda package using the following command
+
+```
+conda install fplll
+```
+
+### MacOS ###
+
+MacOS has a package for fplll inside HomeBrew. Assuming that you have HomeBrew installed, you may install fplll using the following command
+
+```
+brew install fplll
+```
+
+### Docker and AWS ###
+We now have Docker/AWS images for fplll too. They aren't on this repository, though; you can find them [here](https://github.com/malb/fplll-virtual-machines)
+
+## Installation from source ##
+
+fplll can also be built from source. Below, we explicate some of the dependencies for building from source, as well as operating systems specific instructions.
+
+### Dependencies ###
+
+#### Required ####
 
 - GNU MP 4.2.0 or higher [http://gmplib.org/](http://gmplib.org/) or MPIR 1.0.0 or higher [http://mpir.org](http://mpir.org)
 - MPFR 2.3.0 or higher, COMPLETE INSTALLATION [http://www.mpfr.org/](http://www.mpfr.org/)
 - autotools 2.61 or higher
 - g++ 4.9.3 or higher
 
-### Optional ###
+#### Optional ####
 - QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install
   the shared library (e.g. `./configure --enable-shared=yes`).
   [http://crd-legacy.lbl.gov/~dhbailey/mpdist/](http://crd-legacy.lbl.gov/~dhbailey/mpdist/)
   
 NOTE: If you are intending to use fplll on Windows 10, then these packages are not required before you get started. This is because you use fplll via the "Windows Subsystem for Linux". Please go straight to the instructions for [Windows 10](#windows-10).
 
-## Installation ##
+### Linux and MacOS ###
 
-### Linux ###
-
-You should downloaded the source code from github and then run
+You should download the source code from Github and then run
 
     ./autogen.sh
 
@@ -105,11 +148,11 @@ installation directory name other than `/usr/local` by giving `./configure` the 
 
 ### Windows 10 ###
 
-Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to **Settings** -> **Update and security** -> **For developers** and enable developer mode. (This may take a while.) Afterwards, open Powershell as an administrator and run 
+Windows 10 has the "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to **Settings** -> **Update and security** -> **For developers** and enable developer mode. (This may take a while.) Afterwards, open Powershell as an administrator and run 
 
 	Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
 
-This will enable the WSL. Next, open the Windows Store and navigate to your favourite available Linux distribution - this may be installed as if were a regular application. Afterwards, this system can be accessed as if it were a regular program e.g. by opening command prompt and typing `bash`. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
+This will enable the WSL. Next, open the Windows Store and navigate to your favourite available Linux distribution - this may be installed as if it were a regular application. Afterwards, this system will act as a regular program, and so it can be opened however you like e.g. by opening command prompt and typing `bash`. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run:
 	
 	sudo apt-get update
 	
