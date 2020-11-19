@@ -20,10 +20,12 @@ jobs:
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install autoconf automake libtool libgmp-dev libmpfr-dev libqd-dev
-      - name: Setup
+      - name: Configure
         run: |
           ./autogen.sh
-
+          ./configure --disable-static --with-max-enum-dim=$MAX_ENUM_DIM \
+                      --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM
+                      
       - name: Distcheck
         run: make -j $JOBS distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --with-max-enum-dim=$MAX_ENUM_DIM --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM"
 
