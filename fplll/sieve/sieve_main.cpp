@@ -83,9 +83,6 @@ int main(int argc, char **argv)
   bool flag_verbose = true, flag_file = false, flag_cvpp = false;
   int option, alg, dim = 10, seed = 0, bs = 0;
 
-// set bool flag_verbose = false; otherwise always true
-// set seed = time(NULL); otherwise the output is the same in every run
-
 #if 0
   dot_time = 0;
   dot_num = 0;

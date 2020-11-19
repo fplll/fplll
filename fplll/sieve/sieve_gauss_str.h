@@ -140,8 +140,8 @@ if (debug) {
   cout << "[debug]  p1new = " << p1->v << endl;
   cout << "[debug]  |p1new| = " << p1->norm << endl;
   cout << "[debug]  |v| = " << p2->norm << endl;
-     if (p1->norm <= p2->norm && p1->norm != 0)
-     exit(1);
+    if (p1->norm <= p2->norm && p1->norm != 0)
+      exit(1);
 }*/
 
 #if 0
