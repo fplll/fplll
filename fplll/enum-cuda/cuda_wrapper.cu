@@ -152,6 +152,10 @@ uint64_t enumerate(const int dim, double maxdist, std::function<extenum_cb_set_c
   while ((dim - start_dims) % opts.dimensions_per_level != 0) {
     ++start_dims;
   }
+  if (start_dims >= _d) {
+      // use fallback, as cuda enumeration in such small dimensions is too much overhead
+      return 0;
+  }
 
   // later, when using an evaluator + recursive fplll enumeration, this pair interface is what we need
   typedef int Dummy;
@@ -166,7 +170,7 @@ uint64_t enumerate(const int dim, double maxdist, std::function<extenum_cb_set_c
   {
     ++x[start_dims - 1];
   } while (!naive_enum_recursive<FloatWrapper, enumf>(x, start_dims, dim, 0, 0, mu.get(), dim - 1, 
-                                               static_cast<float>(radius * radius), callback));
+                                                      static_cast<float>(radius * radius), callback));
 
   PinnedPtr<enumi> start_point_array = cuenum::create_start_point_array(start_points.size(), start_dims, start_points.begin(), start_points.end());
 
