@@ -1,0 +1,40 @@
+name: Check Style
+
+on: 
+  push:
+  pull_request:
+
+env:
+  DIST_PREREQ: autoconf automake libtool libgmp-dev libmpfr-dev libqd-dev
+  MAX_ENUM_DIM: 64
+  MAX_PARALLEL_ENUM_DIM: 20
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - name: Install prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $DIST_PREREQ
+      - name: Configure
+        run: |
+          ./autogen.sh
+          ./configure --disable-static --with-max-enumeration-dimension=$MAX_ENUM_DIM \
+                      --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM
+      - name: Check style
+        run: |
+          make check-style
+          if [[ $(git status -s) ]]; then
+             git --no-pager diff
+             tput setaf 1;
+             echo "Code does not adhere to the project standards. Run \"make check-style\".";
+             exit 1;
+          else 
+             tput setaf 2;
+             echo "Code adheres to the project standards.";
+             exit 0;
+          fi;
