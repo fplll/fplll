@@ -5,6 +5,11 @@ on:
     tags:
     - '*'
 
+env:
+  MAX_ENUM_DIM: 64
+  MAX_PARALLEL_ENUM_DIM: 20
+  JOBS: 2
+    
 jobs:
   build:
     name: Upload Release Asset
