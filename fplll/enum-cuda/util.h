@@ -2,6 +2,7 @@
 #include <iostream>
 #include <functional>
 #include <cmath>
+#include <vector>
 
 /**
 Provides an iterator that iterates over Z in the order 0, -1, 1, -2, 2, -3, 3, ...
@@ -34,40 +35,41 @@ struct CenterToOutIterator
   inline int operator*() { return current; }
 };
 
-template <typename FT, unsigned int levels, unsigned int dimensions>
-inline bool naive_enum_recursive(std::array<FT, levels> &x, const float parentdist,
-                                 const float parentcenter,
-                                 const std::array<std::array<float, dimensions>, dimensions> &mu,
-                                 const unsigned int k, const float radius_square,
-                                 std::function<void(const std::array<FT, levels> &)> &callback)
+template <typename FT, typename FL>
+inline bool naive_enum_recursive(std::vector<FT> &x, 
+                                 unsigned int levels, unsigned int n,
+                                 const FL parentdist, const FL parentcenter,
+                                 const FL* mu,
+                                 const unsigned int k, const FL radius_square,
+                                 std::function<void(const std::vector<FT> &)> &callback)
 {
-  float alphak  = x[k + levels - dimensions] - parentcenter;
-  float newdist = parentdist + alphak * alphak * mu[k][k] * mu[k][k];
+  FL alphak  = x[k + levels - n] - parentcenter;
+  FL newdist = parentdist + alphak * alphak * mu[k * n + k] * mu[k * n + k];
 
   if (newdist > radius_square)
   {
     return true;
   }
 
-  if (k == dimensions - levels)
+  if (k == n - levels)
   {
     callback(x);
     return false;
   }
 
-  float newcenter = 0;
+  FL newcenter = 0;
   for (unsigned int i = k; i < levels; ++i)
   {
-    newcenter -= x[i] * mu[k - 1][i];
+    newcenter -= x[i] * mu[(k - 1) * n + i];
   }
-  newcenter /= mu[k - 1][k - 1];
+  newcenter /= mu[(k - 1) * n + k - 1];
 
   bool is_out_of_bounds = false;
   for (CenterToOutIterator iter; !is_out_of_bounds; ++iter)
   {
-    x[k + levels - dimensions - 1] = round(newcenter) + *iter;
+    x[k + levels - n - 1] = round(newcenter) + *iter;
     is_out_of_bounds =
-        naive_enum_recursive<FT, levels, dimensions>(x, newdist, newcenter, mu, k - 1, radius_square, callback);
+        naive_enum_recursive<FT>(x, levels, n, newdist, newcenter, mu, k - 1, radius_square, callback);
   }
   return false;
 }
@@ -122,3 +124,33 @@ FL find_initial_radius(const std::array<std::array<FL, dimensions>, dimensions> 
   }
   return sqrt(result);
 }
+
+struct FloatWrapper {
+  float value;
+
+  inline double get_d() const {
+    return value;
+  }
+
+  inline FloatWrapper operator-(float rhs) const {
+    return { value - rhs };
+  }
+
+  inline FloatWrapper operator*(float rhs) const {
+    return { value * rhs };
+  }
+
+  inline FloatWrapper& operator=(float rhs) {
+    value = rhs;
+    return *this;
+  }
+
+  inline FloatWrapper& operator++() {
+    ++value;
+    return *this;
+  }
+
+  inline operator float() const {
+    return value;
+  }
+};

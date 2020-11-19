@@ -988,7 +988,7 @@ typedef std::function<float(double, float*)> process_sol_fn;
  * @param process_sol - callback function called on solution points that were found. This is a host function.
  */
 template <unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level, bool print_status = true>
-void enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
+uint64_t enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
                unsigned int start_point_dim, unsigned int start_point_count, enumf initial_radius,
                process_sol_fn process_sol,
                Opts<levels, dimensions_per_level, max_nodes_per_level> opts)
@@ -1059,6 +1059,10 @@ void enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
   check(cudaDeviceSynchronize());
   check(cudaGetLastError());
 
+  unsigned long long searched_nodes;
+  check(cudaMemcpy(&searched_nodes, node_counter.get(), sizeof(unsigned long long),
+                   cudaMemcpyDeviceToHost));
+
   if (print_status)
   {
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -1067,16 +1071,13 @@ void enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
               << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << " ms"
               << std::endl;
 
-    unsigned long long searched_nodes;
     uint32_t result_radius;
-    check(cudaMemcpy(&searched_nodes, node_counter.get(), sizeof(unsigned long long),
-                     cudaMemcpyDeviceToHost));
-
     check(cudaMemcpy(&result_radius, radius_mem.get(), sizeof(uint32_t), cudaMemcpyDeviceToHost));
     std::cout << "Searched " << searched_nodes
               << " tree nodes, and decreased enumeration bound down to "
               << sqrt(int_to_float_order_preserving_bijection(result_radius)) << std::endl;
   }
+  return searched_nodes;
 }
 
 }
