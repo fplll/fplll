@@ -1,7 +1,7 @@
 ## -*- docker-image-name: "fplll/fplll" -*-
 
 FROM debian:buster
-MAINTAINER Martin Albrecht <martin.albrecht@royalholloway.ac.uk>
+MAINTAINER Martin Albrecht <fplll-devel@googlegroups.com>
 
 ARG BRANCH=master
 
