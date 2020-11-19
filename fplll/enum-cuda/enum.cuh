@@ -9,10 +9,13 @@
 #include <iostream>
 #include <limits>
 #include <stdint.h>
+#include <functional>
+#include <vector>
 
 #include "atomic.h"
 #include "cuda_util.cuh"
 #include "prefix.cuh"
+#include "streaming.cuh"
 #include "recenum.cuh"
 
 namespace cuenum
@@ -825,8 +828,9 @@ clear_level(CG &group, PrefixCounter<CG, block_size> &prefix_counter, unsigned i
   }
 }
 
-constexpr unsigned int enumerate_block_size             = 128;
-constexpr unsigned int enumerate_cooperative_group_size = 32;
+constexpr unsigned int enumerate_block_size               = 128;
+constexpr unsigned int enumerate_cooperative_group_size   = 32;
+constexpr unsigned int enumerate_point_stream_buffer_size = 100;
 
 template <unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level>
 struct Opts
@@ -836,18 +840,19 @@ struct Opts
   unsigned int thread_count;
 };
 
-template <typename eval_sol_fn, unsigned int levels, unsigned int dimensions_per_level,
+template <unsigned int levels, unsigned int dimensions_per_level,
           unsigned int max_nodes_per_level>
 __global__ void __launch_bounds__(enumerate_block_size, 2)
     enumerate_kernel(unsigned char *buffer_memory, const enumi *start_points,
                      unsigned int *processed_start_point_counter, unsigned int start_point_count,
                      unsigned int start_point_dim, const enumf *mu_ptr, const enumf *rdiag,
                      uint32_t *radius_squared_location, unsigned long long *perf_counter_memory,
-                     eval_sol_fn process_sol,
+                     unsigned char* point_stream_memory,
                      Opts<levels, dimensions_per_level, max_nodes_per_level> opts)
 {
   typedef cooperative_groups::thread_block_tile<32> CG;
   typedef SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> SubtreeBuffer;
+  typedef PointStreamEvaluator<enumerate_point_stream_buffer_size> Evaluator;
 
   constexpr unsigned int block_size            = enumerate_block_size;
   constexpr unsigned int dimensions            = dimensions_per_level * levels;
@@ -856,7 +861,7 @@ __global__ void __launch_bounds__(enumerate_block_size, 2)
   constexpr unsigned int mu_shared_memory_size    = dimensions * dimensions * sizeof(enumf);
   constexpr unsigned int rdiag_shared_memory_size = dimensions * sizeof(enumf);
 
-  constexpr unsigned int shared_mem_size = group_count_per_block * sizeof(unsigned int) +
+  constexpr unsigned int shared_mem_size = group_count_per_block * sizeof(unsigned int) + sizeof(unsigned int) + 
                                            mu_shared_memory_size + rdiag_shared_memory_size;
 
   __shared__ unsigned char shared_mem[shared_mem_size];
@@ -874,6 +879,9 @@ __global__ void __launch_bounds__(enumerate_block_size, 2)
   unsigned int *group_shared_counter =
       reinterpret_cast<unsigned int *>(shared_mem + group_id_in_block * sizeof(unsigned int) +
                                        mu_shared_memory_size + rdiag_shared_memory_size);
+  unsigned int *point_stream_counter = 
+      reinterpret_cast<unsigned int *>(shared_mem + group_count_per_block * sizeof(unsigned int) +
+                                       mu_shared_memory_size + rdiag_shared_memory_size);
 
   const unsigned int ldmu = dimensions + start_point_dim;
   for (unsigned int i = threadIdx.x; i < dimensions * dimensions; i += blockDim.x)
@@ -888,6 +896,8 @@ __global__ void __launch_bounds__(enumerate_block_size, 2)
   Matrix mu(mu_shared, dimensions);
 
   PerfCounter node_counter(perf_counter_memory);
+
+  Evaluator process_sol(point_stream_memory + blockIdx.x * Evaluator::memory_size_in_bytes(dimensions + start_point_dim), point_stream_counter);
 
   assert(opts.initial_nodes_per_group <= group.size());
 
@@ -960,7 +970,7 @@ constexpr unsigned int get_grid_size(unsigned int thread_count)
 constexpr unsigned int get_started_thread_count(unsigned int thread_count) {
   return get_grid_size(thread_count) * enumerate_block_size;
 }
-
+ 
 /**
  * Enumerates all points within the enumeration bound (initialized to parameter initial_radius) and calls
  * the given function on each coordinate of each of these points.
@@ -973,18 +983,17 @@ constexpr unsigned int get_started_thread_count(unsigned int thread_count) {
  * @param rdiag - n entries containing the squared norms of the gram-schmidt vectors, in one contigous segment of memory
  * @param start_points - Function yielding a pointer to memory containing the start_point_dim coefficients of the i-th start point. This
  * pointer must stay valid until the next call of the function. 
- * @param process_sol - callback function with signature void(enumi x, unsigned int i, bool done, enumf norm_squared, uint32_t* enum_bound_location);
- * this object will be passed to the cuda kernel, so it should be memcpy-able to device memory. It might also be called from multiple cuda threads
- * concurrently. The function is called once for each point and each coordinate, and on the last call for a point, done == true. The enumeration bound
- * stored at enum_bound_location must be mapped to the squared enumeration radius by using int_to_float_order_preserving_bijection() from "atomic.h".
+ * @param process_sol - callback function called on solution points that were found. This is a host function.
  */
-template <typename eval_sol_fn, unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level, bool print_status = true>
+template <unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level, bool print_status = true>
 void enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
                unsigned int start_point_dim, unsigned int start_point_count, enumf initial_radius,
-               eval_sol_fn process_sol,
+               std::function<float(double, float*)> process_sol,
                Opts<levels, dimensions_per_level, max_nodes_per_level> opts)
 {
   typedef SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> SubtreeBuffer;
+  typedef PointStreamEvaluator<enumerate_point_stream_buffer_size> Evaluator;
+  typedef PointStreamEndpoint<enumerate_point_stream_buffer_size> PointStream;
 
   constexpr unsigned int tree_dimensions = levels * dimensions_per_level;
   const unsigned int mu_n                = tree_dimensions + start_point_dim;
@@ -992,13 +1001,16 @@ void enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
   const unsigned int group_count         = grid_size * enumerate_block_size / enumerate_cooperative_group_size;
 
   CudaPtr<unsigned char> buffer_mem =
-      alloc(unsigned char, SubtreeBuffer::memory_size_in_bytes * group_count);
-  CudaPtr<uint32_t> radius_mem             = alloc(uint32_t, 1);
-  CudaPtr<enumf> device_mu                 = alloc(enumf, mu_n * mu_n);
-  CudaPtr<enumf> device_rdiag              = alloc(enumf, mu_n);
-  CudaPtr<unsigned long long> node_counter = alloc(unsigned long long, 1);
-  CudaPtr<enumi> device_start_points       = alloc(enumi, start_point_count * start_point_dim);
-  CudaPtr<unsigned int> processed_start_point_count = alloc(unsigned int, 1);
+      cuda_alloc(unsigned char, SubtreeBuffer::memory_size_in_bytes * group_count);
+  CudaPtr<unsigned char> point_stream_memory = 
+      cuda_alloc(unsigned char, Evaluator::memory_size_in_bytes(mu_n) * grid_size);
+
+  CudaPtr<uint32_t> radius_mem             = cuda_alloc(uint32_t, 1);
+  CudaPtr<enumf> device_mu                 = cuda_alloc(enumf, mu_n * mu_n);
+  CudaPtr<enumf> device_rdiag              = cuda_alloc(enumf, mu_n);
+  CudaPtr<unsigned long long> node_counter = cuda_alloc(unsigned long long, 1);
+  CudaPtr<enumi> device_start_points       = cuda_alloc(enumi, start_point_count * start_point_dim);
+  CudaPtr<unsigned int> processed_start_point_count = cuda_alloc(unsigned int, 1);
 
   const uint32_t repr_initial_radius_squared =
       float_to_int_order_preserving_bijection(initial_radius * initial_radius);
@@ -1008,6 +1020,13 @@ void enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
                    cudaMemcpyHostToDevice));
   check(cudaMemcpy(device_start_points.get(), start_points,
                    start_point_dim * start_point_count * sizeof(enumi), cudaMemcpyHostToDevice));
+
+  PointStream stream(point_stream_memory.get(), grid_size, mu_n);
+  stream.init();
+
+  cudaEvent_t raw_event;
+  check(cudaEventCreateWithFlags(&raw_event, cudaEventDisableTiming));
+  CudaEvent event(raw_event);
 
   if (print_status)
   {
@@ -1020,7 +1039,16 @@ void enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
   enumerate_kernel<<<dim3(grid_size), dim3(enumerate_block_size)>>>(
       buffer_mem.get(), device_start_points.get(), processed_start_point_count.get(),
       start_point_count, start_point_dim, device_mu.get(), device_rdiag.get(), radius_mem.get(),
-      node_counter.get(), process_sol, opts);
+      node_counter.get(), point_stream_memory.get(), opts);
+  
+  check(cudaEventRecord(event.get()));
+
+  while(cudaEventQuery(event.get()) != cudaSuccess) 
+  {
+    stream.query_new_points(process_sol);
+  }
+  stream.wait_for_event(event.get());
+  stream.query_new_points(process_sol);
 
   check(cudaDeviceSynchronize());
   check(cudaGetLastError());

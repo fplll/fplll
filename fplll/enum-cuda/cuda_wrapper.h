@@ -3,15 +3,13 @@
 
 #include <utility>
 #include <type_traits>
-#include "cuda_check.h"
+#include <functional>
+#include "memory.h"
 
 namespace cuenum
 {
 
-enum struct EvaluatorStrategy
-{
-  FAST
-};
+typedef std::function<float(double, float*)> process_sol_fn;
 
 struct CudaEnumOpts
 {
@@ -37,13 +35,8 @@ constexpr CudaEnumOpts default_opts = {50, .5, 3, 8, 32 * 256};
 void search_enumeration_cuda(const double *mu, const double *rdiag,
                              const unsigned int enum_dimensions,
                              const float *start_point_coefficients, unsigned int start_point_count,
-                             unsigned int start_point_dim, EvaluatorStrategy evaluator,
+                             unsigned int start_point_dim, process_sol_fn evaluator,
                              double initial_radius, CudaEnumOpts opts = default_opts);
-
-template <typename T> struct PinnedDeleter
-{
-  inline void operator()(T *ptr) const { check(cudaFreeHost(ptr)); }
-};
 
 /**
  * Allocates memory and fills it with the given start points, so that it is directly copyable to the device
@@ -53,13 +46,11 @@ template <typename T> struct PinnedDeleter
  * will correctly free it.
  */
 template <typename InputIt>
-inline std::unique_ptr<float, PinnedDeleter<float>>
+inline PinnedPtr<float>
 create_start_point_array(size_t start_point_count, size_t start_point_dim,
                          InputIt begin, InputIt end)
 {
-  float *ptr;
-  check(cudaMallocHost(&ptr, start_point_count * start_point_dim * sizeof(float)));
-  std::unique_ptr<float, PinnedDeleter<float>> result(ptr, PinnedDeleter<float>());
+  PinnedPtr<float> result = allocatePinnedMemory<float>(start_point_count * start_point_dim);
   size_t i = 0;
   for (InputIt it = begin; it != end; ++it)
   {

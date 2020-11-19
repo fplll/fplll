@@ -5,25 +5,7 @@
 #include <iostream>
 #include <memory>
 #include <ctime>
-#include "cuda_check.h"
-
-template <typename T> struct CudaDeleter
-{
-  inline void operator()(T *ptr) const { check(cudaFree(ptr)); }
-};
-
-template<typename T>
-using CudaPtr = std::unique_ptr<T, CudaDeleter<T>>;
-
-template<typename T>
-inline CudaPtr<T> allocateCudaMemory(size_t len, const char* file, const unsigned int line)
-{
-	T* result = nullptr;
-	checkCudaError(cudaMalloc(&result, len * sizeof(T)), file, line);
-	return CudaPtr<T>(result);
-}
-
-#define alloc(type, len) allocateCudaMemory<type>(len, __FILE__, __LINE__) 
+#include "memory.h"
 
 __device__ __host__ inline unsigned int thread_id()
 {

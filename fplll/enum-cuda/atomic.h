@@ -114,4 +114,16 @@ DEVICE_HOST_FUNCTION inline float atomic_min(uint32_t *target, float value)
       atomic_min(target, float_to_int_order_preserving_bijection(value)));
 }
 
+// implementation is only atomic on the device
+DEVICE_HOST_FUNCTION inline uint32_t atomic_load(volatile uint32_t *target)
+{
+  return *target;
+}
+
+DEVICE_HOST_FUNCTION inline void threadfence_system() {
+#ifdef __CUDA_ARCH__
+  __threadfence_system();
+#endif
+}
+
 #endif

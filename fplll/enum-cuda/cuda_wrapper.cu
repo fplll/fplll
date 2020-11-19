@@ -4,21 +4,24 @@
 
 namespace cuenum {
 
-constexpr int cudaenum_max_dims_per_level  = 5;
-constexpr int cudaenum_max_levels          = 15;
+constexpr int cudaenum_max_dims_per_level  = 4;
+constexpr int cudaenum_max_levels          = 19;
 constexpr unsigned int cudaenum_max_nodes_per_level = 3100;
 
 template <int min> struct int_marker
 {
 };
 
-template <typename eval_sol_fn, int dimensions_per_level, int levels>
+template <int dimensions_per_level, int levels>
 inline void search_enumeration_choose_levels(
     const enumf *mu, const enumf *rdiag, const unsigned int enum_levels,
     const float *start_point_coefficients, unsigned int start_point_count,
-    unsigned int start_point_dim, enumf initial_radius, eval_sol_fn callback,
+    unsigned int start_point_dim, enumf initial_radius, process_sol_fn evaluator,
     CudaEnumOpts enum_opts, int_marker<dimensions_per_level>, int_marker<levels>, int_marker<0>)
 {
+  if (enum_levels != levels) {
+    throw "enumeration dimension must be within the allowed interval";
+  }
   assert(enum_opts.max_subtree_paths * enumerate_cooperative_group_size <
          cudaenum_max_nodes_per_level);
   unsigned int max_children_node_count =
@@ -27,16 +30,16 @@ inline void search_enumeration_choose_levels(
       enum_opts.max_subtree_paths, enum_opts.min_active_parents_percentage, max_children_node_count,
       enum_opts.initial_nodes_per_group, enum_opts.thread_count};
   enumerate(mu, rdiag, start_point_coefficients, start_point_dim, start_point_count, initial_radius,
-            callback, opts);
+            evaluator, opts);
 }
 
-template <typename eval_sol_fn, int dimensions_per_level, int min_levels, int delta_levels>
+template <int dimensions_per_level, int min_levels, int delta_levels>
 inline void search_enumeration_choose_levels(const enumf *mu, const enumf *rdiag,
                                              const unsigned int enum_levels,
                                              const float *start_point_coefficients,
                                              unsigned int start_point_count,
                                              unsigned int start_point_dim, enumf initial_radius,
-                                             eval_sol_fn callback, CudaEnumOpts enum_opts,
+                                             process_sol_fn evaluator, CudaEnumOpts enum_opts,
                                              int_marker<dimensions_per_level>,
                                              int_marker<min_levels>, int_marker<delta_levels>)
 {
@@ -48,7 +51,7 @@ inline void search_enumeration_choose_levels(const enumf *mu, const enumf *rdiag
   if (enum_levels <= min_levels + delta_mid)
   {
     search_enumeration_choose_levels(mu, rdiag, enum_levels, start_point_coefficients,
-                                     start_point_count, start_point_dim, initial_radius, callback,
+                                     start_point_count, start_point_dim, initial_radius, evaluator,
                                      enum_opts, int_marker<dimensions_per_level>(),
                                      int_marker<min_levels>(), int_marker<delta_mid>());
   }
@@ -56,33 +59,37 @@ inline void search_enumeration_choose_levels(const enumf *mu, const enumf *rdiag
   {
     search_enumeration_choose_levels(
         mu, rdiag, enum_levels, start_point_coefficients, start_point_count, start_point_dim,
-        initial_radius, callback, enum_opts, int_marker<dimensions_per_level>(),
+        initial_radius, evaluator, enum_opts, int_marker<dimensions_per_level>(),
         int_marker<min_levels + delta_mid + 1>(), int_marker<delta_levels - delta_mid - 1>());
   }
 }
 
-template <typename eval_sol_fn, int dimensions_per_level>
+template <int dimensions_per_level>
 inline void search_enumeration_choose_dims_per_level(
     const enumf *mu, const enumf *rdiag, const unsigned int enum_dimensions,
     const float *start_point_coefficients, unsigned int start_point_count,
-    unsigned int start_point_dim, enumf initial_radius, eval_sol_fn callback,
+    unsigned int start_point_dim, enumf initial_radius, process_sol_fn evaluator,
     CudaEnumOpts enum_opts, int_marker<dimensions_per_level>, int_marker<0>)
 {
-  assert(enum_opts.dimensions_per_level == dimensions_per_level);
-  assert(enum_dimensions % dimensions_per_level == 0);
+  if (enum_opts.dimensions_per_level != dimensions_per_level) {
+    throw "enum_opts.dimensions_per_level not within allowed interval";
+  }
+  if (enum_dimensions % dimensions_per_level != 0) {
+    throw "enumeration dimension count (i.e. dimensions minus start point dimensions) must be divisible by enum_opts.dimensions_per_level";
+  }
   unsigned int enum_levels = enum_dimensions / dimensions_per_level;
 
   search_enumeration_choose_levels(mu, rdiag, enum_levels, start_point_coefficients,
-                                   start_point_count, start_point_dim, initial_radius, callback,
+                                   start_point_count, start_point_dim, initial_radius, evaluator,
                                    enum_opts, int_marker<dimensions_per_level>(), int_marker<1>(),
                                    int_marker<cudaenum_max_levels - 1>());
 }
 
-template <typename eval_sol_fn, int min_dimensions_per_level, int delta_dimensions_per_level>
+template <int min_dimensions_per_level, int delta_dimensions_per_level>
 inline void search_enumeration_choose_dims_per_level(
     const enumf *mu, const enumf *rdiag, const unsigned int enum_dimensions,
     const float *start_point_coefficients, unsigned int start_point_count,
-    unsigned int start_point_dim, enumf initial_radius, eval_sol_fn callback,
+    unsigned int start_point_dim, enumf initial_radius, process_sol_fn evaluator,
     CudaEnumOpts enum_opts, int_marker<min_dimensions_per_level>,
     int_marker<delta_dimensions_per_level>)
 {
@@ -95,76 +102,28 @@ inline void search_enumeration_choose_dims_per_level(
   {
     search_enumeration_choose_dims_per_level(
         mu, rdiag, enum_dimensions, start_point_coefficients, start_point_count, start_point_dim,
-        initial_radius, callback, enum_opts, int_marker<min_dimensions_per_level>(),
+        initial_radius, evaluator, enum_opts, int_marker<min_dimensions_per_level>(),
         int_marker<delta_mid>());
   }
   else
   {
     search_enumeration_choose_dims_per_level(
         mu, rdiag, enum_dimensions, start_point_coefficients, start_point_count, start_point_dim,
-        initial_radius, callback, enum_opts, int_marker<min_dimensions_per_level + delta_mid + 1>(),
+        initial_radius, evaluator, enum_opts, int_marker<min_dimensions_per_level + delta_mid + 1>(),
         int_marker<delta_dimensions_per_level - delta_mid - 1>());
-  }
-}
-
-struct FastEvaluator
-{
-  enumf *norm_squares;
-  enumi *result;
-  unsigned int thread_count;
-
-  inline FastEvaluator(enumf *norm_squared, enumi *result, unsigned int thread_count)
-      : norm_squares(norm_squared), result(result), thread_count(thread_count)
-  {
-  }
-
-  __device__ __host__ inline void operator()(enumi x, unsigned int i, bool done, enumf norm_square,
-                                             uint32_t *enum_bound_location)
-  {
-    if (i == 0)
-    {
-      uint32_t squared_norm_repr = float_to_int_order_preserving_bijection(norm_square);
-      uint32_t old_repr          = atomic_min(enum_bound_location, squared_norm_repr);
-      norm_squares[thread_id()]  = norm_square;
-    }
-    result[i * thread_count + thread_id()] = x;
-  }
-};
-
-inline void search_enumeration_choose_evaluator(const enumf *mu, const enumf *rdiag,
-                                                const unsigned int enum_dimensions,
-                                                const float *start_point_coefficients,
-                                                unsigned int start_point_count,
-                                                unsigned int start_point_dim,
-                                                EvaluatorStrategy evaluator, enumf initial_radius,
-                                                CudaEnumOpts opts)
-{
-  const unsigned int thread_count    = get_started_thread_count(opts.thread_count);
-  const unsigned int total_dimension = start_point_dim + enum_dimensions;
-  switch (evaluator)
-  {
-  case EvaluatorStrategy::FAST:
-    typedef FastEvaluator eval_sol_fn;
-    CudaPtr<enumf> norms_squared = alloc(enumf, thread_count);
-    CudaPtr<enumi> coefficients  = alloc(enumi, thread_count * total_dimension);
-    FastEvaluator evaluator(norms_squared.get(), coefficients.get(), thread_count);
-    search_enumeration_choose_dims_per_level(mu, rdiag, enum_dimensions, start_point_coefficients,
-                                             start_point_count, start_point_dim, initial_radius,
-                                             evaluator, opts, int_marker<1>(),
-                                             int_marker<cudaenum_max_dims_per_level - 1>());
-    break;
   }
 }
 
 void search_enumeration_cuda(const double *mu, const double *rdiag,
                              const unsigned int enum_dimensions,
                              const float *start_point_coefficients, unsigned int start_point_count,
-                             unsigned int start_point_dim, EvaluatorStrategy evaluator,
+                             unsigned int start_point_dim, process_sol_fn evaluator,
                              double initial_radius, CudaEnumOpts opts)
 {
-  search_enumeration_choose_evaluator(mu, rdiag, enum_dimensions, start_point_coefficients,
-                                      start_point_count, start_point_dim, evaluator, initial_radius,
-                                      opts);
+  search_enumeration_choose_dims_per_level(mu, rdiag, enum_dimensions, start_point_coefficients,
+                                           start_point_count, start_point_dim, initial_radius,
+                                           evaluator, opts, int_marker<1>(),
+                                           int_marker<cudaenum_max_dims_per_level - 1>());
 }
 
 }
