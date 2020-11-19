@@ -31,7 +31,7 @@ jobs:
         run: make -j $JOBS
 
       - name: Distcheck
-        run: make -j $JOBS distcheck
+        run: make -j $JOBS distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --with-max-enum-dim=$MAX_ENUM_DIM --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM"
 
       - name: Dist
         run: make -j $JOBS dist
