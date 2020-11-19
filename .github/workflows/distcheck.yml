@@ -1,0 +1,29 @@
+name: Distcheck
+
+on: 
+  push:
+  pull_request:
+
+env:
+  MAX_ENUM_DIM: 64
+  MAX_PARALLEL_ENUM_DIM: 20
+  JOBS: 2
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - name: Install prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install autoconf automake libtool libgmp-dev libmpfr-dev libqd-dev
+      - name: Setup
+        run: |
+          ./autogen.sh
+
+      - name: Distcheck
+        run: make -j $JOBS distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --with-max-enum-dim=$MAX_ENUM_DIM --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM"
+

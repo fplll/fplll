@@ -33,9 +33,6 @@ jobs:
       - name: Test
         run: make -j $JOBS check
 
-      - name: Distcheck
-        run: make -j $JOBS distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --with-max-enum-dim=$MAX_ENUM_DIM --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM"
-
   macos:
     runs-on: macos-latest
 
@@ -57,7 +54,3 @@ jobs:
 
       - name: Test
         run: make -j $JOBS check
-
-      - name: Distcheck
-        run: make -j $JOBS distcheck DISTCHECK_CONFIGURE_FLAGS="--disable-static --with-max-enum-dim=$MAX_ENUM_DIM --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM"
-
