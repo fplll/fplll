@@ -23,7 +23,7 @@ jobs:
       - name: Configure
         run: |
           ./autogen.sh
-          ./configure --disable-static --with-max-enumeration-dimension=$MAX_ENUM_DIM \
+          ./configure --disable-static --with-max-enum-dim=$MAX_ENUM_DIM \
                       --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM
       - name: Check style
         run: |
