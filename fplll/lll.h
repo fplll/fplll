@@ -158,9 +158,14 @@ template <class ZT, class FT> inline bool LLLReduction<ZT, FT>::set_status(int n
   if (verbose)
   {
     if (status == RED_SUCCESS)
+    {
       cerr << "End of LLL: success" << endl;
+    }
     else
+    {
       cerr << "End of LLL: failure: " << RED_STATUS_STR[status] << endl;
+      cerr << RED_STATUS_STR[RedStatus::RED_URL_ERR] << endl;
+    }
   }
   return status == RED_SUCCESS;
 }
