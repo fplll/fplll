@@ -48,7 +48,7 @@ void search_arr_dyn(const std::array<std::array<float, total_dims>, total_dims> 
                           find_initial_radius<float, total_dims>(mu) * 1.1, opts);
 }
 
-inline void gpu_test()
+void test_direct()
 {
   constexpr unsigned int total_dim       = 50;
   constexpr unsigned int start_point_dim = 8;
@@ -59,7 +59,7 @@ inline void gpu_test()
   std::vector<FloatWrapper> x;
   x.resize(start_point_dim, { 0 });
   x[start_point_dim - 1] = -1;
-  enumf radius           = find_initial_radius<float, total_dim>(mu) * 1.5;
+  enumf radius           = find_initial_radius<float, total_dim>(mu) * 1.1;
   std::function<void(const std::vector<FloatWrapper> &)> callback =
       [&start_points](const std::vector<FloatWrapper> &a) { start_points.push_back(std::make_pair(0, a)); };
   do
@@ -71,9 +71,29 @@ inline void gpu_test()
   search_arr_dyn<total_dim, start_point_dim>(mu, start_points);
 }
 
+void test_fplll_like() {
+  
+  constexpr unsigned int total_dim       = 50;
+  const std::array<std::array<float, total_dim>, total_dim> &lattice = test_mu_knapsack_big;
+
+  double maxdist = find_initial_radius<float, total_dim>(lattice) * 1.1;
+  maxdist = maxdist * maxdist; 
+  std::function<extenum_cb_set_config> set_config = [&lattice](double *mu, size_t mudim, bool mutranspose, double *rdiag, double *pruning) {
+    assert(mutranspose);
+    for (unsigned int i = 0; i < mudim; ++i) {
+      for (unsigned int j = i; j < mudim; ++j) {
+        mu[i * mudim + j] = lattice[i][j] / lattice[i][i];
+      }
+      rdiag[i] = lattice[i][i] * lattice[i][i];
+    }
+  };
+  std::function<extenum_cb_process_sol> process_sol = [](double norm_square, float* x)-> double { return norm_square; };
+  ext_cuda_enumerate(total_dim, maxdist, set_config, process_sol, nullptr);
+}
+
 int main()
 {
-  gpu_test();
+  test_fplll_like();
 
   return 0;
 }

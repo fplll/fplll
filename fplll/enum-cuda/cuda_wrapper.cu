@@ -128,9 +128,41 @@ uint64_t search_enumeration_cuda(const double *mu, const double *rdiag,
 
 }
 
+// TODO: replace with recursive enumeration from fplll
 #include "util.h"
 
-uint64_t enumerate(const int dim, double maxdist, std::function<extenum_cb_set_config> cbfunc,
+PinnedPtr<enumi> enumerate_start_points(const int dim, const int start_dims, double radius_squared, const enumf* mu, const enumf* rdiag, unsigned int& start_point_count) {
+
+  // later, when using an evaluator + recursive fplll enumeration, this pair interface is what we need
+  typedef int Dummy;
+  std::vector<std::pair<Dummy, std::vector<FloatWrapper>>> start_points;
+
+  std::unique_ptr<double[]> lattice(new double[dim * dim]);
+  std::memcpy(lattice.get(), mu, dim * dim * sizeof(double));
+  for (unsigned int i = 0; i < dim; ++i) {
+    for (unsigned int j = 0; j < dim; ++j) {
+      lattice[i * dim + j] *= std::sqrt(rdiag[i]);
+    }
+  }
+
+  std::vector<FloatWrapper> x;
+  x.resize(start_dims, { 0 });
+  x[start_dims - 1] = -1;
+  std::function<void(const std::vector<FloatWrapper> &)> callback =
+      [&start_points](const std::vector<FloatWrapper> &a) { 
+        start_points.push_back(std::make_pair(0, a)); 
+      };
+  do
+  {
+    ++x[start_dims - 1];
+  } while (!naive_enum_recursive<FloatWrapper, double>(x, start_dims, dim, 0, 0, lattice.get(), dim - 1,
+                                                       radius_squared, callback));
+  start_point_count = start_points.size();
+  return cuenum::create_start_point_array(start_points.size(), start_dims, start_points.begin(), start_points.end());
+
+}
+
+uint64_t ext_cuda_enumerate(const int dim, double maxdist, std::function<extenum_cb_set_config> cbfunc,
   std::function<extenum_cb_process_sol> cbsol, std::function<extenum_cb_process_subsol> cbsubsol,
   bool dual, bool findsubsols) 
 {
@@ -147,7 +179,7 @@ uint64_t enumerate(const int dim, double maxdist, std::function<extenum_cb_set_c
 
   cuenum::CudaEnumOpts opts = cuenum::default_opts;
   
-  int start_dims = 5;
+  int start_dims = 6;
   while ((dim - start_dims) % opts.dimensions_per_level != 0) {
     ++start_dims;
   }
@@ -156,23 +188,9 @@ uint64_t enumerate(const int dim, double maxdist, std::function<extenum_cb_set_c
       return 0;
   }
 
-  // later, when using an evaluator + recursive fplll enumeration, this pair interface is what we need
-  typedef int Dummy;
-  std::vector<std::pair<Dummy, std::vector<FloatWrapper>>> start_points;
-  std::vector<FloatWrapper> x;
-  x.resize(start_dims, { 0 });
-  x[start_dims - 1] = -1;
-
-  std::function<void(const std::vector<FloatWrapper> &)> callback =
-      [&start_points](const std::vector<FloatWrapper> &a) { start_points.push_back(std::make_pair(0, a)); };
-  do
-  {
-    ++x[start_dims - 1];
-  } while (!naive_enum_recursive<FloatWrapper, enumf>(x, start_dims, dim, 0, 0, mu.get(), dim - 1, 
-                                                      static_cast<float>(radius * radius), callback));
-
-  PinnedPtr<enumi> start_point_array = cuenum::create_start_point_array(start_points.size(), start_dims, start_points.begin(), start_points.end());
+  unsigned int start_point_count = 0;
+  PinnedPtr<enumi> start_point_array = enumerate_start_points(dim, start_dims, maxdist, mu.get(), rdiag.get(), start_point_count);
 
   return cuenum::search_enumeration_cuda(mu.get(), rdiag.get(), dim - start_dims, start_point_array.get(), 
-    start_points.size(), start_dims, cbsol, radius, opts);
+    start_point_count, start_dims, cbsol, radius, opts);
 }

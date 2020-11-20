@@ -1038,7 +1038,7 @@ uint64_t enumerate(const enumf *mu, const enumf *rdiag, const float *start_point
   {
     std::cout << "Enumerating " << (levels * dimensions_per_level)
               << " dimensional lattice using cuda, started " << grid_size << " block with "
-              << enumerate_block_size << " threads each" << std::endl;
+              << enumerate_block_size << " threads each; Beginning with " << start_point_count << " start points" << std::endl;
   }
   std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 

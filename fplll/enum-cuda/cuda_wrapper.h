@@ -73,9 +73,9 @@ create_start_point_array(size_t start_point_count, size_t start_point_dim,
 typedef void(extenum_cb_set_config)(double *mu, size_t mudim, bool mutranspose, double *rdiag,
                                     double *pruning);
 typedef double(extenum_cb_process_sol)(double dist, float *sol);
-typedef void(extenum_cb_process_subsol)(double dist, float *subsol, int offset);
+typedef void(extenum_cb_process_subsol)(double dist, double *subsol, int offset);
 
-uint64_t enumerate(const int dim, double maxdist, std::function<extenum_cb_set_config> cbfunc,
+uint64_t ext_cuda_enumerate(const int dim, double maxdist, std::function<extenum_cb_set_config> cbfunc,
     std::function<extenum_cb_process_sol> cbsol, std::function<extenum_cb_process_subsol> cbsubsol,
     bool dual = false, bool findsubsols = false);
 
