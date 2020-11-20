@@ -35,4 +35,7 @@
 #undef HAVE_LIBGMP
 #undef HAVE_LIBMPIR
 
+/* external enumeration */
+#undef FPLLL_EXTENUM_FUNC
+
 #endif //FPLLL_CONFIG__H

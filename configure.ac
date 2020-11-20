@@ -196,17 +196,17 @@ AC_ARG_WITH(extenum-func,
   AS_HELP_STRING([--with-extenum-func@<:@=FUNC@:>@], [Specify external enumeration function name]),
   [extenum_func=$withval])
 AS_IF([test "x$extenum_lib" != "x"],[
-  AS_IF([test "x$extenum_func" != "x"],[
-      AC_LINK_IFELSE(
-        [AC_LANG_PROGRAM([
+  AS_IF([test "x$extenum_func" != "x"],,[extenum_func=$extenum_lib])
+  AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM([
           #include "fplll/enum/enumerate_ext_api.h"
           extern extenum_fc_enumerate $extenum_func;
-        ],[
+    ],[
           auto abc = & $extenum_func;
-        ])],,AC_MSG_ERROR([Failed to find external enumeration]))
-      EXTENUM_LIBS="-l$extenum_lib"
-      AC_DEFINE_UNQUOTED([FPLLL_EXTENUM_FUNC], $extenum_func, [use external enumeration function])
-  ])
+    ])]
+    ,,AC_MSG_ERROR([Failed to find external enumeration]))
+  EXTENUM_LIBS="-l$extenum_lib"
+  AC_DEFINE_UNQUOTED([FPLLL_EXTENUM_FUNC], $extenum_func, [use external enumeration function])
 ])
 AC_SUBST(EXTENUM_LIBS)
 
