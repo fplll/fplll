@@ -327,7 +327,10 @@ See [API documentation](https://fplll.github.io/fplll/annotated.html) and [tests
 ## Multicore support ##
 This library does not currently use multiple cores and running multiple threads working on the same object `IntegerMatrix`, `LLLReduction`, `MatGSO` etc. is not supported.  Running multiple threads working on *different* objects, however, is supported. That is, there are no global variables and it is safe to e.g. reduce several lattices in parallel in the same process.
 
-As an exception to the above, fplll has an implementation of parallel lattice point enumeration. This implementation is currently used as the default enumeration strategy in fplll. At present fplll does not contain strategies for multi-core pruned enumeration, and so speedups for pruned enumeration may be sub-linear (see [this](https://martinralbrecht.wordpress.com/2020/10/26/multicore-bkz-in-fplll/) for more information). On the other hand, unpruned enumeration appears to scale linearly.
+As an exception to the above, fplll has an implementation of parallel lattice point enumeration. 
+To enable this implementation, make sure you compile with the maximum parallel enumeration dimension greater than 0. Note that increasing this value will increase the compile-time due to the use of templates.
+
+At present fplll does not contain strategies for multi-core pruned enumeration, and so speedups for pruned enumeration may be sub-linear (see [this](https://martinralbrecht.wordpress.com/2020/10/26/multicore-bkz-in-fplll/) for more information). On the other hand, unpruned enumeration appears to scale linearly.
 
 # Examples #
 
