@@ -111,7 +111,7 @@ fplll can also be built from source. Below, we explicate some of the dependencie
   the shared library (e.g. `./configure --enable-shared=yes`).
   [http://crd-legacy.lbl.gov/~dhbailey/mpdist/](http://crd-legacy.lbl.gov/~dhbailey/mpdist/)
   
-NOTE: If you are intending to use fplll on Windows 10, then these packages are not required before you get started. This is because you use fplll via the "Windows Subsystem for Linux". Please go straight to the instructions for [Windows 10](#windows-10).
+NOTE: If you are intending to use fplll on Windows 10, then these packages should be installed after the `Windows Subsystem for Linux` has been installed and activated. Please go to the [Windows 10](#windows-10) instructions for more information.
 
 ### Linux and MacOS ###
 
@@ -148,7 +148,7 @@ installation directory name other than `/usr/local` by giving `./configure` the 
 
 ### Windows 10 ###
 
-Windows 10 has the "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to **Settings** -> **Update and security** -> **For developers** and enable developer mode. (This may take a while.) Afterwards, open Powershell as an administrator and run 
+Windows 10 has the "Windows Subsystem for Linux"(WSL), which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to **Settings** -> **Update and security** -> **For developers** and enable developer mode. (This may take a while.) Afterwards, open Powershell as an administrator and run 
 
 	Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
 
