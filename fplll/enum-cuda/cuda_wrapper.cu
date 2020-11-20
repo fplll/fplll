@@ -141,8 +141,7 @@ uint64_t enumerate(const int dim, double maxdist, std::function<extenum_cb_set_c
   }
   PinnedPtr<enumf> mu = allocatePinnedMemory<enumf>(dim * dim);
   PinnedPtr<enumf> rdiag = allocatePinnedMemory<enumf>(dim);
-  // TODO: init radius
-  enumf radius;
+  enumf radius = std::sqrt(maxdist);
 
   cbfunc(mu.get(), dim, true, rdiag.get(), nullptr);
 
@@ -152,7 +151,7 @@ uint64_t enumerate(const int dim, double maxdist, std::function<extenum_cb_set_c
   while ((dim - start_dims) % opts.dimensions_per_level != 0) {
     ++start_dims;
   }
-  if (start_dims >= _d) {
+  if (start_dims >= dim) {
       // use fallback, as cuda enumeration in such small dimensions is too much overhead
       return 0;
   }
