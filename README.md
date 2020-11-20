@@ -63,7 +63,7 @@ fplll is available as a pre-built package for a variety of operating systems; th
 
 Below, we give some instructions on how to install these packaged variants of fplll.
 
-Note that these packages will be up-to-date for the most recent version of fplll. However, if you want a feature that has recently been added to master (that is not yet in a release) then it is necessary to build from source (See the "Install from Source" section).
+Note that these packages will be up-to-date for the most recent version of fplll. However, if you want a feature that has recently been added to master (that is not yet in a release) then it is necessary to build from source. If this is the case, please see the [Installation from Source](#installation-from-source) section.
 
 ### Ubuntu and Debian ###
 fplll can be installed directly via Aptitude or Synaptic. Both of these package managers package fplll in the package `fplll-tools`. Therefore, to install this package using Aptitude, run the following command
