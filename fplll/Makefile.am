@@ -40,26 +40,18 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	householder.h hlll.h \
 	threadpool.h io/thread_pool.hpp
 
-bin_PROGRAMS=fplll latticegen latsieve mybench
+bin_PROGRAMS=fplll latticegen latsieve
 check_PROGRAMS=llldiff
-EXTRA_PROGRAMS=fplll_dbg latticegen_dbg mybench_dbg
+EXTRA_PROGRAMS=fplll_dbg latticegen_dbg
 lib_LTLIBRARIES=libfplll.la
 EXTRA_LTLIBRARIES=libfplllv.la libfpllld.la
-
-# mybench bin
-mybench_SOURCES=mybench.cpp
-mybench_LDADD=libfplll.la
-mybench_dbg_SOURCES=mybench.cpp
-mybench_dbg_CPPFLAGS=-DDEBUG $(AM_CPPFLAGS)
-mybench_dbg_CXXFLAGS=-g -O0 $(AM_CXXFLAGS)
-mybench_dbg_LDADD=libfpllld.la
 
 # fplll bin
 fplll_SOURCES=main.cpp main.h
 fplll_LDADD=libfplll.la
 fplll_dbg_SOURCES=$(fplll_SOURCES)
 fplll_dbg_CPPFLAGS=-DDEBUG $(AM_CPPFLAGS)
-fplll_dbg_CXXFLAGS=-g -O0 $(AM_CXXFLAGS)
+fplll_dbg_CXXFLAGS=-g $(AM_CXXFLAGS)
 fplll_dbg_LDADD=libfpllld.la
 
 # latticegen bin
@@ -67,7 +59,7 @@ latticegen_SOURCES=latticegen.cpp
 latticegen_LDADD=libfplll.la
 latticegen_dbg_SOURCES=$(latticegen_SOURCES)
 latticegen_dbg_CPPFLAGS=-DDEBUG $(AM_CPPFLAGS)
-latticegen_dbg_CXXFLAGS=-g -O0 $(AM_CXXFLAGS)
+latticegen_dbg_CXXFLAGS=-g $(AM_CXXFLAGS)
 latticegen_dbg_LDADD=libfpllld.la
 
 # llldiff bin
@@ -83,8 +75,6 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	util.cpp util.h \
 	enum/topenum.cpp enum/topenum.h \
 	enum/enumerate.cpp enum/enumerate.h \
-	enum/enumerate_dyn.cpp enum/enumerate_dyn.h \
-	enum-cuda/enumerate_cuda.cpp enum-cuda/enumerate_cuda.h \
 	enum/enumerate_base.cpp enum/enumerate_base.h \
 	enum/enumerate_ext.cpp enum/enumerate_ext.h \
 	enum/evaluator.cpp enum/evaluator.h \
@@ -119,7 +109,6 @@ libfplll_la_CXXFLAGS=$(PTHREAD_CFLAGS)
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
 libfplll_la_LIBADD=$(LIBQD_LIBS) $(PTHREAD_LIBS)
 libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REVISION@:@FPLLL_LT_AGE@ $(PTHREAD_CFLAGS)
-EXTRA_libfplll_la_DEPENDENCIES=
 
 if FPLLL_PARALLEL_ENUM
 libfplll_la_SOURCES+=\
@@ -132,35 +121,20 @@ libfplll_la_SOURCES+=\
 EXTRA_libfplll_la_SOURCES+=enum-parallel/enumlib_dim.cpp
 endif
 
+
 # libfplll variants
 libfplllv_la_SOURCES=$(libfplll_la_SOURCES)
 EXTRA_libfplllv_la_SOURCES=$(EXTRA_libfplll_la_SOURCES)
-EXTRA_libfplllv_la_DEPENDENCIES=$(EXTRA_libfplll_la_DEPENDENCIES)
 libfplllv_la_CPPFLAGS=$(AM_CPPFLAGS)
 libfplllv_la_LIBADD=$(libfplll_la_LIBADD)
 libfplllv_la_LDFLAGS=$(libfplll_la_LDFLAGS)
 
 libfpllld_la_SOURCES=$(libfplll_la_SOURCES)
 EXTRA_libfpllld_la_SOURCES=$(EXTRA_libfplll_la_SOURCES)
-EXTRA_libfpllld_la_DEPENDENCIES=$(EXTRA_libfplll_la_DEPENDENCIES)
 libfpllld_la_CPPFLAGS=-DDEBUG $(AM_CPPFLAGS)
-libfpllld_la_CXXFLAGS=-g -O0 $(AM_CXXFLAGS)
+libfpllld_la_CXXFLAGS=-g $(AM_CXXFLAGS)
 libfpllld_la_LIBADD=$(libfplll_la_LIBADD)
 libfpllld_la_LDFLAGS=$(libfplll_la_LDFLAGS)
-
-if FPLLL_CUDA_ENUM
-EXTRA_libfplllv_la_DEPENDENCIES+=enum-cuda/cuda_wrapper.lo 
-libfplllv_la_LIBADD+=enum-cuda/cuda_wrapper.lo
-libfplllv_la_LDFLAGS+=$(CUDA_LIBS)
-
-EXTRA_libfplll_la_DEPENDENCIES+=enum-cuda/cuda_wrapper.lo 
-libfplll_la_LIBADD+=enum-cuda/cuda_wrapper.lo
-libfplll_la_LDFLAGS+=$(CUDA_LIBS)
-
-EXTRA_libfpllld_la_DEPENDENCIES+=enum-cuda/cuda_wrapper_dbg.lo 
-libfpllld_la_LIBADD+=enum-cuda/cuda_wrapper_dbg.lo
-libfpllld_la_LDFLAGS+=$(CUDA_LIBS)
-endif
 
 install-data-hook:
 	echo "#include <fplll/fplll.h>" > "$(builddir)/fplll.h.root"
@@ -175,12 +149,5 @@ uninstall-hook:
 	(test -d "${DESTDIR}$(includedir)/fplll" && rmdir "${DESTDIR}$(includedir)/fplll") || true
 	rm -f "${DESTDIR}$(includedir)/fplll.h"
 
-dbg: fplll_dbg latticegen_dbg mybench_dbg
+dbg: fplll_dbg latticegen_dbg
 
-MOSTLYCLEANFILES=enum-cuda/wrapper.lo enum-cuda/wrapper_dbg.lo enum-cuda/wrapper.o enum-cuda/wrapper_dbg.o
-
-enum-cuda/cuda_wrapper.lo: enum-cuda/cuda_wrapper.cu
-	$(LIBTOOL) --tag=CXX --mode=compile $(NVCC) -D NDEBUG -O3 --compiler-options -fPIC -ccbin=$(CC) --compile --ptxas-options=-v --std c++11 -o $@ $^ -static
-
-enum-cuda/cuda_wrapper_dbg.lo: enum-cuda/cuda_wrapper.cu
-	$(LIBTOOL) --tag=CXX --mode=compile $(NVCC) -g -G -O1 --compiler-options -fPIC -ccbin=$(CC) --compile --std c++11 -o $@ $^ -static

@@ -110,7 +110,6 @@ static int shortest_vector_ex(ZZ_mat<mpz_t> &b, vector<Z_NR<mpz_t>> &sol_coord, 
   // Allocates space for vectors and matrices in constructors
   ZZ_mat<mpz_t> empty_mat;
   MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> gso(b, empty_mat, empty_mat, GSO_INT_GRAM);
-
   FP_NR<mpfr_t> max_dist;
   Z_NR<mpz_t> int_max_dist;
   Z_NR<mpz_t> itmp1;

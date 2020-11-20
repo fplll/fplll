@@ -66,12 +66,7 @@ enumerate_dim_detail(int dim, float_type maxdist,
 
   lat.activeswirly = false;
 
-  auto begin = std::chrono::steady_clock::now();
-
   lat.enumerate_recursive();
-
-  auto end = std::chrono::steady_clock::now();
-  std::cout << "done in " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms, using " << ::fplll::get_threads() << " threads" << std::endl;
 
   if (findsubsols)
   {
