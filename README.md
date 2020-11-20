@@ -91,7 +91,7 @@ brew install fplll
 ```
 
 ### Docker and AWS ###
-We now have Docker/AWS images for fplll too. They aren't on this repository, though; you can find them [here](https://github.com/malb/fplll-virtual-machines)
+We now have Docker/AWS images for fplll too. They aren't on this repository, though; you can find them [here](https://hub.docker.com/u/fplll)
 
 ## Installation from source ##
 
