@@ -188,7 +188,7 @@ AM_CONDITIONAL(FPLLL_PARALLEL_ENUM, test "x$max_parallel_enum_dim" != "x0")
 # Use external enumeration
 AC_ARG_WITH(extenum-dir,
   AS_HELP_STRING([--with-extenum-dir@<:@=DIR@:>@], [Specify external enumeration library install directory]),
-  [extenum_dir=$withval])
+  [LDFLAGS="$LDFLAGS -L$withval"])
 AC_ARG_WITH(extenum-lib,
   AS_HELP_STRING([--with-extenum-lib@<:@=FILE@:>@], [Specify external enumeration library name]),
   [extenum_lib=$withval])
@@ -198,8 +198,13 @@ AC_ARG_WITH(extenum-func,
 AS_IF([test "x$extenum_lib" != "x"],[
   AS_IF([test "x$extenum_func" != "x"],[
       AC_LINK_IFELSE(
-        [AC_LANG_PROGRAM([#include "fplll/enum/enumeration_ext.h"],[extenum_fc_enumerate $extenum_func; auto abc = & $extenum_func;])],,AC_MSG_ERROR([Failed to find external enumeration]))
-      EXTENUM_LIBS="-L$extenum_dir -l$extenum_lib"
+        [AC_LANG_PROGRAM([
+          #include "fplll/enum/enumerate_ext_api.h"
+          extern extenum_fc_enumerate $extenum_func;
+        ],[
+          auto abc = & $extenum_func;
+        ])],,AC_MSG_ERROR([Failed to find external enumeration]))
+      EXTENUM_LIBS="-l$extenum_lib"
       AC_DEFINE_UNQUOTED([FPLLL_EXTENUM_FUNC], $extenum_func, [use external enumeration function])
   ])
 ])
