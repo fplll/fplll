@@ -15,7 +15,7 @@ template <int min> struct int_marker
 template <int dimensions_per_level, int levels>
 inline std::vector<uint64_t> search_enumeration_choose_levels(
     const enumf *mu, const enumf *rdiag, const unsigned int enum_levels,
-    const float *start_point_coefficients, unsigned int start_point_count,
+    const enumi *start_point_coefficients, unsigned int start_point_count,
     unsigned int start_point_dim, enumf initial_radius, process_sol_fn evaluator,
     CudaEnumOpts enum_opts, int_marker<dimensions_per_level>, int_marker<levels>, int_marker<0>)
 {
@@ -36,7 +36,7 @@ inline std::vector<uint64_t> search_enumeration_choose_levels(
 template <int dimensions_per_level, int min_levels, int delta_levels>
 inline std::vector<uint64_t> search_enumeration_choose_levels(const enumf *mu, const enumf *rdiag,
                                              const unsigned int enum_levels,
-                                             const float *start_point_coefficients,
+                                             const enumi *start_point_coefficients,
                                              unsigned int start_point_count,
                                              unsigned int start_point_dim, enumf initial_radius,
                                              process_sol_fn evaluator, CudaEnumOpts enum_opts,
@@ -67,7 +67,7 @@ inline std::vector<uint64_t> search_enumeration_choose_levels(const enumf *mu, c
 template <int dimensions_per_level>
 inline std::vector<uint64_t> search_enumeration_choose_dims_per_level(
     const enumf *mu, const enumf *rdiag, const unsigned int enum_dimensions,
-    const float *start_point_coefficients, unsigned int start_point_count,
+    const enumi *start_point_coefficients, unsigned int start_point_count,
     unsigned int start_point_dim, enumf initial_radius, process_sol_fn evaluator,
     CudaEnumOpts enum_opts, int_marker<dimensions_per_level>, int_marker<0>)
 {
@@ -88,7 +88,7 @@ inline std::vector<uint64_t> search_enumeration_choose_dims_per_level(
 template <int min_dimensions_per_level, int delta_dimensions_per_level>
 inline std::vector<uint64_t> search_enumeration_choose_dims_per_level(
     const enumf *mu, const enumf *rdiag, const unsigned int enum_dimensions,
-    const float *start_point_coefficients, unsigned int start_point_count,
+    const enumi *start_point_coefficients, unsigned int start_point_count,
     unsigned int start_point_dim, enumf initial_radius, process_sol_fn evaluator,
     CudaEnumOpts enum_opts, int_marker<min_dimensions_per_level>,
     int_marker<delta_dimensions_per_level>)
@@ -116,7 +116,7 @@ inline std::vector<uint64_t> search_enumeration_choose_dims_per_level(
 
 std::vector<uint64_t> search_enumeration_cuda(const double *mu, const double *rdiag,
                              const unsigned int enum_dimensions,
-                             const float *start_point_coefficients, unsigned int start_point_count,
+                             const enumi *start_point_coefficients, unsigned int start_point_count,
                              unsigned int start_point_dim, process_sol_fn evaluator,
                              double initial_radius, CudaEnumOpts opts)
 {
@@ -137,8 +137,8 @@ PinnedPtr<enumi> enumerate_start_points(const int dim, const int start_dims, dou
   typedef int Dummy;
   std::vector<std::pair<Dummy, std::vector<FloatWrapper>>> start_points;
 
-  std::unique_ptr<double[]> lattice(new double[dim * dim]);
-  std::memcpy(lattice.get(), mu, dim * dim * sizeof(double));
+  std::unique_ptr<enumf[]> lattice(new enumf[dim * dim]);
+  std::memcpy(lattice.get(), mu, dim * dim * sizeof(enumf));
   for (unsigned int i = 0; i < dim; ++i) {
     for (unsigned int j = 0; j < dim; ++j) {
       lattice[i * dim + j] *= std::sqrt(rdiag[i]);
@@ -155,13 +155,13 @@ PinnedPtr<enumi> enumerate_start_points(const int dim, const int start_dims, dou
   do
   {
     ++x[start_dims - 1];
-  } while (!naive_enum_recursive<FloatWrapper, double>(x, start_dims, dim, 0, 0, lattice.get(), dim - 1,
+  } while (!naive_enum_recursive<FloatWrapper, enumf>(x, start_dims, dim, 0, 0, lattice.get(), dim - 1,
                                                        radius_squared, callback));
   start_point_count = start_points.size();
   return cuenum::create_start_point_array(start_points.size(), start_dims, start_points.begin(), start_points.end());
 }
 
-std::array<uint64_t, cudaenum_return_array_size> ext_cuda_enumerate(const int dim, double maxdist, std::function<extenum_cb_set_config> cbfunc,
+std::array<uint64_t, cudaenum_return_array_size> ext_cuda_enumerate(const int dim, enumf maxdist, std::function<extenum_cb_set_config> cbfunc,
   std::function<extenum_cb_process_sol> cbsol, std::function<extenum_cb_process_subsol> cbsubsol,
   bool dual, bool findsubsols) 
 {

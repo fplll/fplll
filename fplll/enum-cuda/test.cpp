@@ -38,7 +38,7 @@ void search_arr_dyn(const std::array<std::array<float, total_dims>, total_dims> 
   CudaEnumOpts opts         = default_opts;
   opts.dimensions_per_level = dimensions_per_level;
 
-  process_sol_fn callback = [](double norm, float* x) -> float { return norm; };
+  process_sol_fn callback = [](double norm, double* x) -> double { return norm; };
 
   auto start_point_memory = create_start_point_array(start_points.size(), start_point_dim,
                                                      start_points.begin(), start_points.end());
@@ -87,7 +87,7 @@ void test_fplll_like() {
       rdiag[i] = lattice[i][i] * lattice[i][i];
     }
   };
-  std::function<extenum_cb_process_sol> process_sol = [](double norm_square, float* x)-> double { return norm_square; };
+  std::function<extenum_cb_process_sol> process_sol = [](double norm_square, double* x)-> double { return norm_square; };
   ext_cuda_enumerate(total_dim, maxdist, set_config, process_sol, nullptr);
 }
 

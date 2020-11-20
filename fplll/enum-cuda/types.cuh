@@ -5,7 +5,7 @@
 #include "atomic.h"
 
 typedef double enumf;
-typedef float enumi;
+typedef double enumi;
 
 struct Matrix
 {

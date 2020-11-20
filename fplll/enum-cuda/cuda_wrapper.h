@@ -9,7 +9,7 @@
 namespace cuenum
 {
 
-typedef std::function<float(double, float*)> process_sol_fn;
+typedef std::function<float(double, double*)> process_sol_fn;
 
 struct CudaEnumOpts
 {
@@ -34,7 +34,7 @@ constexpr CudaEnumOpts default_opts = {50, .5, 3, 8, 32 * 256};
 
 std::vector<uint64_t> search_enumeration_cuda(const double *mu, const double *rdiag,
                                  const unsigned int enum_dimensions,
-                                 const float *start_point_coefficients, unsigned int start_point_count,
+                                 const double *start_point_coefficients, unsigned int start_point_count,
                                  unsigned int start_point_dim, process_sol_fn evaluator,
                                  double initial_radius, CudaEnumOpts opts = default_opts);
 
@@ -46,18 +46,18 @@ std::vector<uint64_t> search_enumeration_cuda(const double *mu, const double *rd
  * will correctly free it.
  */
 template <typename InputIt>
-inline PinnedPtr<float>
+inline PinnedPtr<double>
 create_start_point_array(size_t start_point_count, size_t start_point_dim,
                          InputIt begin, InputIt end)
 {
-  PinnedPtr<float> result = allocatePinnedMemory<float>(start_point_count * start_point_dim);
+  PinnedPtr<double> result = allocatePinnedMemory<double>(start_point_count * start_point_dim);
   size_t i = 0;
   for (InputIt it = begin; it != end; ++it)
   {
     const auto& point = it->second;
     for (size_t j = 0; j < start_point_dim; ++j)
     {
-      result.get()[i * start_point_dim + j] = static_cast<float>(point[j].get_d());
+      result.get()[i * start_point_dim + j] = static_cast<double>(point[j].get_d());
     }
     ++i;
   }
@@ -74,7 +74,7 @@ constexpr size_t cudaenum_return_array_size = 256;
 
 typedef void(extenum_cb_set_config)(double *mu, size_t mudim, bool mutranspose, double *rdiag,
                                     double *pruning);
-typedef double(extenum_cb_process_sol)(double dist, float *sol);
+typedef double(extenum_cb_process_sol)(double dist, double *sol);
 typedef void(extenum_cb_process_subsol)(double dist, double *subsol, int offset);
 
 std::array<uint64_t, cudaenum_return_array_size> ext_cuda_enumerate(const int dim, double maxdist, std::function<extenum_cb_set_config> cbfunc,

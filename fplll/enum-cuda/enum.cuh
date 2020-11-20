@@ -972,7 +972,7 @@ constexpr unsigned int get_started_thread_count(unsigned int thread_count) {
   return get_grid_size(thread_count) * enumerate_block_size;
 }
  
-typedef std::function<float(double, float*)> process_sol_fn;
+typedef std::function<float(enumf, enumi*)> process_sol_fn;
 
 /**
  * Enumerates all points within the enumeration bound (initialized to parameter initial_radius) and calls
@@ -989,7 +989,7 @@ typedef std::function<float(double, float*)> process_sol_fn;
  * @param process_sol - callback function called on solution points that were found. This is a host function.
  */
 template <unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level, bool print_status = true>
-std::vector<uint64_t> enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
+std::vector<uint64_t> enumerate(const enumf *mu, const enumf *rdiag, const enumi *start_points,
                unsigned int start_point_dim, unsigned int start_point_count, enumf initial_radius,
                process_sol_fn process_sol,
                Opts<levels, dimensions_per_level, max_nodes_per_level> opts)
