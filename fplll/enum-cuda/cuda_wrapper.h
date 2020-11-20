@@ -32,7 +32,7 @@ struct CudaEnumOpts
 
 constexpr CudaEnumOpts default_opts = {50, .5, 3, 8, 32 * 256};
 
-uint64_t search_enumeration_cuda(const double *mu, const double *rdiag,
+std::vector<uint64_t> search_enumeration_cuda(const double *mu, const double *rdiag,
                                  const unsigned int enum_dimensions,
                                  const float *start_point_coefficients, unsigned int start_point_count,
                                  unsigned int start_point_dim, process_sol_fn evaluator,
@@ -70,12 +70,14 @@ create_start_point_array(size_t start_point_count, size_t start_point_dim,
 
 }  // namespace cuenum
 
+constexpr size_t cudaenum_return_array_size = 256;
+
 typedef void(extenum_cb_set_config)(double *mu, size_t mudim, bool mutranspose, double *rdiag,
                                     double *pruning);
 typedef double(extenum_cb_process_sol)(double dist, float *sol);
 typedef void(extenum_cb_process_subsol)(double dist, double *subsol, int offset);
 
-uint64_t ext_cuda_enumerate(const int dim, double maxdist, std::function<extenum_cb_set_config> cbfunc,
+std::array<uint64_t, cudaenum_return_array_size> ext_cuda_enumerate(const int dim, double maxdist, std::function<extenum_cb_set_config> cbfunc,
     std::function<extenum_cb_process_sol> cbsol, std::function<extenum_cb_process_subsol> cbsubsol,
     bool dual = false, bool findsubsols = false);
 

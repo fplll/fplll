@@ -13,7 +13,7 @@ template <int min> struct int_marker
 };
 
 template <int dimensions_per_level, int levels>
-inline uint64_t search_enumeration_choose_levels(
+inline std::vector<uint64_t> search_enumeration_choose_levels(
     const enumf *mu, const enumf *rdiag, const unsigned int enum_levels,
     const float *start_point_coefficients, unsigned int start_point_count,
     unsigned int start_point_dim, enumf initial_radius, process_sol_fn evaluator,
@@ -34,7 +34,7 @@ inline uint64_t search_enumeration_choose_levels(
 }
 
 template <int dimensions_per_level, int min_levels, int delta_levels>
-inline uint64_t search_enumeration_choose_levels(const enumf *mu, const enumf *rdiag,
+inline std::vector<uint64_t> search_enumeration_choose_levels(const enumf *mu, const enumf *rdiag,
                                              const unsigned int enum_levels,
                                              const float *start_point_coefficients,
                                              unsigned int start_point_count,
@@ -65,7 +65,7 @@ inline uint64_t search_enumeration_choose_levels(const enumf *mu, const enumf *r
 }
 
 template <int dimensions_per_level>
-inline uint64_t search_enumeration_choose_dims_per_level(
+inline std::vector<uint64_t> search_enumeration_choose_dims_per_level(
     const enumf *mu, const enumf *rdiag, const unsigned int enum_dimensions,
     const float *start_point_coefficients, unsigned int start_point_count,
     unsigned int start_point_dim, enumf initial_radius, process_sol_fn evaluator,
@@ -86,7 +86,7 @@ inline uint64_t search_enumeration_choose_dims_per_level(
 }
 
 template <int min_dimensions_per_level, int delta_dimensions_per_level>
-inline uint64_t search_enumeration_choose_dims_per_level(
+inline std::vector<uint64_t> search_enumeration_choose_dims_per_level(
     const enumf *mu, const enumf *rdiag, const unsigned int enum_dimensions,
     const float *start_point_coefficients, unsigned int start_point_count,
     unsigned int start_point_dim, enumf initial_radius, process_sol_fn evaluator,
@@ -114,7 +114,7 @@ inline uint64_t search_enumeration_choose_dims_per_level(
   }
 }
 
-uint64_t search_enumeration_cuda(const double *mu, const double *rdiag,
+std::vector<uint64_t> search_enumeration_cuda(const double *mu, const double *rdiag,
                              const unsigned int enum_dimensions,
                              const float *start_point_coefficients, unsigned int start_point_count,
                              unsigned int start_point_dim, process_sol_fn evaluator,
@@ -159,10 +159,9 @@ PinnedPtr<enumi> enumerate_start_points(const int dim, const int start_dims, dou
                                                        radius_squared, callback));
   start_point_count = start_points.size();
   return cuenum::create_start_point_array(start_points.size(), start_dims, start_points.begin(), start_points.end());
-
 }
 
-uint64_t ext_cuda_enumerate(const int dim, double maxdist, std::function<extenum_cb_set_config> cbfunc,
+std::array<uint64_t, cudaenum_return_array_size> ext_cuda_enumerate(const int dim, double maxdist, std::function<extenum_cb_set_config> cbfunc,
   std::function<extenum_cb_process_sol> cbsol, std::function<extenum_cb_process_subsol> cbsubsol,
   bool dual, bool findsubsols) 
 {
@@ -171,6 +170,7 @@ uint64_t ext_cuda_enumerate(const int dim, double maxdist, std::function<extenum
   } else if (findsubsols) {
     throw "Unsupported operation: findsubsols == true";
   }
+  std::array<uint64_t, cudaenum_return_array_size> result = {};
   PinnedPtr<enumf> mu = allocatePinnedMemory<enumf>(dim * dim);
   PinnedPtr<enumf> rdiag = allocatePinnedMemory<enumf>(dim);
   enumf radius = std::sqrt(maxdist);
@@ -185,12 +185,15 @@ uint64_t ext_cuda_enumerate(const int dim, double maxdist, std::function<extenum
   }
   if (start_dims >= dim) {
       // use fallback, as cuda enumeration in such small dimensions is too much overhead
-      return 0;
+      return result;
   }
 
   unsigned int start_point_count = 0;
   PinnedPtr<enumi> start_point_array = enumerate_start_points(dim, start_dims, maxdist, mu.get(), rdiag.get(), start_point_count);
 
-  return cuenum::search_enumeration_cuda(mu.get(), rdiag.get(), dim - start_dims, start_point_array.get(), 
+  std::vector<uint64_t> node_counts = cuenum::search_enumeration_cuda(mu.get(), rdiag.get(), dim - start_dims, start_point_array.get(), 
     start_point_count, start_dims, cbsol, radius, opts);
+
+  std::copy(node_counts.begin(), node_counts.end(), result.begin());
+  return result;
 }

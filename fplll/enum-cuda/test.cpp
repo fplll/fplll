@@ -76,7 +76,7 @@ void test_fplll_like() {
   constexpr unsigned int total_dim       = 50;
   const std::array<std::array<float, total_dim>, total_dim> &lattice = test_mu_knapsack_big;
 
-  double maxdist = find_initial_radius<float, total_dim>(lattice) * 1.1;
+  double maxdist = find_initial_radius<float, total_dim>(lattice) * 1.05;
   maxdist = maxdist * maxdist; 
   std::function<extenum_cb_set_config> set_config = [&lattice](double *mu, size_t mudim, bool mutranspose, double *rdiag, double *pruning) {
     assert(mutranspose);

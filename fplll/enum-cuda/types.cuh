@@ -32,11 +32,15 @@ struct SubtreeEnumerationBuffer;
 
 struct PerfCounter
 {
-  unsigned long long *counter;
+  uint64_t *counter;
 
-  __device__ __host__ inline PerfCounter(unsigned long long *target) : counter(target) {}
+  __device__ __host__ inline PerfCounter(uint64_t *target) : counter(target) {}
 
-  __device__ __host__ inline void inc() { aggregated_atomic_inc(counter); }
+  __device__ __host__ inline void inc(unsigned int level) { aggregated_atomic_inc(&counter[level]); }
+
+  __device__ __host__ inline PerfCounter offset_level(unsigned int start_level) {
+    return PerfCounter(&counter[start_level]);
+  }
 };
 
 #endif

@@ -49,12 +49,12 @@ DEVICE_HOST_FUNCTION inline unsigned long long atomic_add(unsigned long long *ta
 }
 
 // implementation is only atomic on the device, requires ctr to be the same for all threads in the warp
-DEVICE_HOST_FUNCTION inline unsigned int aggregated_atomic_inc(unsigned int *ctr)
+DEVICE_HOST_FUNCTION inline uint32_t aggregated_atomic_inc(uint32_t *ctr)
 {
 #ifdef __CUDA_ARCH__
   // use warp-aggregated atomic for improved performance
   auto g = cooperative_groups::coalesced_threads();
-  int warp_res;
+  uint32_t warp_res;
   if (g.thread_rank() == 0)
   {
     warp_res = atomicAdd(ctr, g.size());
@@ -66,15 +66,16 @@ DEVICE_HOST_FUNCTION inline unsigned int aggregated_atomic_inc(unsigned int *ctr
 }
 
 // implementation is only atomic on the device, requires ctr to be the same for all threads in the warp
-DEVICE_HOST_FUNCTION inline unsigned long long aggregated_atomic_inc(unsigned long long *ctr)
+DEVICE_HOST_FUNCTION inline uint64_t aggregated_atomic_inc(uint64_t *ctr)
 {
+  static_assert(sizeof(unsigned long long) == sizeof(uint64_t), "atomicAdd is only defined for unsigned long long, so we can only use it for uint64_t if unsigned long long == uint64_t");
 #ifdef __CUDA_ARCH__
   // use warp-aggregated atomic for improved performance
   auto g = cooperative_groups::coalesced_threads();
-  int warp_res;
+  uint64_t warp_res;
   if (g.thread_rank() == 0)
   {
-    warp_res = atomicAdd(ctr, g.size());
+    warp_res = atomicAdd(reinterpret_cast<unsigned long long*>(ctr), static_cast<unsigned long long>(g.size()));
   }
   return g.shfl(warp_res, 0) + g.thread_rank();
 #else

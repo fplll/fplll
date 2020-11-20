@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <functional>
 #include <vector>
+#include <numeric>
 
 #include "atomic.h"
 #include "cuda_util.cuh"
@@ -400,7 +401,6 @@ struct AddToTreeCallback
   unsigned int parent_index;
   Matrix mu;
   SubtreeEnumerationBuffer<levels, dimensions_per_level, max_nodes_per_level> &buffer;
-  PerfCounter &counter;
 
   __device__ __host__ void operator()(const enumi *x, enumf squared_norm);
 };
@@ -572,9 +572,10 @@ __device__ __host__ void generate_nodes_children(
     if (!is_done)
     {
       typedef AddToTreeCallback<levels, dimensions_per_level, max_nodes_per_level> CallbackType;
-      CallbackType callback = {static_cast<unsigned int>(level + 1), index, mu, buffer, counter};
+      CallbackType callback = {static_cast<unsigned int>(level + 1), index, mu, buffer};
+      PerfCounter offset_counter = counter.offset_level(offset_kk);
       enumeration.template enumerate_recursive(
-          callback, max_paths, counter, kk_marker<dimensions_per_level - 1>());
+          callback, max_paths, offset_counter, kk_marker<dimensions_per_level - 1>());
 
       buffer.set_enumeration(level, index, enumeration);
     }
@@ -846,7 +847,7 @@ __global__ void __launch_bounds__(enumerate_block_size, 2)
     enumerate_kernel(unsigned char *buffer_memory, const enumi *start_points,
                      unsigned int *processed_start_point_counter, unsigned int start_point_count,
                      unsigned int start_point_dim, const enumf *mu_ptr, const enumf *rdiag,
-                     uint32_t *radius_squared_location, unsigned long long *perf_counter_memory,
+                     uint32_t *radius_squared_location, uint64_t *perf_counter_memory,
                      unsigned char* point_stream_memory,
                      Opts<levels, dimensions_per_level, max_nodes_per_level> opts)
 {
@@ -988,7 +989,7 @@ typedef std::function<float(double, float*)> process_sol_fn;
  * @param process_sol - callback function called on solution points that were found. This is a host function.
  */
 template <unsigned int levels, unsigned int dimensions_per_level, unsigned int max_nodes_per_level, bool print_status = true>
-uint64_t enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
+std::vector<uint64_t> enumerate(const enumf *mu, const enumf *rdiag, const float *start_points,
                unsigned int start_point_dim, unsigned int start_point_count, enumf initial_radius,
                process_sol_fn process_sol,
                Opts<levels, dimensions_per_level, max_nodes_per_level> opts)
@@ -1001,21 +1002,20 @@ uint64_t enumerate(const enumf *mu, const enumf *rdiag, const float *start_point
   const unsigned int mu_n                = tree_dimensions + start_point_dim;
   const unsigned int grid_size           = get_grid_size(opts.thread_count);
   const unsigned int group_count         = grid_size * enumerate_block_size / enumerate_cooperative_group_size;
+  const uint32_t repr_initial_radius_squared =
+      float_to_int_order_preserving_bijection(initial_radius * initial_radius);
 
   CudaPtr<unsigned char> buffer_mem =
       cuda_alloc(unsigned char, SubtreeBuffer::memory_size_in_bytes * group_count);
   CudaPtr<unsigned char> point_stream_memory = 
       cuda_alloc(unsigned char, Evaluator::memory_size_in_bytes(mu_n) * grid_size);
-
   CudaPtr<uint32_t> radius_mem             = cuda_alloc(uint32_t, 1);
   CudaPtr<enumf> device_mu                 = cuda_alloc(enumf, mu_n * mu_n);
   CudaPtr<enumf> device_rdiag              = cuda_alloc(enumf, mu_n);
-  CudaPtr<unsigned long long> node_counter = cuda_alloc(unsigned long long, 1);
+  CudaPtr<uint64_t> node_counter           = cuda_alloc(uint64_t, tree_dimensions);
   CudaPtr<enumi> device_start_points       = cuda_alloc(enumi, start_point_count * start_point_dim);
   CudaPtr<unsigned int> processed_start_point_count = cuda_alloc(unsigned int, 1);
 
-  const uint32_t repr_initial_radius_squared =
-      float_to_int_order_preserving_bijection(initial_radius * initial_radius);
   check(cudaMemcpy(device_mu.get(), mu, mu_n * mu_n * sizeof(enumf), cudaMemcpyHostToDevice));
   check(cudaMemcpy(device_rdiag.get(), rdiag, mu_n * sizeof(enumf), cudaMemcpyHostToDevice));
   check(cudaMemcpy(radius_mem.get(), &repr_initial_radius_squared, sizeof(uint32_t),
@@ -1059,10 +1059,10 @@ uint64_t enumerate(const enumf *mu, const enumf *rdiag, const float *start_point
   check(cudaDeviceSynchronize());
   check(cudaGetLastError());
 
-  unsigned long long searched_nodes;
-  check(cudaMemcpy(&searched_nodes, node_counter.get(), sizeof(unsigned long long),
+  std::array<uint64_t, tree_dimensions> searched_nodes;
+  check(cudaMemcpy(&searched_nodes[0], node_counter.get(), tree_dimensions * sizeof(uint64_t),
                    cudaMemcpyDeviceToHost));
-
+  
   if (print_status)
   {
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -1073,11 +1073,11 @@ uint64_t enumerate(const enumf *mu, const enumf *rdiag, const float *start_point
 
     uint32_t result_radius;
     check(cudaMemcpy(&result_radius, radius_mem.get(), sizeof(uint32_t), cudaMemcpyDeviceToHost));
-    std::cout << "Searched " << searched_nodes
+    std::cout << "Searched " << std::accumulate(searched_nodes.begin(), searched_nodes.end(), static_cast<uint64_t>(0))
               << " tree nodes, and decreased enumeration bound down to "
               << sqrt(int_to_float_order_preserving_bijection(result_radius)) << std::endl;
   }
-  return searched_nodes;
+  return std::vector<uint64_t>(searched_nodes.begin(), searched_nodes.end());
 }
 
 }

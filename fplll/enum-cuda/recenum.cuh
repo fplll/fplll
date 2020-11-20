@@ -133,7 +133,7 @@ CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &m
 
   while (true)
   {
-    node_counter.inc();
+    node_counter.inc(kk);
     bool is_done = enumerate_recursive(callback, max_paths, node_counter, kk_marker<kk - 1>());
     if (!is_done)
     {
@@ -200,7 +200,7 @@ CudaEnumeration<maxdim>::enumerate_recursive(Callback &callback, unsigned int &m
 
   while (true)
   {
-    node_counter.inc();
+    node_counter.inc(kk);
     x[kk] = next_coeff(x[kk], center[kk]);
 
     enumf alphak2  = x[kk] - center[kk];
