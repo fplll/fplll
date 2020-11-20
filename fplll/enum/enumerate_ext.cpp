@@ -17,6 +17,10 @@
 #include "enumerate_ext.h"
 #include <fplll/defs.h>
 
+#ifdef FPLLL_WITH_CUDA_ENUM
+#include "cuda_wrapper.h"
+#endif
+
 #if FPLLL_MAX_PARALLEL_ENUM_DIM != 0
 #include "../enum-parallel/enumlib.h"
 #endif
@@ -24,10 +28,14 @@
 FPLLL_BEGIN_NAMESPACE
 
 // set & get external enumerator (nullptr => disabled)
+#if FPLLL_WITH_CUDA_ENUM != 0
+std::function<extenum_fc_enumerate> fplll_extenum = enumeration_fn;
+#else
 #if FPLLL_MAX_PARALLEL_ENUM_DIM != 0
 std::function<extenum_fc_enumerate> fplll_extenum = enumlib::enumlib_enumerate;
 #else
 std::function<extenum_fc_enumerate> fplll_extenum = nullptr;
+#endif
 #endif
 
 void set_external_enumerator(std::function<extenum_fc_enumerate> extenum)

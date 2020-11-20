@@ -185,6 +185,16 @@ AC_ARG_WITH(max-parallel-enum-dim,
 AC_DEFINE_UNQUOTED([FPLLL_MAX_PARALLEL_ENUM_DIM], $max_parallel_enum_dim, [parallel enumeration enabled])
 AM_CONDITIONAL(FPLLL_PARALLEL_ENUM, test "x$max_parallel_enum_dim" != "x0")
 
+AC_ARG_ENABLE(cuda-enum,
+   AS_HELP_STRING([--enable-cuda-enum], [Enable cuda enumeration]))
+
+use_cuda=0
+AS_IF([test "x$enable_cuda_enum" != "xno"], [
+   AC_DEFINE_UNQUOTED([FPLLL_WITH_CUDA_ENUM], [1], [cuda enumeration enabled])
+   use_cuda=1
+])
+AM_CONDITIONAL(FPLLL_CUDA_ENUM, test "x$use_cuda" != "x0")
+
 # Store version numbers in header
 
 AC_DEFINE_UNQUOTED([FPLLL_MAJOR_VERSION],[$FPLLL_MAJOR_VERSION],[major version])

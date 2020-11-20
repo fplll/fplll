@@ -28,6 +28,9 @@
 /* Recursive enumeration enabled */
 #undef FPLLL_WITH_RECURSIVE_ENUM
 
+/* Cuda enumeration enabled */
+#undef FPLLL_WITH_CUDA_ENUM
+
 /* Maximum supported parallel enumeration dimension */
 #define FPLLL_MAX_PARALLEL_ENUM_DIM @FPLLL_MAX_PARALLEL_ENUM_DIM@
 
