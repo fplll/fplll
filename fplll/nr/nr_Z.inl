@@ -47,10 +47,10 @@ public:
    */
   inline double get_d() const;
 
-/**
- * Converts this object to a long double. If it does not fit in
- * a long double, the result is undefined.
- */
+  /**
+   * Converts this object to a long double. If it does not fit in
+   * a long double, the result is undefined.
+   */
 #ifdef FPLLL_WITH_LONG_DOUBLE
   inline long double get_ld() const;
 #endif
