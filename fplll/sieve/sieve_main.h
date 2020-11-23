@@ -1,3 +1,4 @@
+#include "sieve_cvpp.cpp"
 #include "sieve_gauss.h"
 #include <fstream>
 #include <getopt.h>
