@@ -1,0 +1,56 @@
+name: Tests
+
+on: 
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * 0' # weekly
+
+env:
+  MAX_ENUM_DIM: 64
+  MAX_PARALLEL_ENUM_DIM: 20
+  JOBS: 2
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - name: Install prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install autoconf automake libtool libgmp-dev libmpfr-dev libqd-dev
+      - name: Configure
+        run: |
+          ./autogen.sh
+          ./configure --disable-static --with-max-enum-dim=$MAX_ENUM_DIM \
+                      --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM
+      - name: Compile
+        run: make -j $JOBS
+
+      - name: Test
+        run: make -j $JOBS check
+
+  macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v2
+      - name: Install prerequisites
+        run: |
+          brew update
+          brew reinstall gmp
+          brew install autoconf automake clang-format
+      - name: Configure
+        run: |
+          ./autogen.sh
+          ./configure --disable-static --with-max-enum-dim=$MAX_ENUM_DIM \
+                      --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM
+      - name: Compile
+        run: make -j $JOBS
+
+      - name: Test
+        run: make -j $JOBS check

@@ -87,7 +87,7 @@ Before you submit a pull request, please run tests:
 
     $ make check
 
-These checks are also run on [Travis-CI](https://travis-ci.org/fplll/fplll) automatically for every pull request. Nothing failing tests will be accepted.
+These checks are also run automatically for every pull request. Nothing failing tests will be accepted.
 
 ### If you add code please add tests
 
@@ -200,7 +200,7 @@ DisableFormat:   false
 
 ### Enforcement of the coding convention
 
-Starting from fplll 5.1.0, the coding convention is [enforced](https://github.com/fplll/fplll/pull/215) throughout the whole project. In particular, the code of every pull request has to strictly adhere to the coding convention, and the Travis build will error when it is not the case. Automatic formatting can (and should) be performed by the command
+Starting from fplll 5.1.0, the coding convention is [enforced](https://github.com/fplll/fplll/pull/215) throughout the whole project. In particular, the code of every pull request has to strictly adhere to the coding convention, and a GitHub Action will error when it is not the case. Automatic formatting can (and should) be performed by the command
 
 ```
 make check-style

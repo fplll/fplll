@@ -1,6 +1,6 @@
 # fplll #
 
-[![Build Status](https://travis-ci.org/fplll/fplll.svg?branch=master)](https://travis-ci.org/fplll/fplll) [![codecov](https://codecov.io/gh/fplll/fplll/branch/master/graph/badge.svg)](https://codecov.io/gh/fplll/fplll)
+[![Build Status](https://github.com/fplll/fplll/workflows/Tests/badge.svg)](https://github.com/fplll/fplll/actions?query=workflow%3ATests) [![codecov](https://codecov.io/gh/fplll/fplll/branch/master/graph/badge.svg)](https://codecov.io/gh/fplll/fplll)
 
 
 fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL [[LLL82](#LLL82)] is central to the code, hence the name.

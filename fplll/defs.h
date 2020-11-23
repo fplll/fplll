@@ -164,21 +164,24 @@ enum RedStatus
   RED_HLLL_FAILURE      = 9,
   RED_HLLL_NORM_FAILURE = 10,
   RED_HLLL_SR_FAILURE   = 11,
-  RED_STATUS_MAX        = 12
+  RED_URL_ERR           = 12,
+  RED_STATUS_MAX        = 13
 };
 
-const char *const RED_STATUS_STR[RED_STATUS_MAX] = {"success",
-                                                    "",
-                                                    "infinite number in GSO",
-                                                    "infinite loop in babai",
-                                                    "infinite loop in LLL",
-                                                    "error in SVP solver",
-                                                    "error in BKZ",
-                                                    "time limit exceeded in BKZ",
-                                                    "loops limit exceeded in BKZ",
-                                                    "error in HLLL",
-                                                    "increase of the norm",
-                                                    "error in weak size reduction"};
+const char *const RED_STATUS_STR[RED_STATUS_MAX] = {
+    "success",
+    "",
+    "infinite number in GSO",
+    "infinite loop in babai",
+    "infinite loop in LLL",
+    "error in SVP solver",
+    "error in BKZ",
+    "time limit exceeded in BKZ",
+    "loops limit exceeded in BKZ",
+    "error in HLLL",
+    "increase of the norm",
+    "error in weak size reduction",
+    "Please see https://github.com/fplll/fplll/wiki/fplll-errors-FAQ for more information."};
 
 enum LLLMethod
 {
