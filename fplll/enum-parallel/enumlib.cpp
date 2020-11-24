@@ -39,7 +39,7 @@ enumlib_enumerate(int dim, fplll::enumf maxdist, std::function<fplll::extenum_cb
                   bool findsubsols);
 
 #define ENUMFUNCNAME(DIM)                                                                          \
-  std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> enumerate##DIM(                                              \
+  std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> enumerate##DIM(                              \
       int, float_type, std::function<extenum_cb_set_config>,                                       \
       std::function<extenum_cb_process_sol>, std::function<extenum_cb_process_subsol>, bool,       \
       bool);

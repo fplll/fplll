@@ -19,9 +19,9 @@
 #ifndef FPLLL_ENUMERATE_BASE_H
 #define FPLLL_ENUMERATE_BASE_H
 
+#include "fplll/enum/enumerate_ext_api.h"
 #include "fplll/fplll_config.h"
 #include "fplll/nr/nr.h"
-#include "fplll/enum/enumerate_ext_api.h"
 #include <array>
 #include <cfenv>
 #include <cmath>

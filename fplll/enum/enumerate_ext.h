@@ -123,7 +123,10 @@ public:
     return _nodes[level];
   }
 
-  inline std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> get_nodes_array() const { return _nodes; }
+  inline std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> get_nodes_array() const
+  {
+    return _nodes;
+  }
 
 private:
   void callback_set_config(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag, enumf *pruning);
