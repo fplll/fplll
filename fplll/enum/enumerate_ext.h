@@ -86,7 +86,7 @@ using ::extenum_cb_process_subsol;
  *         Or ~uint64_t(0) when instance is not supported
  *         in which case fplll falls back to its own enumeration.
  */
-// typedef array<uint64_t, FPLLL_MAX_ENUM_DIM>(extenum_fc_enumerate)(
+// typedef array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM>(extenum_fc_enumerate)(
 //    const int dim, enumf maxdist, std::function<extenum_cb_set_config> cbfunc,
 //    std::function<extenum_cb_process_sol> cbsol, std::function<extenum_cb_process_subsol>
 //    cbsubsol, bool dual /*=false*/, bool findsubsols /*=false*/
@@ -123,7 +123,7 @@ public:
     return _nodes[level];
   }
 
-  inline array<uint64_t, FPLLL_MAX_ENUM_DIM> get_nodes_array() const { return _nodes; }
+  inline std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> get_nodes_array() const { return _nodes; }
 
 private:
   void callback_set_config(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag, enumf *pruning);
@@ -137,7 +137,7 @@ private:
   vector<enumf> _pruning;
   long _normexp;
 
-  array<uint64_t, FPLLL_MAX_ENUM_DIM> _nodes;
+  array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> _nodes;
   bool _dual;
   int _d, _first;
   enumf _maxdist;

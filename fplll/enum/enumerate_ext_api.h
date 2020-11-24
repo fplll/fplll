@@ -22,7 +22,7 @@
 #include <memory>
 
 typedef double fplll_extenum_enumf;
-#define FPLLL_EXTENUM_MAX_EXTENUM_DIM 256
+#define FPLLL_EXTENUM_MAX_EXTENUM_DIM 1024
 
 /* function callback API for external enumeration library (extenum) */
 
