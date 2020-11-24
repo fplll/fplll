@@ -48,8 +48,8 @@ typedef double fplll_extenum_enumf;
  * contain the pruning coefficients for enumeration. In rigorous enumeration, this array will
  * consist solely of 1's.
  */
-typedef void(extenum_cb_set_config)(fplll_extenum_enumf *mu, std::size_t mudim, bool mutranspose, fplll_extenum_enumf *rdiag,
-                                    fplll_extenum_enumf *pruning);
+typedef void(extenum_cb_set_config)(fplll_extenum_enumf *mu, std::size_t mudim, bool mutranspose,
+                                    fplll_extenum_enumf *rdiag, fplll_extenum_enumf *pruning);
 
 /**
  * Callback function given to external enumeration library.
@@ -58,14 +58,16 @@ typedef void(extenum_cb_set_config)(fplll_extenum_enumf *mu, std::size_t mudim, 
  * @param[in] sol - a pointer to the new solution.
  * @return The new enumeration bound.
  */
-typedef fplll_extenum_enumf(extenum_cb_process_sol)(fplll_extenum_enumf dist, fplll_extenum_enumf *sol);
+typedef fplll_extenum_enumf(extenum_cb_process_sol)(fplll_extenum_enumf dist,
+                                                    fplll_extenum_enumf *sol);
 
 /**
  * Callback function given to external enumeration library.
  *
  * Pass a subsolution and its partial length to Evaluator.
  */
-typedef void(extenum_cb_process_subsol)(fplll_extenum_enumf dist, fplll_extenum_enumf *subsol, int offset);
+typedef void(extenum_cb_process_subsol)(fplll_extenum_enumf dist, fplll_extenum_enumf *subsol,
+                                        int offset);
 
 /**
  * External enumeration function prototype.
