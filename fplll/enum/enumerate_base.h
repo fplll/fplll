@@ -19,6 +19,7 @@
 #ifndef FPLLL_ENUMERATE_BASE_H
 #define FPLLL_ENUMERATE_BASE_H
 
+#include "fplll/enum/enumerate_ext_api.h"
 #include "fplll/fplll_config.h"
 #include "fplll/nr/nr.h"
 #include <array>
@@ -97,7 +98,7 @@ protected:
   bool finished;
 
   /* nodes count */
-  array<uint64_t, maxdim> nodes;
+  array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> nodes;
 
   template <int kk, int kk_start, bool dualenum, bool findsubsols, bool enable_reset> struct opts
   {

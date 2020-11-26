@@ -35,6 +35,8 @@ FPLLL_BEGIN_NAMESPACE
 namespace enumlib
 {
 
+using namespace std;
+
 template <int dimension> struct enumerate_traits
 {
   static const int SWIRLY          = 1 + (dimension / 20);
@@ -43,7 +45,7 @@ template <int dimension> struct enumerate_traits
 };
 
 template <int dimension, bool findsubsols>
-array<uint64_t, FPLLL_MAX_ENUM_DIM>
+array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM>
 enumerate_dim_detail(int dim, float_type maxdist,
                      std::function<extenum_cb_set_config> cb_set_config,
                      std::function<extenum_cb_process_sol> cb_process_sol,
@@ -81,13 +83,13 @@ enumerate_dim_detail(int dim, float_type maxdist,
   static_assert(FPLLL_MAX_ENUM_DIM > dimension,
                 "The maximum enumeration dimension needs to be bigger than, or equal to, the "
                 "parallel enumeration dim");
-  array<uint64_t, FPLLL_MAX_ENUM_DIM> arr{};
+  array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> arr{};
   std::copy(lat._counts.cbegin(), lat._counts.cend(), arr.begin());
   return arr;
 }
 
 template <int dimension>
-array<uint64_t, FPLLL_MAX_ENUM_DIM>
+array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM>
 enumerate_dim(int dim, float_type maxdist, std::function<extenum_cb_set_config> cb_set_config,
               std::function<extenum_cb_process_sol> cb_process_sol,
               std::function<extenum_cb_process_subsol> cb_process_subsol, bool dual,
@@ -112,7 +114,7 @@ enumerate_dim(int dim, float_type maxdist, std::function<extenum_cb_set_config> 
                               dual, findsubsols);                                                  \
     break;
 
-array<uint64_t, FPLLL_MAX_ENUM_DIM> DIMFUNC(ENUMDIMENSION)(
+array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> DIMFUNC(ENUMDIMENSION)(
     int dim, float_type maxdist, std::function<extenum_cb_set_config> cb_set_config,
     std::function<extenum_cb_process_sol> cb_process_sol,
     std::function<extenum_cb_process_subsol> cb_process_subsol, bool dual, bool findsubsols)
@@ -133,7 +135,7 @@ array<uint64_t, FPLLL_MAX_ENUM_DIM> DIMFUNC(ENUMDIMENSION)(
   }
 
   cout << "[enumlib] " << ENUMDIMENSION << ":" << dim << " wrong dimension!" << endl;
-  array<uint64_t, FPLLL_MAX_ENUM_DIM> arr{};
+  std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> arr{};
   arr[0] = ~uint64_t(0);
   return arr;
 }

@@ -32,16 +32,14 @@ FPLLL_BEGIN_NAMESPACE
 namespace enumlib
 {
 
-using namespace std;
-
-array<uint64_t, FPLLL_MAX_ENUM_DIM>
+std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM>
 enumlib_enumerate(int dim, fplll::enumf maxdist, std::function<fplll::extenum_cb_set_config> cbfunc,
                   std::function<fplll::extenum_cb_process_sol> cbsol,
                   std::function<fplll::extenum_cb_process_subsol> cbsubsol, bool dual,
                   bool findsubsols);
 
 #define ENUMFUNCNAME(DIM)                                                                          \
-  array<uint64_t, FPLLL_MAX_ENUM_DIM> enumerate##DIM(                                              \
+  std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> enumerate##DIM(                              \
       int, float_type, std::function<extenum_cb_set_config>,                                       \
       std::function<extenum_cb_process_sol>, std::function<extenum_cb_process_subsol>, bool,       \
       bool);
@@ -92,7 +90,7 @@ ENUMFUNCNAME(150);
 ENUMFUNCNAME(160);
 #endif
 
-array<uint64_t, FPLLL_MAX_ENUM_DIM>
+std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM>
 enumlib_enumerate(int dim, fplll_float maxdist, std::function<extenum_cb_set_config> cbfunc,
                   std::function<extenum_cb_process_sol> cbsol,
                   std::function<extenum_cb_process_subsol> cbsubsol, bool dual, bool findsubsols)
@@ -100,7 +98,7 @@ enumlib_enumerate(int dim, fplll_float maxdist, std::function<extenum_cb_set_con
   // dual svp enumeration not supported yet
   if (dim <= 10 || dual)
   {
-    array<uint64_t, FPLLL_MAX_ENUM_DIM> out;
+    std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> out;
     out[0] = ~uint64_t(0);
     return out;
   }
@@ -165,7 +163,7 @@ enumlib_enumerate(int dim, fplll_float maxdist, std::function<extenum_cb_set_con
   if (dim <= 160)
     return enumerate160(dim, maxdist, cbfunc, cbsol, cbsubsol, dual, findsubsols);
 #endif
-  array<uint64_t, FPLLL_MAX_ENUM_DIM> out;
+  std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> out;
   out[0] = ~uint64_t(0);
   return out;
 }
