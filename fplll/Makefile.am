@@ -34,7 +34,7 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	enum/evaluator.h \
 	wrapper.h \
 	bkz_param.h \
-	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h \
+	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h enum/enumerate_ext_api.h \
 	sieve/sieve_gauss.h sieve/sieve_common.h sieve/sieve_gauss_str.h sieve/sampler_basic.h \
 	pruner/pruner.h pruner/pruner_simplex.h \
 	householder.h hlll.h \
@@ -76,7 +76,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	enum/topenum.cpp enum/topenum.h \
 	enum/enumerate.cpp enum/enumerate.h \
 	enum/enumerate_base.cpp enum/enumerate_base.h \
-	enum/enumerate_ext.cpp enum/enumerate_ext.h \
+	enum/enumerate_ext.cpp enum/enumerate_ext.h enum/enumerate_ext_api.h \
 	enum/evaluator.cpp enum/evaluator.h \
 	lll.cpp lll.h \
 	wrapper.cpp wrapper.h \
@@ -107,7 +107,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 libfplll_la_CXXFLAGS=$(PTHREAD_CFLAGS)
 
 EXTRA_libfplll_la_SOURCES= svpcvp.cpp
-libfplll_la_LIBADD=$(LIBQD_LIBS) $(PTHREAD_LIBS)
+libfplll_la_LIBADD=$(LIBQD_LIBS) $(PTHREAD_LIBS) $(EXTENUM_LIBS)
 libfplll_la_LDFLAGS=-no-undefined -version-info @FPLLL_LT_CURRENT@:@FPLLL_LT_REVISION@:@FPLLL_LT_AGE@ $(PTHREAD_CFLAGS)
 
 if FPLLL_PARALLEL_ENUM

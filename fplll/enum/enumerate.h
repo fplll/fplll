@@ -54,7 +54,7 @@ public:
     return nodes[level];
   }
 
-  inline array<uint64_t, FPLLL_MAX_ENUM_DIM> get_nodes_array() { return nodes; }
+  inline array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> get_nodes_array() { return nodes; }
 
 private:
   MatGSOInterface<ZT, FT> &_gso;
@@ -117,7 +117,7 @@ public:
     return _nodes[level];
   }
 
-  inline array<uint64_t, EnumerationBase::maxdim> get_nodes_array() const { return _nodes; }
+  inline array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> get_nodes_array() const { return _nodes; }
 
 private:
   MatGSOInterface<ZT, FT> &_gso;
@@ -125,7 +125,7 @@ private:
   vector<int> _max_indices;
   std::unique_ptr<EnumerationDyn<ZT, FT>> enumdyn;
   std::unique_ptr<ExternalEnumeration<ZT, FT>> enumext;
-  array<uint64_t, EnumerationBase::maxdim> _nodes;
+  array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> _nodes;
 };
 
 FPLLL_END_NAMESPACE
