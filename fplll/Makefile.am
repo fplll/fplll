@@ -121,11 +121,6 @@ libfplll_la_SOURCES+=\
 EXTRA_libfplll_la_SOURCES+=enum-parallel/enumlib_dim.cpp
 endif
 
-if FPLLL_CUDA_ENUM
-libfplll_la_LIBADD+= -lcudaenum -L/home/feanor/Projekte/fplll-cuda-enumeration
-libfplll_la_CXXFLAGS+= -I/home/feanor/Projekte/fplll-cuda-enumeration/src
-endif
-
 # libfplll variants
 libfplllv_la_SOURCES=$(libfplll_la_SOURCES)
 EXTRA_libfplllv_la_SOURCES=$(EXTRA_libfplll_la_SOURCES)
