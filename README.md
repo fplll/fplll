@@ -9,7 +9,7 @@ It includes implementations of floating-point LLL reduction algorithms [[NS09](#
 
 It includes an implementation of the BKZ reduction algorithm [[SE94](#SE94)], including the BKZ-2.0 [[CN11](#CN11)] improvements (extreme enumeration pruning, pre-processing of blocks, early termination). Additionally, Slide reduction [[GN08](#GN08)] and self dual BKZ [[MW16](#MW16)] are supported. 
 
-It also includes a floating-point implementation of the Kannan-Fincke-Pohst algorithm [[K83](#K83),[FP85](#FP85)] that finds a shortest non-zero lattice vector. For the same task, the GaussSieve algorithm [[MV10](#MV10)] is also available in fplll. Finally, it contains a variant of the enumeration algorithm that computes a lattice vector closest to a given vector belonging to the real span of the lattice.
+It also includes a floating-point implementation of the Kannan-Fincke-Pohst algorithm [[K83](#K83),[FP85](#FP85)] that finds a shortest non-zero lattice vector. Finally, it contains a variant of the enumeration algorithm that computes a lattice vector closest to a given vector belonging to the real span of the lattice.
 
 fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of the License, or, at your option, any later version) as published by the Free Software Foundation.
 
@@ -43,7 +43,7 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
     * [Check](#check)
     * [Optimization](#optimization)
   * [How to use](#how-to-use)
-    * Programs [latticegen](#latticegen), [fplll](#fplll-1), [llldiff](#llldiff), [latsieve](#latsieve).
+    * Programs [latticegen](#latticegen), [fplll](#fplll-1), [llldiff](#llldiff).
     * [How to use as a library](#how-to-use-as-a-library)
     * [Multicore support](#multicore-support)
   * [Examples](#examples)
@@ -302,24 +302,6 @@ Only for `-a hlll`:
 equal iff d=d' and for any i, bi = +- ci. Concretely, if basis B is in file 'B.txt' and if basis C is in file 'C.txt' (in the fplll format), then one may run `cat B.txt C.txt | ./llldiff`.
 
 
-## latsieve ##
-
-`latsieve` does (tuple) lattice sieve on a matrix (considered as a set of row
-vectors) given in a file as parameter. 
- It will generate the executable file
- `latsieve` in `fplll/` which is a wrapper of `fplll/.libs/latsieve`.
-
-
-The options are:
-
-* `-a nnn` : nnn is the tuple algorithm to use (default 2 corresponding to GaussSieve)
-* `-f filename` : follows input matrix
-* `-b nnn` : BKZ preprocessing of blocksize nnn (optional)
-* `-t nnn` : targeted square norm for stoping sieving (optional)
-* `-s nnn` : using seed=nnn (optional)
-* `-v` : verbose toggle
-
-
 ## How to use as a library ##
 
 See [API documentation](https://fplll.github.io/fplll/annotated.html) and [tests](https://github.com/fplll/fplll/tree/master/tests) as a source of examples.
@@ -463,8 +445,6 @@ Bug reports may be sent to [https://groups.google.com/forum/#!forum/fplll-devel]
 <a name="LLL82">[LLL82]</a> A. K. Lenstra, H. W. Lenstra, Jr. and L. Lovasz. Factoring polynomials with rational coefficients. Math. Ann., 261: 515–534 (1982)
 
 <a name="MSV09">[MSV09]</a> I. Morel, D. Stehle and G. Villard. H-LLL: using Householder inside LLL. ISSAC 2009: 271-278
-
-<a name="MV10">[MV10]</a> D. Micciancio and P. Voulgaris. Faster Exponential Time Algorithms for the Shortest Vector Problem. SODA 2010: 1468-1480
 
 <a name="MW16">[MW16]</a> D. Micciancio and M. Walter. Practical, Predictable Lattice Basis Reduction. EUROCRYPT 2016: 820-849
 
