@@ -17,12 +17,11 @@
 #ifndef FPLLL_ENUMERATE_EXT_H
 #define FPLLL_ENUMERATE_EXT_H
 
-#include <array>
+#include "enumerate_ext_api.h"
+
 #include <fplll/enum/enumerate_base.h>
 #include <fplll/enum/evaluator.h>
 #include <fplll/gso_interface.h>
-#include <functional>
-#include <memory>
 
 FPLLL_BEGIN_NAMESPACE
 
@@ -50,8 +49,9 @@ FPLLL_BEGIN_NAMESPACE
  * contain the pruning coefficients for enumeration. In rigorous enumeration, this array will
  * consist solely of 1's.
  */
-typedef void(extenum_cb_set_config)(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag,
-                                    enumf *pruning);
+// typedef void(extenum_cb_set_config)(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag,
+//                                    enumf *pruning);
+using ::extenum_cb_set_config;
 
 /**
  * Callback function given to external enumeration library.
@@ -60,14 +60,16 @@ typedef void(extenum_cb_set_config)(enumf *mu, size_t mudim, bool mutranspose, e
  * @param[in] sol - a pointer to the new solution.
  * @return The new enumeration bound.
  */
-typedef enumf(extenum_cb_process_sol)(enumf dist, enumf *sol);
+// typedef enumf(extenum_cb_process_sol)(enumf dist, enumf *sol);
+using ::extenum_cb_process_sol;
 
 /**
  * Callback function given to external enumeration library.
  *
  * Pass a subsolution and its partial length to Evaluator.
  */
-typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
+// typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
+using ::extenum_cb_process_subsol;
 
 /**
  * External enumeration function prototype.
@@ -84,11 +86,12 @@ typedef void(extenum_cb_process_subsol)(enumf dist, enumf *subsol, int offset);
  *         Or ~uint64_t(0) when instance is not supported
  *         in which case fplll falls back to its own enumeration.
  */
-typedef array<uint64_t, FPLLL_MAX_ENUM_DIM>(extenum_fc_enumerate)(
-    const int dim, enumf maxdist, std::function<extenum_cb_set_config> cbfunc,
-    std::function<extenum_cb_process_sol> cbsol, std::function<extenum_cb_process_subsol> cbsubsol,
-    bool dual /*=false*/, bool findsubsols /*=false*/
-);
+// typedef array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM>(extenum_fc_enumerate)(
+//    const int dim, enumf maxdist, std::function<extenum_cb_set_config> cbfunc,
+//    std::function<extenum_cb_process_sol> cbsol, std::function<extenum_cb_process_subsol>
+//    cbsubsol, bool dual /*=false*/, bool findsubsols /*=false*/
+//);
+using ::extenum_fc_enumerate;
 
 /* set & get external enumerator. If extenum = nullptr then this interface is disabled,
                                   and fplll will use the internal enumerator.
@@ -120,7 +123,10 @@ public:
     return _nodes[level];
   }
 
-  inline array<uint64_t, FPLLL_MAX_ENUM_DIM> get_nodes_array() const { return _nodes; }
+  inline std::array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> get_nodes_array() const
+  {
+    return _nodes;
+  }
 
 private:
   void callback_set_config(enumf *mu, size_t mudim, bool mutranspose, enumf *rdiag, enumf *pruning);
@@ -134,7 +140,7 @@ private:
   vector<enumf> _pruning;
   long _normexp;
 
-  array<uint64_t, FPLLL_MAX_ENUM_DIM> _nodes;
+  array<uint64_t, FPLLL_EXTENUM_MAX_EXTENUM_DIM> _nodes;
   bool _dual;
   int _d, _first;
   enumf _maxdist;

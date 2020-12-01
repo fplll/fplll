@@ -21,13 +21,21 @@
 #include "../enum-parallel/enumlib.h"
 #endif
 
+#ifdef FPLLL_EXTENUM_FUNC
+extern extenum_fc_enumerate FPLLL_EXTENUM_FUNC;
+#endif
+
 FPLLL_BEGIN_NAMESPACE
 
 // set & get external enumerator (nullptr => disabled)
+#ifdef FPLLL_EXTENUM_FUNC
+std::function<extenum_fc_enumerate> fplll_extenum = FPLLL_EXTENUM_FUNC;
+#else
 #if FPLLL_MAX_PARALLEL_ENUM_DIM != 0
 std::function<extenum_fc_enumerate> fplll_extenum = enumlib::enumlib_enumerate;
 #else
 std::function<extenum_fc_enumerate> fplll_extenum = nullptr;
+#endif
 #endif
 
 void set_external_enumerator(std::function<extenum_fc_enumerate> extenum)
