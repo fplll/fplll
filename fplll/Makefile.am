@@ -35,12 +35,11 @@ nobase_include_fplll_HEADERS=defs.h fplll.h \
 	wrapper.h \
 	bkz_param.h \
 	enum/enumerate.h enum/enumerate_base.h enum/enumerate_ext.h enum/enumerate_ext_api.h \
-	sieve/sieve_gauss.h sieve/sieve_common.h sieve/sieve_gauss_str.h sieve/sampler_basic.h \
 	pruner/pruner.h pruner/pruner_simplex.h \
 	householder.h hlll.h \
 	threadpool.h io/thread_pool.hpp
 
-bin_PROGRAMS=fplll latticegen latsieve
+bin_PROGRAMS=fplll latticegen
 check_PROGRAMS=llldiff
 EXTRA_PROGRAMS=fplll_dbg latticegen_dbg
 lib_LTLIBRARIES=libfplll.la
@@ -66,10 +65,6 @@ latticegen_dbg_LDADD=libfpllld.la
 llldiff_SOURCES=llldiff.cpp
 llldiff_LDADD=libfplll.la
 
-# latsieve bin
-latsieve_SOURCES=sieve/sieve_main.cpp sieve/sieve_main.h
-latsieve_LDADD=libfplll.la $(LIBQD_LIBS)
-
 # libfplll
 libfplll_la_SOURCES=fplll.cpp fplll.h \
 	util.cpp util.h \
@@ -92,15 +87,6 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	pruner/pruner_optimize_tp.cpp \
 	pruner/pruner_prob.cpp \
 	pruner/pruner_util.cpp \
-	sieve/sieve_gauss.cpp \
-	sieve/sieve_gauss.h  \
-	sieve/sieve_common.h\
-	sieve/sieve_gauss_str.h \
-	sieve/sieve_gauss_2sieve.cpp \
-	sieve/sieve_gauss_3sieve.cpp \
-	sieve/sieve_gauss_4sieve.cpp \
-	sieve/sampler_basic.h \
-	sieve/sampler_basic.cpp \
 	householder.cpp householder.h hlll.cpp hlll.h \
 	io/json.hpp \
 	threadpool.h threadpool.cpp io/thread_pool.hpp
