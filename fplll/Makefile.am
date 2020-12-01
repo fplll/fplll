@@ -101,6 +101,7 @@ libfplll_la_SOURCES=fplll.cpp fplll.h \
 	sieve/sieve_gauss_4sieve.cpp \
 	sieve/sampler_basic.h \
 	sieve/sampler_basic.cpp \
+	sieve/sieve_cvpp.cpp \
 	householder.cpp householder.h hlll.cpp hlll.h \
 	io/json.hpp \
 	threadpool.h threadpool.cpp io/thread_pool.hpp

@@ -35,6 +35,9 @@ public:
   vector<long> iters_ls;
 
   NumVect<Z_NR<ZT>> return_first();
+  void print_list_to_file(const char *file_name);
+  void approx_voronoi_cvpp(const char *targets_file_name, const char *list_file_name,
+                           const char *output_list_file);
 
 private:
   int nr, nc;
@@ -86,6 +89,11 @@ private:
   Z_NR<ZT> update_p_4reduce_3reduce(ListPoint<ZT> *p);
   void update_p_4reduce_aux(ListPoint<ZT> *p, typename list<ListPoint<ZT> *>::iterator &lp_it);
   Z_NR<ZT> update_p_4reduce(ListPoint<ZT> *p);
+
+  /* CVPP functions */
+  void import_list_from_file(const char *list_file_name);
+  void iterative_slicer(ListPoint<ZT> *target);
+  void randomised_slicer(ListPoint<ZT> *target, const int bound);
 
   /* info functions */
   void print_curr_info();

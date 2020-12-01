@@ -2,6 +2,8 @@
   This provides an implementation of Gauss sieving, including using
   tuples of vectors in fplll framework. The Gauss Sieve code is
   based on Panagiotis Voulgaris's implementation of the Gauss sieve.
+  In addition a CVP(P) functionality is added based on using sieving
+  as the preprocessing.
 */
 #include "sieve_main.h"
 #include "fplll.h"
@@ -25,6 +27,12 @@ static void main_usage(char *myself)
        << "     Using seed=nnn\n"
        << "  -b nnn\n"
        << "     BKZ preprocessing of blocksize=nnn\n"
+       << "  -p filename\n"
+       << "     Output filename for the list\n"
+       << "  -L filename\n"
+       << "     Input filename used for CVPP (includes the list)\n"
+       << "  -C filename\n"
+       << "     Input filename for CVPP (includes the target(s))\n"
        << "  -v\n"
        << "     Verbose mode\n";
 }
@@ -33,10 +41,34 @@ static void main_usage(char *myself)
  * run sieve
  */
 template <class ZT>
-int main_run_sieve(ZZ_mat<ZT> B, Z_NR<ZT> target_norm, int alg, int ver, int seed)
+int main_run_sieve(ZZ_mat<ZT> B, Z_NR<ZT> target_norm, int alg, bool ver, int seed,
+                   char *file_name)  //----
 {
+  clock_t stime = clock(), etime = clock();
+  double secs;
+
   GaussSieve<ZT, FP_NR<double>> gsieve(B, alg, ver, seed);
   gsieve.sieve(target_norm);
+
+  etime = clock();
+  secs  = (etime - stime) / (double)CLOCKS_PER_SEC;
+  if (ver)
+    cout << "# [info] sieve took time " << secs << " s" << endl;
+
+  gsieve.print_list_to_file(file_name);
+  return 0;
+}
+
+/**
+ * run cvpp
+ */
+template <class ZT>
+int main_run_cvpp(ZZ_mat<ZT> B, Z_NR<ZT> target_norm, int alg, bool ver, int seed,
+                  const char *input_list_file, const char *targets_file_name,
+                  const char *output_list_file)
+{
+  GaussSieve<ZT, FP_NR<double>> gsieve(B, alg, ver, seed);
+  gsieve.approx_voronoi_cvpp(input_list_file, targets_file_name, output_list_file);
   return 0;
 }
 
@@ -45,9 +77,10 @@ int main_run_sieve(ZZ_mat<ZT> B, Z_NR<ZT> target_norm, int alg, int ver, int see
  */
 int main(int argc, char **argv)
 {
-  char *input_file_name = NULL;
-  char *target_norm_s   = NULL;
-  bool flag_verbose = true, flag_file = false;
+  char *input_file_name  = NULL;
+  char *target_norm_s    = NULL;
+  char *output_list_file = NULL, *input_list_file = NULL, *targets_file_name = NULL;
+  bool flag_verbose = true, flag_file = false, flag_cvpp = false;
   int option, alg, dim = 10, seed = 0, bs = 0;
 
 #if 0
@@ -64,7 +97,7 @@ int main(int argc, char **argv)
     main_usage(argv[0]);
     return -1;
   }
-  while ((option = getopt(argc, argv, "a:f:r:t:s:b:v")) != -1)
+  while ((option = getopt(argc, argv, "a:f:r:t:s:b:p:L:C:v")) != -1)
   {
     switch (option)
     {
@@ -92,8 +125,18 @@ int main(int argc, char **argv)
       break;
     case 't':
       // ntarget_norm = atol(optarg);
-      cout << optarg << endl;
+      // cout << optarg << endl;   ---- not necessary ----
       target_norm_s = optarg;
+      break;
+    case 'p':
+      output_list_file = optarg;
+      break;
+    case 'L':
+      input_list_file = optarg;
+      break;
+    case 'C':
+      targets_file_name = optarg;
+      flag_cvpp         = true;
       break;
     case 'h':
       main_usage(argv[0]);
@@ -168,8 +211,7 @@ int main(int argc, char **argv)
   // cout << B << endl;
 
   /* decide integer type */
-  stime = clock();
-  max   = B.get_max();
+  max = B.get_max();
 
 #if 1
   if (max < std::numeric_limits<int>::max())
@@ -181,17 +223,26 @@ int main(int argc, char **argv)
     for (int i = 0; i < B.get_rows(); i++)
       for (int j = 0; j < B.get_cols(); j++)
         B2(i, j) = B(i, j).get_si();
-    main_run_sieve<long>(B2, target_norm_lt, alg, flag_verbose, seed);
+    /* Choose if we solve cvpp or svp */
+    if (flag_cvpp)
+      main_run_cvpp<long>(B2, target_norm_lt, alg, flag_verbose, seed, input_list_file,
+                          targets_file_name, output_list_file);
+    else
+      main_run_sieve<long>(B2, target_norm_lt, alg, flag_verbose, seed, output_list_file);
   }
   else
+  {
 #endif
-    main_run_sieve<mpz_t>(B, target_norm, alg, flag_verbose, seed);
+    /* Choose if we solve cvpp or svp */
+    if (flag_cvpp)
+      main_run_cvpp<mpz_t>(B, target_norm, alg, flag_verbose, seed, input_list_file,
+                           targets_file_name, output_list_file);
+    else
+      main_run_sieve<mpz_t>(B, target_norm, alg, flag_verbose, seed, output_list_file);
+  }
 
-  etime = clock();
-  secs  = (etime - stime) / (double)CLOCKS_PER_SEC;
   if (flag_verbose)
   {
-    cout << "# [info] sieve took time " << secs << " s" << endl;
 /* dot product time */
 #if 0
     cout << "# [info] dot_time " << dot_time << endl;
