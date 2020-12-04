@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['reduce_5ftiming',['REDUCE_TIMING',['../sieve__gauss_8cpp.html#ac4cc0e5d5aa81e51089b200bf445a678',1,'sieve_gauss.cpp']]]
+  ['stdc_5fheaders',['STDC_HEADERS',['../config_8h.html#a550e5c272cc3cf3814651721167dcd23',1,'config.h']]]
 ];

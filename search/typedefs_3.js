@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['float_5ftype',['float_type',['../namespaceenumlib.html#ab7346c211681b3c4b2e19e7e7e9c2470',1,'enumlib']]],
-  ['fltrow_5ft',['fltrow_t',['../structenumlib_1_1lattice__enum__t.html#af303c04b3416864b656535b6bd50ec4c',1,'enumlib::lattice_enum_t']]],
-  ['fplll_5ffloat',['fplll_float',['../namespaceenumlib.html#a9e4c16ffe68ea8567d2c1b284a59c0fa',1,'enumlib']]]
+  ['enumxt',['enumxt',['../nr_8h.html#aad613bfc7e28007423ec4f6bf425329a',1,'nr.h']]],
+  ['extenum_5fcb_5fprocess_5fsol',['extenum_cb_process_sol',['../enumerate__ext__api_8h.html#a2c24bb8878b66b96d996f12ab608873f',1,'enumerate_ext_api.h']]],
+  ['extenum_5fcb_5fprocess_5fsubsol',['extenum_cb_process_subsol',['../enumerate__ext__api_8h.html#a110ab05accb26cc2da5b3ba1724dadba',1,'enumerate_ext_api.h']]],
+  ['extenum_5fcb_5fset_5fconfig',['extenum_cb_set_config',['../enumerate__ext__api_8h.html#ac34aa7b1ea6ca1c84b1af9e43e984a1a',1,'enumerate_ext_api.h']]]
 ];

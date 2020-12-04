@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.3.3</a>
+                    <a class="navbar-brand">fplll 5.4.0</a>
                 </div>
             </div>
         </nav>
@@ -88,10 +88,12 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a811be0374e1c9c5e7098035f8ed8b9c3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classExternalEnumeration.html#a811be0374e1c9c5e7098035f8ed8b9c3">ExternalEnumeration</a> (<a class="el" href="classMatGSOInterface.html">MatGSOInterface</a>&lt; ZT, FT &gt; &amp;gso, <a class="el" href="classEvaluator.html">Evaluator</a>&lt; FT &gt; &amp;evaluator)</td></tr>
 <tr class="separator:a811be0374e1c9c5e7098035f8ed8b9c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed73cdb8dfe99f64b58f09dd3b9b6679"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classExternalEnumeration.html#aed73cdb8dfe99f64b58f09dd3b9b6679">enumerate</a> (int first, int last, FT &amp;fmaxdist, long fmaxdistexpo, const vector&lt; <a class="el" href="nr_8h.html#adffa6ba924cfa418fd030a2dbb7dfd14">enumf</a> &gt; &amp;pruning=vector&lt; <a class="el" href="nr_8h.html#adffa6ba924cfa418fd030a2dbb7dfd14">enumf</a> &gt;(), bool dual=false)</td></tr>
+<tr class="memitem:aed73cdb8dfe99f64b58f09dd3b9b6679"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classExternalEnumeration.html#aed73cdb8dfe99f64b58f09dd3b9b6679">enumerate</a> (int first, int last, FT &amp;fmaxdist, long fmaxdistexpo, const vector&lt; <a class="el" href="nr_8h.html#adffa6ba924cfa418fd030a2dbb7dfd14">enumf</a> &gt; &amp;pruning=vector&lt; <a class="el" href="nr_8h.html#adffa6ba924cfa418fd030a2dbb7dfd14">enumf</a> &gt;(), bool <a class="el" href="enumerate__ext__api_8h.html#abf65de5ed5732b05aec7e99493703c93">dual</a>=false)</td></tr>
 <tr class="separator:aed73cdb8dfe99f64b58f09dd3b9b6679"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af30f8d6a6856a5069e232849879b6c1e"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classExternalEnumeration.html#af30f8d6a6856a5069e232849879b6c1e">get_nodes</a> () const</td></tr>
-<tr class="separator:af30f8d6a6856a5069e232849879b6c1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cce07bf49bd9ea5b29da3cf51b2308e"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classExternalEnumeration.html#a6cce07bf49bd9ea5b29da3cf51b2308e">get_nodes</a> (const int level=-1) const</td></tr>
+<tr class="separator:a6cce07bf49bd9ea5b29da3cf51b2308e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23dd7e8190d67a93858d6fab29f2f3f0"><td class="memItemLeft" align="right" valign="top">std::array&lt; uint64_t, <a class="el" href="enumerate__ext__api_8h.html#a88e128c3bc423df91a7830f93b5da37f">FPLLL_EXTENUM_MAX_EXTENUM_DIM</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classExternalEnumeration.html#a23dd7e8190d67a93858d6fab29f2f3f0">get_nodes_array</a> () const</td></tr>
+<tr class="separator:a23dd7e8190d67a93858d6fab29f2f3f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a811be0374e1c9c5e7098035f8ed8b9c3"></a>
@@ -187,8 +189,8 @@ template&lt;typename ZT , typename FT &gt; </div>
 
 </div>
 </div>
-<a id="af30f8d6a6856a5069e232849879b6c1e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af30f8d6a6856a5069e232849879b6c1e">&#9670;&nbsp;</a></span>get_nodes()</h2>
+<a id="a6cce07bf49bd9ea5b29da3cf51b2308e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cce07bf49bd9ea5b29da3cf51b2308e">&#9670;&nbsp;</a></span>get_nodes()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -200,6 +202,34 @@ template&lt;typename ZT , typename FT &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">uint64_t <a class="el" href="classExternalEnumeration.html">ExternalEnumeration</a>&lt; ZT, FT &gt;::get_nodes </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>level</em> = <code>-1</code></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a23dd7e8190d67a93858d6fab29f2f3f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23dd7e8190d67a93858d6fab29f2f3f0">&#9670;&nbsp;</a></span>get_nodes_array()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ZT , typename FT &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt;uint64_t, <a class="el" href="enumerate__ext__api_8h.html#a88e128c3bc423df91a7830f93b5da37f">FPLLL_EXTENUM_MAX_EXTENUM_DIM</a>&gt; <a class="el" href="classExternalEnumeration.html">ExternalEnumeration</a>&lt; ZT, FT &gt;::get_nodes_array </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>

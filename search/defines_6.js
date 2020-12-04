@@ -12,6 +12,7 @@ var searchData=
   ['fplll_5fdefine_5fhlll',['FPLLL_DEFINE_HLLL',['../wrapper_8cpp.html#ae9ae4a4001fc3bde5c3b5dff9777bfc9',1,'wrapper.cpp']]],
   ['fplll_5fdefine_5flll',['FPLLL_DEFINE_LLL',['../wrapper_8cpp.html#a9df72e712e2a1f7156bcb3ef1b61ea68',1,'wrapper.cpp']]],
   ['fplll_5fend_5fnamespace',['FPLLL_END_NAMESPACE',['../defs_8h.html#a688f11a69cd04577ba3972ec16280242',1,'defs.h']]],
+  ['fplll_5fextenum_5fmax_5fextenum_5fdim',['FPLLL_EXTENUM_MAX_EXTENUM_DIM',['../enumerate__ext__api_8h.html#a88e128c3bc423df91a7830f93b5da37f',1,'enumerate_ext_api.h']]],
   ['fplll_5finfo',['FPLLL_INFO',['../defs_8h.html#ad77a373be3c72c6776454139baa60317',1,'defs.h']]],
   ['fplll_5fmajor_5fversion',['FPLLL_MAJOR_VERSION',['../config_8h.html#a6e2248f5438c80a10e0082485870376f',1,'FPLLL_MAJOR_VERSION():&#160;config.h'],['../fplll__config_8h.html#a6e2248f5438c80a10e0082485870376f',1,'FPLLL_MAJOR_VERSION():&#160;fplll_config.h']]],
   ['fplll_5fmatrix_5fcpp',['FPLLL_MATRIX_CPP',['../matrix_8cpp.html#aed792c157be536dbffbd1785da9b1fb3',1,'matrix.cpp']]],

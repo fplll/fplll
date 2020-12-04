@@ -1,10 +1,17 @@
 var searchData=
 [
-  ['z_5fnr',['Z_NR',['../classZ__NR.html#a38f83f81e129c0fbb42ded3baf393f91',1,'Z_NR::Z_NR()'],['../classZ__NR.html#a75f5dbc7a965323690a597ddc1a9c08f',1,'Z_NR::Z_NR(const Z_NR&lt; Z &gt; &amp;z)'],['../classZ__NR.html#a85812228df38c0f126a1e991a9bcae7d',1,'Z_NR::Z_NR(const Z &amp;z)']]],
-  ['zero_5fp',['zero_p',['../classFP__NR.html#a6322beb4ba05be5475eda09b10df54b5',1,'FP_NR']]],
-  ['zeros_5ffirst',['zeros_first',['../util_8cpp.html#a17af3f37921336f44e6129a069e4762b',1,'zeros_first(ZZ_mat&lt; ZT &gt; &amp;b, ZZ_mat&lt; ZT &gt; &amp;u, ZZ_mat&lt; ZT &gt; &amp;u_inv_t):&#160;util.cpp'],['../util_8h.html#a17af3f37921336f44e6129a069e4762b',1,'zeros_first(ZZ_mat&lt; ZT &gt; &amp;b, ZZ_mat&lt; ZT &gt; &amp;u, ZZ_mat&lt; ZT &gt; &amp;u_inv_t):&#160;util.cpp']]],
-  ['zeros_5ffirst_3c_20mpz_5ft_20_3e',['zeros_first&lt; mpz_t &gt;',['../util_8cpp.html#a80fb5abb48992e33de7951b491b42696',1,'util.cpp']]],
-  ['zeros_5flast',['zeros_last',['../util_8cpp.html#ac8b31d0e5ffebed97c9004a7843ba72c',1,'zeros_last(ZZ_mat&lt; ZT &gt; &amp;b, ZZ_mat&lt; ZT &gt; &amp;u, ZZ_mat&lt; ZT &gt; &amp;u_inv_t):&#160;util.cpp'],['../util_8h.html#ac8b31d0e5ffebed97c9004a7843ba72c',1,'zeros_last(ZZ_mat&lt; ZT &gt; &amp;b, ZZ_mat&lt; ZT &gt; &amp;u, ZZ_mat&lt; ZT &gt; &amp;u_inv_t):&#160;util.cpp']]],
-  ['zeros_5flast_3c_20mpz_5ft_20_3e',['zeros_last&lt; mpz_t &gt;',['../util_8cpp.html#a4810b819f1ef96fbabd91c296a1dd49a',1,'util.cpp']]],
-  ['zz_5fmat',['ZZ_mat',['../classZZ__mat.html#a48a684182fad59626e1517c9e14aa5ec',1,'ZZ_mat::ZZ_mat()'],['../classZZ__mat.html#a69a9d01ba51e0ba230bc03131c81fb2f',1,'ZZ_mat::ZZ_mat(int rows, int cols)']]]
+  ['_7ebarrier',['~barrier',['../classthread__pool_1_1barrier.html#a8893e86358598a5d58c01a60b9fc421a',1,'thread_pool::barrier']]],
+  ['_7ebkzreduction',['~BKZReduction',['../classBKZReduction.html#ab290fe4f613372cdb56bb693f7997438',1,'BKZReduction']]],
+  ['_7ecallbackevaluator',['~CallbackEvaluator',['../classCallbackEvaluator.html#a22e5ff81e44011b3147d33bf78627182',1,'CallbackEvaluator']]],
+  ['_7eenumerationbase',['~EnumerationBase',['../classEnumerationBase.html#a5d6201c082baa8d7d828f0975e5fb528',1,'EnumerationBase']]],
+  ['_7eerrorboundedevaluator',['~ErrorBoundedEvaluator',['../classErrorBoundedEvaluator.html#ad83d5fa0a1a85bbc29e618c4833f27f2',1,'ErrorBoundedEvaluator']]],
+  ['_7eevaluator',['~Evaluator',['../classEvaluator.html#a79889bb38bf2bcab737d3b37280fa10f',1,'Evaluator']]],
+  ['_7eexacterrorboundedevaluator',['~ExactErrorBoundedEvaluator',['../classExactErrorBoundedEvaluator.html#a3ea4d431ecee00f6b073af9a54ce3a52',1,'ExactErrorBoundedEvaluator']]],
+  ['_7efasterrorboundedevaluator',['~FastErrorBoundedEvaluator',['../classFastErrorBoundedEvaluator.html#a0a10dba40bb6b646350614b5977799b2',1,'FastErrorBoundedEvaluator']]],
+  ['_7efastevaluator',['~FastEvaluator',['../classFastEvaluator.html#a91c7a94c9d238cd7c05df269cfa10610',1,'FastEvaluator']]],
+  ['_7efp_5fnr',['~FP_NR',['../classFP__NR.html#a18c733ddacf8331b48e7ad86281d15ac',1,'FP_NR::~FP_NR()'],['../classFP__NR.html#a27955614a264685d0fda708d5a04f1c7',1,'FP_NR::~FP_NR()'],['../classFP__NR.html#a4699774e7b501359330b741a7ac4ea8d',1,'FP_NR::~FP_NR()'],['../classFP__NR.html#a0d2c5f2e1ed7b8d6378c59721dc7081a',1,'FP_NR::~FP_NR()'],['../classFP__NR.html#aeb6a69900de9e53d3066f63bad1be89f',1,'FP_NR::~FP_NR()']]],
+  ['_7ematgsointerface',['~MatGSOInterface',['../classMatGSOInterface.html#a4542f3b7a219f42f6b13201fbcbf3f8e',1,'MatGSOInterface']]],
+  ['_7emathouseholder',['~MatHouseholder',['../classMatHouseholder.html#a9c5c1c6690a6f621558e80286770aff8',1,'MatHouseholder']]],
+  ['_7ethread_5fpool',['~thread_pool',['../classthread__pool_1_1thread__pool.html#a368b4a5634e884bd23c45bf282cb786f',1,'thread_pool::thread_pool']]],
+  ['_7ez_5fnr',['~Z_NR',['../classZ__NR.html#ae94247587eca55b642fea53f2808f10e',1,'Z_NR']]]
 ];

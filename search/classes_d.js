@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['randgen',['RandGen',['../classRandGen.html',1,'']]],
-  ['randgenint',['RandGenInt',['../classRandGenInt.html',1,'']]]
+  ['strategy',['Strategy',['../classStrategy.html',1,'']]]
 ];

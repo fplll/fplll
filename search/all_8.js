@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['half_5f2reduce',['half_2reduce',['../sieve__gauss__str_8h.html#a9b77152473658d6201e458e5304b792a',1,'sieve_gauss_str.h']]],
   ['have_5fcstdio',['HAVE_CSTDIO',['../config_8h.html#a1380afa5a10bba6b531975951fd6ecba',1,'config.h']]],
   ['have_5fcxx11',['HAVE_CXX11',['../config_8h.html#adad73cb262d6d08e869992f5ba0e0f58',1,'config.h']]],
   ['have_5fdlfcn_5fh',['HAVE_DLFCN_H',['../config_8h.html#a0ee1617ff2f6885ef384a3dd46f9b9d7',1,'config.h']]],

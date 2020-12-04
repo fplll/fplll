@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['introw_5ft',['introw_t',['../structenumlib_1_1globals__t.html#abfff4b97834ed52f68768d276a3657ca',1,'enumlib::globals_t::introw_t()'],['../structenumlib_1_1lattice__enum__t.html#ae60ea49bad1c20d0620d332aa7a4b98f',1,'enumlib::lattice_enum_t::introw_t()']]],
-  ['iterator',['iterator',['../classNumVect.html#aed7f6f94c645e243a5e382cd46cb6a48',1,'NumVect']]]
+  ['global_5fa_5ft',['global_A_t',['../namespaceenumlib.html#adfde9ad14f0b145f44f4391381addf65',1,'enumlib']]],
+  ['global_5fsignal_5ft',['global_signal_t',['../namespaceenumlib.html#a4c352149324cc613484caca875d03d66',1,'enumlib']]]
 ];

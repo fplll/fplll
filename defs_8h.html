@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.3.3</a>
+                    <a class="navbar-brand">fplll 5.4.0</a>
                 </div>
             </div>
         </nav>
@@ -112,7 +112,7 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="defs_8h__dep__incl.svg" width="3391" height="827"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="defs_8h__dep__incl.svg" width="2387" height="872"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 </div>
@@ -176,7 +176,9 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a3df6de3acb8d4a7c9023752643985df6">RED_HLLL_FAILURE</a> = 9, 
 <a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a9c01f6b79d988df640d56d9910fbe8f9">RED_HLLL_NORM_FAILURE</a> = 10, 
 <a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5aa766f3bbf857edb4820c366f54014948">RED_HLLL_SR_FAILURE</a> = 11, 
-<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5af52499b62bae7c4636a1308c81c83e17">RED_STATUS_MAX</a> = 12
+<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a291c30ef569985858d2137c02d999d40">RED_URL_ERR</a> = 12, 
+<br />
+&#160;&#160;<a class="el" href="defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5af52499b62bae7c4636a1308c81c83e17">RED_STATUS_MAX</a> = 13
 <br />
  }</td></tr>
 <tr class="separator:a5bc9cc17a20cb4546d3d80d0ac0c6fe5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -822,6 +824,7 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5a3df6de3acb8d4a7c9023752643985df6"></a>RED_HLLL_FAILURE&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5a9c01f6b79d988df640d56d9910fbe8f9"></a>RED_HLLL_NORM_FAILURE&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5aa766f3bbf857edb4820c366f54014948"></a>RED_HLLL_SR_FAILURE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5a291c30ef569985858d2137c02d999d40"></a>RED_URL_ERR&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a5bc9cc17a20cb4546d3d80d0ac0c6fe5af52499b62bae7c4636a1308c81c83e17"></a>RED_STATUS_MAX&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
@@ -1185,7 +1188,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {<span class="stringliteral">&quot;success&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;infinite number in GSO&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;infinite loop in babai&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;infinite loop in LLL&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;error in SVP solver&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;error in BKZ&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;time limit exceeded in BKZ&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;loops limit exceeded in BKZ&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;error in HLLL&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;increase of the norm&quot;</span>,</div><div class="line">                                                    <span class="stringliteral">&quot;error in weak size reduction&quot;</span>}</div></div><!-- fragment -->
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    <span class="stringliteral">&quot;success&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;infinite number in GSO&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;infinite loop in babai&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;infinite loop in LLL&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;error in SVP solver&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;error in BKZ&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;time limit exceeded in BKZ&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;loops limit exceeded in BKZ&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;error in HLLL&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;increase of the norm&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;error in weak size reduction&quot;</span>,</div><div class="line">    <span class="stringliteral">&quot;Please see https://github.com/fplll/fplll/wiki/fplll-errors-FAQ for more information.&quot;</span>}</div></div><!-- fragment -->
 </div>
 </div>
 <a id="aa34d57416d55e30ac1a521d69e4056ce"></a>

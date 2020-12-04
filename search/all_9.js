@@ -42,7 +42,5 @@ var searchData=
   ['is_5frow_5fop_5fforce_5flong',['is_row_op_force_long',['../classMatHouseholder.html#a9b20efa0d904f83c97a62b0c8db0f4a3',1,'MatHouseholder']]],
   ['is_5fsvp',['is_svp',['../classEnumerationBase.html#a7e1bcc842006b873173ef2df31e806e8',1,'EnumerationBase']]],
   ['is_5fzero',['is_zero',['../classMatrixRow.html#a97390ef92ae3a1f4539a2ad5896ada4f',1,'MatrixRow::is_zero()'],['../classFP__NR.html#a4fa733f2b0ff51c740c463632eaa7754',1,'FP_NR::is_zero()'],['../classZ__NR.html#a519b54be9fdc39c8b3392fa882e8b170',1,'Z_NR::is_zero()'],['../classNumVect.html#a6afeb1b66f16dc5471c1466a68f10ea2',1,'NumVect::is_zero()'],['../classFP__NR.html#a1692807f36ce5e564b30ad24ad25c895',1,'FP_NR::is_zero() const'],['../classFP__NR.html#a4f1e6f8398a579a92030c1001dc4f836',1,'FP_NR::is_zero() const'],['../classFP__NR.html#ab7e85565e5928d5bc2f9757763de0eac',1,'FP_NR::is_zero() const'],['../classFP__NR.html#ae4380a90b15c2591254e6906f0709444',1,'FP_NR::is_zero() const']]],
-  ['iterator',['iterator',['../classNumVect.html#aed7f6f94c645e243a5e382cd46cb6a48',1,'NumVect']]],
-  ['iters_5fls',['iters_ls',['../classGaussSieve.html#a94508df670c3f1f9ae32e96f580b8e96',1,'GaussSieve']]],
-  ['iters_5fnorm',['iters_norm',['../classGaussSieve.html#ae01441d6396bbb76f37526c183521606',1,'GaussSieve']]]
+  ['iterator',['iterator',['../classNumVect.html#aed7f6f94c645e243a5e382cd46cb6a48',1,'NumVect']]]
 ];

@@ -2,7 +2,6 @@ var searchData=
 [
   ['g',['g',['../classMatGSO.html#af2a21c8c5bcd6a196543e747cc2bc25d',1,'MatGSO']]],
   ['gaussian_5fheuristic',['gaussian_heuristic',['../classPruner.html#a0fa68fd92550a70f9c418049e0a97425',1,'Pruner']]],
-  ['gausssieve',['GaussSieve',['../classGaussSieve.html',1,'GaussSieve&lt; ZT, F &gt;'],['../classGaussSieve.html#afdba405d4e8af79b16dd03db40dee5ef',1,'GaussSieve::GaussSieve()']]],
   ['gen_5fidentity',['gen_identity',['../classZZ__mat.html#aa3cd79d0e1ddfd79edaea9d3aca6cfb7',1,'ZZ_mat']]],
   ['gen_5fintrel',['gen_intrel',['../classZZ__mat.html#acc9a50f4926d78d2656189648905a086',1,'ZZ_mat']]],
   ['gen_5fntrulike',['gen_ntrulike',['../classZZ__mat.html#afbba30ba70728b479e8e2650a998bfb6',1,'ZZ_mat']]],
@@ -51,7 +50,8 @@ var searchData=
   ['get_5fmu_5fexp',['get_mu_exp',['../classMatGSOInterface.html#ac7e259f1d655bbca6f2c08fa7ffb8844',1,'MatGSOInterface::get_mu_exp(int i, int j, long &amp;expo)'],['../classMatGSOInterface.html#a1260f916b9077ed08c25395a28e62853',1,'MatGSOInterface::get_mu_exp(int i, int j)']]],
   ['get_5fmu_5fmatrix',['get_mu_matrix',['../classMatGSOInterface.html#a9335b920d2b9e8c8b807e5a72e242ca5',1,'MatGSOInterface']]],
   ['get_5fn',['get_n',['../classMatHouseholder.html#a4899224d3dcb258d7a9259e9f73c03f3',1,'MatHouseholder']]],
-  ['get_5fnodes',['get_nodes',['../classEnumerationDyn.html#aad729ae10175b7c6e15d2816ad571796',1,'EnumerationDyn::get_nodes()'],['../classEnumeration.html#a0ec05f620d98265791373049922a9fce',1,'Enumeration::get_nodes()'],['../classEnumerationBase.html#ae84ab79935e901b5f21e4aff4e3a3e58',1,'EnumerationBase::get_nodes()'],['../classExternalEnumeration.html#af30f8d6a6856a5069e232849879b6c1e',1,'ExternalEnumeration::get_nodes()']]],
+  ['get_5fnodes',['get_nodes',['../classEnumerationDyn.html#ab8c1b73d3a39941a82d1ec890284b200',1,'EnumerationDyn::get_nodes()'],['../classEnumeration.html#a5ab197fa442434872f4d8a0c26425c73',1,'Enumeration::get_nodes()'],['../classEnumerationBase.html#adcc63b148952ad88feeb5670c195f07b',1,'EnumerationBase::get_nodes()'],['../classExternalEnumeration.html#a6cce07bf49bd9ea5b29da3cf51b2308e',1,'ExternalEnumeration::get_nodes()']]],
+  ['get_5fnodes_5farray',['get_nodes_array',['../classEnumerationDyn.html#a7a2e737124901a53508449d5cb96bf70',1,'EnumerationDyn::get_nodes_array()'],['../classEnumeration.html#a9a6caaddc250335a8b7742e9a597ec3c',1,'Enumeration::get_nodes_array()'],['../classExternalEnumeration.html#a23dd7e8190d67a93858d6fab29f2f3f0',1,'ExternalEnumeration::get_nodes_array()']]],
   ['get_5fnorm_5fsquare_5fb',['get_norm_square_b',['../classMatHouseholder.html#a5faa73444ae8aff6f85757896088e191',1,'MatHouseholder']]],
   ['get_5fprec',['get_prec',['../classFP__NR.html#a339ebb9f4af0a746a49560f2a1b22347',1,'FP_NR::get_prec()'],['../classFP__NR.html#af1a727c6a2313c4ab4835428d3e5c4b7',1,'FP_NR::get_prec()'],['../classFP__NR.html#addb95d10389d5ab4dc76757ca1a8a21b',1,'FP_NR::get_prec()'],['../classFP__NR.html#a45da8a5adf089dd059a3feb30e122266',1,'FP_NR::get_prec()'],['../classFP__NR.html#aa4a5ac73c28941f9932d6a2970deae9f',1,'FP_NR::get_prec()']]],
   ['get_5fpruning',['get_pruning',['../classStrategy.html#ad45ee60d67c6afd779f686f120c1b476',1,'Strategy']]],

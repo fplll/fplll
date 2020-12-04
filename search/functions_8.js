@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['half_5f2reduce',['half_2reduce',['../sieve__gauss__str_8h.html#a9b77152473658d6201e458e5304b792a',1,'sieve_gauss_str.h']]],
   ['hkz',['hkz',['../classBKZReduction.html#a82366ca09350688356767c8601c951fc',1,'BKZReduction::hkz()'],['../main_8cpp.html#a86cfcb31133b30ad22bbdd8e431419ea',1,'hkz(Options &amp;, ZZ_mat&lt; ZT &gt; &amp;):&#160;main.cpp'],['../main_8cpp.html#af9c89684e6246ca31fd2c7eebf8e5666',1,'hkz(Options &amp;o, ZZ_mat&lt; mpz_t &gt; &amp;b):&#160;main.cpp']]],
   ['hkz_5freduction',['hkz_reduction',['../bkz_8cpp.html#a595c2586bd4137de5d2b90eb63cfb8c5',1,'hkz_reduction(ZZ_mat&lt; mpz_t &gt; &amp;b, int flags, FloatType float_type, int precision):&#160;bkz.cpp'],['../bkz_8h.html#af53fbb4f558d7dd73835f8e1d832d019',1,'hkz_reduction(ZZ_mat&lt; mpz_t &gt; &amp;b, int flags=HKZ_DEFAULT, FloatType float_type=FT_DEFAULT, int precision=0):&#160;bkz.cpp']]],
   ['hlll',['hlll',['../classHLLLReduction.html#a3c5235c5511e1f55e1eb38b44e024bf1',1,'HLLLReduction::hlll()'],['../classWrapper.html#a236c33a1a0448f102440a548b80625d5',1,'Wrapper::hlll()'],['../main_8cpp.html#aaa49965ebd94a2d4d8a54d7f3ed18f3f',1,'hlll():&#160;main.cpp']]],

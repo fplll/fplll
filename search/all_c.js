@@ -7,7 +7,6 @@ var searchData=
   ['lattice_5fenum_5ft',['lattice_enum_t',['../structenumlib_1_1lattice__enum__t.html',1,'enumlib::lattice_enum_t&lt; N, SWIRLY, SWIRLY2BUF, SWIRLY1FRACTION, findsubsols &gt;'],['../structenumlib_1_1lattice__enum__t.html#a280a998fc401c16e568f14b94a8cc16b',1,'enumlib::lattice_enum_t::lattice_enum_t()']]],
   ['latticegen_2ecpp',['latticegen.cpp',['../latticegen_8cpp.html',1,'']]],
   ['linearpruningparams',['LinearPruningParams',['../classPruningParams.html#a330813f6579d80fc6ac8d17f02e52680',1,'PruningParams']]],
-  ['listpoint',['ListPoint',['../classListPoint.html',1,'']]],
   ['lll',['lll',['../classLLLReduction.html#afa3ce89770eceed4a60593f7025cd6f9',1,'LLLReduction::lll()'],['../classWrapper.html#a63991f45981345190cef9028fee82a54',1,'Wrapper::lll()'],['../main_8cpp.html#a2721925148e7cf3ca8fb087ff97a10f8',1,'lll():&#160;main.cpp']]],
   ['lll_2ecpp',['lll.cpp',['../lll_8cpp.html',1,'']]],
   ['lll_2eh',['lll.h',['../lll_8h.html',1,'']]],

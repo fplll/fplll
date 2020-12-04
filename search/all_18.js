@@ -2,7 +2,6 @@ var searchData=
 [
   ['z_5fnr',['Z_NR',['../classZ__NR.html',1,'Z_NR&lt; Z &gt;'],['../classZ__NR.html#a38f83f81e129c0fbb42ded3baf393f91',1,'Z_NR::Z_NR()'],['../classZ__NR.html#a75f5dbc7a965323690a597ddc1a9c08f',1,'Z_NR::Z_NR(const Z_NR&lt; Z &gt; &amp;z)'],['../classZ__NR.html#a85812228df38c0f126a1e991a9bcae7d',1,'Z_NR::Z_NR(const Z &amp;z)']]],
   ['z_5fnr_3c_20mpz_5ft_20_3e',['Z_NR&lt; mpz_t &gt;',['../classZ__NR.html',1,'']]],
-  ['z_5fnr_3c_20zt_20_3e',['Z_NR&lt; ZT &gt;',['../classZ__NR.html',1,'']]],
   ['zero_5fp',['zero_p',['../classFP__NR.html#a6322beb4ba05be5475eda09b10df54b5',1,'FP_NR']]],
   ['zeros',['zeros',['../classLLLReduction.html#a89f30b607de16f992f0e4271cdd47acc',1,'LLLReduction']]],
   ['zeros_5ffirst',['zeros_first',['../util_8cpp.html#a17af3f37921336f44e6129a069e4762b',1,'zeros_first(ZZ_mat&lt; ZT &gt; &amp;b, ZZ_mat&lt; ZT &gt; &amp;u, ZZ_mat&lt; ZT &gt; &amp;u_inv_t):&#160;util.cpp'],['../util_8h.html#a17af3f37921336f44e6129a069e4762b',1,'zeros_first(ZZ_mat&lt; ZT &gt; &amp;b, ZZ_mat&lt; ZT &gt; &amp;u, ZZ_mat&lt; ZT &gt; &amp;u_inv_t):&#160;util.cpp']]],

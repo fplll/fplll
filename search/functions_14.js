@@ -1,4 +1,8 @@
 var searchData=
 [
-  ['vector_5fmatrix_5fproduct',['vector_matrix_product',['../util_8h.html#a43b4ee018477a49f0888324da9c47c41',1,'vector_matrix_product(vector&lt; ZT &gt; &amp;result, const vector&lt; ZT &gt; &amp;x, const Matrix&lt; ZT &gt; &amp;m):&#160;util.h'],['../util_8h.html#a874deb131636120a4b3e76381a9985f6',1,'vector_matrix_product(NumVect&lt; ZT &gt; &amp;result, const NumVect&lt; ZT &gt; &amp;x, const Matrix&lt; ZT &gt; &amp;m):&#160;util.h']]]
+  ['wait',['wait',['../classthread__pool_1_1barrier.html#a8f389e5b4391f4c2ce34b570cc25411f',1,'thread_pool::barrier']]],
+  ['wait_5fsleep',['wait_sleep',['../classthread__pool_1_1thread__pool.html#ac7c2a3f155ef15c150eca9de931a86ed',1,'thread_pool::thread_pool']]],
+  ['wait_5fwork',['wait_work',['../classthread__pool_1_1thread__pool.html#a7e905ee140b61116e601570d044ce424',1,'thread_pool::thread_pool']]],
+  ['work',['work',['../classthread__pool_1_1thread__pool.html#a899176b3a885ba316b49d5062ef11b26',1,'thread_pool::thread_pool']]],
+  ['wrapper',['Wrapper',['../classWrapper.html#aee9ce7614e66d0396050ebe1df1309f8',1,'Wrapper::Wrapper(ZZ_mat&lt; mpz_t &gt; &amp;b, ZZ_mat&lt; mpz_t &gt; &amp;u, ZZ_mat&lt; mpz_t &gt; &amp;u_inv, double delta, double eta, int flags)'],['../classWrapper.html#a7f0131a0e5f31c032c3e17d1a512b88a',1,'Wrapper::Wrapper(ZZ_mat&lt; mpz_t &gt; &amp;b, ZZ_mat&lt; mpz_t &gt; &amp;u, ZZ_mat&lt; mpz_t &gt; &amp;u_inv, double delta, double eta, double theta, double c, int flags)']]]
 ];

@@ -13,13 +13,11 @@ var searchData=
   ['nd_5fsigma',['ND_SIGMA',['../pruner__optimize__tc_8cpp.html#a1421612614bf0c3165dc2bb238cfbac2',1,'pruner_optimize_tc.cpp']]],
   ['neg',['neg',['../classFP__NR.html#a099bb66cf5f71a69eef3ae5e08f3bed9',1,'FP_NR::neg()'],['../classZ__NR.html#a10c47ae6d3da677bae4539d775da38a6',1,'Z_NR::neg()'],['../classFP__NR.html#a8b7a74c3a97bc2214fc2a7ac20c5c909',1,'FP_NR::neg(const FP_NR&lt; double &gt; &amp;b)'],['../classFP__NR.html#a0f4a1ce734063e7dbdc48fa0709dcb35',1,'FP_NR::neg(const FP_NR&lt; dd_real &gt; &amp;b)'],['../classFP__NR.html#a5d3bd21d86a5feae11caa4622ae2f4bc',1,'FP_NR::neg(const FP_NR&lt; long double &gt; &amp;b)'],['../classFP__NR.html#ae6b58542366a3fca2bc7b301e6543dfe',1,'FP_NR::neg(const FP_NR&lt; qd_real &gt; &amp;b)']]],
   ['negate_5frow_5fof_5fb',['negate_row_of_b',['../classMatGSO.html#a4d444236b607be6760ff1164f0fa2c98',1,'MatGSO::negate_row_of_b()'],['../classMatGSOGram.html#a8e8825a99999e7db566789653622b10c',1,'MatGSOGram::negate_row_of_b()'],['../classMatGSOInterface.html#ad58d2b5fbf2e6cfa41f22713a5764024',1,'MatGSOInterface::negate_row_of_b()']]],
-  ['new_5flistpoint',['new_listpoint',['../sieve__gauss__str_8h.html#a7c105896905c93c1613801337a9cb398',1,'sieve_gauss_str.h']]],
   ['next_5fpos_5fup',['next_pos_up',['../classEnumerationBase.html#a2589e1566a0ad42f9f12ece799978286',1,'EnumerationBase']]],
   ['nextprime',['nextprime',['../classZ__NR.html#ac2825132f8f53ebc081b7df584676386',1,'Z_NR']]],
   ['no_5flll',['no_lll',['../structOptions.html#aa5b1d890761096451355169db419261c',1,'Options']]],
-  ['nodes',['nodes',['../classBKZReduction.html#a0dd16ffbff20bdd4066cccaa81c40382',1,'BKZReduction::nodes()'],['../classEnumerationBase.html#ab72fbab7cf3bdd8a6189a2da0b2ba915',1,'EnumerationBase::nodes()']]],
+  ['nodes',['nodes',['../classBKZReduction.html#a0dd16ffbff20bdd4066cccaa81c40382',1,'BKZReduction::nodes()'],['../classEnumerationBase.html#a6220bf1147198b66a6ded2ab5ed2ae8b',1,'EnumerationBase::nodes()']]],
   ['nolocalupdate',['NOLOCALUPDATE',['../enumeration_8h.html#a6541cc7ea828e45a68a4c17b74c7486b',1,'enumeration.h']]],
-  ['norm',['norm',['../classListPoint.html#acc16778b3864c3ecc9464180629f1abb',1,'ListPoint']]],
   ['norm_5fr_5frow',['norm_R_row',['../classMatHouseholder.html#a307587a39e94d18de61045931cfe2681',1,'MatHouseholder']]],
   ['norm_5fsquare_5fb_5frow',['norm_square_b_row',['../classMatHouseholder.html#aa636cd4ec8f933873da0771145fb738e',1,'MatHouseholder']]],
   ['norm_5fsquare_5fb_5frow_5fnaively',['norm_square_b_row_naively',['../classMatHouseholder.html#afbbe429690b590065eb0fdb25605ca0d',1,'MatHouseholder']]],
@@ -51,9 +49,6 @@ var searchData=
   ['num_5ftype_5fstr_3c_20mpfr_5ft_20_3e',['num_type_str&lt; mpfr_t &gt;',['../nr_8h.html#af96f70af387a3a48ec3fd04dc62e5115',1,'nr.h']]],
   ['num_5ftype_5fstr_3c_20mpz_5ft_20_3e',['num_type_str&lt; mpz_t &gt;',['../nr_8h.html#a4153c4dbb725b64f45fad8de5ed75821',1,'nr.h']]],
   ['num_5ftype_5fstr_3c_20qd_5freal_20_3e',['num_type_str&lt; qd_real &gt;',['../nr_8h.html#a6bd4a1f2bbbbbc3efe867e1494f75d94',1,'nr.h']]],
-  ['num_5fvec_5fto_5flist_5fpoint',['num_vec_to_list_point',['../sieve__gauss__str_8h.html#a667b7bf0b2da134e97a17f1183089eb5',1,'sieve_gauss_str.h']]],
   ['numvect',['NumVect',['../classNumVect.html',1,'NumVect&lt; T &gt;'],['../classNumVect.html#a556d003a38c13a46e7cdf8268ee22d19',1,'NumVect::NumVect()'],['../classNumVect.html#ab20bf96d50ccb5488a4e5346065f38f5',1,'NumVect::NumVect(const NumVect &amp;v)'],['../classNumVect.html#a914eed96479b6c79f25fb88c8d94a91f',1,'NumVect::NumVect(const vector&lt; T &gt; &amp;v)'],['../classNumVect.html#a225b4093fbda836f2bc017e728c607c1',1,'NumVect::NumVect(int size)'],['../classNumVect.html#aca38d4030462de4984080070e21c7bab',1,'NumVect::NumVect(int size, const T &amp;t)']]],
-  ['numvect_2eh',['numvect.h',['../numvect_8h.html',1,'']]],
-  ['numvect_3c_20f_20_3e',['NumVect&lt; F &gt;',['../classNumVect.html',1,'']]],
-  ['numvect_3c_20z_5fnr_3c_20zt_20_3e_20_3e',['NumVect&lt; Z_NR&lt; ZT &gt; &gt;',['../classNumVect.html',1,'']]]
+  ['numvect_2eh',['numvect.h',['../numvect_8h.html',1,'']]]
 ];

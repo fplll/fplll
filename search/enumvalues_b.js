@@ -11,5 +11,6 @@ var searchData=
   ['red_5fhlll_5fsr_5ffailure',['RED_HLLL_SR_FAILURE',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5aa766f3bbf857edb4820c366f54014948',1,'defs.h']]],
   ['red_5flll_5ffailure',['RED_LLL_FAILURE',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a196f0a76df03789dc2edeb5361042ec6',1,'defs.h']]],
   ['red_5fstatus_5fmax',['RED_STATUS_MAX',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5af52499b62bae7c4636a1308c81c83e17',1,'defs.h']]],
-  ['red_5fsuccess',['RED_SUCCESS',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a969c417014c076ba40f0e28d8d1c9725',1,'defs.h']]]
+  ['red_5fsuccess',['RED_SUCCESS',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a969c417014c076ba40f0e28d8d1c9725',1,'defs.h']]],
+  ['red_5furl_5ferr',['RED_URL_ERR',['../defs_8h.html#a5bc9cc17a20cb4546d3d80d0ac0c6fe5a291c30ef569985858d2137c02d999d40',1,'defs.h']]]
 ];

@@ -10,8 +10,6 @@ var searchData=
   ['_7efasterrorboundedevaluator',['~FastErrorBoundedEvaluator',['../classFastErrorBoundedEvaluator.html#a0a10dba40bb6b646350614b5977799b2',1,'FastErrorBoundedEvaluator']]],
   ['_7efastevaluator',['~FastEvaluator',['../classFastEvaluator.html#a91c7a94c9d238cd7c05df269cfa10610',1,'FastEvaluator']]],
   ['_7efp_5fnr',['~FP_NR',['../classFP__NR.html#a18c733ddacf8331b48e7ad86281d15ac',1,'FP_NR::~FP_NR()'],['../classFP__NR.html#a27955614a264685d0fda708d5a04f1c7',1,'FP_NR::~FP_NR()'],['../classFP__NR.html#a4699774e7b501359330b741a7ac4ea8d',1,'FP_NR::~FP_NR()'],['../classFP__NR.html#a0d2c5f2e1ed7b8d6378c59721dc7081a',1,'FP_NR::~FP_NR()'],['../classFP__NR.html#aeb6a69900de9e53d3066f63bad1be89f',1,'FP_NR::~FP_NR()']]],
-  ['_7egausssieve',['~GaussSieve',['../classGaussSieve.html#a80663d2f917e5734dc5f158167b13d67',1,'GaussSieve']]],
-  ['_7ekleinsampler',['~KleinSampler',['../classKleinSampler.html#a2f1f934fad0f5519e698e9dc2e58816f',1,'KleinSampler']]],
   ['_7ematgsointerface',['~MatGSOInterface',['../classMatGSOInterface.html#a4542f3b7a219f42f6b13201fbcbf3f8e',1,'MatGSOInterface']]],
   ['_7emathouseholder',['~MatHouseholder',['../classMatHouseholder.html#a9c5c1c6690a6f621558e80286770aff8',1,'MatHouseholder']]],
   ['_7ethread_5fpool',['~thread_pool',['../classthread__pool_1_1thread__pool.html#a368b4a5634e884bd23c45bf282cb786f',1,'thread_pool::thread_pool']]],

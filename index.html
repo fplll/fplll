@@ -35,7 +35,7 @@
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.3.3</a>
+                    <a class="navbar-brand">fplll 5.4.0</a>
                 </div>
             </div>
         </nav>
@@ -79,11 +79,11 @@ $(function() {
 <div class="title">fplll </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a href="https://travis-ci.org/fplll/fplll"></a> <a href="https://codecov.io/gh/fplll/fplll"></a></p>
+<div class="textblock"><p><a href="https://github.com/fplll/fplll/actions?query=workflow%3ATests"></a> <a href="https://codecov.io/gh/fplll/fplll"></a></p>
 <p>fplll contains implementations of several lattice algorithms. The implementation relies on floating-point orthogonalization, and LLL [<a href="#LLL82">LLL82</a>] is central to the code, hence the name.</p>
 <p>It includes implementations of floating-point LLL reduction algorithms [<a href="#NS09">NS09</a>,<a href="#MSV09">MSV09</a>], offering different speed/guarantees ratios. It contains a 'wrapper' choosing the estimated best sequence of variants in order to provide a guaranteed output as fast as possible [<a href="#S09">S09</a>]. In the case of the wrapper, the succession of variants is oblivious to the user.</p>
 <p>It includes an implementation of the BKZ reduction algorithm [<a href="#SE94">SE94</a>], including the BKZ-2.0 [<a href="#CN11">CN11</a>] improvements (extreme enumeration pruning, pre-processing of blocks, early termination). Additionally, Slide reduction [<a href="#GN08">GN08</a>] and self dual BKZ [<a href="#MW16">MW16</a>] are supported.</p>
-<p>It also includes a floating-point implementation of the Kannan-Fincke-Pohst algorithm [<a href="#K83">K83</a>,<a href="#FP85">FP85</a>] that finds a shortest non-zero lattice vector. For the same task, the <a class="el" href="classGaussSieve.html">GaussSieve</a> algorithm [<a href="#MV10">MV10</a>] is also available in fplll. Finally, it contains a variant of the enumeration algorithm that computes a lattice vector closest to a given vector belonging to the real span of the lattice.</p>
+<p>It also includes a floating-point implementation of the Kannan-Fincke-Pohst algorithm [<a href="#K83">K83</a>,<a href="#FP85">FP85</a>] that finds a shortest non-zero lattice vector. Finally, it contains a variant of the enumeration algorithm that computes a lattice vector closest to a given vector belonging to the real span of the lattice.</p>
 <p>fplll is distributed under the [GNU Lesser General Public License](COPYING) (either version 2.1 of the License, or, at your option, any later version) as published by the Free Software Foundation.</p>
 <h2>How to cite</h2>
 <pre class="fragment">@unpublished{fplll,
@@ -101,21 +101,28 @@ $(function() {
 </li>
 <li><a href="#table-of-contents">Table of contents</a></li>
 <li><a href="#compilation">Compilation</a><ul>
+<li><a href="#Installation-from-packages">Installation from packages</a><ul>
+<li><a href="#Ubuntu-and-Debian">Ubuntu and Debian</a></li>
+<li><a href="#Conda">Conda</a></li>
+<li><a href="#MacOS">MacOS</a></li>
+<li><a href="#Docker-and-AWS">Docker and AWS</a></li>
+</ul>
+</li>
+<li><a href="#Installation-from-source">Installation from source</a><ul>
 <li><a href="#dependencies">Dependencies</a><ul>
 <li><a href="#required">Required</a>, <a href="#optional">Optional</a>.</li>
 </ul>
 </li>
-<li><a href="#installation">Installation</a><ul>
-<li><a href="#linux">Linux</a></li>
+<li><a href="#Linux-and-MacOS">Linux and MacOS</a></li>
 <li><a href="#windows-10">Windows 10</a></li>
 </ul>
 </li>
-<li><a href="#optimization">Optimization</a></li>
 <li><a href="#check">Check</a></li>
+<li><a href="#optimization">Optimization</a></li>
 </ul>
 </li>
 <li><a href="#how-to-use">How to use</a><ul>
-<li>Programs <a href="#latticegen">latticegen</a>, <a href="#fplll-1">fplll</a>, <a href="#llldiff">llldiff</a>, <a href="#latsieve">latsieve</a>.</li>
+<li>Programs <a href="#latticegen">latticegen</a>, <a href="#fplll-1">fplll</a>, <a href="#llldiff">llldiff</a>.</li>
 <li><a href="#how-to-use-as-a-library">How to use as a library</a></li>
 <li><a href="#multicore-support">Multicore support</a></li>
 </ul>
@@ -131,22 +138,36 @@ $(function() {
 <li><a href="#bibliography">Bibliography</a></li>
 </ul>
 <h1>Compilation</h1>
-<h2>Dependencies</h2>
-<h3>Required</h3>
+<h2>Installation from packages</h2>
+<p>fplll is available as a pre-built package for a variety of operating systems; these pre-built packages typically include all mandatory dependencies, and so these packages can be used to start running fplll quickly.</p>
+<p>Below, we give some instructions on how to install these packaged variants of fplll.</p>
+<p>Note that these packages will be up-to-date for the most recent version of fplll. However, if you want a feature that has recently been added to master (that is not yet in a release) then it is necessary to build from source. If this is the case, please see the <a href="#installation-from-source">Installation from Source</a> section.</p>
+<h3>Ubuntu and Debian</h3>
+<p>fplll can be installed directly via Aptitude or Synaptic. Both of these package managers package fplll in the package <code>fplll-tools</code>. Therefore, to install this package using Aptitude, run the following command</p>
+<div class="fragment"><div class="line">sudo aptitude install fplll-tools</div></div><!-- fragment --><p>If you want to use Synaptic, then you will need to search for the <code>fplll-tools</code> package using the search bar.</p>
+<h3>Conda</h3>
+<p>fplll can be installed natively as a conda package using the following command</p>
+<div class="fragment"><div class="line">conda install fplll</div></div><!-- fragment --><h3>MacOS</h3>
+<p>MacOS has a package for fplll inside HomeBrew. Assuming that you have HomeBrew installed, you may install fplll using the following command</p>
+<div class="fragment"><div class="line">brew install fplll</div></div><!-- fragment --><h3>Docker and AWS</h3>
+<p>We now have Docker/AWS images for fplll too. They aren't on this repository, though; you can find them <a href="https://hub.docker.com/u/fplll">here</a></p>
+<h2>Installation from source</h2>
+<p>fplll can also be built from source. Below, we explicate some of the dependencies for building from source, as well as operating systems specific instructions.</p>
+<h3>Dependencies</h3>
+<h4>Required</h4>
 <ul>
 <li>GNU MP 4.2.0 or higher <a href="http://gmplib.org/">http://gmplib.org/</a> or MPIR 1.0.0 or higher <a href="http://mpir.org">http://mpir.org</a></li>
 <li>MPFR 2.3.0 or higher, COMPLETE INSTALLATION <a href="http://www.mpfr.org/">http://www.mpfr.org/</a></li>
 <li>autotools 2.61 or higher</li>
 <li>g++ 4.9.3 or higher</li>
 </ul>
-<h3>Optional</h3>
+<h4>Optional</h4>
 <ul>
 <li>QD 2.3.15 or higher (a C++/Fortran-90 double-double and quad-double package), compile and install the shared library (e.g. <code>./configure --enable-shared=yes</code>). <a href="http://crd-legacy.lbl.gov/~dhbailey/mpdist/">http://crd-legacy.lbl.gov/~dhbailey/mpdist/</a></li>
 </ul>
-<p>NOTE: If you are intending to use fplll on Windows 10, then these packages are not required before you get started. This is because you use fplll via the "Windows Subsystem for Linux". Please go straight to the instructions for <a href="#windows-10">Windows 10</a>.</p>
-<h2>Installation</h2>
-<h3>Linux</h3>
-<p>You should downloaded the source code from github and then run </p><pre class="fragment">./autogen.sh
+<p>NOTE: If you are intending to use fplll on Windows 10, then these packages should be installed after the <code>Windows Subsystem for Linux</code> has been installed and activated. Please go to the <a href="#windows-10">Windows 10</a> instructions for more information.</p>
+<h3>Linux and MacOS</h3>
+<p>You should download the source code from Github and then run </p><pre class="fragment">./autogen.sh
 </pre><p>which generates the <code>./configure</code> script used to configure fplll by calling the appropriate autotools command.</p>
 <p>Then, to compile and install type </p><pre class="fragment">./configure
 make
@@ -156,8 +177,8 @@ make install            # (as root)
 </pre><p>The same philosophy applies to the (optional) QD library. If you want to use mpir instead of gmp, use <code>--enable-mpir</code> and <code>--with-mpir=path/to/mpir</code>.</p>
 <p>You can remove the program binaries and object files from the source code directory by typing <code>make clean</code>. To also remove the files that <code>./configure</code> created (so you can compile the package for a different kind of computer), type <code>make distclean</code>. By default, <code>make install</code> installs the package commands under <code>/usr/local/bin</code>, include files under <code>/usr/local/include</code>, etc. You can specify an installation directory name other than <code>/usr/local</code> by giving <code>./configure</code> the option <code>--prefix=dirname</code>. Run <code>./configure --help</code> for further details.</p>
 <h3>Windows 10</h3>
-<p>Windows 10 has a "Windows Subsystem for Linux", which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to <b>Settings</b> -&gt; <b>Update and security</b> -&gt; <b>For developers</b> and enable developer mode. (This may take a while.) Afterwards, open Powershell as an administrator and run </p><pre class="fragment">Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
-</pre><p>This will enable the WSL. Next, open the Windows Store and navigate to your favourite available Linux distribution - this may be installed as if were a regular application. Afterwards, this system can be accessed as if it were a regular program e.g. by opening command prompt and typing <code>bash</code>. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run: </p><pre class="fragment">sudo apt-get update
+<p>Windows 10 has the "Windows Subsystem for Linux"(WSL), which essentially allows you to use Linux features in Windows without the need for a dual-boot system or a virtual machine. To activate this, first go to <b>Settings</b> -&gt; <b>Update and security</b> -&gt; <b>For developers</b> and enable developer mode. (This may take a while.) Afterwards, open Powershell as an administrator and run </p><pre class="fragment">Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+</pre><p>This will enable the WSL. Next, open the Windows Store and navigate to your favourite available Linux distribution - this may be installed as if it were a regular application. Afterwards, this system will act as a regular program, and so it can be opened however you like e.g. by opening command prompt and typing <code>bash</code>. With this Linux-like subsystem, installing fplll is then similar to above, except that most likely the package repository is not up to date, and various additional packages need to be installed first. To make sure you only install the most recent software, run: </p><pre class="fragment">sudo apt-get update
 </pre><p>Then run <code>sudo apt-get install &lt;packages&gt;</code> for the (indirectly) required packages, such as <code>make</code>, <code>autoconf</code>, <code>libtool</code>, <code>gcc</code>, <code>g++</code>, <code>libgmp-dev</code>, <code>libmpfr-dev</code> and <code>pkg-config</code>. Finally, download the fplll source code, extract the contents, navigate to this folder in Bash (commonly found under <code>/mnt/c/&lt;local path&gt;</code> when stored somewhere on the <code>C:\</code> drive), and run: </p><pre class="fragment">./autogen.sh
 ./configure
 make 
@@ -259,21 +280,12 @@ make
 </ul>
 <h2>llldiff</h2>
 <p><code>llldiff</code> compares two bases (b1,...,bd) and (c1,...c_d'): they are considered equal iff d=d' and for any i, bi = +- ci. Concretely, if basis B is in file 'B.txt' and if basis C is in file 'C.txt' (in the fplll format), then one may run <code>cat B.txt C.txt | ./llldiff</code>.</p>
-<h2>latsieve</h2>
-<p><code>latsieve</code> does (tuple) lattice sieve on a matrix (considered as a set of row vectors) given in a file as parameter. It will generate the executable file <code>latsieve</code> in <code>fplll/</code> which is a wrapper of <code>fplll/.libs/latsieve</code>.</p>
-<p>The options are:</p>
-<ul>
-<li><code>-a nnn</code> : nnn is the tuple algorithm to use (default 2 corresponding to <a class="el" href="classGaussSieve.html">GaussSieve</a>)</li>
-<li><code>-f filename</code> : follows input matrix</li>
-<li><code>-b nnn</code> : BKZ preprocessing of blocksize nnn (optional)</li>
-<li><code>-t nnn</code> : targeted square norm for stoping sieving (optional)</li>
-<li><code>-s nnn</code> : using seed=nnn (optional)</li>
-<li><code>-v</code> : verbose toggle</li>
-</ul>
 <h2>How to use as a library</h2>
-<p>See <a href="https://fplll.github.io/fplll/">API documentation</a>.</p>
+<p>See <a href="https://fplll.github.io/fplll/annotated.html">API documentation</a> and <a href="https://github.com/fplll/fplll/tree/master/tests">tests</a> as a source of examples.</p>
 <h2>Multicore support</h2>
 <p>This library does not currently use multiple cores and running multiple threads working on the same object <code>IntegerMatrix</code>, <code><a class="el" href="classLLLReduction.html">LLLReduction</a></code>, <code><a class="el" href="classMatGSO.html">MatGSO</a></code> etc. is not supported. Running multiple threads working on <em>different</em> objects, however, is supported. That is, there are no global variables and it is safe to e.g. reduce several lattices in parallel in the same process.</p>
+<p>As an exception to the above, fplll has an implementation of parallel lattice point enumeration. To enable this implementation, make sure you compile with the maximum parallel enumeration dimension greater than 0. Note that increasing this value will increase the compile-time due to the use of templates.</p>
+<p>At present fplll does not contain strategies for multi-core pruned enumeration, and so speedups for pruned enumeration may be sub-linear (see <a href="https://martinralbrecht.wordpress.com/2020/10/26/multicore-bkz-in-fplll/">this</a> for more information). On the other hand, unpruned enumeration appears to scale linearly.</p>
 <h1>Examples</h1>
 <ol type="1">
 <li>LLL reduction</li>
@@ -347,7 +359,6 @@ make
 <p><a class="anchor" id="FP85"></a>[FP85] U. Fincke and M. Pohst. Improved methods for calculating vectors of short length in a lattice, including a complexity analysis. Math. Comp., 44(170):463–471 (1985)</p>
 <p><a class="anchor" id="LLL82"></a>[LLL82] A. K. Lenstra, H. W. Lenstra, Jr. and L. Lovasz. Factoring polynomials with rational coefficients. Math. Ann., 261: 515–534 (1982)</p>
 <p><a class="anchor" id="MSV09"></a>[MSV09] I. Morel, D. Stehle and G. Villard. H-LLL: using Householder inside LLL. ISSAC 2009: 271-278</p>
-<p><a class="anchor" id="MV10"></a>[MV10] D. Micciancio and P. Voulgaris. Faster Exponential Time Algorithms for the Shortest Vector Problem. SODA 2010: 1468-1480</p>
 <p><a class="anchor" id="MW16"></a>[MW16] D. Micciancio and M. Walter. Practical, Predictable Lattice Basis Reduction. EUROCRYPT 2016: 820-849</p>
 <p><a class="anchor" id="MR09"></a>[MR09] D. Micciancio and O. Regev. Post-Quantum Cryptography. Chapter of Lattice-based Cryptography, 147-191 (2009)</p>
 <p><a class="anchor" id="NS09"></a>[NS09] P. Q. Nguyen and D. Stehle. An LLL Algorithm with Quadratic Complexity. SIAM J. Comput. 39(3): 874-903 (2009)</p>

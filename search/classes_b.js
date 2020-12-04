@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['options',['Options',['../structOptions.html',1,'']]],
-  ['opts',['opts',['../structEnumerationBase_1_1opts.html',1,'EnumerationBase']]]
+  ['pruner',['Pruner',['../classPruner.html',1,'']]],
+  ['pruningparams',['PruningParams',['../classPruningParams.html',1,'']]]
 ];
