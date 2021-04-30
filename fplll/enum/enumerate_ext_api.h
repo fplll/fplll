@@ -18,6 +18,7 @@
 #define FPLLL_ENUMERATE_EXT_API_H
 
 #include <array>
+#include <cstdint>
 #include <functional>
 #include <memory>
 
