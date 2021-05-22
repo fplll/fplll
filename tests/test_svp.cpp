@@ -32,6 +32,17 @@ enum Test
   DSVP_REDUCE
 };
 
+double inline norm(const vector<Z_NR<mpz_t>> &v)
+{
+  Z_NR<mpz_t> norm, tmp;
+  for (size_t i = 0; i < v.size(); i++)
+  {
+    tmp.mul(v[i], v[i]);
+    norm.add(norm, tmp);
+  }
+  return sqrt(norm.get_d());
+}
+
 /**
    @brief Test if SVP function returns vector with right norm.
 
@@ -45,7 +56,7 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
   vector<Z_NR<mpz_t>> sol_coord;   // In the LLL-reduced basis
   vector<Z_NR<mpz_t>> sol_coord2;  // In the initial basis
   vector<Z_NR<mpz_t>> solution;
-  ZZ_mat<mpz_t> u;
+  ZZ_mat<mpz_t> u(A.get_rows(), A.get_rows());
 
   int status =
       lll_reduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
@@ -252,6 +263,39 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
   return 0;
 }
 
+/**
+   @brief test that proved is no worse than fast.
+
+   @param d large dimension of initial lattice
+   @param d2 enumeration dimension
+
+ */
+
+int test_svp_proved_vs_fast(size_t d, size_t d2)
+{
+  ZZ_mat<mpz_t> A(d, d);
+  A.gen_qary_withq(d / 2, 65537);
+
+  int r = lll_reduction(A);
+  ZZ_mat<mpz_t> B(d2, d);  // so that LLL doesn't just solve it
+  vector<Z_NR<mpz_t>> sol_coord_proved, sol_coord_fast;
+  vector<Z_NR<mpz_t>> solution_proved, solution_fast;
+
+  for (size_t i = 0; i < d2; i++)
+  {
+    for (int j = 0; j < A.get_cols(); j++)
+      B[i][j] = A[i][j];
+  }
+
+  r |= shortest_vector(B, sol_coord_proved, SVPM_PROVED);
+  r |= shortest_vector(B, sol_coord_fast, SVPM_FAST);
+
+  vector_matrix_product(solution_proved, sol_coord_proved, B);
+  vector_matrix_product(solution_fast, sol_coord_fast, B);
+  r |= (norm(solution_fast) < norm(solution_proved));
+  return r;
+}
+
 int test_rank_defect()
 {
   ZZ_mat<mpz_t> A = ZZ_mat<mpz_t>(4, 4);
@@ -321,6 +365,8 @@ int test_filename(const char *input_filename, const char *output_filename,
 int main()
 {
 
+  RandGen::init_with_seed(0);
+
   int status = 0;
   status |= test_filename<mpz_t>(TESTDATADIR "/tests/lattices/example_svp_in",
                                  TESTDATADIR "/tests/lattices/example_svp_out");
@@ -330,6 +376,7 @@ int main()
                                  TESTDATADIR "/tests/lattices/example_dsvp_out", DSVP_REDUCE);
 
   status |= test_rank_defect();
+  status |= test_svp_proved_vs_fast(100, 30);
 
   if (status == 0)
   {
