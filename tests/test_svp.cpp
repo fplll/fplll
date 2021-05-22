@@ -63,7 +63,7 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
     return status;
   }
 
-//  vector_matrix_product(sol_coord2, sol_coord, u);
+  //  vector_matrix_product(sol_coord2, sol_coord, u);
   vector_matrix_product(solution, sol_coord, A);
 
   Z_NR<ZT> tmp;
