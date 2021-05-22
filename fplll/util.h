@@ -41,7 +41,7 @@ template <class ZT>
 void vector_matrix_product(vector<ZT> &result, const vector<ZT> &x, const Matrix<ZT> &m)
 {
   int nrows = m.get_rows(), ncols = m.get_cols();
-  if (x.size() != nrows)
+  if (x.size() != (unsigned int)nrows)
     throw std::runtime_error("vector_matrix_product(): dimensions do not match!");
   gen_zero_vect(result, ncols);
   for (int i = 0; i < nrows; i++)
