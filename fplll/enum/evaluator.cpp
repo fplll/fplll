@@ -320,7 +320,7 @@ void ExactErrorBoundedEvaluator::eval_sub_sol(int offset,
   vector<Z_NR<mpz_t>> new_sol, coord;
 
   gen_zero_vect(new_sol, n);
-  gen_zero_vect(coord, n);
+  gen_zero_vect(coord, gso.get_rows_of_b());
   new_sol_dist = 0;
 
   // Computes the distance between x[[offset,d)] and zero
