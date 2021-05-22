@@ -45,7 +45,7 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
   vector<Z_NR<mpz_t>> sol_coord;   // In the LLL-reduced basis
   vector<Z_NR<mpz_t>> sol_coord2;  // In the initial basis
   vector<Z_NR<mpz_t>> solution;
-  ZZ_mat<mpz_t> u;
+  ZZ_mat<mpz_t> u(A.get_rows(), A.get_rows());
 
   int status =
       lll_reduction(A, u, LLL_DEF_DELTA, LLL_DEF_ETA, LM_WRAPPER, FT_DEFAULT, 0, LLL_DEFAULT);
@@ -63,7 +63,7 @@ template <class ZT> int test_svp(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
     return status;
   }
 
-  //  vector_matrix_product(sol_coord2, sol_coord, u);
+  vector_matrix_product(sol_coord2, sol_coord, u);
   vector_matrix_product(solution, sol_coord, A);
 
   Z_NR<ZT> tmp;
