@@ -42,7 +42,7 @@ void vector_matrix_product(vector<ZT> &result, const vector<ZT> &x, const Matrix
 {
   int nrows = m.get_rows(), ncols = m.get_cols();
   if (x.size() != nrows)
-   throw std::runtime_error("vector_matrix_product(): dimensions do not match!");
+    throw std::runtime_error("vector_matrix_product(): dimensions do not match!");
   gen_zero_vect(result, ncols);
   for (int i = 0; i < nrows; i++)
     for (int j = 0; j < ncols; j++)
@@ -56,7 +56,7 @@ void vector_matrix_product(NumVect<ZT> &result, const NumVect<ZT> &x, const Matr
 {
   int nrows = m.get_rows(), ncols = m.get_cols();
   if (x.size() != nrows)
-   throw std::runtime_error("vector_matrix_product(): dimensions do not match!");
+    throw std::runtime_error("vector_matrix_product(): dimensions do not match!");
   result.gen_zero(ncols);
   for (int i = 0; i < nrows; i++)
     for (int j = 0; j < ncols; j++)
