@@ -27,10 +27,8 @@
 *                                                                                 *
 \*********************************************************************************/
 
-// this file is slightly modified for fplll to use specialized header guards and namespace
-
-#ifndef FPLLL_THREAD_POOL_HPP
-#define FPLLL_THREAD_POOL_HPP
+#ifndef THREAD_POOL_HPP
+#define THREAD_POOL_HPP
 
 #include <cstdint>
 #include <memory>
@@ -43,10 +41,6 @@
 #include <condition_variable>
 #include <future>
 #include <atomic>
-
-
-#include <fplll/defs.h>
-FPLLL_BEGIN_NAMESPACE
 
 /*************************** example usage ***************************************\
 grep "^//test.cpp" thread_pool.hpp -A33 > test.cpp
@@ -205,15 +199,19 @@ namespace thread_pool {
 
 	inline void thread_pool::push(const std::function<void()>& f)
 	{
-		std::unique_lock<std::mutex> lock(_mutex);
-		_tasks.emplace(f);
+		{
+			std::unique_lock<std::mutex> lock(_mutex);
+			_tasks.emplace(f);
+		}
 		_condition.notify_one();
 	}
 
 	inline void thread_pool::push(std::function<void()>&& f)
 	{
-		std::unique_lock<std::mutex> lock(_mutex);
-		_tasks.emplace(std::move(f));
+		{
+			std::unique_lock<std::mutex> lock(_mutex);
+			_tasks.emplace(std::move(f));
+		}
 		_condition.notify_one();
 	}
 
@@ -232,27 +230,42 @@ namespace thread_pool {
 	{
 		if (threads < 1 || threads > int(_threads.size())+1)
 			threads = int(_threads.size())+1;
-		for (int i = 0; i < threads; ++i)
-			this->push(f);
-		this->wait_work();
+		{
+			std::unique_lock<std::mutex> lock(_mutex);
+			for (int i = 0; i < threads-1; ++i)
+				_tasks.emplace(f);
+		}
+		_condition.notify_all();
+		f();
+		this->wait_sleep();
 	}
 
 	inline void thread_pool::run(const std::function<void(int)>& f, int threads)
 	{
 		if (threads < 1 || threads > int(_threads.size())+1)
 			threads = int(_threads.size())+1;
-		for (int i = 0; i < threads; ++i)
-			this->push( [f,i](){f(i);} );
-		this->wait_work();
+		{
+			std::unique_lock<std::mutex> lock(_mutex);
+			for (int i = 0; i < threads-1; ++i)
+				_tasks.emplace( [=](){f(i);} );
+		}
+		_condition.notify_all();
+		f(threads-1);
+		this->wait_sleep();
 	}
 
 	inline void thread_pool::run(const std::function<void(int,int)>& f, int threads)
 	{
 		if (threads < 1 || threads > int(_threads.size())+1)
 			threads = int(_threads.size())+1;
-		for (int i = 0; i < threads; ++i)
-			this->push( [f,i,threads](){f(i,threads);} );
-		this->wait_work();
+		{
+			std::unique_lock<std::mutex> lock(_mutex);
+			for (int i = 0; i < threads-1; ++i)
+				_tasks.emplace( [=](){f(i,threads);} );
+		}
+		_condition.notify_all();
+		f(threads-1,threads);
+		this->wait_sleep();
 	}
 
 	inline void thread_pool::resize(std::size_t nrthreads)
@@ -338,6 +351,7 @@ namespace thread_pool {
 		if (++_i >= _count)
 		{
 			_i = 0;
+			lock.unlock();
 			_condition.notify_all();
 		}
 		else
@@ -348,6 +362,4 @@ namespace thread_pool {
 
 } // namespace thread_pool
 
-FPLLL_END_NAMESPACE
-
-#endif // FPLLL_THREAD_POOL_HPP
+#endif // THREAD_POOL_HPP
