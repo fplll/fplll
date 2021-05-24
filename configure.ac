@@ -177,7 +177,7 @@ AS_IF([test "x$enable_recursive_enum" != "xno"], [
         AC_DEFINE([FPLLL_WITH_RECURSIVE_ENUM], [1], [recursive enumeration enabled])])
 
 
-max_parallel_enum_dim=80
+max_parallel_enum_dim=120
 AC_ARG_WITH(max-parallel-enum-dim,
         AS_HELP_STRING([--with-max-parallel-enum-dim@<:@=DIM@:>@],
          [Maximum supported parallel enumeration dimension (max=160, default=120, disable=0).]),
