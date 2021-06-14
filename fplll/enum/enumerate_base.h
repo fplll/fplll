@@ -142,7 +142,7 @@ protected:
   }
   void restore_rounding() { std::fesetround(rounding_backup); }
 
-  inline bool next_pos_up(bool break_symetry)
+  inline bool next_pos_up(bool break_symmetry)
   {
     ++k;
     if (partdist[k] != 0.0)
@@ -156,8 +156,9 @@ protected:
       if (k >= k_end)
         return false;
       k_max = k;
-      if (break_symetry){
-        ++x[k]; 
+      if (break_symmetry)
+      {
+        ++x[k];
       }
       else
       {
