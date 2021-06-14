@@ -237,14 +237,14 @@ template <bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBa
       {
         if (newdist > 0.0 || !is_svp)
           process_solution(newdist);
-        finished = !next_pos_up();
+        finished = !next_pos_up(is_svp);
         continue;
       }
       if (enable_reset &&
           k < reset_depth)  // in CVP, below the max GS vector, we reset the partial distance
       {
         reset(newdist, k);
-        finished = !next_pos_up();
+        finished = !next_pos_up(is_svp);
         continue;
       }
       if (dualenum)
@@ -268,7 +268,7 @@ template <bool dualenum, bool findsubsols, bool enable_reset> void EnumerationBa
     }
     else
     {
-      finished = !next_pos_up();
+      finished = !next_pos_up(is_svp);
     }
   }
 }
