@@ -72,7 +72,7 @@ public:
 protected:
   /* configuration */
   bool dual;
-  bool is_svp;
+  bool is_svp;  // only for SVP: exploit symmetry in enumeration to half search space
   bool resetflag;
 
   /* enumeration input */
@@ -142,7 +142,7 @@ protected:
   }
   void restore_rounding() { std::fesetround(rounding_backup); }
 
-  inline bool next_pos_up(bool break_symmetry)
+  inline bool next_pos_up()
   {
     ++k;
     if (partdist[k] != 0.0)
@@ -156,8 +156,9 @@ protected:
       if (k >= k_end)
         return false;
       k_max = k;
-      if (break_symmetry)
+      if (is_svp)
       {
+        // only for SVP: break symmetry at the top non-zero coefficient
         ++x[k];
       }
       else
