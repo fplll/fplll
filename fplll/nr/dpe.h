@@ -98,8 +98,7 @@
 #define DPE_EXPMIN INT_MIN /* smallest possible exponent */
 #endif
 
-typedef union
-{
+typedef union {
   double d;
   int i[2];
 } dpe_double_words;

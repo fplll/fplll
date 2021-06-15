@@ -66,8 +66,8 @@ template <class FT> int test_list_cvp()
 
   // Search for up to 999999 vectors, up to radius 32.5 around the origin
   // the right answer is 196561
-  FP_NR<FT> rad           = 32.5;
-  FP_NR<FT> half_rad           = 16.5;
+  FP_NR<FT> rad                   = 32.5;
+  FP_NR<FT> half_rad              = 16.5;
   const unsigned int right_answer = 196561;
 
   // Tests with two targets: 0, and something very close to 0.
@@ -75,9 +75,8 @@ template <class FT> int test_list_cvp()
   // HOLE: Not sure how to set that up
   size_t d = A.get_rows();
   if (d != 24)
-  {  
-    cerr << "Expected a lattice of dimension 24, got : "
-         << d << endl;
+  {
+    cerr << "Expected a lattice of dimension 24, got : " << d << endl;
     return 1;
   }
 
@@ -93,13 +92,12 @@ template <class FT> int test_list_cvp()
     enum_obj.enumerate(0, d, rad, 0, target);
     if (evaluator.size() != right_answer)
     {
-      cerr << "list CVP failed (center at 0), expected 196561 solutions, got : "
-           << get_red_status_str(evaluator.size()) << endl;
+      cerr << "list CVP failed (center at 0), expected 196561 solutions, got : " << evaluator.size()
+           << endl;
       return 1;
     }
+    // cerr << "list CVP (at 0) PASSED : " << evaluator.size() << endl;
   }
-
-  cerr << "list CVP (0) PASSED" << endl;
 
   {
     gso.update_gso();
@@ -111,33 +109,67 @@ template <class FT> int test_list_cvp()
     if (evaluator.size() != right_answer)
     {
       cerr << "list CVP failed (center near 0), expected 196561 solutions, got : "
-           << get_red_status_str(evaluator.size()) << endl;
+           << evaluator.size() << endl;
       return 1;
     }
+    // cerr << "list CVP (near 0) PASSED : " << evaluator.size() << endl;
   }
 
-  cerr << "list CVP (near 0) PASSED" << endl;
-
+  for (size_t rep = 0; rep < 24; ++rep)
   {
     FastEvaluator<FP_NR<FT>> evaluator(999999);
     Enumeration<Z_NR<mpz_t>, FP_NR<FT>> enum_obj(gso, evaluator);
 
-    std::vector<FP_NR<FT>> target(d, 0.0001);
-    target[0] = .499;
+    std::vector<FP_NR<FT>> can_target(d, 0.0);
+
+    // Generate a point in the half lattice
+    for (size_t i = 0; i < d; ++i)
+    {
+      size_t c = (i == rep || rand() % 2);  // make sure at least one of them is non-zero
+      // std::cerr << c;
+      if (!c)
+        continue;
+      for (size_t j = 0; j < d; ++j)
+      {
+        can_target[j] += 0.5 * A[i][j].get_d();
+      }
+    }
+
+    std::vector<FP_NR<FT>> target(d, 0.0);
+    // Convert it to GSO basis
+    for (size_t i = 0; i < d; ++i)
+    {
+      for (size_t j = 0; j < d; ++j)
+      {
+        target[i] += A[i][j].get_d() * can_target[j];
+      }
+
+      for (size_t j = 0; j < i; ++j)
+      {
+        FP_NR<FT> mu_ij;
+        gso.get_mu(mu_ij, i, j);
+        target[i] -= target[j] * mu_ij;
+      }
+    }
+    for (size_t i = 0; i < d; ++i)
+    {
+      FP_NR<FT> r_ii;
+      gso.get_r(r_ii, i, i);
+      target[i] /= r_ii;
+    }
+
     enum_obj.enumerate(0, d, half_rad, 0, target);
 
-    if (evaluator.size() != 2 || evaluator.size() != 48)
+    if (evaluator.size() != 2 && evaluator.size() != 48)
     {
-      cerr << "list CVP failed (halfway), expected 2 or 48 solutions, got : "
-           << get_red_status_str(evaluator.size()) << endl;
+      cerr << "list CVP failed (halfway), expected 2 or 48 solutions, got : " << evaluator.size()
+           << endl;
       return 1;
     }
+    // cerr << "list CVP failed (halfway) PASSED : " << evaluator.size() << endl;
   }
-   cerr << "list CVP failed (halfway) PASSED" << endl;
-
 
   return 0;
-
 }
 
 bool callback_firstf(size_t n, enumf *new_sol_coord, void *ctx)
