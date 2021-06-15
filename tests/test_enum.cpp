@@ -66,26 +66,34 @@ template <class FT> int test_list_cvp()
   // Search for up to 999999 vectors, up to radius 32.5 around the origin
   // the right answer is 196561
   FT rad           = 32.5;
-  int right_answer = 196561;
+  const unsigned int right_answer = 196561;
 
   // Tests with two targets: 0, and something very close to 0.
 
   // HOLE: Not sure how to set that up
   size_t d = A.get_rows();
+  if (d != 24)
+  {  
+    cerr << "Expected a lattice of dimension 24, got : "
+         << d << endl;
+    return 1;
+  }
+
   std::vector<FP_NR<FT>> target(d);
   ZZ_mat<mpz_t> empty_mat;
-  MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
+  MatGSO<Z_NR<mpz_t>, FP_NR<FT>> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
+  gso.update_gso();
 
-  FastEvaluator<FP_NR<FT>> evaluator(d, gso.get_mu_matrix(), gso.get_r_matrix(), EVALMODE_CV,
-                                     999999);
+  FastEvaluator<FP_NR<FT>> evaluator(999999);
   Enumeration<Z_NR<mpz_t>, FP_NR<FT>> enum_obj(gso, evaluator);
+
   enum_obj.enumerate(0, d, rad, 0, target);
 
   // HOLE: Not sure how to really count solutions
-  if (enum_obj.count_solution() != right_answer)
+  if (evaluator.size() != right_answer)
   {
-    cerr << "list CVP failed, expected 196561 solutions, got : "
-         << get_red_status_str(enum_obj.count_solution()) << endl;
+    cerr << "list CVP failed (center at 0), expected 196561 solutions, got : "
+         << get_red_status_str(evaluator.size()) << endl;
     return 1;
   }
 
@@ -94,10 +102,10 @@ template <class FT> int test_list_cvp()
   target.resize(d, 0.0001);
   enum_obj.enumerate(0, d, rad, 0, target);
   // HOLE: Not sure how to really count solutions
-  if (enum_obj.count_solution() != right_answer)
+  if (evaluator.size() != right_answer)
   {
-    cerr << "list CVP failed, expected 196561 solutions, got : "
-         << get_red_status_str(enum_obj.count_solution()) << endl;
+    cerr << "list CVP failed (center near 0), expected 196561 solutions, got : "
+         << get_red_status_str(evaluator.size()) << endl;
     return 1;
   }
 }
@@ -150,7 +158,7 @@ int main(int argc, char *argv[])
   int status = 0;
   status |= test_enum<double>(30);
   status |= test_callback_enum<double>(40);
-
+  status |= test_list_cvp<double>();
   if (status == 0)
   {
     std::cerr << "All tests passed." << std::endl;
