@@ -44,6 +44,62 @@ template <class FT> int test_enum(size_t d)
   }
 }
 
+
+/**
+   @brief Test if list_CVP via enumeration function returns the correct amount of vectors
+   @return
+*/
+
+
+template <class FT>
+int test_list_cvp()
+{
+  ZZ_mat<mpz_t> u;
+  status |= read_file(A, "tests/lattices/example_list_cvp_in_lattice");
+  int status = lll_reduction(A);    
+  if (status != RED_SUCCESS)
+  {
+    cerr << "LLL reduction failed: " << get_red_status_str(status) << endl;
+    return status;
+  }
+
+  // Search for up to 999999 vectors, up to radius 32.5 around the origin
+  // the right answer is 196561
+  FT rad = 32.5;
+  int right_answer = 196561;
+
+  // Tests with two targets: 0, and something very close to 0.
+
+  // HOLE: Not sure how to set that up
+  target = 0 ...
+
+  FastEvaluator<FP_NR<FT>> evaluator(999999);
+  Enumeration<Z_NR<mpz_t>, FP_NR<FT>> enum_obj(A.M, evaluator);
+  enum_obj.enumerate(0, d, max_dist, 0, target);
+
+  // HOLE: Not sure how to really count solutions
+  if (enum_obj.count_solution() != right_answer)
+  {
+    cerr << "list CVP failed, expected 196561 solutions, got : " << get_red_status_str(enum_obj.count_solution()) << endl;
+    return 1;
+  }
+
+  // HOLE: Not sure how to set that up
+  target = 0.001 ...
+  enum_obj.enumerate(0, d, max_dist, 0, target);
+  // HOLE: Not sure how to really count solutions
+  if (enum_obj.count_solution() != right_answer)
+  {
+    cerr << "list CVP failed, expected 196561 solutions, got : " << get_red_status_str(enum_obj.count_solution()) << endl;
+    return 1;
+  }
+
+
+}
+
+
+
+
 bool callback_firstf(size_t n, enumf *new_sol_coord, void *ctx)
 {
   if (new_sol_coord[0] == static_cast<double *>(ctx)[0])
