@@ -55,7 +55,8 @@ template <class FT> int test_list_cvp()
   ZZ_mat<mpz_t> u;
   int status = 0;
   ZZ_mat<mpz_t> A;
-  status |= read_file(A, "tests/lattices/example_list_cvp_in_lattice");
+  status |= read_file(A, TESTDATADIR "tests/lattices/example_list_cvp_in_lattice");
+
   status |= lll_reduction(A);
   if (status != RED_SUCCESS)
   {
@@ -65,7 +66,8 @@ template <class FT> int test_list_cvp()
 
   // Search for up to 999999 vectors, up to radius 32.5 around the origin
   // the right answer is 196561
-  FT rad           = 32.5;
+  FP_NR<FT> rad           = 32.5;
+  FP_NR<FT> half_rad           = 16.5;
   const unsigned int right_answer = 196561;
 
   // Tests with two targets: 0, and something very close to 0.
@@ -79,35 +81,63 @@ template <class FT> int test_list_cvp()
     return 1;
   }
 
-  std::vector<FP_NR<FT>> target(d);
   ZZ_mat<mpz_t> empty_mat;
   MatGSO<Z_NR<mpz_t>, FP_NR<FT>> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
-  gso.update_gso();
 
-  FastEvaluator<FP_NR<FT>> evaluator(999999);
-  Enumeration<Z_NR<mpz_t>, FP_NR<FT>> enum_obj(gso, evaluator);
-
-  enum_obj.enumerate(0, d, rad, 0, target);
-
-  // HOLE: Not sure how to really count solutions
-  if (evaluator.size() != right_answer)
   {
-    cerr << "list CVP failed (center at 0), expected 196561 solutions, got : "
-         << get_red_status_str(evaluator.size()) << endl;
-    return 1;
+    gso.update_gso();
+    FastEvaluator<FP_NR<FT>> evaluator(999999);
+    Enumeration<Z_NR<mpz_t>, FP_NR<FT>> enum_obj(gso, evaluator);
+
+    std::vector<FP_NR<FT>> target(d, 0.0);
+    enum_obj.enumerate(0, d, rad, 0, target);
+    if (evaluator.size() != right_answer)
+    {
+      cerr << "list CVP failed (center at 0), expected 196561 solutions, got : "
+           << get_red_status_str(evaluator.size()) << endl;
+      return 1;
+    }
   }
 
-  // HOLE: Not sure how to set that up
-  target.clear();
-  target.resize(d, 0.0001);
-  enum_obj.enumerate(0, d, rad, 0, target);
-  // HOLE: Not sure how to really count solutions
-  if (evaluator.size() != right_answer)
+  cerr << "list CVP (0) PASSED" << endl;
+
   {
-    cerr << "list CVP failed (center near 0), expected 196561 solutions, got : "
-         << get_red_status_str(evaluator.size()) << endl;
-    return 1;
+    gso.update_gso();
+    FastEvaluator<FP_NR<FT>> evaluator(999999);
+    Enumeration<Z_NR<mpz_t>, FP_NR<FT>> enum_obj(gso, evaluator);
+
+    std::vector<FP_NR<FT>> target(d, 0.0001);
+    enum_obj.enumerate(0, d, rad, 0, target);
+    if (evaluator.size() != right_answer)
+    {
+      cerr << "list CVP failed (center near 0), expected 196561 solutions, got : "
+           << get_red_status_str(evaluator.size()) << endl;
+      return 1;
+    }
   }
+
+  cerr << "list CVP (near 0) PASSED" << endl;
+
+  {
+    FastEvaluator<FP_NR<FT>> evaluator(999999);
+    Enumeration<Z_NR<mpz_t>, FP_NR<FT>> enum_obj(gso, evaluator);
+
+    std::vector<FP_NR<FT>> target(d, 0.0001);
+    target[0] = .499;
+    enum_obj.enumerate(0, d, half_rad, 0, target);
+
+    if (evaluator.size() != 2 || evaluator.size() != 48)
+    {
+      cerr << "list CVP failed (halfway), expected 2 or 48 solutions, got : "
+           << get_red_status_str(evaluator.size()) << endl;
+      return 1;
+    }
+  }
+   cerr << "list CVP failed (halfway) PASSED" << endl;
+
+
+  return 0;
+
 }
 
 bool callback_firstf(size_t n, enumf *new_sol_coord, void *ctx)
