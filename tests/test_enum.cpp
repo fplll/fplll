@@ -15,6 +15,7 @@
 
 #include <cstring>
 #include <fplll/fplll.h>
+#include <test_utils.h>
 
 using namespace fplll;
 
@@ -44,19 +45,18 @@ template <class FT> int test_enum(size_t d)
   }
 }
 
-
 /**
    @brief Test if list_CVP via enumeration function returns the correct amount of vectors
    @return
 */
 
-
-template <class FT>
-int test_list_cvp()
+template <class FT> int test_list_cvp()
 {
   ZZ_mat<mpz_t> u;
+  int status = 0;
+  ZZ_mat<mpz_t> A;
   status |= read_file(A, "tests/lattices/example_list_cvp_in_lattice");
-  int status = lll_reduction(A);    
+  status |= lll_reduction(A);
   if (status != RED_SUCCESS)
   {
     cerr << "LLL reduction failed: " << get_red_status_str(status) << endl;
@@ -65,40 +65,42 @@ int test_list_cvp()
 
   // Search for up to 999999 vectors, up to radius 32.5 around the origin
   // the right answer is 196561
-  FT rad = 32.5;
+  FT rad           = 32.5;
   int right_answer = 196561;
 
   // Tests with two targets: 0, and something very close to 0.
 
   // HOLE: Not sure how to set that up
-  target = 0 ...
+  size_t d = A.get_rows();
+  std::vector<FP_NR<FT>> target(d);
+  ZZ_mat<mpz_t> empty_mat;
+  MatGSO<Z_NR<mpz_t>, FP_NR<mpfr_t>> gso(A, empty_mat, empty_mat, GSO_INT_GRAM);
 
-  FastEvaluator<FP_NR<FT>> evaluator(999999);
-  Enumeration<Z_NR<mpz_t>, FP_NR<FT>> enum_obj(A.M, evaluator);
-  enum_obj.enumerate(0, d, max_dist, 0, target);
+  FastEvaluator<FP_NR<FT>> evaluator(d, gso.get_mu_matrix(), gso.get_r_matrix(), EVALMODE_CV,
+                                     999999);
+  Enumeration<Z_NR<mpz_t>, FP_NR<FT>> enum_obj(gso, evaluator);
+  enum_obj.enumerate(0, d, rad, 0, target);
 
   // HOLE: Not sure how to really count solutions
   if (enum_obj.count_solution() != right_answer)
   {
-    cerr << "list CVP failed, expected 196561 solutions, got : " << get_red_status_str(enum_obj.count_solution()) << endl;
+    cerr << "list CVP failed, expected 196561 solutions, got : "
+         << get_red_status_str(enum_obj.count_solution()) << endl;
     return 1;
   }
 
   // HOLE: Not sure how to set that up
-  target = 0.001 ...
-  enum_obj.enumerate(0, d, max_dist, 0, target);
+  target.clear();
+  target.resize(d, 0.0001);
+  enum_obj.enumerate(0, d, rad, 0, target);
   // HOLE: Not sure how to really count solutions
   if (enum_obj.count_solution() != right_answer)
   {
-    cerr << "list CVP failed, expected 196561 solutions, got : " << get_red_status_str(enum_obj.count_solution()) << endl;
+    cerr << "list CVP failed, expected 196561 solutions, got : "
+         << get_red_status_str(enum_obj.count_solution()) << endl;
     return 1;
   }
-
-
 }
-
-
-
 
 bool callback_firstf(size_t n, enumf *new_sol_coord, void *ctx)
 {
