@@ -7,15 +7,24 @@ on:
     - cron: '0 0 * * 0' # weekly
 
 env:
-  MAX_ENUM_DIM: 64
-  MAX_PARALLEL_ENUM_DIM: 20
   JOBS: 2
+  CONFIGURE_OPTS: --enable-recursive-enum  --with-max-enum-dim=64 --with-max-parallel-enum-dim=64
 
 jobs:
   linux:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        include:
+          - configure-options: --enable-recursive-enum  --with-max-enum-dim=64 --with-max-parallel-enum-dim=64
+          - configure-options: --enable-recursive-enum  --with-max-enum-dim=64 --with-max-parallel-enum-dim=0
+          - configure-options: --disable-recursive-enum --with-max-enum-dim=64 --with-max-parallel-enum-dim=0         
+              
     steps:
+      - name: Echo Configure Options
+        env:
+          CONFIGURE_OPTS: ${{ matrix.configure-options }}
+        run: echo $CONFIGURE_OPTS
       - name: Check out
         uses: actions/checkout@v2
       - name: Install prerequisites
@@ -25,8 +34,7 @@ jobs:
       - name: Configure
         run: |
           ./autogen.sh
-          ./configure --disable-static --with-max-enum-dim=$MAX_ENUM_DIM \
-                      --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM
+          ./configure --disable-static $CONFIGURE_OPTS
       - name: Compile
         run: make -j $JOBS
 
@@ -48,8 +56,7 @@ jobs:
       - name: Configure
         run: |
           ./autogen.sh
-          ./configure --disable-static --with-max-enum-dim=$MAX_ENUM_DIM \
-                      --with-max-parallel-enum-dim=$MAX_PARALLEL_ENUM_DIM
+          ./configure --disable-static $CONFIGURE_OPTS
       - name: Compile
         run: make -j $JOBS
 
