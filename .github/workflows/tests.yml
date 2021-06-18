@@ -8,7 +8,7 @@ on:
 
 env:
   JOBS: 2
-  CONFIGURE_OPTS: --enable-recursive-enum  --with-max-enum-dim=64 --max-parallel-enum-dim=64
+  CONFIGURE_OPTS: --enable-recursive-enum  --with-max-enum-dim=64 --with-max-parallel-enum-dim=64
 
 jobs:
   linux:
@@ -16,9 +16,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - configure-options: --enable-recursive-enum  --with-max-enum-dim=64 --max-parallel-enum-dim=64
-          - configure-options: --enable-recursive-enum  --with-max-enum-dim=64 --max-parallel-enum-dim=0
-          - configure-options: --disable-recursive-enum --with-max-enum-dim=64 --max-parallel-enum-dim=0         
+          - configure-options: --enable-recursive-enum  --with-max-enum-dim=64 --with-max-parallel-enum-dim=64
+          - configure-options: --enable-recursive-enum  --with-max-enum-dim=64 --with-max-parallel-enum-dim=0
+          - configure-options: --disable-recursive-enum --with-max-enum-dim=64 --with-max-parallel-enum-dim=0         
               
     steps:
       - name: Echo Configure Options
