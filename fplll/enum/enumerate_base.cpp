@@ -77,69 +77,42 @@ inline void EnumerationBase::enumerate_recursive(
                            << " newdist=" << newdist << " partdistbounds_k=" << partdistbounds[kk]);
     enumerate_recursive(opts<kk - 1, kk_start, dualenum, findsubsols, enable_reset>());
 
-    if (partdist[kk] != 0.0)
+    if (!is_svp || partdist[kk] != 0.0)
     {
       x[kk] += dx[kk];
       ddx[kk] = -ddx[kk];
       dx[kk]  = ddx[kk] - dx[kk];
-
-      enumf alphak2  = x[kk] - center[kk];
-      enumf newdist2 = partdist[kk] + alphak2 * alphak2 * rdiag[kk];
-      if (!(newdist2 <= partdistbounds[kk]))
-        return;
-      ++nodes[kk];
-      alpha[kk] = alphak2;
-      if (kk == 0)
-      {
-        if (newdist2 > 0.0 || !is_svp)
-          process_solution(newdist2);
-      }
-      else
-      {
-        partdist[kk - 1] = newdist2;
-        if (dualenum)
-          center_partsums[kk - 1][kk - 1 + 1] =
-              center_partsums[kk - 1][kk - 1 + 1 + 1] - alpha[kk - 1 + 1] * mut[kk - 1][kk - 1 + 1];
-        else
-          center_partsums[kk - 1][kk - 1 + 1] =
-              center_partsums[kk - 1][kk - 1 + 1 + 1] - x[kk - 1 + 1] * mut[kk - 1][kk - 1 + 1];
-        if (kk > center_partsum_begin[kk - 1])
-          center_partsum_begin[kk - 1] = kk;
-        center[kk - 1] = center_partsums[kk - 1][kk - 1 + 1];
-        roundto(x[kk - 1], center[kk - 1]);
-        dx[kk - 1] = ddx[kk - 1] = (((int)(center[kk - 1] >= x[kk - 1]) & 1) << 1) - 1;
-      }
     }
     else
     {
       ++x[kk];
+    }
 
-      enumf alphak2  = x[kk] - center[kk];
-      enumf newdist2 = partdist[kk] + alphak2 * alphak2 * rdiag[kk];
-      if (!(newdist2 <= partdistbounds[kk]))
-        return;
-      ++nodes[kk];
-      alpha[kk] = alphak2;
-      if (kk == 0)
-      {
-        if (newdist2 > 0.0 || !is_svp)
-          process_solution(newdist2);
-      }
+    enumf alphak2  = x[kk] - center[kk];
+    enumf newdist2 = partdist[kk] + alphak2 * alphak2 * rdiag[kk];
+    if (!(newdist2 <= partdistbounds[kk]))
+      return;
+    ++nodes[kk];
+    alpha[kk] = alphak2;
+    if (kk == 0)
+    {
+      if (newdist2 > 0.0 || !is_svp)
+        process_solution(newdist2);
+    }
+    else
+    {
+      partdist[kk - 1] = newdist2;
+      if (dualenum)
+        center_partsums[kk - 1][kk - 1 + 1] =
+            center_partsums[kk - 1][kk - 1 + 1 + 1] - alpha[kk - 1 + 1] * mut[kk - 1][kk - 1 + 1];
       else
-      {
-        partdist[kk - 1] = newdist2;
-        if (dualenum)
-          center_partsums[kk - 1][kk - 1 + 1] =
-              center_partsums[kk - 1][kk - 1 + 1 + 1] - alpha[kk - 1 + 1] * mut[kk - 1][kk - 1 + 1];
-        else
-          center_partsums[kk - 1][kk - 1 + 1] =
-              center_partsums[kk - 1][kk - 1 + 1 + 1] - x[kk - 1 + 1] * mut[kk - 1][kk - 1 + 1];
-        if (kk > center_partsum_begin[kk - 1])
-          center_partsum_begin[kk - 1] = kk;
-        center[kk - 1] = center_partsums[kk - 1][kk - 1 + 1];
-        roundto(x[kk - 1], center[kk - 1]);
-        dx[kk - 1] = ddx[kk - 1] = (((int)(center[kk - 1] >= x[kk - 1]) & 1) << 1) - 1;
-      }
+        center_partsums[kk - 1][kk - 1 + 1] =
+            center_partsums[kk - 1][kk - 1 + 1 + 1] - x[kk - 1 + 1] * mut[kk - 1][kk - 1 + 1];
+      if (kk > center_partsum_begin[kk - 1])
+        center_partsum_begin[kk - 1] = kk;
+      center[kk - 1] = center_partsums[kk - 1][kk - 1 + 1];
+      roundto(x[kk - 1], center[kk - 1]);
+      dx[kk - 1] = ddx[kk - 1] = (((int)(center[kk - 1] >= x[kk - 1]) & 1) << 1) - 1;
     }
   }
 }

@@ -72,7 +72,7 @@ public:
 protected:
   /* configuration */
   bool dual;
-  bool is_svp;
+  bool is_svp;  // only for SVP: exploit symmetry in enumeration to half search space
   bool resetflag;
 
   /* enumeration input */
@@ -156,7 +156,17 @@ protected:
       if (k >= k_end)
         return false;
       k_max = k;
-      ++x[k];
+      if (is_svp)
+      {
+        // only for SVP: break symmetry at the top non-zero coefficient
+        ++x[k];
+      }
+      else
+      {
+        x[k] += dx[k];
+        ddx[k] = -ddx[k];
+        dx[k]  = ddx[k] - dx[k];
+      }
     }
     return true;
   }
