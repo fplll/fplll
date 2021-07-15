@@ -216,7 +216,7 @@ public:
    * Coefficients of the Gram Schmidt Orthogonalization
    * (lower triangular matrix)
    */
-  const Matrix<ZT> &get_g_matrix() const 
+  const Matrix<ZT> &get_g_matrix() const
   {
     if (gptr == nullptr)
     {
@@ -657,7 +657,8 @@ inline const FT &MatGSOInterface<ZT, FT>::get_mu_exp(int i, int j, long &expo) c
   return mu(i, j);
 }
 
-template <class ZT, class FT> inline const FT &MatGSOInterface<ZT, FT>::get_mu_exp(int i, int j) const
+template <class ZT, class FT>
+inline const FT &MatGSOInterface<ZT, FT>::get_mu_exp(int i, int j) const
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i && j < gso_valid_cols[i] &&
                     !in_row_op_range(i));
@@ -686,7 +687,8 @@ inline const FT &MatGSOInterface<ZT, FT>::get_r_exp(int i, int j, long &expo) co
   return r(i, j);
 }
 
-template <class ZT, class FT> inline const FT &MatGSOInterface<ZT, FT>::get_r_exp(int i, int j) const
+template <class ZT, class FT>
+inline const FT &MatGSOInterface<ZT, FT>::get_r_exp(int i, int j) const
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < gso_valid_cols[i] &&
                     !in_row_op_range(i));
