@@ -202,21 +202,21 @@ public:
    * (lower triangular matrix)
    * mu(i, j) = r(i, j) / ||b*_j||^2.
    */
-  const Matrix<FT> &get_mu_matrix() { return mu; }
+  const Matrix<FT> &get_mu_matrix() const { return mu; }
 
   /**
    * Returns the r matrix
    * Coefficients of the Gram Schmidt Orthogonalization
    * (lower triangular matrix)
    */
-  const Matrix<FT> &get_r_matrix() { return r; }
+  const Matrix<FT> &get_r_matrix() const { return r; }
 
   /**
    * Returns the g matrix (Z_NR version of r)
    * Coefficients of the Gram Schmidt Orthogonalization
    * (lower triangular matrix)
    */
-  const Matrix<ZT> &get_g_matrix()
+  const Matrix<ZT> &get_g_matrix() const 
   {
     if (gptr == nullptr)
     {
@@ -234,8 +234,8 @@ public:
    * The returned value is a reference to the coefficient of the internal
    * matrix, which may change if the matrix is modified.
    */
-  inline const FT &get_mu_exp(int i, int j, long &expo);
-  inline const FT &get_mu_exp(int i, int j);
+  inline const FT &get_mu_exp(int i, int j, long &expo) const;
+  inline const FT &get_mu_exp(int i, int j) const;
 
   /**
    * Returns f = (b_i, b*_j) / ||b*_j||^2.
@@ -262,8 +262,8 @@ public:
    * The returned value is a reference to the coefficient of the internal
    * matrix, which may change if the matrix is modified
    */
-  inline const FT &get_r_exp(int i, int j, long &expo);
-  inline const FT &get_r_exp(int i, int j);
+  inline const FT &get_r_exp(int i, int j, long &expo) const;
+  inline const FT &get_r_exp(int i, int j) const;
 
   /**
    * Returns f = (b_i, b*_j).
@@ -646,7 +646,7 @@ template <class ZT, class FT> inline ZT &MatGSOInterface<ZT, FT>::sym_g(int i, i
 }
 
 template <class ZT, class FT>
-inline const FT &MatGSOInterface<ZT, FT>::get_mu_exp(int i, int j, long &expo)
+inline const FT &MatGSOInterface<ZT, FT>::get_mu_exp(int i, int j, long &expo) const
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i && j < gso_valid_cols[i] &&
                     !in_row_op_range(i));
@@ -657,7 +657,7 @@ inline const FT &MatGSOInterface<ZT, FT>::get_mu_exp(int i, int j, long &expo)
   return mu(i, j);
 }
 
-template <class ZT, class FT> inline const FT &MatGSOInterface<ZT, FT>::get_mu_exp(int i, int j)
+template <class ZT, class FT> inline const FT &MatGSOInterface<ZT, FT>::get_mu_exp(int i, int j) const
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < i && j < gso_valid_cols[i] &&
                     !in_row_op_range(i));
@@ -675,7 +675,7 @@ template <class ZT, class FT> inline FT &MatGSOInterface<ZT, FT>::get_mu(FT &f, 
 }
 
 template <class ZT, class FT>
-inline const FT &MatGSOInterface<ZT, FT>::get_r_exp(int i, int j, long &expo)
+inline const FT &MatGSOInterface<ZT, FT>::get_r_exp(int i, int j, long &expo) const
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < gso_valid_cols[i] &&
                     !in_row_op_range(i));
@@ -686,7 +686,7 @@ inline const FT &MatGSOInterface<ZT, FT>::get_r_exp(int i, int j, long &expo)
   return r(i, j);
 }
 
-template <class ZT, class FT> inline const FT &MatGSOInterface<ZT, FT>::get_r_exp(int i, int j)
+template <class ZT, class FT> inline const FT &MatGSOInterface<ZT, FT>::get_r_exp(int i, int j) const
 {
   FPLLL_DEBUG_CHECK(i >= 0 && i < n_known_rows && j >= 0 && j < gso_valid_cols[i] &&
                     !in_row_op_range(i));
