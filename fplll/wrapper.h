@@ -41,7 +41,7 @@ FPLLL_BEGIN_NAMESPACE
 class Wrapper
 {
 public:
-  /* u must be either empty of the identity matrix */
+  /* u must be either empty or the identity matrix */
   Wrapper(ZZ_mat<mpz_t> &b, ZZ_mat<mpz_t> &u, ZZ_mat<mpz_t> &u_inv, double delta, double eta,
           int flags);
 
