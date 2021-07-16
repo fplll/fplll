@@ -34,7 +34,7 @@ FPLLL_BEGIN_NAMESPACE
  * User note: all of the parameters passed into this class are non-const references. Thus, this
  * class may overwrite these variables. In particular, the methods in this class typically
  * over-write the parameter ``u`` with the transformation matrix applied to ``b`` to produce LLL(B).
- * In other words, let C = LLL(B). Then we can write C = U^T B for some unimodular transformation
+ * In other words, let C = LLL(B). Then we can write C = U B for some unimodular transformation
  * matrix U. For this reason, ``u`` should either be an empty matrix or the identity matrix when it
  * is passed in to this function, so that no information is lost.
  */
