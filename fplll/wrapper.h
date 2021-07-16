@@ -32,11 +32,17 @@ FPLLL_BEGIN_NAMESPACE
  * heuristic and fast variants of both LLL and HLLL.
  *
  * User note: all of the parameters passed into this class are non-const references. Thus, this
- * class may overwrite these variables. In particular, the methods in this class typically
+ * class may overwrite these variables. 
+ *
+ * In particular, the methods in this class typically
  * over-write the parameter ``u`` with the transformation matrix applied to ``b`` to produce LLL(B).
  * In other words, let C = LLL(B). Then we can write C = U B for some unimodular transformation
  * matrix U. For this reason, ``u`` should either be an empty matrix or the identity matrix when it
- * is passed in to this function, so that no information is lost.
+ * is passed in to this function, so that no information is lost. 
+ *
+ * Similarly, the parameter ``u_inv`` will contain the inverse matrix ``u ^ -1``. 
+ * This allows you to recover the original basis ``b`` by multipyling ``C`` by ``u_inv``.
+ * This and other such behaviour on these parameters is described in some detail in gso_interface.h. 
  */
 class Wrapper
 {
