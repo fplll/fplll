@@ -41,7 +41,10 @@ FPLLL_BEGIN_NAMESPACE
  * is passed in to this function, so that no information is lost.
  *
  * Similarly, the parameter ``u_inv`` will contain the inverse matrix ``u ^ -1``.
- * This allows you to recover the original basis ``b`` by multipyling ``C`` by ``u_inv``.
+ * This allows you to recover the original basis ``b`` by multiplying ``C`` by ``u_inv``.
+ * Note that all operations on this object are carried out on the transpose of this matrix 
+ * (see gso_interface.h) for speed: hence the discrepancy between the names (see the lll_reduction method
+ * in wraper.cpp for this). 
  * This and other such behaviour on these parameters is described in some detail in gso_interface.h.
  */
 class Wrapper
