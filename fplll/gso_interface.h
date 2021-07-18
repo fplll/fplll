@@ -71,6 +71,8 @@ public:
    *   (in this case both must have the same number of rows).
    *   If u is initially the identity matrix, multiplying transform by the
    *   initial basis gives the current basis.
+   *   In other words, u will contain the transformation matrix used on the basis b
+   *   that was used to obtain the current basis.
    * @param u_inv_t
    *   Inverse transform (should be empty, which disables the computation, or
    *   initialized with identity matrix). It works only if u is not empty.
