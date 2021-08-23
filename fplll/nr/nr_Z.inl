@@ -24,10 +24,10 @@ public:
   /**
    * Constructors.
    */
-  inline Z_NR<Z>();
-  inline Z_NR<Z>(const Z_NR<Z> &z);
-  inline Z_NR<Z>(const Z &z);
-  inline ~Z_NR<Z>();
+  inline Z_NR();
+  inline Z_NR(const Z_NR<Z> &z);
+  inline Z_NR(const Z &z);
+  inline ~Z_NR();
 
   /** get data */
 
