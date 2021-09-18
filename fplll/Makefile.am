@@ -124,7 +124,6 @@ libfpllld_la_LDFLAGS=$(libfplll_la_LDFLAGS)
 
 install-data-hook:
 	echo "#include <fplll/fplll.h>" > "$(builddir)/fplll.h.root"
-	echo "using namespace fplll;" >> "$(builddir)/fplll.h.root"
 	$(INSTALL) -m 644 "$(builddir)/fplll.h.root" "${DESTDIR}$(includedir)/fplll.h"
 	rm -f "$(builddir)/fplll.h.root"
 
