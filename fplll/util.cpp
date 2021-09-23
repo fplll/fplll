@@ -27,13 +27,6 @@ enum MinPrecAlgo
   MINPREC_L2
 };
 
-/* State of LDConvHelper (declared in nr.h, must be defined in exactly one
-   source file) */
-#ifdef FPLLL_WITH_LONG_DOUBLE
-mpfr_t LDConvHelper::temp;
-bool LDConvHelper::temp_initialized = false;
-#endif
-
 /* State of the random generator (declared in nr.h, must be defined in exactly
    one source file) */
 bool RandGen::initialized = false;

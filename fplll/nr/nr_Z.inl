@@ -242,12 +242,13 @@ public:
   /** Converts op to a long double with rounding to nearest. */
   static long double mpz_get_ld(const mpz_t op)
   {
-    init_temp();
+    mpfr_t temp;
+    mpfr_init2(temp, numeric_limits<long double>::digits);
     mpfr_set_z(temp, op, GMP_RNDN);
-    return mpfr_get_ld(temp, GMP_RNDN);  // exact
+    const auto result{mpfr_get_ld(temp, GMP_RNDN)};  // exact
+    mpfr_clear(temp);
+    return result;
   }
-
-  static void free() { free_temp(); }
 
   /**
    * Returns d and sets exp such that 0.5 <= |d| < 1 and d * 2^exp is equal
@@ -255,41 +256,24 @@ public:
    */
   static long double mpz_get_ld_2exp(long *exp, const mpz_t op)
   {
-    init_temp();
+    mpfr_t temp;
+    mpfr_init2(temp, numeric_limits<long double>::digits);
     mpfr_set_z(temp, op, GMP_RNDN);
-    return mpfr_get_ld_2exp(exp, temp, GMP_RNDN);  // exact
+
+    const auto result{mpfr_get_ld_2exp(exp, temp, GMP_RNDN)};  // exact
+    mpfr_clear(temp);
+    return result;
   }
 
   /** Sets the value of rop from op. */
   static void mpz_set_ld(mpz_t rop, long double op)
   {
-    init_temp();
+    mpfr_t temp;
+    mpfr_init2(temp, numeric_limits<long double>::digits);
     mpfr_set_ld(temp, op, GMP_RNDN);  // exact
     mpfr_get_z(rop, temp, GMP_RNDN);
+    mpfr_clear(temp);
   }
-
-private:
-  static inline void init_temp()
-  {
-    if (!temp_initialized)
-    {
-      mpfr_init2(temp, numeric_limits<long double>::digits);
-      temp_initialized = true;
-    }
-  }
-
-  static inline void free_temp()
-  {
-    if (temp_initialized)
-    {
-      mpfr_clear(temp);
-      temp_initialized = false;
-    }
-  }
-
-  // These static members are initialized in util.cpp
-  static mpfr_t temp;
-  static bool temp_initialized;
 };
 
 #endif
