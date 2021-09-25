@@ -236,19 +236,26 @@ public:
  */
 #ifdef FPLLL_WITH_LONG_DOUBLE
 
+// Thread_local variables for doing numeric conversions.
+// These are global to replace their previous usage, but member variables
+// cannot be thread local and so they're declared at this scope.
+// NOTE: these are extern because these can only have one definition.
+// These are declared in util.cpp
+extern thread_local mpfr_t temp_mpfr;
+extern thread_local bool temp_mpfr_initialized;
+
 class LDConvHelper
 {
 public:
   /** Converts op to a long double with rounding to nearest. */
   static long double mpz_get_ld(const mpz_t op)
   {
-    mpfr_t temp;
-    mpfr_init2(temp, numeric_limits<long double>::digits);
-    mpfr_set_z(temp, op, GMP_RNDN);
-    const auto result{mpfr_get_ld(temp, GMP_RNDN)};  // exact
-    mpfr_clear(temp);
-    return result;
+    init_temp();
+    mpfr_set_z(temp_mpfr, op, GMP_RNDN);
+    return mpfr_get_ld(temp_mpfr, GMP_RNDN);  // exact
   }
+
+  static void free() { free_temp(); }
 
   /**
    * Returns d and sets exp such that 0.5 <= |d| < 1 and d * 2^exp is equal
@@ -256,23 +263,36 @@ public:
    */
   static long double mpz_get_ld_2exp(long *exp, const mpz_t op)
   {
-    mpfr_t temp;
-    mpfr_init2(temp, numeric_limits<long double>::digits);
-    mpfr_set_z(temp, op, GMP_RNDN);
-
-    const auto result{mpfr_get_ld_2exp(exp, temp, GMP_RNDN)};  // exact
-    mpfr_clear(temp);
-    return result;
+    init_temp();
+    mpfr_set_z(temp_mpfr, op, GMP_RNDN);
+    return mpfr_get_ld_2exp(exp, temp_mpfr, GMP_RNDN);  // exact
   }
 
   /** Sets the value of rop from op. */
   static void mpz_set_ld(mpz_t rop, long double op)
   {
-    mpfr_t temp;
-    mpfr_init2(temp, numeric_limits<long double>::digits);
-    mpfr_set_ld(temp, op, GMP_RNDN);  // exact
-    mpfr_get_z(rop, temp, GMP_RNDN);
-    mpfr_clear(temp);
+    init_temp();
+    mpfr_set_ld(temp_mpfr, op, GMP_RNDN);  // exact
+    mpfr_get_z(rop, temp_mpfr, GMP_RNDN);
+  }
+
+private:
+  static inline void init_temp()
+  {
+    if (!temp_mpfr_initialized)
+    {
+      mpfr_init2(temp_mpfr, numeric_limits<long double>::digits);
+      temp_mpfr_initialized = true;
+    }
+  }
+
+  static inline void free_temp()
+  {
+    if (temp_mpfr_initialized)
+    {
+      mpfr_clear(temp_mpfr);
+      temp_mpfr_initialized = false;
+    }
   }
 };
 
