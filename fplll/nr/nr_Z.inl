@@ -240,7 +240,7 @@ public:
 // These are global to replace their previous usage, but member variables
 // cannot be thread local and so they're declared at this scope.
 // NOTE: these are extern because these can only have one definition.
-// These are declared in util.cpp
+// These are defined in util.cpp
 extern thread_local mpfr_t temp_mpfr;
 extern thread_local bool temp_mpfr_initialized;
 
