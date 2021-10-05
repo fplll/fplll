@@ -36,11 +36,9 @@ public:
    * needed).
    */
   LLLReduction(MatGSOInterface<ZT, FT> &m, double delta, double eta, int flags);
-
 #ifdef FPLLL_WITH_LONG_DOUBLE
   ~LLLReduction() { LDConvHelper::free(); }
 #endif
-
   /**
      @brief LLL reduction.
 

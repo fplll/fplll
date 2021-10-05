@@ -236,6 +236,14 @@ public:
  */
 #ifdef FPLLL_WITH_LONG_DOUBLE
 
+// Thread_local variables for doing numeric conversions.
+// These are global to replace their previous usage, but member variables
+// cannot be thread local and so they're declared at this scope.
+// NOTE: these are extern because these can only have one definition.
+// These are defined in util.cpp
+extern thread_local mpfr_t temp_mpfr;
+extern thread_local bool temp_mpfr_initialized;
+
 class LDConvHelper
 {
 public:
@@ -243,8 +251,8 @@ public:
   static long double mpz_get_ld(const mpz_t op)
   {
     init_temp();
-    mpfr_set_z(temp, op, GMP_RNDN);
-    return mpfr_get_ld(temp, GMP_RNDN);  // exact
+    mpfr_set_z(temp_mpfr, op, GMP_RNDN);
+    return mpfr_get_ld(temp_mpfr, GMP_RNDN);  // exact
   }
 
   static void free() { free_temp(); }
@@ -256,40 +264,36 @@ public:
   static long double mpz_get_ld_2exp(long *exp, const mpz_t op)
   {
     init_temp();
-    mpfr_set_z(temp, op, GMP_RNDN);
-    return mpfr_get_ld_2exp(exp, temp, GMP_RNDN);  // exact
+    mpfr_set_z(temp_mpfr, op, GMP_RNDN);
+    return mpfr_get_ld_2exp(exp, temp_mpfr, GMP_RNDN);  // exact
   }
 
   /** Sets the value of rop from op. */
   static void mpz_set_ld(mpz_t rop, long double op)
   {
     init_temp();
-    mpfr_set_ld(temp, op, GMP_RNDN);  // exact
-    mpfr_get_z(rop, temp, GMP_RNDN);
+    mpfr_set_ld(temp_mpfr, op, GMP_RNDN);  // exact
+    mpfr_get_z(rop, temp_mpfr, GMP_RNDN);
   }
 
 private:
   static inline void init_temp()
   {
-    if (!temp_initialized)
+    if (!temp_mpfr_initialized)
     {
-      mpfr_init2(temp, numeric_limits<long double>::digits);
-      temp_initialized = true;
+      mpfr_init2(temp_mpfr, numeric_limits<long double>::digits);
+      temp_mpfr_initialized = true;
     }
   }
 
   static inline void free_temp()
   {
-    if (temp_initialized)
+    if (temp_mpfr_initialized)
     {
-      mpfr_clear(temp);
-      temp_initialized = false;
+      mpfr_clear(temp_mpfr);
+      temp_mpfr_initialized = false;
     }
   }
-
-  // These static members are initialized in util.cpp
-  static mpfr_t temp;
-  static bool temp_initialized;
 };
 
 #endif
