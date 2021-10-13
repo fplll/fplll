@@ -409,7 +409,7 @@ Please add yourself here if you make a contribution.
 
 - [json.hpp](fplll/io/json.hpp) is taken from https://github.com/nlohmann/json
 
-- This project has been supported by ERC Starting Grant ERC-2013-StG-335086-LATTAC and by the European Union PROMETHEUS project (Horizon 2020 Research and Innovation Program, grant 780701).
+- This project has been supported by ERC Starting Grant ERC-2013-StG-335086-LATTAC, by the European Union PROMETHEUS project (Horizon 2020 Research and Innovation Program, grant 780701), by EPSRC grant EP/P009417/1 and by EPSRC grant EP/S020330/1.
 
 # Contributing #
 
