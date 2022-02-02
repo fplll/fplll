@@ -248,8 +248,8 @@ template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &
   ZZ_mat<mpz_t> u;
   bool with_coord     = strchr(format, 'c') != NULL;
   bool with_coord_std = strchr(format, 's') != NULL;
-  int flags           = SVP_DEFAULT | (o.verbose ? SVP_VERBOSE : 0);
   int flagsLLL        = LLL_DEFAULT | (o.verbose ? LLL_VERBOSE : 0);
+  int flags;
   int status;
 
   if (!o.no_lll)
@@ -270,9 +270,15 @@ template <> int svpcvp(Options &o, ZZ_mat<mpz_t> &b, const vector<Z_NR<mpz_t>> &
   }
 
   if (target.empty())
+  {
+    flags  = SVP_DEFAULT | (o.verbose ? SVP_VERBOSE : 0);
     status = shortest_vector(b, sol_coord, SVPM_PROVED, flags);
+  }
   else
-    status = closest_vector(b, target, sol_coord, flags);
+  {
+    flags  = CVP_DEFAULT | (o.verbose ? CVP_VERBOSE : 0);
+    status = closest_vector(b, target, sol_coord, CVPM_PROVED, flags);
+  }
 
   if (status != RED_SUCCESS)
   {
