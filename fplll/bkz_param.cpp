@@ -81,7 +81,7 @@ vector<Strategy> load_strategies_json(const std::string &filename)
 {
   json js;
   {
-    std::ifstream fs(filename);
+    std::ifstream fs(strategy_full_path(filename));
     if (fs.fail())
       throw std::runtime_error("Cannot open strategies file.");
     fs >> js;
