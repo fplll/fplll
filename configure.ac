@@ -1,8 +1,8 @@
 # -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.61)
-AC_INIT(fplll, 5.4.1)
+AC_PREREQ([2.71])
+AC_INIT([fplll],[5.4.2])
 AC_CONFIG_SRCDIR([fplll/fplll.cpp])
 AM_MAINTAINER_MODE([enable])
 AC_CANONICAL_TARGET
@@ -20,7 +20,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 DEFAULT_CXXFLAGS="-O3 -Wall"
 
@@ -41,7 +41,7 @@ LT_INIT
 #    current, and set both revision and age to zero.
 
 FPLLL_LT_CURRENT=7
-FPLLL_LT_REVISION=0
+FPLLL_LT_REVISION=1
 FPLLL_LT_AGE=0
 
 AC_SUBST(FPLLL_LT_CURRENT)
@@ -51,7 +51,7 @@ AC_SUBST(FPLLL_LT_AGE)
 AC_PROG_INSTALL
 
 # Checks for programs.
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_MAKE_SET
@@ -141,7 +141,15 @@ AS_IF([test "x${have_libqd}" = "xyes"], [
 AC_SUBST(LIBQD_LIBS)
 
 # Checks for header files.
-AC_HEADER_STDC
+m4_warn([obsolete],
+[The preprocessor macro `STDC_HEADERS' is obsolete.
+  Except in unusual embedded environments, you can safely include all
+  ISO C90 headers unconditionally.])dnl
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_CHECK_HEADERS([limits.h cstdio iostream string limits vector])
 
 # Checks for typedefs, structures, and compiler characteristics.

@@ -75,3 +75,4 @@ doc/html/
 /tests/test_bkz_gram
 /tests/test_svp_gram
 /tests/test_counter
+/.cache/
