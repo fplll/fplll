@@ -1,6 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classEvaluator.html" title="Evaluator\&lt; FP_NR\&lt; mpfr\l_t \&gt; \&gt;" alt="" coords="5,23,176,65"/>
-<area shape="rect" id="node2" href="$classErrorBoundedEvaluator.html" title="ErrorBoundedEvaluator" alt="" coords="224,31,380,57"/>
-<area shape="rect" id="node3" href="$classExactErrorBoundedEvaluator.html" title="ExactErrorBoundedEvaluator" alt="" coords="428,5,619,32"/>
-<area shape="rect" id="node4" href="$classFastErrorBoundedEvaluator.html" title="FastErrorBoundedEvaluator" alt="" coords="432,56,615,83"/>
+<area shape="rect" id="node1" href="$classEvaluator.html" title=" " alt="" coords="5,23,176,65"/>
+<area shape="rect" id="node2" href="$classErrorBoundedEvaluator.html" title=" " alt="" coords="224,31,380,57"/>
+<area shape="rect" id="node3" href="$classExactErrorBoundedEvaluator.html" title=" " alt="" coords="428,5,619,32"/>
+<area shape="rect" id="node4" href="$classFastErrorBoundedEvaluator.html" title=" " alt="" coords="432,56,615,83"/>
 </map>

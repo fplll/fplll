@@ -1,51 +1,52 @@
 <map id="fplll/nr/nr_FP_dpe.inl" name="fplll/nr/nr_FP_dpe.inl">
-<area shape="rect" id="node2" href="$nr_8h.html" title="fplll/nr/nr.h" alt="" coords="657,80,739,107"/>
-<area shape="rect" id="node3" href="$numvect_8h.html" title="fplll/nr/numvect.h" alt="" coords="637,155,759,181"/>
-<area shape="rect" id="node48" href="$enumerate__base_8h.html" title="fplll/enum/enumerate\l_base.h" alt="" coords="172,379,315,420"/>
-<area shape="rect" id="node50" href="$bkz__param_8cpp.html" title="fplll/bkz_param.cpp" alt="" coords="784,155,919,181"/>
-<area shape="rect" id="node4" href="$matrix_8h.html" title="fplll/nr/matrix.h" alt="" coords="1025,229,1133,256"/>
-<area shape="rect" id="node5" href="$gso__interface_8h.html" title="fplll/gso_interface.h" alt="" coords="735,304,869,331"/>
-<area shape="rect" id="node6" href="$gso_8h.html" title="fplll/gso.h" alt="" coords="937,386,1016,413"/>
-<area shape="rect" id="node20" href="$test__gso_8cpp.html" title="tests/test_gso.cpp" alt="" coords="1046,475,1177,502"/>
-<area shape="rect" id="node32" href="$gso__gram_8h.html" title="fplll/gso_gram.h" alt="" coords="1193,386,1307,413"/>
-<area shape="rect" id="node35" href="$matrix_8cpp.html" title="fplll/nr/matrix.cpp" alt="" coords="894,304,1017,331"/>
-<area shape="rect" id="node36" href="$util_8h.html" title="fplll/util.h" alt="" coords="1478,304,1553,331"/>
-<area shape="rect" id="node44" href="$wrapper_8h.html" title="fplll/wrapper.h" alt="" coords="2263,475,2365,502"/>
-<area shape="rect" id="node45" href="$householder_8h.html" title="fplll/householder.h" alt="" coords="1871,386,1997,413"/>
-<area shape="rect" id="node7" href="$lll_8h.html" title="fplll/lll.h" alt="" coords="1313,475,1379,502"/>
-<area shape="rect" id="node12" href="$test__bkz__gram_8cpp.html" title="tests/test_bkz_gram.cpp" alt="" coords="1333,825,1500,852"/>
-<area shape="rect" id="node13" href="$test__lll__gram_8cpp.html" title="tests/test_lll_gram.cpp" alt="" coords="1033,825,1187,852"/>
-<area shape="rect" id="node21" href="$evaluator_8h.html" title="fplll/enum/evaluator.h" alt="" coords="665,386,811,413"/>
-<area shape="rect" id="node22" href="$enumerate__ext_8h.html" title="fplll/enum/enumerate\l_ext.h" alt="" coords="172,468,315,509"/>
-<area shape="rect" id="node23" href="$enumerate_8h.html" title="fplll/enum/enumerate.h" alt="" coords="598,565,753,591"/>
-<area shape="rect" id="node34" href="$gso__interface_8cpp.html" title="fplll/gso_interface.cpp" alt="" coords="491,386,641,413"/>
-<area shape="rect" id="node19" href="$gso_8cpp.html" title="fplll/gso.cpp" alt="" coords="929,475,1021,502"/>
-<area shape="rect" id="node8" href="$pruner_8h.html" title="fplll/pruner/pruner.h" alt="" coords="1454,654,1587,681"/>
-<area shape="rect" id="node15" href="$bkz_8h.html" title="fplll/bkz.h" alt="" coords="1148,654,1227,681"/>
-<area shape="rect" id="node17" href="$lll_8cpp.html" title="fplll/lll.cpp" alt="" coords="1507,565,1587,591"/>
-<area shape="rect" id="node18" href="$wrapper_8cpp.html" title="fplll/wrapper.cpp" alt="" coords="1945,565,2062,591"/>
-<area shape="rect" id="node9" href="$fplll_8h.html" title="fplll/fplll.h" alt="" coords="1706,743,1783,770"/>
-<area shape="rect" id="node10" href="$fplll_8cpp.html" title="fplll/fplll.cpp" alt="" coords="2358,825,2449,852"/>
-<area shape="rect" id="node11" href="$main_8h.html" title="fplll/main.h" alt="" coords="1702,825,1787,852"/>
-<area shape="rect" id="node14" href="$test__svp__gram_8cpp.html" title="tests/test_svp_gram.cpp" alt="" coords="1995,825,2161,852"/>
-<area shape="rect" id="node16" href="$bkz_8cpp.html" title="fplll/bkz.cpp" alt="" coords="1184,743,1276,770"/>
-<area shape="rect" id="node31" href="$evaluator_8cpp.html" title="fplll/enum/evaluator.cpp" alt="" coords="541,475,701,502"/>
-<area shape="rect" id="node26" href="$enumerate__ext_8cpp.html" title="fplll/enum/enumerate\l_ext.cpp" alt="" coords="197,557,340,599"/>
-<area shape="rect" id="node27" href="$fplll__types_8h.html" title="fplll/enum&#45;parallel\l/fplll_types.h" alt="" coords="50,557,173,599"/>
-<area shape="rect" id="node24" href="$enumerate_8cpp.html" title="fplll/enum/enumerate.cpp" alt="" coords="591,654,759,681"/>
-<area shape="rect" id="node25" href="$svpcvp_8cpp.html" title="fplll/svpcvp.cpp" alt="" coords="2137,654,2251,681"/>
-<area shape="rect" id="node28" href="$enumeration_8h.html" title="fplll/enum&#45;parallel\l/enumeration.h" alt="" coords="197,647,319,688"/>
-<area shape="rect" id="node29" href="$enumlib_8cpp.html" title="fplll/enum&#45;parallel\l/enumlib.cpp" alt="" coords="50,736,173,777"/>
-<area shape="rect" id="node30" href="$enumlib_8h.html" title="fplll/enum&#45;parallel\l/enumlib.h" alt="" coords="50,647,173,688"/>
-<area shape="rect" id="node33" href="$gso__gram_8cpp.html" title="fplll/gso_gram.cpp" alt="" coords="1454,475,1582,502"/>
-<area shape="rect" id="node37" href="$topenum_8h.html" title="fplll/enum/topenum.h" alt="" coords="2124,386,2267,413"/>
-<area shape="rect" id="node39" href="$svpcvp_8h.html" title="fplll/svpcvp.h" alt="" coords="2137,565,2235,591"/>
-<area shape="rect" id="node40" href="$hlll_8cpp.html" title="fplll/hlll.cpp" alt="" coords="1783,565,1869,591"/>
-<area shape="rect" id="node41" href="$latticegen_8cpp.html" title="fplll/latticegen.cpp" alt="" coords="1383,386,1509,413"/>
-<area shape="rect" id="node42" href="$llldiff_8cpp.html" title="fplll/llldiff.cpp" alt="" coords="1534,386,1633,413"/>
-<area shape="rect" id="node43" href="$util_8cpp.html" title="fplll/util.cpp" alt="" coords="1657,386,1745,413"/>
-<area shape="rect" id="node38" href="$topenum_8cpp.html" title="fplll/enum/topenum.cpp" alt="" coords="2081,475,2238,502"/>
-<area shape="rect" id="node46" href="$hlll_8h.html" title="fplll/hlll.h" alt="" coords="1881,475,1955,502"/>
-<area shape="rect" id="node47" href="$householder_8cpp.html" title="fplll/householder.cpp" alt="" coords="2441,475,2582,502"/>
-<area shape="rect" id="node49" href="$enumerate__base_8cpp.html" title="fplll/enum/enumerate\l_base.cpp" alt="" coords="5,468,148,509"/>
+<area shape="rect" id="node1" title=" " alt="" coords="1521,5,1662,32"/>
+<area shape="rect" id="node2" href="$nr_8h.html" title=" " alt="" coords="1550,80,1633,107"/>
+<area shape="rect" id="node3" href="$bkz__param_8cpp.html" title=" " alt="" coords="1371,155,1505,181"/>
+<area shape="rect" id="node4" href="$enumerate__base_8h.html" title=" " alt="" coords="2079,379,2221,420"/>
+<area shape="rect" id="node26" href="$numvect_8h.html" title=" " alt="" coords="1530,155,1653,181"/>
+<area shape="rect" id="node5" href="$enumerate_8h.html" title=" " alt="" coords="1727,565,1882,591"/>
+<area shape="rect" id="node19" href="$enumerate__base_8cpp.html" title=" " alt="" coords="2189,468,2332,509"/>
+<area shape="rect" id="node20" href="$enumerate__ext_8h.html" title=" " alt="" coords="1971,468,2113,509"/>
+<area shape="rect" id="node6" href="$bkz_8cpp.html" title=" " alt="" coords="1335,743,1427,770"/>
+<area shape="rect" id="node7" href="$bkz_8h.html" title=" " alt="" coords="1448,654,1527,681"/>
+<area shape="rect" id="node17" href="$enumerate_8cpp.html" title=" " alt="" coords="1727,654,1895,681"/>
+<area shape="rect" id="node18" href="$svpcvp_8cpp.html" title=" " alt="" coords="368,654,481,681"/>
+<area shape="rect" id="node8" href="$fplll_8h.html" title=" " alt="" coords="653,743,730,770"/>
+<area shape="rect" id="node9" href="$fplll_8cpp.html" title=" " alt="" coords="277,833,367,859"/>
+<area shape="rect" id="node10" href="$main_8h.html" title=" " alt="" coords="735,833,821,859"/>
+<area shape="rect" id="node11" href="$pruner_8cpp.html" title=" " alt="" coords="526,915,673,941"/>
+<area shape="rect" id="node12" href="$pruner__cost_8cpp.html" title=" " alt="" coords="391,825,514,867"/>
+<area shape="rect" id="node13" href="$pruner__optimize_8cpp.html" title=" " alt="" coords="538,825,661,867"/>
+<area shape="rect" id="node14" href="$test__bkz__gram_8cpp.html" title=" " alt="" coords="1036,833,1203,859"/>
+<area shape="rect" id="node15" href="$test__lll__gram_8cpp.html" title=" " alt="" coords="1511,833,1666,859"/>
+<area shape="rect" id="node16" href="$test__svp__gram_8cpp.html" title=" " alt="" coords="845,833,1012,859"/>
+<area shape="rect" id="node21" href="$enumerate__ext_8cpp.html" title=" " alt="" coords="1971,557,2113,599"/>
+<area shape="rect" id="node22" href="$fplll__types_8h.html" title=" " alt="" coords="2138,557,2261,599"/>
+<area shape="rect" id="node23" href="$enumeration_8h.html" title=" " alt="" coords="1991,647,2114,688"/>
+<area shape="rect" id="node24" href="$enumlib_8cpp.html" title=" " alt="" coords="2138,736,2261,777"/>
+<area shape="rect" id="node25" href="$enumlib_8h.html" title=" " alt="" coords="2138,647,2261,688"/>
+<area shape="rect" id="node27" href="$matrix_8h.html" title=" " alt="" coords="1273,229,1381,256"/>
+<area shape="rect" id="node28" href="$gso_8h.html" title=" " alt="" coords="1425,386,1504,413"/>
+<area shape="rect" id="node33" href="$test__gso_8cpp.html" title=" " alt="" coords="1277,475,1407,502"/>
+<area shape="rect" id="node34" href="$gso__gram_8h.html" title=" " alt="" coords="1087,386,1202,413"/>
+<area shape="rect" id="node36" href="$gso__interface_8h.html" title=" " alt="" coords="1585,304,1720,331"/>
+<area shape="rect" id="node39" href="$householder_8h.html" title=" " alt="" coords="296,386,423,413"/>
+<area shape="rect" id="node43" href="$matrix_8cpp.html" title=" " alt="" coords="1390,304,1513,331"/>
+<area shape="rect" id="node44" href="$util_8h.html" title=" " alt="" coords="873,304,947,331"/>
+<area shape="rect" id="node50" href="$wrapper_8h.html" title=" " alt="" coords="5,475,108,502"/>
+<area shape="rect" id="node29" href="$gso_8cpp.html" title=" " alt="" coords="1432,475,1524,502"/>
+<area shape="rect" id="node30" href="$lll_8h.html" title=" " alt="" coords="1549,475,1615,502"/>
+<area shape="rect" id="node31" href="$lll_8cpp.html" title=" " alt="" coords="767,565,847,591"/>
+<area shape="rect" id="node32" href="$wrapper_8cpp.html" title=" " alt="" coords="292,565,408,591"/>
+<area shape="rect" id="node35" href="$gso__gram_8cpp.html" title=" " alt="" coords="1023,475,1151,502"/>
+<area shape="rect" id="node37" href="$evaluator_8h.html" title=" " alt="" coords="1580,386,1725,413"/>
+<area shape="rect" id="node38" href="$gso__interface_8cpp.html" title=" " alt="" coords="1801,386,1950,413"/>
+<area shape="rect" id="node40" href="$hlll_8h.html" title=" " alt="" coords="348,475,421,502"/>
+<area shape="rect" id="node42" href="$householder_8cpp.html" title=" " alt="" coords="184,475,324,502"/>
+<area shape="rect" id="node41" href="$hlll_8cpp.html" title=" " alt="" coords="432,565,519,591"/>
+<area shape="rect" id="node45" href="$topenum_8h.html" title=" " alt="" coords="73,565,216,591"/>
+<area shape="rect" id="node46" href="$latticegen_8cpp.html" title=" " alt="" coords="651,386,777,413"/>
+<area shape="rect" id="node47" href="$llldiff_8cpp.html" title=" " alt="" coords="802,386,901,413"/>
+<area shape="rect" id="node48" href="$svpcvp_8h.html" title=" " alt="" coords="543,565,642,591"/>
+<area shape="rect" id="node49" href="$util_8cpp.html" title=" " alt="" coords="925,386,1013,413"/>
 </map>
