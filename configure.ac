@@ -104,7 +104,7 @@ AS_IF([test -z "$with_qd"], [with_qd=yes])
 # and libraries if that didn't work for some reason.
 #
 # We only show a warning if we cannot find libqd, it is optional but recommended
-AS_IF([test "x$with_qd" == "xyes"], [
+AS_IF([test "x$with_qd" = "xyes"], [
   PKG_CHECK_MODULES([LIBQD], [qd], [have_libqd="yes"], [
     # fall back to manual search.
     AC_SEARCH_LIBS(c_dd_add,
