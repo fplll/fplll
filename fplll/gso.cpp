@@ -402,6 +402,112 @@ template <class ZT, class FT> void MatGSO<ZT, FT>::size_increased()
   }
 }
 
+template <class ZT, class FT>
+void MatGSO<ZT, FT>::to_canonical(vector<FT> &w, const vector<FT> &v, long start)
+{
+  vector<FT> x = vector<FT>(v);
+  long dim     = (((long)x.size()) < d - start) ? x.size() : d - start;
+  long expo    = 0;
+  FT tmp       = 0.0;
+  // 1. triangular system solving
+  for (long i = dim - 1; i >= 0; i--)
+  {
+    for (long j = i + 1; j < dim; j++)
+    {
+      get_mu(tmp, start + j, start + i);
+      x[i] -= tmp * x[j];
+    }
+  }
+  // 2. multiply by B
+  w.resize(b.get_cols());
+  for (long j = 0; j < b.get_cols(); j++)
+  {
+    w[j] = 0.0;
+    for (long i = 0; i < dim; i++)
+    {
+      b[start + i][j].get_f_exp(tmp, expo);
+      tmp.mul(tmp, x[i]);
+      tmp.mul_2si(tmp, expo);
+      w[j] += tmp;
+    }
+  }
+}
+
+template <class ZT, class FT>
+void MatGSO<ZT, FT>::from_canonical(vector<FT> &v, const vector<FT> &w, long start, long dimension)
+{
+  long dim  = (dimension == -1) ? d - start : dimension;
+  long expo = 0;
+  FT tmp    = 0.0;
+  vector<FT> x(start + dim);
+
+  // 1.multiply by B
+  for (long i = 0; i < start + dim; i++)
+  {
+    x[i] = 0.0;
+    for (long j = 0; j < b.get_cols(); j++)
+    {
+      b[i][j].get_f_exp(tmp, expo);
+      tmp.mul(tmp, w[j]);
+      tmp.mul_2si(tmp, expo);
+      x[i] += tmp;
+    }
+  }
+  // 2. triangular system solving
+  for (long i = 0; i < start + dim; i++)
+  {
+    for (long j = 0; j < i; j++)
+    {
+      get_mu(tmp, i, j);
+      tmp.mul(tmp, x[j]);
+      x[i] -= tmp;
+    }
+  }
+  // 3. scale
+  for (long i = 0; i < dim; i++)
+  {
+    get_r(tmp, start + i, start + i);
+    x[i + start] /= tmp;
+  }
+
+  // copy out
+  v.resize(dim);
+  for (long i = 0; i < dim; i++)
+  {
+    v[i] = x[start + i];
+  }
+}
+
+template <class ZT, class FT>
+void MatGSO<ZT, FT>::babai(vector<ZT> &v, int start, int dimension, bool gso)
+{
+  vector<FT> w;
+  FT tmp = 0.0;
+  for (size_t i = 0; i < v.size(); i++)
+  {
+    tmp.set_z(v[i]);
+    w.push_back(tmp);
+    v[i] = 0;
+  }
+  babai(v, w, start, dimension, gso);
+}
+
+template <class ZT, class FT>
+void MatGSO<ZT, FT>::babai(vector<ZT> &w, const vector<FT> &v, int start, int dimension, bool gso)
+{
+  dimension = (dimension == -1) ? this->d - start : dimension;
+  vector<FT> x;
+  if (!gso)
+  {
+    from_canonical(x, v, start, dimension);
+    MatGSOInterface<ZT, FT>::babai(w, x, start, dimension);
+  }
+  else
+  {
+    MatGSOInterface<ZT, FT>::babai(w, v, start, dimension);
+  }
+}
+
 template class MatGSO<Z_NR<long>, FP_NR<double>>;
 template class MatGSO<Z_NR<double>, FP_NR<double>>;
 template class MatGSO<Z_NR<mpz_t>, FP_NR<double>>;

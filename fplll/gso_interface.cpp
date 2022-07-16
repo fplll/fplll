@@ -280,6 +280,41 @@ void adjust_radius_to_gh_bound(FT &max_dist, long max_dist_expo, int block_size,
     max_dist = f;
   }
 }
+template <class ZT, class FT>
+void MatGSOInterface<ZT, FT>::babai(vector<ZT> &v, int start, int dimension)
+{
+  vector<FT> w;
+  FT tmp = 0.0;
+  for (size_t i = 0; i < v.size(); i++)
+  {
+    tmp.set_z(v[i]);
+    w.push_back(tmp);
+    v[i] = 0;
+  }
+  babai(v, w, start, dimension);
+}
+
+template <class ZT, class FT>
+void MatGSOInterface<ZT, FT>::babai(vector<ZT> &w, const vector<FT> &v, int start, int dimension)
+{
+  FT mu_;
+  dimension = (dimension == -1) ? this->d - start : dimension;
+
+  vector<FT> x = vector<FT>(v);
+  for (long i = dimension - 1; i >= 0; i--)
+  {
+    x[i].rnd(x[i]);
+    for (long j = 0; j < i; j++)
+    {
+      x[j] -= get_mu(mu_, start + i, start + j) * x[i];
+    }
+  }
+  w.resize(dimension);
+  for (long i = 0; i < dimension; i++)
+  {
+    w[i].set_f(x[i]);
+  }
+}
 
 template class MatGSOInterface<Z_NR<long>, FP_NR<double>>;
 template class MatGSOInterface<Z_NR<double>, FP_NR<double>>;

@@ -76,3 +76,4 @@ doc/html/
 /tests/test_svp_gram
 /tests/test_counter
 /.cache/
+/tests/test_babai
