@@ -142,8 +142,8 @@ public:
 
   virtual inline long get_max_exp_of_b();
   virtual inline bool b_row_is_zero(int i);
-  virtual inline int get_cols_of_b();
-  virtual inline int get_rows_of_b();
+  virtual inline int get_cols_of_b() const;
+  virtual inline int get_rows_of_b() const;
   virtual inline void negate_row_of_b(int i);
 
   virtual inline void create_rows(int n_new_rows);
@@ -230,9 +230,15 @@ template <class ZT, class FT> inline bool MatGSO<ZT, FT>::b_row_is_zero(int i)
 {
   return b[i].is_zero();
 }
-template <class ZT, class FT> inline int MatGSO<ZT, FT>::get_cols_of_b() { return b.get_cols(); }
+template <class ZT, class FT> inline int MatGSO<ZT, FT>::get_cols_of_b() const
+{
+  return b.get_cols();
+}
 
-template <class ZT, class FT> inline int MatGSO<ZT, FT>::get_rows_of_b() { return b.get_rows(); }
+template <class ZT, class FT> inline int MatGSO<ZT, FT>::get_rows_of_b() const
+{
+  return b.get_rows();
+}
 
 template <class ZT, class FT> inline void MatGSO<ZT, FT>::negate_row_of_b(int i)
 {
