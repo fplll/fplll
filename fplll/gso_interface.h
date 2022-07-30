@@ -146,14 +146,14 @@ public:
    *  the gram version it returns the number
    *  of columns of g.
    */
-  virtual int get_cols_of_b() = 0;
+  virtual int get_cols_of_b() const = 0;
 
   /** Returns number of rows of b. In
    * the gram version it returns the number
    * of of rows of g. This function is made
    * to reduce code repetition (dump_mu/dump_r)
    */
-  virtual int get_rows_of_b() = 0;
+  virtual int get_rows_of_b() const = 0;
 
   /** Negates the ith row of b. Needed
    * by dbkz_postprocessing.

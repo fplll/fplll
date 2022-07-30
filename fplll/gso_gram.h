@@ -94,8 +94,8 @@ public:
 public:
   virtual inline long get_max_exp_of_b();
   virtual inline bool b_row_is_zero(int i);
-  virtual inline int get_cols_of_b();
-  virtual inline int get_rows_of_b();
+  virtual inline int get_cols_of_b() const;
+  virtual inline int get_rows_of_b() const;
   virtual inline void negate_row_of_b(int i);
 
   //  inline void set_g(Matrix<ZT> arg_g)
@@ -192,7 +192,7 @@ template <class ZT, class FT> inline bool MatGSOGram<ZT, FT>::b_row_is_zero(int 
   // now, we just check whether g[i][i] is zero.
   return g[i][i].is_zero();
 }
-template <class ZT, class FT> inline int MatGSOGram<ZT, FT>::get_cols_of_b()
+template <class ZT, class FT> inline int MatGSOGram<ZT, FT>::get_cols_of_b() const
 {
   if (gptr == nullptr)
   {
@@ -204,7 +204,7 @@ template <class ZT, class FT> inline int MatGSOGram<ZT, FT>::get_cols_of_b()
   return gptr->get_cols();
 }
 
-template <class ZT, class FT> inline int MatGSOGram<ZT, FT>::get_rows_of_b()
+template <class ZT, class FT> inline int MatGSOGram<ZT, FT>::get_rows_of_b() const
 {
   if (gptr == nullptr)
   {
