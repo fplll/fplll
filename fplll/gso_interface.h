@@ -455,6 +455,27 @@ public:
    */
   inline void print_mu_r_g(ostream &os);
 
+  /**
+   * Update`v` to `w` s.t. `‖w⋅B - v⋅B^*‖` is small using Babai's nearest plane algorithm.
+   *
+   * @param v         a vector, both input and output
+   * @param start     only consider subbasis starting at start
+   * @param dimension only consider dimension vectors or all if -1
+   */
+
+  void virtual babai(vector<ZT> &v, int start = 0, int dimension = -1);
+
+  /**
+   * Return vector `w` s.t. `‖w⋅B - v⋅B^*‖` is small using Babai's nearest plane algorithm.
+   *
+   * @param w         a vector
+   * @param v         a vector
+   * @param start     only consider subbasis starting at start
+   * @param dimension only consider dimension vectors or all if -1
+   */
+
+  void virtual babai(vector<ZT> &w, const vector<FT> &v, int start = 0, int dimension = 1);
+
   /** Exact computation of dot products (i.e. with type ZT instead of FT) */
   const bool enable_int_gram;
 

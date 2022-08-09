@@ -186,6 +186,53 @@ public:
   // b[i] <-> b[j] (i < j)
   virtual void row_swap(int i, int j);
 
+  /**
+     Given a vector `v` wrt the Gram-Schmidt basis `B^*` return a vector `w` wrt the
+     canonical basis `ZZ^n`, i.e. solve `w = v⋅B^*`.
+
+     @param v      a tuple-like object of dimension ``M.d``
+     @param start  only consider subbasis starting at ``start``
+
+   */
+
+  void to_canonical(vector<FT> &w, const vector<FT> &v, long start = 0);
+
+  /**
+     Given a vector `w` wrt the canonical basis `ZZ^n` return a vector `v` wrt the Gram-Schmidt
+     basis `B^*`.
+
+     @param v          a tuple-like object of dimension ``M.B.ncols``
+     @param start      only consider subbasis starting at ``start``
+     @param dimension: only consider ``dimension`` vectors or all if ``-1``
+
+   */
+
+  void from_canonical(vector<FT> &v, const vector<FT> &w, long start = 0, long dimension = -1);
+
+  /**
+   * Update`v` to `w` s.t. `‖w⋅B - v‖` is small using Babai's nearest plane algorithm.
+   *
+   * @param v         a vector
+   * @param start     only consider subbasis starting at start
+   * @param dimension only consider dimension vectors or all if -1
+   * @param gso       if true then input `v` is considered to be expressed to `B*`
+   */
+
+  void virtual babai(vector<ZT> &v, int start = 0, int dimension = -1, bool gso = false);
+
+  /**
+   * Return vector `w` s.t. `‖w⋅B - v‖` is small using Babai's nearest plane algorithm.
+   *
+   * @param w         a vector
+   * @param v         a vector
+   * @param start     only consider subbasis starting at start
+   * @param dimension only consider dimension vectors or all if -1
+   * @param gso       if true then input `v` is considered to be expressed wrt `B*`
+   */
+
+  void virtual babai(vector<ZT> &w, const vector<FT> &v, int start = 0, int dimension = 1,
+                     bool gso = false);
+
 private:
   /* Allocates matrices and arrays whose size depends on d (all but tmp_col_expo).
    When enable_int_gram=false, initializes bf. */
