@@ -238,6 +238,8 @@ template <> inline void FP_NR<qd_real>::rnd_we(const FP_NR<qd_real> &b, long exp
 
 template <> inline void FP_NR<qd_real>::floor(const FP_NR<qd_real> &b) { data = ::floor(b.data); }
 
+template <> inline void FP_NR<qd_real>::ceil(const FP_NR<qd_real> &b) { data = ::ceil(b.data); }
+
 template <> inline void FP_NR<qd_real>::set_nan() { data = NAN; }
 
 template <> inline void FP_NR<qd_real>::swap(FP_NR<qd_real> &a)

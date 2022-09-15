@@ -350,6 +350,11 @@ public:
   inline void floor(const FP_NR<F> &b);
 
   /**
+   * value := smallest integer greater than (or equal to) b.
+   **/
+  inline void ceil(const FP_NR<F> &b);
+
+  /**
    * value := NaN.
    */
   inline void set_nan();

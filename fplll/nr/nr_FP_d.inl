@@ -234,6 +234,8 @@ template <> inline void FP_NR<double>::rnd_we(const FP_NR<double> &b, long expo_
 
 template <> inline void FP_NR<double>::floor(const FP_NR<double> &b) { data = ::floor(b.data); }
 
+template <> inline void FP_NR<double>::ceil(const FP_NR<double> &b) { data = ::ceil(b.data); }
+
 template <> inline void FP_NR<double>::set_nan() { data = NAN; }
 
 template <> inline void FP_NR<double>::swap(FP_NR<double> &a) { std::swap(data, a.data); }

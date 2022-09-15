@@ -258,6 +258,11 @@ template <> inline void FP_NR<long double>::floor(const FP_NR<long double> &b)
   data = floorl(b.data);
 }
 
+template <> inline void FP_NR<long double>::ceil(const FP_NR<long double> &b)
+{
+  data = ceill(b.data);
+}
+
 template <> inline void FP_NR<long double>::set_nan() { data = NAN; }
 
 template <> inline void FP_NR<long double>::swap(FP_NR<long double> &a) { std::swap(data, a.data); }
