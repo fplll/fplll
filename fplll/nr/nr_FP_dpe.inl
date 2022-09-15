@@ -219,6 +219,8 @@ template <> inline void FP_NR<dpe_t>::rnd_we(const FP_NR<dpe_t> &a, long /*expo_
 
 template <> inline void FP_NR<dpe_t>::floor(const FP_NR<dpe_t> &a) { dpe_floor(data, a.data); }
 
+template <> inline void FP_NR<dpe_t>::ceil(const FP_NR<dpe_t> &a) { dpe_ceil(data, a.data); }
+
 template <> inline void FP_NR<dpe_t>::set_nan()
 {
   // dpe_set_d(data, NAN); // DPE_UNLIKELY branch in dpe_normalize

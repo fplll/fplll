@@ -243,6 +243,8 @@ template <> inline void FP_NR<mpfr_t>::rnd_we(const FP_NR<mpfr_t> &a, long /*exp
 }
 template <> inline void FP_NR<mpfr_t>::floor(const FP_NR<mpfr_t> &a) { mpfr_floor(data, a.data); }
 
+template <> inline void FP_NR<mpfr_t>::ceil(const FP_NR<mpfr_t> &a) { mpfr_ceil(data, a.data); }
+
 template <> inline void FP_NR<mpfr_t>::set_nan() { mpfr_set_nan(data); }
 
 template <> inline void FP_NR<mpfr_t>::swap(FP_NR<mpfr_t> &a) { mpfr_swap(data, a.data); }
