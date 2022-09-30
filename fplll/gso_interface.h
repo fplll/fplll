@@ -409,8 +409,11 @@ public:
   inline void dump_r_d(vector<double> &r, int offset = 0, int block_size = -1);
 
   /**
-     @brief Return slope of the curve fitted to the lengths of the vectors from
+     @brief Return slope of the line fitted to the lengths of the vectors from
      `start_row` to `stop_row`.
+
+     The line is found with the method of least squares and minimizes the sum
+     of squared errors.
 
      The slope gives an indication of the quality of the basis.
 
