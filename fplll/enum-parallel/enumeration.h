@@ -414,9 +414,8 @@ struct lattice_enum_t
     swirlys[0].clear();
     enumerate_recur(i_tag<N - 1, svp, N - SWIRLY, 0>());
 
-    const auto swirl_less = [](const swirl_item_t &l, const swirl_item_t &r) {
-      return l.second.second < r.second.second;
-    };
+    const auto swirl_less = [](const swirl_item_t &l, const swirl_item_t &r)
+    { return l.second.second < r.second.second; };
     if (activeswirly)
     {
       sort(swirlys[0].begin(), swirlys[0].end(), swirl_less);
@@ -460,7 +459,8 @@ struct lattice_enum_t
       auto &swirly_ref = swirlys[1];
       std::atomic<std::size_t> swirly_i(0);
       unsigned threadid = 0;
-      auto f            = [this, &swirly_ref, &swirly_i, swirly1end, &threadid]() {
+      auto f            = [this, &swirly_ref, &swirly_i, swirly1end, &threadid]()
+      {
         auto mylat = *this;
         {
           lock_type lock(globals.mutex);
