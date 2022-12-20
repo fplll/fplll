@@ -17,7 +17,7 @@ fplll is distributed under the [GNU Lesser General Public License](COPYING) (eit
 
 	@unpublished{fplll,
 	    author = {The {FPLLL} development team},
-	    title = {{fplll}, a lattice reduction library, {Version}: 5.4.2},
+	    title = {{fplll}, a lattice reduction library, {Version}: 5.4.3},
 	    year = 2022,
 	    note = {Available at \url{https://github.com/fplll/fplll}},
 	    url = {https://github.com/fplll/fplll}
