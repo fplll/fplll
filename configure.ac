@@ -40,7 +40,7 @@ LT_INIT
 # 3. If interfaces were removed (breaks backward compatibility): increment
 #    current, and set both revision and age to zero.
 
-FPLLL_LT_CURRENT=7
+FPLLL_LT_CURRENT=8
 FPLLL_LT_REVISION=0
 FPLLL_LT_AGE=1
 
