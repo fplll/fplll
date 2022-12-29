@@ -68,8 +68,9 @@ int test_intrel(long n, long bits, bool shouldfail = false, int seed = 0)
   }
   else
   {
-    std::cerr << "n:" << n << ", bits: " << bits << std::endl;
-    std::cerr << w << std::endl;
+    std::cerr << "n:" << n << ", bits: " << bits << ", shouldfail:" << shouldfail << std::endl;
+    std::cerr << "t:" << t << std::endl;
+    std::cerr << "w:" << w << std::endl;
     return 1;
   }
 }
@@ -83,8 +84,13 @@ int main(int argc, char *argv[])
   status += test_intrel<mpz_t, double>(10, 40);
   status += test_intrel<mpz_t, double>(10, 50);
   status += test_intrel<mpz_t, double>(10, 60, true);
-  status += test_intrel<mpz_t, long double>(10, 60);
+
 #ifdef FPLLL_WITH_LONG_DOUBLE
+  // Some platforms have sizeof(double) == sizeof(long double)
+  // because long double is only required to be at least as large
+  // as a double. This means the behaviour of the first test
+  // depends on the platform.
+  status += test_intrel<mpz_t, long double>(10, 60, sizeof(double) == sizeof(long double));
   status += test_intrel<mpz_t, long double>(10, 70, true);
 #endif
 #ifdef FPLLL_WITH_QD
