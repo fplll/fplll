@@ -16,7 +16,7 @@
 #include "fplll/fplll.h"
 #include <vector>
 
-#include<cfloat> // Needed for precision macros. 
+#include <cfloat>  // Needed for precision macros.
 
 using namespace fplll;
 
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
   // (3) On x86-64, some compilers may treat long double as the 80-bit extended precision
   //     x87 type. This means that there's more precision than a regular double. In this situation,
   //     the compiler may also make sizeof(long double) == 16, meaning that we cannot detect this
-  //     easily based on the size of long double alone. 
+  //     easily based on the size of long double alone.
   //
   // To circumvent these issues, we check how many elements are in the mantissa of long double,
   // using LDBL_MANT_DIG. Specifically, if LDBL_MANT_DIG == DBL_MANT_DIG, then we are in case (1).
