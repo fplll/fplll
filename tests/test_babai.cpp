@@ -16,6 +16,8 @@
 #include "fplll/fplll.h"
 #include <vector>
 
+#include<cfloat> // Needed for precision macros. 
+
 using namespace fplll;
 
 template <class ZT, class FT>
@@ -86,12 +88,25 @@ int main(int argc, char *argv[])
   status += test_intrel<mpz_t, double>(10, 60, true);
 
 #ifdef FPLLL_WITH_LONG_DOUBLE
-  // Some platforms have sizeof(double) == sizeof(long double)
-  // because long double is only required to be at least as large
-  // as a double. This means the behaviour of the first test
-  // depends on the platform.
-  status += test_intrel<mpz_t, long double>(10, 60, sizeof(double) == sizeof(long double));
-  status += test_intrel<mpz_t, long double>(10, 70, true);
+  // long double has various types of platform and compiler specific behaviour.
+  // This makes this test case platform specific.
+  // These cases are (at least):
+  // (1) Some platforms have sizeof(double) == sizeof(long double), because the C standard
+  //     only requires long double to be at least as big as double. This means that
+  //     in some situations long double may simply alias double (e.g MSVC).
+  // (2) Some platforms make long double an alias for IEEE quadruple precision types. This
+  //     may mean that long double is actually rather accurate (more than, say, 60 bits of
+  //     precision).
+  // (3) On x86-64, some compilers may treat long double as the 80-bit extended precision
+  //     x87 type. This means that there's more precision than a regular double. In this situation,
+  //     the compiler may also make sizeof(long double) == 16, meaning that we cannot detect this
+  //     easily based on the size of long double alone. 
+  //
+  // To circumvent these issues, we check how many elements are in the mantissa of long double,
+  // using LDBL_MANT_DIG. Specifically, if LDBL_MANT_DIG == DBL_MANT_DIG, then we are in case (1).
+  // If they are different, then if LDBL_MANT_DIG < 70 then the second test should also fail.
+  status += test_intrel<mpz_t, long double>(10, 60, LDBL_MANT_DIG == DBL_MANT_DIG);
+  status += test_intrel<mpz_t, long double>(10, 70, LDBL_MANT_DIG < 70);
 #endif
 #ifdef FPLLL_WITH_QD
   status += test_intrel<mpz_t, dd_real>(10, 110);
