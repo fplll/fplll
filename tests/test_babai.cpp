@@ -109,10 +109,16 @@ int main(int argc, char *argv[])
   status += test_intrel<mpz_t, long double>(10, 70, LDBL_MANT_DIG < 70);
 #endif
 #ifdef FPLLL_WITH_QD
+  // QD needs to have the round-to-double flag set on x86 systems. This function
+  // does nothing on non-x86 machines (see the readme for the QD library for more).
+  // This is also already done in the wrapper.
+  unsigned old_cw;
+  fpu_fix_start(&old_cw);
   status += test_intrel<mpz_t, dd_real>(10, 110);
   status += test_intrel<mpz_t, dd_real>(10, 120, true);
   // status += test_intrel<mpz_t, qd_real>(10, 100);
   // status += test_intrel<mpz_t, qd_real>(10, 230, true);
+  fpu_fix_end(&old_cw);
 #endif
   FP_NR<mpfr_t>::set_prec(100);
   status += test_intrel<mpz_t, mpfr_t>(10, 100);
