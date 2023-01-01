@@ -230,7 +230,7 @@ public:
    * @param gso       if true then input `v` is considered to be expressed wrt `B*`
    */
 
-  void virtual babai(vector<ZT> &w, const vector<FT> &v, int start = 0, int dimension = 1,
+  void virtual babai(vector<ZT> &w, const vector<FT> &v, int start = 0, int dimension = -1,
                      bool gso = false);
 
 private:
