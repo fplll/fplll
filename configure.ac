@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([fplll],[5.4.3])
+AC_INIT([fplll],[5.4.4])
 AC_CONFIG_SRCDIR([fplll/fplll.cpp])
 AM_MAINTAINER_MODE([enable])
 AC_CANONICAL_TARGET
@@ -42,7 +42,7 @@ LT_INIT
 
 FPLLL_LT_CURRENT=8
 FPLLL_LT_REVISION=0
-FPLLL_LT_AGE=1
+FPLLL_LT_AGE=0
 
 AC_SUBST(FPLLL_LT_CURRENT)
 AC_SUBST(FPLLL_LT_REVISION)

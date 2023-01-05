@@ -77,3 +77,4 @@ doc/html/
 /tests/test_counter
 /.cache/
 /tests/test_babai
+/configure~
