@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['pruner_1111',['Pruner',['../classPruner.html',1,'']]],
-  ['pruningparams_1112',['PruningParams',['../classPruningParams.html',1,'']]]
+  ['pruner_0',['Pruner',['../classPruner.html',1,'']]],
+  ['pruningparams_1',['PruningParams',['../classPruningParams.html',1,'']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['hlllreduction_1092',['HLLLReduction',['../classHLLLReduction.html',1,'']]]
+  ['hlllreduction_0',['HLLLReduction',['../classHLLLReduction.html',1,'']]]
 ];
