@@ -222,7 +222,7 @@ The options are:
 * `-a sld` : slide reduction.
 * `-a cvp` : prints the vector in the lattice closest to the input vector.
 * `-v` : verbose mode. 
-* `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution). In the cas of hlll, verify if the input basis is HLLL-reduced.
+* `-nolll` : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution). In the case of hlll, verify if the input basis is HLLL-reduced.
 
 * `-a hlll` : HLLL-reduction.
 
