@@ -270,12 +270,12 @@ Options for BKZ-reduction:
 
 Without any of the last three options, BKZ runs until no block has been updated for a full loop iteration.
 
-* `-s filename.json` :         use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.
+* `-s filename.json` :         use strategies for preprocessing and pruning parameter (/strategies/default.json provided). Experimental.
 
 * `-bkzghbound factor` :       multiplies the Gaussian heuristic by `factor` (of float type) to set the enumeration radius of the SVP calls.
 * `-bkzboundedlll` :	       restricts the LLL call before considering a block to vector indices within that block.
 
-* `-bkzdumgso file_name` :     dumps the log ||b_i*|| 's in specified file.
+* `-bkzdumpgso file_name` :     dumps the log ||b_i*|| 's in specified file.
 
 Output formats:
 
