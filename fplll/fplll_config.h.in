@@ -13,9 +13,6 @@
 /* fplll micro version */
 #define FPLLL_MICRO_VERSION @FPLLL_MICRO_VERSION@
 
-/* fplll sonum */
-#define FPLLL_SONUM @FPLLL_SONUM@
-
 /* fplll version */
 #define FPLLL_VERSION @FPLLL_VERSION@
 
