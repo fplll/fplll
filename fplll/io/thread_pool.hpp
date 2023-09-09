@@ -96,7 +96,7 @@ namespace thread_pool {
 
 		// enqueue a function and obtain a future on its return value
 		template<typename F, typename... Args>
-		auto enqueue(F&& f, Args&&... args) -> std::future<std::invoke_result_t<F, Args...>>;
+		auto enqueue(F&& f, Args&&... args) -> std::future<decltype(f(args...))>;
 
 		// push a trivial function without a future
 		void push(const std::function<void()>& f);
@@ -216,10 +216,10 @@ namespace thread_pool {
 	}
 
 	template<typename F, typename... Args>
-	inline auto thread_pool::enqueue(F&& f, Args&&... args)
-		-> std::future<std::invoke_result_t<F, Args...>>
+	inline auto thread_pool::enqueue(F&& f, Args&&... args) 
+		-> std::future<decltype(f(args ...))>
 	{
-		typedef typename std::invoke_result_t<F, Args...> return_type;
+		typedef decltype(f(args ...)) return_type;
 		auto task = std::make_shared< std::packaged_task<return_type()> >
 				( std::bind(std::forward<F>(f), std::forward<Args>(args)...) );
 		push( [task](){ (*task)(); } );
