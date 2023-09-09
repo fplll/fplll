@@ -51,7 +51,7 @@ typedef thread_pool::barrier barrier;
                 // advanced way to add job
                 template<typename F, typename... Args>
                 auto enqueue(F&& f, Args&&... args) -> std::future<typename
-   std::result_of<F(Args...)>::type>;
+                        std::invoke_result_t<F, Args...>>;
 
                 // process tasks with main thread & then wait until all threads are idle
                 // DO NOT CALL FROM A JOB FUNCTION: WILL CAUSE DEADLOCK
