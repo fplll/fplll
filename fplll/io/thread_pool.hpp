@@ -84,6 +84,20 @@ int main()
 
 namespace thread_pool {
 
+#if __cplusplus < 201703L
+	namespace detail {
+		template<class> struct result_of;
+		template<class F, class... ArgTypes>
+		struct result_of<F(ArgTypes...)> : std::result_of<F(ArgTypes...)> {};
+	}
+#else
+	namespace detail {
+		template<class> struct result_of;
+		template<class F, class... ArgTypes>
+		struct result_of<F(ArgTypes...)> : std::invoke_result<F, ArgTypes...> {};
+	}
+#endif
+
 	class thread_pool {
 	public:
 		thread_pool(std::size_t nrthreads = 0);
@@ -96,7 +110,7 @@ namespace thread_pool {
 
 		// enqueue a function and obtain a future on its return value
 		template<typename F, typename... Args>
-		auto enqueue(F&& f, Args&&... args) -> std::future<typename std::result_of<F(Args...)>::type>;
+		auto enqueue(F&& f, Args&&... args) -> std::future<typename detail::result_of<F(Args...)>::type>;
 
 		// push a trivial function without a future
 		void push(const std::function<void()>& f);
@@ -217,9 +231,9 @@ namespace thread_pool {
 
 	template<typename F, typename... Args>
 	inline auto thread_pool::enqueue(F&& f, Args&&... args) 
-		-> std::future<typename std::result_of<F(Args...)>::type>
+		-> std::future<typename detail::result_of<F(Args...)>::type>
 	{
-		typedef typename std::result_of<F(Args...)>::type return_type;
+		typedef typename detail::result_of<F(Args...)>::type return_type;
 		auto task = std::make_shared< std::packaged_task<return_type()> >
 				( std::bind(std::forward<F>(f), std::forward<Args>(args)...) );
 		push( [task](){ (*task)(); } );
