@@ -26,7 +26,7 @@ jobs:
           CONFIGURE_OPTS: ${{ matrix.configure-options }}
         run: echo $CONFIGURE_OPTS
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
@@ -46,7 +46,7 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install prerequisites
         run: |
           brew update
