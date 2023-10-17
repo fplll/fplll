@@ -36,7 +36,7 @@ MathJax.Hub.Config({
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.4.4</a>
+                    <a class="navbar-brand">fplll 5.4.5</a>
                 </div>
             </div>
         </nav>
@@ -102,9 +102,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad30103e733858d9fbf8110212c6e3a15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8534525754f4db7ea0fe4b3186b1d6a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool_1_1thread__pool.html#a8534525754f4db7ea0fe4b3186b1d6a2">resize</a> (std::size_t nrthreads)</td></tr>
 <tr class="separator:a8534525754f4db7ea0fe4b3186b1d6a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3cd9dcde144689589df6aa0c668a5ad7"><td class="memTemplParams" colspan="2">template&lt;typename F , typename... Args&gt; </td></tr>
-<tr class="memitem:a3cd9dcde144689589df6aa0c668a5ad7"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classthread__pool_1_1thread__pool.html#a3cd9dcde144689589df6aa0c668a5ad7">enqueue</a> (F &amp;&amp;f, Args &amp;&amp;... args) -&gt; std::future&lt; typename std::result_of&lt; F(Args...)&gt;::type &gt;</td></tr>
-<tr class="separator:a3cd9dcde144689589df6aa0c668a5ad7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab18fbe4ae67381a18eed8f91b4ae2931"><td class="memTemplParams" colspan="2">template&lt;typename F , typename... Args&gt; </td></tr>
+<tr class="memitem:ab18fbe4ae67381a18eed8f91b4ae2931"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classthread__pool_1_1thread__pool.html#ab18fbe4ae67381a18eed8f91b4ae2931">enqueue</a> (F &amp;&amp;f, Args &amp;&amp;... args) -&gt; std::future&lt; typename <a class="el" href="structthread__pool_1_1detail_1_1result__of.html">detail::result_of</a>&lt; F(Args...)&gt;::type &gt;</td></tr>
+<tr class="separator:ab18fbe4ae67381a18eed8f91b4ae2931"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a1fd2c1df6aa9a453ef8630e6a47fe1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool_1_1thread__pool.html#a6a1fd2c1df6aa9a453ef8630e6a47fe1">push</a> (const std::function&lt; void()&gt; &amp;f)</td></tr>
 <tr class="separator:a6a1fd2c1df6aa9a453ef8630e6a47fe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e1edf19bc3cbfded15888dc3a3f5918"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classthread__pool_1_1thread__pool.html#a0e1edf19bc3cbfded15888dc3a3f5918">push</a> (std::function&lt; void()&gt; &amp;&amp;f)</td></tr>
@@ -177,8 +177,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3cd9dcde144689589df6aa0c668a5ad7" name="a3cd9dcde144689589df6aa0c668a5ad7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3cd9dcde144689589df6aa0c668a5ad7">&#9670;&nbsp;</a></span>enqueue()</h2>
+<a id="ab18fbe4ae67381a18eed8f91b4ae2931" name="ab18fbe4ae67381a18eed8f91b4ae2931"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab18fbe4ae67381a18eed8f91b4ae2931">&#9670;&nbsp;</a></span>enqueue()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -203,7 +203,7 @@ template&lt;typename F , typename... Args&gt; </div>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> -&gt; std::future&lt;typename std::result_of&lt;F(Args...)&gt;::type&gt;</td>
+          <td></td><td> -&gt; std::future&lt;typename <a class="el" href="structthread__pool_1_1detail_1_1result__of.html">detail::result_of</a>&lt;F(Args...)&gt;::type&gt;</td>
         </tr>
       </table>
   </td>

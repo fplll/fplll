@@ -36,7 +36,7 @@ MathJax.Hub.Config({
         <nav class="navbar navbar-default" role="navigation">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand">fplll 5.4.4</a>
+                    <a class="navbar-brand">fplll 5.4.5</a>
                 </div>
             </div>
         </nav>
@@ -93,7 +93,7 @@ $(function() {
 How to cite</h1>
 <pre class="fragment">@unpublished{fplll,
     author = {The {FPLLL} development team},
-    title = {{fplll}, a lattice reduction library, {Version}: 5.4.4},
+    title = {{fplll}, a lattice reduction library, {Version}: 5.4.5},
     year = 2023,
     note = {Available at \url{https://github.com/fplll/fplll}},
     url = {https://github.com/fplll/fplll}
@@ -244,7 +244,7 @@ fplll</h2>
 <li><code>-a sld</code> : slide reduction.</li>
 <li><code>-a cvp</code> : prints the vector in the lattice closest to the input vector.</li>
 <li><code>-v</code> : verbose mode.</li>
-<li><code>-nolll</code> : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution). In the cas of hlll, verify if the input basis is HLLL-reduced.</li>
+<li><code>-nolll</code> : does not apply to LLL-reduction. In the case of bkz, hkz and svp, by default, the input basis is LLL-reduced before anything else. This option allows to remove that initial LLL-reduction (note that other calls to LLL-reduction may occur during the execution). In the case of hlll, verify if the input basis is HLLL-reduced.</li>
 <li><code>-a hlll</code> : HLLL-reduction.</li>
 </ul>
 <p ><a class="el" href="structOptions.html">Options</a> for LLL-reduction:</p>
@@ -281,10 +281,10 @@ fplll</h2>
 </ul>
 <p >Without any of the last three options, BKZ runs until no block has been updated for a full loop iteration.</p>
 <ul>
-<li><code>-s filename.json</code> : use strategies for preprocessing and pruning paramater (/strategies/default.json provided). Experimental.</li>
+<li><code>-s filename.json</code> : use strategies for preprocessing and pruning parameter (/strategies/default.json provided). Experimental.</li>
 <li><code>-bkzghbound factor</code> : multiplies the Gaussian heuristic by <code>factor</code> (of float type) to set the enumeration radius of the SVP calls.</li>
 <li><code>-bkzboundedlll</code> : restricts the LLL call before considering a block to vector indices within that block.</li>
-<li><code>-bkzdumgso file_name</code> : dumps the log ||b_i*|| 's in specified file.</li>
+<li><code>-bkzdumpgso file_name</code> : dumps the log ||b_i*|| 's in specified file.</li>
 </ul>
 <p >Output formats:</p>
 <ul>
