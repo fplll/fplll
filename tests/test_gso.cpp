@@ -19,7 +19,7 @@
 #include <gso_interface.h>
 #include <householder.h>
 #include <nr/matrix.h>
-//#include <random>
+// #include <random>
 #include <test_utils.h>
 
 using namespace std;
@@ -230,6 +230,58 @@ template <class ZT, class FT> int test_ggso(ZZ_mat<ZT> &A)
   return (!retvalue1) * 1 + (!retvalue2) * 2 + (!retvalue3) * 4 + (!retvalue4) * 8;
 }
 
+template <class ZT, class FT>
+static double _calculate_slope(MatGSOInterface<ZT, FT> *M, int start_row, int stop_row)
+{
+  FT f, log_f;
+  long expo;
+  vector<double> x;
+  x.resize(stop_row);
+  for (int i = start_row; i < stop_row; i++)
+  {
+    M->update_gso_row(i);
+    f = M->get_r_exp(i, i, expo);
+    log_f.log(f, GMP_RNDU);
+    x[i] = log_f.get_d() + expo * std::log(2.0);
+  }
+  int n         = stop_row - start_row;
+  double i_mean = 0, x_mean = 0, v1 = 0, v2 = 0;
+  for (int i = start_row; i < stop_row; i++)
+  {
+    i_mean += i;
+    x_mean += x[i];
+  }
+  i_mean /= n;
+  x_mean /= n;
+  for (int i = start_row; i < stop_row; i++)
+  {
+    v1 += (i - i_mean) * (x[i] - x_mean);
+    v2 += (i - i_mean) * (i - i_mean);
+  }
+  return v1 / v2;
+}
+
+template <class ZT, class FT> int test_current_slope(ZZ_mat<ZT> &A, int start_row, int stop_row)
+{
+  ZZ_mat<ZT> U, UT;
+
+  MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, GSO_DEFAULT);
+  M.update_gso();
+
+  double slope_found    = M.get_current_slope(start_row, stop_row);
+  double slope_expected = _calculate_slope<Z_NR<ZT>, FP_NR<FT>>(&M, start_row, stop_row);
+  double abs_diff       = abs(slope_found - slope_expected);
+
+  // Bounded absolute error
+  int ret_code = abs_diff > 1e-12;
+  if (slope_expected != 0.0)
+  {
+    // Bounded relative error
+    ret_code |= abs(abs_diff / slope_expected) > 1e-12;
+  }
+  return ret_code;
+}
+
 template <class ZT, class FT> int test_filename(const char *input_filename)
 {
   ZZ_mat<ZT> A;
@@ -259,6 +311,7 @@ template <class ZT, class FT> int test_filename(const char *input_filename)
             "basis representation after adding rows.\n";
   }
   retvalue |= test_householder<ZT, FT>(A);
+  retvalue |= test_current_slope<ZT, FT>(A, 0, A.get_rows());
   if (retvalue > 0)
   {
     return 1;
@@ -296,6 +349,7 @@ template <class ZT, class FT> int test_int_rel(int d, int b)
     return 1;
   }
   retvalue |= test_householder<ZT, FT>(A);
+  retvalue |= test_current_slope<ZT, FT>(A, 0, A.get_rows());
   if (retvalue > 0)
     return 1;
 
@@ -384,6 +438,4 @@ int main(int /*argc*/, char ** /*argv*/)
   {
     return -1;
   }
-
-  return 0;
 }
