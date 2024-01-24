@@ -199,26 +199,20 @@ double MatGSOInterface<ZT, FT>::get_current_slope(int start_row, int stop_row)
 {
   FT f, log_f;
   long expo;
-  vector<double> x;
-  x.resize(stop_row);
+  int n     = stop_row - start_row;
+  double v1 = 0, v2 = (double)(n + 1) * n * (n - 1) / 12.0, weight = (1.0 - n) / 2.0;
+  // Calculate v1 and v2 and return v1 / v2, with
+  //   v1 = sum_i (i - avg(i))(x_i - avg(x)),
+  //   v2 = sum_i (i - avg(i))^2,
+  // where i ranges from start_row (incl.) to stop_row (excl.) and x_i is the
+  // natural logarithm of the ith GS basis vector.
   for (int i = start_row; i < stop_row; i++)
   {
     update_gso_row(i);
     f = get_r_exp(i, i, expo);
     log_f.log(f, GMP_RNDU);
-    x[i] = log_f.get_d() + expo * std::log(2.0);
-  }
-  int n         = stop_row - start_row;
-  double i_mean = (n - 1) * 0.5 + start_row, x_mean = 0, v1 = 0, v2 = 0;
-  for (int i = start_row; i < stop_row; i++)
-  {
-    x_mean += x[i];
-  }
-  x_mean /= n;
-  for (int i = start_row; i < stop_row; i++)
-  {
-    v1 += (i - i_mean) * (x[i] - x_mean);
-    v2 += (i - i_mean) * (i - i_mean);
+    v1 += weight * (log_f.get_d() + expo * std::log(2.0));
+    weight++;
   }
   return v1 / v2;
 }
