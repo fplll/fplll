@@ -47,6 +47,8 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v4
+      - name: Unlink 2to3
+        run: brew unlink /usr/local/bin/2to3
       - name: Install prerequisites
         run: |
           brew update
