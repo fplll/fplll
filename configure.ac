@@ -209,6 +209,22 @@ AS_IF([test "x$extenum_lib" != "x"],[
 ])
 AC_SUBST(EXTENUM_LIBS)
 
+AC_ARG_WITH(default-strategy-dir,
+  AS_HELP_STRING([--with-default-strategy-dir@<:@=DIR@:>@],
+    [Default strategies install directory]),
+  [default_strategy_dir="$withval"])
+AS_IF([test x"${default_strategy_dir}" != 'x'], [],
+  [default_strategy_dir='${prefix}/share/fplll/strategies'])
+AC_SUBST([DEFAULTSTRATEGYDIR], ["${default_strategy_dir}"])
+
+AC_ARG_WITH(default-strategy,
+  AS_HELP_STRING([--with-default-strategy@<:@=FILE@:>@],
+    [Path (rel. or abs.) to installed default strategy]),
+  [default_strategy="$withval"])
+AS_IF([test x"${default_strategy}" != 'x'], [],
+  [default_strategy="${default_strategy_dir}/default.json"])
+AC_SUBST([DEFAULTSTRATEGY], ["${default_strategy}"])
+
 # Store version numbers in header
 
 AC_DEFINE_UNQUOTED([FPLLL_MAJOR_VERSION],[$FPLLL_MAJOR_VERSION],[major version])
