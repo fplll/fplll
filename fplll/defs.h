@@ -19,7 +19,7 @@
 #ifndef FPLLL_DEFS_H
 #define FPLLL_DEFS_H
 
-#ifndef __CYGWIN__
+#if !defined(__CYGWIN__) && !(defined(__APPLE__) && defined(__aarch64__))
 #define FPLLL_WITH_LONG_DOUBLE
 #endif
 
