@@ -108,6 +108,35 @@ public:
    * @param row_op_force_long
    *   Affects the behaviour of row_addmul(_we).
    *   See the documentation of row_addmul.
+   * @section Example Example Usage:
+   *    <code>
+   *    #include <cstring>                                      <br>
+   *    #include <fplll/gso.h>                                  <br>
+   *    #include <fplll/gso_gram.h>                             <br>
+   *    #include <fplll/gso_interface.h>                        <br>
+   *    #include <fplll/householder.h>                          <br>
+   *    #include <fplll/nr/matrix.h>                            <br>
+   *                                                            <br>
+   *    using namespace std;                                    <br>
+   *    using namespace fplll;                                  <br>
+   *                                                            <br>
+   *
+   *    template<class ZT,class FT>void gso_example()           <br>
+   *    {                                                       <br>
+   *        ZZ_mat<ZT>A(4,4),U,UT;                              <br>
+   *        A.gen_ntrulike(5);                                  <br>
+   *                                                            <br>
+   *        MatGSO<Z_NR<ZT>, FP_NR<FT>> M(A, U, UT, GSO_DEFAULT); <br>
+   *        M.update_gso();                                     <br>
+   *                                                            <br>
+   *    }                                                       <br>
+   *                                                            <br>
+   *    int main()                                              <br>
+   *    {                                                       <br>
+   *        gso_example<mpz_t,float>();                         <br>
+   *    }                                                       <br>
+   *    </code>
+   *
    */
   MatGSO(Matrix<ZT> &arg_b, Matrix<ZT> &arg_u, Matrix<ZT> &arg_uinv_t, int flags)
       : MatGSOInterface<ZT, FT>(arg_u, arg_uinv_t, flags), b(arg_b)
