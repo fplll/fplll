@@ -52,7 +52,7 @@ jobs:
           brew update
           brew install -f --overwrite python@3.12
           brew reinstall gmp
-          brew install automake clang-format
+          brew install automake clang-format libtool
           brew upgrade autoconf
       - name: Configure
         run: |
