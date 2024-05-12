@@ -47,6 +47,10 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v4
+      - name: Set Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - name: Install prerequisites
         run: |
           brew update
@@ -56,8 +60,15 @@ jobs:
           brew upgrade autoconf
       - name: Configure
         run: |
+          if [[ $(uname -m) == 'arm64' ]]; then
+             GMP=/opt/homebrew/opt/gmp
+             MPFR=/opt/homebrew/opt/mpfr
+          else
+             GMP=/usr/local/include/gmp
+             MPFR=/usr/local/include/mpfr
+          fi
           ./autogen.sh
-          ./configure --disable-static $CONFIGURE_OPTS
+          ./configure --disable-static --with-gmp=$GMP --with-mpfr=$MPFR $CONFIGURE_OPTS
       - name: Compile
         run: make -j $JOBS
 
