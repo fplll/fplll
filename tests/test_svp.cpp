@@ -274,7 +274,7 @@ template <class ZT> int test_dsvp_reduce(ZZ_mat<ZT> &A, vector<Z_NR<mpz_t>> &b)
 int test_svp_proved_vs_fast(size_t d, size_t d2)
 {
   ZZ_mat<mpz_t> A(d, d);
-  A.gen_qary_withq(d / 2, 65537);
+  A.gen_qary(d / 2, 65537);
 
   int r = lll_reduction(A);
   ZZ_mat<mpz_t> B(d2, d);  // so that LLL doesn't just solve it

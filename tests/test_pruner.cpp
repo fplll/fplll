@@ -311,7 +311,7 @@ template <class FT> int test_auto_prune(size_t n)
   int status = 0;
   double cost;
   ZZ_mat<mpz_t> A(2 * n, 2 * n);
-  A.gen_qary(n, 30);
+  A.gen_qary_bits(n, 30);
   ZZ_mat<mpz_t> U;
   MatGSO<Z_NR<mpz_t>, FP_NR<double>> M(A, U, U, GSO_DEFAULT);
   LLLReduction<Z_NR<mpz_t>, FP_NR<double>> lll_obj =

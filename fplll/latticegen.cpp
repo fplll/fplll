@@ -155,17 +155,19 @@ int main(int argc, char *argv[])
     int k  = atoi(argv[iArg]);
     int b  = atoi(argv[iArg + 1]);
     char c = argv[iArg + 2][0];
+    if (b <= 0)
+      fatal_error("parameter b must be at least 1");
     m.resize(d, d);
     switch (c)
     {
     case 'b':
     {
-      m.gen_qary(k, b);
+      m.gen_qary_bits(k, b);
       break;
     }
     case 'q':
     {
-      m.gen_qary_withq(k, b);
+      m.gen_qary(k, b);
       break;
     }
     case 'p':
