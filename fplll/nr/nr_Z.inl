@@ -90,8 +90,9 @@ public:
 
   /**
    * Sets the value to s, signed integer in basis 10.
+   * Returns "false" if parsing failed, or overflow occured.
    */
-  inline void set_str(const char *s);
+  inline bool set_str(const char *s);
 
   /** comparison */
 

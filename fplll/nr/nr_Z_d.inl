@@ -38,7 +38,15 @@ template <> inline long Z_NR<double>::exponent() const
 }
 
 /** set data */
-template <> inline void Z_NR<double>::set_str(const char *s) { data = atof(s); }
+template <> inline bool Z_NR<double>::set_str(const char *s)
+{
+  data = atof(s);
+  data = strtof(s, NULL);
+  // From https://cplusplus.com/reference/cstdlib/strtof/:
+  // If no valid conversion could be performed, 'data = 0.0F'.
+  // If the correct value is out of the range of representable values for the type, return false.
+  return !((data == HUGE_VALF || data == -HUGE_VALF) && errno == ERANGE);
+}
 
 /** comparison */
 template <> inline int Z_NR<double>::cmp(const Z_NR<double> &m) const

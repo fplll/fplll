@@ -285,7 +285,7 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_uniform(int bits)
       matrix[i][j].randb(bits);
 }
 
-template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits)
+template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(const Z_NR<ZT> &q)
 {
   // [A00 A01]
   // [A10 A11]
@@ -300,11 +300,7 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits)
   // clang-format off
   Z_NR<ZT> *h = new Z_NR<ZT>[d];
   // clang-format on
-  Z_NR<ZT> q;
 
-  q.randb(bits);
-  if (q.sgn() == 0)
-    q = 1;
   h[0] = 0;
   for (i = 1; i < d; i++)
   {
@@ -355,77 +351,8 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike(int bits)
   delete[] h;
 }
 
-template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike_withq(int q)
+template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(const Z_NR<ZT> &q)
 {
-  // Same as above, except q is specified by the user rather than chosen
-  // randomly with a prescribed bit-length.
-
-  int i, j, k;
-  int d = r / 2;
-  if (c != r || c != 2 * d)
-  {
-    FPLLL_ABORT("gen_ntrulike called on an ill-formed matrix");
-    return;
-  }
-  // clang-format off
-  Z_NR<ZT> *h = new Z_NR<ZT>[d];
-  // clang-format on
-  Z_NR<ZT> q2;
-
-  q2   = q;
-  h[0] = 0;
-  for (i = 1; i < d; i++)
-  {
-    h[i].randm(q2);
-    h[0].sub(h[0], h[i]);
-    if (h[0].sgn() < 0)
-      h[0].add(h[0], q2);
-    // set h0 such that h(1) = 0 mod q.
-  }
-
-  // I in A00
-  for (i = 0; i < d; i++)
-  {
-    for (j = 0; j < i; j++)
-      matrix[i][j] = 0;
-    matrix[i][i] = 1;
-    for (j = i + 1; j < d; j++)
-      matrix[i][j] = 0;
-  }
-
-  // 0 in A10
-  for (i = d; i < r; i++)
-  {
-    for (j = 0; j < d; j++)
-      matrix[i][j] = 0;
-  }
-  // qI in A11
-  for (i = d; i < r; i++)
-  {
-    for (j = d; j < i; j++)
-      matrix[i][j] = 0;
-    matrix[i][i] = q2;
-    for (j = i + 1; j < c; j++)
-      matrix[i][j] = 0;
-  }
-  // H in A01
-  for (i = 0; i < d; i++)
-    for (j = d; j < c; j++)
-    {
-      k = j - d - i;
-      while (k < 0)
-      {
-        k += d;
-      }
-      matrix[i][j] = h[k];
-    }
-
-  delete[] h;
-}
-
-template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(int bits)
-{
-
   int i, j, k;
   int d = r / 2;
   if (c != r || c != 2 * d)
@@ -435,10 +362,8 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(int bits)
   }
   // clang-format off
   Z_NR<ZT> *h = new Z_NR<ZT>[d];
-  Z_NR<ZT> q;
   // clang-format on
 
-  q.randb(bits);
   h[0] = 0;
   for (i = 1; i < d; i++)
   {
@@ -479,63 +404,7 @@ template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2(int bits)
   delete[] h;
 }
 
-template <class ZT> inline void ZZ_mat<ZT>::gen_ntrulike2_withq(int q)
-{
-
-  int i, j, k;
-  int d = r / 2;
-  if (c != r || c != 2 * d)
-  {
-    FPLLL_ABORT("gen_ntrulike2 called on an ill-formed matrix");
-    return;
-  }
-  // clang-format off
-  Z_NR<ZT> *h = new Z_NR<ZT>[d];
-  Z_NR<ZT> q2;
-  // clang-format on
-
-  q2   = q;
-  h[0] = 0;
-  for (i = 1; i < d; i++)
-  {
-    h[i].randm(q2);
-    h[0].sub(h[0], h[i]);
-    if (h[0].sgn() < 0)
-      h[0].add(h[0], q2);
-    // set h0 such that h(1) = 0 mod q.
-  }
-
-  for (i = 0; i < d; i++)
-  {
-    for (j = 0; j < c; j++)
-      matrix[i][j] = 0;
-  }
-
-  for (i = 0; i < d; i++)
-    matrix[i][i] = q2;
-  for (i = d; i < r; i++)
-    for (j = d; j < c; j++)
-      matrix[i][j] = 0;
-  for (i = d; i < c; i++)
-    matrix[i][i] = 1;
-
-  for (i = d; i < r; i++)
-  {
-    for (j = 0; j < d; j++)
-    {
-      k = i - d - j;
-      while (k < 0)
-      {
-        k += d;
-      }
-      matrix[i][j] = h[k];
-    }
-  }
-
-  delete[] h;
-}
-
-template <class ZT> inline void ZZ_mat<ZT>::gen_qary(int k, Z_NR<ZT> &q)
+template <class ZT> inline void ZZ_mat<ZT>::gen_qary(int k, const Z_NR<ZT> &q)
 {
   int i, j;
   int d = r;

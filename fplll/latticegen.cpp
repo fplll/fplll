@@ -124,21 +124,61 @@ int main(int argc, char *argv[])
   }
   case 'n':
   {
-    if (argc - iArg < 1)
+    if (argc - iArg < 2)
       fatal_error("method 'n' requires 3 arguments");
-    int b  = atoi(argv[iArg]);
     char c = argv[iArg + 1][0];
     m.resize(2 * d, 2 * d);
     switch (c)
     {
     case 'b':
     {
-      m.gen_ntrulike(b);
+      int b = atoi(argv[iArg]);
+      if (b <= 0)
+        fatal_error("parameter b must be at least 1");
+      m.gen_ntrulike_bits(b);
       break;
     }
     case 'q':
     {
-      m.gen_ntrulike_withq(b);
+      Z_NR<mpz_t> q;
+      if (!q.set_str(argv[iArg]) || q <= 0)
+      {
+        fatal_error("parameter b must be a valid positive integer");
+      }
+      m.gen_ntrulike(q);
+      break;
+    }
+    default:
+    {
+      fatal_error("parameter c must be 'b' or 'q'");
+    }
+    }
+    break;
+  }
+  case 'N':
+  {
+    if (argc - iArg < 2)
+      fatal_error("method 'N' requires 3 arguments");
+    int c = argv[iArg + 1][0];
+    m.resize(2 * d, 2 * d);
+    switch (c)
+    {
+    case 'b':
+    {
+      int b = atoi(argv[iArg]);
+      if (b <= 0)
+        fatal_error("parameter b must be at least 1");
+      m.gen_ntrulike2_bits(b);
+      break;
+    }
+    case 'q':
+    {
+      Z_NR<mpz_t> q;
+      if (!q.set_str(argv[iArg]) || q <= 0)
+      {
+        fatal_error("parameter b must be a valid positive integer");
+      }
+      m.gen_ntrulike2(q);
       break;
     }
     default:
@@ -150,60 +190,42 @@ int main(int argc, char *argv[])
   }
   case 'q':
   {
-    if (argc - iArg < 1)
+    if (argc - iArg < 3)
       fatal_error("method 'q' requires 4 arguments");
     int k  = atoi(argv[iArg]);
-    int b  = atoi(argv[iArg + 1]);
     char c = argv[iArg + 2][0];
-    if (b <= 0)
-      fatal_error("parameter b must be at least 1");
     m.resize(d, d);
     switch (c)
     {
     case 'b':
     {
+      int b = atoi(argv[iArg + 1]);
+      if (b <= 0)
+        fatal_error("parameter b must be at least 1");
       m.gen_qary_bits(k, b);
       break;
     }
     case 'q':
     {
-      m.gen_qary(k, b);
+      Z_NR<mpz_t> q;
+      if (!q.set_str(argv[iArg + 1]) || q <= 0)
+      {
+        fatal_error("parameter b must be a valid positive integer");
+      }
+      m.gen_qary(k, q);
       break;
     }
     case 'p':
     {
+      int b = atoi(argv[iArg + 1]);
+      if (b <= 0)
+        fatal_error("parameter b must be at least 1");
       m.gen_qary_prime(k, b);
       break;
     }
     default:
     {
       fatal_error("parameter c must be 'b' or 'q' or 'p'");
-    }
-    }
-    break;
-  }
-  case 'N':
-  {
-    if (argc - iArg < 1)
-      fatal_error("method 'N' requires 3 arguments");
-    int b = atoi(argv[iArg]);
-    int c = argv[iArg + 1][0];
-    m.resize(2 * d, 2 * d);
-    switch (c)
-    {
-    case 'b':
-    {
-      m.gen_ntrulike2(b);
-      break;
-    }
-    case 'q':
-    {
-      m.gen_ntrulike2_withq(b);
-      break;
-    }
-    default:
-    {
-      fatal_error("parameter c must be 'b' or 'q'");
     }
     }
     break;
