@@ -23,7 +23,9 @@ template <class FT> int test_enum(size_t d)
 {
   RandGen::init_with_seed(0x1337);
   ZZ_mat<mpz_t> A = ZZ_mat<mpz_t>(100, 100);
-  A.gen_qary_withq(50, 7681);
+  Z_NR<mpz_t> q;
+  q = 7681;
+  A.gen_qary(50, q);
   lll_reduction(A);
   ZZ_mat<mpz_t> U;
   MatGSO<Z_NR<mpz_t>, FP_NR<FT>> M(A, U, U, 0);
@@ -185,7 +187,9 @@ template <class FT> int test_callback_enum(size_t d)
 {
   RandGen::init_with_seed(0x1337);
   ZZ_mat<mpz_t> A = ZZ_mat<mpz_t>(100, 100);
-  A.gen_qary_withq(50, 7681);
+  Z_NR<mpz_t> q;
+  q = 7681;
+  A.gen_qary(50, q);
   lll_reduction(A);
   ZZ_mat<mpz_t> U;
   MatGSO<Z_NR<mpz_t>, FP_NR<FT>> M(A, U, U, 0);

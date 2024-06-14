@@ -278,13 +278,31 @@ public:
   /** Generate a random matrix of uniform distribution. */
   void gen_uniform(int bits);
 
+  /** Generate a value for q in the interval [2^{bits-1}, 2^bits - 1],
+     uniformly at random, and store the result in q.
+  */
+  static inline void gen_q(int bits, Z_NR<ZT> &q)
+  {
+    Z_NR<ZT> pow2;
+    pow2 = 1;
+    pow2.mul_2si(pow2, bits - 1);
+    q.randb(bits - 1);
+    q.add(q, pow2);
+  }
+
   /** Construct a matrix `[[I,H],[0,qI]]` where `H` is constructed from rotations of a vector ``h``.
 
      @note The constructed matrix will not come with a guarantee of unusually short vectors.
-  **/
+  */
 
-  void gen_ntrulike(int bits);
-  void gen_ntrulike_withq(int q);
+  void gen_ntrulike(const Z_NR<ZT> &q);
+
+  void gen_ntrulike_bits(int bits)
+  {
+    Z_NR<ZT> q;
+    gen_q(bits, q);
+    gen_ntrulike(q);
+  }
 
   /** Construct a matrix ``[[qI,0],[H,I]]`` where ``H`` is constructed from rotations of a vector
     ``h``.
@@ -292,32 +310,31 @@ public:
     @note The constructed matrix will not come with a guarantee of unusually short vectors.
   */
 
-  void gen_ntrulike2(int bits);
-  void gen_ntrulike2_withq(int q);
+  void gen_ntrulike2(const Z_NR<ZT> &q);
+
+  void gen_ntrulike2_bits(int bits)
+  {
+    Z_NR<ZT> q;
+    gen_q(bits, q);
+    gen_ntrulike2(q);
+  }
 
   /** Construct a matrix ``[[I,H],[0,Iq]]`` where ``H`` is uniform mod q, of dimensions (n-k) x k.
    */
 
-  void gen_qary(int k, Z_NR<ZT> &q);
+  void gen_qary(int k, const Z_NR<ZT> &q);
 
-  void gen_qary(int k, int bits)
+  void gen_qary_bits(int k, int bits)
   {
     Z_NR<ZT> q;
-    q.randb(bits);
+    gen_q(bits, q);
     gen_qary(k, q);
-  }
-
-  void gen_qary_withq(int k, int q)
-  {
-    Z_NR<ZT> q2;
-    q2 = q;
-    gen_qary(k, q2);
   }
 
   void gen_qary_prime(int k, int bits)
   {
     Z_NR<ZT> q;
-    q.randb(bits);
+    gen_q(bits, q);
     q.nextprime(q);
     gen_qary(k, q);
   }

@@ -38,7 +38,10 @@ template <> inline long Z_NR<mpz_t>::exponent() const
 }
 
 /** set data */
-template <> inline void Z_NR<mpz_t>::set_str(const char *s) { mpz_set_str(data, s, 10); }
+template <> inline bool Z_NR<mpz_t>::set_str(const char *s)
+{
+  return mpz_set_str(data, s, 10) == 0;
+}
 
 /** comparison */
 template <> inline int Z_NR<mpz_t>::cmp(const Z_NR<mpz_t> &m) const
@@ -272,7 +275,7 @@ template <> inline istream &operator>>(istream &is, Z_NR<mpz_t> &x)
   else
     is.putback(c);
 
-  if (mpz_set_str(x.get_data(), s.c_str(), 10))
+  if (!x.set_str(s.c_str()))
   {
     is.setstate(ios::failbit);
   }
