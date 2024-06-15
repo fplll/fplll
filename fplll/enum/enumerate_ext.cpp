@@ -15,7 +15,7 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "enumerate_ext.h"
-#include <fplll/defs.h>
+#include "../defs.h"
 
 #if FPLLL_MAX_PARALLEL_ENUM_DIM != 0
 #include "../enum-parallel/enumlib.h"

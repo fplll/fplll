@@ -14,9 +14,9 @@
   along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "pruner.h"
-#include "ballvol.const"
-#include "factorial.const"
-#include "fplll.h"
+#include "../ballvol.const"
+#include "../factorial.const"
+#include "../fplll.h"
 
 // add components
 #include "pruner_cost.cpp"

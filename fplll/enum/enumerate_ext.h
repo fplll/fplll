@@ -18,10 +18,9 @@
 #define FPLLL_ENUMERATE_EXT_H
 
 #include "enumerate_ext_api.h"
-
-#include <fplll/enum/enumerate_base.h>
-#include <fplll/enum/evaluator.h>
-#include <fplll/gso_interface.h>
+#include "enumerate_base.h"
+#include "evaluator.h"
+#include "../gso_interface.h"
 
 FPLLL_BEGIN_NAMESPACE
 

@@ -7,30 +7,29 @@
 #include "../defs.h"
 #include <iostream>
 
-#include "fplll/nr/nr_rand.inl"
+#include "nr_rand.inl"
 
-#include "fplll/nr/nr_Z.inl"
-#include "fplll/nr/nr_Z_d.inl"
-#include "fplll/nr/nr_Z_l.inl"
-#include "fplll/nr/nr_Z_mpz.inl"
-
-#include "fplll/nr/nr_FP.inl"
-#include "fplll/nr/nr_FP_d.inl"
-#include "fplll/nr/nr_FP_ld.inl"
+#include "nr_Z.inl"
+#include "nr_Z_d.inl"
+#include "nr_Z_l.inl"
+#include "nr_Z_mpz.inl"
+#include "nr_FP.inl"
+#include "nr_FP_d.inl"
+#include "nr_FP_ld.inl"
 
 #ifdef FPLLL_WITH_DPE
-#include "fplll/nr/nr_FP_dpe.inl"
+#include "nr_FP_dpe.inl"
 #endif
 
 #ifdef FPLLL_WITH_QD
-#include "fplll/nr/nr_FP_dd.inl"
-#include "fplll/nr/nr_FP_qd.inl"
+#include "nr_FP_dd.inl"
+#include "nr_FP_qd.inl"
 #endif
 
-#include "fplll/nr/nr_FP_mpfr.inl"
+#include "nr_FP_mpfr.inl"
 
-#include "fplll/nr/nr_FP_misc.inl"
-#include "fplll/nr/nr_Z_misc.inl"
+#include "nr_FP_misc.inl"
+#include "nr_Z_misc.inl"
 
 FPLLL_BEGIN_NAMESPACE
 

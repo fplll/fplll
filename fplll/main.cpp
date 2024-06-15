@@ -16,7 +16,7 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include "main.h"
-#include <config.h>
+#include "../config.h"
 
 template <class ZT> int lll(Options &o, ZZ_mat<ZT> &b)
 {
