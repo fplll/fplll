@@ -14,13 +14,13 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include <cstring>
-#include <gso.h>
-#include <gso_gram.h>
-#include <gso_interface.h>
-#include <householder.h>
-#include <nr/matrix.h>
+#include <fplll/gso.h>
+#include <fplll/gso_gram.h>
+#include <fplll/gso_interface.h>
+#include <fplll/householder.h>
+#include <fplll/nr/matrix.h>
 // #include <random>
-#include <test_utils.h>
+#include "test_utils.h"
 
 using namespace std;
 using namespace fplll;

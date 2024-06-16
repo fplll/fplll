@@ -16,9 +16,9 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include <cstring>
-#include <fplll.h>
-#include <gso_gram.h>
-#include <test_utils.h>
+#include <fplll/fplll.h>
+#include <fplll/gso_gram.h>
+#include "test_utils.h"
 
 #ifndef TESTDATADIR
 #define TESTDATADIR ".."

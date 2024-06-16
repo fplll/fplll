@@ -15,7 +15,7 @@
 
 #include <cstring>
 #include <fplll/fplll.h>
-#include <test_utils.h>
+#include "test_utils.h"
 
 using namespace fplll;
 

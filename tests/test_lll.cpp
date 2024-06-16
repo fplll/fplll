@@ -14,8 +14,8 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include <cstring>
-#include <fplll.h>
-#include <test_utils.h>
+#include <fplll/fplll.h>
+#include "test_utils.h"
 
 using namespace std;
 using namespace fplll;
