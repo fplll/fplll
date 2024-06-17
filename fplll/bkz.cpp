@@ -823,8 +823,7 @@ int bkz_reduction_f(ZZ_mat<mpz_t> &b, const BKZParam &param, int sel_ft, double 
   ZZ_mat<long> ul_inv;
 
   // we check if we can convert the basis to long integers for performance
-  if (convert<long, mpz_t>(bl, b, 10) && \
-      convert<long, mpz_t>(ul, u, 10) && \
+  if (convert<long, mpz_t>(bl, b, 10) && convert<long, mpz_t>(ul, u, 10) &&
       convert<long, mpz_t>(ul_inv, u_inv, 10))
   {
     MatGSO<Z_NR<long>, FT> m_gso(bl, ul, ul_inv, gso_flags);
