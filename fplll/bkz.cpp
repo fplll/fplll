@@ -819,19 +819,17 @@ int bkz_reduction_f(ZZ_mat<mpz_t> &b, const BKZParam &param, int sel_ft, double 
   if (sel_ft == FT_DOUBLE || sel_ft == FT_LONG_DOUBLE)
     gso_flags |= GSO_ROW_EXPO;
   ZZ_mat<long> bl;
-  // we check if we can convert the basis to long integers for performance
-  if (convert<long, mpz_t>(bl, b, 10))
-  {
-    ZZ_mat<long> ul;
-    convert<long, mpz_t>(ul, u, 0);
-    ZZ_mat<long> ul_inv;
-    convert<long, mpz_t>(ul_inv, u_inv, 0);
+  ZZ_mat<long> ul;
+  ZZ_mat<long> ul_inv;
 
+  // we check if we can convert the basis to long integers for performance
+  if (convert<long, mpz_t>(bl, b, 10) && convert<long, mpz_t>(ul, u, 10) &&
+      convert<long, mpz_t>(ul_inv, u_inv, 10))
+  {
     MatGSO<Z_NR<long>, FT> m_gso(bl, ul, ul_inv, gso_flags);
     LLLReduction<Z_NR<long>, FT> lll_obj(m_gso, lll_delta, LLL_DEF_ETA, LLL_DEFAULT);
     BKZReduction<Z_NR<long>, FT> bkz_obj(m_gso, lll_obj, param);
     bkz_obj.bkz();
-
     convert<mpz_t, long>(b, bl, 0);
     convert<mpz_t, long>(u, ul, 0);
     convert<mpz_t, long>(u_inv, ul_inv, 0);
