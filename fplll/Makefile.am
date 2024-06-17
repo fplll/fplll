@@ -7,9 +7,7 @@ EXTRA_DIST = io/json.hpp ballvol.const factorial.const
 
 CLEANFILES = *.gcov .libs/*.gcda .libs/*.gcno *.gcno *.gcda */*.gcno */*.gcda
 
-nodist_include_fplll_HEADERS=fplll_config.h
-
-nobase_include_fplll_HEADERS=defs.h fplll.h \
+nobase_include_fplll_HEADERS=defs.h fplll.h fplll_config.h \
 	nr/dpe.h \
 	nr/matrix.h \
 	nr/matrix.cpp \
