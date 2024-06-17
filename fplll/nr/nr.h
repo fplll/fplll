@@ -9,13 +9,13 @@
 
 #include "nr_rand.inl"
 
+#include "nr_FP.inl"
+#include "nr_FP_d.inl"
+#include "nr_FP_ld.inl"
 #include "nr_Z.inl"
 #include "nr_Z_d.inl"
 #include "nr_Z_l.inl"
 #include "nr_Z_mpz.inl"
-#include "nr_FP.inl"
-#include "nr_FP_d.inl"
-#include "nr_FP_ld.inl"
 
 #ifdef FPLLL_WITH_DPE
 #include "nr_FP_dpe.inl"

@@ -14,13 +14,13 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
+#include "test_utils.h"
 #include <cstring>
 #include <fplll/fplll.h>
 #include <fplll/gso.h>
 #include <fplll/gso_gram.h>
 #include <fplll/gso_interface.h>
 #include <fplll/lll.h>
-#include "test_utils.h"
 
 using namespace std;
 using namespace fplll;

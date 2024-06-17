@@ -19,10 +19,10 @@
 #ifndef FPLLL_ENUMERATE_H
 #define FPLLL_ENUMERATE_H
 
+#include "../gso_interface.h"
 #include "enumerate_base.h"
 #include "enumerate_ext.h"
 #include "evaluator.h"
-#include "../gso_interface.h"
 #include <array>
 #include <memory>
 
