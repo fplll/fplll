@@ -17,8 +17,8 @@
 #ifndef FPLLL_PRUNER_H
 #define FPLLL_PRUNER_H
 
-#include "fplll/defs.h"
-#include "fplll/lll.h"
+#include "../defs.h"
+#include "../lll.h"
 #include <vector>
 
 FPLLL_BEGIN_NAMESPACE

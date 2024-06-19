@@ -14,7 +14,7 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include <cstring>
-#include <fplll.h>
+#include <fplll/fplll.h>
 
 using namespace std;
 using namespace fplll;

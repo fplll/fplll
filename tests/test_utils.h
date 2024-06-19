@@ -1,7 +1,7 @@
 #ifndef TEST_UTILS_H
 #define TEST_UTILS_H 
 
-#include <fplll.h>
+#include <fplll/fplll.h>
 using namespace std;
 using namespace fplll;
 

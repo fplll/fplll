@@ -19,11 +19,11 @@
 #ifndef FPLLL_ENUMERATE_H
 #define FPLLL_ENUMERATE_H
 
+#include "../gso_interface.h"
+#include "enumerate_base.h"
+#include "enumerate_ext.h"
+#include "evaluator.h"
 #include <array>
-#include <fplll/enum/enumerate_base.h>
-#include <fplll/enum/enumerate_ext.h>
-#include <fplll/enum/evaluator.h>
-#include <fplll/gso_interface.h>
 #include <memory>
 
 FPLLL_BEGIN_NAMESPACE

@@ -14,7 +14,7 @@
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
 #include <cstring>
-#include <fplll.h>
+#include <fplll/fplll.h>
 
 #ifdef FPLLL_WITH_QD
 #include <qd/dd_real.h>

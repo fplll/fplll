@@ -17,11 +17,10 @@
 #ifndef FPLLL_ENUMERATE_EXT_H
 #define FPLLL_ENUMERATE_EXT_H
 
+#include "../gso_interface.h"
+#include "enumerate_base.h"
 #include "enumerate_ext_api.h"
-
-#include <fplll/enum/enumerate_base.h>
-#include <fplll/enum/evaluator.h>
-#include <fplll/gso_interface.h>
+#include "evaluator.h"
 
 FPLLL_BEGIN_NAMESPACE
 

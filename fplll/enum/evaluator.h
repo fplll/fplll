@@ -16,9 +16,9 @@
 #ifndef FPLLL_EVALUATOR_H
 #define FPLLL_EVALUATOR_H
 
+#include "../gso_interface.h"
+#include "../util.h"
 #include <cassert>
-#include <fplll/gso_interface.h>
-#include <fplll/util.h>
 #include <functional>
 #include <map>
 #include <queue>

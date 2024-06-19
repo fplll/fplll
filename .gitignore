@@ -86,3 +86,7 @@ stamp-h1
 /tests/test_sieve
 /tests/test_svp
 /tests/test_svp_gram
+**/*.DS_Store
+config.guess~
+config.sub~
+install-sh~

@@ -15,7 +15,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with fplll. If not, see <http://www.gnu.org/licenses/>. */
 
-#include "config.h"
+#include "../config.h"
 #include "util.h"
 
 using namespace fplll;

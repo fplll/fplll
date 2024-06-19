@@ -16,8 +16,8 @@
 #ifndef FPLLL_THREADPOOL_H
 #define FPLLL_THREADPOOL_H
 
-#include <fplll/defs.h>
-#include <fplll/io/thread_pool.hpp>
+#include "defs.h"
+#include "io/thread_pool.hpp"
 
 FPLLL_BEGIN_NAMESPACE
 

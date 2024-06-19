@@ -29,7 +29,7 @@ template <> inline void Z_NR<long>::get_mpz(mpz_t r) const { mpz_set_si(r, data)
 
 inline long compute_long_exponent(long data)
 {
-  unsigned long y = static_cast<unsigned long>(abs(data));
+  unsigned long y = static_cast<unsigned long>(std::abs(data));
   long e;
   for (e = 0; y; e++, y >>= 1)
   {

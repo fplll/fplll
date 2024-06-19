@@ -16,7 +16,7 @@
 #ifndef FPLLL_NUMVECT_H
 #define FPLLL_NUMVECT_H
 
-#include "fplll/nr/nr.h"
+#include "nr.h"
 #include <vector>
 
 FPLLL_BEGIN_NAMESPACE
