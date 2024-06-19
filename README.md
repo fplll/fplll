@@ -113,6 +113,27 @@ fplll can also be built from source. Below, we explicate some of the dependencie
   
 NOTE: If you are intending to use fplll on Windows 10, then these packages should be installed after the `Windows Subsystem for Linux` has been installed and activated. Please go to the [Windows 10](#windows-10) instructions for more information.
 
+### Using `cmake` instead of `libtools` and `auto[conf|make]` ###
+
+_Note:_ the `CMakeLists.txt` configuration is unofficial and trying to reproduce the official build as close as possible, however, less tested cross-platforms.
+
+One upside of `cmake` is, it will generate compilation database automatically at `build/compile_commands.json` which integrates well with language server like `clangd`.
+
+``` sh
+mkdir build && cd build/
+# default for MAKE_INSTALL_PREFIX=/usr/local
+cmake -DMAKE_INSTALL_PREFIX=$VIRTUAL_ENV ..
+make
+make install # this will install headers, libfplll.dylib, libfplll.a, fplll, latticegen, llldiff
+
+# additionally, if this is your first time
+# run `cmake` again to build test files, as they depend on installed headers from previous `make install`
+# in the future, no more `cmake`, your Makefile is good for go
+cmake -DMAKE_INSTALL_PREFIX=$VIRTUAL_ENV ..
+make build_tests
+make test
+```
+
 ### Linux and MacOS ###
 
 You should download the source code from Github and then run
