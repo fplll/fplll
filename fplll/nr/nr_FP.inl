@@ -27,11 +27,11 @@ public:
   /**
    * Constructors.
    */
-  inline FP_NR<F>();
-  inline FP_NR<F>(const FP_NR<F> &f);
+  inline FP_NR();
+  inline FP_NR(const FP_NR<F> &f);
   inline ~FP_NR();
-  inline FP_NR<F>(const double d) : FP_NR<F>() { *this = d; };
-  inline FP_NR<F>(const char *s) : FP_NR<F>() { *this = s; };
+  inline FP_NR(const double d) : FP_NR() { *this = d; };
+  inline FP_NR(const char *s) : FP_NR() { *this = s; };
 
   /**
    * Returns the current precision for new FP_NR&lt;F&gt; objects.
