@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([fplll],[5.4.5])
+AC_INIT([fplll],[5.5.0])
 AC_CONFIG_SRCDIR([fplll/fplll.cpp])
 AM_MAINTAINER_MODE([enable])
 AC_CANONICAL_TARGET
@@ -40,8 +40,8 @@ LT_INIT
 # 3. If interfaces were removed (breaks backward compatibility): increment
 #    current, and set both revision and age to zero.
 
-FPLLL_LT_CURRENT=8
-FPLLL_LT_REVISION=1
+FPLLL_LT_CURRENT=9
+FPLLL_LT_REVISION=0
 FPLLL_LT_AGE=0
 
 AC_SUBST(FPLLL_LT_CURRENT)
