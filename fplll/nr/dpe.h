@@ -286,7 +286,7 @@ DPE_INLINE mp_exp_t dpe_get_z_exp(mpz_t x, const dpe_t y)
   return DPE_EXP(y) - DPE_BITSIZE;
 }
 
-#endif  //#ifdef __GMP_H__
+#endif  // #ifdef __GMP_H__
 
 #ifdef __MPFR_H
 /* set x to y where y is mpfr_t. */

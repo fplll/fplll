@@ -497,7 +497,7 @@ bool Wrapper::hlll()
     hlll_complete = fast_hlll<double>();
   else
     hlll_complete = true;
-#else   // 0
+#else  // 0
   hlll_complete = fast_hlll<double>();
 #endif  // 0
 
