@@ -14,9 +14,8 @@
    License for more details.
 
    You should have received a copy of the GNU Lesser General Public License
-   along with the DPE Library; see the file COPYING.LIB.  If not, write to
-   the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
-   MA 02110-1301, USA. */
+   along with the DPE Library; see the file COPYING.LIB.  If not, see
+   <https://www.gnu.org/licenses/>. */
 
 /* WARNING: Patched version */
 
