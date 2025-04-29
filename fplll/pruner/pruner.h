@@ -44,8 +44,7 @@ public:
   /**
      The default constructor means no pruning.
   */
-  PruningParams()
-      : gh_factor(1.), expectation(1.), metric(PRUNER_METRIC_PROBABILITY_OF_SHORTEST) {};
+  PruningParams() : gh_factor(1.), expectation(1.), metric(PRUNER_METRIC_PROBABILITY_OF_SHORTEST) {};
 
   /** Set all pruning coefficients to 1, except the last <level>
       coefficients, these will be linearly with slope `-1 /
