@@ -32,7 +32,7 @@ jobs:
       - name: Generate
         run: |
           make -j $JOBS check
-          cd fplll && gcov --object-directory .libs *.cpp && cd ..
+          cd fplll && gcov .libs/libfplll_la-*.o && cd ..
 
       - name: Push
         uses: codecov/codecov-action@v1
