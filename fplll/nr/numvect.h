@@ -259,7 +259,7 @@ public:
   int size_nz() const;
 
   friend ostream &operator<< <T>(ostream &os, const NumVect<T> &v);
-  friend istream &operator>><T>(istream &is, NumVect<T> &v);
+  friend istream &operator>> <T>(istream &is, NumVect<T> &v);
 
 private:
   vector<T> data;

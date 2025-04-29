@@ -649,8 +649,7 @@ void read_options(int argc, char **argv, Options &o)
         ABORT_MSG("use '-m " << m.substr(0, m.size() - 5) << " -y' instead of " << argv[ac]);
       }
       else
-        ABORT_MSG("parse error in -m switch : proved, heuristic, fast, "
-                  << "or wrapper expected");
+        ABORT_MSG("parse error in -m switch : proved, heuristic, fast, " << "or wrapper expected");
     }
     else if (strcmp(argv[ac], "-nolll") == 0)
     {

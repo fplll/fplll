@@ -141,8 +141,8 @@ inline bool LLLReduction<ZT, FT>::early_reduction(int start, int size_reduction_
 
 template <class ZT, class FT> inline void LLLReduction<ZT, FT>::print_params()
 {
-  cerr << "Entering LLL"
-       << "\ndelta = " << delta << "\neta = " << eta << "\nprecision = " << FT::get_prec()
+  cerr << "Entering LLL" << "\ndelta = " << delta << "\neta = " << eta
+       << "\nprecision = " << FT::get_prec()
        << "\nexact_dot_product = " << static_cast<int>(m.enable_int_gram)
        << "\nrow_expo = " << static_cast<int>(m.enable_row_expo)
        << "\nearly_red = " << static_cast<int>(enable_early_red)

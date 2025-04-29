@@ -158,7 +158,7 @@ int run_pruner(ZZ_mat<mpz_t> &B, FloatType float_type, int precision, int prune_
   {
     int old_prec = FP_NR<mpfr_t>::set_prec(precision);
     status       = run_pruner_f<FP_NR<mpfr_t>>(B, sel_ft, prune_start, prune_end, prune_pre_nodes,
-                                         prune_min_prob, gh_factor);
+                                               prune_min_prob, gh_factor);
     FP_NR<mpfr_t>::set_prec(old_prec);
   }
   else

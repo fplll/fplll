@@ -416,7 +416,7 @@ template <class ZT, class FT> bool HLLLReduction<ZT, FT>::verify_size_reduction(
     ftmp2.mul_2si(ftmp2, expo2 - expo1);
     ftmp2.add(ftmp0, ftmp2);
 
-#else   // 0
+#else  // 0
     // We want to test if (theoretically the same test as in hplll)
     //   |R(kappa, i)| / R(i, i) <= (0.00...01 * ||b[kappa]||) / R(i, i) + 1
     //   ftmp1 / ftmp2 * 2^(expo1 - expo2) <= ftmp0 / ftmp2 * 2^(expo0 - expo2) + 1

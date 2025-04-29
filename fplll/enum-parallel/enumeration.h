@@ -52,8 +52,8 @@ FPLLL_BEGIN_NAMESPACE
 namespace enumlib
 {
 
-//#define SINGLE_THREADED
-//#define NOCOUNTS
+// #define SINGLE_THREADED
+// #define NOCOUNTS
 #define NOLOCALUPDATE
 
 using namespace std;

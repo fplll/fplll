@@ -3,7 +3,7 @@
 FPLLL_BEGIN_NAMESPACE
 
 #define BALANCE_HEURISTIC_PRUNER_OPTIMIZE
-//#define DEBUG_PRUNER_OPTIMIZE_TC
+// #define DEBUG_PRUNER_OPTIMIZE_TC
 
 /**
  *  preparation work to have some raw pruning coefficients
