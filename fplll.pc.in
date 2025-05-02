@@ -3,6 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
+defaultstrategydir=@DEFAULTSTRATEGYDIR@
+defaultstrategy=@DEFAULTSTRATEGY@
+
 Name: @PACKAGE_NAME@
 Description: lattice algorithms with floating-point computations
 Version: @PACKAGE_VERSION@
