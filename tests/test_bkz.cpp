@@ -15,9 +15,9 @@
 
 #include "test_utils.h"
 #include <cstring>
-#include <unistd.h>
 #include <fplll/fplll.h>
 #include <fplll/io/json.hpp>
+#include <unistd.h>
 
 using json = nlohmann::json;
 
@@ -194,8 +194,9 @@ int test_int_rel_bkz_dump_gso(int d, int b, const int block_size,
   int status = 0;
   // TODO: maybe not safe.
   char temp_template[] = "/tmp/fplll_test_XXXXXX";
-  int temp_fd = mkstemp(temp_template);
-  if (temp_fd == -1) {
+  int temp_fd          = mkstemp(temp_template);
+  if (temp_fd == -1)
+  {
     cerr << "Error creating temporary file" << endl;
     unlink(temp_template);
     return 1;
