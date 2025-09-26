@@ -882,8 +882,10 @@ class basic_json
                     break;
                 }
 
+                case value_t::discarded:
                 default:
                 {
+                    object = nullptr;
                     break;
                 }
             }

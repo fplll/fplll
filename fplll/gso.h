@@ -69,6 +69,7 @@ public:
   using MatGSOInterface<ZT, FT>::update_gso_row;
   using MatGSOInterface<ZT, FT>::row_addmul;
   using MatGSOInterface<ZT, FT>::symmetrize_g;
+  using MatGSOInterface<ZT, FT>::babai;
 
 #ifdef DEBUG
   /* Used only in debug mode. */
