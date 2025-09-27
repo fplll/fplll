@@ -198,7 +198,6 @@ int test_int_rel_bkz_dump_gso(int d, int b, const int block_size,
   if (temp_fd == -1)
   {
     cerr << "Error creating temporary file" << endl;
-    unlink(temp_template);
     return 1;
   }
   close(temp_fd);  // Close the file descriptor as we only need the filename
