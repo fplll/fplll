@@ -699,12 +699,6 @@ DPE_INLINE void dpe_swap(dpe_t x, dpe_t y)
 }
 
 /* Ugly hacks: No correct rounding guaranteed */
-
-DPE_INLINE void dpe_ugly_log(dpe_t x, const dpe_t y)
-{
-  dpe_set_d(x, ((double)DPE_EXP(y)) * M_LN2 + log(DPE_MANT(y)));
-}
-
 DPE_INLINE void dpe_ugly_exp(dpe_t x, const dpe_t y)
 {
   // printf ("## exp is %ld\n", DPE_EXP(y));
