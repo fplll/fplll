@@ -196,7 +196,6 @@ template <> inline void FP_NR<dpe_t>::exponential(const FP_NR<dpe_t> &a, mp_rnd_
 template <> inline void FP_NR<dpe_t>::log(const FP_NR<dpe_t> &a, mp_rnd_t /*rnd*/)
 {
   dpe_log(data, a.data);
-  // dpe_ugly_log(data, a.data);
 }
 
 template <> inline void FP_NR<dpe_t>::sqrt(const FP_NR<dpe_t> &a, mp_rnd_t /*rnd*/)
