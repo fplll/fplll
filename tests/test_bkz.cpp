@@ -17,7 +17,6 @@
 #include <cstring>
 #include <fplll/fplll.h>
 #include <fplll/io/json.hpp>
-#include <unistd.h>
 
 using json = nlohmann::json;
 
@@ -192,21 +191,13 @@ int test_int_rel_bkz_dump_gso(int d, int b, const int block_size,
   A.gen_intrel(b);
   B          = A;
   int status = 0;
-  char temp_template[] = "/tmp/fplll_test_XXXXXX";
-  int temp_fd          = mkstemp(temp_template);
-  if (temp_fd == -1)
-  {
-    cerr << "Error creating temporary file" << endl;
-    return 1;
-  }
-  close(temp_fd);  // Close the file descriptor as we only need the filename
-  string file_bkz_dump_gso = temp_template;
+  // TODO: maybe not safe.
+  string file_bkz_dump_gso = tmpnam(nullptr);
   status |= test_bkz_param<ZT>(B, block_size, flags, file_bkz_dump_gso);
 
   if (status != 0)
   {
     cerr << "Error in test_bkz_param." << endl;
-    unlink(temp_template);
     return status;
   }
 
@@ -215,7 +206,6 @@ int test_int_rel_bkz_dump_gso(int d, int b, const int block_size,
   if (fs.fail())
   {
     cerr << "File " << file_bkz_dump_gso << " cannot be loaded." << endl;
-    unlink(temp_template);
     return 1;
   }
   fs >> js;
@@ -228,7 +218,6 @@ int test_int_rel_bkz_dump_gso(int d, int b, const int block_size,
     {
       cerr << "The array \"norms\" does not contain enough values (" << A.get_rows()
            << " expected but " << i["norms"].size() << " found)." << endl;
-      unlink(temp_template);
       return 1;
     }
 
@@ -242,7 +231,6 @@ int test_int_rel_bkz_dump_gso(int d, int b, const int block_size,
       if (loop_js != -1)
       {
         cerr << "Steps Input or Output are not with \"loop\" = -1." << endl;
-        unlink(temp_template);
         return 1;
       }
     }
@@ -253,20 +241,17 @@ int test_int_rel_bkz_dump_gso(int d, int b, const int block_size,
       if (loop_js != loop)
       {
         cerr << "Loop does not increase." << endl;
-        unlink(temp_template);
         return 1;
       }
       // Verify that time increases
       if (time > time_js)
       {
         cerr << "Time does not increase." << endl;
-        unlink(temp_template);
         return 1;
       }
       time = time_js;
     }
   }
-  unlink(temp_template);
 
   return 0;
 }
