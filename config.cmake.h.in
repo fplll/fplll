@@ -1,0 +1,173 @@
+/* major version */
+#define FPLLL_MAJOR_VERSION @FPLLL_MAJOR_VERSION@
+
+/* micro version */
+#define FPLLL_MICRO_VERSION @FPLLL_MICRO_VERSION@
+
+/* minor version */
+#define FPLLL_MINOR_VERSION @FPLLL_MINOR_VERSION@
+
+/* full version */
+#define FPLLL_VERSION @FPLLL_VERSION@
+
+/* long version string */
+#define FPLLL_VERSION_INFO @FPLLL_VERSION_INFO@
+
+/* defined when libqd is usable */
+#cmakedefine FPLLL_WITH_QD
+
+/* parallel enumeration enabled */
+#define FPLLL_MAX_PARALLEL_ENUM_DIM @FPLLL_MAX_PARALLEL_ENUM_DIM@
+
+/* recursive enumeration enabled */
+#define FPLLL_WITH_RECURSIVE_ENUM @FPLLL_WITH_RECURSIVE_ENUM@
+
+/* maximum supported enumeration dimension */
+#define FPLLL_MAX_ENUM_DIM @FPLLL_MAX_ENUM_DIM@
+
+/* use external enumeration function */
+#cmakedefine FPLLL_EXTENUM_FUNC
+
+/* Switch between GMP and MPIR */
+#if @HAVE_LIBGMP@
+#define HAVE_LIBGMP 1
+#else
+#define HAVE_LIBMPIR 1
+#endif
+
+/* Define to 1 if you have the 'mpfr' library (-lmpfr). */
+#cmakedefine HAVE_LIBMPFR
+
+/* Define to 1 if you have the <limits.h> header file. */
+#cmakedefine HAVE_LIMITS_H
+
+/* Define to 1 if you have the <cstdio> header file. */
+#cmakedefine HAVE_CSTDIO
+
+/* Define to 1 if you have the <iostream> header file. */
+#cmakedefine HAVE_IOSTREAM
+
+/* Define to 1 if you have the <string> header file. */
+#cmakedefine HAVE_STRING
+
+/* Define to 1 if you have the <vector> header file. */
+#cmakedefine HAVE_VECTOR
+
+/* define if the compiler supports basic C++11 syntax */
+#cmakedefine HAVE_CXX11
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#cmakedefine HAVE_DLFCN_H
+
+/* Define to 1 if you have the 'floor' function. */
+#cmakedefine HAVE_FLOOR
+
+/* Define to 1 if you have the 'pow' function. */
+#cmakedefine HAVE_POW
+
+/* Define to 1 if you have the 'rint' function. */
+#cmakedefine HAVE_RINT
+
+/* Define to 1 if you have the 'sqrt' function. */
+#cmakedefine HAVE_SQRT
+
+/* Define to 1 if you have the 'strtol' function. */
+#cmakedefine HAVE_STRTOL
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#cmakedefine HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <limits> header file. */
+#cmakedefine HAVE_LIMITS
+
+/* Define if you have POSIX threads libraries and header files. */
+#cmakedefine HAVE_PTHREAD
+
+/* Have PTHREAD_PRIO_INHERIT. */
+#cmakedefine HAVE_PTHREAD_PRIO_INHERIT
+
+/* Define to 1 if stdbool.h conforms to C99. */
+#cmakedefine HAVE_STDBOOL_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#cmakedefine HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#cmakedefine HAVE_STDIO_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#cmakedefine HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#cmakedefine HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#cmakedefine HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#cmakedefine HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#cmakedefine HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#cmakedefine HAVE_UNISTD_H
+
+/* Define to 1 if the system has the type '_Bool'. */
+#cmakedefine HAVE__BOOL
+
+/* Not using libtool, using cmake instead */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
+/* #undef LT_OBJDIR */
+
+/* Name of package */
+#define PACKAGE "@PROJECT_NAME@"
+
+/* Define to the address where bug reports for this package should be sent. */
+#define PACKAGE_BUGREPORT "@PROJECT_BUGREPORT@"
+
+/* Define to the full name of this package. */
+#define PACKAGE_NAME "@PROJECT_NAME@"
+
+/* Define to the full name and version of this package. */
+#define PACKAGE_STRING "@PROJECT_NAME@ @FPLLL_VERSION@"
+
+/* Define to the one symbol short name of this package. */
+#define PACKAGE_TARNAME "@PROJECT_NAME@"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL "@PROJECT_HOMEPAGE_URL@"
+
+/* Define to the version of this package. */
+#define PACKAGE_VERSION "@FPLLL_VERSION@"
+
+/* Version number of package */
+#define VERSION "@FPLLL_VERSION@"
+
+/* NOTE: for all below, since c++11 is supported, skip checking for simplicity */
+/* should work for most modern setups */
+
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
+/* #undef STDC_HEADERS */
+
+/* Define to necessary symbol if this constant uses a non-standard name on
+   your system. */
+/* #undef PTHREAD_CREATE_JOINABLE */
+
+/* Define to empty if 'const' does not conform to ANSI C. */
+/* #undef const */
+
+/* Define to '__inline__' or '__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+/* #undef inline */
+#endif
+
+/* Define as 'unsigned int' if <stddef.h> doesn't define. */
+/* #undef size_t */
+
+/* Define to empty if the keyword 'volatile' does not work. Warning: valid
+   code using 'volatile' can become incorrect without. Disable with care. */
+/* #undef volatile */
