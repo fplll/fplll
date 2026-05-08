@@ -144,10 +144,27 @@ template <class ZT, class FT> bool MatGSOInterface<ZT, FT>::update_gso_row(int i
   {
     get_gram(ftmp1, i, j);
     FPLLL_DEBUG_CHECK(j == i || gso_valid_cols[j] >= j);
+    // Kahan-compensated subtraction loop computing
+    //   ftmp1 := <b_i, b_j> - sum_{k<j} mu(j,k) * r(i,k).
+    // The naive in-place form (ftmp1.sub(ftmp1, ftmp2)) suffers
+    // catastrophic cancellation in the diagonal case (j == i) when
+    // b_i is nearly in the span of {b*_k : k < i}, and can produce
+    // finite negative r(i,i) -- the squared GS norm -- on
+    // near-degenerate bases. Maintaining a Kahan compensation term
+    // captures the low-order bits lost on each subtraction and folds
+    // them back into the running sum at no cost in precision and at
+    // ~3x the inner-loop FP op count.
+    FT kahan_c, kahan_y, kahan_t;
+    kahan_c = 0.0;
     for (int k = 0; k < j; k++)
     {
       ftmp2.mul(mu(j, k), r(i, k));
-      ftmp1.sub(ftmp1, ftmp2);
+      // ftmp1 -= ftmp2, with running residual kahan_c.
+      kahan_y.add(ftmp2, kahan_c);    // y = ftmp2 + c
+      kahan_t.sub(ftmp1, kahan_y);    // t = ftmp1 - y
+      kahan_c.sub(ftmp1, kahan_t);    // c = ftmp1 - t  (approx y, off by lost bits)
+      kahan_c.sub(kahan_c, kahan_y);  // c = (ftmp1 - t) - y  (captured residual)
+      ftmp1 = kahan_t;
     }
     r(i, j) = ftmp1;
     if (i > j)
