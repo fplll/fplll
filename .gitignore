@@ -1,6 +1,7 @@
 *.la
 *.lo
 *.trs
+*.exe
 .clang-format
 .deps
 .dirstamp
