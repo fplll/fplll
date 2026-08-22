@@ -84,12 +84,17 @@ AS_IF([test "x$enable_mpir" != "xyes"], [
 	[GMP version >= 4.2.0 needed, see http://gmplib.org])])
 ])
 
+AC_SUBST([MPFR_LIBS], [-lmpfr])
+AC_SUBST([MPFR_CFLAGS])
 AC_ARG_WITH(mpfr,
    AS_HELP_STRING([--with-mpfr=@<:@=DIR@:>@], [MPFR install directory]), [
-      CPPFLAGS="$CPPFLAGS -I$withval/include"
-       LDFLAGS="$LDFLAGS -L$withval/lib"
-       mpfr_lib_path="$withval/lib"
-   ])
+	AS_IF([test "x$with_mpfr" != "xyes"],
+	    AS_IF([test "x$with_mpfr" = "xno"],
+		[AC_MSG_ERROR([mpfr is required])],
+		[CPPFLAGS="$CPPFLAGS -I$withval/include"
+		 LDFLAGS="$LDFLAGS -L$withval/lib"
+		 MPFR_CFLAGS="-I$withval/include"
+		 MPFR_LIBS="-L$withval/lib -lmpfr"]))])
 
 AC_CHECK_LIB(mpfr, mpfr_fms, , [AC_MSG_ERROR(
 [MPFR version >= 2.3.0 needed, see http://www.mpfr.org])])
