@@ -120,14 +120,20 @@ AS_IF([test -z "$with_qd"], [with_qd=yes])
 # and libraries if that didn't work for some reason.
 #
 # We only show a warning if we cannot find libqd, it is optional but recommended
+AC_SUBST([LIBQD_LIBS])
+AC_SUBST([LIBQD_CFLAGS])
 AS_IF([test "x$with_qd" = "xyes"], [
-  PKG_CHECK_MODULES([LIBQD], [qd], [have_libqd="yes"], [
+  PKG_CHECK_MODULES([LIBQD], [qd],
+    [have_libqd="yes"
+     CPPFLAGS="$CPPFLAGS $LIBQD_CFLAGS"
+     LDFLAGS="$LDFLAGS `$PKG_CONFIG --libs-only-L qd`"], [
     # fall back to manual search.
     AC_SEARCH_LIBS(c_dd_add,
                    qd,
                    [
                      AC_CHECK_HEADER(qd/dd_real.h,
-                       [have_libqd="yes"],
+                       [have_libqd="yes"
+                        LIBQD_LIBS=-lqd],
                        [AC_MSG_WARN([unable to find header qd/dd_real.h])])
                    ],
                    [ AC_MSG_WARN([unable to find c_dd_add() in libqd]) ]
@@ -138,8 +144,8 @@ AS_IF([test "x$with_qd" = "xyes"], [
   CPPFLAGS="$CPPFLAGS -I$with_qd/include"
   AC_CHECK_HEADER(qd/dd_real.h, [
     LDFLAGS="$LDFLAGS -L$with_qd/lib"
-    qd_lib_path="$with_qd/lib"
-    LIBQD_LIBS="-lqd"
+    LIBQD_LIBS="-L$with_qd/lib -lqd"
+    LIBQD_CFLAGS="-I$with_qd/include"
     have_libqd="yes"],
     [ AC_MSG_WARN([unable to find header qd/dd_real.h]) ]
   )]
@@ -148,13 +154,6 @@ AS_IF([test "x$with_qd" = "xyes"], [
 AS_IF([test "x${have_libqd}" = "xyes"], [
   AC_DEFINE([FPLLL_WITH_QD], [1], [defined when libqd is usable])
 ])
-
-# This will be non-empty if we found qd using pkg-config, or if a path
-# was passed to --with-qd=<path> and we set the variable ourselves. If
-# we found libqd via a manual library search, on the other hand, then
-# the linker flag will be found in LIBS instead because that's just how
-# the AC_SEARCH_LIBS macro works.
-AC_SUBST(LIBQD_LIBS)
 
 AC_CHECK_HEADERS([limits.h cstdio iostream string limits vector])
 
