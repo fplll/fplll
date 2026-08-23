@@ -58,16 +58,23 @@ AC_PROG_MAKE_SET
 AX_CXX_COMPILE_STDCXX([11],[noext],[mandatory])
 
 # Checks for libraries.
+AC_SUBST([GMP_LIBS], [-lgmp])
+AC_SUBST([GMP_CFLAGS])
 AC_ARG_ENABLE(mpir,
         AS_HELP_STRING([--enable-mpir],
          [Enable MPIR instead of GMP]))
 
 AS_IF([test "x$enable_mpir" = "xyes"], [
+	GMP_LIBS=-lmpir
 	AC_ARG_WITH(mpir,
 	   AS_HELP_STRING([--with-mpir=@<:@=DIR@:>@], [MPIR install directory]), [
-	      CPPFLAGS="$CPPFLAGS -I$withval/include"
-	      LDFLAGS="$LDFLAGS -L$withval/lib"
-	      mpir_lib_path="$withval/lib"
+		AS_IF([test "x$with_mpir" != "xyes"],
+		    AS_IF([test "x$with_mpir" = "xno"],
+			[AC_MSG_ERROR([--enable-mpir and --without-mpir both given])],
+			[CPPFLAGS="$CPPFLAGS -I$withval/include"
+			 LDFLAGS="$LDFLAGS -L$withval/lib"
+			 GMP_CFLAGS="-I$withval/include"
+			 GMP_LIBS="-L$withval/lib -lmpir"]))
 	   ])
 	AC_CHECK_LIB(mpir, __gmp_get_memory_functions, , [AC_MSG_ERROR(
 	[MPIR version >= 1.0.0 needed, see http://mpir.org])])
@@ -76,9 +83,13 @@ AS_IF([test "x$enable_mpir" = "xyes"], [
 AS_IF([test "x$enable_mpir" != "xyes"], [
 	AC_ARG_WITH(gmp,
 	   AS_HELP_STRING([--with-gmp=@<:@=DIR@:>@], [GMP install directory]), [
-	      CPPFLAGS="$CPPFLAGS -I$withval/include"
-	      LDFLAGS="$LDFLAGS -L$withval/lib"
-	      mpir_lib_path="$withval/lib"
+		AS_IF([test "x$with_gmp" != "xyes"],
+		    AS_IF([test "x$with_gmp" = "xno"],
+			[AC_MSG_ERROR([gmp is required])],
+			[CPPFLAGS="$CPPFLAGS -I$withval/include"
+			 LDFLAGS="$LDFLAGS -L$withval/lib"
+			 GMP_CFLAGS="-I$withval/include"
+			 GMP_LIBS="-L$withval/lib -lgmp"]))
 	   ])
 	AC_CHECK_LIB(gmp, __gmp_get_memory_functions, , [AC_MSG_ERROR(
 	[GMP version >= 4.2.0 needed, see http://gmplib.org])])
