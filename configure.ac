@@ -58,16 +58,23 @@ AC_PROG_MAKE_SET
 AX_CXX_COMPILE_STDCXX([11],[noext],[mandatory])
 
 # Checks for libraries.
+AC_SUBST([GMP_LIBS], [-lgmp])
+AC_SUBST([GMP_CFLAGS])
 AC_ARG_ENABLE(mpir,
         AS_HELP_STRING([--enable-mpir],
          [Enable MPIR instead of GMP]))
 
 AS_IF([test "x$enable_mpir" = "xyes"], [
+	GMP_LIBS=-lmpir
 	AC_ARG_WITH(mpir,
 	   AS_HELP_STRING([--with-mpir=@<:@=DIR@:>@], [MPIR install directory]), [
-	      CPPFLAGS="$CPPFLAGS -I$withval/include"
-	      LDFLAGS="$LDFLAGS -L$withval/lib"
-	      mpir_lib_path="$withval/lib"
+		AS_IF([test "x$with_mpir" != "xyes"],
+		    AS_IF([test "x$with_mpir" = "xno"],
+			[AC_MSG_ERROR([--enable-mpir and --without-mpir both given])],
+			[CPPFLAGS="$CPPFLAGS -I$withval/include"
+			 LDFLAGS="$LDFLAGS -L$withval/lib"
+			 GMP_CFLAGS="-I$withval/include"
+			 GMP_LIBS="-L$withval/lib -lmpir"]))
 	   ])
 	AC_CHECK_LIB(mpir, __gmp_get_memory_functions, , [AC_MSG_ERROR(
 	[MPIR version >= 1.0.0 needed, see http://mpir.org])])
@@ -76,20 +83,29 @@ AS_IF([test "x$enable_mpir" = "xyes"], [
 AS_IF([test "x$enable_mpir" != "xyes"], [
 	AC_ARG_WITH(gmp,
 	   AS_HELP_STRING([--with-gmp=@<:@=DIR@:>@], [GMP install directory]), [
-	      CPPFLAGS="$CPPFLAGS -I$withval/include"
-	      LDFLAGS="$LDFLAGS -L$withval/lib"
-	      mpir_lib_path="$withval/lib"
+		AS_IF([test "x$with_gmp" != "xyes"],
+		    AS_IF([test "x$with_gmp" = "xno"],
+			[AC_MSG_ERROR([gmp is required])],
+			[CPPFLAGS="$CPPFLAGS -I$withval/include"
+			 LDFLAGS="$LDFLAGS -L$withval/lib"
+			 GMP_CFLAGS="-I$withval/include"
+			 GMP_LIBS="-L$withval/lib -lgmp"]))
 	   ])
 	AC_CHECK_LIB(gmp, __gmp_get_memory_functions, , [AC_MSG_ERROR(
 	[GMP version >= 4.2.0 needed, see http://gmplib.org])])
 ])
 
+AC_SUBST([MPFR_LIBS], [-lmpfr])
+AC_SUBST([MPFR_CFLAGS])
 AC_ARG_WITH(mpfr,
    AS_HELP_STRING([--with-mpfr=@<:@=DIR@:>@], [MPFR install directory]), [
-      CPPFLAGS="$CPPFLAGS -I$withval/include"
-       LDFLAGS="$LDFLAGS -L$withval/lib"
-       mpfr_lib_path="$withval/lib"
-   ])
+	AS_IF([test "x$with_mpfr" != "xyes"],
+	    AS_IF([test "x$with_mpfr" = "xno"],
+		[AC_MSG_ERROR([mpfr is required])],
+		[CPPFLAGS="$CPPFLAGS -I$withval/include"
+		 LDFLAGS="$LDFLAGS -L$withval/lib"
+		 MPFR_CFLAGS="-I$withval/include"
+		 MPFR_LIBS="-L$withval/lib -lmpfr"]))])
 
 AC_CHECK_LIB(mpfr, mpfr_fms, , [AC_MSG_ERROR(
 [MPFR version >= 2.3.0 needed, see http://www.mpfr.org])])
@@ -104,14 +120,20 @@ AS_IF([test -z "$with_qd"], [with_qd=yes])
 # and libraries if that didn't work for some reason.
 #
 # We only show a warning if we cannot find libqd, it is optional but recommended
+AC_SUBST([LIBQD_LIBS])
+AC_SUBST([LIBQD_CFLAGS])
 AS_IF([test "x$with_qd" = "xyes"], [
-  PKG_CHECK_MODULES([LIBQD], [qd], [have_libqd="yes"], [
+  PKG_CHECK_MODULES([LIBQD], [qd],
+    [have_libqd="yes"
+     CPPFLAGS="$CPPFLAGS $LIBQD_CFLAGS"
+     LDFLAGS="$LDFLAGS `$PKG_CONFIG --libs-only-L qd`"], [
     # fall back to manual search.
     AC_SEARCH_LIBS(c_dd_add,
                    qd,
                    [
                      AC_CHECK_HEADER(qd/dd_real.h,
-                       [have_libqd="yes"],
+                       [have_libqd="yes"
+                        LIBQD_LIBS=-lqd],
                        [AC_MSG_WARN([unable to find header qd/dd_real.h])])
                    ],
                    [ AC_MSG_WARN([unable to find c_dd_add() in libqd]) ]
@@ -122,8 +144,8 @@ AS_IF([test "x$with_qd" = "xyes"], [
   CPPFLAGS="$CPPFLAGS -I$with_qd/include"
   AC_CHECK_HEADER(qd/dd_real.h, [
     LDFLAGS="$LDFLAGS -L$with_qd/lib"
-    qd_lib_path="$with_qd/lib"
-    LIBQD_LIBS="-lqd"
+    LIBQD_LIBS="-L$with_qd/lib -lqd"
+    LIBQD_CFLAGS="-I$with_qd/include"
     have_libqd="yes"],
     [ AC_MSG_WARN([unable to find header qd/dd_real.h]) ]
   )]
@@ -132,13 +154,6 @@ AS_IF([test "x$with_qd" = "xyes"], [
 AS_IF([test "x${have_libqd}" = "xyes"], [
   AC_DEFINE([FPLLL_WITH_QD], [1], [defined when libqd is usable])
 ])
-
-# This will be non-empty if we found qd using pkg-config, or if a path
-# was passed to --with-qd=<path> and we set the variable ourselves. If
-# we found libqd via a manual library search, on the other hand, then
-# the linker flag will be found in LIBS instead because that's just how
-# the AC_SEARCH_LIBS macro works.
-AC_SUBST(LIBQD_LIBS)
 
 AC_CHECK_HEADERS([limits.h cstdio iostream string limits vector])
 
