@@ -2,7 +2,7 @@ include_fpllldir=$(includedir)/fplll
 TOPSRCDIR = $(srcdir)/..
 strategydir = $(pkgdatadir)/strategies
 # see https://stackoverflow.com/questions/5867136/autoconf-how-to-get-installation-paths-into-config-h
-AM_CPPFLAGS = -DFPLLL_DEFAULT_STRATEGY_PATH=\"$(strategydir)\" -DFPLLL_DEFAULT_STRATEGY=\"$(strategydir)/default.json\" -I$(TOPSRCDIR)
+AM_CPPFLAGS = -DFPLLL_DEFAULT_STRATEGY_PATH=\"@DEFAULTSTRATEGYDIR@\" -DFPLLL_DEFAULT_STRATEGY=\"@DEFAULTSTRATEGY@\" -I$(TOPSRCDIR)
 EXTRA_DIST = io/json.hpp ballvol.const factorial.const
 
 CLEANFILES = *.gcov .libs/*.gcda .libs/*.gcno *.gcno *.gcda */*.gcno */*.gcda
