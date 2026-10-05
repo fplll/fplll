@@ -44,6 +44,9 @@ jobs:
   macos:
     runs-on: macos-15
     env:
+      # setting this avoids upgrading dependent packages, which we don't need for this test run
+      # it is important to list *all* packages we need, so those do get installed/upgraded
+      # so if anything breaks, try unsetting this or add packages to `brew install`
       HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
 
     steps:
