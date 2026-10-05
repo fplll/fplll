@@ -43,6 +43,8 @@ jobs:
 
   macos:
     runs-on: macos-15
+    env:
+      HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
 
     steps:
       - name: Check out
@@ -54,19 +56,11 @@ jobs:
       - name: Install prerequisites
         run: |
           brew update
-          brew install -f --overwrite python@3.12
-          brew reinstall gmp
-          brew install automake clang-format libtool
-          brew upgrade autoconf
+          brew install autoconf automake libtool pkgconf gmp mpfr clang-format
       - name: Configure
         run: |
-          if [[ $(uname -m) == 'arm64' ]]; then
-             GMP=/opt/homebrew/opt/gmp
-             MPFR=/opt/homebrew/opt/mpfr
-          else
-             GMP=/usr/local/include/gmp
-             MPFR=/usr/local/include/mpfr
-          fi
+          GMP=$(brew --prefix gmp)
+          MPFR=$(brew --prefix mpfr)
           ./autogen.sh
           ./configure --disable-static --with-gmp=$GMP --with-mpfr=$MPFR $CONFIGURE_OPTS
       - name: Compile
