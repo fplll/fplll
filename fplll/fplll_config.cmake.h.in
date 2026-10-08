@@ -1,0 +1,41 @@
+#ifndef FPLLL_CONFIG__H
+#define FPLLL_CONFIG__H
+
+/* use quaddouble library */
+#cmakedefine FPLLL_WITH_QD
+
+/* fplll major version */
+#define FPLLL_MAJOR_VERSION @FPLLL_MAJOR_VERSION@
+
+/* fplll minor version */
+#define FPLLL_MINOR_VERSION @FPLLL_MINOR_VERSION@
+
+/* fplll micro version */
+#define FPLLL_MICRO_VERSION @FPLLL_MICRO_VERSION@
+
+/* fplll version */
+#define FPLLL_VERSION @FPLLL_VERSION@
+
+/* fplll version info */
+#define FPLLL_VERSION_INFO @FPLLL_VERSION_INFO@
+
+/* Maximum supported enumeration dimension */
+#define FPLLL_MAX_ENUM_DIM @FPLLL_MAX_ENUM_DIM@
+
+/* Recursive enumeration enabled */
+#cmakedefine FPLLL_WITH_RECURSIVE_ENUM
+
+/* Maximum supported parallel enumeration dimension */
+#define FPLLL_MAX_PARALLEL_ENUM_DIM @FPLLL_MAX_PARALLEL_ENUM_DIM@
+
+/* Switch between GMP and MPIR */
+#if @HAVE_LIBGMP@
+#define HAVE_LIBGMP 1
+#else
+#define HAVE_LIBMPIR 1
+#endif
+
+/* external enumeration */
+#cmakedefine FPLLL_EXTENUM_FUNC
+
+#endif //FPLLL_CONFIG__H
