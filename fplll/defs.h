@@ -23,14 +23,19 @@
 #define FPLLL_WITH_LONG_DOUBLE
 #endif
 
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
+#define FPLLL_WITH_GETRUSAGE
+#endif
+
 #define FPLLL_WITH_DPE
 #define FPLLL_WITH_ZDOUBLE
 #define FPLLL_WITH_ZLONG
-#define FPLLL_WITH_GETRUSAGE
+
+#define _USE_MATH_DEFINES
+#include <cmath>
 
 #include <algorithm>
 #include <climits>
-#include <cmath>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
@@ -42,10 +47,10 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <sys/time.h>
 
 #ifdef FPLLL_WITH_GETRUSAGE
 #include <sys/resource.h>
-#include <sys/time.h>
 #include <unistd.h>
 #endif
 
